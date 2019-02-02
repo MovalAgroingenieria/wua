@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_gravconsumption_view_form" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (form view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_gravity_irrigation.wua_gravconsumption_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='subparcel_id']"
+             position="after">
+                <field name="product_id" readonly="1"/>
+                <field name="invoiceset_id" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_gravity_irrigation.wua_gravconsumption_view_search"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="product_id"/>
+                <field name="invoiceset_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='executed']" position="after">
+                <separator/>
+                <filter string="Invoiced" name="invoiced"
+                 domain="[('invoiced_consumption','=',True)]"/>
+                <filter string="Not invoiced" name="notinvoiced"
+                 domain="[('invoiced_consumption','!=',True)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='agriculturalseason']" position="before">
+                <filter string="Water Type" name="product"
+                 context="{'group_by':'product_id'}"/>
+            </xpath>
+            <xpath expr="//filter[@name='partner']" position="after">
+                <filter string="Invoice Set" name="invoiceset"
+                 context="{'group_by':'invoiceset_id'}"/>
+                <filter string="Invoiced (Yes/No)" name="invoicedgroup"
+                 context="{'group_by':'invoiced_consumption'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

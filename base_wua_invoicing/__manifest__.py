@@ -1,0 +1,42 @@
+# -*- coding: utf-8 -*-
+# Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+{
+    "name": "Water Users Association Invoicing",
+    "summary": "In a water users association, global invoicing "
+               "based on a selection of items (parcels, partners, etc)",
+    "version": '10.0.1.1.0',
+    "category": "Water Users Associations",
+    "website": "http://www.moval.es",
+    "author": "Moval Agroingeniería",
+    "license": "AGPL-3",
+    "depends": [
+        "base_wua_infrastructure",
+        "account_cancel",
+        "account_banking_sepa_direct_debit",
+        "sale",
+        "account_invoice_transmit_method",
+        "account_due_list",
+        "account_due_list_aging_comments",
+        "account_due_list_days_overdue",
+        "account_due_list_payment_mode",],
+    "data": [
+        "security/ir.model.access.csv",
+        "data/product_category_data.xml",
+        "views/resources.xml",
+        "views/product_views.xml",
+        "views/wua_invoiceset_view.xml",
+        "views/wua_invoicing_config_settings_view.xml",
+        "views/account_invoice_view.xml",
+        "views/wua_parcel_view.xml",
+        "views/wua_waterconnection_view.xml",
+        "views/wua_irrigationgate_view.xml",
+        "views/wua_irrigationditch_view.xml",
+        "views/wua_irrigationshed_view.xml",
+        "views/wua_hydraulicsector_view.xml",
+        "views/res_partner_view.xml",
+        "views/account_view.xml",],
+    "installable": True,
+    "application": True,
+}

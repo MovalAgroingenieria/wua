@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+
+        <record id="categ_00" model="product.category">
+            <field name="name">WUA Service</field>
+        </record>            
+
+        <record id="categ_01" model="product.category">
+            <field name="name">Parcel</field>
+            <field name="productcategory_code">1</field>
+            <field name="parent_id" ref="categ_00"/>
+        </record>
+
+        <record id="categ_02" model="product.category">
+            <field name="name">Partner</field>
+            <field name="productcategory_code">2</field>
+            <field name="parent_id" ref="categ_00"/>
+        </record>
+
+        <record id="categ_03" model="product.category">
+            <field name="name">Contribution depending on the parcel size</field>
+            <field name="productcategory_code">3</field>
+            <field name="parent_id" ref="categ_00"/>
+        </record>
+
+        <record id="categ_04" model="product.category">
+            <field name="name">Contribution depending on the parcel (by ownership percentage)</field>
+            <field name="productcategory_code">4</field>
+            <field name="parent_id" ref="categ_00"/>
+        </record>
+
+        <record id="categ_05" model="product.category">
+            <field name="name">Water Connection</field>
+            <field name="productcategory_code">5</field>
+            <field name="parent_id" ref="categ_00"/>
+        </record>
+
+        <record id="categ_06" model="product.category">
+            <field name="name">Irrigation Gate</field>
+            <field name="productcategory_code">6</field>
+            <field name="parent_id" ref="categ_00"/>
+        </record>
+
+    </data>
+
+    <data noupdate="0">
+
+        <record id="categ_00" model="product.category">
+            <field name="name">WUA Service</field>
+            <field name="is_wua_master_product_category">True</field>
+        </record>
+
+    </data>            
+    
+    <data noupdate="1">
+
+        <record id="product_01" model="product.template">
+            <field name="name">Normal Parcel Pay</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">30</field>
+            <field name="categ_id" ref="categ_01"/>
+        </record>
+
+        <record id="product_02" model="product.template">
+            <field name="name">Standard Partner Pay</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">100</field>
+            <field name="categ_id" ref="categ_02"/>
+        </record>
+
+        <record id="product_03" model="product.template">
+            <field name="name">Normal Contrib/hec</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">45</field>
+            <field name="categ_id" ref="categ_03"/>
+        </record>
+
+        <record id="product_04" model="product.template">
+            <field name="name">Contrib/hec for annual loan</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">55</field>
+            <field name="categ_id" ref="categ_04"/>
+        </record>
+
+        <record id="product_05" model="product.template">
+            <field name="name">Standard Water Connection Maintenance</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">10</field>
+            <field name="categ_id" ref="categ_05"/>
+        </record>
+
+        <record id="product_06" model="product.template">
+            <field name="name">Standard Irrigation Gate Maintenance</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">12</field>
+            <field name="categ_id" ref="categ_06"/>
+        </record>
+
+    </data>
+    
+</odoo>

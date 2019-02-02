@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_presconsumption_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for pressure consumptions (tree view)</field>
+        <field name="model">wua.invoiceset.line.presconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <field name="presconsumption_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="reading_initial_time"/>
+                <field name="reading_end_time"/>
+                <field name="volume"/>
+                <field name="adjustement_volume"/>
+                <field name="volume_real"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_presconsumption_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for pressure consumptions (search view)</field>
+        <field name="model">wua.invoiceset.line.presconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="presconsumption_id"/>
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Is selected (marked)"
+                     name="isselected"
+                     context="{'group_by':'selected'}"/>
+                    <filter string="Hydraulic Sector"
+                     name="hydraulic_sector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigation_shed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Water Connection"
+                     name="water_connection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                    <filter string="Water Meter"
+                     name="water_meter"
+                     context="{'group_by':'watermeter_id'}"/>
+                </group>                
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_presconsumption_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_presconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.presconsumption'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_add_presconsumption_to_invoiceset" model="ir.values">
+        <field name="name">Add pressure consumption to invoice set</field>
+        <field name="model">wua.invoiceset.line.presconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_presconsumption_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_presconsumption_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_presconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.presconsumption'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_remove_presconsumption_to_invoiceset" model="ir.values">
+        <field name="name">Remove pressure consumption from invoice set</field>
+        <field name="model">wua.invoiceset.line.presconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_presconsumption_to_invoiceset'))"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_property_form" model="ir.ui.view" >
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='sales_purchases']" position="attributes">
+                <attribute name="string">Commercial Data/Banks</attribute>
+            </xpath>
+            <xpath expr="//group[@name='sale']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//group[@name='acc_sale']" position="attributes">
+                <attribute name="attrs">
+                    {'invisible':[('is_wua_partner','=',False)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//group[@name='acc_purchase']" position="attributes">
+                <attribute name="attrs">
+                    {'invisible':[('is_wua_partner','=',True)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='trust']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>            
+        </field>
+    </record>
+
+    <record forcecreate="True" id="property_account_position_id" model="ir.property">
+        <field name="name">property_account_position_id</field>
+        <field name="fields_id" search="[('model','=','res.partner'),('name','=','property_account_position_id')]"/>
+        <field name="value" eval="1" />
+    </record>
+
+    <!-- Delete some menu? -->
+    <!-- <delete id="account.menu_finance_payables" model="ir.ui.menu"/> -->
+
+</odoo>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="arch" type="xml">
+            <form string="Irrigation Settings" class="oe_form_configuration">
+                <header>
+                    <button string="Apply" type="object" name="execute"
+                     class="oe_highlight"/>
+                    <button string="Cancel" type="object" name="cancel"
+                     class="oe_link"/>
+                </header>
+                <group name="pres_irrig" string="Pressurized Irrigation">
+                    <field name="default_watermeter_type" widget="radio"/>
+                </group>
+                <group name="grav_irrig" string="Gravity Irrigation">
+                    <field name="default_wateringtime_perunitarea"
+                     style="width:100px"/>
+                    <field name="default_volume_perunitime"
+                     style="width:100px"/>
+                    <field name="default_only_cultivable_subparcel"/>
+                    <field name="default_calculation_model" widget="radio"/>
+                    <field name="default_distribute_extra_volume"/>
+                </group>
+                <group name="watering_req" string="Watering Requests">
+                    <field name="watering_req_duration_threshold_active"/>
+                    <field name="watering_req_duration_threshold_factor"
+                     style="width:100px"
+                     attrs="{'invisible':
+                             [('watering_req_duration_threshold_active',
+                               '=', False)]}"/>
+                    <field name="watering_req_duration_threshold_only_portal_users"
+                     attrs="{'invisible':
+                             [('watering_req_duration_threshold_active',
+                               '=', False)]}"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_irrigation_configuration_action"
+            model="ir.actions.act_window">
+        <field name="name">Configure Irrigation</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wua.irrigation.configuration</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+    <menuitem id="wua_irrigation_configuration_menu"
+              name="Parameters"
+              parent="base_wua_irrigation_configuration_menu"
+              action="wua_irrigation_configuration_action"
+              sequence="1"
+              groups="base.group_system"/>
+
+</odoo>

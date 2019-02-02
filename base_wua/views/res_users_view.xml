@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_users_search" model="ir.ui.view">
+        <field name="name">res.users.search</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id"
+               ref="base.view_users_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='no_share']" position="before">
+                <filter name="iswuauser" string="WUA Users" domain="[('is_wua_user','=',True)]"/>
+                <filter name="iswuaportaluser" string="WUA Portal Users" domain="[('is_wua_portal_user','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="base.action_res_users" model="ir.actions.act_window">
+        <field name="context">{'search_default_iswuauser': 1}</field>
+    </record>
+
+</odoo>

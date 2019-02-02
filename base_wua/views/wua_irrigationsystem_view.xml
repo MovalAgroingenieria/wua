@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationsystem_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Systems (form view)</field>
+        <field name="model">wua.irrigationsystem</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <group name="master_data">
+                    <field name="name" style="width:250px"/>
+                    <field name="description" style="width:100%%"/>
+                </group>
+                <group name="slave_data">
+                    <notebook name="slave_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_irrigationsystem_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Systems (tree view)</field>
+        <field name="model">wua.irrigationsystem</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_irrigationsystem_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Systems (search view)</field>
+        <field name="model">wua.irrigationsystem</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_irrigationsystem_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Systems</field>
+        <field name="res_model">wua.irrigationsystem</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_irrigationsystem_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_irrigationsystem_view_search"/>
+    </record>
+
+    <menuitem id="wua_irrigationsystem_menu"
+              name="Irrigation Systems"
+              parent="base_wua_census_configuration_menu"
+              action="wua_irrigationsystem_action"
+              sequence="9"
+              groups="group_wua_user"/>
+
+</odoo>

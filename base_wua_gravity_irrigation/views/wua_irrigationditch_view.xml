@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationditch_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Ditches (form view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_irrigationditch_view_form"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//button"
+                   position="after">
+                <button name="action_see_waterings"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-history"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="number_of_waterings"/>
+                            </span>
+                            <span class="o_stat_text">
+                                waterings
+                            </span>
+                        </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

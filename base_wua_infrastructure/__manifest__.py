@@ -1,0 +1,36 @@
+# -*- coding: utf-8 -*-
+# Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+{
+    "name": "Water Users Association Infrastructure",
+    "summary": "In a water users association, management of its "
+               "infrastructure",
+    "version": '10.0.1.1.0',
+    "category": "Water Users Associations",
+    "website": "http://www.moval.es",
+    "author": "Moval Agroingeniería",
+    "license": "AGPL-3",
+    "depends": [
+        "base_wua",
+        "hr",],
+    "data": [
+        "security/base_wua_infrastructure_security.xml",
+        "security/ir.model.access.csv",
+        "data/wua_infrastructure_config_settings_data.xml",
+        "data/res_groups_data.xml",
+        "data/wua_sequences.xml",
+        "views/resources.xml",
+        "views/wua_irrigationshed_view.xml",
+        "views/wua_infrastructure_config_settings_view.xml",
+        "views/wua_irrigationditch_view.xml",
+        "views/wua_hydraulicsector_view.xml",
+        "views/wua_irrigationgate_view.xml",
+        "views/wua_waterconnection_view.xml",
+        "views/wua_flowdivider_view.xml",
+        "views/wua_parcel_view.xml",
+        "views/res_partner_view.xml",
+        "views/hr_views.xml",],
+    "installable": True,
+    "application": True,
+}

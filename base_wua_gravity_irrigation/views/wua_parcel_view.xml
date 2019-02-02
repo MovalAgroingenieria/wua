@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_parcel_view_form"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']"
+                   position="after">
+                <button name="action_see_gravconsumptions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-leaf"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Gravity Cons.</span>
+                        </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="before">
+                <field name="allow_multiple_waterings" colspan="8"
+                 attrs="{'invisible':[('hydraulic_infrastructure_type','!=',2),
+                                      ('hydraulic_infrastructure_type','!=',3)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view">
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_parcel_view_search"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='withirrigationworker']" position="after">
+                <filter string="Multiple waterings (same period)" name="allowmultiplewaterings"
+                 domain="[('allow_multiple_waterings','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

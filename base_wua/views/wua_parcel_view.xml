@@ -1,0 +1,745 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view" >
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="arch" type="xml">
+            <form string="Parcels" duplicate="false">
+                <header>
+                    <button name="%(action_change_parcel_name)d"
+                            type="action" string="Change Code"
+                            groups="base_wua.group_wua_manager"/>                
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="notbillable,billable"/>
+                </header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="street_view_link" invisible="1"/>
+                        <field name="with_gis_parcel" invisible="1"/>
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button" 
+                                icon="fa-archive"
+                                groups="base_wua.group_wua_user">
+                                <field name="active"
+                                 widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
+                        <button name="action_see_cadastral_report"
+                                type="object"
+                                class="oe_stat_button"
+                                string="Cadaster"
+                                icon="fa-cubes"/>
+                        <br/>
+                        <button name="action_see_street_view"
+                                type="object"
+                                class="oe_stat_button"
+                                string="Street View"
+                                icon="fa-street-view"
+                                attrs="{'invisible':
+                                        [('street_view_link','=',False)]}"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                        ['|',('gis_viewer_link','=',False),
+                                             ('with_gis_parcel','=',False)]}"
+                                groups="base_wua.group_wua_user"/>
+                    </div>
+                    <div class="oe_title">
+                        <field name="id"
+                         invisible="1"/>
+                        <field name="parcel_type" widget="radio"
+                         options="{'horizontal': true}"
+                         style="width:270px"/>
+                        <h1>
+                            <field name="name"
+                             placeholder="Parcel Code"
+                             style="width:270px"
+                             attrs="{'readonly': [('id', '>', 0)]}"/>
+                        </h1>
+                        <field name="county_id"
+                         placeholder="County"
+                         style="width:270px"/>                             
+                    </div>
+                    <group name="master_data">
+                        <group>
+                            <group colspan="4" col="8">
+                                <field name="cadastral_sector"
+                                 colspan="4"
+                                 attrs="{'invisible':
+                                    [('parcel_type','=', 'U')]}"/>
+                                <field name="cadastral_polygon"
+                                 colspan="4"
+                                 attrs="{'invisible':
+                                    [('parcel_type','=', 'U')]}"/>
+                                <newline
+                                 attrs="{'invisible':
+                                    [('parcel_type','=', 'U')]}"/>                                    
+                                <field name="cadastral_parcel"
+                                 colspan="4"
+                                 attrs="{'invisible':
+                                    [('parcel_type','=', 'U')]}"/>
+                                <field name="cadastral_subparcel"
+                                 colspan="4"
+                                 attrs="{'invisible':
+                                    [('parcel_type','=', 'U')]}"/>                                    
+                                <field name="cadastral_reference"
+                                 colspan="4"/>
+                                <field name="area_cadaster"
+                                 colspan="4"/>
+                                <field name="area_official"
+                                 colspan="4"/>
+                                <field name="area_gis"
+                                 colspan="4" readonly="1"/>
+                                <newline/>
+                                <!-- <field name="area_official_hec"
+                                 colspan="4"/> -->
+                                <field name="tag_ids"
+                                 widget="many2many_tags"
+                                 colspan="4"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group colspan="4" col="8">
+                                <field name="with_votes"
+                                 colspan="4"/>
+                                <newline/>
+                                <field name="is_billable_water"
+                                 colspan="4"/>
+                                <field name="is_billable_expenses"
+                                 colspan="4"/>
+                                <field name="with_waterreservoir"
+                                 colspan="4"/>
+                                <field name="waterreservoir_id"
+                                 colspan="4"
+                                 attrs="{'invisible':
+                                    [('with_waterreservoir','=', False)]}"/>
+                                <field name="rurallocation_id"
+                                 colspan="4"/>
+                                <field name="farmproperty_id"
+                                 colspan="4"/>
+                                <field name="with_cultivationplan"
+                                 colspan="4"/>
+                                <field name="cultivationplan_id"
+                                 colspan="4"
+                                 attrs="{'invisible':
+                                    [('with_cultivationplan','=', False)]}"/>
+                                <field name="leased_parcel"
+                                 colspan="4" readonly="1"/>
+                                <newline/>
+                                <field name="leased_from"
+                                 colspan="4"/>
+                                <field name="leased_to"
+                                 colspan="4"/>
+                                <field name="elev_min"
+                                 colspan="4"/>
+                                <field name="elev_max"
+                                 colspan="4"/>
+                                <field name="elev_ave"
+                                 colspan="4"/>
+                                <newline/>
+                                <field name="street_view_active"
+                                 colspan="4"/>
+                                <field name="street_view_orient"
+                                 colspan="4"
+                                 attrs="{'invisible':
+                                    [('street_view_active','=', False)]}"/>
+                                <field name="street_view_x"
+                                 colspan="4"
+                                 digits="(10, 5)"
+                                 attrs="{'invisible':
+                                    [('street_view_active','=', False)]}"/>
+                                <field name="street_view_y"
+                                 colspan="4"
+                                 digits="(10, 5)"
+                                 attrs="{'invisible':
+                                    [('street_view_active','=', False)]}"/>
+                            </group>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook>
+                            <page name="partners" string="Partners">
+                                <field name="partnerlink_ids">
+                                    <tree editable="bottom"
+                                     class="o_base_wua_parcel_partnerlink_view_tree_notebook">
+                                        <field name="name"
+                                         invisible="1"/>
+                                        <field name="partnerlink_code"
+                                         invisible="1"/>
+                                        <field name="pos"
+                                         invisible="1"/>
+                                        <field name="partner_id"
+                                         domain="[('is_wua_partner','=',True)]"
+                                         context="{'wua':'1','default_is_wua_partner':True}"/>
+                                        <field name="irrigation_partner"/>
+                                        <field name="profile"/>
+                                        <field name="ownership_percentage"/>
+                                        <field name="water_costs_percentage"/>
+                                        <field name="other_costs_percentage"/>
+                                        <field name="area_official"
+                                         invisible="1"/>
+                                        <field name="area_official_hec"
+                                         invisible="1"/>
+                                        <field name="area_official_net"
+                                         invisible="1"/>
+                                        <field name="area_official_net_hec"
+                                         invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="subparcels" string="Subparcels">
+                                <field name="subparcel_ids"
+                                       context="{'tree_view_ref':
+                                                 'base_wua.wua_edit_parcel_subparcel_view_tree'}"/>
+                            </page>
+                            <page name="concessions" string="Concessions"
+                                  groups="base_wua.group_wua_user">
+                                <field name="concession_ids">
+                                    <tree editable="bottom">
+                                        <field name="name"/>
+                                        <field name="description" readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="title_deed_data" string="Title Deed Data"
+                                  groups="base_wua.group_wua_user">
+                                <group name="title_deed_data_group">
+                                    <group>
+                                        <group colspan="4" col="8">
+                                            <field name="title_deed_number"
+                                             colspan="4"/>
+                                            <field name="title_deed_date"
+                                             colspan="4"/>
+                                            <field name="title_deed_register_code_type"
+                                             colspan="4" widget="radio"/>
+                                            <newline/>
+                                            <field name="title_deed_register_code"
+                                             colspan="8"
+                                             attrs="{'invisible':
+                                                [('title_deed_register_code_type','=', 0)]}"/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <group colspan="4" col="8">
+                                            <field name="title_deed_city"
+                                             colspan="4"/>
+                                            <field name="title_deed_register"
+                                             colspan="4"/>
+                                            <field name="title_deed_volume"
+                                             colspan="4"/>
+                                            <field name="title_deed_book"
+                                             colspan="4"/>
+                                            <field name="title_deed_page"
+                                             colspan="4"/>
+                                            <field name="title_deed_registered_farm"
+                                             colspan="4"/>
+                                            <field name="title_deed_inscription"
+                                             colspan="4"/>
+                                            <field name="title_deed_registral_area"
+                                             colspan="4"/>
+                                        </group>
+                                    </group>
+                                </group>
+                                <group name="title_deed_observations_group">
+                                    <field name="title_deed_observations"/>
+                                </group>
+                            </page>
+                            <page name="internal_notes" string="Internal Notes"
+                                  groups="base_wua.group_wua_user">
+                                <field name="internal_notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_edit_parcel_subparcel_view_tree" model="ir.ui.view">
+        <field name="name">Subparcels</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_parcel_subparcel_view_tree_notebook"
+                  editable="bottom">
+                  <field name="is_cultivable" invisible="1"/>
+                  <field name="name" invisible="1"/>
+                  <field name="subparcel_code" invisible="1"/>
+                  <field name="pos_str" readonly="1"/>
+                  <field name="subparceltype_id" widget="many2one_unclickable"/>
+                  <field name="area_perc"/>
+                  <field name="area_official"/>
+                  <field name="cultivation_id" widget="many2one_unclickable"
+                         attrs="{'readonly':[('is_cultivable','=', False)],
+                                 'required':[('cultivationvariety_id','!=', False)]}"/>
+                  <field name="cultivationvariety_id" widget="many2one_unclickable"
+                         attrs="{'readonly':[('is_cultivable','=', False)]}"/>
+                  <field name="irrigationsystem_id" widget="many2one_unclickable"
+                         attrs="{'readonly':[('is_cultivable','=', False)]}"/>
+                  <field name="productionmethod_id" widget="many2one_unclickable"/>
+            </tree>        
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_tree" model="ir.ui.view" >
+        <field name="name">Parcels (tree view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_parcel_view_tree"
+                  colors="red:is_billable==False">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="cadastral_reference_link" invisible="1"/>
+                <field name="street_view_link" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_parcel" invisible="1"/>
+                <field name="is_billable" invisible="1"/>
+                <field name="area_official"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to parcel)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible':
+                                ['|',('gis_viewer_link','=',False),
+                                     ('with_gis_parcel','=',False)]}"/>
+                <button name="action_see_cadastral_report"
+                        type="object" class="oe_stat_button"
+                        string="Cadastral Report"
+                        icon="fa-cubes"
+                        attrs="{'invisible': [('cadastral_reference_link','=','')]}"/>
+                <field name="rural_location_county"/>
+                <field name="cadastral_polygon"/>
+                <field name="cadastral_parcel"/>
+                <field name="cadastral_reference"/>
+                <field name="leased_parcel"/>
+                <field name="number_of_subparcels"/>
+                <button name="action_see_street_view"
+                        type="object" class="oe_stat_button"
+                        string="Street View"
+                        icon="fa-street-view"
+                        attrs="{'invisible': [('street_view_link','=','')]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view">
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="rural_location_county"/>
+                <field name="farmproperty_id"/>
+                <field name="cadastral_reference"/>
+                <field name="tag_ids"/>
+                <filter string="Billable Water" name="billablewater"
+                 domain="[('is_billable_water','=',True)]"/>
+                <filter string="Billable Expenses" name="billableexpenses"
+                 domain="[('is_billable_expenses','=',True)]"/>
+                <separator/>
+                <filter string="Leased" name="leased"
+                 domain="[('leased_parcel','=',True)]"/>
+                <separator/>
+                <filter string="GIS Parcel: Yes" name="gisparcelyes"
+                 domain="[('with_gis_parcel','=',True)]"/>
+                <filter string="GIS Parcel: No" name="gisparcelno"
+                 domain="[('with_gis_parcel','=',False)]"/>
+                <separator/>                
+                <filter string="Archived" name="inactive"
+                 domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Irrigation Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Location" name="location"
+                     context="{'group_by':'rural_location_county'}"/>
+                    <filter string="Farm Property" name="farmproperty"
+                     context="{'group_by':'farmproperty_id'}"/>
+                    <filter string="Parcel Type" name="parceltype"
+                     context="{'group_by':'parcel_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_parcel_subparcel_view_form" model="ir.ui.view" >
+        <field name="name">Subparcels (form view)</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="fields">
+                    <group name="fields_left">
+                      <field name="parcel_id"/>
+                      <field name="subparcel_code"/>
+                      <field name="area_official"/>
+                      <field name="subparceltype_id"/>
+                    </group>
+                    <group name="fields_right">
+                        <field name="cultivation_id"/>
+                        <field name="cultivationvariety_id"/>
+                        <field name="irrigationsystem_id"/>
+                        <field name="productionmethod_id"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_parcel_subparcel_view_tree" model="ir.ui.view" >
+        <field name="name">Subparcels (tree view)</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                class="o_base_wua_parcel_subparcel_view_tree">
+                <field name="parcel_id"/>
+                <field name="partner_id"/>                
+                <field name="subparcel_code"/>
+                <field name="area_perc" widget="progressbar"/>
+                <field name="area_official"/>
+                <field name="subparceltype_id" widget="many2one_unclickable"/>
+                <field name="cultivation_id"/>
+                <field name="cultivationvariety_id" widget="many2one_unclickable"/>
+                <field name="irrigationsystem_id" widget="many2one_unclickable"/>
+                <field name="productionmethod_id" widget="many2one_unclickable"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_subparcel_view_search" model="ir.ui.view">
+        <field name="name">Subparcels (search view)</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <field name="subparceltype_id"/>
+                <field name="cultivation_id"/>
+                <field name="cultivationvariety_id"/>
+                <field name="irrigationsystem_id"/>
+                <field name="productionmethod_id"/>
+                <filter string="Cultivable" name="cultivable"
+                 domain="[('is_cultivable','=',True)]"/>
+                <filter string="Not Cultivable" name="notcultivable"
+                 domain="[('is_cultivable','=',False)]"/>
+                <separator/>
+                <filter string="Archived" name="inactive"
+                 domain="[('active','=',False)]"/>                 
+                <group expand="0" string="Group By">
+                    <filter string="Irrigation Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Parcel" name="parcel"
+                     context="{'group_by':'parcel_id'}"/>                
+                    <filter string="Type" name="type"
+                     context="{'group_by':'subparceltype_id'}"/>
+                    <filter string="Cultivation" name="cultivation"
+                     context="{'group_by':'cultivation_id'}"/>
+                    <filter string="Variety" name="variety"
+                     context="{'group_by':'cultivationvariety_id'}"/>
+                    <filter string="Irrigation System" name="irrigationsystem"
+                     context="{'group_by':'irrigationsystem_id'}"/>
+                    <filter string="Production Method" name="productionmethod"
+                     context="{'group_by':'productionmethod_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_parcel_partnerlink_view_form" model="ir.ui.view" >
+        <field name="name">Partner Links (form view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="fields">
+                    <group name="fields_left">
+                      <field name="partner_id"/>
+                      <field name="parcel_id"/>
+                      <field name="water_costs_percentage"
+                             nolabel="1" widget="percentpie"/>
+                      <field name="other_costs_percentage"
+                             nolabel="1" widget="percentpie"/>
+                    </group>
+                    <group name="fields_right">
+                      <field name="profile"/>
+                      <field name="area_official"/>
+                      <field name="ownership_percentage"
+                             nolabel="1" widget="percentpie"
+                             attrs="{'invisible':
+                                      [('profile','!=', 'O')]}"/>
+                      <newline/>
+                      <field name="area_official_net"
+                             attrs="{'invisible':
+                                      [('profile','!=', 'O')]}"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_parcel_partnerlink_view_tree" model="ir.ui.view" >
+        <field name="name">Partner Links (tree view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                class="o_base_wua_parcel_partnerlink_view_tree">
+                <field name="parcel_id"/>                
+                <field name="partnerlink_code"
+                 invisible="1"/>
+                <field name="partner_id"
+                 widget="many2one_unclickable"/>
+                <field name="profile"/>
+                <field name="area_official"/>
+                <field name="ownership_percentage"/>
+                <field name="area_official_net"/>
+                <field name="water_costs_percentage"/>
+                <field name="area_official_water_costs_net"/>
+                <field name="other_costs_percentage"/>
+                <field name="area_official_other_costs_net"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_partnerlink_view_search" model="ir.ui.view">
+        <field name="name">Partner Links (search view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter string="Owner" name="owner"
+                 domain="[('profile','=','O')]"/>
+                <filter string="Lessee" name="lessee"
+                 domain="[('profile','=','L')]"/>
+                <filter string="Payer" name="payer"
+                 domain="[('profile','=','P')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Profile"
+                     name="profile"
+                     context="{'group_by':'profile'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_pivot" model="ir.ui.view" >
+        <field name="name">Parcels (pivot view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="arch" type="xml">
+            <pivot string="Parcels" display_quantity="true">
+                <field name="partner_id"/>
+                <field name="area_official" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_parcel_subparcel_view_pivot" model="ir.ui.view" >
+        <field name="name">Subparcels (pivot view)</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="arch" type="xml">
+            <pivot string="Subparcels" display_quantity="true">
+                <field name="cultivation_id"/>
+                <field name="area_official" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_parcel_partnerlink_view_pivot" model="ir.ui.view" >
+        <field name="name">Partner Links (pivot view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="arch" type="xml">
+            <pivot string="Partner Links" display_quantity="true">
+                <field name="partner_id"/>
+                <field name="area_official" type="measure"/>
+                <field name="area_official_net" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_subparcel_view_tree" model="ir.ui.view" >
+        <field name="name">Subparcels (tree view)</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="parcel_id"/>                
+                <field name="subparcel_code"/>
+                <field name="pos"/>
+                <field name="area_official"/>
+                <field name="area_official_hec"/>
+                <field name="subparceltype_id" widget="many2one_unclickable"/>
+                <field name="cultivation_id" widget="many2one_unclickable"/>
+                <field name="cultivationvariety_id" widget="many2one_unclickable"/>
+                <field name="irrigationsystem_id" widget="many2one_unclickable"/>
+                <field name="productionmethod_id" widget="many2one_unclickable"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_partnerlink_view_tree" model="ir.ui.view" >
+        <field name="name">Partner Links (tree view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="parcel_id"/>                
+                <field name="partnerlink_code"/>
+                <field name="pos"/>
+                <field name="partner_id"
+                 widget="many2one_unclickable"/>
+                <field name="profile"/>
+                <field name="area_official"/>
+                <field name="area_official_hec"/>
+                <field name="ownership_percentage"/>
+                <field name="area_official_net"/>
+                <field name="area_official_net_hec"/>
+                <field name="water_costs_percentage"/>
+                <field name="other_costs_percentage"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_action" model="ir.actions.act_window">
+        <field name="name">Parcels</field>
+        <field name="res_model">wua.parcel</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="view_id" ref="wua_parcel_view_tree"/>
+        <field name="search_view_id" ref="wua_parcel_view_search"/>
+    </record>
+
+    <record id="wua_subparcel_action" model="ir.actions.act_window">
+        <field name="name">Subparcels</field>
+        <field name="res_model">wua.parcel.subparcel</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_id" ref="wua_parcel_subparcel_view_tree"/>
+        <field name="search_view_id" ref="wua_parcel_subparcel_view_search"/>        
+    </record>
+
+    <record id="wua_gisviewer_action" model="ir.actions.server">
+        <field name="name">GIS Viewer</field>
+        <field name="model_id" ref="model_wua_parcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.parcel'].run_gisviewer_url()
+        </field>
+    </record>
+
+    <menuitem id="base_wua_census_menu"
+              name="Census"
+              sequence="-10"
+              web_icon="base_wua,static/description/icon.png"
+              groups="group_wua_user"/>
+        
+    <menuitem id="base_wua_census_landparcels_menu"
+              name="Land Parcels"
+              parent="base_wua_census_menu"
+              sequence="2"/>
+                  
+    <menuitem id="wua_parcel_menu"
+              name="Parcels"
+              parent="base_wua_census_landparcels_menu"
+              action="wua_parcel_action"
+              sequence="1"/>
+
+    <menuitem id="wua_subparcel_menu"
+              name="Subparcels"
+              parent="base_wua_census_landparcels_menu"
+              action="wua_subparcel_action"
+              sequence="2"/>
+
+    <menuitem id="wua_gisviewer_menu"
+              name="GIS Viewer"
+              parent="base_wua_census_landparcels_menu"
+              action="wua_gisviewer_action"
+              sequence="3"/>
+
+    <record id="wua_technical_subparcels_action" model="ir.actions.act_window">
+        <field name="name">Subparcels (low-level)</field>
+        <field name="res_model">wua.parcel.subparcel</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_id" ref="wua_technical_parcel_subparcel_view_tree"/>
+    </record>
+
+    <record id="wua_technical_partnerlinks_action" model="ir.actions.act_window">
+        <field name="name">Partner Links (low-level)</field>
+        <field name="res_model">wua.parcel.partnerlink</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_id" ref="wua_technical_parcel_partnerlink_view_tree"/>
+    </record>
+
+    <record id="wua_technical_partnerbank_action" model="ir.actions.act_window">
+        <field name="name">Bank Accounts (low-level)</field>
+        <field name="res_model">res.partner.bank</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="base.view_partner_bank_tree"/>
+    </record>
+
+    <record id="wua_technical_bankingmandate_action" model="ir.actions.act_window">
+        <field name="name">Banking Mandates (low-level)</field>
+        <field name="res_model">account.banking.mandate</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="account_banking_mandate.view_mandate_tree"/>
+    </record>
+
+    <record id="wua_technical_global_vote_calculation_action" model="ir.actions.server">
+        <field name="name">Global Vote Calculation</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">action = env["wua.parcel"].action_global_vote_calculation()</field>
+    </record>
+
+    <record id="wua_technical_update_gis_link_action" model="ir.actions.server">
+        <field name="name">Refresh GIS Links</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">action = env["wua.parcel"].action_update_gis_link()</field>
+    </record>
+
+    <menuitem id="base_wua_technical_menu"
+              name="Technical"
+              parent="base_wua_census_menu"
+              sequence="1002"
+              groups="base.group_system"/>
+
+    <menuitem id="wua_technical_subparcels_menu"
+              name="Subparcels"
+              parent="base_wua_technical_menu"
+              action="wua_technical_subparcels_action"
+              sequence="1"/>
+
+    <menuitem id="wua_technical_partnerlinks_menu"
+              name="Partner Links"
+              parent="base_wua_technical_menu"
+              action="wua_technical_partnerlinks_action"
+              sequence="2"/>
+
+    <menuitem id="wua_technical_partnerbank_menu"
+              name="Bank Accounts"
+              parent="base_wua_technical_menu"
+              action="wua_technical_partnerbank_action"
+              sequence="3"/>
+
+    <menuitem id="wua_technical_bankingmandate_menu"
+              name="Banking Mandates"
+              parent="base_wua_technical_menu"
+              action="wua_technical_bankingmandate_action"
+              sequence="4"/>
+
+    <menuitem id="wua_technical_global_vote_calculation_menu"
+              name="Calculation: partners"
+              parent="base_wua_technical_menu"
+              action="wua_technical_global_vote_calculation_action"
+              sequence="5"/>
+
+    <menuitem id="wua_technical_update_gis_link_menu"
+              name="Calculation: GIS links"
+              parent="base_wua_technical_menu"
+              action="wua_technical_update_gis_link_action"
+              sequence="6"/>
+
+</odoo>

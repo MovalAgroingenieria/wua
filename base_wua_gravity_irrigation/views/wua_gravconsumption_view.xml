@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_gravconsumption_view_form" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (form view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <form duplicate="0" create="0">
+                <header>
+                    <button name="change_to_executed"
+                            type="object" string="Set as executed"
+                            states="planned"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="change_to_planned"
+                            type="object" string="Set as planned"
+                            states="executed"
+                            groups="base_wua.group_wua_manager"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="proposed,planned,executed"/>                
+                </header>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="wateringperiod_id" readonly="1"/>
+                            <field name="watering_duration"
+                                   attrs="{'readonly':
+                                           [('state','=','proposed')]}"
+                                   style="width:100px"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="subparcel_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="values_page" string="Values">
+                                <group name="values_horizontal_group">
+                                    <group name="values_left">
+                                        <field name="watering_initial_time"
+                                               readonly="1"/>
+                                        <field name="watering_end_time"
+                                               readonly="1"/>
+                                        <field name="area_official"
+                                               readonly="1"/>
+                                        <field name="watering_volume"
+                                               readonly="1"/>
+                                        <field name="extra_volume"
+                                               readonly="1"/>
+                                        <field name="watering_volume_real"
+                                               readonly="1"/>
+                                        <field name="flowdivider_opening_time"
+                                               readonly="1"/>
+                                        <field name="flowdivider_closing_time"
+                                               readonly="1"/>
+                                    </group>
+                                    <group name="values_right">
+                                        <field name="irrigationditch_id"
+                                               readonly="1"/>
+                                        <field name="watering_id"
+                                               attrs="{'invisible':
+                                                       [('watering_id','=',False)]}"
+                                               readonly="1"/>
+                                        <field name="gravconsumption_type"
+                                               readonly="1"/>
+                                        <field name="wateringrequest_id"
+                                               attrs="{'invisible':
+                                                       [('gravconsumption_type','=','distribution')]}"
+                                               readonly="1"/>
+                                        <field name="altered"
+                                               readonly="1"/>
+                                        <field name="discarted"
+                                               readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="links_page" string="Links">
+                                <group name="links_horizontal_group">
+                                    <group name="links_left">
+                                        <field name="partner_id"
+                                               readonly="1"/>
+                                        <field name="employee_id"
+                                               attrs="{'invisible':
+                                                       [('employee_id','=',False)]}"
+                                               readonly="1"/>
+                                    </group>
+                                    <group name="links_right">
+                                        <field name="parcel_id"
+                                               readonly="1"/>
+                                        <field name="irrigationgate_id"
+                                               readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>                        
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (tree view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_gravity_irrigation_gravconsumption_view_tree">
+                <field name="watering_id"/>
+                <field name="wateringperiod_id"/>
+                <field name="subparcel_id"/>
+                <field name="watering_initial_time"/>
+                <field name="watering_end_time"/>
+                <field name="watering_duration"/>
+                <field name="area_official"/>
+                <field name="watering_volume"/>
+                <field name="extra_volume" string="Extra (m3)"/>
+                <field name="watering_volume_real"/>
+                <field name="partner_id"/>
+                <field name="state"/>
+                <field name="gravconsumption_type" invisible="1"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-file"
+                        attrs="{'invisible':
+                                [('gravconsumption_type','=','distribution')],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="irrigationditch_id"/>
+                <field name="wateringperiod_id"/>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <field name="cadastral_reference"/>
+                <field name="subparcel_id"/>
+                <field name="agriculturalseason_id"/>
+                <filter string="Explicit Request" name="request_type"
+                 domain="[('gravconsumption_type','=','request')]"/>
+                <filter string="Distribution" name="distribution_type"
+                 domain="[('gravconsumption_type','=','distribution')]"/>
+                <separator/>
+                <filter string="Modified" name="altered"
+                 domain="[('altered','=',True)]"/>
+                <separator/>
+                <filter string="Discarted" name="discarted"
+                 domain="[('discarted','=',True)]"/>
+                <separator/>
+                <filter string="Zero consumption" name="zeroconsumption"
+                 domain="[('watering_duration','=',0)]"/>
+                <filter string="Positive consumption" name="positiveconsumption"
+                 domain="[('watering_duration','>',0)]"/>
+                <separator/>
+                <filter string="Proposed" name="proposed"
+                 domain="[('state','=','proposed')]"/>
+                <filter string="Planned" name="planned"
+                 domain="[('state','=','planned')]"/>
+                <filter string="Executed" name="executed"
+                 domain="[('state','=','executed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Irrigation Ditch"
+                     name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                    <filter string="Watering Period"
+                     name="wateringperiod"
+                     context="{'group_by':'wateringperiod_id'}"/>
+                    <filter string="Watering"
+                     name="watering"
+                     context="{'group_by':'watering_id'}"/>
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                </group>                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_view_pivot" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (pivot view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values">
+                <field name="area_official" type="measure"/>
+                <field name="watering_duration" type="measure"/>
+                <field name="watering_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_action" model="ir.actions.act_window">
+        <field name="name">Consumptions</field>
+        <field name="res_model">wua.gravconsumption</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="view_id" ref="wua_gravconsumption_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_gravconsumption_view_search"/>
+        <field name="context">{'search_default_executed': 1,
+                               'search_default_agriculturalseason': 1,
+                               'search_default_irrigationditch': 1,
+                               'search_default_wateringperiod': 1}</field>
+    </record>
+
+    <menuitem id="wua_gravconsumption_menu"
+              name="Consumptions"
+              parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
+              action="wua_gravconsumption_action"
+              sequence="5"
+              groups="base_wua.group_wua_user"/>    
+
+    <record id="wua_gravconsumption_one_watering_view_tree" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (tree view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="false"
+                  class="o_base_wua_gravity_irrigation_gravconsumption_one_watering_view_tree">
+                <field name="subparcel_id"/>
+                <field name="watering_initial_time"/>
+                <field name="watering_end_time"/>
+                <field name="watering_duration"/>
+                <field name="flowdivider_opening_time"/>
+                <field name="flowdivider_closing_time"/>
+                <field name="area_official"/>
+                <field name="watering_volume"/>
+                <field name="extra_volume" string="Extra (m3)"/>
+                <field name="watering_volume_real"/>
+                <field name="cadastral_reference"/>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <field name="state"/>
+                <field name="gravconsumption_type" invisible="1"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-file"
+                        attrs="{'invisible':
+                                [('gravconsumption_type','=','distribution')],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_one_watering_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <field name="cadastral_reference"/>
+                <field name="subparcel_id"/>
+                <filter string="Explicit Request" name="request_type"
+                 domain="[('gravconsumption_type','=','request')]"/>
+                <filter string="Distribution" name="distribution_type"
+                 domain="[('gravconsumption_type','=','distribution')]"/>
+                <separator/>
+                <filter string="Modified" name="altered"
+                 domain="[('altered','=',True)]"/>
+                <separator/>
+                <filter string="Discarted" name="discarted"
+                 domain="[('discarted','=',True)]"/>
+                <separator/>
+                <filter string="Proposed" name="proposed"
+                 domain="[('state','=','proposed')]"/>
+                <filter string="Planned" name="planned"
+                 domain="[('state','=','planned')]"/>
+                <filter string="Executed" name="executed"
+                 domain="[('state','=','executed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                </group>                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_one_parcel_view_tree" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (tree view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="false"
+                  class="o_base_wua_gravity_irrigation_gravconsumption_one_parcel_view_tree">
+                <field name="subparcel_id"/>
+                <field name="watering_initial_time"/>
+                <field name="watering_end_time"/>
+                <field name="watering_duration"/>
+                <field name="flowdivider_opening_time"/>
+                <field name="flowdivider_closing_time"/>
+                <field name="area_official"/>
+                <field name="watering_id"/>
+                <field name="watering_volume"/>
+                <field name="extra_volume" string="Extra (m3)"/>
+                <field name="watering_volume_real"/>
+                <field name="wateringrequest_id"/>
+                <field name="state"/>
+                <field name="gravconsumption_type" invisible="1"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-file"
+                        attrs="{'invisible':
+                                [('gravconsumption_type','=','distribution')],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_one_parcel_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <field name="subparcel_id"/>
+                <field name="watering_id"/>
+                <filter string="Explicit Request" name="request_type"
+                 domain="[('gravconsumption_type','=','request')]"/>
+                <filter string="Distribution" name="distribution_type"
+                 domain="[('gravconsumption_type','=','distribution')]"/>
+                <separator/>
+                <filter string="Modified" name="altered"
+                 domain="[('altered','=',True)]"/>
+                <separator/>
+                <filter string="Discarted" name="discarted"
+                 domain="[('discarted','=',True)]"/>
+                <separator/>
+                <filter string="Proposed" name="proposed"
+                 domain="[('state','=','proposed')]"/>
+                <filter string="Planned" name="planned"
+                 domain="[('state','=','planned')]"/>
+                <filter string="Executed" name="executed"
+                 domain="[('state','=','executed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Watering"
+                     name="watering"
+                     context="{'group_by':'watering_id'}"/>
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Watering Request"
+                     name="wateringrequest"
+                     context="{'group_by':'wateringrequest_id'}"/>
+                </group>                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_one_employee_view_tree" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (tree view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="false"
+                  class="o_base_wua_gravity_irrigation_gravconsumption_one_employee_view_tree">
+                <field name="subparcel_id"/>
+                <field name="watering_initial_time"/>
+                <field name="watering_end_time"/>
+                <field name="watering_duration"/>
+                <field name="flowdivider_opening_time"/>
+                <field name="flowdivider_closing_time"/>
+                <field name="area_official"/>
+                <field name="watering_volume"/>
+                <field name="extra_volume" string="Extra (m3)"/>
+                <field name="watering_volume_real"/>
+                <field name="cadastral_reference"/>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <field name="gravconsumption_type" invisible="1"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-file"
+                        attrs="{'invisible':
+                                [('gravconsumption_type','=','distribution')],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_one_employee_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <field name="cadastral_reference"/>
+                <field name="subparcel_id"/>
+                <filter string="Explicit Request" name="request_type"
+                 domain="[('gravconsumption_type','=','request')]"/>
+                <filter string="Distribution" name="distribution_type"
+                 domain="[('gravconsumption_type','=','distribution')]"/>
+                <separator/>
+                <filter string="Modified" name="altered"
+                 domain="[('altered','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Watering"
+                     name="watering"
+                     context="{'group_by':'watering_id'}"/>
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                </group>                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_set_consumption_as_selected" model="ir.actions.server">
+        <field name="name">Select for calculation</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_selected(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_set_consumption_as_selected" model="ir.values">
+        <field name="name">Set consumption as selected</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_selected'))"/>
+    </record>
+
+    <record id="wua_set_consumption_as_unselected" model="ir.actions.server">
+        <field name="name">Unselect for calculation</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_unselected(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_set_consumption_as_unselected" model="ir.values">
+        <field name="name">Set consumption as unselected</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_unselected'))"/>
+    </record>
+
+    <record id="wua_set_consumption_as_executed" model="ir.actions.server">
+        <field name="name">Set as executed (only if state is 'planned')</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_executed(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_set_consumption_as_executed" model="ir.values">
+        <field name="name">Set consumption as executed</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_executed'))"/>
+    </record>
+
+    <record id="wua_set_consumption_as_planned" model="ir.actions.server">
+        <field name="name">Set as planned (only if state is 'executed')</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_planned(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_set_consumption_as_planned" model="ir.values">
+        <field name="name">Set consumption as planned</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_planned'))"/>
+    </record>
+
+    <record id="wua_gravconsumption_portal_user_view_tree" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (tree view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_gravity_irrigation_gravconsumption_portal_user_view_tree">
+                <field name="watering_id" widget="many2one_unclickable"/>
+                <field name="wateringperiod_id" widget="many2one_unclickable"/>
+                <field name="subparcel_id" widget="many2one_unclickable"/>
+                <field name="watering_initial_time"/>
+                <field name="watering_end_time"/>
+                <field name="watering_duration"/>
+                <field name="area_official"/>
+                <field name="watering_volume"/>
+                <field name="extra_volume" string="Extra (m3)"/>
+                <field name="watering_volume_real"/>
+                <field name="state"/>
+                <field name="gravconsumption_type" invisible="1"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-file"
+                        attrs="{'invisible':
+                                [('gravconsumption_type','=','distribution')],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_portal_user_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="cadastral_reference"/>
+                <field name="subparcel_id"/>
+                <filter string="Modified" name="altered"
+                 domain="[('altered','=',True)]"/>
+                <separator/>
+                <filter string="Discarted" name="discarted"
+                 domain="[('discarted','=',True)]"/>
+                <separator/>
+                <filter string="Proposed" name="proposed"
+                 domain="[('state','=','proposed')]"/>
+                <filter string="Planned" name="planned"
+                 domain="[('state','=','planned')]"/>
+                <filter string="Executed" name="executed"
+                 domain="[('state','=','executed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Irrigation Ditch"
+                     name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                    <filter string="Watering Period"
+                     name="wateringperiod"
+                     context="{'group_by':'wateringperiod_id'}"/>
+                    <filter string="Watering"
+                     name="watering"
+                     context="{'group_by':'watering_id'}"/>
+                </group>                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_portal_user_action" model="ir.actions.act_window">
+        <field name="name">Consumptions (read only)</field>
+        <field name="res_model">wua.gravconsumption</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_gravconsumption_portal_user_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_gravconsumption_portal_user_view_search"/>
+        <field name="context">{'search_default_executed': 1,
+                               'search_default_agriculturalseason': 1,
+                               'search_default_watering': 1}</field>
+    </record>
+
+    <menuitem id="wua_gravconsumption_portal_user_menu"
+              name="Consumptions"
+              parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
+              action="wua_gravconsumption_portal_user_action"
+              sequence="5"
+              groups="base_wua.group_wua_portal_user"/>
+
+</odoo>

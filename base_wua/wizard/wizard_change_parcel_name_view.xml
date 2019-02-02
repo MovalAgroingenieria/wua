@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_change_parcel_name_view_form" model="ir.ui.view">
+        <field name="name">Wizard to change parcel code</field>
+        <field name="model">wizard.change.parcel.name</field>
+        <field name="arch" type="xml">
+            <form string="Set a new parcel code">
+                <script>
+                    $(document).ready(function(){
+                        // alert('prueba');
+                        $('.modal-dialog').css({'width': '380px'});
+                        $('.modal-dialog').css({'height': '280px'});
+                    });
+                </script>
+                <group name="body">
+                    <field name="parcel_name"
+                     style="width:150px"/>
+                </group>
+                <footer>
+                    <button name="set_parcel_name"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_change_parcel_name"
+        name="Change Code"
+        res_model="wizard.change.parcel.name"
+        src_model="wua.parcel"
+        view_mode="form"
+        target="new"
+        groups="group_wua_manager"/>
+
+</odoo>

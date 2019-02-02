@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_wateringrequest_view_form" model="ir.ui.view">
+        <field name="name">Watering Requests (form view)</field>
+        <field name="model">wua.wateringrequest</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                    <button name="%(action_copy_requests)d"
+                            type="action" string="Copy request"
+                            groups="base_wua.group_wua_manager"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="pending,intermediate,executed"/>                
+                </header>
+                <field name="id" invisible="1"/>
+                <field name="is_open" invisible="1"/>
+                <field name="editable_record" invisible="1"/>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <span class="oe_edit_only"
+                              style="color:Red;font-weight: bold;"
+                              attrs="{'invisible':[('signature_image','=',False)]}">
+                                NOTICE: It will be necessary to sign again
+                        </span>
+                        <img src="/base_wua_gravity_irrigation/static/image/img_unlock.png"
+                             hspace="10"
+                             attrs="{'invisible':[('is_open', '=', False)]}"/>
+                        <img src="/base_wua_gravity_irrigation/static/image/img_lock.png"
+                             hspace="10"
+                             attrs="{'invisible':[('is_open', '=', True)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="wateringperiod_id"
+                                   domain="[('state', '=', 'open')]"
+                                   attrs="{'readonly':
+                                           [('id','>',0),'|',('editable_record','=',False),('is_open','=',False)]}"/>
+                            <field name="partner_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   domain="[('is_wua_partner', '=', True)]"
+                                   attrs="{'readonly':
+                                           ['|',('is_open','=',False),'|',('id','>',0),('is_portal_user','=',True)]}"/>
+                            <field name="user_id"/>
+                            <field name="irrigationditch_id" class="oe_edit_only"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'invisible': 
+                                           [('id','>',0),'|',('editable_record','=',False),('is_open','=',False)]}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="agriculturalseason_id"/>
+                            <field name="request_date"
+                                   attrs="{'readonly':
+                                           [('id','>',0),'|',('editable_record','=',False),('is_open','=',False)]}"/>
+                            <field name="number_of_subparcels"/>
+                            <field name="is_portal_user"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="gravconsumptions_page"
+                                  string="Requested Subparcels">
+                                <field name="gravconsumption_ids"
+                                       attrs="{'readonly':
+                                               [('id','>',0),'|',('editable_record','=',False),('is_open','=',False)]}">                                       
+                                    <tree class="o_base_wua_gravity_irrigation_gravconsumption_view_tree_notebook"
+                                          editable="bottom">
+                                        <field name="gis_viewer_link" invisible="1"/>
+                                        <field name="subparcel_id"
+                                               domain="[('partner_id', '=', parent.partner_id),
+                                                        ('irrigationgate_id', '!=', False),
+                                                        ('parcel_id.gravityfed_irrigation_right', '=', True),
+                                                        ('parcel_id.with_watering_shift', '=', True),
+                                                        ('irrigationditch_id', '=?', parent.irrigationditch_id)]"
+                                               widget="many2one_unclickable"
+                                               options="{'no_quick_create':True,
+                                                         'no_create_edit':True}"/>
+                                        <field name="area_official"
+                                               readonly="1"/>
+                                        <button name="action_see_gis_viewer"
+                                                type="object" class="oe_stat_button"
+                                                string="GIS Viewer (zoom to parcel)"
+                                                icon="fa-map-marker"
+                                                attrs="{'invisible': [('gis_viewer_link','=','')]}"
+                                                groups="base_wua.group_wua_user"/>
+                                        <field name="parcel_id"
+                                               readonly="1"/>
+                                        <field name="irrigationgate_id"
+                                               readonly="1"/>
+                                        <field name="irrigationditch_id"
+                                               readonly="1"/>
+                                        <field name="watering_duration"/>
+                                        <field name="state"
+                                               readonly="1"/>
+                                        <field name="watering_id"
+                                               readonly="1"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="signature_page" string="Signature"
+                                  groups="base_wua.group_wua_user">
+                                <field name="signature_image" widget="signature"/>
+                            </page>                        
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"
+                                       attrs="{'readonly':
+                                               [('id','>',0),('editable_record','=',False)]}"/>
+                            </page>                        
+                        </notebook>
+                    </group>                    
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers"/>
+                    <field name="message_ids"
+                           widget="mail_thread"
+                           groups="base_wua.group_wua_user"/>
+                </div>                
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_wateringrequest_view_tree" model="ir.ui.view">
+        <field name="name">Watering Requests (tree view)</field>
+        <field name="model">wua.wateringrequest</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_gravity_irrigation_wateringrequest_view_tree">
+                <field name="wateringperiod_id"/>
+                <field name="partner_id"/>
+                <field name="request_date"/>
+                <field name="is_portal_user" string="Created by the partner"/>
+                <field name="number_of_subparcels"/>
+                <field name="is_open"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_wateringrequest_view_search" model="ir.ui.view">
+        <field name="name">Watering Requests (search view)</field>
+        <field name="model">wua.wateringrequest</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="agriculturalseason_id"/>
+                <filter string="Created by the partner" name="isportaluser"
+                 domain="[('is_portal_user','=',True)]"/>
+                <separator/>
+                <filter string="Open" name="isopen"
+                 domain="[('is_open','=',True)]"/>
+                <filter string="Closed" name="isclosed"
+                 domain="[('is_open','=',False)]"/>
+                <separator/>
+                <filter string="Pending Processing" name="statepending"
+                 domain="[('state','=','pending')]"/>
+                <filter string="Intermediate" name="stateintermediate"
+                 domain="[('state','=','intermediate')]"/>
+                <filter string="Executed" name="stateexecuted"
+                 domain="[('state','=','executed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agricultural_season"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Watering Period"
+                     name="watering_period"
+                     context="{'group_by':'wateringperiod_id'}"/>
+                    <filter string="Irrigation Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="User"
+                     name="user"
+                     context="{'group_by':'user_id'}"/>                                          
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_wateringrequest_parner_view_tree" model="ir.ui.view">
+        <field name="name">Watering Requests of Partner (tree view)</field>
+        <field name="model">wua.wateringrequest</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                  class="o_base_wua_gravity_irrigation_wateringrequest_partner_view_tree">
+                <field name="name"/>
+                <field name="wateringperiod_id"/>
+                <field name="request_date"/>
+                <field name="number_of_subparcels" sum="Total"/>
+                <field name="is_open"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_wateringrequest_partner_view_search" model="ir.ui.view">
+        <field name="name">Watering Requests of Partner (search view)</field>
+        <field name="model">wua.wateringrequest</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Open" name="isopen_inpartner"
+                 domain="[('is_open','=',True)]"/>
+                <filter string="Closed" name="isclosed_inpartner"
+                 domain="[('is_open','=',False)]"/>
+                <separator/>
+                <filter string="Pending Processing" name="statepending_inpartner"
+                 domain="[('state','=','pending')]"/>
+                <filter string="Intermediate" name="stateintermediate_inpartner"
+                 domain="[('state','=','intermediate')]"/>
+                <filter string="Executed" name="stateexecuted_inpartner"
+                 domain="[('state','=','executed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agricultural_season_inpartner"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Watering Period"
+                     name="watering_period_inpartner"
+                     context="{'group_by':'wateringperiod_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_wateringrequest_action" model="ir.actions.act_window">
+        <field name="name">Watering Requests</field>
+        <field name="res_model">wua.wateringrequest</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_wateringrequest_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_wateringrequest_view_search"/>
+        <field name="context">{'search_default_isopen': 1}</field>         
+    </record>
+
+    <menuitem id="wua_wateringrequest_menu"
+              name="Watering Requests"
+              parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
+              action="wua_wateringrequest_action"
+              sequence="3"
+              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
+
+</odoo>

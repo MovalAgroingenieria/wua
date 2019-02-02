@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="invoice_tree" model="ir.ui.view">
+        <field name="name">Invoices (tree view)</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_tree"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="invoiceset_id"/>
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="invoice_form" model="ir.ui.view">
+        <field name="name">Invoices (form view)</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="invoiceset_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_invoice_filter" model="ir.ui.view">
+        <field name="name">Invoices (search view)</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='draft']" position="before">
+                <filter string="With invoice set" name="withinvoiceset" 
+                        domain="[('invoiceset_id','!=',False)]"/>
+                <filter string="Without invoice set" name="withoutinvoiceset" 
+                        domain="[('invoiceset_id','=',False)]"/>
+                <separator/>
+            </xpath>
+            <xpath expr="//filter[@name='group_by_partner_id']" position="before">
+                <filter string="Invoice Set" name="invoiceset" 
+                        context="{'group_by':'invoiceset_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_invoice_pivot" model="ir.ui.view">
+        <field name="name">Invoices (pivot view)</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.view_invoice_pivot"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total_signed']" position="after">
+                <field name="amount_tax" type="measure"/>
+                <field name="amount_untaxed" type="measure"/>
+                <field name="amount_untaxed_nocateg" type="measure"/>
+                <field name="amount_untaxed_categ01" type="measure"/>
+                <field name="amount_untaxed_categ02" type="measure"/>
+                <field name="amount_untaxed_categ03" type="measure"/>
+                <field name="amount_untaxed_categ04" type="measure"/>
+                <field name="amount_untaxed_categ05" type="measure"/>
+                <field name="amount_untaxed_categ06" type="measure"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_invoice_line_view_tree" model="ir.ui.view">
+        <field name="name">Invoice Lines (tree view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                  class="o_base_wua_invoicing_invoice_line_view_tree">
+                <field name="invoiceset_id"/>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="name"/>
+                <field name="quantity"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoice_line_view_search" model="ir.ui.view">
+        <field name="name">Invoice Lines (search view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="invoiceset_id"/>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="name"/>
+                <filter string="Draft Invoice" name="draft"
+                 domain="[('invoice_id.state','=','draft')]"/>
+                <filter string="Open Invoice" name="open"
+                 domain="[('invoice_id.state','=','open')]"/>
+                <filter string="Paid Invoice" name="paid"
+                 domain="[('invoice_id.state','=','paid')]"/>
+                <filter string="Cancelled Invoice" name="cancel"
+                 domain="[('invoice_id.state','=','cancel')]"/>
+                <filter string="Proforma Invoice" name="proforma"
+                 domain="['|', ('invoice_id.state','=','proforma'),
+                               ('invoice_id.state','=','proforma2')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Invoice Set" name="invoiceset"
+                     context="{'group_by':'invoiceset_id'}"/>
+                    <filter string="Invoice" name="invoice"
+                     context="{'group_by':'invoice_id'}"/>                     
+                    <filter string="Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Product" name="product"
+                     context="{'group_by':'product_id'}"/>
+                    <filter string="Product Category" name="categ"
+                     context="{'group_by':'categ_id'}"/>
+                </group>                               
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_invoice_line_partner_view_tree" model="ir.ui.view">
+        <field name="name">Invoice Lines of Partner (tree view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                  class="o_base_wua_invoicing_invoice_line_partner_view_tree">
+                <field name="invoiceset_id"/>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="product_id"/>
+                <field name="name"/>
+                <field name="quantity"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoice_line_partner_view_search" model="ir.ui.view">
+        <field name="name">Invoice Lines of Partner (search view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="invoiceset_id"/>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="product_id"/>
+                <field name="name"/>
+                <filter string="Draft Invoice" name="draft"
+                 domain="[('invoice_id.state','=','draft')]"/>
+                <filter string="Open Invoice" name="open"
+                 domain="[('invoice_id.state','=','open')]"/>
+                <filter string="Paid Invoice" name="paid"
+                 domain="[('invoice_id.state','=','paid')]"/>
+                <filter string="Cancelled Invoice" name="cancel"
+                 domain="[('invoice_id.state','=','cancel')]"/>
+                <filter string="Proforma Invoice" name="proforma"
+                 domain="['|', ('invoice_id.state','=','proforma'),
+                               ('invoice_id.state','=','proforma2')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Invoice Set" name="invoiceset"
+                     context="{'group_by':'invoiceset_id'}"/>
+                    <filter string="Invoice" name="invoice"
+                     context="{'group_by':'invoice_id'}"/>                     
+                    <filter string="Product" name="product"
+                     context="{'group_by':'product_id'}"/>
+                    <filter string="Product Category" name="categ"
+                     context="{'group_by':'categ_id'}"/>
+                </group>                               
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_invoice_line_categ_view_tree" model="ir.ui.view">
+        <field name="name">Invoice Lines of Product Category (tree view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                  class="o_base_wua_invoicing_invoice_line_view_tree">
+                <field name="invoiceset_id"/>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="name"/>
+                <field name="quantity" sum="Total Quantity"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoice_line_categ_view_search" model="ir.ui.view">
+        <field name="name">Invoice Lines of Product Category (search view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="invoiceset_id"/>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="partner_id"/>
+                <field name="product_id"/>
+                <field name="name"/>
+                <filter string="Draft Invoice" name="draft"
+                 domain="[('invoice_id.state','=','draft')]"/>
+                <filter string="Open Invoice" name="open"
+                 domain="[('invoice_id.state','=','open')]"/>
+                <filter string="Paid Invoice" name="paid"
+                 domain="[('invoice_id.state','=','paid')]"/>
+                <filter string="Cancelled Invoice" name="cancel"
+                 domain="[('invoice_id.state','=','cancel')]"/>
+                <filter string="Proforma Invoice" name="proforma"
+                 domain="['|', ('invoice_id.state','=','proforma'),
+                               ('invoice_id.state','=','proforma2')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Invoice Set" name="invoiceset"
+                     context="{'group_by':'invoiceset_id'}"/>
+                    <filter string="Invoice" name="invoice"
+                     context="{'group_by':'invoice_id'}"/>                     
+                    <filter string="Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Product" name="product"
+                     context="{'group_by':'product_id'}"/>
+                </group>                               
+            </search>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationshed_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (form view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="gis_googlemaps_link" invisible="1"/>
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <button name="action_see_gis_googlemaps"
+                                type="object"
+                                class="oe_stat_button"
+                                string="Google Maps"
+                                icon="fa-globe"
+                                attrs="{'invisible':
+                                        [('gis_googlemaps_link','=',False)]}"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                        [('gis_viewer_link','=',False)]}"/>                                        
+                    </div>                
+                    <group name="master_data" col="9">
+                        <group name="master_data_image" colspan="3">
+                            <field name="image" widget="image" class="oe_img_259_160"/>
+                        </group>
+                        <group name="master_data_fields" colspan="6" col="4">
+                            <field name="hydraulicsector_id" colspan="4"/>
+                            <field name="name"/>
+                            <field name="elevation"/>
+                            <newline/>
+                            <field name="gis_viewer_x"/>
+                            <field name="gis_viewer_y"/>
+                            <field name="description" colspan="4"/>
+                            <field name="number_of_parcels"/>
+                            <field name="total_affected_area_official"/>
+                            <field name="number_of_waterconnections"/>
+                        </group> 
+                    </group>                    
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="parcels_page" string="Parcels">
+                                <field name="irrigationpoint_ids">
+                                    <tree create="false" edit="false" delete="false"
+                                        class="o_base_wua_infrastructure_waterconnection_parcels_view_tree_notebook">
+                                        <field name="parcel_cadastral_reference_link"
+                                               invisible="1"/>
+                                        <field name="parcel_street_view_link"
+                                               invisible="1"/>
+                                        <field name="parcel_gis_viewer_link"
+                                               invisible="1"/>
+                                        <field name="parcel_id"/>
+                                        <field name="waterconnection_id"/>
+                                        <field name="parcel_area_official"/>
+                                        <button name="action_see_gis_viewer"
+                                                type="object" class="oe_stat_button"
+                                                string="GIS Viewer (zoom to parcel)"
+                                                icon="fa-map-marker"
+                                                attrs="{'invisible': [('parcel_gis_viewer_link','=','')]}"/>
+                                        <button name="action_see_cadastral_report"
+                                                type="object" class="oe_stat_button"
+                                                string="Cadastral Report"
+                                                icon="fa-cubes"
+                                                attrs="{'invisible': [('parcel_cadastral_reference_link','=','')]}"/>
+                                        <field name="parcel_rural_location_county"/>
+                                        <field name="parcel_cadastral_reference"/>
+                                        <field name="parcel_cadastral_polygon"/>
+                                        <field name="parcel_cadastral_parcel"/>
+                                        <button name="action_see_street_view"
+                                                type="object" class="oe_stat_button"
+                                                string="Street View"
+                                                icon="fa-street-view"
+                                                attrs="{'invisible': [('parcel_street_view_link','=','')]}"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="waterconnections_page" string="Water Connections">
+                                <field name="waterconnection_ids">                                
+                                    <tree create="false" edit="false" delete="false"
+                                          class="o_base_wua_infrastructure_waterconnection_view_tree_notebook">
+                                        <field name="name"/>
+                                        <field name="description"/>
+                                        <field name="position"/>
+                                        <field name="total_affected_area_official"/>
+                                        <field name="number_of_parcels"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (tree view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_irrigationshed_view_tree">
+                <field name="gis_googlemaps_link" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="name"/>
+                <field name="hydraulicsector_id"/>
+                <field name="elevation"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': [('gis_viewer_link','=','')]}"/>                        
+                <button name="action_see_gis_googlemaps"
+                        type="object" class="oe_stat_button"
+                        string="Google Maps (zoom to point)"
+                        icon="fa-globe"
+                        attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>
+                <field name="description"/>
+                <field name="number_of_waterconnections"/>
+                <field name="total_affected_area_official"/>
+                <field name="number_of_parcels"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (search view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="hydraulicsector_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulic_sector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                </group>                
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_view_kanban" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (kanban view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="hydraulicsector_id"/>
+                <field name="number_of_waterconnections"/>
+                <field name="image"/>
+                <field name="gis_googlemaps_link"/>
+                <field name="gis_viewer_link"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_image">
+                                <t t-if="record.image.raw_value">
+                                    <img t-att-src="kanban_image('wua.irrigationshed', 'image', record.id.value)"/>
+                                </t>
+                                <div style="margin-top:10px">
+                                  <t t-if="record.gis_viewer_link.raw_value"><a type="button"><button name="action_see_gis_viewer" type="object" class="oe_stat_button"><span><i class="fa fa-map-marker"></i></span></button></a></t>
+                                </div>
+                            </div>                            
+                            <div class="oe_kanban_details">
+                                <strong><field name="hydraulicsector_id"/></strong>
+                                <br/>
+                                <strong><field name="name"/></strong>
+                                <ul>
+                                    <li class="o_text_overflow">Water Connections: <field name="number_of_waterconnections"/></li>
+                                    <br/>
+                                    <li t-if="record.description.raw_value" class="o_text_overflow"><field name="description"/></li>
+                                    <li t-if="record.total_affected_area_official" class="o_text_overflow">Area: <field name="total_affected_area_official"/></li>
+                                    <br/>
+                                    <li t-if="record.number_of_parcels.raw_value" class="o_text_overflow">Parcels: <field name="number_of_parcels"/></li>                                    
+                                    <br/>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Sheds</field>
+        <field name="res_model">wua.irrigationshed</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_id" ref="wua_irrigationshed_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_irrigationshed_view_search"/>
+    </record>
+
+    <menuitem id="base_wua_infrastructure_menu"
+              name="Infrastructure"
+              sequence="-9"
+              web_icon="base_wua_infrastructure,static/description/icon.png"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="base_wua_infrastructure_pressurized_irrigation_menu"
+              name="Pressurized Irrigation"
+              parent="base_wua_infrastructure_menu"
+              sequence="1"/>
+
+    <menuitem id="wua_irrigationshed_menu"
+              name="Irrigation Sheds"
+              parent="base_wua_infrastructure_pressurized_irrigation_menu"
+              action="wua_irrigationshed_action"
+              sequence="2"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

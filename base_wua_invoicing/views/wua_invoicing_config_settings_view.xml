@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoicing_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.invoicing.configuration</field>
+        <field name="arch" type="xml">
+            <form string="Invoicing Settings (sets)"
+                  class="oe_form_configuration">
+                <header>
+                    <button string="Apply" type="object" name="execute"
+                            class="oe_highlight"/>
+                    <button string="Cancel" type="object" name="cancel"
+                            class="oe_link"/>
+                </header>
+                <group string="Invoice-Set Default Values">
+                    <field name="default_invoiceset_code_type"
+                           widget="radio"/>
+                    <field name="default_annual_seq_prefix"
+                           attrs="{'invisible':
+                                  [('default_invoiceset_code_type','!=',2)]}"/>
+                    <field name="default_journal_id"
+                           domain="[('type','=','sale')]"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_invoicing_configuration_action"
+            model="ir.actions.act_window">
+        <field name="name">Configure Invoice Sets</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wua.invoicing.configuration</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+    <menuitem id="wua_invoicing_configuration_menu"
+              name="WUA Parameters"
+              parent="account.menu_finance_configuration"
+              action="wua_invoicing_configuration_action"
+              sequence="1"
+              groups="base.group_system"/>
+
+</odoo>

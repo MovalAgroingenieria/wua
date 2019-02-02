@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_watering_view_form" model="ir.ui.view">
+        <field name="name">Waterings (form view)</field>
+        <field name="model">wua.watering</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="is_open" invisible="1"/>
+                <field name="initialized" invisible="1"/>
+                <field name="is_reservoir_volume_minor_watering_volume" invisible="1"/>
+                <header>
+                    <button name="select_consumptions"
+                            type="object" string="Select"
+                            attrs="{'invisible':
+                                    ['|',('is_open', '=', True),
+                                         ('state', '=', 'validated')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="calculate_consumptions"
+                            type="object" string="Calculate"
+                            attrs="{'invisible':
+                                    ['|',('initialized', '=', False),
+                                         ('state', '=', 'validated')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="validate_consumptions"
+                            type="object" string="Validate"
+                            attrs="{'invisible':
+                                    [('state', '!=', 'calculated')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,calculated,validated"/>
+                </header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <img src="/base_wua_gravity_irrigation/static/image/img_unlock.png"
+                             hspace="10"
+                             attrs="{'invisible':[('is_open', '=', False)]}"/>
+                        <img src="/base_wua_gravity_irrigation/static/image/img_lock.png"
+                             hspace="10"
+                             attrs="{'invisible':[('is_open', '=', True)]}"/>
+                        <button name="action_see_gravconsumptions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-leaf"
+                                attrs="{'invisible':
+                                        [('state','=','draft')]}">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_gravconsumptions"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        consumptions
+                                    </span>
+                                </div>                                
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="irrigationditch_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('initialized', '=', True)]}"/>
+                            <field name="wateringperiod_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('initialized', '=', True)]}"/>
+                            <field name="number"
+                                   attrs="{'readonly':[('initialized', '=', True)]}"/>
+                            <field name="only_cultivable_subparcel"
+                                         attrs="{'readonly':[('initialized', '=', True)]}"/>
+                            <field name="publication_permission"/>
+                            <field name="publishable"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="calculation_model"
+                                         attrs="{'readonly':[('initialized', '=', True)]}"/>
+                            <field name="initial_time"
+                                   attrs="{'readonly':[('state', '=', 'validated')]}"/>
+                            <field name="wateringtime_perunitarea"
+                                   attrs="{'readonly':[('state', '=', 'validated')],
+                                           'invisible':[('calculation_model','=',2)]}"/>
+                            <field name="volume_perunitime"
+                                   attrs="{'readonly':[('state', '=', 'validated')]}"/>
+                            <field name="distribute_extra_volume"
+                                   attrs="{'readonly':[('state', '=', 'validated')]}"/>
+                            <field name="early_shutdown_time"
+                                   attrs="{'readonly':[('state', '=', 'validated')]}"/>
+                            <field name="reservoiremptying_end_time_manual"
+                                   attrs="{'readonly':[('state', '=', 'validated')]}"/>                                   
+                        </group>                        
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="values_page" string="Values">
+                                <group name="values_horizontal_group">
+                                    <group name="values_left">
+                                        <field name="watering_initial_time"
+                                               readonly="1"/>
+                                        <field name="watering_end_time"
+                                               readonly="1"/>
+                                        <field name="watering_duration_ddhhmm"/>
+                                        <field name="reservoiremptying_end_time"
+                                               readonly="1"/>
+                                        <field name="reservoiremptying_duration_ddhhmm"/>
+                                    </group>
+                                    <group name="values_right">
+                                        <field name="watering_volume"
+                                               readonly="1"/>
+                                        <field name="reservoir_volume"
+                                               readonly="1"
+                                               attrs="{'invisible':[('is_reservoir_volume_minor_watering_volume', '=', True)]}"/>
+                                        <field name="reservoir_volume_copy"
+                                               style="color:Red;font-weight: bold;"
+                                               attrs="{'invisible':[('is_reservoir_volume_minor_watering_volume', '=', False)]}"/>
+                                        <field name="extra_volume"
+                                               readonly="1"/>
+                                        <field name="total_accumulated_delay_time"
+                                               readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>                        
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>                        
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_watering_view_tree" model="ir.ui.view">
+        <field name="name">Waterings (tree view)</field>
+        <field name="model">wua.watering</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_gravity_irrigation_watering_view_tree">
+                <field name="calculation_model" invisible="1"/>
+                <field name="is_open" invisible="1"/>
+                <field name="irrigationditch_id"/>
+                <field name="wateringperiod_id"/>
+                <field name="number"/>
+                <field name="wateringtime_perunitarea"
+                             attrs="{'invisible':
+                                     [('calculation_model','=',2)]}"/>
+                <field name="volume_perunitime"/>
+                <field name="initial_time"/>
+                <field name="watering_initial_time"/>
+                <field name="reservoiremptying_end_time"/>
+                <field name="watering_end_time"/>
+                <field name="watering_duration_ddhhmm"/>
+                <field name="watering_volume"/>
+                <field name="publishable" string="Publis."/>
+                <field name="state"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-unlock"
+                        attrs="{'invisible':
+                                [('is_open','=',False)],
+                                'readonly':'1'}"/>                
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_watering_view_search" model="ir.ui.view">
+        <field name="name">Waterings (search view)</field>
+        <field name="model">wua.watering</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="irrigationditch_id"/>
+                <field name="wateringperiod_id"/>
+                <field name="agriculturalseason_id"/>
+                <filter string="Open" name="isopen"
+                 domain="[('is_open','=',True)]"/>
+                <separator/>
+                <filter string="Draft" name="draft"
+                 domain="[('state','=','draft')]"/>
+                <filter string="Calculated" name="calculated"
+                 domain="[('state','=','calculated')]"/>
+                <filter string="Validated" name="validated"
+                 domain="[('state','=','validated')]"/>
+                <separator/>
+                <filter string="Publishable" name="publishable"
+                 domain="[('publishable','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>                
+                    <filter string="Irrigation Ditch"
+                     name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                    <filter string="Watering Period"
+                     name="wateringperiod"
+                     context="{'group_by':'wateringperiod_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_watering_view_pivot" model="ir.ui.view">
+        <field name="name">Waterings (pivot view)</field>
+        <field name="model">wua.watering</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values">
+                <field name="watering_duration" type="measure"/>
+                <field name="watering_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_watering_view_calendar" model="ir.ui.view">
+        <field name="name">Waterings (calendar view)</field>
+        <field name="model">wua.watering</field>
+        <field name="arch" type="xml">
+            <calendar date_start="watering_initial_time"
+                      date_stop="watering_end_time"
+                      color="irrigationditch_id"
+                      mode="month"
+                      display="  [watering_volume] m3, [number_of_gravconsumptions] cons.">
+                <field name="watering_volume"/>
+                <field name="number_of_gravconsumptions"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_to_select_view_tree" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (tree view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <tree delete="false"
+                class="o_base_wua_gravity_irrigation_gravconsumption_to_select_view_tree">
+                <field name="selected" invisible="1"/>
+                <field name="gravconsumption_type" invisible="1"/>
+                <field name="subparcel_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="extra"/>
+                <field name="watering_duration_str"/>
+                <field name="area_official"/>
+                <field name="parcel_id"/>
+                <field name="cadastral_reference"/>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <field name="is_portal_user"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-file"
+                        attrs="{'invisible':
+                                [('gravconsumption_type','=','distribution')],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_to_select_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="cadastral_reference"/>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <filter string="Created by the partner" name="isportaluser"
+                 domain="[('is_portal_user','=',True)]"/>
+                <separator/>
+                <filter string="Extra Consumption" name="extra"
+                 domain="[('extra','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                </group>                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_watering_action" model="ir.actions.act_window">
+        <field name="name">Waterings</field>
+        <field name="res_model">wua.watering</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,pivot,calendar</field>
+        <field name="view_id" ref="wua_watering_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_watering_view_search"/>
+        <field name="context">{'search_default_agriculturalseason': 1,
+                               'search_default_irrigationditch': 1,
+                               'search_default_wateringperiod': 1}</field>
+    </record>
+
+    <menuitem id="wua_watering_menu"
+              name="Waterings"
+              parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
+              action="wua_watering_action"
+              sequence="4"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

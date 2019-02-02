@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.configuration</field>
+        <field name="arch" type="xml">
+            <form string="Census Settings" class="oe_form_configuration">
+                <header>
+                    <button string="Apply" type="object" name="execute" class="oe_highlight"/>
+                    <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                </header>
+                <group string="Area">
+                    <field name="area_measurement_type" widget="radio"/>
+                    <field name="area_measurement_name" style="width:100px"
+                     attrs="{'invisible':[('area_measurement_type','=',0)]}"/>
+                    <field name="area_measurement_equivalence" style="width:100px"
+                     attrs="{'invisible':[('area_measurement_type','=',0)]}"/>
+                </group>
+                <group string="Volume">
+                    <field name="volume_time_equivalence" style="width:100px"/>
+                </group>
+                <group string="Polling System">
+                    <field name="polling_system_type" widget="radio"/>
+                    <field name="polling_system_interval" style="width:100px"
+                     attrs="{'invisible':[('polling_system_type','!=',2)]}"/>
+                    <field name="polling_system_rounding_type" widget="radio"
+                     attrs="{'invisible':[('polling_system_type','!=',2)]}"/>
+                    <field name="polling_system_intervals" style="width:100%%"
+                     attrs="{'invisible':[('polling_system_type','!=',3)]}"/>
+                </group>
+                <group string="GIS Settings">
+                    <field name="url_cadastral_report"/>
+                    <field name="url_street_view"/>
+                    <field name="url_gis_viewer"/>
+                    <field name="url_gis_viewer_parcel_param"/>
+                    <field name="url_gis_viewer_partner_param"/>
+                    <field name="url_gis_viewer_username"/>
+                    <field name="url_gis_viewer_password"/>
+                    <field name="url_gis_viewer_epsg_code"/>                    
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_configuration_action" model="ir.actions.act_window">
+        <field name="name">Configure Census</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wua.configuration</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+    <menuitem id="base_wua_census_configuration_menu"
+              name="Configuration"
+              parent="base_wua_census_menu"
+              sequence="1001"/>
+
+    <menuitem id="wua_configuration_menu"
+              name="Parameters"
+              parent="base_wua_census_configuration_menu"
+              action="wua_configuration_action"
+              sequence="1"
+              groups="base.group_system"/>
+
+</odoo>

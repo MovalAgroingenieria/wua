@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cultivationplan_view_form" model="ir.ui.view">
+        <field name="name">Cultivation Plans (form view)</field>
+        <field name="model">wua.cultivationplan</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <group name="master_data">
+                    <field name="name" style="width:350px"/>
+                    <field name="description" style="width:100%%"/>
+                </group>
+                <group name="slave_data">
+                    <notebook name="master_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_cultivationplan_view_tree" model="ir.ui.view">
+        <field name="name">Cultivation Plans (tree view)</field>
+        <field name="model">wua.cultivationplan</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_cultivationplan_view_search" model="ir.ui.view">
+        <field name="name">Cultivation Plans (search view)</field>
+        <field name="model">wua.cultivationplan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_cultivationplan_action" model="ir.actions.act_window">
+        <field name="name">Cultivation Plans</field>
+        <field name="res_model">wua.cultivationplan</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_cultivationplan_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_cultivationplan_view_search"/>
+    </record>
+
+    <menuitem id="wua_cultivationplan_menu"
+              name="Cultivation Plans"
+              parent="base_wua_census_configuration_menu"
+              action="wua_cultivationplan_action"
+              sequence="6"
+              groups="group_wua_user"/>
+
+</odoo>

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="paperformat_portrait_standard_reservoiremptyingorder_crargos"
+            model="report.paperformat">
+        <field name="name">European A4 Portrait</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">35</field>
+        <field name="margin_bottom">92</field>
+        <field name="margin_left">14</field>
+        <field name="margin_right">14</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">25</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="action_wua_reservoiremptyingorder_report"
+            string="Reservoir Emptying Order"
+            model="wua.watering"
+            report_type="qweb-pdf"
+            name="wua_infrastructure_crargos.report_wua_reservoiremptyingorder"
+            paperformat="paperformat_portrait_standard_reservoiremptyingorder_crargos"
+    />
+
+    <template id="report_wua_reservoiremptyingorder">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="wua_infrastructure_crargos.report_wua_reservoiremptyingorder_external_layout">
+                    <t t-call="wua_infrastructure_crargos.report_wua_reservoiremptyingorder_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_reservoiremptyingorder_document">
+        <t t-set="reservoiremptying_initial_time" t-value="context_timestamp(datetime.datetime.strptime(o.initial_time,'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y, %H:%M')"/>
+        <t t-if="o.reservoiremptying_end_time">
+            <t t-set="reservoiremptying_end_time" t-value="context_timestamp(datetime.datetime.strptime(o.reservoiremptying_end_time,'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y, %H:%M')"/>
+        </t>
+        <t t-set="reservoir_volume" t-value="int(round(o.reservoir_volume))"/>
+        <div class="page" style="font-family: lucidasansregular;font-size: 13px;">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'lucidasansregular';
+                src: local('Lucida Sans');
+            }
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            @font-face {
+                font-family: 'dejavusansmono';
+                src: local('DejaVu Sans Mono');
+            }
+            ]]>
+            </style>
+            <div class="row">
+                <div class="col-xs-7">
+                </div>
+                <div class="col-xs-5" style="font-size: 13px;">
+                    CONFEDERACIÓN HIDROGRÁFICA DEL SEGURA<br/>
+                    SR. ENCARGADO DEL EMBALSE DEL ARGOS<br/>
+                    VALENTÍN - CEHEGÍN (MURCIA)<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12" style="text-decoration: underline">
+                    SOLICITUD DESEMBALSE DE AGUA:
+                </div>
+                <div class="col-xs-12">
+                    <br/>Por la presente le ruego, que sirva dar el desembalse que se indica a continuación:<br/>
+                </div>
+                <div class="col-xs-4">
+                    - Destinado exclusivamente a:
+                </div>
+                <div class="col-xs-8" style="font-family: verdana; font-weight:bold;">
+                    <span t-field="o.irrigationditch_id"/>
+                </div>
+                <div class="col-xs-4">
+                    - Fecha inicio desembalse:
+                </div>
+                <div class="col-xs-8" style="font-family: verdana; font-weight:bold;">
+                    <span t-esc="reservoiremptying_initial_time"/>
+                </div>
+                <div class="col-xs-4">
+                    - Caudal desembalse:
+                </div>
+                <div class="col-xs-8" style="font-family: verdana; font-weight:bold;">
+                    <span t-field="o.volume_perunitime"/> litros por segundo<br/><br/><br/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12" style="text-decoration: underline">
+                    SOLICITUD CORTE DE AGUA:
+                </div>
+                <div class="col-xs-12">
+                    <br/>Por la presente le ruego, que sirva dar corte al desembalse indicado anteriormente según el siguiente detalle:<br/>
+                </div>
+                <div class="col-xs-4">
+                    - Desembalse correspondiente a:
+                </div>
+                <div class="col-xs-8" style="font-family: verdana; font-weight:bold;">
+                    <span t-field="o.irrigationditch_id"/>
+                </div>
+                <div class="col-xs-4">
+                    - Fecha finalización desembalse:
+                </div>
+                <div class="col-xs-8" style="font-family: verdana; font-weight:bold;">
+                    <span t-esc="reservoiremptying_end_time"/>
+                </div>
+                <div class="col-xs-4">
+                    - Caudal de corte del desembalse:
+                </div>
+                <div class="col-xs-8" style="font-family: verdana; font-weight:bold;">
+                    <span t-field="o.volume_perunitime"/> litros por segundo<br/><br/><br/>
+                </div>
+                <div class="col-xs-4">
+                    Duración del desembalse:
+                </div>
+                <div class="col-xs-8" style="font-family: verdana; font-weight:bold;">
+                    <span t-field="o.reservoiremptying_duration_ddhhmm"/> (d.hh:mm)
+                </div>
+                <div class="col-xs-4">
+                    Volumen de agua solicitado:
+                </div>
+                <div class="col-xs-8" style="font-family: verdana; font-weight:bold;">
+                    <span t-esc="reservoir_volume"/> metros cúbicos
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_wua_reservoiremptyingorder_external_layout">
+        <!-- Multicompany -->
+        <t t-if="not o and doc">
+            <t t-set="o" t-value="doc"/>
+        </t>
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"></t>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"></t>
+        </t>
+
+        <t t-call="wua_infrastructure_crargos.report_wua_reservoiremptyingorder_external_layout_header" />
+        <t t-raw="0" />
+        <t t-call="wua_infrastructure_crargos.report_wua_reservoiremptyingorder_external_layout_footer" />
+    </template>
+
+    <template id="report_wua_reservoiremptyingorder_external_layout_header">
+        <t t-if="o.initial_time">
+            <t t-set="initial_time" t-value="context_timestamp(datetime.datetime.strptime(o.initial_time,'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y, %H:%M')"/>
+        </t>
+        <div class="header">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'lucidasansregular';
+                src: local('Lucida Sans');
+            }
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            ]]>
+            </style>
+            <div class="row">
+                <div class="col-xs-4">
+                    <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 65px;"/>
+                </div>
+                <div class="col-xs-8 text-right" style="margin-top:5px;font-family: lucidasansregular;font-size: 14px;"><span>PRESIDENTE SINDICATO DE RIEGOS<br/><br/></span><span t-field="o.irrigationditch_id"/> - <span t-field="o.volume_perunitime"/> l/s - <span t-esc="initial_time"/></div>
+            </div>
+            <div class="row zero_min_height">
+                <div class="col-xs-12">
+                    <div style="border-bottom: 1px solid black;"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_wua_reservoiremptyingorder_external_layout_footer">
+        <t t-if="company.street and company.zip and company.city and company.state_id">
+            <t t-set="address" t-value="company.street + ' - ' + company.zip + ' ' + company.city + ' (' + company.state_id.name + ')'"/>
+        </t>
+        <div class="footer" style="font-family: lucidasansregular;font-size: 14px;">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'lucidasansregular';
+                src: local('Lucida Sans');
+            }
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            ]]>
+            </style>
+            <div class="row">
+                <div class="col-xs-12 text-center" name="sign_date">
+                    Calasparra, a <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/>
+                </div>
+                <br/><br/>
+                <div class="col-xs-12 text-center" name="sign_date">
+                    EL PRESIDENTE DEL SINDICATO DE RIEGOS
+                </div>
+                <br/><br/><br/><br/><br/><br/>
+                <div class="col-xs-12 text-center" name="sign_date">
+                    Fdo: D. Ginés Hernández Hervás<br/>DNI 74432357X
+                </div>
+                <br/><br/><br/><br/>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 text-justify" name="protected_data_warning" style="font-size: 11px;">
+                AVISO IMPORTANTE: De acuerdo con la Ley Orgánica 15/1999, de 13 de diciembre, de
+                Protección de Datos de Carácter Personal (LOPD), les informamos de la existencia de
+                un fichero que contiene datos de carácter personal, cuya finalidad principal es mantener
+                actualizados los datos de los comuneros e incluir en el censo los de los futuros. Este
+                fichero ha sido debidamente inscrito en la Agencia Española de Protección de Datos.
+                En caso de querer ejercer los derechos de acceso, rectificación, cancelación y
+                oposición, puede hacerlo en la dirección del responsable del fichero
+                <t t-if="address and company.email">: <span t-esc="address"/>, o en la dirección de
+                correo electrónico: <span t-field="company.email"/>.</t>
+                <t t-else="">.</t>
+                </div>
+            </div>
+            <div class="row zero_min_height">
+                <div class="col-xs-12">
+                    <div style="border-bottom: 1px solid black;"></div>
+                </div>
+            </div>
+            <div class="row" name="company_address_email">
+                <div class="col-xs-12 text-center" name="company_footer" style="margin-top:4px;font-family: verdana;font-size: 12px;">
+                    <span t-field="company.partner_id"/>
+                </div>
+                <t t-if="address">
+                    <div class="col-xs-12 text-center" style="font-size: 12px;">
+                        <span t-esc="address"/>
+                    </div>
+                </t>
+                <t t-if="company.email and company.phone and company.vat">
+                    <div class="col-xs-12 text-center" style="font-size: 12px;">
+                        <span t-field="company.email"/> - <span t-field="company.phone"/> - CIF <span t-field="company.vat"/>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </template>
+
+</odoo>

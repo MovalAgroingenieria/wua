@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_category_form_view" model="ir.ui.view">
+        <field name="name">Categories (form view)</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="is_wua_master_product_category" invisible="1"/>
+            </xpath>
+            <xpath expr="//button" position="after">
+                <button name="action_see_invoice_lines"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-dollar"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Detail lines
+                            </span>
+                        </div>
+                </button>
+            </xpath>        
+            <xpath expr="//field[@name='parent_id']" position="attributes">
+                <attribute name="attrs">
+                 {'readonly':['|',
+                              ('is_wua_product_category', '=', True),
+                              ('is_wua_master_product_category', '=', True)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='type']" position="attributes">
+                <attribute name="attrs">
+                 {'readonly':['|',
+                              ('is_wua_product_category', '=', True),
+                              ('is_wua_master_product_category', '=', True)]}                
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='type']" position="after">
+                <field name="is_wua_product_category" readonly="1"/>
+                <field name="productcategory_code"
+                 attrs="{'invisible':
+                         [('is_wua_product_category', '!=', True)],
+                         'readonly':
+                         [('is_wua_product_category', '=', True)]}"/>
+            </xpath>
+            <xpath expr="//group[@name='first']" position="after">
+                <group name="slave_data">
+                    <notebook>
+                        <page name="products" string="Services">
+                            <field name="product_ids" mode="kanban"/>
+                        </page>
+                    </notebook>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_category_list_view" model="ir.ui.view">
+        <field name="name">Categories (tree view)</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_list_view"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='display_name']" position="before">
+                <field name="productcategory_code"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_category_search_view" model="ir.ui.view">
+        <field name="name">Categories (search view)</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="after">
+                <filter string="WUA Product Category" name="wuaproductcategory"
+                 domain="[('is_wua_product_category','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_category_action_form" model="ir.actions.act_window">
+        <field name="name">Product Categories</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.category</field>
+        <field name="view_type">form</field>
+        <field name="search_view_id" ref="product_category_search_view"/>
+        <field name="view_id" ref="product_category_list_view"/>
+        <field name="context">{'search_default_wuaproductcategory':1}</field>
+    </record>
+
+    <record id="wua_invoice_line_product_view_tree" model="ir.ui.view">
+        <field name="name">Invoice Lines of Product (tree view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                  class="o_base_wua_invoicing_invoice_line_product_view_tree">
+                <field name="invoiceset_id"/>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="partner_id"/>
+                <field name="name"/>
+                <field name="quantity" sum="Total Quantity"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal" sum="Total"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoice_line_product_view_search" model="ir.ui.view">
+        <field name="name">Invoice Lines of Product (search view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="invoiceset_id"/>
+                <field name="invoice_id"/>
+                <field name="date_invoice"/>
+                <field name="partner_id"/>
+                <field name="name"/>
+                <filter string="Draft Invoice" name="draft"
+                 domain="[('invoice_id.state','=','draft')]"/>
+                <filter string="Open Invoice" name="open"
+                 domain="[('invoice_id.state','=','open')]"/>
+                <filter string="Paid Invoice" name="paid"
+                 domain="[('invoice_id.state','=','paid')]"/>
+                <filter string="Cancelled Invoice" name="cancel"
+                 domain="[('invoice_id.state','=','cancel')]"/>
+                <filter string="Proforma Invoice" name="proforma"
+                 domain="['|', ('invoice_id.state','=','proforma'),
+                               ('invoice_id.state','=','proforma2')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Invoice Set" name="invoiceset"
+                     context="{'group_by':'invoiceset_id'}"/>
+                    <filter string="Invoice" name="invoice"
+                     context="{'group_by':'invoice_id'}"/>                     
+                    <filter string="Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                </group>                               
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_invoice_line_product_action" model="ir.actions.act_window">
+        <field name="name">Invoice Lines</field>
+        <field name="res_model">account.invoice.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="base_wua_invoicing.wua_invoice_line_product_view_tree"/>
+        <field name="search_view_id" ref="base_wua_invoicing.wua_invoice_line_product_view_search"/>
+        <field name="domain">[("product_id","=",context.get('active_id'))]</field>
+    </record>
+
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">Products (form view)</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="%(wua_invoice_line_product_action)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-dollar"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Detail lines
+                            </span>
+                        </div>
+                </button>
+            </xpath>        
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="is_wua_product" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_search_view" model="ir.ui.view">
+        <field name="name">Products (search view)</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='services']" position="before">
+                <filter string="WUA Product" name="wuaproduct"
+                 domain="[('is_wua_product','=',True)]"/>                
+                <separator/>
+            </xpath>
+            <xpath expr="//filter[@name='inactive']" position="after">
+                <group expand="0" string="Group By">
+                    <filter string="Product Category" name="productcategory"
+                     context="{'group_by':'categ_id'}"/>                
+                </group>
+            </xpath>            
+        </field>
+    </record>
+
+    <menuitem id="product_category_menu"
+              name="Product Categories"
+              parent="account.menu_finance_receivables"
+              action="product_category_action_form"
+              sequence="106"
+              groups="base_wua.group_wua_manager"/>
+
+</odoo>

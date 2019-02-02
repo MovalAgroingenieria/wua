@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_copy_requests_view_form" model="ir.ui.view">
+        <field name="name">Wizard to copy watering requests</field>
+        <field name="model">wizard.copy.requests</field>
+        <field name="arch" type="xml">
+            <form string="Copy of requests from one period to another">
+                <field name="source_wateringperiod_id" invisible="1"/>
+                <field name="wateringperiods_ok" invisible="1"/>
+                <div name="warning"
+                    attrs="{'invisible':[('wateringperiods_ok','=',True)]}">
+                    <span class="o_stat_text">
+                        The selected watering requests must be mapped with
+                        a simple watering period. It is not possible
+                        to perform the copy operation.
+                    </span>
+                </div>
+                <group name="body"
+                       attrs="{'invisible':[('wateringperiods_ok','=',False)]}">
+                    <group name="body_left">
+                        <field name="source_wateringperiod_name" readonly="1"/>
+                        <field name="number_of_requests" readonly="1"/>
+                        <field name="destination_type" widget="radio"/>
+                    </group>
+                    <group name="body_right">
+                        <field name="destination_wateringperiod_id"
+                               attrs="{'invisible':[('destination_type','=',2)],
+                                       'required':[('destination_type','=',1)]}"
+                               domain="[('id', '!=', source_wateringperiod_id),
+                                        ('state', '=', 'open')]"/>
+                        <field name="initial_date"
+                               attrs="{'invisible':[('destination_type','=',1)],
+                                       'required':[('destination_type','=',2)]}"/>
+                        <field name="end_date"
+                               attrs="{'invisible':[('destination_type','=',1)],
+                                       'required':[('destination_type','=',2)]}"/>
+                        <span class="o_stat_text">(only open periods)</span>
+                    </group>
+                </group>
+                <footer
+                    attrs="{'invisible':[('wateringperiods_ok','=',False)]}">
+                    <button name="copy_requests"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"
+                            attrs="{'invisible':[('wateringperiods_ok','=',False)]}"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>                
+            </form>
+        </field>
+    </record>            
+
+    <act_window id="action_copy_requests"
+        name="Copy Request"
+        res_model="wizard.copy.requests"
+        src_model="wua.wateringrequest"
+        key2="client_action_multi" 
+        view_mode="form"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+
+</odoo>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_productionmethod_view_form" model="ir.ui.view">
+        <field name="name">Production Methods (form view)</field>
+        <field name="model">wua.productionmethod</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <group name="master_data">
+                    <field name="name" style="width:350px"/>
+                    <field name="description" style="width:100%%"/>
+                </group>
+                <group name="slave_data">
+                    <notebook name="slave_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_productionmethod_view_tree" model="ir.ui.view">
+        <field name="name">Production Methods (tree view)</field>
+        <field name="model">wua.productionmethod</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_productionmethod_view_search" model="ir.ui.view">
+        <field name="name">Production Methods (search view)</field>
+        <field name="model">wua.productionmethod</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_productionmethod_action" model="ir.actions.act_window">
+        <field name="name">Production Methods</field>
+        <field name="res_model">wua.productionmethod</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_productionmethod_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_productionmethod_view_search"/>
+    </record>
+
+    <menuitem id="wua_productionmethod_menu"
+              name="Production Methods"
+              parent="base_wua_census_configuration_menu"
+              action="wua_productionmethod_action"
+              sequence="10"
+              groups="group_wua_user"/>
+
+</odoo>

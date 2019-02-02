@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='subparcels']" position="after">
+                <page name="irrigation_supplies" string="Water Connections">
+                    <field name="irrigationpointwc_ids"
+                           context="{'tree_view_ref': 'base_wua_infrastructure.wua_edit_parcel_irrigationpointwc_view_tree'}"/>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="before">
+                <field name="hydraulic_infrastructure_type" colspan="8"/>
+                <field name="hydraulicsector_id" colspan="4"/>
+                <field name="pressurized_irrigation_right" colspan="4"/>
+                <field name="irrigationditch_id" colspan="4"/>
+                <field name="gravityfed_irrigation_right" colspan="4"/>
+                <field name="with_watering_shift" colspan="4"/>
+                <field name="with_irrigation_worker" colspan="4"/>
+                <field name="employee_id" colspan="8"
+                 attrs="{'invisible':[('with_irrigation_worker','=', False)]}"
+                 domain="[('is_irrigation_worker','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view">
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationditch_id"/>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <filter string="Infrastructure: None" name="hydraulic_infrastructure_type_0"
+                 domain="[('hydraulic_infrastructure_type','=',False)]"/>
+                <filter string="Infrastructure: Pressurized Irrigation" name="hydraulic_infrastructure_type_1"
+                 domain="[('hydraulic_infrastructure_type','=',1)]"/>
+                <filter string="Infrastructure: Gravity Irrigation" name="hydraulic_infrastructure_type_2"
+                 domain="[('hydraulic_infrastructure_type','=',2)]"/>
+                <filter string="Infrastructure: Pressurized and Gravity Irrigation" name="hydraulic_infrastructure_type_3"
+                 domain="[('hydraulic_infrastructure_type','=',3)]"/>
+                <separator/>
+                <filter string="Water Right: Pressurized Irrigation" name="pressurizedirrigation"
+                 domain="[('pressurized_irrigation_right','=',True)]"/>
+                <filter string="Water Right: Gravity Irrigation" name="gravityfedirrigation"
+                 domain="[('gravityfed_irrigation_right','=',True)]"/>
+                <separator/>
+                <filter string="With Irrigation Worker" name="withirrigationworker"
+                 domain="[('with_irrigation_worker','=',True)]"/>
+                <separator/>
+            </xpath>
+            <xpath expr="//filter[@name='partner']" position="before">
+                <filter string="Hydraulic Sector" name="hydraulicsector"
+                 context="{'group_by':'hydraulicsector_id'}"/>
+                <filter string="Irrigation Ditch" name="irrigationditch"
+                 context="{'group_by':'irrigationditch_id'}"/>
+                <filter string="Irrigation Worker" name="irrigationworker"
+                 context="{'group_by':'employee_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_edit_parcel_subparcel_view_tree" model="ir.ui.view">
+        <field name="name">Subparcels</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="inherit_id" ref="base_wua.wua_edit_parcel_subparcel_view_tree"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='productionmethod_id']" position="after">
+                <field name="irrigationgate_id"/>
+                <field name="irrigation_duration_coefficient"/>
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_edit_parcel_irrigationpoint_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Points</field>
+        <field name="model">wua.parcel.irrigationpoint</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_irrigationpoint_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Points (form view)</field>
+        <field name="model">wua.parcel.irrigationpoint</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="fields">
+                    <group name="fields_left">
+                         <field name="parcel_id"/>
+                         <newline/>
+                         <field name="type"/>
+                    </group>
+                    <group name="fields_right">
+                        <field name="waterconnection_id"
+                               attrs="{'invisible':
+                                        [('type','!=', 'WC')]}"/>
+                        <field name="irrigationshed_id"                
+                               attrs="{'invisible':
+                                        [('type','!=', 'WC')]}"/>
+                        <field name="irrigationgate_id"
+                               attrs="{'invisible':
+                                        [('type','!=', 'IG')]}"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_parcel_irrigationpoint_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Points (tree view)</field>
+        <field name="model">wua.parcel.irrigationpoint</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                  class="o_base_wua_infrastructure_parcel_irrigationpoint_view_tree">
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationgate_id"/>
+                <field name="irrigationditch_id"/>
+                <field name="parcel_id"/>
+                <field name="parcel_rural_location_county"/>
+                <field name="parcel_area_official"/>
+                <field name="parcel_cadastral_reference"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_irrigationpoint_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Points (search view)</field>
+        <field name="model">wua.parcel.irrigationpoint</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationgate_id"/>
+                <field name="irrigationditch_id"/>
+                <filter string="Water Connection" name="waterconnection"
+                 domain="[('type','=','WC')]"/>
+                <filter string="Irrigation Gate" name="irrigationgate"
+                 domain="[('type','=','IG')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector" name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed" name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Irrigation Ditch" name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                    <filter string="Parcel" name="parcel"
+                     context="{'group_by':'parcel_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_parcel_subparcel_view_search" model="ir.ui.view">
+        <field name="name">Subparcels (search view)</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_subparcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationditch_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='partner']" position="before">
+                <filter string="Hydraulic Sector" name="hydraulicsector"
+                 context="{'group_by':'hydraulicsector_id'}"/>
+                <filter string="Irrigation Ditch" name="irrigationditch"
+                 context="{'group_by':'irrigationditch_id'}"/>            
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_edit_parcel_irrigationpointwc_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Points (WC)</field>
+        <field name="model">wua.parcel.irrigationpointwc</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom"
+                  class="o_base_wua_infrastructure_parcel_irrigationpointwc_view_tree">
+                <field name="pos_str"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_irrigationpointwc_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Points (WC, form view)</field>
+        <field name="model">wua.parcel.irrigationpointwc</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="fields">
+                    <group name="fields_left">
+                         <field name="parcel_id"/>
+                         <field name="pos"/>
+                    </group>
+                    <group name="fields_right">
+                        <field name="waterconnection_id"/>
+                        <field name="irrigationshed_id"/>
+                        <field name="hydraulicsector_id"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_irrigationpoint_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Points (tree view)</field>
+        <field name="model">wua.parcel.irrigationpoint</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="parcel_id"/>
+                <field name="type"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationgate_id"/>
+                <field name="irrigationditch_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_irrigationpointwc_view_tree" model="ir.ui.view">
+        <field name="name">Water Connections (tree view)</field>
+        <field name="model">wua.parcel.irrigationpointwc</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="parcel_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_subparcel_view_tree" model="ir.ui.view" >
+        <field name="name">Subparcels (tree view)</field>
+        <field name="model">wua.parcel.subparcel</field>
+        <field name="inherit_id" ref="base_wua.wua_technical_parcel_subparcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='productionmethod_id']" position="after">
+                <field name="irrigationgate_id"/>
+                <field name="irrigation_duration_coefficient"/>
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_technical_irrigationpoints_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Points (low-level)</field>
+        <field name="res_model">wua.parcel.irrigationpoint</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_technical_parcel_irrigationpoint_view_tree"/>
+    </record>
+
+    <record id="wua_technical_irrigationpointswc_action" model="ir.actions.act_window">
+        <field name="name">Water Connections (low-level)</field>
+        <field name="res_model">wua.parcel.irrigationpointwc</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_technical_parcel_irrigationpointwc_view_tree"/>
+    </record>
+
+    <record id="wua_technical_global_irrigationpoints_calculation_action" model="ir.actions.server">
+        <field name="name">Global Irrigation Points Calculation</field>
+        <field name="model_id" ref="base_wua_infrastructure.model_wua_parcel"/>
+        <field name="code">action = env["wua.parcel"].action_global_irrigationpoints_calculation()</field>
+    </record>
+
+    <menuitem id="base_wua_infrastructure_technical_menu"
+              name="Technical"
+              parent="base_wua_infrastructure_menu"
+              sequence="1002"
+              groups="base.group_system"/>
+
+    <menuitem id="wua_technical_irrigationpoints_menu"
+              name="Water Connections"
+              parent="base_wua_infrastructure_technical_menu"
+              action="wua_technical_irrigationpointswc_action"
+              sequence="1"/>
+
+    <menuitem id="wua_technical_global_irrigationpoints_calculation_menu"
+              name="Calculation: irrigation points"
+              parent="base_wua_infrastructure_technical_menu"
+              action="wua_technical_global_irrigationpoints_calculation_action"
+              sequence="2"/>
+    
+</odoo>

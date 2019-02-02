@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='last_reading_value']"
+             position="after">
+                <field name="product_id"
+                 domain="[('categ_id.productcategory_code','=',7)]"/>                          
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_tree" model="ir.ui.view">
+        <field name="name">Water Connections (tree view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='last_reading_value']" position="after">
+                <field name="product_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_search" model="ir.ui.view">
+        <field name="name">Water Connections (search view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_search"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <field name="watermeter_id"/>
+                <filter string="With water meter" name="withwatermeter"
+                 domain="[('with_watermeter','=',True)]"/>
+                <filter string="Without water meter" name="withoutwatermeter"
+                 domain="[('with_watermeter','=',False)]"/>
+            </xpath>
+            <xpath expr="//field[@name='watermeter_id']" position="after">
+                <field name="product_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='irrigation_shed']" position="after">
+                <filter string="Product" name="product"
+                 context="{'group_by':'product_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_kanban" model="ir.ui.view">
+        <field name="name">Water Connections (kanban view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_waterconnection_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='image']"
+             position="after">
+                <field name="product_id"/>
+            </xpath>
+            <xpath expr="//li[@t-if='record.number_of_parcels.raw_value']"
+             position="after">
+                <br/>
+                <li t-if="record.product_id.raw_value" class="o_text_overflow"><strong><field name="product_id"/></strong></li>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

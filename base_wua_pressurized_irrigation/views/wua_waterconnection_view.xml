@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']"
+                   position="after">
+                <button name="action_see_presconsumptions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-pagelines"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Consumptions</span>
+                        </div>
+                </button>                             
+            </xpath>        
+            <xpath expr="//field[@name='total_affected_area_official']"
+             position="after">
+                <field name="watermeter_id"
+                 domain="[('waterconnection_id','=',False),
+                          ('state','=','active')]"/>
+                <newline/>
+                <field name="last_reading_time"/>
+                <newline/>
+                <field name="last_reading_value"/>
+            </xpath>
+            <xpath expr="//page[@name='parcels_page']" position="after">
+                <page name="watermeters_page" string="Water Meters">
+                    <field name="wcwm_ids">
+                        <tree create="false" edit="false" delete="false"
+                         class="o_base_wua_pressurized_irrigation_watermeters_view_tree_notebook">
+                            <field name="assign_start"/>
+                            <field name="assign_end"/>
+                            <field name="watermeter_id"/>
+                            <field name="type"/>
+                            <field name="nominal_diameter"/>
+                            <field name="nominal_water_flow"/>
+                            <field name="pressure"/>
+                            <field name="days" sum="Total"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_tree" model="ir.ui.view">
+        <field name="name">Water Connections (tree view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_waterconnection_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class">o_base_wua_pressurized_irrigation_waterconnection_view_tree</attribute>
+            </xpath>
+            <xpath expr="//field[@name='number_of_parcels']" position="after">
+                <field name="watermeter_id"/>
+                <field name="last_reading_time" string="Last Reading (time)"/>
+                <field name="last_reading_value" string="Last Reading (value)"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_search" model="ir.ui.view">
+        <field name="name">Water Connections (search view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_waterconnection_view_search"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <field name="watermeter_id"/>
+                <filter string="With water meter" name="withwatermeter"
+                 domain="[('with_watermeter','=',True)]"/>
+                <filter string="Without water meter" name="withoutwatermeter"
+                 domain="[('with_watermeter','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

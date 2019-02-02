@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_presconsumption_view_form" model="ir.ui.view">
+        <field name="name">Consumptions (form view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="arch" type="xml">
+            <form create="0" delete="0" duplicate="0">
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="reading_initial_time"/>
+                            <field name="initial_volume"/>
+                            <field name="reading_end_time"/>
+                            <field name="end_volume"/>
+                            <field name="volume"/>
+                            <field name="adjustement_volume"/>
+                            <field name="volume_real"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="watermeter_id"/>
+                            <field name="waterconnection_id"/>
+                            <field name="irrigationshed_id"/>
+                            <field name="hydraulicsector_id"/>
+                            <field name="reading_id"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>                        
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Consumptions (tree view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="0" delete="0" duplicate="0"
+             class="o_base_wua_pressurized_irrigation_consumptions_view_tree">
+                <field name="waterconnection_id"/>
+                <field name="watermeter_id"/>
+                <field name="reading_initial_time"/>
+                <field name="reading_end_time"/>
+                <field name="volume"/>
+                <field name="adjustement_volume"/>
+                <field name="volume_real"/>
+                <field name="reading_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_view_search" model="ir.ui.view">
+        <field name="name">Consumptions (search view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterconnection_id"/>
+                <field name="watermeter_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="With adjustement" name="withadjustement"
+                 domain="[('adjustement_volume','!=',0)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>                
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                    <filter string="Reading Date"
+                     name="readingendtime"
+                     context="{'group_by':'reading_end_time:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_one_waterconnection_view_tree" model="ir.ui.view">
+        <field name="name">Consumptions (tree view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="0" delete="0" duplicate="0"
+             class="o_base_wua_pressurized_irrigation_consumptions_one_waterconnection_view_tree">
+                <field name="reading_initial_time"/>
+                <field name="reading_end_time"/>
+                <field name="volume"/>
+                <field name="adjustement_volume"/>
+                <field name="volume_real"/>
+                <field name="reading_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_one_waterconnection_view_search" model="ir.ui.view">
+        <field name="name">Consumptions (search view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <filter string="With adjustement" name="withadjustement"
+                 domain="[('adjustement_volume','!=',0)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_view_graphic" model="ir.ui.view">
+        <field name="name">Consumptions (graph view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="arch" type="xml">
+            <graph string="Pressure Consumptions" type="bar">
+                <field name="hydraulicsector_id"/>
+                <field name="volume_real" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_view_pivot" model="ir.ui.view">
+        <field name="name">Pressurized Consumptions (pivot view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+                <field name="volume" type="measure"/>
+                <field name="adjustement_volume" type="measure"/>
+                <field name="volume_real" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_action" model="ir.actions.act_window">
+        <field name="name">Consumptions</field>
+        <field name="res_model">wua.presconsumption</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="view_id" ref="wua_presconsumption_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_presconsumption_view_search"/>
+        <field name="context">{'search_default_hydraulicsector': 1, 'search_default_readingendtime': 1}</field>
+    </record>
+
+    <menuitem id="wua_presconsumption_menu"
+              name="Consumptions"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="wua_presconsumption_action"
+              sequence="3"/>
+
+</odoo>

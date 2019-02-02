@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="wua_region_view_form" model="ir.ui.view">
+        <field name="name">Regions (form view)</field>
+        <field name="model">wua.region</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="image" widget="image" class="oe_avatar"/>
+                <group name="master_data">
+                    <group name="master_data_regionname">
+                        <field name="name"/>
+                        <field name="number_of_states"/>
+                    </group>
+                    <group name="master_data_regioncode">
+                        <field name="code"/>
+                    </group>
+                </group>
+                <label for="state_ids"/>
+                <field name="state_ids">
+                    <tree editable="bottom">
+                        <field name="name"/>
+                        <field name="cadastral_code"/>
+                    </tree>
+                </field>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_region_view_tree" model="ir.ui.view">
+        <field name="name">Regions (tree view)</field>
+        <field name="model">wua.region</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_region_view_tree">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="number_of_states"/>
+            </tree>
+        </field>
+    </record>
+            
+    <record id="wua_region_action" model="ir.actions.act_window">
+        <field name="name">Regions</field>
+        <field name="res_model">wua.region</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_region_view_tree"/>
+    </record>
+
+    <record id="wua_region_state_view_form" model="ir.ui.view">
+        <field name="name">States (form view)</field>
+        <field name="model">wua.region.state</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <group name="master_data">
+                    <group name="master_data_statename">
+                        <field name="name"/>
+                        <field name="cadastral_code"
+                         style="width:25%%"/>
+                    </group>
+                    <group name="master_data_region">
+                        <field name="region_id"/>
+                    </group>
+                </group>
+                <label for="county_ids"/>
+                <field name="county_ids">
+                    <tree editable="bottom">
+                        <field name="name"/>
+                        <field name="cadastral_code"/>
+                        <field name="cadastral_state_county_code"/>
+                    </tree>
+                </field>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_region_state_view_tree" model="ir.ui.view">
+        <field name="name">States (tree view)</field>
+        <field name="model">wua.region.state</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="cadastral_code"/>
+                <field name="region_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_region_state_view_search" model="ir.ui.view">
+        <field name="name">States (search view)</field>
+        <field name="model">wua.region.state</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="cadastral_code"/>
+                <field name="region_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_region_state_action" model="ir.actions.act_window">
+        <field name="name">States</field>
+        <field name="res_model">wua.region.state</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_region_state_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_region_state_view_search"/>
+    </record>
+
+    <record id="wua_region_state_county_view_form" model="ir.ui.view">
+        <field name="name">Counties (form view)</field>
+        <field name="model">wua.region.state.county</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="fields">
+                    <group name="fields_left">
+                        <field name="name"/>
+                        <field name="cadastral_code"
+                         style="width:25%%"/>
+                    </group>
+                    <group name="fields_right">
+                        <field name="state_id"/>
+                        <field name="cadastral_state_county_code"
+                         style="width:25%%"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_region_state_county_view_tree" model="ir.ui.view">
+        <field name="name">Counties (tree view)</field>
+        <field name="model">wua.region.state.county</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom"
+                  class="o_base_wua_region_state_county_view_tree">
+                <field name="name"/>
+                <field name="cadastral_code"/>
+                <field name="state_id"/>
+                <field name="cadastral_state_county_code"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_region_state_county_view_search" model="ir.ui.view">
+        <field name="name">Counties (search view)</field>
+        <field name="model">wua.region.state.county</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="cadastral_code"/>
+                <field name="state_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_region_state_county_action" model="ir.actions.act_window">
+        <field name="name">Counties</field>
+        <field name="res_model">wua.region.state.county</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_region_state_county_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_region_state_county_view_search"/>
+    </record>
+            
+    <menuitem id="base_wua_census_localization_menu"
+              name="Localization"
+              parent="base_wua_census_menu"
+              sequence="2"
+              groups="base.group_system"/>
+                  
+    <menuitem id="wua_region_menu"
+              name="Regions"
+              parent="base_wua_census_localization_menu"
+              action="wua_region_action"
+              sequence="1"
+              groups="group_wua_user"/>
+
+    <menuitem id="wua_state_menu"
+              name="States"
+              parent="base_wua_census_localization_menu"
+              action="wua_region_state_action"
+              sequence="2"
+              groups="group_wua_user"/>
+
+    <menuitem id="wua_county_menu"
+              name="Counties"
+              parent="base_wua_census_localization_menu"
+              action="wua_region_state_county_action"
+              sequence="2"
+              groups="group_wua_user"/>
+
+</odoo>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_wateringperiod_view_form" model="ir.ui.view">
+        <field name="name">Watering Periods (form view)</field>
+        <field name="model">wua.wateringperiod</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                    <button name="open_period"
+                            type="object" string="Open the period"
+                            states="closed"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="close_period"
+                            type="object" string="Close the period"
+                            states="open"
+                            groups="base_wua.group_wua_manager"/>                
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="open,closed"/>
+                </header>
+                <sheet>
+                    <field name="number_of_waterings" invisible="1"/>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="action_see_waterings"
+                                attrs="{'invisible':[('number_of_waterings','=',0)]}"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-history"
+                                groups="base_wua.group_wua_user">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_waterings"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        waterings
+                                    </span>
+                                </div>
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="initial_date"/>
+                            <field name="agriculturalseason_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"/>
+                            <field name="publication_permission"/>
+                            <field name="publishable"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="end_date"/>
+                            <field name="predicted_watering"/>
+                            <field name="number_of_requests"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="wateringrequests_page"
+                                  string="Watering Requests">
+                                <field name="wateringrequest_ids">
+                                    <tree class="o_base_wua_gravity_irrigation_wateringrequest_view_tree_notebook"
+                                     create="false" edit="false" delete="false">
+                                        <field name="partner_id"/>
+                                        <field name="request_date"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>                        
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>                        
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_wateringperiod_view_tree" model="ir.ui.view">
+        <field name="name">Watering Periods (tree view)</field>
+        <field name="model">wua.wateringperiod</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_gravity_irrigation_wateringperiod_view_tree">
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="agriculturalseason_id"/>
+                <field name="number_of_requests"/>
+                <field name="number_of_waterings"/>
+                <field name="publishable"/>
+                <field name="predicted_watering"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_wateringperiod_view_search" model="ir.ui.view">
+        <field name="name">Watering Periods (search view)</field>
+        <field name="model">wua.wateringperiod</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="agriculturalseason_id"/>
+                <filter string="Open" name="stateopen"
+                 domain="[('state','=','open')]"/>
+                <filter string="Closed" name="stateclosed"
+                 domain="[('state','=','closed')]"/>
+                <separator/>
+                <filter string="Predicted Watering" name="predictedwatering"
+                 domain="[('predicted_watering','=',True)]"/>
+                <separator/>
+                <filter string="Publishable" name="publishable"
+                 domain="[('publishable','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agricultural_season"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Year"
+                     name="year"
+                     context="{'group_by':'year'}"/>
+                </group>                 
+            </search>
+        </field>
+    </record>
+    
+    <record id="wua_wateringperiod_action" model="ir.actions.act_window">
+        <field name="name">Watering Periods</field>
+        <field name="res_model">wua.wateringperiod</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_wateringperiod_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_wateringperiod_view_search"/>
+        <field name="context">{'search_default_agricultural_season': 1,
+                               'search_default_predictedwatering': 1}</field>
+    </record>
+
+    <menuitem id="wua_wateringperiod_menu"
+              name="Watering Periods"
+              parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
+              action="wua_wateringperiod_action"
+              sequence="2"
+              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>    
+
+    <record id="wua_set_wateringperiod_as_open" model="ir.actions.server">
+        <field name="name">Open period</field>
+        <field name="model_id" ref="model_wua_wateringperiod"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.wateringperiod'].set_as_open(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_set_wateringperiod_as_open" model="ir.values">
+        <field name="name">Open period</field>
+        <field name="model">wua.wateringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_wateringperiod_as_open'))"/>
+    </record>
+
+    <record id="wua_set_wateringperiod_as_close" model="ir.actions.server">
+        <field name="name">Close period</field>
+        <field name="model_id" ref="model_wua_wateringperiod"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.wateringperiod'].set_as_close(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_set_wateringperiod_as_close" model="ir.values">
+        <field name="name">Close period</field>
+        <field name="model">wua.wateringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_wateringperiod_as_close'))"/>
+    </record>
+
+</odoo>

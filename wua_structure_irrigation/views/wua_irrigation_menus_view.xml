@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="base_wua_irrigation_menu"
+              name="Irrigation Management"
+              sequence="-8"
+              web_icon="wua_structure_irrigation,static/description/icon.png"
+              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
+              
+    <menuitem id="base_wua_pressurized_irrigation_menu"
+              name="Pressurized Irrigation"
+              parent="base_wua_irrigation_menu"
+              sequence="1"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="base_wua_gravity_irrigation_menu"
+              name="Gravity Irrigation"
+              parent="base_wua_irrigation_menu"
+              sequence="2"
+              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
+
+    <menuitem id="base_wua_irrigation_configuration_menu"
+              name="Configuration"
+              parent="base_wua_irrigation_menu"
+              sequence="1001"/>
+
+    <menuitem id="base_wua_irrigation_technical_menu"
+              name="Technical"
+              parent="base_wua_irrigation_menu"
+              sequence="1002"
+              groups="base.group_system"/>
+              
+</odoo>

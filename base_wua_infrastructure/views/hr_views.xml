@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="employee_parcels_action" model="ir.actions.act_window">
+        <field name="name">Parcels</field>
+        <field name="res_model">wua.parcel</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="base_wua.wua_parcel_view_tree"/>
+        <field name="search_view_id" ref="base_wua_infrastructure.wua_parcel_view_search"/>
+        <field name="domain">[("employee_id","=",context.get('active_id'))]</field>
+        <field name="context">{'disable_edit_parcel':'1'}</field>
+    </record>
+
+    <record id="view_employee_form" model="ir.ui.view">
+        <field name="name">Employees (form view)</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="%(employee_parcels_action)d"
+                        attrs="{'invisible':[('is_irrigation_worker','=',False)]}"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-square-o"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="number_of_parcels"
+                                 readonly="1"/>
+                            </span>                        
+                            <span class="o_stat_text">
+                                parcels
+                            </span>
+                        </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='department_id']" position="before">
+                <field name="is_irrigation_worker"
+                 groups="base_wua.group_wua_user"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_employee_tree" model="ir.ui.view">
+        <field name="name">Employees (tree view)</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="is_irrigation_worker" groups="base_wua.group_wua_user"/>
+                <field name="number_of_parcels" groups="base_wua.group_wua_user"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_employee_filter" model="ir.ui.view">
+        <field name="name">Employees (search view)</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='message_needaction']" position="before">        
+                <filter string="Irrigation Worker" name="is_irrigation_worker"
+                 domain="[('is_irrigation_worker','=',True)]"
+                 groups="base_wua.group_wua_user"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_kanban_view_employees" model="ir.ui.view">
+        <field name="name">Employees (kanban view)</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.hr_kanban_view_employees"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='message_needaction_counter']" position="after">
+                <field name="is_irrigation_worker"/>
+                <field name="number_of_parcels"/>
+            </xpath>
+            <xpath expr="//li[@t-if='record.mobile_phone.raw_value']" position="after">
+                <li t-if="record.is_irrigation_worker.raw_value"><i class="fa fa-bicycle"></i> <strong>Irrigation worker</strong> (parcels: <field name="number_of_parcels"/>)</li>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

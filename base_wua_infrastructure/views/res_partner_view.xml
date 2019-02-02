@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_partner_irrigationpoints_action" model="ir.actions.server">
+        <field name="name">Partners (form view)</field>
+        <field name="model_id" ref="base_wua_infrastructure.model_res_partner"/>
+        <field name="code">action = env["res.partner"].get_res_partner_irrigationpoints_action()</field>
+    </record>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">res.partner.view.form.inh.wua</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="%(res_partner_irrigationpoints_action)d"
+                        attrs="{'invisible':[('is_wua_partner','=',False)]}"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-tint"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Irrig. supplies
+                            </span>                      
+                        </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

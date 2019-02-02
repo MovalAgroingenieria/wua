@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']"
+                   position="after">
+                <field name="credit_overdue" invisible="1"/>
+                <button name="action_see_invoice_lines"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-dollar"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Detail lines
+                            </span>
+                        </div>
+                </button>
+                <button name="action_see_overdue_credits"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-bullhorn"
+                        attrs="{'invisible':
+                                [('credit_overdue','=',0)]}"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Overdue Credit
+                            </span>
+                        </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_tree" model="ir.ui.view">
+        <field name="name">Partners (tree view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="base_wua.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="colors">red:credit_overdue>0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phones']" position="after">
+                <field name="credit_overdue"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

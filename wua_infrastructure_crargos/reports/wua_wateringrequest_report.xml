@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="paperformat_portrait_standard_wateringrequest_crargos"
+            model="report.paperformat">
+        <field name="name">European A4 Portrait</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">35</field>
+        <field name="margin_bottom">82</field>
+        <field name="margin_left">14</field>
+        <field name="margin_right">14</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">25</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.action_wua_wateringrequest_report" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="wua_infrastructure_crargos.paperformat_portrait_standard_wateringrequest_crargos"/>
+    </record>
+
+    <template id="report_wua_wateringrequest_document" inherit_id="base_wua_gravity_irrigation.report_wua_wateringrequest_document">
+        <xpath expr="//div[@name='section_detail_header']" position="replace">
+            <div class="row" name="section_detail_header" style="border: 1px solid black;margin-top: 10px">
+                <div class="col-xs-12 text-center">
+                    <span style="font-family: verdana">SOLICITA:</span><br/><br/>
+                </div>
+                <div class="col-xs-12">
+                    <span>La inclusión en los citados entandes de los bancales abajo reseñados, junto con sus respectivos tiempos de riego:</span>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@name='section_detail_content']" position="after">
+            <p style="page-break-after:always;"></p>
+            <div class="row" name="section_norms">
+                <div class="col-xs-12 text-justify">
+                    <span style="font-size: 15">
+                        Que en la Junta General de 24 de marzo de 2017 se aprobó el reparto del agua para la presente campaña de riego, el sistema de reparto general de agua según los 11 sectores existentes de riego tradicional, así como el procedimiento de cálculo de los turnos de riego para cada entande, todo ello en virtud de las obligaciones, competencias y funciones de la Comunidad de Regantes establecidas en la Ley y en las Ordenanzas de la Comunidad, de ordenación y distribución de las aguas, estableciendo los turnos o tandas de riego del modo más conveniente, velando por la seguridad del aprovechamiento y la conservación de presas, acequias y demás obras comunes, con potestad de sancionar a aquellos partícipes que infrinjan las ordenanzas.
+                    </span>
+                    <span style="font-size: 15"><br/><br/>Que la Junta General de 24/03/2018 establece como
+                    </span>
+                    <span style="font-family: verdana;font-size: 16;font-weight:bold;">requisito necesario para poder regar con el sistema de riego tradicional, la obligatoriedad de petición previa de agua, para cada tanda, según el Sistema de Entandamiento implantado.
+                    </span>
+                    <span style="font-size: 15"><br/><br/>
+                        Que cada regante es el responsable de administrar su dotación, pudiendo gastar su cupo de agua en los entandamientos que considere oportuno y con la distribución de tiempo que precise. No pudiendo gastar más agua de la que le corresponde según el reparto aprobado en la Junta General de 24/03/2018.
+                    </span>
+                    <span style="font-size: 15"><br/><br/>
+                        Que las peticiones de agua hay que registrarlas con tres semanas de antelación.
+                    </span>
+                    <span style="font-size: 15"><br/><br/>
+                        Que el desconocimiento de las normas de funcionamiento no le exime de su cumplimiento, entre dichas normas destacan las siguientes:
+                    </span>
+                    <span style="font-size: 15"><br/><br/>
+                        - El Regante sólo puede tomar el agua por los tablachos o tomas de la red de riego tradicional; y no está permitido tomar agua por cualquier otro sistema de toma no contemplado en las ordenanzas.
+                    </span>
+                    <span style="font-size: 15"><br/><br/>
+                        - El Regante no puede tomar el agua cuando no sea su turno.
+                    </span>
+                    <span style="font-size: 15"><br/><br/>
+                        - El Regante no puede usar el agua durante más tiempo del asignado.
+                    </span>
+                    <span style="font-size: 15"><br/><br/>
+                        - El Regante no puede dejar escurrir el agua por las colas de los ramales o brazales de riego.
+                    </span>
+                    <span style="font-size: 15"><br/><br/>
+                        Que el regante está obligado a informarse y conocer para cada entande o riego: cuándo es su turno de riego, durante cuánto tiempo puede regar y, en su caso, cuándo debe cortar el agua en el inicio del brazal o ramal de riego.
+                    </span>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@name='section_detail_content']" position="replace">
+            <div class="row" name="section_detail_content" style="margin-top: 10px">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Id.Bancal</th>
+                            <th class="text-center">Parcela</th>
+                            <th class="text-left">Acequia</th>
+                            <th class="text-right">Superficie</th>
+                            <th class="text-center">Ref.Catastral</th>
+                            <th class="text-right">Duración (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.gravconsumption_ids" t-as="l">
+                            <td align="center">
+                                <span t-field="l.subparcel_id.id_bancal"/>
+                            </td>
+                            <td align="center">
+                                <span t-field="l.parcel_id"/>
+                            </td>
+                            <td align="left">
+                                <span t-field="l.irrigationditch_id"/>
+                            </td>
+                            <td align="right">
+                                <span t-field="l.subparcel_id.area_official"/>
+                            </td>
+                            <td align="center">
+                                <span t-field="l.parcel_id.cadastral_reference"/>
+                            </td>
+                            <td align="right">
+                                <span t-field="l.watering_duration"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="report_wua_wateringrequest_external_layout_header" inherit_id="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_header">
+        <xpath expr="//div[@name='title_header']" position="replace">
+            <div class="col-xs-8 text-right hidden-odd-page" style="margin-top: 10px;font-family: verdana;font-size: 16px;font-weight:bold;">
+                <span>NORMAS GENERALES SOBRE RIEGO</span>
+            </div>
+            <div class="col-xs-8 text-right hidden-even-page" style="margin-top: 10px;font-family: verdana;font-size: 16px;font-weight:bold;">
+                <span>SOLICITUD DE RIEGO</span>
+            </div>
+        </xpath>
+        <xpath expr="//div[@name='company_header']" position="replace">
+        </xpath>
+    </template>
+
+    <template id="report_wua_wateringrequest_external_layout_footer" inherit_id="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_footer">
+        <xpath expr="//div[@name='footer_content']" position="attributes">
+            <attribute name="t-att-class">"footer hidden-even-page"</attribute>
+        </xpath>
+        <xpath expr="//div[@name='company_address_email']" position="after">
+            <div class="row" style="border: 1px solid black;font-size: 11px;margin-top:5px;">
+                <div class="col-xs-6">
+                    <span>SERVICIO DE VIGILANCIA DEL AGUA</span>
+                </div>
+                <div class="col-xs-6 text-right">
+                    <span><i>(ver normas de riego en el reverso)</i></span>
+                </div>
+            </div>
+            <div class="row" style="border: 1px solid black;font-size: 11px">
+                <div class="col-xs-4">
+                    <span>JOSÉ PÉREZ: 608120089</span>
+                </div>
+                <div class="col-xs-4 text-center">
+                    <span>JUAN MARTÍNEZ: 682321926</span>
+                </div>
+                <div class="col-xs-4 text-right">
+                    <span>TELF.GUARDIA: 638912427</span>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@name='pagination']" position="replace">
+        </xpath>
+    </template>
+
+</odoo>

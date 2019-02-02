@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_reading_view_form" model="ir.ui.view">
+        <field name="name">Readings (form view)</field>
+        <field name="model">wua.reading</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <field name="is_last_reading" invisible="1"/>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <img src="/base_wua_pressurized_irrigation/static/image/img_last.png"
+                             hspace="2"
+                             attrs="{'invisible':[('is_last_reading', '=', False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="volume"
+                                   attrs="{'readonly':
+                                           [('id', '>', 0),
+                                            ('is_last_reading', '!=', True)]}"/>
+                            <field name="reading_time"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="watermeter_id"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="initialization_reading"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="waterconnection_id"/>
+                            <field name="irrigationshed_id"/>
+                            <field name="hydraulicsector_id"/>
+                            <field name="presconsumption_id"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>                        
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_reading_view_tree" model="ir.ui.view">
+        <field name="name">Readings (tree view)</field>
+        <field name="model">wua.reading</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_readings_view_tree">
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="reading_time"/>
+                <field name="volume"/>
+                <field name="initialization_reading" string="Init. Reading"/>
+                <field name="presconsumption_volume" string="Cons. Value (m3)"/>
+                <field name="presconsumption_adjustement_volume" string="Cons. Adj. Value (m3)"/>
+                <field name="presconsumption_volume_real" string="Cons. Real Value (m3)"/>
+                <field name="is_last_reading"/>
+                <field name="presconsumption_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_reading_view_search" model="ir.ui.view">
+        <field name="name">Readings (search view)</field>
+        <field name="model">wua.reading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Initialization Reading" name="initreadingyes"
+                 domain="[('initialization_reading','=',True)]"/>
+                <filter string="Normal Reading" name="initreadingno"
+                 domain="[('initialization_reading','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>                
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>                
+                    <filter string="Water Meter"
+                     name="watermeter"
+                     context="{'group_by':'watermeter_id'}"/>                
+                </group>                                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_reading_one_watermeter_view_tree" model="ir.ui.view">
+        <field name="name">Readings (tree view)</field>
+        <field name="model">wua.reading</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_readings_one_watermeter_view_tree">
+                <field name="reading_time"/>
+                <field name="volume"/>
+                <field name="initialization_reading" string="Init. Reading"/>
+                <field name="presconsumption_volume" string="Cons. Value (m3)"/>
+                <field name="presconsumption_adjustement_volume" string="Cons. Adj. Value (m3)"/>
+                <field name="presconsumption_volume_real" string="Cons. Real Value (m3)"/>
+                <field name="is_last_reading"/>
+                <field name="presconsumption_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_reading_one_watermeter_view_search" model="ir.ui.view">
+        <field name="name">Readings (search view)</field>
+        <field name="model">wua.reading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Initialization Reading" name="initreadingyes"
+                 domain="[('initialization_reading','=',True)]"/>
+                <filter string="Normal Reading" name="initreadingno"
+                 domain="[('initialization_reading','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>                
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>                
+                </group>                                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_reading_action" model="ir.actions.act_window">
+        <field name="name">Readings</field>
+        <field name="res_model">wua.reading</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_reading_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_reading_view_search"/>
+        <field name="context">{'search_default_watermeter': 1}</field>
+    </record>
+
+    <menuitem id="wua_reading_menu"
+              name="Readings"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="wua_reading_action"
+              sequence="2"/>
+
+</odoo>

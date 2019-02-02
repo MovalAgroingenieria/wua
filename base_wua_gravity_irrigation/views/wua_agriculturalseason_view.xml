@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                    <button name="%(action_generate_periods)d"
+                            type="action" string="Generate periods"
+                            groups="base_wua.group_wua_manager"/>                    
+                </header>
+                <sheet>
+                    <field name="number_of_waterings" invisible="1"/>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="action_see_waterings"
+                                attrs="{'invisible':[('number_of_waterings','=',0)]}"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-history">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_waterings"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        waterings
+                                    </span>
+                                </div>
+                        </button>
+                    </div>                
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="initial_date"/>
+                            <field name="description"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="end_date"/>
+                            <field name="number_of_periods"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="wateringperiods_page"
+                                  string="Watering Periods">
+                                <field name="wateringperiod_ids">
+                                    <tree class="o_base_wua_gravity_irrigation_wateringperiod_view_tree_notebook"
+                                     create="false" edit="false" delete="false">
+                                        <field name="initial_date"/>
+                                        <field name="end_date"/>
+                                        <field name="number_of_requests"
+                                         sum="Total"/>
+                                        <field name="number_of_waterings"
+                                         sum="Total"/>
+                                        <field name="publishable"/>
+                                        <field name="state"/>                                         
+                                    </tree>                                
+                                </field>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>                        
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_tree" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (tree view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_gravity_irrigation_agriculturalseason_view_tree">
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="description"/>
+                <field name="number_of_periods"/>
+                <field name="number_of_waterings"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_search" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (search view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_action" model="ir.actions.act_window">
+        <field name="name">Agricultural Seasons</field>
+        <field name="res_model">wua.agriculturalseason</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_agriculturalseason_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_agriculturalseason_view_search"/>
+    </record>
+
+    <menuitem id="wua_agriculturalseason_menu"
+              name="Agricultural Seasons"
+              parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
+              action="wua_agriculturalseason_action"
+              sequence="1"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

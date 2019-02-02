@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_employee_form" model="ir.ui.view">
+        <field name="name">Employees (form view)</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="action_see_gravconsumptions_planned"
+                        attrs="{'invisible':[('is_irrigation_worker','=',False)]}"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-leaf"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Planned<br/>consumptions
+                            </span>
+                        </div>
+                </button>
+                <button name="action_see_gravconsumptions_executed"
+                        attrs="{'invisible':[('is_irrigation_worker','=',False)]}"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-leaf"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Executed<br/>consumptions
+                            </span>
+                        </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

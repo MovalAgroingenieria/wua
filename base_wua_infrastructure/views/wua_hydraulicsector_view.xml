@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_hydraulicsector_parcels_action" model="ir.actions.server">
+        <field name="name">Parcels</field>
+        <field name="model_id" ref="base_wua_infrastructure.model_wua_hydraulicsector"/>
+        <field name="code">action = env["wua.hydraulicsector"].get_wua_hydraulicsector_parcels_action()</field>
+    </record>
+
+    <record id="wua_hydraulicsector_view_form" model="ir.ui.view">
+        <field name="name">Hydraulic Sectors (form view)</field>
+        <field name="model">wua.hydraulicsector</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="%(wua_hydraulicsector_parcels_action)d"
+                                type="action"
+                                class="oe_stat_button"
+                                string="Parcels"
+                                icon="fa-square-o"/>
+                    </div>                
+                    <group name="master_data">
+                        <group name="master_data_id">
+                            <field name="name"/>
+                            <field name="number_of_parcels"/>
+                            <field name="number_of_irrigationsheds"/>
+                            <newline/>
+                            <field name="number_of_waterconnections"/>
+                        </group>
+                        <group name="master_data_desc">
+                            <field name="hydraulicsector_code"/>
+                            <field name="description"/>
+                            <field name="total_affected_area_official"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="irrigationsheds_page" string="Irrigation Sheds">
+                                <field name="irrigationshed_ids">                                
+                                    <tree create="false" edit="false" delete="false"
+                                          class="o_base_wua_infrastructure_hydraulicsector_view_tree_notebook">
+                                        <field name="name"/>
+                                        <field name="elevation"/>
+                                        <field name="description"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_hydraulicsector_view_tree" model="ir.ui.view">
+        <field name="name">Hydraulic Sectors (tree view)</field>
+        <field name="model">wua.hydraulicsector</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_hydraulicsector_view_tree">
+                <field name="hydraulicsector_code"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="number_of_irrigationsheds"/>
+                <field name="number_of_waterconnections"/>
+                <field name="total_affected_area_official"/>
+                <field name="number_of_parcels"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_hydraulicsector_view_search" model="ir.ui.view">
+        <field name="name">Hydraulic Sectors (search view)</field>
+        <field name="model">wua.hydraulicsector</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="hydraulicsector_code"/>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydraulicsector_action" model="ir.actions.act_window">
+        <field name="name">Hydraulic Sectors</field>
+        <field name="res_model">wua.hydraulicsector</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_hydraulicsector_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_hydraulicsector_view_search"/>
+    </record>
+
+    <menuitem id="wua_hydraulicsector_menu"
+              name="Hydraulic Sectors"
+              parent="base_wua_infrastructure_pressurized_irrigation_menu"
+              action="wua_hydraulicsector_action"
+              sequence="1"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

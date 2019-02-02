@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationditch_parcels_action" model="ir.actions.server">
+        <field name="name">Parcels</field>
+        <field name="model_id" ref="base_wua_infrastructure.model_wua_irrigationditch"/>
+        <field name="code">action = env["wua.irrigationditch"].get_wua_irrigationditch_parcels_action()</field>
+    </record>
+
+    <record id="wua_irrigationditch_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Ditches (form view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="%(wua_irrigationditch_parcels_action)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-square-o"
+                                string="Parcels"
+                                attrs="{'invisible': [('number_of_parcels', '=', 0)]}"/>
+                    </div>                
+                    <group name="master_data">
+                        <group name="master_data_id">
+                            <field name="name"/>
+                            <field name="irrigationditch_code"/>
+                            <field name="description"/>
+                            <field name="number_of_parcels"/>
+                            <field name="number_of_irrigationgates"/>
+                        </group>
+                        <group name="master_data_desc">
+                            <field name="early_shutdown_time"/>
+                            <field name="wateringduration_area_ratio"/>
+                            <field name="water_flow"/>
+                            <field name="total_affected_area_official"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="irrigationgates_page" string="Irrigation Gates">
+                                <field name="irrigationgate_ids">                                
+                                    <tree class="o_base_wua_infrastructure_irrigationgate_view_tree_notebook"
+                                     create="false" edit="false" delete="false">
+                                        <field name="gis_googlemaps_link" invisible="1"/>
+                                        <field name="name"/>
+                                        <button name="action_see_gis_googlemaps"
+                                                type="object" class="oe_stat_button"
+                                                string="Google Maps (zoom to point)"
+                                                icon="fa-map-marker"
+                                                attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>
+                                        <field name="description"/>
+                                        <field name="hydraulic_order"/>                                        
+                                        <field name="total_affected_area_official"/>
+                                        <field name="number_of_parcels"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="flowdividers_page" string="Flow Dividers">
+                                <field name="flowdivider_ids">                                
+                                    <tree class="o_base_wua_infrastructure_flowdivider_view_tree_notebook"
+                                     create="false" edit="false" delete="false">
+                                        <field name="gis_googlemaps_link" invisible="1"/>
+                                        <field name="name"/>
+                                        <button name="action_see_gis_googlemaps"
+                                                type="object" class="oe_stat_button"
+                                                string="Google Maps (zoom to point)"
+                                                icon="fa-map-marker"
+                                                attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>
+                                        <field name="description"/>
+                                        <field name="initial_hydraulic_order"/>
+                                        <field name="final_hydraulic_order"/>
+                                        <field name="number_of_irrigationgates"/>
+                                    </tree>
+                                </field>
+                            </page>                            
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_irrigationditch_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Ditches (tree view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_irrigationditch_view_tree">
+                <field name="irrigationditch_code"/>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="number_of_irrigationgates"/>
+                <field name="total_affected_area_official"/>
+                <field name="number_of_parcels"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_irrigationditch_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Ditches (search view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="irrigationditch_code"/>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_irrigationditch_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Ditches</field>
+        <field name="res_model">wua.irrigationditch</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_irrigationditch_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_irrigationditch_view_search"/>
+    </record>
+
+    <menuitem id="base_wua_infrastructure_gravityfed_irrigation_menu"
+              name="Gravity fed Irrigation"
+              parent="base_wua_infrastructure_menu"
+              sequence="2"/>
+
+    <menuitem id="wua_irrigationditch_menu"
+              name="Irrigation Ditches"
+              parent="base_wua_infrastructure_gravityfed_irrigation_menu"
+              action="wua_irrigationditch_action"
+              sequence="1"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

@@ -1,0 +1,643 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_view_form" model="ir.ui.view" >
+        <field name="name">Invoice Sets (form view)</field>
+        <field name="model">wua.invoiceset</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <form string="Invoce Sets" duplicate="false">
+                <field name="configured_invoiceset" invisible="1"/>
+                <header>
+                    <button name="configure_invoiceset"
+                            type="object" string="Configure"
+                            states="draft"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="calculate_invoiceset"
+                            type="object" string="Calculate"
+                            attrs="{'invisible':
+                                    ['|',
+                                     ('configured_invoiceset','=',False),
+                                     ('state','=','generated')]}"                            
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <button name="cancel_invoiceset"
+                            type="object" string="Cancel"
+                            states="generated"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,generated"/>                
+                </header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button" 
+                                icon="fa-archive"
+                                groups="base_wua.group_wua_manager">
+                                <field name="active"
+                                 widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
+                        <button name="action_see_invoices"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-dollar"
+                                attrs="{'invisible':
+                                        [('state','=','draft')]}">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_invoices"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        Invoices
+                                    </span>
+                                </div>                                
+                        </button>
+                    </div>
+                    <group name="master_data" col="10">
+                        <group name="master_data_id01" colspan="4">
+                            <field name="id" invisible="1"/>
+                            <field name="name"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="date_invoiceset"
+                                   attrs="{'readonly':
+                                           [('state','=','generated')]}"/>
+                            <field name="date_due_invoiceset"
+                                   attrs="{'readonly':
+                                           [('state','=','generated')]}"/>
+                        </group>
+                        <group name="master_data_id02" colspan="4">
+                            <field name="description"
+                                   attrs="{'readonly':
+                                           [('state','=','generated')]}"/>                            
+                            <field name="journal_id"
+                                   domain="[('type','=','sale')]"
+                                   attrs="{'readonly':
+                                           [('state','=','generated')]}"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group name="master_data_sum" colspan="2"
+                               class="oe_subtotal_footer oe_right"
+                               attrs="{'invisible': [('state','=','draft')]}">
+                            <field name="company_id" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount_untaxed"/>
+                            <field name="amount_tax"/>
+                            <field name="amount_total"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="lines_page" string="Lines">
+                                <field name="line_ids"
+                                       context="{'tree_view_ref':
+                                                 'base_wua_invoicing.wua_edit_invoiceset_line_view_tree'}"/>                            
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>                
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_view_tree" model="ir.ui.view">
+        <field name="name">Invoice Sets (tree view)</field>
+        <field name="model">wua.invoiceset</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_invoicing_invoiceset_view_tree">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="journal_id"/>
+                <field name="date_invoiceset"/>
+                <field name="date_due_invoiceset"/>
+                <field name="user_id"/>
+                <field name="number_of_invoices"/>
+                <field name="amount_untaxed"/>
+                <field name="amount_tax"/>
+                <field name="amount_total"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_view_search" model="ir.ui.view">
+        <field name="name">Invoice Sets (search view)</field>
+        <field name="model">wua.invoiceset</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="user_id"/>
+                <field name="year_invoiceset"/>
+                <filter string="Draft" name="draft"
+                 domain="[('state','=','draft')]"/>
+                <filter string="Generated" name="generated"
+                 domain="[('state','=','generated')]"/>                 
+                <separator/>
+                <filter string="Archived" name="inactive"
+                 domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Journal" name="journal"
+                     context="{'group_by':'journal_id'}"/>
+                    <filter string="Salesperson" name="user"
+                     context="{'group_by':'user_id'}"/>
+                    <filter string="Year" name="year"
+                     context="{'group_by':'year_invoiceset'}"/>                     
+                    <filter string="Totals" name="totals"
+                     context="{'group_by':'active'}"/>                     
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_edit_invoiceset_line_view_tree" model="ir.ui.view">
+        <field name="name">Invoice-Set Lines</field>
+        <field name="model">wua.invoiceset.line</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_invoicing_invoiceset_line_view_tree_notebook"
+                  editable="bottom">
+                <field name="company_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="configured_line" invisible="1"/>
+                <field name="pos_str"/>
+                <field name="product_id" widget="many2one_unclickable"
+                       attrs="{'readonly':[('configured_line','=',True)]}"
+                       domain="[('is_wua_product','=',True)]"/>
+                <field name="linkable_unit_type"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('configured_line','=',False)],
+                                'readonly':
+                                [('configured_line','=',True)]}"/>                
+                <field name="quantity"/>
+                <field name="price_unit"/>
+                <field name="amount_untaxed"/>
+                <field name="taxes_id" widget="many2many_tags"/>
+                <field name="amount_tax"/>
+                <field name="amount_total"/>
+            </tree>        
+        </field>
+    </record>
+
+    <record id="wua_config_invoiceset_view_form" model="ir.ui.view">
+        <field name="name">Invoice-Set (configuration)</field>
+        <field name="model">wua.invoiceset</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <form>
+                <field name="line_ids" readonly="1"
+                 context="{'tree_view_ref': 'base_wua_invoicing.wua_config_invoiceset_line_view_tree'}"/>
+                <footer>
+                   <button name="auxbutton" type="object" string="aux"
+                           invisible="1"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_config_invoiceset_line_view_tree" model="ir.ui.view">
+        <field name="name">Invoice-Set Lines</field>
+        <field name="model">wua.invoiceset.line</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_invoicing_invoiceset_line_view_tree_config">
+                <field name="pos_str"/>
+                <field name="product_id" widget="many2one_unclickable"/>
+                <field name="categ_id" widget="many2one_unclickable"/>
+                <field name="linkable_unit_type"/>
+                <button name="action_select_linked_items"
+                        type="object"
+                        string="Select"/>
+            </tree>        
+        </field>
+    </record>
+   
+    <record id="wua_invoiceset_line_view_form" model="ir.ui.view">
+        <field name="name">Invoice-Set Lines</field>
+        <field name="model">wua.invoiceset.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="fields">
+                    <group name="fields_left">
+                        <field name="invoiceset_id" widget="many2one_unclickable"/>
+                        <field name="pos"/>
+                        <field name="product_id"/>
+                        <field name="linkable_unit_type"/>
+                    </group>
+                    <group name="fields_right">
+                        <field name="quantity"/>
+                        <field name="price_unit"/>
+                        <field name="taxes_id"/>
+                        <field name="amount_untaxed"/>
+                        <field name="amount_tax"/>
+                        <field name="amount_total"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_parcel_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for parcels (tree view)</field>
+        <field name="model">wua.invoiceset.line.parcel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_invoicing_invoiceset_line_parcel_view_tree"
+                  create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <field name="parcel_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="partner_id"/>
+                <field name="cadastral_reference"/>
+                <field name="area_official"/>
+                <field name="leased_parcel"/>
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationditch_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_parcel_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for parcels (search view)</field>
+        <field name="model">wua.invoiceset.line.parcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="tag_ids" string="Parcel Tag"/>
+                <field name="partner_id"/>
+                <field name="cadastral_reference"/>
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationditch_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <separator/>
+                <filter string="Billable Water" name="billablewater"
+                 domain="[('is_billable_water','=',True)]"/>
+                <filter string="Billable Expenses" name="billableexpenses"
+                 domain="[('is_billable_expenses','=',True)]"/>
+                <separator/>
+                <filter string="Leased" name="leased"
+                 domain="[('leased_parcel','=',True)]"/>
+                <separator/>
+                <filter string="Infrastructure: None" name="hydraulic_infrastructure_type_0"
+                 domain="[('hydraulic_infrastructure_type','=',False)]"/>
+                <filter string="Infrastructure: Pressurized Irrigation" name="hydraulic_infrastructure_type_1"
+                 domain="[('hydraulic_infrastructure_type','=',1)]"/>
+                <filter string="Infrastructure: Gravity Irrigation" name="hydraulic_infrastructure_type_2"
+                 domain="[('hydraulic_infrastructure_type','=',2)]"/>
+                <filter string="Infrastructure: Pressurized and Gravity Irrigation" name="hydraulic_infrastructure_type_3"
+                 domain="[('hydraulic_infrastructure_type','=',3)]"/>
+                <separator/>
+                <filter string="Water Right: Pressurized Irrigation" name="pressurizedirrigation"
+                 domain="[('pressurized_irrigation_right','=',True)]"/>
+                <filter string="Water Right: Gravity Irrigation" name="gravityfedirrigation"
+                 domain="[('gravityfed_irrigation_right','=',True)]"/>
+                <separator/>
+                <filter string="With Irrigation Worker" name="withirrigationworker"
+                 domain="[('with_irrigation_worker','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Is selected (marked)"
+                     name="isselected"
+                     context="{'group_by':'selected'}"/>
+                    <filter string="Irrigation Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Hydraulic Sector" name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Ditch" name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                    <filter string="Irrigation Worker" name="irrigationworker"
+                     context="{'group_by':'employee_id'}"/>                     
+                </group>                
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_parcel_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_parcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.parcel'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_add_parcel_to_invoiceset" model="ir.values">
+        <field name="name">Add parcel to invoice set</field>
+        <field name="model">wua.invoiceset.line.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_parcel_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_parcel_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_parcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.parcel'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_remove_parcel_to_invoiceset" model="ir.values">
+        <field name="name">Remove parcel from invoice set</field>
+        <field name="model">wua.invoiceset.line.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_parcel_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_invoiceset_line_partner_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for partners (tree view)</field>
+        <field name="model">wua.invoiceset.line.partner</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_invoicing_invoiceset_line_partner_view_tree"
+                  create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <field name="partner_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>                
+                <field name="number_of_votes"/>
+                <field name="is_owner"/>                
+                <field name="parcel_owner_number"/>
+                <field name="parcel_owner_area"/>
+                <field name="is_lessee"/>
+                <field name="parcel_lessee_number"/>
+                <field name="parcel_lessee_area"/>
+                <field name="is_payer"/>
+                <field name="parcel_payer_number"/>
+                <field name="parcel_payer_area"/>
+                <field name="is_company"/>                
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_partner_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for partners (search view)</field>
+        <field name="model">wua.invoiceset.line.partner</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <separator/>
+                <filter string="Persons" name="notiscompany"
+                 domain="[('is_company','=',False)]"/>
+                <filter string="Companies" name="iscompany"
+                 domain="[('is_company','=',True)]"/>
+                <separator/>
+                <filter string="Owner" name="isowner"
+                 domain="[('is_owner','=',True)]"/>
+                <filter string="Lessee" name="islessee"
+                 domain="[('is_lessee','=',True)]"/>
+                <filter string="Payer" name="ispayer"
+                 domain="[('is_payer','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Is selected (marked)"
+                     name="isselected"
+                     context="{'group_by':'selected'}"/>
+                    <filter string="Is a company (marked)"
+                     name="isacompany"
+                     context="{'group_by':'is_company'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_partner_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.partner'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_add_partner_to_invoiceset" model="ir.values">
+        <field name="name">Add partner to invoice set</field>
+        <field name="model">wua.invoiceset.line.partner</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_partner_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_partner_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.partner'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_remove_partner_to_invoiceset" model="ir.values">
+        <field name="name">Remove partner from invoice set</field>
+        <field name="model">wua.invoiceset.line.partner</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_partner_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_invoiceset_line_waterconnection_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for water connections (tree view)</field>
+        <field name="model">wua.invoiceset.line.waterconnection</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_invoicing_invoiceset_line_waterconnection_view_tree"
+                  create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <field name="waterconnection_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>                
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="position"/>
+                <field name="total_affected_area_official"/>
+                <field name="number_of_parcels"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_waterconnection_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for water connections (search view)</field>
+        <field name="model">wua.invoiceset.line.waterconnection</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Is selected (marked)"
+                     name="isselected"
+                     context="{'group_by':'selected'}"/>
+                    <filter string="Hydraulic Sector"
+                     name="hydraulic_sector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigation_shed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                </group>                
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_waterconnection_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_waterconnection"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.waterconnection'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_add_waterconnection_to_invoiceset" model="ir.values">
+        <field name="name">Add waterconnection to invoice set</field>
+        <field name="model">wua.invoiceset.line.waterconnection</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_waterconnection_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_waterconnection_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_waterconnection"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.waterconnection'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_remove_waterconnection_to_invoiceset" model="ir.values">
+        <field name="name">Remove waterconnection from invoice set</field>
+        <field name="model">wua.invoiceset.line.waterconnection</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_waterconnection_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_invoiceset_line_irrigationgate_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for irrigation gates (tree view)</field>
+        <field name="model">wua.invoiceset.line.irrigationgate</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_invoicing_invoiceset_line_irrigationgate_view_tree" 
+                  create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <field name="irrigationgate_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>                
+                <field name="irrigationditch_id"/>
+                <field name="hydraulic_order"/>
+                <field name="total_affected_area_official"/>
+                <field name="number_of_parcels"/>                
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_irrigationgate_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for irrigation gates (search view)</field>
+        <field name="model">wua.invoiceset.line.irrigationgate</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="irrigationgate_id"/>
+                <field name="irrigationditch_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Is selected (marked)"
+                     name="isselected"
+                     context="{'group_by':'selected'}"/>
+                    <filter string="Irrigation Ditch"
+                     name="irrigation_ditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_irrigationgate_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_irrigationgate"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.irrigationgate'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_add_irrigationgate_to_invoiceset" model="ir.values">
+        <field name="name">Add irrigationgate to invoice set</field>
+        <field name="model">wua.invoiceset.line.irrigationgate</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_irrigationgate_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_irrigationgate_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_irrigationgate"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.irrigationgate'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_remove_irrigationgate_to_invoiceset" model="ir.values">
+        <field name="name">Remove irrigationgate from invoice set</field>
+        <field name="model">wua.invoiceset.line.irrigationgate</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_irrigationgate_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_invoiceset_action" model="ir.actions.act_window">
+        <field name="name">Invoice Sets</field>
+        <field name="res_model">wua.invoiceset</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_invoiceset_view_tree"/>
+        <field name="search_view_id" ref="wua_invoiceset_view_search"/>
+    </record>
+
+    <menuitem id="wua_invoiceset_menu"
+              name="Invoice Sets"
+              parent="account.menu_finance_receivables"
+              action="wua_invoiceset_action"
+              sequence="2"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

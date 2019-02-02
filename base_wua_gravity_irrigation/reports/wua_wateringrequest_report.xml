@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="paperformat_portrait_standard_wateringrequest"
+            model="report.paperformat">
+        <field name="name">European A4 Portrait</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">37</field>
+        <field name="margin_bottom">77</field>
+        <field name="margin_left">14</field>
+        <field name="margin_right">14</field>
+        <field name="header_line" eval="False" />
+        <field name="header_spacing">30</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="action_wua_wateringrequest_report"
+            string="Watering Request"
+            model="wua.wateringrequest"
+            report_type="qweb-pdf"
+            name="base_wua_gravity_irrigation.report_wua_wateringrequest"
+            paperformat="paperformat_portrait_standard_wateringrequest"
+            groups="base_wua.group_wua_user"/>
+
+    <template id="report_wua_wateringrequest">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout">
+                    <t t-call="base_wua_gravity_irrigation.report_wua_wateringrequest_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_wateringrequest_document">
+        <div class="page" style="font-family: lucidasansregular;font-size: 11; margin-left: 13px; margin-right: 13px">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'lucidasansregular';
+                src: local('Lucida Sans');
+            }
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            @font-face {
+                font-family: 'dejavusansmono';
+                src: local('DejaVu Sans Mono');
+            }
+            ]]>
+            </style>
+            <div class="row">
+                <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                    <span style="font-family: verdana">NOMBRE Y APELLIDOS O RAZÓN SOCIAL</span>
+                </div>
+                <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
+                    <span style="font-family: verdana">DNI/CIF</span>
+                </div>
+                <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
+                    <span style="font-family: verdana">TELÉFONO</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6" style="border: 1px solid black;">
+                    <span t-field="o.partner_id"/>
+                </div>
+                <div class="col-xs-3" style="border: 1px solid black;">
+                    <t t-if="o.partner_id.vat"><span t-field="o.partner_id.vat"/></t>
+                    <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                </div>
+                <div class="col-xs-3 text-center" style="border: 1px solid black;">
+                    <t t-if="o.partner_id.phones"><span t-field="o.partner_id.phones"/></t>
+                    <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                    <span style="font-family: verdana">DOMICILIO</span>
+                </div>
+                <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                    <span style="font-family: verdana">LOCALIDAD</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6" style="border: 1px solid black;">
+                    <t t-if="o.partner_id.street_name"><span t-field="o.partner_id.street_name"/> <span t-field="o.partner_id.street_number"/> <span t-field="o.partner_id.zip"/></t>
+                    <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                </div>
+                <div class="col-xs-6" style="border: 1px solid black;">
+                    <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/> (<span t-field="o.partner_id.state_id"/>)</t>
+                    <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                </div>
+            </div>
+            <div class="row" style="border: 1px solid black;margin-top: 10px">
+                <div class="col-xs-12 text-center">
+                    <span style="font-family: verdana">EXPONE:</span><br/><br/>
+                </div>
+                <div class="col-xs-12">
+                    <span>En relación con los entandes adscritos al siguiente período de riego:</span><br/>
+                </div>
+                <div class="col-xs-12">
+                    <span t-field="o.wateringperiod_id"/>
+                </div>
+            </div>
+            <div class="row" name="section_detail_header" style="border: 1px solid black;margin-top: 10px">
+                <div class="col-xs-12 text-center">
+                    <span style="font-family: verdana">SOLICITA:</span><br/><br/>
+                </div>
+                <div class="col-xs-12">
+                    <span>La inclusión en los citados entandes de las subparcelas abajo reseñadas, junto con sus respectivos tiempos de riego:</span>
+                </div>
+            </div>
+            <div class="row" name="section_detail_content" style="margin-top: 10px">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Subparcela</th>
+                            <th class="text-center">Parcela</th>
+                            <th class="text-left">Acequia</th>
+                            <th class="text-right">Superficie</th>
+                            <th class="text-center">Ref.Catastral</th>
+                            <th class="text-right">Duración (min)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.gravconsumption_ids" t-as="l">
+                            <td align="center">
+                                <span t-field="l.subparcel_id"/>
+                            </td>
+                            <td align="center">
+                                <span t-field="l.parcel_id"/>
+                            </td>
+                            <td align="left">
+                                <span t-field="l.irrigationditch_id"/>
+                            </td>
+                            <td align="right">
+                                <span t-field="l.subparcel_id.area_official"/>
+                            </td>
+                            <td align="center">
+                                <span t-field="l.parcel_id.cadastral_reference"/>
+                            </td>
+                            <td align="right">
+                                <span t-field="l.watering_duration"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_wua_wateringrequest_external_layout">
+        <!-- Multicompany -->
+        <t t-if="not o and doc">
+            <t t-set="o" t-value="doc"/>
+        </t>
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"></t>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"></t>
+        </t>
+
+        <t t-call="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_header" />
+        <t t-raw="0" />
+        <t t-call="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_footer" />
+    </template>
+
+    <template id="report_wua_wateringrequest_external_layout_header">
+        <div class="header" name="header_content">
+            <div name="logo_title_header" class="row">
+                <div class="col-xs-4">
+                    <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 65px;"/>
+                </div>
+                <div name="title_header">
+                    <div class="col-xs-8 text-right" style="margin-top:43px;font-family: dejavusansmono;font-size: 12px;">
+                        <span>SOLICITUD DE RIEGO</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row zero_min_height">
+                <div class="col-xs-12">
+                    <div style="border-bottom: 1px solid black;"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12" name="company_header" style="margin-top:4px;font-family: verdana;font-size: 12px;">
+                    <span t-field="company.partner_id"
+                    t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_wua_wateringrequest_external_layout_footer">
+        <t t-if="company.street and company.zip and company.city and company.state_id">
+            <t t-set="address" t-value="company.street + ' - ' + company.zip + ' ' + company.city + ' (' + company.state_id.name + ')'"/>
+        </t>
+        <div class="footer" name="footer_content" style="font-family: lucidasansregular;font-size: 11; margin-left: 13px; margin-right: 13px">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'lucidasansregular';
+                src: local('Lucida Sans');
+            }
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            ]]>
+            </style>
+            <div class="row">
+                <div class="col-xs-5" name="sign_date" style="border: 1px solid black;font-size: 12px;">
+                    <div class="text-center" style="margin-top:4px;margin-bottom:14px;">
+                        <span style="font-family: verdana">LUGAR Y FECHA</span><br/><br/><br/>
+                        <p t-if="company.city and company.state_id"><span t-field="company.city"/> (<span t-field="company.state_id.name"/>), <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/><br/><span style="font-size: 10px;" t-esc="context_timestamp(datetime.datetime.now()).strftime('%H:%M:%S')"/></p>
+                    </div>
+                </div>
+                <div class="col-xs-2"/>
+                <div class="col-xs-5" name="sign_text" style="border: 1px solid black;font-size: 12px;">
+                    <div class="text-center" style="margin-top:4px;margin-bottom:14px;">
+                        <span style="font-family: verdana">FIRMA</span><br/><br/>
+                        <t t-if="o.signature_image"><img t-att-src="'data:image/png;base64,%s' % o.signature_image" style="max-height: 51px;"/></t>
+                        <t t-else=""><br/><br/><br/></t>
+                   </div>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-xs-12 text-center" name="to_president" style="font-size: 11px;font-weight: bold;">
+                    Sr. Presidente de la <span t-field="company.partner_id"/>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-xs-12 text-justify" name="protected_data_warning" style="font-size: 8px;">
+                AVISO IMPORTANTE: De acuerdo con la Ley Orgánica 15/1999, de 13 de diciembre, de
+                Protección de Datos de Carácter Personal (LOPD), les informamos de la existencia de
+                un fichero que contiene datos de carácter personal, cuya finalidad principal es mantener
+                actualizados los datos de los comuneros e incluir en el censo los de los futuros. Este
+                fichero ha sido debidamente inscrito en la Agencia Española de Protección de Datos.
+                En caso de querer ejercer los derechos de acceso, rectificación, cancelación y
+                oposición, puede hacerlo en la dirección del responsable del fichero
+                <t t-if="address and company.email">: <span t-esc="address"/>, o en la dirección de
+                correo electrónico: <span t-field="company.email"/>.</t>
+                <t t-else="">.</t>
+                </div>
+            </div>
+            <div class="row zero_min_height">
+                <div class="col-xs-12">
+                    <div style="border-bottom: 1px solid black;"></div>
+                </div>
+            </div>
+            <div class="row" name="company_address_email">
+                <div class="col-xs-12 text-center" name="company_footer" style="margin-top:4px;font-family: verdana;font-size: 10px;">
+                    <span t-field="company.partner_id"/>
+                </div>
+                <t t-if="address">
+                    <div class="col-xs-12 text-center" style="font-size: 9px;">
+                        <span t-esc="address"/>
+                    </div>
+                </t>
+                <t t-if="company.email and company.phone and company.vat">
+                    <div class="col-xs-12 text-center" style="font-size: 9px;">
+                        <span t-field="company.email"/> - <span t-field="company.phone"/> - CIF <span t-field="company.vat"/>
+                    </div>
+                </t>
+            </div>
+            <div class="row" name="pagination">
+                <div class="col-xs-12 text-center hidden-if-one-page" name="pages" style="margin-top:14px;font-family: verdana;font-size: 10px;">
+                    <span class="page"/> / <span class="topage"/>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="minimal_layout" inherit_id="report.minimal_layout">
+        <xpath expr="//t[@t-if='subst is True']" position="replace">
+            <t t-if="subst is True">
+                <script>
+                    function subst() {
+                        var vars = {};
+                        var x = document.location.search.substring(1).split('&amp;');
+                        for (var i in x) {
+                            var z = x[i].split('=', 2);
+                            vars[z[0]] = unescape(z[1]);
+                        }
+                        var x=['frompage', 'topage', 'page', 'webpage', 'section', 'subsection', 'subsubsection'];
+                        for (var i in x) {
+                            var y = document.getElementsByClassName(x[i]);
+                            for (var j=0; j&lt;y.length; ++j)
+                                y[j].textContent = vars[x[i]];
+                        }
+                        var operations = {
+                            'not-first-page': function (elt) {
+                                elt.style.visibility = (vars.page === vars.frompage) ? "hidden" : "visible";
+                            },
+                            'not-last-page': function (elt) {
+                                elt.style.visibility = (vars.page === vars.topage) ? "hidden" : "visible";
+                            },
+                            'first-page': function (elt) {
+                                elt.style.visibility = (vars.page === vars.frompage) ? "visible" : "hidden";
+                            },
+                            'last-page': function (elt) {
+                                elt.style.visibility = (vars.page === vars.topage) ? "visible" : "hidden";
+                            },
+                            'hidden-if-one-page': function (elt) {
+                                elt.style.visibility = (vars.topage > 1) ? "visible" : "hidden";
+                            },
+                            'hidden-even-page': function (elt) {
+                                elt.style.visibility = (vars.page % 2 == 1) ? "visible" : "hidden";
+                            },
+                            'hidden-odd-page': function (elt) {
+                                elt.style.visibility = (vars.page % 2 == 0) ? "visible" : "hidden";
+                            },
+                        };
+                        for (var klass in operations) {
+                            var y = document.getElementsByClassName(klass);
+                            for (var j=0; j&lt;y.length; ++j)
+                                operations[klass](y[j]);
+                        }
+                    }
+                </script>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

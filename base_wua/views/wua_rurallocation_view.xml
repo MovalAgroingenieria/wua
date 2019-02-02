@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_rurallocation_view_form" model="ir.ui.view">
+        <field name="name">Rural Locations (form view)</field>
+        <field name="model">wua.rurallocation</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <group name="master_data">
+                    <field name="name" style="width:350px"/>
+                    <field name="description" style="width:100%%"/>
+                </group>
+                <group name="slave_data">
+                    <notebook name="slave_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_rurallocation_view_tree" model="ir.ui.view">
+        <field name="name">Rural Locations (tree view)</field>
+        <field name="model">wua.rurallocation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_rurallocation_view_search" model="ir.ui.view">
+        <field name="name">Rural Locations (search view)</field>
+        <field name="model">wua.rurallocation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_rurallocation_action" model="ir.actions.act_window">
+        <field name="name">Rural Locations</field>
+        <field name="res_model">wua.rurallocation</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_rurallocation_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_rurallocation_view_search"/>
+    </record>
+
+    <menuitem id="wua_rurallocation_menu"
+              name="Rural Locations"
+              parent="base_wua_census_configuration_menu"
+              action="wua_rurallocation_action"
+              sequence="3"
+              groups="group_wua_user"/>
+
+</odoo>

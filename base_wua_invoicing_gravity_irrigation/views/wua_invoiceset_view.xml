@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_gravconsumption_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for gravity consumptions (tree view)</field>
+        <field name="model">wua.invoiceset.line.gravconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <field name="gravconsumption_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="irrigationgate_id"/>
+                <field name="subparcel_id"/>
+                <field name="area_official"/>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <field name="employee_id"/>
+                <field name="watering_duration"/>
+                <field name="watering_volume_real"/>
+                <field name="gravconsumption_type" invisible="1"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-file"
+                        attrs="{'invisible':
+                                [('gravconsumption_type','=','distribution')],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_gravconsumption_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for gravity consumptions (search view)</field>
+        <field name="model">wua.invoiceset.line.gravconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="gravconsumption_id"/>
+                <field name="irrigationgate_id"/>
+                <field name="irrigationditch_id"/>
+                <field name="wateringperiod_id"/>
+                <field name="partner_id"/>
+                <field name="vat"/>
+                <field name="employee_id"/>
+                <field name="cadastral_reference"/>
+                <field name="subparcel_id"/>
+                <field name="agriculturalseason_id"/>
+                <filter string="Explicit Request" name="request_type"
+                 domain="[('gravconsumption_type','=','request')]"/>
+                <filter string="Distribution" name="distribution_type"
+                 domain="[('gravconsumption_type','=','distribution')]"/>
+                <separator/>
+                <filter string="With Irrigation Worker" name="withirrigationworker"
+                 domain="[('with_irrigation_worker','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Irrigation Ditch"
+                     name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                    <filter string="Watering Period"
+                     name="wateringperiod"
+                     context="{'group_by':'wateringperiod_id'}"/>
+                    <filter string="Watering"
+                     name="watering"
+                     context="{'group_by':'watering_id'}"/>
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Irrigation Worker"
+                     name="emloyee"
+                     context="{'group_by':'employee_id'}"/>
+                </group>                 
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_gravconsumption_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.gravconsumption'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_add_gravconsumption_to_invoiceset" model="ir.values">
+        <field name="name">Add gravity consumption to invoice set</field>
+        <field name="model">wua.invoiceset.line.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_gravconsumption_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_gravconsumption_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.gravconsumption'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+    
+    <record id="wua_action_remove_gravconsumption_to_invoiceset" model="ir.values">
+        <field name="name">Remove gravity consumption from invoice set</field>
+        <field name="model">wua.invoiceset.line.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_gravconsumption_to_invoiceset'))"/>
+    </record>
+
+</odoo>

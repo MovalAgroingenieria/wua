@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_watermeter_view_form" model="ir.ui.view">
+        <field name="name">Water Meters (form view)</field>
+        <field name="model">wua.watermeter</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="action_see_readings"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list"
+                                groups="base_wua.group_wua_user">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_text">Readings</span>
+                                </div>
+                        </button>                             
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name"/>
+                            <field name="state"/>
+                            <field name="type"/>
+                            <field name="nominal_diameter"/>
+                            <field name="nominal_water_flow"/>
+                            <field name="pressure"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="waterconnection_id"/>
+                            <field name="irrigationshed_id"/>
+                            <field name="hydraulicsector_id"/>
+                            <field name="last_reading_time" readonly="1"/>
+                            <field name="last_reading_value" readonly="1"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="waterconnections_page"
+                             string="Water Connections">
+                                <field name="wcwm_ids">
+                                    <tree create="false" edit="false" delete="false"
+                                     class="o_base_wua_pressurized_irrigation_waterconnections_view_tree_notebook">
+                                        <field name="assign_start"/>
+                                        <field name="assign_end"/>
+                                        <field name="waterconnection_id"/>
+                                        <field name="position"/>
+                                        <field name="hydraulicsector_id"/>
+                                        <field name="days" sum="Total"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>                        
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_watermeter_view_tree" model="ir.ui.view">
+        <field name="name">Water Meters (tree view)</field>
+        <field name="model">wua.watermeter</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_watermeters_view_tree">
+                <field name="name"/>
+                <field name="type"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="nominal_diameter"/>
+                <field name="nominal_water_flow" string="W. Flow (m3/hour)"/>
+                <field name="pressure"/>
+                <field name="last_reading_time" string="Last Reading (time)"/>
+                <field name="last_reading_value" string="Last Reading (value)"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_watermeter_view_search" model="ir.ui.view">
+        <field name="name">Water Meters (search view)</field>
+        <field name="model">wua.watermeter</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Multi-stream" name="multistream"
+                 domain="[('type','=','multistream')]"/>
+                <filter string="Woltmann" name="woltmann"
+                 domain="[('type','=','woltmann')]"/>
+                <filter string="Electromagnetic" name="electromagnetic"
+                 domain="[('type','=','electromagnetic')]"/>
+                <filter string="Ultrasonic" name="ultrasonic"
+                 domain="[('type','=','ultrasonic')]"/>
+                <filter string="Other" name="other"
+                 domain="[('type','=','undefined')]"/>
+                <separator/>
+                <filter string="Active" name="active_state"
+                 domain="[('state','=',1)]"/>
+                <filter string="Stored" name="stored_state"
+                 domain="[('state','=',2)]"/>
+                <filter string="Discarted" name="discarted_state"
+                 domain="[('state','=',3)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="waterconnection"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_watermeter_action" model="ir.actions.act_window">
+        <field name="name">Water Meters</field>
+        <field name="res_model">wua.watermeter</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_watermeter_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_watermeter_view_search"/>
+    </record>
+
+    <menuitem id="wua_watermeter_menu"
+              name="Water Meters"
+              parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
+              action="wua_watermeter_action"
+              sequence="4"/>
+
+</odoo>
