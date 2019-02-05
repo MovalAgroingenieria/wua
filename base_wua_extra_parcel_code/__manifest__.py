@@ -13,6 +13,7 @@
     "depends": [
         "base_wua",],
     "data": [
+        "views/resources.xml",
         "views/wua_parcel_view.xml",],
     "installable": True,
     "application": False,
