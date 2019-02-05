@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_gravconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (tree view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_gravity_irrigation.wua_gravconsumption_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class"></attribute>
+            </xpath>
+            <xpath expr="//field[@name='subparcel_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_initial_time']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_end_time']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_duration']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_volume']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='extra_volume']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_volume_real']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='subparcel_id']"
+                   position="before">
+                <field name="parcel_id"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']"
+                   position="after">
+                <field name="with_irrigation_worker"/>
+                <field name="employee_id"/>
+                <field name="gross_amount"/>
+                <field name="net_parcel_amount"/>
+                <field name="net_worker_amount"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_gravity_irrigation.wua_gravconsumption_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='subparcel_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='subparcel_id']"
+                   position="before">
+                <field name="parcel_id"/>
+                <field name="employee_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='partner']"
+                   position="after">
+                    <filter string="Irrigation Worker"
+                     name="irrigationworker"
+                     context="{'group_by':'employee_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_one_watering_view_tree" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (tree view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_gravity_irrigation.wua_gravconsumption_one_watering_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class"></attribute>
+            </xpath>
+            <xpath expr="//field[@name='subparcel_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_initial_time']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_end_time']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_duration']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='flowdivider_opening_time']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='flowdivider_closing_time']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_volume']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='extra_volume']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='watering_volume_real']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='subparcel_id']"
+                   position="before">
+                <field name="parcel_id"/>
+            </xpath>
+            <xpath expr="//field[@name='vat']"
+                   position="after">
+                <field name="with_irrigation_worker"/>
+                <field name="employee_id"/>
+                <field name="gross_amount"/>
+                <field name="net_parcel_amount"/>
+                <field name="net_worker_amount"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_gravconsumption_one_watering_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_gravity_irrigation.wua_gravconsumption_one_watering_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='subparcel_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='subparcel_id']"
+                   position="before">
+                <field name="parcel_id"/>
+                <field name="employee_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='partner']"
+                   position="after">
+                    <filter string="Irrigation Worker"
+                     name="irrigationworker"
+                     context="{'group_by':'employee_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
