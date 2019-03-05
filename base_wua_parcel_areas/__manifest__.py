@@ -8,7 +8,7 @@
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
-    "author": "Moval Agroingeniería",
+    "author": u"Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
         "base_wua",
@@ -16,6 +16,7 @@
     ],
     "data": [
         "views/wua_parcel_areas_view.xml",
+        "views/product_template_view.xml",
     ],
     "installable": True,
     "application": False,

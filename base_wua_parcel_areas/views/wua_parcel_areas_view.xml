@@ -1,47 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-
     <record id="wua_parcel_view_form" model="ir.ui.view">
         <field name="name">Parcels (form view)</field>
         <field name="model">wua.parcel</field>
-        <field name="inherit_id"
-               ref="base_wua.wua_parcel_view_form"/>        
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='cadastral_sector']"
-                   position="before">
-                <field name="extra_code" colspan="8"/>
+            <xpath expr="//field[@name='area_gis']" position="after">
+                <field name="area_irrigation_percentage" colspan="4"/>
+                <field name="area_irrigation" colspan="4"/>
+                <field name="area_unproductive_percentage" colspan="4"/>
+                <field name="area_unproductive" colspan="4"/>
+                <field name="area_drainage_percentage" colspan="4"/>
+                <field name="area_drainage" colspan="4"/>
+            </xpath>
+            <xpath expr="//field[@name='is_billable_expenses']" position="after">
+                <field name="billable_irrigation_percentage" colspan="4"/>
             </xpath>
         </field>
     </record>
 
-
-<!-- 
     <record id="wua_parcel_view_tree" model="ir.ui.view">
         <field name="name">Parcels (tree view)</field>
         <field name="model">wua.parcel</field>
-        <field name="inherit_id"
-               ref="base_wua.wua_parcel_view_tree"/>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']"
-                   position="after">
-                <field name="extra_code"/>
+            <xpath expr="//field[@name='area_official']" position="before">
+                <field name="area_irrigation"/>
+                <field name="area_unproductive"/>
             </xpath>
+            <xpath expr="//field[@name='area_official']" position="after">
+                <field name="area_drainage"/>
+            </xpath>
+            
         </field>
     </record>
 
     <record id="wua_parcel_view_search" model="ir.ui.view">
         <field name="name">Parcels (search view)</field>
         <field name="model">wua.parcel</field>
-        <field name="inherit_id"
-               ref="base_wua.wua_parcel_view_search"/>        
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='name']"
-                   position="after">
-                <field name="extra_code"/>
+            <xpath expr="//filter[@name='billableexpenses']" position="after">
+                <filter string="Billable Irrigation" name="billableirrigation"
+                 domain="[('billable_irrigation_percentage','=',True)]"/>
             </xpath>
         </field>
     </record>
 
--->
 </odoo>

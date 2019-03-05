@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from . import wua_parcel_areas
+from . import wua_parcel, product_template
