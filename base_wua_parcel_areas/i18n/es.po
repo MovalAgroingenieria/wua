@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-05 11:18+0000\n"
-"PO-Revision-Date: 2019-03-05 11:18+0000\n"
+"POT-Creation-Date: 2019-03-05 17:10+0000\n"
+"PO-Revision-Date: 2019-03-05 17:10+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -51,6 +51,26 @@ msgid "Irrigation Area"
 msgstr "Área Riego"
 
 #. module: base_wua_parcel_areas
+#: sql_constraint:wua.parcel:0
+msgid "The drainage percentage must be a value between 0 and 100"
+msgstr "El porcentaje de área de avenamiento debe ser un valor entre 0 y 100"
+
+#. module: base_wua_parcel_areas
+#: sql_constraint:wua.parcel:0
+msgid "The irrigation percentage must be a value between 0 and 100"
+msgstr "El porcentaje de área de riego debe ser un valor entre 0 y 100"
+
+#. module: base_wua_parcel_areas
+#: sql_constraint:wua.parcel:0
+msgid "The sum of the percentage of the irrigation and unproductive areas must be 100"
+msgstr "La suma de los porcentajes de las áreas improductiva y de riego debe ser 100"
+
+#. module: base_wua_parcel_areas
+#: sql_constraint:wua.parcel:0
+msgid "The unproductive percentage must be a value between 0 and 100"
+msgstr "El porcentaje de área improductiva debe ser un valor entre 0 y 100"
+
+#. module: base_wua_parcel_areas
 #: model:ir.model.fields,field_description:base_wua_parcel_areas.field_wua_parcel_area_unproductive_percentage
 msgid "Unproductive %"
 msgstr "% Improductivo"
@@ -75,6 +95,17 @@ msgstr "Tipo de ponderación"
 #: selection:product.template,weighting_type:0
 msgid "drainage"
 msgstr "Avenamiento"
+
+#. module: base_wua_parcel_areas
+#: code:addons/base_wua_parcel_areas/models/wua_parcel.py:108
+#: code:addons/base_wua_parcel_areas/models/wua_parcel.py:115
+#: code:addons/base_wua_parcel_areas/models/wua_parcel.py:122
+#: code:addons/base_wua_parcel_areas/models/wua_parcel.py:129
+#: code:addons/base_wua_parcel_areas/models/wua_parcel.py:136
+#: code:addons/base_wua_parcel_areas/models/wua_parcel.py:143
+#, python-format
+msgid "hectares"
+msgstr "hectáreas"
 
 #. module: base_wua_parcel_areas
 #: selection:product.template,weighting_type:0

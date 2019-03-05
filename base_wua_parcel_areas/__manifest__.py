@@ -4,7 +4,8 @@
 
 {
     "name": "Water Users Association: additional code for parcel areas",
-    "summary": "In a water users association, additional code for parcels areas",
+    "summary": " In a water users association, \
+                 additional code for parcels areas",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
