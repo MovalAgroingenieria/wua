@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api
 from lxml import etree
 
 
@@ -18,7 +18,7 @@ class WuaParcel(models.Model):
         string='Irrigation Area',
         digits=(32, 4),
         index=True,
-        readonly=True,
+        store=True,
         compute='_compute_irrigation_area')
 
     area_unproductive_percentage = fields.Float(
@@ -31,7 +31,7 @@ class WuaParcel(models.Model):
         string='Unproductive Area',
         digits=(32, 4),
         index=True,
-        readonly=True,
+        store=True,
         compute='_compute_unproductive_area')
 
     area_drainage_percentage = fields.Float(
@@ -44,7 +44,7 @@ class WuaParcel(models.Model):
         string='Drainage Area',
         digits=(32, 4),
         index=True,
-        readonly=True,
+        store=True,
         compute='_compute_drainage_area')
 
     billable_irrigation_percentage = fields.Boolean(
@@ -54,18 +54,18 @@ class WuaParcel(models.Model):
     _sql_constraints = [
         ('valid_area_irrigation_percentage',
          'CHECK (area_irrigation_percentage BETWEEN 0 AND 100)',
-         'The irrigation percentage must be a value between 0 and 100'),
+         'The irrigation percentage must be a value between 0 and 100.'),
         ('valid_area_unproductive_percentage',
          'CHECK (area_unproductive_percentage BETWEEN 0 AND 100)',
-         'The unproductive percentage must be a value between 0 and 100'),
+         'The unproductive percentage must be a value between 0 and 100.'),
         ('valid_area_drainage_percentage',
          'CHECK (area_drainage_percentage BETWEEN 0 AND 100)',
-         'The drainage percentage must be a value between 0 and 100'),
+         'The drainage percentage must be a value between 0 and 100.'),
         ('valid_sum_percentage_areas_irrigation_unproductive',
          'CHECK (area_irrigation_percentage + \
                  area_unproductive_percentage = 100)',
          'The sum of the percentage of the irrigation and \
-          unproductive areas must be 100'),
+          unproductive areas must be 100.'),
         ]
 
     @api.depends('area_official', 'area_irrigation_percentage')

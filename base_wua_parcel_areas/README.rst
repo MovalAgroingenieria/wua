@@ -2,15 +2,18 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-==========================================================
-Water Users Association extra code for parcels areas
-==========================================================
+======================================================
+Water Users Association: Extra parcel areas management
+======================================================
 
 This module add a extra parcel code for invoicing parcels areas.
 
 Description
 ===========
 
+This module allows adding the percentages of irrigated, unproductive
+and drainage areas, and based on the official area, it calculates
+the area in the given unit. That allows invoicing based on those areas.
 
 Credits
 =======
@@ -23,8 +26,8 @@ Contributors
 * Alberto Hernández <ahernandez@moval.es>
 * Eduardo Iniesta <einiesta@moval.es>
 * Miguel Mora <mmora@moval.es>
-* Jorge Vera <jvera@moval.es>
 * Juanu Sandoval <jsandoval@moval.es>
+* Jorge Vera <jvera@moval.es>
 
 Maintainer
 ----------
