@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association: Extra parcel areas management",
     "summary": " In a water users association, \
-                 a extra parcel code for invoicing parcels areas",
+                 management of additional areas for invoicing parcels",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",

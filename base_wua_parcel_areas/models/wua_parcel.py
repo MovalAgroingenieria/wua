@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from lxml import etree
 
 
@@ -198,7 +198,7 @@ class WuaParcel(models.Model):
                     original_label = \
                         self.sudo().get_value_from_translation(
                             'base_wua_parcel_areas',
-                            self.__class__.area_irrigation.string)
+                            self.__class__.area_unproductive.string)
                     posBracket = original_label.find(' (')
                     if posBracket != -1:
                         original_label = original_label[:posBracket]

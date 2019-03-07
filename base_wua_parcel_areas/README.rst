@@ -6,7 +6,7 @@
 Water Users Association: Extra parcel areas management
 ======================================================
 
-This module add a extra parcel code for invoicing parcels areas.
+This module add new area types for parcels. 
 
 Description
 ===========
