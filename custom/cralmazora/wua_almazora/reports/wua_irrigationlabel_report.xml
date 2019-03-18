@@ -75,7 +75,7 @@
                             </div>
                             <div class="col-xs-4">
                                 <t t-if="o.partner_id">
-                                    <span t-esc="o.partner_id.name[:30]"/>
+                                    <span t-esc="('[' + str(o.partner_id.partner_code) + '] ' + o.partner_id.name)[:30]"/>
                                 </t>
                                 <t t-else="">
                                     <span><![CDATA[&nbsp;]]></span>
@@ -86,7 +86,7 @@
                             </div>
                             <div class="col-xs-4">
                                 <t t-if="o.partner_id">
-                                    <span t-esc="o.partner_id.name[:30]"/>
+                                    <span t-esc="('[' + str(o.partner_id.partner_code) + '] ' + o.partner_id.name)[:30]"/>
                                 </t>
                                 <t t-else="">
                                     <span><![CDATA[&nbsp;]]></span>
