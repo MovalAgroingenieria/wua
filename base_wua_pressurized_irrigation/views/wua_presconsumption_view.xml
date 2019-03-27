@@ -64,9 +64,13 @@
                 <field name="watermeter_id"/>
                 <field name="irrigationshed_id"/>
                 <field name="hydraulicsector_id"/>
+                <field name="agriculturalseason_id"/>
                 <filter string="With adjustement" name="withadjustement"
                  domain="[('adjustement_volume','!=',0)]"/>
                 <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
                     <filter string="Hydraulic Sector"
                      name="hydraulicsector"
                      context="{'group_by':'hydraulicsector_id'}"/>
@@ -105,8 +109,14 @@
         <field name="model">wua.presconsumption</field>
         <field name="arch" type="xml">
             <search>
+                <field name="agriculturalseason_id"/>
                 <filter string="With adjustement" name="withadjustement"
                  domain="[('adjustement_volume','!=',0)]"/>
+                 <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                 </group>                 
             </search>
         </field>
     </record>
@@ -145,10 +155,23 @@
         <field name="context">{'search_default_hydraulicsector': 1, 'search_default_readingendtime': 1}</field>
     </record>
 
+    <record id="wua_technical_assign_agriculturalseason_to_consumptions_action"
+            model="ir.actions.server">
+        <field name="name">Assign agricultural seasons to pressurized consumptions</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation.model_wua_presconsumption"/>
+        <field name="code">action = env["wua.presconsumption"].action_assign_agriculturalseason_to_consumptions()</field>
+    </record>
+
     <menuitem id="wua_presconsumption_menu"
               name="Consumptions"
               parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
               action="wua_presconsumption_action"
               sequence="3"/>
+
+    <menuitem id="wua_technical_assign_agriculturalseason_to_consumptions_menu"
+              name="Calculation: pres. consumptions"
+              parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+              action="wua_technical_assign_agriculturalseason_to_consumptions_action"
+              sequence="1"/>
 
 </odoo>

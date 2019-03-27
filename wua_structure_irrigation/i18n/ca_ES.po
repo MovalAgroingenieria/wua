@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-23 07:41+0000\n"
-"PO-Revision-Date: 2018-09-23 07:41+0000\n"
+"POT-Creation-Date: 2019-03-28 17:31+0000\n"
+"PO-Revision-Date: 2019-03-28 17:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,9 +21,14 @@ msgid "After watering calculation, distribute extra volume"
 msgstr "Després de calcular el entande, repartir entre els consums el volum extra sobrant"
 
 #. module: wua_structure_irrigation
+#: model:ir.model,name:wua_structure_irrigation.model_wua_agriculturalseason
+msgid "Agricultural Seasons"
+msgstr "Campanyes"
+
+#. module: wua_structure_irrigation
 #: model:ir.ui.view,arch_db:wua_structure_irrigation.wua_irrigation_config_settings_view_form
 msgid "Apply"
-msgstr "Aplica"
+msgstr "Aplicar"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_default_calculation_model
@@ -33,7 +38,7 @@ msgstr "Model de Càlcul"
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,help:wua_structure_irrigation.field_wua_irrigation_configuration_default_calculation_model
 msgid "Calculation Model for watering"
-msgstr "Calculation Model for watering"
+msgstr "Tipus de procediment a aplicar en el càlcul de entandes"
 
 #. module: wua_structure_irrigation
 #: model:ir.ui.view,arch_db:wua_structure_irrigation.wua_irrigation_config_settings_view_form
@@ -46,19 +51,14 @@ msgid "Configuration"
 msgstr "Configuració"
 
 #. module: wua_structure_irrigation
-#: model:ir.model,name:wua_structure_irrigation.model_wua_irrigation_configuration
-msgid "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
-msgstr "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
-
-#. module: wua_structure_irrigation
 #: model:ir.actions.act_window,name:wua_structure_irrigation.wua_irrigation_configuration_action
 msgid "Configure Irrigation"
-msgstr "Configure Irrigation"
+msgstr "Configurar reg"
 
 #. module: wua_structure_irrigation
 #: selection:wua.irrigation.configuration,default_calculation_model:0
 msgid "Constant Irrigation Allocation"
-msgstr "Constant Irrigation Allocation"
+msgstr "Dotació fixa per parcel·la"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_create_uid
@@ -88,17 +88,28 @@ msgstr "Dotació de reg per defecte (si la sèquia triada no té aquest valor)"
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_display_name
 msgid "Display Name"
-msgstr "Mostrar Nom"
+msgstr "Mostra el nom"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_default_distribute_extra_volume
 msgid "Distribute extra vol."
-msgstr "Repartir Vol. Extra"
+msgstr "Repartir volum extra"
 
 #. module: wua_structure_irrigation
 #: selection:wua.irrigation.configuration,default_watermeter_type:0
 msgid "Electromagnetic"
-msgstr "Electromagnetic"
+msgstr "Electromagnètic"
+
+#. module: wua_structure_irrigation
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:62
+#, python-format
+msgid "Empty Value (description)."
+msgstr "Valor en blanc (descripció)."
+
+#. module: wua_structure_irrigation
+#: sql_constraint:wua.agriculturalseason:0
+msgid "Existing Agricultural Season."
+msgstr "Campaña ja existent."
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,help:wua_structure_irrigation.field_wua_irrigation_configuration_default_only_cultivable_subparcel
@@ -122,6 +133,11 @@ msgid "If true, there will be a maximum duration for the requested subparcel wat
 msgstr "Si es marca, hi haurà una durada màxima per als regs de subparcel·les sol·licitats"
 
 #. module: wua_structure_irrigation
+#: sql_constraint:wua.agriculturalseason:0
+msgid "Incorrect dates."
+msgstr "Dates incorrectes."
+
+#. module: wua_structure_irrigation
 #: model:ir.ui.menu,name:wua_structure_irrigation.base_wua_irrigation_menu
 msgid "Irrigation Management"
 msgstr "Gestió de Regs"
@@ -134,17 +150,17 @@ msgstr "Configuració dels regs"
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació feta el"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Actualitzat per última vegada per"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Actualitzat per última vegada el dia"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_default_volume_perunitime
@@ -191,6 +207,20 @@ msgstr "Reg a pressió"
 #: model:ir.ui.menu,name:wua_structure_irrigation.base_wua_irrigation_technical_menu
 msgid "Technical"
 msgstr "Tècnic"
+
+#. module: wua_structure_irrigation
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:78
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:106
+#, python-format
+msgid "The agricultural season is overlapped on another season."
+msgstr "La campanya es solapa amb una altra."
+
+#. module: wua_structure_irrigation
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:71
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:99
+#, python-format
+msgid "The duration of an agricultural season can not be longer than one year."
+msgstr "La campanya no pot durar més d'un any."
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,help:wua_structure_irrigation.field_wua_irrigation_configuration_watering_req_duration_threshold_factor

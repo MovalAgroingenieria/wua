@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-02 16:45+0000\n"
-"PO-Revision-Date: 2018-12-02 16:45+0000\n"
+"POT-Creation-Date: 2019-03-29 07:22+0000\n"
+"PO-Revision-Date: 2019-03-29 07:22+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_form
 msgid "<span class=\"o_stat_text\">Consumptions</span>"
 msgstr "<span class=\"o_stat_text\">Consumos</span>"
@@ -43,6 +44,25 @@ msgid "Agregated Values"
 msgstr "Valores agregados"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_agriculturalseason_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_one_waterconnection_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
+msgid "Agricultural Season"
+msgstr "Campaña"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_agriculturalseason_action
+#: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_agriculturalseason
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_agriculturalseason_menu
+msgid "Agricultural Seasons"
+msgstr "Campañas"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation.wua_technical_assign_agriculturalseason_to_consumptions_action
+msgid "Assign agricultural seasons to pressurized consumptions"
+msgstr "Asignar campaña a los consumos de presión"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_wcwm_ids
 msgid "Assigned Water Connections"
 msgstr "Tomas asignadas"
@@ -51,6 +71,11 @@ msgstr "Tomas asignadas"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_wcwm_ids
 msgid "Assigned Water Meters"
 msgstr "Contadores asignados"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_technical_assign_agriculturalseason_to_consumptions_menu
+msgid "Calculation: pres. consumptions"
+msgstr "Cálculo: consumos (presión)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
@@ -76,8 +101,11 @@ msgid "Consumption"
 msgstr "Consumo"
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/models/wua_agriculturalseason.py:39
+#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:229
 #: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:143
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_presconsumption_action
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_agriculturalseason_presconsumption_ids
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_presconsumption_menu
 #, python-format
 msgid "Consumptions"
@@ -128,12 +156,12 @@ msgstr "Electromagnético"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_presconsumption
 msgid "Entity (pressure consumption)"
-msgstr "Entity (pressure consumption)"
+msgstr "Elemento (consumo de presión)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_waterconnection
 msgid "Entity (water connection)"
-msgstr "Entity (water connection)"
+msgstr "Elemento (toma)"
 
 #. module: base_wua_pressurized_irrigation
 #: sql_constraint:wua.presconsumption:0
@@ -167,6 +195,7 @@ msgid "Gross Value (m3)"
 msgstr "Volumen bruto (m3)"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_one_waterconnection_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
@@ -232,7 +261,7 @@ msgstr "Caseta"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_parcel_irrigationpointwc
 msgid "Irrigation point of a parcel (WC), with pressurized irrigation"
-msgstr "Irrigation point of a parcel (WC), with pressurized irrigation"
+msgstr "Punto de suministro de una parcela, con riego a presión"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption___last_update
@@ -310,11 +339,17 @@ msgstr "Lectura normal"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_notes
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_notes
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_notes
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_form
 msgid "Notes"
 msgstr "Notas"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_agriculturalseason_number_of_presconsumptions
+msgid "Number of consumptions"
+msgstr "Nº consumos"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
@@ -339,7 +374,7 @@ msgstr "Presión (bar)"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_graphic
 msgid "Pressure Consumptions"
-msgstr "Pressure Consumptions"
+msgstr "Consumos a presión"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_name
@@ -386,7 +421,7 @@ msgstr "Volumen real (m3)"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_state
 msgid "State"
-msgstr "Provincia"
+msgstr "Estado"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
@@ -431,7 +466,7 @@ msgid "The reading volume must be a non-negative value."
 msgstr "El valor (m3) de la lectura no puede ser negativo."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:140
+#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:148
 #, python-format
 msgid "The water meter is mandatory, it must be active and it must have a water connection."
 msgstr "Es obligatorio indicar un contador activo que esté conectado a una toma."
@@ -509,7 +544,7 @@ msgstr "Caudal (m3/hora)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 msgid "Water Connection"
-msgstr "Toma"
+msgstr "Concepto por toma"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_waterconnection_ids

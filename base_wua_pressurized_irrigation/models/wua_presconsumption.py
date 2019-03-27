@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
+# 2019 - Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
@@ -29,7 +29,8 @@ class WuaPresconsumption(models.Model):
 
     reading_initial_time = fields.Datetime(
         string='Reading Start Time',
-        readonly=True)
+        readonly=True,
+        index=True)
 
     initial_volume = fields.Float(
         string='Initial Value (m3)',
@@ -38,7 +39,8 @@ class WuaPresconsumption(models.Model):
 
     reading_end_time = fields.Datetime(
         string='Reading End Time',
-        readonly=True)
+        readonly=True,
+        index=True)
 
     end_volume = fields.Float(
         string='Final Value (m3)',
@@ -99,6 +101,12 @@ class WuaPresconsumption(models.Model):
         index=True)
 
     notes = fields.Html(string='Notes')
+
+    agriculturalseason_id = fields.Many2one(
+        string='Agricultural Season',
+        comodel_name='wua.agriculturalseason',
+        index=True,
+        ondelete='set null')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Consumption.'),
@@ -172,6 +180,15 @@ class WuaPresconsumption(models.Model):
                     record.reading_end_time
             record.name = value
 
+    @api.model
+    def create(self, vals):
+        agriculturalseasons = self.env['wua.agriculturalseason'].search(
+            [('initial_date', '<=', vals['reading_end_time']),
+             ('end_date', '>=', vals['reading_end_time'])])
+        if len(agriculturalseasons) == 1:
+            vals['agriculturalseason_id'] = agriculturalseasons[0].id
+        return super(WuaPresconsumption, self).create(vals)
+
     @api.multi
     def name_get(self):
         result = []
@@ -191,3 +208,28 @@ class WuaPresconsumption(models.Model):
                     date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
             result.append((record.id, name))
         return result
+
+    def action_assign_agriculturalseason_to_consumptions(self):
+        presconsumptions = self.env['wua.presconsumption']
+        all_presconsumptions = presconsumptions.search([])
+        all_presconsumptions.write({
+            'agriculturalseason_id': None,
+            })
+        agriculturalseasons = self.env['wua.agriculturalseason'].search([])
+        for agriculturalseason in agriculturalseasons:
+            presconsumptions_of_current_season = presconsumptions.search(
+                [('reading_end_time', '>=', agriculturalseason.initial_date),
+                 ('reading_end_time', '<=', agriculturalseason.end_date)])
+            if len(presconsumptions_of_current_season) > 0:
+                presconsumptions_of_current_season.write({
+                    'agriculturalseason_id': agriculturalseason.id,
+                    })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Consumptions'),
+            'res_model': 'wua.presconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'target': 'current',
+            'context': self.env.context,
+            }
