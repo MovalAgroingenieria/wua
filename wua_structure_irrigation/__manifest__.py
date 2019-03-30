@@ -14,6 +14,7 @@
     "depends": [
         "base_wua_infrastructure",],
     "data": [
+        "security/ir.model.access.csv",
         "data/wua_irrigation_config_settings_data.xml",
         "views/wua_irrigation_menus_view.xml",
         "views/wua_irrigation_config_settings_view.xml",],
