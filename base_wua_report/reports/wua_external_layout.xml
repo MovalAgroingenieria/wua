@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Paper format for wua reports (margins L/R 2cm) -->
+    <record id="paperformat_wua_reports" model="report.paperformat">
+        <field name="name">European A4 Wua Reports</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">23</field>
+        <field name="margin_left">12</field>
+        <field name="margin_right">12</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">30</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <!-- Assign paper format to all external reports -->
+    <!-- Sale order -->
+    <record id="sale.report_sale_order" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
+    <!-- Proforma invoice (sale_proforma_quotation module dependence)
+    <record id="sale_proforma_quotation.report_proforma" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record> -->
+
+    <!-- Picking Operations -->
+    <record id="stock.action_report_picking" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
+    <!-- Delivery Slip -->
+    <record id="stock.action_report_delivery" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
+    <!-- Inventory -->
+    <record id="stock.action_report_inventory" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
+    <!-- Invoice -->
+    <record id="account.account_invoices" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
+    <!-- Purchase -->
+    <!-- @TODO -->
+
+
+    <!-- Define external layout -->
+    <template id="wua_external_layout">
+        <!-- Multicompany -->
+        <t t-if="not o and doc">
+            <t t-set="o" t-value="doc"/>
+        </t>
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"></t>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"></t>
+        </t>
+        <t t-call="base_wua_report.external_layout_header"/>
+        <t t-raw="0" />
+        <t t-call="base_wua_report.external_layout_footer"/>
+    </template>
+
+
+    <!-- Header -->
+    <template id="external_layout_header">
+        <div class="header">
+
+            <div class="row">
+                <div class="col-xs-6">
+                    <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 60px;"/>
+                </div>
+                <div class="col-xs-6" style="margin-bottom: 6px">
+                    <!-- This subdivision is the anchor for picking operations barcode insert -->
+                    <div name="company_address">
+                        <t t-if="company.name">
+                            <li style="list-style:none;">
+                                <strong><span t-field="company.name"/></strong>
+                            </li>
+                        </t>
+                        <t t-if="company.vat">
+                            <li style="list-style:none;">TIN: <span t-field="company.vat"/></li>
+                        </t>
+                        <t t-if="company.street">
+                            <li style="list-style:none;">
+                                <span t-field="company.street"/>
+                                <t t-if="company.street2">
+		                            <span t-field="company.street"/>
+		                        </t>
+                            </li>
+                        </t>
+                        <t t-if="company.city">
+                            <li style="list-style:none;">
+                                <span t-field="company.city"/>
+                                <t t-if="company.zip">
+                                    <span t-field="company.zip"/>
+                                </t>
+                            </li>
+                        </t>
+                        <t t-if="company.state_id">
+                            <li style="list-style:none;">
+                                <span t-field="company.state_id"/>
+                                <t t-if="company.country_id">
+                                    <span t-field="company.country_id"/>
+                                </t>
+                            </li>
+                        </t>
+                        
+                        
+                        
+                        <t t-set="company" t-value="company.sudo()"/>
+                        <t t-if="company.phone">
+                            <li style="list-style:none;">Phone: <span t-field="company.phone"/></li>
+                        </t>
+                        <t t-if="company.fax">
+                            <li style="list-style:none;">Fax: <span t-field="company.fax"/></li>
+                        </t>
+                        <t t-if="company.email">
+                            <li style="list-style:none;">Email: <span t-field="company.email"/></li>
+                            
+                        </t>
+                        <t t-if="company.website">
+                            <li style="list-style:none;">Website: <span t-field="company.website"/></li>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <!-- separator line -->
+            <div class="row zero_min_height">
+	            <div class="col-xs-12">
+	                <div style="border-bottom: 1px solid black;"/>
+	            </div>
+            </div>
+        </div>
+        
+        
+    </template>
+
+
+    <!--  Footer -->
+    <template id="external_layout_footer">
+        <div class="footer">
+            <div class="text-center" style="border-top: 1px solid black;">
+                <ul t-if="not company.custom_footer" class="list-inline">
+                    <t t-set="company" t-value="company.sudo()"/>
+                    <li t-if="company.phone">Phone: <span t-field="company.phone"/></li>
+
+                    <li t-if="company.fax and company.phone">&amp;bull;</li>
+                    <li t-if="company.fax">Fax: <span t-field="company.fax"/></li>
+
+                    <li t-if="company.email and company.fax or company.email and company.phone">&amp;bull;</li>
+                    <li t-if="company.email">Email: <span t-field="company.email"/></li>
+
+                    <li t-if="company.website and company.email or company.website and company.fax or company.website and company.phone">&amp;bull;</li>
+                    <li t-if="company.website">Website: <span t-field="company.website"/></li>
+                </ul>
+
+                <ul t-if="not company.custom_footer" class="list-inline" name="financial_infos">
+                    <li t-if="company.vat">TIN: <span t-field="company.vat"/></li>
+                </ul>
+
+                <t t-if="company.custom_footer">
+                    <span t-raw="company.rml_footer"/>
+                </t>
+                
+                <div>HOLA</div>
+                
+                <ul class="list-inline">
+                    <li>Page:</li>
+                    <li><span class="page"/></li>
+                    <li>/</li>
+                    <li><span class="topage"/></li>
+                </ul>
+            </div>
+        </div>
+    </template>
+
+
+
+
+    <!-- Change associated external layout in all external reports -->
+    <!-- Sale order -->
+    <template id="base_wua_report_saleorder" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        </xpath>
+    </template>
+
+    <!-- Proforma invoice -->
+    <!-- @TODO -->
+
+    <!-- Picking Operations (overwrite original) -->
+    <template id="stock.external_layout_header_barcode_right" inherit_id="base_wua_report.external_layout_header">
+        <xpath expr="//div[@class='header']" position="after">
+            <div class="col-xs-4 pull-right mt8" name="right_box">
+                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s' % ('Code128', o.name, 600, 100)" style="width:300px;height:50px;"/>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Delivery Slip -->
+    <template id="base_wua_report_delivery" inherit_id="stock.report_delivery_document">
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        </xpath>
+    </template>
+
+    <!-- Inventory 
+    <template id="base_wua_report_inventory" inherit_id="account.report_invoice_document">
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        </xpath>
+    </template> -->
+
+    <!-- Invoice -->
+    <template id="base_wua_report_invoice" inherit_id="account.report_invoice_document">
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        </xpath>
+    </template>
+
+
+</odoo>
