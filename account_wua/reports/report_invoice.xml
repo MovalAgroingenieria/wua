@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Modification report invoice -->
+    <template id="wua_report_invoice_document" inherit_id="account.report_invoice_document">
+
+        <!-- Customize address -->
+        <xpath expr="//div[@name='invoice_address']" position="replace">
+            <div name="invoice_address">
+                <div class="row" style="border: 1px solid lightgrey; margin: 0px 20px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="border-right: 1px solid black; width: 50%; display: table-cell;">
+                            <p style="margin-left: -8px; margin-top: 2px">Invoicing address</p>
+                            <p>&amp;nbsp;</p>
+                            <p>&amp;nbsp;</p>
+                        </div>
+                        <div style="width: 50%; display: table-cell; padding: 0px 8px;">
+                            <p style="margin-top: 2px">Shipping Address</p>
+                            <p>&amp;nbsp;</p>
+                            <p>&amp;nbsp;</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+        <!-- Add invoiceset (lot) field to infocells -->
+        <xpath expr="//div[@t-if='o.name']" position="before">
+            <div class="col-xs-12" t-if="o.invoiceset_id">
+                <strong>Lot: </strong>
+                <p t-field="o.invoiceset_id"/>
+            </div>
+        </xpath>
+
+        <!-- Add product_id column to invoice lines -->
+        <xpath expr="//table[@class='table table-condensed'][1]/thead/tr" position="after">
+            <th>Product</th>
+        </xpath>
+        <xpath expr="//tr[@t-foreach='o.invoice_line_ids']" position="after">
+            <td><span t-field="l.product_id.name"/></td>
+        </xpath>
+
+
+        <!-- Add monetary symbol to unitary price column 
+        <xpath expr="//span[@t-field='l.price_unit']" position="replace">
+            <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
+        </xpath> -->
+
+
+        <!-- Do not show tax resume table 
+	    <xpath expr="//div[@t-if='len(o.tax_line_ids) > 0']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+	    </xpath> -->
+
+        <!-- Add bank account (conditional) 
+        <xpath expr="//p[@t-if='o.fiscal_position_id.note']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath> -->
+
+
+    </template>
+
+</odoo>

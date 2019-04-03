@@ -11,9 +11,14 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "account",],
+        "account",
+        "base_wua_report",
+        "invoice_comment_template",
+    ],
     "data": [
-        "views/partner_view.xml",],
+        "views/partner_view.xml",
+        "reports/report_invoice.xml",
+    ],
     "installable": True,
     "application": False,
 }
