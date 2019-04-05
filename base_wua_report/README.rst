@@ -2,16 +2,14 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-===================================
-Account for Water Users Association
-===================================
-
-This module allows you to manage the account module functions for water users associations.
+===============
+Base Wua Report
+===============
 
 Description
 ===========
 
-Account module adapted for base_wua module
+This module customizes the header and footer of the external printed documents.
 
 Credits
 =======

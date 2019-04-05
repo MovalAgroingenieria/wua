@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Modification report invoice -->
+    <template id="wua_report_invoice_document" inherit_id="account.report_invoice_document">
+
+        <!-- Customize address -->
+        <xpath expr="//div[@name='invoice_address']" position="replace">
+            <div name="invoice_address">
+                <div class="row" style="border: 1px solid white; margin: 0px 20px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="border-right: 1px solid white; width: 60%; display: table-cell;">
+                            <p style="margin-bottom: 0px"><i>Invoicing address</i></p>
+                            <div>
+                                <t t-if="o.partner_id.name">
+                                    <strong><span t-field="o.partner_id.name"/></strong>
+                                </t>
+                                <br/>
+                                <t t-if="o.partner_id.vat">
+                                    <!-- The two first chars are sliced -->
+                                    <t t-set="mod_vat" t-value="o.partner_id.vat[2:]"/>
+                                    <span>TIN:&amp;nbsp;</span>
+                                    <span t-esc="mod_vat"/>
+                                </t>
+                                <br/>
+                                <t t-if="o.partner_id.street">
+                                    <span t-field="o.partner_id.street"/>
+                                </t>
+                                <t t-if="o.partner_id.street2">
+                                    <span t-field="o.partner_id.street2"/>
+                                </t>
+                                <t t-if="o.partner_id.street_number">
+                                    <span>,&amp;nbsp;</span>
+                                    <span t-field="o.partner_id.street_number"/>
+                                </t>
+                                <br/>
+                                <t t-if="o.partner_id.city">
+                                    <span t-field="o.partner_id.city"/>
+                                </t>
+                                <t t-if="o.partner_id.zip">
+                                    <span>&amp;nbsp;-&amp;nbsp;</span>
+                                    <span t-field="o.partner_id.zip"/>
+                                </t>
+                                <br/>
+                                <t t-if="o.partner_id.state_id">
+                                    <span t-field="o.partner_id.state_id"/>
+                                </t>
+                                <t t-if="o.partner_id.country_id">
+                                    <span t-field="o.partner_id.country_id"/>
+                                </t>
+                            </div>
+                        </div>
+                        <div style="width: 40%; display: table-cell; padding: 0px 8px;">
+                            <p style="margin-bottom: 0px"><i>Shipping Address</i></p>
+                            <div>
+                                <t t-if="o.partner_id.name">
+                                    <strong><span t-field="o.partner_id.name"/></strong>
+                                </t>
+                                <br/>
+                                <t t-if="o.partner_id.street">
+                                    <span t-field="o.partner_id.street"/>
+                                </t>
+                                <t t-if="o.partner_id.street2">
+                                    <span t-field="o.partner_id.street2"/>
+                                </t>
+                                <t t-if="o.partner_id.street_number">
+                                    <span>,&amp;nbsp;</span>
+                                    <span t-field="o.partner_id.street_number"/>
+                                </t>
+                                <br/>
+                                <t t-if="o.partner_id.city">
+                                    <span t-field="o.partner_id.city"/>
+                                </t>
+                                <t t-if="o.partner_id.zip">
+                                    <span>&amp;nbsp;-&amp;nbsp;</span>
+                                    <span t-field="o.partner_id.zip"/>
+                                </t>
+                                <br/>
+                                <t t-if="o.partner_id.state_id">
+                                    <span t-field="o.partner_id.state_id"/>
+                                </t>
+                                <t t-if="o.partner_id.country_id">
+                                    <span t-field="o.partner_id.country_id"/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+        <!-- Add invoiceset (lot) field to infocells -->
+        <xpath expr="//div[@t-if='o.name']" position="before">
+            <div class="col-xs-12" t-if="o.invoiceset_id">
+                <strong>Lot:&amp;nbsp;</strong>
+                <span t-field="o.invoiceset_id"/>
+            </div>
+        </xpath>
+
+        <!-- Add product_id column to invoice lines -->
+        <xpath expr="//table[@class='table table-condensed'][1]/thead/tr/th" position="before">
+            <th>Product</th>
+        </xpath>
+        <xpath expr="//tbody[@class='invoice_tbody']/tr/td" position="before">
+            <td><span t-field="l.product_id"/></td>
+        </xpath>
+
+        <!-- Add monetary symbol to unitary price column -->
+        <xpath expr="//span[@t-field='l.price_unit']" position="replace">
+            <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
+        </xpath>
+
+        <!-- Change tax column from tax description to tax name -->
+        <xpath expr='//span[@t-esc="&apos;, &apos;.join(map(lambda x: (x.description or x.name), l.invoice_line_tax_ids))"]' position="replace">
+            <span t-esc="', '.join(map(lambda x: (x.name), l.invoice_line_tax_ids))"/>
+        </xpath>
+        <xpath expr='//span[@t-esc="amount_by_group[0] if len(o.tax_line_ids) > 1 else (o.tax_line_ids.tax_id.description or o.tax_line_ids.tax_id.name)"]' position="replace">
+            <span t-esc="amount_by_group[0] if len(o.tax_line_ids) > 1 else (o.tax_line_ids.tax_id.name)"/>
+        </xpath>
+
+        <!-- Do not show tax resume table -->
+        <xpath expr="//div[@t-if='len(o.tax_line_ids) > 0']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+
+        <!-- Add payment mode and bank account (conditional) -->
+        <xpath expr="//p[@t-if='o.fiscal_position_id.note']" position="after">
+            <t t-if="o.payment_mode_id">
+                <p>
+                    <span><strong>Payment mode:&amp;nbsp;</strong></span>
+                    <span t-field="o.payment_mode_id"/>
+                </p>
+                <p>
+                    <t t-if="'bancari' not in o.payment_mode_id.name">
+                        <span><strong>Bank account:&amp;nbsp;</strong></span>
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.name">
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.name"/>
+                        </t>
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.bic">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.bic"/>
+                        </t>
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_acc_number">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_acc_number"/>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <span><strong>Bank account:&amp;nbsp;</strong></span>
+                        <t t-if="o.mandate_id.partner_bank_id.bank_name">
+                            <span t-field="o.mandate_id.partner_bank_id.bank_name"/>
+                        </t>
+                        <t t-if="o.mandate_id.partner_bank_id.bank_bic">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.mandate_id.partner_bank_id.bank_bic"/>
+                        </t>
+                        <t t-if="o.mandate_id.partner_bank_id.acc_number">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <t t-set="anonymous_acc_number" t-value="o.mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                            <span t-esc="anonymous_acc_number"/>
+                        </t>
+                    </t>
+                </p>
+            </t>
+        </xpath>
+
+    </template>
+
+</odoo>
