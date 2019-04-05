@@ -131,17 +131,19 @@
             </p>
             <p>
                 <span><strong>Bank account:&amp;nbsp;</strong></span>
-                <t t-if="'bancaria' not in o.payment_mode_id.name">
-                    <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.name">
-                        <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.name"/>
-                    </t>
-                    <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.bic">
-                        <span>&amp;nbsp;-&amp;nbsp;</span>
-                        <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.bic"/>
-                    </t>
-                    <t t-if="o.payment_mode_id.fixed_journal_id.bank_acc_number">
-                        <span>&amp;nbsp;-&amp;nbsp;</span>
-                        <span t-field="o.payment_mode_id.fixed_journal_id.bank_acc_number"/>
+                <t t-if="o.payment_mode_id">
+                    <t t-if="'bancaria' not in o.payment_mode_id.name">
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.name">
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.name"/>
+                        </t>
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.bic">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.bic"/>
+                        </t>
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_acc_number">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_acc_number"/>
+                        </t>
                     </t>
                 </t>
                 <t t-else="">
