@@ -145,17 +145,19 @@
                     </t>
                 </t>
                 <t t-else="">
-                    <t t-if="o.mandate_id.partner_bank_id.bank_name">
-                        <span t-field="o.mandate_id.partner_bank_id.bank_name"/>
-                    </t>
-                    <t t-if="o.mandate_id.partner_bank_id.bank_bic">
-                        <span>&amp;nbsp;-&amp;nbsp;</span>
-                        <span t-field="o.mandate_id.partner_bank_id.bank_bic"/>
-                    </t>
-                    <t t-if="o.mandate_id.partner_bank_id.acc_number">
-                        <span>&amp;nbsp;-&amp;nbsp;</span>
-                        <t t-set="anonymous_acc_number" t-value="o.mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
-                        <span t-esc="anonymous_acc_number"/>
+                    <t t-if="o.payment_mode_id">
+                        <t t-if="o.mandate_id.partner_bank_id.bank_name">
+                            <span t-field="o.mandate_id.partner_bank_id.bank_name"/>
+                        </t>
+                        <t t-if="o.mandate_id.partner_bank_id.bank_bic">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.mandate_id.partner_bank_id.bank_bic"/>
+                        </t>
+                        <t t-if="o.mandate_id.partner_bank_id.acc_number">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <t t-set="anonymous_acc_number" t-value="o.mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                            <span t-esc="anonymous_acc_number"/>
+                        </t>
                     </t>
                 </t>
             </p>
