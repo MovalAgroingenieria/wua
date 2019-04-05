@@ -11,6 +11,7 @@
     "license": "AGPL-3",
     "depends": [
         "account",
+        "base_wua_invoicing",
         "sale",
         "stock",
         "report",

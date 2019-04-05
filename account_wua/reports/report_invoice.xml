@@ -131,8 +131,8 @@
                     <span t-field="o.payment_mode_id"/>
                 </p>
                 <p>
-                    <span><strong>Bank account:&amp;nbsp;</strong></span>
                     <t t-if="'bancari' not in o.payment_mode_id.name">
+                        <span><strong>Bank account:&amp;nbsp;</strong></span>
                         <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.name">
                             <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.name"/>
                         </t>
@@ -146,6 +146,7 @@
                         </t>
                     </t>
                     <t t-else="">
+                        <span><strong>Bank account:&amp;nbsp;</strong></span>
                         <t t-if="o.mandate_id.partner_bank_id.bank_name">
                             <span t-field="o.mandate_id.partner_bank_id.bank_name"/>
                         </t>
