@@ -16,6 +16,7 @@
     ],
     "data": [
         "views/wua_share_view.xml",
+        "views/base_wua_share.xml",
     ],
     "installable": True,
     "application": False,
