@@ -3,17 +3,16 @@
    :alt: License: AGPL-3
 
 ======================================================
-Water Users Association: Extra parcel areas management
+Water Users Association: Share management
 ======================================================
 
-This module add new area types for parcels. 
+This module add field for Share information. 
 
 Description
 ===========
 
-This module allows adding the percentages of irrigated, unproductive
-and drainage areas, and based on the official area, it calculates
-the area in the given unit. That allows invoicing based on those areas.
+This module allows to add a field name Share to the Partners of
+a WUA 
 
 Credits
 =======
@@ -28,7 +27,7 @@ Contributors
 * Miguel Mora <mmora@moval.es>
 * Juanu Sandoval <jsandoval@moval.es>
 * Jorge Vera <jvera@moval.es>
-
+* Salvador Sánchez <ssanchez@moval.es>
 Maintainer
 ----------
 
