@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_share_view_form" model="ir.ui.view">
+        <field name="name">Share (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='number_of_votes']" position="after">
+              <field name="share" readonly="0"
+               attrs="{'invisible':[('is_wua_partner','=',False)]}"
+               groups="base_wua.group_wua_user"/>
+          </xpath>
+        </field>
+    </record>
+
+    <record id="wua_share_view_tree" model="ir.ui.view">
+        <field name="name">Share (tree view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_tree"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='number_of_votes']" position="after">
+              <field name="share" readonly="1"
+              />
+          </xpath>
+        </field>
+    </record>
+
+
+
+</odoo>
