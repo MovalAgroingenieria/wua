@@ -2,9 +2,9 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-======================================================
+=========================================
 Water Users Association: Share management
-======================================================
+=========================================
 
 This module add field for Share information. 
 
@@ -28,6 +28,7 @@ Contributors
 * Juanu Sandoval <jsandoval@moval.es>
 * Jorge Vera <jvera@moval.es>
 * Salvador Sánchez <ssanchez@moval.es>
+
 Maintainer
 ----------
 
