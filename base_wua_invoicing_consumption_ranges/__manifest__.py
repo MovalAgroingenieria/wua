@@ -16,7 +16,9 @@
         "base_wua_invoicing_pressurized_irrigation",],
     "data": [
         "security/security.xml",
-        "views/wua_invoiceset_view.xml",],
+        "views/wua_invoiceset_view.xml",
+        "views/wua_waterconnection_view.xml",
+        "views/wua_irrigation_config_settings_view.xml",],
     "installable": True,
     "application": True,
 }
