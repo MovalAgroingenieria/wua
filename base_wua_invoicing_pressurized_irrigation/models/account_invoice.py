@@ -32,15 +32,15 @@ class AccountInvoice(models.Model):
             if (invoice_line.categ_id.productcategory_code == 7 and
                invoice_line.waterconnection_id):
                 waterconnections_ids.append(invoice_line.waterconnection_id.id)
-        # Provisional
-        # waterconnections_ids.append(10)
         if waterconnections_ids:
+            invoiceset_id = invoice_lines[0].invoiceset_id.id
             waterconnections_ids = list(set(waterconnections_ids))
             consumptions = []
             for waterconnection_id in waterconnections_ids:
                 consumptions_of_current_wc = \
                     self.env['wua.presconsumption'].search(
-                        [('waterconnection_id', '=', waterconnection_id)],
+                        [('waterconnection_id', '=', waterconnection_id),
+                         ('invoiceset_id', '=', invoiceset_id)],
                         order='reading_end_time')
                 if consumptions_of_current_wc:
                     consumptions.extend(consumptions_of_current_wc)

@@ -310,10 +310,8 @@ class WuaInvoicesetLine(models.Model):
                     UPDATE wua_presconsumption
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
                     invoiced_consumption=TRUE
-                    FROM wua_invoiceset_line_presconsumption
-                    WHERE wua_presconsumption.id=
-                    wua_invoiceset_line_presconsumption.presconsumption_id
-                    """)
+                    WHERE product_id=""" + str(product_id) + """ and
+                    invoiceset_id is null""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
