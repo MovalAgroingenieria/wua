@@ -18,7 +18,8 @@
         "security/security.xml",
         "views/wua_invoiceset_view.xml",
         "views/wua_waterconnection_view.xml",
-        "views/wua_irrigation_config_settings_view.xml",],
+        "views/wua_irrigation_config_settings_view.xml",
+        "reports/report_invoice_templates.xml",],
     "installable": True,
     "application": True,
 }

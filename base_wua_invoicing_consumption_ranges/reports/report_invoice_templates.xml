@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_invoice_document"
+     inherit_id="base_wua_invoicing_pressurized_irrigation.report_invoice_document">
+        <xpath expr="//div[@name='consumptions']" position="after">
+            <div name="threshold">
+            <t t-set="daily_quota_data"
+               t-value="o._get_daily_quota_data(o.invoice_line_ids)"/>
+            <t t-if="daily_quota_data['quota_day'] > 0">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Daily Quota (m3/area unit)</th>
+                            <th class="text-center">Total Area</th>
+                            <th class="text-center">Invoicing Days</th>
+                            <th class="text-center">Assigned Quota (m3)</th>
+                            <th class="text-center">Total Consumption (m3)</th>
+                            <th class="text-center">Extra Consumption (m3)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="invoice_tbody">
+                        <tr>
+                            <td class="text-center">
+                                <span t-esc=
+                                "'{:.2f}'.format(daily_quota_data['quota_day'])"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc=
+                                "'{:.4f}'.format(daily_quota_data['total_area'])"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc="daily_quota_data['days']"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc=
+                                "'{:.3f}'.format(daily_quota_data['threshold'])"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc=
+                                "'{:.3f}'.format(daily_quota_data['total_consumption'])"/>
+                            </td>
+                            <td class="text-center">
+                                <span t-esc=
+                                "'{:.3f}'.format(daily_quota_data['extra_consumption'])"/>
+                            </td>
+                        </tr>
+                    </tbody>                    
+                </table>
+            </t>            
+            </div>
+        </xpath>
+    </template>
+    
+</odoo>

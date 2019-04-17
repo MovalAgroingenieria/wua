@@ -49,15 +49,35 @@ class WuaInvoiceset(models.Model):
             partner_ids = list(set(partner_ids))
             partner_ids.sort()
             for partner_id in partner_ids:
+                partner = self.env['res.partner'].browse(partner_id)
+                range_lbl = _('Range')
+                if partner.lang:
+                    range_lbl = \
+                        self.get_value_from_translation(
+                            'base_wua_invoicing_consumption_ranges',
+                            'Range', partner.lang)
                 invoice_details_of_current_partner = filter(
                     lambda x: x['partner_id'] == partner_id, invoice_details)
                 total_consumption = sum(x['quantity'] for x in
                                         invoice_details_of_current_partner)
                 total_area = 0
+                waterconnections_of_current_partner = []
                 for invoice_detail in invoice_details_of_current_partner:
+                    waterconnection_id = invoice_detail['key1']
                     parcel_id = invoice_detail['key2']
+                    waterconnections_of_current_partner.append(
+                        str(waterconnection_id))
                     total_area = total_area + \
                         self.env['wua.parcel'].browse(parcel_id).area_official
+                waterconnection_ids_str = ''
+                if len(waterconnections_of_current_partner) > 0:
+                    waterconnections_of_current_partner = list(
+                        set(waterconnections_of_current_partner))
+                    waterconnections_of_current_partner.sort()
+                    for wc_id in waterconnections_of_current_partner:
+                        waterconnection_ids_str = waterconnection_ids_str + \
+                            str(wc_id) + ','
+                    waterconnection_ids_str = waterconnection_ids_str[:-1]
                 days = 1
                 presconsumptions = self.env['wua.presconsumption'].browse(
                     item_ids)
@@ -75,6 +95,9 @@ class WuaInvoiceset(models.Model):
                 if initial_date < end_date:
                     days = (end_date - initial_date).days + 1
                 threshold = quota_day * total_area * days
+                extra_consumption = total_consumption - threshold
+                if extra_consumption < 0:
+                    extra_consumption = 0
                 invoiced_consumption = total_consumption
                 if total_consumption > threshold:
                     invoiced_consumption = threshold
@@ -83,9 +106,15 @@ class WuaInvoiceset(models.Model):
                     'product_id': product.id,
                     'categ_code': 7,
                     'key1': partner_id,
-                    'key2': 0,
+                    'key2': waterconnection_ids_str,
                     'quantity': invoiced_consumption,
-                    'description': _('Range') + ' 1',
+                    'description': range_lbl + ' 1',
+                    'quota_day': quota_day,
+                    'total_area': total_area,
+                    'days': days,
+                    'threshold': threshold,
+                    'total_consumption': total_consumption,
+                    'extra_consumption': extra_consumption
                     }
                 reorganized_invoice_details.append(result)
                 if total_consumption > invoiced_consumption:
@@ -112,7 +141,13 @@ class WuaInvoiceset(models.Model):
                                 'key1': partner_id,
                                 'key2': 0,
                                 'quantity': invoiced_consumption_of_range,
-                                'description': _('Range') + ' ' + str(n_range),
+                                'description': range_lbl + ' ' + str(n_range),
+                                'quota_day': 0,
+                                'total_area': 0,
+                                'days': 0,
+                                'threshold': 0,
+                                'total_consumption': 0,
+                                'extra_consumption': 0
                                 }
                             n_range = n_range + 1
                             reorganized_invoice_details.append(result)
@@ -127,6 +162,20 @@ class WuaInvoiceset(models.Model):
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
         data['partner_id'] = invoice_data_line['key1']
+        if invoice_data_line['key2'] != 0:
+            data['waterconnection_ids_str'] = invoice_data_line['key2']
+        if invoice_data_line['quota_day'] != 0:
+            data['quota_day'] = invoice_data_line['quota_day']
+        if invoice_data_line['total_area'] != 0:
+            data['total_area'] = invoice_data_line['total_area']
+        if invoice_data_line['days'] != 0:
+            data['days'] = invoice_data_line['days']
+        if invoice_data_line['threshold'] != 0:
+            data['threshold'] = invoice_data_line['threshold']
+        if invoice_data_line['total_consumption'] != 0:
+            data['total_consumption'] = invoice_data_line['total_consumption']
+        if invoice_data_line['extra_consumption'] != 0:
+            data['extra_consumption'] = invoice_data_line['extra_consumption']
         return data
 
     def get_consumption_ranges(self, product):
@@ -222,10 +271,9 @@ class WuaInvoicesetLine(models.Model):
                     UPDATE wua_presconsumption
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
                     invoiced_consumption=TRUE
-                    FROM wua_invoiceset_line_presconsumption
-                    WHERE wua_presconsumption.id=
-                    wua_invoiceset_line_presconsumption.presconsumption_id
-                    """)
+                    WHERE (product_id=""" + str(product_id) + """
+                    or product_id=""" + str(product_tmpl_id) + """)
+                    and invoiceset_id is null""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True

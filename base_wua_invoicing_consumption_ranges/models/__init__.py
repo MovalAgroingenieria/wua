@@ -7,3 +7,4 @@ from . import product_template
 from . import product_attribute
 from . import wua_invoiceset
 from . import wua_waterconnection
+from . import account_invoice
