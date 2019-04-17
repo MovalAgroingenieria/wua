@@ -15,6 +15,7 @@
         "base_wua_pressurized_irrigation",
         "base_wua_invoicing",],
     "data": [
+        "security/ir.model.access.csv",
         "data/product_category_data.xml",
         "views/wua_waterconnection_view.xml",
         "views/wua_irrigation_config_settings_view.xml",

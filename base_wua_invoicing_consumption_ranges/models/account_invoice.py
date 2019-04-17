@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
+# 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields
@@ -8,33 +8,18 @@ from odoo import models, fields
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-    amount_untaxed_categ07 = fields.Monetary(
-        string='C7: Press. Cons.',
-        currency_field='currency_id',
-        store=True,
-        compute='_compute_amount')
-
-    # It is not necessary "api.depends" (get from parent method).
-    def _compute_amount(self):
-        super(AccountInvoice, self)._compute_amount()
-        for record in self:
-            record.amount_untaxed_categ07 = \
-                sum(line.price_subtotal for line in record.invoice_line_ids.
-                    filtered(lambda x: x.categ_id.productcategory_code == 7))
-            record.amount_untaxed_nocateg = record.amount_untaxed_nocateg - \
-                record.amount_untaxed_categ07
-
-    # For report.
     def _get_presconsumptions_from_lines(self, invoice_lines):
         lines = []
         waterconnections_ids = []
         for invoice_line in invoice_lines:
             if (invoice_line.categ_id.productcategory_code == 7 and
-               invoice_line.waterconnection_id):
-                waterconnections_ids.append(invoice_line.waterconnection_id.id)
+               invoice_line.waterconnection_ids_str and
+               len(invoice_line.waterconnection_ids_str) > 0):
+                waterconnections_ids = \
+                    invoice_line.waterconnection_ids_str.split(',')
         if waterconnections_ids:
+            waterconnections_ids = list(set(map(int, waterconnections_ids)))
             invoiceset_id = invoice_lines[0].invoiceset_id.id
-            waterconnections_ids = list(set(waterconnections_ids))
             consumptions = []
             for waterconnection_id in waterconnections_ids:
                 consumptions_of_current_wc = \
@@ -63,3 +48,57 @@ class AccountInvoice(models.Model):
                     }
                 lines.append(item)
         return lines
+
+    def _get_daily_quota_data(self, invoice_lines):
+        resp = {
+            'quota_day': 0,
+            'total_area': 0,
+            'days': 0,
+            'thresold': 0,
+            'total_consumption': 0,
+            'extra_consumption': 0}
+        for invoice_line in invoice_lines:
+            if invoice_line.quota_day > 0:
+                resp['quota_day'] = invoice_line.quota_day
+                resp['total_area'] = invoice_line.total_area
+                resp['days'] = invoice_line.days
+                resp['threshold'] = invoice_line.threshold
+                resp['total_consumption'] = invoice_line.total_consumption
+                resp['extra_consumption'] = invoice_line.extra_consumption
+                break
+        return resp
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    waterconnection_ids_str = fields.Text(string='List of waterconnections')
+
+    quota_day = fields.Float(
+        string='Daily Quota (m3/area unit)',
+        digits=(32, 4),
+        default=0)
+
+    total_area = fields.Float(
+        string='Area Total',
+        digits=(32, 4),
+        default=0)
+
+    days = fields.Integer(
+        string='Invoicing Days',
+        default=0)
+
+    threshold = fields.Float(
+        string='Assigned Quota (m3)',
+        digits=(32, 4),
+        default=0)
+
+    total_consumption = fields.Float(
+        string='Total Consumption (m3)',
+        digits=(32, 4),
+        default=0)
+
+    extra_consumption = fields.Float(
+        string='Extra Consumption (m3)',
+        digits=(32, 4),
+        default=0)

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing_pressurized_irrigation.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']"
+                   position="attributes">
+                <attribute name="domain">
+                    [('categ_id.productcategory_code','=',7),
+                     ('is_first_variant','=',True)]
+                </attribute>                   
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

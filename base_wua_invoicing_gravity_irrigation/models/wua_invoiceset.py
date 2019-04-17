@@ -181,7 +181,8 @@ class WuaInvoiceset(models.Model):
         overprice_with_irrigation_worker = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'overprice_with_irrigation_worker')
-        if overprice_with_irrigation_worker != 0:
+        if (overprice_with_irrigation_worker and
+           overprice_with_irrigation_worker != 0):
             parcel = self.env['wua.parcel'].browse(data['parcel_id'])
             if parcel.with_irrigation_worker:
                 data['price_unit'] = data['price_unit'] + \
@@ -311,10 +312,9 @@ class WuaInvoicesetLine(models.Model):
                     UPDATE wua_gravconsumption
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
                     invoiced_consumption=TRUE
-                    FROM wua_invoiceset_line_gravconsumption
-                    WHERE wua_gravconsumption.id=
-                    wua_invoiceset_line_gravconsumption.gravconsumption_id
-                    """)
+                    WHERE product_id=""" + str(product_id) + """ and
+                    invoiceset_id is null and state='executed' and
+                    watering_volume_real>0""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
