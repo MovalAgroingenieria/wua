@@ -23,6 +23,7 @@
         "views/wua_gravconsumption_view.xml",
         "views/wua_invoiceset_view.xml",
         "views/account_invoice_view.xml",],
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": True,
 }

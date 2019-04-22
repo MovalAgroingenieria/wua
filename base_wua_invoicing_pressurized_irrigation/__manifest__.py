@@ -23,6 +23,7 @@
         "views/wua_presconsumption_view.xml",
         "views/account_invoice_view.xml",
         "reports/report_invoice_templates.xml",],
+    "post_init_hook": "post_init_hook", 
     "installable": True,
     "application": True,
 }

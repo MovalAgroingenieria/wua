@@ -2,25 +2,12 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields
 
 
 class WuaWaterconnection(models.Model):
     _inherit = 'wua.waterconnection'
     _description = 'Entity (water connection)'
-
-    @api.model_cr
-    def init(self):
-        default_product = self._default_product_id()
-        if default_product:
-            waterconnections_no_watertype = \
-                self.env['wua.waterconnection'].search(
-                    [('product_id', '=', False)])
-            if waterconnections_no_watertype:
-                vals = {
-                    'product_id': default_product,
-                    }
-                waterconnections_no_watertype.write(vals)
 
     def _default_product_id(self):
         resp = None

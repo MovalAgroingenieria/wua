@@ -9,21 +9,6 @@ class WuaGravconsumption(models.Model):
     _inherit = 'wua.gravconsumption'
     _description = 'Entity (gravity consumption)'
 
-    @api.model_cr
-    def init(self):
-        default_product = self._default_product_id()
-        if default_product:
-            gravconsumptions_no_watertype = \
-                self.env['wua.gravconsumption'].search(
-                    [('product_id', '=', False), '|',
-                     ('state', '=', 'planned'),
-                     ('state', '=', 'executed')])
-            if gravconsumptions_no_watertype:
-                vals = {
-                    'product_id': default_product,
-                    }
-                gravconsumptions_no_watertype.write(vals)
-
     def _default_product_id(self):
         resp = None
         default_product_id = self.env['ir.values'].get_default(
