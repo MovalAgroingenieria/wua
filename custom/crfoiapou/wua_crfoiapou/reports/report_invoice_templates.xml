@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_invoice_document" inherit_id="base_wua_invoicing_consumption_ranges.report_invoice_document">
+        <xpath expr="//div[@name='consumptions']/table/thead/tr/th[2]" position="after">
+            <th>Paraje</th>
+        </xpath>
+        <xpath expr="//div[@name='consumptions']/table/tbody/tr[1]/td[2]" position="after">
+                   <t t-foreach="[1]" t-as="i">
+                     <td>
+                        <span t-esc="c['watermeter']"/>
+                     </td>           
+                </t> 
+        </xpath>
+    </template>
+    
+</odoo>
