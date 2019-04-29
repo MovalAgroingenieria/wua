@@ -45,17 +45,13 @@ class AccountInvoice(models.Model):
                     'waterconnection': consumption.waterconnection_id.name,
                     'watermeter': consumption.watermeter_id.name,
                     'reading_initial_time': consumption.reading_initial_time,
-                    'initial_volume': '{:.3f}'.format(
-                        consumption.initial_volume),
+                    'initial_volume': '{:,.0f}'.format(
+                        consumption.initial_volume).replace(',','.'),
                     'reading_end_time': consumption.reading_end_time,
-                    'end_volume': '{:.3f}'.format(
-                        consumption.end_volume),
-                    'volume': '{:.3f}'.format(
-                        consumption.volume),
-                    'adjustement_volume': '{:.3f}'.format(
-                        consumption.adjustement_volume),
-                    'volume_real': '{:.3f}'.format(
-                        consumption.volume_real),
+                    'end_volume': '{:,.0f}'.format(
+                        consumption.end_volume).replace(',','.'),
+                    'volume_real': '{:,.0f}'.format(
+                        consumption.volume_real).replace(',','.'),
                     'rural_location': rural_locations[i],
                     }
                 i = i+1

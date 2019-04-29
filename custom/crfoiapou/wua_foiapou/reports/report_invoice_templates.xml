@@ -5,7 +5,7 @@
         <xpath expr="//p[@style='page-break-after:always;']" position="replace"/>
         <xpath expr="//div[@name='consumptions']" position="replace"/>
         <xpath expr="//div[@name='threshold']" position="replace"/>
-        <xpath expr="//table[@class='table']" position="before">
+        <xpath expr="//p[@t-if='o.payment_term_id']" position="before">
             <t t-set="with_presconsumptions" t-value="False"/>
             <t t-foreach="o.invoice_line_ids" t-as="l">
                 <t t-if="l.categ_id.productcategory_code == 7">
@@ -16,8 +16,10 @@
                 <t t-set="consumptions"
                    t-value="o._get_presconsumptions_from_lines(o.invoice_line_ids)"/>
                 <t t-if="consumptions">
+                 <p style="page-break-after:always;"></p>
                     <div name="consumptions">
-                    <table class="table">
+                    <table class="table table-condensed">
+                        <caption>CONSUMOS DE AGUA POR CONTADOR</caption>
                         <thead>
                             <tr>
                                 <th>Water Connection</th>
@@ -26,9 +28,7 @@
                                 <th>Final time</th>
                                 <th class="text-right">Initial Reading</th>
                                 <th class="text-right">Final Reading</th>
-                                <th class="text-right">Gross Vol. (m3)</th>
-                                <th class="text-right">Adjust. (m3)</th>
-                                <th class="text-right">Real Vol. (m3)</th>
+                                <th class="text-right">Real Vol. (m<sup>3</sup>)</th>
                             </tr>
                         </thead>
                         <tbody class="invoice_tbody">
@@ -37,12 +37,12 @@
                                  t-value="context_timestamp(
                                      datetime.datetime.strptime(
                                      c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).
-                                     strftime('%d/%m/%y, %H:%M')"/>
+                                     strftime('%d/%m/%y')"/>
                                 <t t-set="reading_end_time"
                                  t-value="context_timestamp(
                                      datetime.datetime.strptime(
                                      c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
-                                     strftime('%d/%m/%y, %H:%M')"/>
+                                     strftime('%d/%m/%y')"/>
                                 <td>
                                     <span t-esc="c['waterconnection']"/>
                                 </td>
@@ -55,20 +55,22 @@
                                 <td>
                                     <span t-esc="reading_end_time"/>
                                 </td>
-                                <td class="text-right">
+                                <td class="text-center">
                                     <span t-esc="c['initial_volume']"/>
                                 </td>
-                                <td class="text-right">
+                                <td class="text-center">
                                     <span t-esc="c['end_volume']"/>
                                 </td>
-                                <td class="text-right">
-                                    <span t-esc="c['volume']"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-esc="c['adjustement_volume']"/>
-                                </td>
-                                <td class="text-right">
+                                <td class="text-center">
                                     <span t-esc="c['volume_real']"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                   <span>Total water consumption (m<sup>3</sup>):</span>
+                                </td>
+                                <td class="text-center">
+                                   <span>TODO</span>
                                 </td>
                             </tr>
                         </tbody>
@@ -81,40 +83,41 @@
                t-value="o._get_daily_quota_data(o.invoice_line_ids)"/>
             <t t-if="daily_quota_data['quota_day'] > 0">
                 <table class="table table-condensed">
+                    <caption>CÁLCULO CUPO ASIGNADO Y EXCESO DE CONSUMO</caption>
                     <thead>
                         <tr>
-                            <th class="text-center">Daily Quota (m3/area unit)</th>
-                            <th class="text-center">Total Area</th>
+                            <th class="text-center">Daily Quota (m<sup>3</sup>/hg and day)</th>
+                            <th class="text-center">Total Area/hg</th>
                             <th class="text-center">Invoicing Days</th>
-                            <th class="text-center">Assigned Quota (m3)</th>
-                            <th class="text-center">Total Consumption (m3)</th>
-                            <th class="text-center">Extra Consumption (m3)</th>
+                            <th class="text-center">Assigned Quota (m<sup>3</sup>)</th>
+                            <th class="text-center">Total Consumption (m<sup>3</sup>)</th>
+                            <th class="text-center">Extra Consumption (m<sup>3</sup>)</th>
                         </tr>
                     </thead>
                     <tbody class="invoice_tbody">
                         <tr>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.2f}'.format(daily_quota_data['quota_day'])"/>
+                                "'{:,.2f}'.format(daily_quota_data['quota_day']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.4f}'.format(daily_quota_data['total_area'])"/>
+                                "'{:,.4f}'.format(daily_quota_data['total_area']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc="daily_quota_data['days']"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.3f}'.format(daily_quota_data['threshold'])"/>
+                                "'{:,.3f}'.format(daily_quota_data['threshold']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.3f}'.format(daily_quota_data['total_consumption'])"/>
+                                "'{:,.3f}'.format(daily_quota_data['total_consumption']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.3f}'.format(daily_quota_data['extra_consumption'])"/>
+                                "'{:,.3f}'.format(daily_quota_data['extra_consumption']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                         </tr>
                     </tbody>                    
@@ -131,7 +134,61 @@
             </td>           
         </xpath>
     </template>
-    <record model="ir.ui.view" id="wua_foiapou.report_invoice_document">
+  <!--  <record model="ir.ui.view" id="wua_foiapou.report_invoice_document">
         <field name="priority" eval="15"/>
-     </record>
+     </record> -->
+
+<template id="report_invoice_document_2" inherit_id="account_wua.wua_report_invoice_document">
+ <xpath expr="//table[@class='table']" position="replace">
+        <table class="table">
+        <caption>DESGLOSE FACTURACIÓN POR TRAMO DE CONSUMO</caption>
+                <col width="30%"/>
+                <col width="20%"/>
+                <col width="15%"/>
+                <col width="12%"/>
+                <col width="12%"/>
+                <col width="11%"/>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Description</th>
+                        <th class="hidden">Source Document</th>
+                        <th class="text-right">Quantity</th>
+                        <th class="text-right">Price</th>
+                        <th t-if="display_discount" class="text-right">Disc.(%)</th>
+                        <th>Taxes</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody class="invoice_tbody">
+                    <tr t-foreach="o.invoice_line_ids" t-as="l">
+                        <td><span t-field="l.product_id"/></td>
+                        <td><span t-field="l.name"/></td>
+                        <td class="hidden"><span t-field="l.origin"/></td>
+                        <td class="text-right">
+                            <span t-field="l.quantity"/>
+                            <span t-field="l.uom_id" groups="product.group_uom"/>
+                        </td>
+                        <td class="text-right">
+                            <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
+                            <span>/</span>
+                            <span t-field="l.uom_id" groups="product.group_uom"/>
+                        </td>
+                        <td t-if="display_discount" class="text-right">
+                            <span t-field="l.discount"/>
+                        </td>
+                        <td>
+                            <!-- Change tax column from tax description to tax name (see below) -->
+                            <span t-esc="', '.join(map(lambda x: (x.name), l.invoice_line_tax_ids))"/>
+                        </td>
+                        <td class="text-right">
+                            <span t-field="l.price_subtotal" 
+                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        </td>
+                    </tr>
+                  
+                </tbody>
+            </table>    
+ </xpath>
+</template>
 </odoo>
