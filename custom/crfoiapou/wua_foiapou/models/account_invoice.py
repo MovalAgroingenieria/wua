@@ -32,7 +32,7 @@ class AccountInvoice(models.Model):
                 rural_location = ""
                 for current_parcel in parcel:
                     for wc_parcel_id in current_parcel.irrigationpointwc_ids:
-                        if(wc_parcel_id.id == waterconnection_id):
+                        if(wc_parcel_id.waterconnection_id.id == waterconnection_id):
                             rural_location = \
                                 current_parcel.rurallocation_id.name
                 if consumptions_of_current_wc:
@@ -40,6 +40,7 @@ class AccountInvoice(models.Model):
                     rural_locations.append(rural_location)
             i = 0
             for consumption in consumptions:
+                print consumption.waterconnection_id.name
                 item = {
                     'waterconnection': consumption.waterconnection_id.name,
                     'watermeter': consumption.watermeter_id.name,
