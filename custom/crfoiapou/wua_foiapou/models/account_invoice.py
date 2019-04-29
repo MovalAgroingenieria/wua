@@ -12,9 +12,9 @@ class AccountInvoice(models.Model):
         lines = []
         waterconnections_ids = []
         for invoice_line in invoice_lines:
-            if (invoice_line.categ_id.productcategory_code == 7 and
-               invoice_line.waterconnection_ids_str and
-               len(invoice_line.waterconnection_ids_str) > 0):
+            if (invoice_line.categ_id.productcategory_code == 7 and \
+                   invoice_line.waterconnection_ids_str and
+                    len(invoice_line.waterconnection_ids_str) > 0):
                 waterconnections_ids = \
                     invoice_line.waterconnection_ids_str.split(',')
         if waterconnections_ids:
@@ -32,7 +32,8 @@ class AccountInvoice(models.Model):
                 rural_location = ""
                 for current_parcel in parcel:
                     for wc_parcel_id in current_parcel.irrigationpointwc_ids:
-                        if(wc_parcel_id.waterconnection_id.id == waterconnection_id):
+                        if wc_parcel_id.waterconnection_id.id == \
+                                 waterconnection_id:
                             rural_location = \
                                 current_parcel.rurallocation_id.name
                 if consumptions_of_current_wc:
@@ -40,7 +41,6 @@ class AccountInvoice(models.Model):
                     rural_locations.append(rural_location)
             i = 0
             for consumption in consumptions:
-                print consumption.waterconnection_id.name
                 item = {
                     'waterconnection': consumption.waterconnection_id.name,
                     'watermeter': consumption.watermeter_id.name,
