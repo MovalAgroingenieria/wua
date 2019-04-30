@@ -22,10 +22,10 @@
                         <caption>WATER CONSUMPTION FOR WATERMETER</caption>
                         <thead>
                             <tr>
-                                <th>Water Connection</th>
-                                <th>Water Meter</th>
-                                <th>Initial time</th>
-                                <th>Final time</th>
+                                <th class="text-center">Water Connection</th>
+                                <th class="text-center">Water Meter</th>
+                                <th class="text-center">Initial time</th>
+                                <th class="text-center">Final time</th>
                                 <th class="text-right">Initial Reading</th>
                                 <th class="text-right">Final Reading</th>
                                 <th class="text-right">Real Vol. (m<sup>3</sup>)</th>
@@ -44,16 +44,16 @@
                                      datetime.datetime.strptime(
                                      c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
                                      strftime('%d/%m/%y')"/>
-                                <td>
+                                <td class="text-center">
                                     <span t-esc="c['waterconnection']"/>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <span t-esc="c['watermeter']"/>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <span t-esc="reading_initial_time"/>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <span t-esc="reading_end_time"/>
                                 </td>
                                 <td class="text-center">
@@ -62,16 +62,16 @@
                                 <td class="text-center">
                                     <span t-esc="'{:,.0f}'.format(round(c['end_volume'])).replace(',','.')"/>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-right">
                                     <span t-esc="'{:,.0f}'.format(round(c['volume_real'])).replace(',','.')"/>
                                 </td>
                                 <t t-set="qty" t-value="qty + float(round(c['volume_real']))"/>
                             </tr>                            
                             <tr>
-                                <td colspan="7" class="text-center">
+                                <td colspan="7" class="text-right">
                                    <span>Total water consumption (m<sup>3</sup>):</span>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-right">
                                    <span t-esc="'{:,.0f}'.format(qty).replace(',','.')"></span>
                                 </td>
                             </tr>
@@ -129,10 +129,10 @@
             <p style="page-break-after:always;"></p>
         </xpath>  
         <xpath expr="//div[@name='consumptions']/table/thead/tr/th[2]" position="after">
-            <th>Rural Location</th>
+            <th class="text-center">Rural Location</th>
         </xpath>
         <xpath expr="//div[@name='consumptions']/table/tbody/tr[1]/td[2]" position="after">
-            <td>
+            <td class="text-center">
                 <span t-esc="c['rural_location']"/>
             </td>           
         </xpath>
@@ -153,8 +153,8 @@
                 <col width="11%"/>
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th>Description</th>
+                        <th class="text-center">Product</th>
+                        <th class="text-center">Description</th>
                         <th class="hidden">Source Document</th>
                         <th class="text-right">Quantity</th>
                         <th class="text-right">Price</th>
@@ -165,8 +165,8 @@
                 </thead>
                 <tbody class="invoice_tbody">
                     <tr t-foreach="o.invoice_line_ids" t-as="l">
-                        <td><span t-field="l.product_id"/></td>
-                        <td><span t-field="l.name"/></td>
+                        <td class="text-center"><span t-field="l.product_id"/></td>
+                        <td class="text-center"><span t-field="l.name"/></td>
                         <td class="hidden"><span t-field="l.origin"/></td>
                         <td class="text-right">
                             <span t-field="l.quantity"/>
