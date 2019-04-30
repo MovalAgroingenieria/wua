@@ -5,7 +5,7 @@
         <xpath expr="//p[@style='page-break-after:always;']" position="replace"/>
         <xpath expr="//div[@name='consumptions']" position="replace"/>
         <xpath expr="//div[@name='threshold']" position="replace"/>
-        <xpath expr="//p[@t-if='o.payment_term_id']" position="before">
+        <xpath expr="//div[@class='row mt32 mb32']" position="after">
             <t t-set="with_presconsumptions" t-value="False"/>
             <t t-foreach="o.invoice_line_ids" t-as="l">
                 <t t-if="l.categ_id.productcategory_code == 7">
@@ -16,7 +16,7 @@
                 <t t-set="consumptions"
                    t-value="o._get_presconsumptions_from_lines(o.invoice_line_ids)"/>
                 <t t-if="consumptions">
-                 <p style="page-break-after:always;"></p>
+                <!-- <p style="page-break-after:always;"></p> -->
                     <div name="consumptions">
                     <table class="table table-condensed">
                         <caption>WATER CONSUMPTION FOR WATERMETER</caption>
@@ -126,6 +126,7 @@
                 </table>
             </t>            
             </div>
+            <p style="page-break-after:always;"></p>
         </xpath>  
         <xpath expr="//div[@name='consumptions']/table/thead/tr/th[2]" position="after">
             <th>Rural Location</th>
@@ -144,8 +145,8 @@
  <xpath expr="//table[@class='table']" position="replace">
         <table class="table">
         <caption>INVOICING APPORTIONMENT FOR CONSUMPTION TRANCHE</caption>
-                <col width="30%"/>
-                <col width="20%"/>
+                <col width="33%"/>
+                <col width="17%"/>
                 <col width="15%"/>
                 <col width="12%"/>
                 <col width="12%"/>
@@ -192,44 +193,6 @@
                 </tbody>
             </table>    
  </xpath>
-        <xpath expr="//t[@t-if='o.payment_mode_id']" position="replace">
-            <t t-if="o.payment_mode_id">
-                <p>
-                    <span><strong>Payment mode:&amp;nbsp;</strong></span>
-                    <span t-field="o.payment_mode_id"/>
-                </p>
-                <p>
-                    <t t-if="'bancari' not in o.payment_mode_id.name">
-                        <span><strong>Bank account:&amp;nbsp;</strong></span>
-                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.name">
-                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.name"/>
-                        </t>
-                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.bic">
-                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.bic"/>
-                        </t>
-                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_acc_number">
-                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_acc_number"/>
-                        </t>
-                    </t>
-                    <t t-else="">
-                        <span><strong>Bank account:&amp;nbsp;</strong></span>
-                        <t t-if="o.mandate_id.partner_bank_id.bank_name">
-                            <span t-field="o.mandate_id.partner_bank_id.bank_name"/>
-                        </t>
-                        <t t-if="o.mandate_id.partner_bank_id.bank_bic">
-                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                            <span t-field="o.mandate_id.partner_bank_id.bank_bic"/>
-                        </t>
-                        <t t-if="o.mandate_id.partner_bank_id.acc_number">
-                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                            <t t-set="anonymous_acc_number" t-value="o.mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
-                            <span t-esc="anonymous_acc_number"/>
-                        </t>
-                    </t>
-                </p>
-            </t>
-        </xpath>
+        
 </template>
 </odoo>
