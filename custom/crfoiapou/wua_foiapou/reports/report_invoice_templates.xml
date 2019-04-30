@@ -19,7 +19,7 @@
                  <p style="page-break-after:always;"></p>
                     <div name="consumptions">
                     <table class="table table-condensed">
-                        <caption>CONSUMOS DE AGUA POR CONTADOR</caption>
+                        <caption>WATER CONSUMPTION FOR WATERMETER</caption>
                         <thead>
                             <tr>
                                 <th>Water Connection</th>
@@ -32,6 +32,7 @@
                             </tr>
                         </thead>
                         <tbody class="invoice_tbody">
+                            <t t-set="qty" t-value="0"/>
                             <tr t-foreach="consumptions" t-as="c">
                                 <t t-set="reading_initial_time"
                                  t-value="context_timestamp(
@@ -62,15 +63,16 @@
                                     <span t-esc="c['end_volume']"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-esc="c['volume_real']"/>
+                                    <span t-esc="'{:,.0f}'.format(c['volume_real']).replace(',','.')"/>
                                 </td>
-                            </tr>
+                                <t t-set="qty" t-value="qty + float(c['volume_real'])"/>
+                            </tr>                            
                             <tr>
                                 <td colspan="7" class="text-center">
                                    <span>Total water consumption (m<sup>3</sup>):</span>
                                 </td>
                                 <td class="text-center">
-                                   <span>TODO</span>
+                                   <span t-esc="'{:,.0f}'.format(qty).replace(',','.')"></span>
                                 </td>
                             </tr>
                         </tbody>
@@ -83,7 +85,7 @@
                t-value="o._get_daily_quota_data(o.invoice_line_ids)"/>
             <t t-if="daily_quota_data['quota_day'] > 0">
                 <table class="table table-condensed">
-                    <caption>CÁLCULO CUPO ASIGNADO Y EXCESO DE CONSUMO</caption>
+                    <caption>ASSIGNED QUOTA AND CONSUMPTION EXCESS CALCULUS</caption>
                     <thead>
                         <tr>
                             <th class="text-center">Daily Quota (m<sup>3</sup>/hg and day)</th>
@@ -141,7 +143,7 @@
 <template id="report_invoice_document_2" inherit_id="account_wua.wua_report_invoice_document">
  <xpath expr="//table[@class='table']" position="replace">
         <table class="table">
-        <caption>DESGLOSE FACTURACIÓN POR TRAMO DE CONSUMO</caption>
+        <caption>INVOICING APPORTIONMENT FOR CONSUMPTION TRANCHE</caption>
                 <col width="30%"/>
                 <col width="20%"/>
                 <col width="15%"/>

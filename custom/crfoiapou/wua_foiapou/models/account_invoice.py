@@ -50,8 +50,7 @@ class AccountInvoice(models.Model):
                     'reading_end_time': consumption.reading_end_time,
                     'end_volume': '{:,.0f}'.format(
                         consumption.end_volume).replace(',','.'),
-                    'volume_real': '{:,.0f}'.format(
-                        consumption.volume_real).replace(',','.'),
+                    'volume_real': consumption.volume_real,
                     'rural_location': rural_locations[i],
                     }
                 i = i+1
