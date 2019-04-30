@@ -57,15 +57,15 @@
                                     <span t-esc="reading_end_time"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-esc="c['initial_volume']"/>
+                                    <span t-esc="'{:,.0f}'.format(round(c['initial_volume'])).replace(',','.')"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-esc="c['end_volume']"/>
+                                    <span t-esc="'{:,.0f}'.format(round(c['end_volume'])).replace(',','.')"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-esc="'{:,.0f}'.format(c['volume_real']).replace(',','.')"/>
+                                    <span t-esc="'{:,.0f}'.format(round(c['volume_real'])).replace(',','.')"/>
                                 </td>
-                                <t t-set="qty" t-value="qty + float(c['volume_real'])"/>
+                                <t t-set="qty" t-value="qty + float(round(c['volume_real']))"/>
                             </tr>                            
                             <tr>
                                 <td colspan="7" class="text-center">
@@ -140,7 +140,7 @@
         <field name="priority" eval="15"/>
      </record> -->
 
-<template id="report_invoice_document_2" inherit_id="account_wua.wua_report_invoice_document">
+<template id="wua_report_invoice_document" inherit_id="account_wua.wua_report_invoice_document">
  <xpath expr="//table[@class='table']" position="replace">
         <table class="table">
         <caption>INVOICING APPORTIONMENT FOR CONSUMPTION TRANCHE</caption>
@@ -192,5 +192,44 @@
                 </tbody>
             </table>    
  </xpath>
+        <xpath expr="//t[@t-if='o.payment_mode_id']" position="replace">
+            <t t-if="o.payment_mode_id">
+                <p>
+                    <span><strong>Payment mode:&amp;nbsp;</strong></span>
+                    <span t-field="o.payment_mode_id"/>
+                </p>
+                <p>
+                    <t t-if="'bancari' not in o.payment_mode_id.name">
+                        <span><strong>Bank account:&amp;nbsp;</strong></span>
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.name">
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.name"/>
+                        </t>
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.bic">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.bic"/>
+                        </t>
+                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_acc_number">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_acc_number"/>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <span><strong>Bank account:&amp;nbsp;</strong></span>
+                        <t t-if="o.mandate_id.partner_bank_id.bank_name">
+                            <span t-field="o.mandate_id.partner_bank_id.bank_name"/>
+                        </t>
+                        <t t-if="o.mandate_id.partner_bank_id.bank_bic">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <span t-field="o.mandate_id.partner_bank_id.bank_bic"/>
+                        </t>
+                        <t t-if="o.mandate_id.partner_bank_id.acc_number">
+                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                            <t t-set="anonymous_acc_number" t-value="o.mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                            <span t-esc="anonymous_acc_number"/>
+                        </t>
+                    </t>
+                </p>
+            </t>
+        </xpath>
 </template>
 </odoo>

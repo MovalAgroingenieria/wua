@@ -49,17 +49,12 @@ class AccountInvoice(models.Model):
                     'waterconnection': consumption.waterconnection_id.name,
                     'watermeter': consumption.watermeter_id.name,
                     'reading_initial_time': consumption.reading_initial_time,
-                    'initial_volume': '{:.3f}'.format(
-                        consumption.initial_volume),
+                    'initial_volume': consumption.initial_volume,
                     'reading_end_time': consumption.reading_end_time,
-                    'end_volume': '{:.3f}'.format(
-                        consumption.end_volume),
-                    'volume': '{:.3f}'.format(
-                        consumption.volume),
-                    'adjustement_volume': '{:.3f}'.format(
-                        consumption.adjustement_volume),
-                    'volume_real': '{:.3f}'.format(
-                        consumption.volume_real),
+                    'end_volume': consumption.end_volume,
+                    'volume': consumption.volume,
+                    'adjustement_volume': consumption.adjustement_volume,
+                    'volume_real': consumption.volume_real,
                     }
                 lines.append(item)
         return lines

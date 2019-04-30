@@ -23,26 +23,26 @@
                         <tr>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.2f}'.format(daily_quota_data['quota_day'])"/>
+                                "'{:.2f}'.format(daily_quota_data['quota_day']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.4f}'.format(daily_quota_data['total_area'])"/>
+                                "'{:.4f}'.format(daily_quota_data['total_area']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc="daily_quota_data['days']"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.3f}'.format(daily_quota_data['threshold'])"/>
+                                "'{:.3f}'.format(daily_quota_data['threshold']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.3f}'.format(daily_quota_data['total_consumption'])"/>
+                                "'{:.3f}'.format(daily_quota_data['total_consumption']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                             <td class="text-center">
                                 <span t-esc=
-                                "'{:.3f}'.format(daily_quota_data['extra_consumption'])"/>
+                                "'{:.3f}'.format(daily_quota_data['extra_consumption']).replace('.','%').replace(',','.').replace('%',',')"/>
                             </td>
                         </tr>
                     </tbody>                    
