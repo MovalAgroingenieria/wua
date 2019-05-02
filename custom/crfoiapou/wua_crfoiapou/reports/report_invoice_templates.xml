@@ -18,7 +18,7 @@
                 <t t-if="consumptions">
                 <!-- <p style="page-break-after:always;"></p> -->
                     <div name="consumptions">
-                    <table class="table table-condensed">
+                    <table class="table">
                         <caption>WATER CONSUMPTION FOR WATERMETER</caption>
                         <thead>
                             <tr>
@@ -84,7 +84,7 @@
             <t t-set="daily_quota_data"
                t-value="o._get_daily_quota_data(o.invoice_line_ids)"/>
             <t t-if="daily_quota_data['quota_day'] > 0">
-                <table class="table table-condensed">
+                <table class="table">
                     <caption>ASSIGNED QUOTA AND CONSUMPTION EXCESS CALCULUS</caption>
                     <thead>
                         <tr>
@@ -142,7 +142,7 @@
      </record> -->
 
     <template id="wua_report_invoice_document" inherit_id="account_wua.wua_report_invoice_document">
-         <xpath expr="//table[@class='table']" position="replace">
+         <xpath expr="//table[@class='table']" position="replace"></xpath> 
                 <table class="table">
                 <caption>INVOICING APPORTIONMENT FOR CONSUMPTION TRANCHE</caption>
                         <col width="33%"/>
