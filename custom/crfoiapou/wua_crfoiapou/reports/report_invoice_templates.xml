@@ -22,8 +22,8 @@
                         <caption>WATER CONSUMPTION FOR WATERMETER</caption>
                         <thead>
                             <tr>
-                                <th class="text-center">Water Connection</th>
-                                <th class="text-center">Water Meter</th>
+                                <th class="text-left">Water Connection</th>
+                                <th class="text-left">Water Meter</th>
                                 <th class="text-center">Initial time</th>
                                 <th class="text-center">Final time</th>
                                 <th class="text-right">Initial Reading</th>
@@ -44,10 +44,10 @@
                                      datetime.datetime.strptime(
                                      c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
                                      strftime('%d/%m/%y')"/>
-                                <td class="text-center">
+                                <td class="text-left">
                                     <span t-esc="c['waterconnection']"/>
                                 </td>
-                                <td class="text-center">
+                                <td class="text-left">
                                     <span t-esc="c['watermeter']"/>
                                 </td>
                                 <td class="text-center">
@@ -153,8 +153,8 @@
                         <col width="11%"/>
                         <thead>
                             <tr>
-                                <th class="text-center">Product</th>
-                                <th class="text-center">Description</th>
+                                <th class="text-left">Product</th>
+                                <th class="text-left">Description</th>
                                 <th class="hidden">Source Document</th>
                                 <th class="text-right">Quantity</th>
                                 <th class="text-right">Price</th>
@@ -165,8 +165,8 @@
                         </thead>
                         <tbody class="invoice_tbody">
                             <tr t-foreach="o.invoice_line_ids" t-as="l">
-                                <td class="text-center"><span t-field="l.product_id"/></td>
-                                <td class="text-center"><span t-field="l.name"/></td>
+                                <td class="text-left"><span t-field="l.product_id"/></td>
+                                <td class="text-left"><span t-field="l.name"/></td>
                                 <td class="hidden"><span t-field="l.origin"/></td>
                                 <td class="text-right">
                                     <span t-field="l.quantity"/>
