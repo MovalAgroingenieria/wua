@@ -12,8 +12,8 @@ class AccountInvoice(models.Model):
         lines = []
         waterconnections_ids = []
         for invoice_line in invoice_lines:
-            if (invoice_line.categ_id.productcategory_code == 7 and \
-                   invoice_line.waterconnection_ids_str and
+            if (invoice_line.categ_id.productcategory_code == 7 and
+                    invoice_line.waterconnection_ids_str and
                     len(invoice_line.waterconnection_ids_str) > 0):
                 waterconnections_ids = \
                     invoice_line.waterconnection_ids_str.split(',')
