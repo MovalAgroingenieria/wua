@@ -460,9 +460,9 @@ class ResPartner(models.Model):
                    offset=0, limit=None, orderby=False, lazy=True):
         if 'partner_code' in fields:
             fields.remove('partner_code')
-            return super(ResPartner, self).read_group(domain, fields, groupby,
-                                                      offset, limit, orderby,
-                                                      lazy)
+        return super(ResPartner, self).read_group(domain, fields, groupby,
+                                                  offset, limit, orderby,
+                                                  lazy)
 
     @api.multi
     def name_get(self):
