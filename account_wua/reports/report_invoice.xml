@@ -41,13 +41,26 @@
                                     <span>&amp;nbsp;-&amp;nbsp;</span>
                                     <span t-field="o.partner_id.zip"/>
                                 </t>
-                                <br/>
-                                <t t-if="o.partner_id.state_id">
-                                    <span t-field="o.partner_id.state_id"/>
+                              <!--  <br/> -->
+                                <t id="state_invoicing_address" t-if="o.partner_id.state_id">
+                                        <span t-tag="span">(</span>
+                                        <span t-field="o.partner_id.state_id"/> 
+                                        <t t-if="not o.partner_id.country_id">
+                                            <span>)</span>
+                                        </t>
+                                        <t t-else="">
+                                           <span>-</span>
+                                        </t>
                                 </t>
-                                <t t-if="o.partner_id.country_id">
-                                    <span t-field="o.partner_id.country_id"/>
+                                <t id="contry_invoicing_address" t-if="o.partner_id.country_id">
+                                    <t t-if="not o.partner_id.state_id">
+                                        <span>(</span>
+                                    </t>
+                                    <span t-field="o.partner_id.country_id">
+                                    </span>
+                                    <span>)</span>
                                 </t>
+                            <br/>
                             </div>
                         </div>
                         <div style="width: 40%; display: table-cell; padding: 0px 8px;">
@@ -75,11 +88,14 @@
                                     <span>&amp;nbsp;-&amp;nbsp;</span>
                                     <span t-field="o.partner_id.zip"/>
                                 </t>
-                                <br/>
-                                <t t-if="o.partner_id.state_id">
+                                <br/>                   
+                                <t id="state_shipping_address" t-if="o.partner_id.state_id">
                                     <span t-field="o.partner_id.state_id"/>
+                                    <t t-if="o.partner_id.country_id">
+                                        <span>-</span>
+                                    </t>
                                 </t>
-                                <t t-if="o.partner_id.country_id">
+                                <t id="country_shipping_address" t-if="o.partner_id.country_id">
                                     <span t-field="o.partner_id.country_id"/>
                                 </t>
                             </div>
