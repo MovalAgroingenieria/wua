@@ -30,7 +30,7 @@
                 <t t-if="consumptions">
                 <!-- <p style="page-break-after:always;"></p> -->
                     <div name="consumptions">
-                    <table class="table table-condensed algo">
+                    <table class="table table-condensed consum">
                         <caption>WATER CONSUMPTION FOR WATERMETER</caption>
                         <thead>
                             <tr>
@@ -96,7 +96,7 @@
             <t t-set="daily_quota_data"
                t-value="o._get_daily_quota_data(o.invoice_line_ids)"/>
             <t t-if="daily_quota_data['quota_day'] > 0">
-                <table class="table table-condensed algo2">
+                <table class="table table-condensed daily">
                     <caption>ASSIGNED QUOTA AND CONSUMPTION EXCESS CALCULUS</caption>
                     <thead>
                         <tr>
@@ -139,8 +139,8 @@
             </t>            
             </div>
 <!--            <p style="page-break-after:always;"></p> -->
-             <table class="table table-condensed algo3">
-                <caption>INVOICING APPORTIONMENT FOR CONSUMPTION TRANCHE</caption>
+             <table class="table table-condensed appor">
+                <caption>INVOICING APPORTIONMENT</caption>
                         <col width="33%"/>
                         <col width="17%"/>
                         <col width="15%"/>
