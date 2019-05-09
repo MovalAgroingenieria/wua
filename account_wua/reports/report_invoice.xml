@@ -42,7 +42,6 @@
                                     <span t-field="o.partner_id.zip"/>
                                 </t>
                               <!--  <br/> -->
-                                <!-- Address -->
                                 <t id="state_invoicing_address" t-if="o.partner_id.state_id">
                                         <span t-tag="span">(</span>
                                         <span t-field="o.partner_id.state_id"/> 
@@ -89,26 +88,16 @@
                                     <span>&amp;nbsp;-&amp;nbsp;</span>
                                     <span t-field="o.partner_id.zip"/>
                                 </t>
-                               <!-- <br/> -->
-                                <!-- Facturación -->
+                                <br/>                   
                                 <t id="state_shipping_address" t-if="o.partner_id.state_id">
-                                    <span>(</span>
                                     <span t-field="o.partner_id.state_id"/>
-                                    <t t-if="not o.partner_id.country_id">
-                                        <span>)&amp;nbsp;</span>
-                                    </t>
-                                    <t t-else="">
+                                    <t t-if="o.partner_id.country_id">
                                         <span>-</span>
                                     </t>
                                 </t>
                                 <t id="country_shipping_address" t-if="o.partner_id.country_id">
-                                    <t t-if="not o.partner_id.state_id">
-                                        (
-                                    </t>
                                     <span t-field="o.partner_id.country_id"/>
-                                    <span>)</span>
                                 </t>
-                                <br/>
                             </div>
                         </div>
                     </div>
