@@ -139,55 +139,73 @@
             </t>            
             </div>
 <!--            <p style="page-break-after:always;"></p> -->
-             <table class="table table-condensed appor">
-                <caption>INVOICING APPORTIONMENT</caption>
-                        <col width="33%"/>
-                        <col width="17%"/>
-                        <col width="15%"/>
-                        <col width="12%"/>
-                        <col width="12%"/>
-                        <col width="11%"/>
-                        <thead>
-                            <tr>
-                                <th class="text-left">Product</th>
-                                <th class="text-left">Description</th>
-                                <th class="hidden">Source Document</th>
-                                <th class="text-right">Quantity</th>
-                                <th class="text-right">Price</th>
-                                <th t-if="display_discount" class="text-right">Disc.(%)</th>
-                                <th>Taxes</th>
-                                <th class="text-right">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody class="invoice_tbody">
-                            <tr t-foreach="o.invoice_line_ids" t-as="l">
-                                <td class="text-left"><span t-field="l.product_id"/></td>
-                                <td class="text-left"><span t-field="l.name"/></td>
-                                <td class="hidden"><span t-field="l.origin"/></td>
-                                <td class="text-right">
-                                    <span t-field="l.quantity"/>
-                                    <span t-field="l.uom_id" groups="product.group_uom"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
-                                    <span>/</span>
-                                    <span t-field="l.uom_id" groups="product.group_uom"/>
-                                </td>
-                                <td t-if="display_discount" class="text-right">
-                                    <span t-field="l.discount"/>
-                                </td>
-                                <td> 
-                                    <!-- Change tax column from tax description to tax name (see below) -->
-                                    <span t-esc="', '.join(map(lambda x: (x.name), l.invoice_line_tax_ids))"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-field="l.price_subtotal" 
-                                        t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                </td>
-                            </tr>
-                          
-                        </tbody>
-                    </table> 
+            <t t-set="all_are_presconsumptions" t-value="True"/>
+            <t t-foreach="o.invoice_line_ids" t-as="l">
+                <t t-if="l.categ_id.productcategory_code != 7">
+                    <t t-set="all_are_presconsumptions" t-value="False"/>
+                </t>
+            </t>
+                 <table class="table table-condensed appor">
+                    <caption>INVOICING APPORTIONMENT</caption>
+                        <t t-if="all_are_presconsumptions">
+                            <col width="33%"/>
+                            <col width="17%"/>
+                            <col width="15%"/>
+                            <col width="12%"/>
+                            <col width="12%"/>
+                            <col width="11%"/>
+                        </t>
+                        <t t-else="">
+                            <col width="10%"/>
+                            <col width="44%"/>
+                            <col width="12%"/>
+                            <col width="12%"/>
+                            <col width="12%"/>
+                            <col width="10%"/>
+                        </t>
+                            <thead>
+                                <tr>
+                                    <th class="text-left">Product</th>
+                                    <th class="text-left">Description</th>
+                                    <th class="hidden">Source Document</th>
+                                    <th class="text-right">Quantity</th>
+                                    <th class="text-right">Price</th>
+                                    <th t-if="display_discount" class="text-right">Disc.(%)</th>
+                                    <th>Taxes</th>
+                                    <th class="text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="invoice_tbody">
+                                <tr t-foreach="o.invoice_line_ids" t-as="l">
+                                    <td class="text-left"><span t-field="l.product_id"/></td>
+                                    <td class="text-left"><span t-field="l.name"/></td>
+                                    <td class="hidden"><span t-field="l.origin"/></td>
+                                    <td class="text-right">
+                                        <span t-field="l.quantity"/>
+                                        <span t-field="l.uom_id" groups="product.group_uom"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
+                                        <span>/</span>
+                                        <span t-field="l.uom_id" groups="product.group_uom"/>
+                                    </td>
+                                    <td t-if="display_discount" class="text-right">
+                                        <span t-field="l.discount"/>
+                                    </td>
+                                    <td> 
+                                        <!-- Change tax column from tax description to tax name (see below) -->
+                                        <span t-esc="', '.join(map(lambda x: (x.name), l.invoice_line_tax_ids))"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="l.price_subtotal" 
+                                            t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                              
+                            </tbody>
+                        </table>
+                    
+             
         </xpath>  
         <xpath expr="//div[@name='consumptions']/table/thead/tr/th[2]" position="after">
             <th class="text-center">Rural Location</th>
