@@ -2,7 +2,7 @@
 <odoo>
 
     <template id="report_invoice_document"
-     inherit_id="account.report_invoice_document">
+     inherit_id="account_wua.wua_report_invoice_document">
         <xpath expr="//p[@t-if='o.payment_term_id']" position="after">
             <t t-set="with_presconsumptions" t-value="False"/>
             <t t-foreach="o.invoice_line_ids" t-as="l">
