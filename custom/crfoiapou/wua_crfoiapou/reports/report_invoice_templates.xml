@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="wua_report_invoice_document" inherit_id="account.report_invoice_document">
-         <xpath expr="//table[@class='table table-condensed'][1]" position="replace">
-
-         </xpath> 
-        
-    </template>
-
-    <template id="report_invoice_document2" inherit_id="base_wua_invoicing_pressurized_irrigation.report_invoice_document">
-        
-        <!-- <xpath expr="//div[@name='consumptions']" position="replace"/>-->
-    </template>
 
     <template id="report_invoice_document" inherit_id="base_wua_invoicing_consumption_ranges.report_invoice_document">
         <xpath expr="//p[@style='page-break-after:always;']" position="replace"/>        
         <xpath expr="//div[@name='consumptions']" position="replace"/>
         <xpath expr="//div[@name='threshold']" position="replace"/>
+        <xpath expr="//table[@class='table'][1]" position="replace"/>
         <xpath expr="//div[@class='row mt32 mb32']" position="after">
             <t t-set="with_presconsumptions" t-value="False"/>
             <t t-foreach="o.invoice_line_ids" t-as="l">
