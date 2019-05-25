@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_subparceltype_view_form" model="ir.ui.view">
+        <field name="name">Subparcel Types (form view)</field>
+        <field name="model">wua.subparceltype</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_subparceltype_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_cultivable']" position="after">
+                <field name="is_read_only" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_read_only','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='is_cultivable']" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_read_only','=',True)]}</attribute>
+            </xpath>            
+        </field>
+    </record>
+
+</odoo>
