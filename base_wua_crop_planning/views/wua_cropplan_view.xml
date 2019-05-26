@@ -176,7 +176,7 @@
             <tree editable="bottom"
                 class="o_base_wua_crop_planning_enrolledsubparcel_edit_view_tree">
                 <field name="is_cultivable" invisible="1"/>
-                <field name="parcel_id"/>
+                <field name="parcel_id" context="{'in_combo': True}"/>
                 <field name="subparceltype_id" widget="many2one_unclickable"/>
                 <field name="area_perc"/>
                 <field name="area_official"/>
@@ -219,7 +219,11 @@
         <field name="view_mode">tree,pivot</field>
         <field name="view_id" ref="wua_enrolledsubparcel_view_tree"/>
         <field name="search_view_id" ref="wua_enrolledsubparcel_view_search"/>
-        <field name="context">{'search_default_active_agriculturalseason': 1}</field>        
+        <field name="context">
+            {'search_default_active_agriculturalseason': 1,
+             'reduced_name_get_for_agriculturalseason': True,
+             'reduced_name_get_for_cropplan': True}
+        </field>        
     </record>
 
     <menuitem id="wua_cropplan_menu"

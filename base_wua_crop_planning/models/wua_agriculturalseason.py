@@ -2,6 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
 from datetime import timedelta
 from odoo import models, fields, api, exceptions, _
 
@@ -32,6 +33,23 @@ class WuaAgriculturalseason(models.Model):
              enrollment_end_date <= end_date)',
          'Incorrect enrollment dates.'),
         ]
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            initial_date_str = datetime.datetime.strptime(
+                record.initial_date, '%Y-%m-%d').strftime('%x')
+            end_date_str = datetime.datetime.strptime(
+                record.end_date, '%Y-%m-%d').strftime('%x')
+            if (record.description != '' and not self.env.context.get(
+               'reduced_name_get_for_agriculturalseason', False)):
+                name = initial_date_str + ' - ' + end_date_str + ' ' + \
+                    '(' + record.description + ')'
+            else:
+                name = name = initial_date_str + ' ' + end_date_str
+            result.append((record.id, name))
+        return result
 
     @api.multi
     def open_agriculturalseason(self):
