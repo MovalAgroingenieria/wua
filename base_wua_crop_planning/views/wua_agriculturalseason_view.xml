@@ -9,11 +9,8 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
                 <field name="is_the_active" invisible="1"/>
+                <field name="initialized" invisible="1"/>
                 <header>
-                    <span style="display: block; color:Black;font-weight: bold;padding-top: 6px;padding-bottom: 6px;"
-                            attrs="{'invisible':[('is_the_active', '=' , False)]}">
-                            ACTIVE AGRICULTURAL SEASON
-                    </span>                            
                     <button name="open_agriculturalseason"
                             type="object" string="Open"
                             attrs="{'invisible':
@@ -26,13 +23,26 @@
                                     [('is_the_active', '=', False)]}"                            
                             groups="base_wua_crop_planning.group_wua_technical_director"
                             confirm="IMPORTANT: After closing the agricultural season it is not possible to add new cultivation plans, and it is not possible to do roollback. Are you sure you want to do the operation?"/>
+                    <div name="activeagriculturalseason"
+                         style="display: inline-block;color:black;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('is_the_active', '=' , False)]}">
+                        ( ACTIVE AGRICULTURAL SEASON )
+                    </div>
                 </header>
             </xpath>
-            <xpath expr="//field[@name='initial_date']" position="after">
-                <field name="enrollment_initial_date"/>
-            </xpath>
             <xpath expr="//field[@name='end_date']" position="after">
+                <field name="enrollment_initial_date"/>
                 <field name="enrollment_end_date"/>
+            </xpath>
+            <xpath expr="//field[@name='initial_date']" position="attributes">
+                <attribute name="attrs">{'readonly': [('initialized','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='end_date']" position="attributes">
+                <attribute name="attrs">{'readonly': [('initialized','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="number_of_cropplans"/>
+                <field name="number_of_enrolledsubparcels"/>
             </xpath>
             <xpath expr="//sheet" position="after">
                 <div class="oe_chatter">
@@ -58,10 +68,29 @@
                    position="after">
                 <field name="enrollment_initial_date"/>
                 <field name="enrollment_end_date"/>
+                <field name="number_of_cropplans"
+                 string="Crop Plans"/>
+                <field name="number_of_enrolledsubparcels"
+                 string="Enrolled Subparcels"/>
             </xpath>
             <xpath expr="//field[@name='number_of_presconsumptions']"
                    position="after">
                 <field name="is_the_active"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_search" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (search view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_agriculturalseason_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <filter string="Active Agricultural Season" name="active_agriculturalseason"
+                 domain="[('is_the_active','=',True)]"/>
+                <filter string="Closed Agricultural Seasons" name="closed_agriculturalseasons"
+                 domain="[('is_the_active','=',False)]"/>
             </xpath>
         </field>
     </record>

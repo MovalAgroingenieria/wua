@@ -26,6 +26,33 @@ class WuaAgriculturalseason(models.Model):
         default=lambda self: fields.datetime.now() + timedelta(days=364),
         required=True)
 
+    cropplan_ids = fields.One2many(
+        string='Crop Plans',
+        comodel_name='wua.cropplan',
+        inverse_name='agriculturalseason_id')
+
+    number_of_cropplans = fields.Integer(
+        string='Number of crop plans',
+        store=True,
+        index=True,
+        compute='_compute_number_of_cropplans')
+
+    initialized = fields.Boolean(
+        string='Initialized',
+        store=True,
+        compute='_compute_initialized')
+
+    enrolledsubparcel_ids = fields.One2many(
+        string='Enrolled Subparcels',
+        comodel_name='wua.enrolledsubparcel',
+        inverse_name='agriculturalseason_id')
+
+    number_of_enrolledsubparcels = fields.Integer(
+        string='Number of enrolled subparcels',
+        store=True,
+        index=True,
+        compute='_compute_number_of_enrolledsubparcels')
+
     _sql_constraints = [
         ('valid_enrollment_dates',
          'CHECK (initial_date <= enrollment_initial_date and \
@@ -33,6 +60,31 @@ class WuaAgriculturalseason(models.Model):
              enrollment_end_date <= end_date)',
          'Incorrect enrollment dates.'),
         ]
+
+    @api.depends('cropplan_ids')
+    def _compute_number_of_cropplans(self):
+        for record in self:
+            number_of_cropplans = 0
+            if record.cropplan_ids:
+                number_of_cropplans = len(record.cropplan_ids)
+            record.number_of_cropplans = number_of_cropplans
+
+    @api.depends('number_of_cropplans')
+    def _compute_initialized(self):
+        for record in self:
+            initialized = False
+            if record.number_of_cropplans > 0:
+                initialized = True
+            record.initialized = initialized
+
+    @api.depends('cropplan_ids', 'enrolledsubparcel_ids')
+    def _compute_number_of_enrolledsubparcels(self):
+        for record in self:
+            number_of_enrolledsubparcels = 0
+            if record.enrolledsubparcel_ids:
+                number_of_enrolledsubparcels = \
+                    len(record.enrolledsubparcel_ids)
+            record.number_of_enrolledsubparcels = number_of_enrolledsubparcels
 
     @api.multi
     def name_get(self):

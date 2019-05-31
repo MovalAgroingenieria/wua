@@ -11,3 +11,8 @@ class WuaCultivation(models.Model):
     permanent = fields.Boolean(
         string='Permanent',
         default=False)
+
+    enrolledsubparcel_ids = fields.One2many(
+        string='Enrolled Subparcels',
+        comodel_name='wua.enrolledsubparcel',
+        inverse_name='cultivation_id')

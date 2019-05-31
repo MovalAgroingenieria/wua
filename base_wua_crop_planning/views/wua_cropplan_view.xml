@@ -7,6 +7,14 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <field name="id" invisible="1"/>
+                <field name="out_of_time" invisible="1"/>
+                <header>
+                    <div name="cropplanoutoftime"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('out_of_time','=',False)]}">
+                        ( OUT OF TIME )
+                    </div>
+                </header>
                 <sheet>
                     <group name="master_data">
                         <group name="master_data_left">
@@ -14,12 +22,14 @@
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    domain="[('is_wua_partner', '=', True)]"
-                                   attrs="{'readonly': [('id','>',0)]}"/>
-                            <field name="user_id"/>                        
+                                   attrs="{'readonly':[('id','>',0)]}"/>
+                            <field name="user_id"/>
+                            <field name="number_of_enrolledsubparcels"/>
                         </group>
                         <group name="master_data_right">
                             <field name="agriculturalseason_id"/>
                             <field name="request_date"/>
+                            <field name="area_official"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -49,10 +59,14 @@
         <field name="name">Crop Plans (tree view)</field>
         <field name="model">wua.cropplan</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_crop_planning_cropplan_view_tree">
+            <tree colors="red:out_of_time==True"
+                  class="o_base_wua_crop_planning_cropplan_view_tree">
                 <field name="agriculturalseason_id"/>
                 <field name="partner_id"/>
                 <field name="request_date"/>
+                <field name="out_of_time"/>
+                <field name="number_of_enrolledsubparcels"/>
+                <field name="area_official"/>
             </tree>
         </field>
     </record>
@@ -66,6 +80,17 @@
                 <field name="user_id"/>
                 <filter string="Active Agricultural Season" name="active_agriculturalseason"
                  domain="[('agriculturalseason_id.is_the_active','=',True)]"/>
+                <separator/>
+                <filter string="Out of time" name="outoftime"
+                 domain="[('out_of_time','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season" name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Irrigation Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="User" name="user"
+                     context="{'group_by':'user_id'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -176,8 +201,11 @@
             <tree editable="bottom"
                 class="o_base_wua_crop_planning_enrolledsubparcel_edit_view_tree">
                 <field name="is_cultivable" invisible="1"/>
-                <field name="parcel_id" context="{'in_combo': True}"/>
-                <field name="subparceltype_id" widget="many2one_unclickable"/>
+                <field name="parcel_id" context="{'in_combo': True}"
+                       domain="[('partner_id', '=', parent.partner_id),
+                                ('hydraulic_infrastructure_type', '=', 1)]"/>
+                <field name="subparceltype_id" widget="many2one_unclickable"
+                       domain="[('is_read_only', '=', False)]"/>
                 <field name="area_perc"/>
                 <field name="area_official"/>
                 <field name="cultivation_id" widget="many2one_unclickable"
@@ -187,7 +215,8 @@
                        attrs="{'readonly':[('is_cultivable','=', False)]}"/>
                 <field name="irrigationsystem_id" widget="many2one_unclickable"
                        attrs="{'readonly':[('is_cultivable','=', False)]}"/>
-                <field name="productionmethod_id" widget="many2one_unclickable"/>                
+                <field name="productionmethod_id" widget="many2one_unclickable"
+                       attrs="{'readonly':[('is_cultivable','=', False)]}"/>                
             </tree>
         </field>
     </record>
@@ -200,6 +229,17 @@
                 <field name="cultivation_id"/>
                 <field name="area_official" type="measure"/>
             </pivot>
+        </field>
+    </record>
+
+    <record id="wua_enrolledsubparcel_view_graph" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (graph view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <graph string="Subparcels">
+                <field name="cultivation_id"/>
+                <field name="area_official" type='measure'/>
+            </graph>
         </field>
     </record>
 
@@ -216,14 +256,15 @@
     <record id="wua_enrolledsubparcel_action" model="ir.actions.act_window">
         <field name="name">Enrolled Subparcels</field>
         <field name="res_model">wua.enrolledsubparcel</field>
-        <field name="view_mode">tree,pivot</field>
+        <field name="view_mode">tree,graph,pivot</field>
         <field name="view_id" ref="wua_enrolledsubparcel_view_tree"/>
         <field name="search_view_id" ref="wua_enrolledsubparcel_view_search"/>
         <field name="context">
             {'search_default_active_agriculturalseason': 1,
              'reduced_name_get_for_agriculturalseason': True,
-             'reduced_name_get_for_cropplan': True}
-        </field>        
+             'reduced_name_get_for_cropplan': True,
+             'graph_mode': 'pie'}
+        </field>
     </record>
 
     <menuitem id="wua_cropplan_menu"

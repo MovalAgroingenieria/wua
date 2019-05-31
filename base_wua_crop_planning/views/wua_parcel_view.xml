@@ -7,6 +7,24 @@
         <field name="inherit_id"
                ref="base_wua.wua_parcel_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='%(base_wua.action_change_parcel_name)d']"
+             position="after">
+                <field name="registered_cropplan" invisible="1"/>
+                <div name="cropplanregistered"
+                     style="display: inline-block;color:black;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                     attrs="{'invisible':[('registered_cropplan','=',False)]}">
+                    ( CROP PLAN REGISTERED )
+                </div>
+                <div name="cropplannotregistered"
+                     style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                     attrs="{'invisible':[('registered_cropplan','=',True)]}">
+                    ( CROP PLAN NOT REGISTERED )
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="before">
+                <field name="cropplan_id" colspan="8"/>
+                <newline/>
+            </xpath>            
             <xpath expr="//field[@name='with_cultivationplan']"
                    position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -17,6 +35,35 @@
             </xpath>
             <xpath expr="//field[@name='subparcel_ids']" position="attributes">
                 <attribute name="attrs">{'readonly': [('hydraulic_infrastructure_type','=',1)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_tree" model="ir.ui.view" >
+        <field name="name">Parcels (tree view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_parcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_subparcels']"
+                   position="after">
+                <field name="registered_cropplan" string="Registered Crop Plan"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view" >
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <filter string="Registered Crop Plan: Yes" name="registeredcropplanyes"
+                 domain="[('registered_cropplan','=',True)]"/>
+                <filter string="Registered Crop Plan: No" name="registeredcropplanno"
+                 domain="[('registered_cropplan','=',False)]"/>
+                <separator/>                 
             </xpath>
         </field>
     </record>

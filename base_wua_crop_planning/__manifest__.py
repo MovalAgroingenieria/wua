@@ -21,7 +21,9 @@
         "views/wua_parcel_view.xml",
         "views/wua_agriculturalseason_view.xml",
         "views/wua_subparceltype_view.xml",
-        "views/wua_cropplan_view.xml",],
+        "views/wua_cropplan_view.xml",
+        "views/wua_waterconnection_view.xml",
+        "views/res_partner_view.xml",],
     "installable": True,
     "application": True,
 }

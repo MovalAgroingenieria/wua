@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaCropplan(models.Model):
@@ -78,6 +78,26 @@ class WuaCropplan(models.Model):
         comodel_name='wua.enrolledsubparcel',
         inverse_name='cropplan_id')
 
+    number_of_enrolledsubparcels = fields.Integer(
+        string='Enrolled Subparcels',
+        store=True,
+        index=True,
+        compute='_compute_number_of_enrolledsubparcels',
+        track_visibility='onchange')
+
+    area_official = fields.Float(
+        string='Official Area',
+        digits=(32, 4),
+        store=True,
+        index=True,
+        compute='_compute_area_official',
+        track_visibility='onchange')
+
+    out_of_time = fields.Boolean(
+        string='Out of time',
+        store=True,
+        compute='_compute_out_of_time')
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
@@ -114,40 +134,192 @@ class WuaCropplan(models.Model):
                         self.MAX_SIZE_PARTNER_CODE)
             record.name = value
 
+    @api.depends('enrolledsubparcel_ids')
+    def _compute_number_of_enrolledsubparcels(self):
+        for record in self:
+            number_of_enrolledsubparcels = 0
+            if record.enrolledsubparcel_ids:
+                number_of_enrolledsubparcels = \
+                    len(record.enrolledsubparcel_ids)
+            record.number_of_enrolledsubparcels = number_of_enrolledsubparcels
+
+    @api.depends('enrolledsubparcel_ids',
+                 'enrolledsubparcel_ids.area_official')
+    def _compute_area_official(self):
+        for record in self:
+            area_official = 0
+            if record.enrolledsubparcel_ids:
+                area_official = sum(map(lambda x: x.area_official,
+                                        record.enrolledsubparcel_ids))
+            record.area_official = area_official
+
+    @api.depends('request_date',
+                 'agriculturalseason_id.enrollment_initial_date',
+                 'agriculturalseason_id.enrollment_end_date')
+    def _compute_out_of_time(self):
+        for record in self:
+            out_of_time = False
+            if (record.request_date <
+               record.agriculturalseason_id.enrollment_initial_date or
+               record.request_date >
+               record.agriculturalseason_id.enrollment_end_date):
+                out_of_time = True
+            record.out_of_time = out_of_time
+
     @api.model
     def create(self, vals):
         accumulative_data = []
         if vals['enrolledsubparcel_ids'] is not None:
             accumulative_data = self.process_vals_enrolledsubparcel_ids(
                 vals['enrolledsubparcel_ids'])
+        if self.has_a_cropplan(vals['partner_id']):
+            raise exceptions.UserError(_('The partner already has a previous '
+                                         'crop plan. For each agricultural '
+                                         'season, only one crop plan '
+                                         'per partner is accepted.'))
         new_cropplan = super(WuaCropplan, self).create(vals)
+        if new_cropplan.number_of_enrolledsubparcels == 0:
+            raise exceptions.UserError(_('The crop plan must have one '
+                                         'or more parcels.'))
         if accumulative_data:
-            # Provisional
-            # Update subparcels census...
-            pass
-        # print new_cropplan.enrolledsubparcel_ids[0].area_official
+            if not self.all_enrolledparcels_with_correct_partner(
+               vals['partner_id'], accumulative_data):
+                raise exceptions.UserError(_('There is some parcel with a '
+                                             'different partner.'))
+            self.update_census(new_cropplan.id, accumulative_data,
+                               new_cropplan.enrolledsubparcel_ids)
+            new_ids_parcel = self.get_ids_parcel_from_accumulative_data(
+                accumulative_data)
+            self.update_cropplan_for_parcels(new_ids_parcel,
+                                             new_cropplan.id)
+            self.update_cropplan_for_waterconnections(new_ids_parcel,
+                                                      new_cropplan.id)
+            self.update_cropplan_for_partner(vals['partner_id'],
+                                             new_cropplan.id)
         return new_cropplan
 
     @api.multi
     def write(self, vals):
-        accumulative_data = []
         if len(self) == 1:
+            accumulative_data = []
+            new_ids_parcel = []
             if 'enrolledsubparcel_ids' in vals:
+                old_ids_parcel = self.get_ids_parcel_from_enrolledsubparcels(
+                    self.enrolledsubparcel_ids)
                 accumulative_data = self.process_vals_enrolledsubparcel_ids(
                     vals['enrolledsubparcel_ids'])
-        super(WuaCropplan, self).write(vals)
-        if accumulative_data:
-            # Provisional
-            # Update subparcels census...
-            pass
-        # print self.enrolledsubparcel_ids[0].area_official
+            super(WuaCropplan, self).write(vals)
+            if self.number_of_enrolledsubparcels == 0:
+                raise exceptions.UserError(_('The crop plan must have one '
+                                             'or more parcels.'))
+            if accumulative_data:
+                self.update_census(self.id, accumulative_data,
+                                   self.enrolledsubparcel_ids)
+                new_ids_parcel = self.get_ids_parcel_from_accumulative_data(
+                    accumulative_data)
+                invariable_ids_parcel = \
+                    list(set(old_ids_parcel) & set(new_ids_parcel))
+                for parcel_id in invariable_ids_parcel:
+                    old_ids_parcel.remove(parcel_id)
+                    new_ids_parcel.remove(parcel_id)
+                self.update_cropplan_for_parcels(old_ids_parcel, 0)
+                self.update_cropplan_for_waterconnections(old_ids_parcel, 0)
+                self.update_cropplan_for_parcels(
+                    new_ids_parcel, self.id)
+                self.update_cropplan_for_waterconnections(
+                    new_ids_parcel, self.id)
+        else:
+            super(WuaCropplan, self).write(vals)
         return True
+
+    @api.multi
+    def unlink(self):
+        for record in self:
+            old_ids_parcel = self.get_ids_parcel_from_enrolledsubparcels(
+                record.enrolledsubparcel_ids)
+            self.update_cropplan_for_parcels(old_ids_parcel, 0)
+            self.update_cropplan_for_partner(record.partner_id.id, 0)
+        return super(WuaCropplan, self).unlink()
+
+    def has_a_cropplan(self, partner_id):
+        resp = False
+        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+            [('is_the_active', '=', True)])
+        if active_agriculturalseason:
+            active_agriculturalseason = active_agriculturalseason[0]
+            if self.env['wua.cropplan'].search(
+              [('partner_id', '=', partner_id),
+               ('agriculturalseason_id', '=', active_agriculturalseason.id)]):
+                resp = True
+        return resp
 
     def process_vals_enrolledsubparcel_ids(self, vals):
         accumulative_data = self.get_accumulative_data(vals)
-        # Provisional
-        print accumulative_data
+        if not accumulative_data:
+            return []
+        parcel_with_incorrect_subparcels_area = \
+            self.get_parcel_with_incorrect_subparcels_area(accumulative_data)
+        if parcel_with_incorrect_subparcels_area:
+            parcel = self.env['wua.parcel'].browse(
+                parcel_with_incorrect_subparcels_area)
+            warning_incorrect_subparcels_area_01 = \
+                _('The sum of the areas of the subparcels of parcel ')
+            warning_incorrect_subparcels_area_02 = \
+                _(' is grather than the area of the parcel.')
+            raise exceptions.UserError(warning_incorrect_subparcels_area_01 +
+                                       parcel.name +
+                                       warning_incorrect_subparcels_area_02)
+        self.assign_order_to_enrolledsubparcels(vals, accumulative_data)
         return accumulative_data
+
+    def assign_order_to_enrolledsubparcels(self, vals, accumulative_data):
+        for parcel_data in accumulative_data:
+            current_parcel_id = parcel_data['parcel_id']
+            enrolledsubparcels = self.env['wua.enrolledsubparcel']
+            last_order = 0
+            max_enrolledsubparcel_id = 0
+            # Loop #1: get the last order of the each group of
+            # enrolled subparcels
+            for enrolledsubparcel in vals:
+                enrolledsubparcel_oper = enrolledsubparcel[0]
+                enrolledsubparcel_id = enrolledsubparcel[1]
+                enrolledsubparcel_vals = enrolledsubparcel[2]
+                parcel_id = 0
+                # Get the implied parcel_id.
+                if enrolledsubparcel_oper == 0:
+                    parcel_id = enrolledsubparcel_vals['parcel_id']
+                if enrolledsubparcel_oper == 4:
+                    notmodified_enrolledsubparcel = \
+                        enrolledsubparcels.browse(enrolledsubparcel_id)
+                    parcel_id = notmodified_enrolledsubparcel.parcel_id.id
+                if enrolledsubparcel_oper == 1:
+                    modified_enrolledsubparcel = enrolledsubparcels.browse(
+                        enrolledsubparcel_id)
+                    parcel_id = modified_enrolledsubparcel.parcel_id.id
+                    if ('parcel_id' in enrolledsubparcel_vals and
+                       enrolledsubparcel_vals['parcel_id'] != parcel_id):
+                        parcel_id = enrolledsubparcel_vals['parcel_id']
+                # Only process if the implied parcel_id is equal to
+                # current_parcel_id
+                if parcel_id != current_parcel_id:
+                    continue
+                if (enrolledsubparcel_oper == 1 or
+                   enrolledsubparcel_oper == 4):
+                    if enrolledsubparcel_id > max_enrolledsubparcel_id:
+                        max_enrolledsubparcel_id = enrolledsubparcel_id
+            if max_enrolledsubparcel_id > 0:
+                last_enrolledsubparcel_of_current_parcel = \
+                    enrolledsubparcels.browse(max_enrolledsubparcel_id)
+                last_order = last_enrolledsubparcel_of_current_parcel.order
+            # Loop #2: assign a order for each new enrolled subparcel.
+            order = last_order + 1
+            for enrolledsubparcel in vals:
+                enrolledsubparcel_oper = enrolledsubparcel[0]
+                enrolledsubparcel_vals = enrolledsubparcel[2]
+                if (enrolledsubparcel_oper == 0 and
+                   enrolledsubparcel_vals['parcel_id'] == current_parcel_id):
+                    enrolledsubparcel_vals['order'] = order
+                    order = order + 1
 
     # The result of get_accumulative_data method is a list of dictionaries.
     # Each key is a parcel code, and there are two values: the sum of areas
@@ -164,14 +336,12 @@ class WuaCropplan(models.Model):
                 if enrolledsubparcel_oper == 0:
                     parcel_id = enrolledsubparcel_vals['parcel_id']
                     area_official = enrolledsubparcel_vals['area_official']
-                    order = 0
                 # Not-modified enrolled subparcel.
                 if enrolledsubparcel_oper == 4:
                     notmodified_enrolledsubparcel = enrolledsubparcels.browse(
                         enrolledsubparcel_id)
                     parcel_id = notmodified_enrolledsubparcel.parcel_id.id
                     area_official = notmodified_enrolledsubparcel.area_official
-                    order = notmodified_enrolledsubparcel.order
                 # Modified enrolled subparcel.
                 if enrolledsubparcel_oper == 1:
                     modified_enrolledsubparcel = enrolledsubparcels.browse(
@@ -181,7 +351,6 @@ class WuaCropplan(models.Model):
                        enrolledsubparcel_vals['parcel_id'] != parcel_id):
                         parcel_id = enrolledsubparcel_vals['parcel_id']
                         area_official = enrolledsubparcel_vals['area_official']
-                        order = 0
                     else:
                         if 'area_official' in enrolledsubparcel_vals:
                             area_official = \
@@ -189,14 +358,13 @@ class WuaCropplan(models.Model):
                         else:
                             area_official = \
                                 modified_enrolledsubparcel.area_official
-                        order = modified_enrolledsubparcel.order
                 # Updating the parcels dictionary
                 if not resp:
                     resp.append({
-                        parcel_id: parcel_id,
-                        area_official: area_official,
-                        order: 1,
-                    })
+                        'parcel_id': parcel_id,
+                        'area_official': area_official,
+                        'number_of_enrolledsubparcels': 1,
+                        })
                 else:
                     current_parcel = filter(
                         lambda parcel: parcel['parcel_id'] == parcel_id, resp)
@@ -204,20 +372,166 @@ class WuaCropplan(models.Model):
                         current_parcel = current_parcel[0]
                         current_parcel['area_official'] = \
                             current_parcel['area_official'] + area_official
-                        if current_parcel['order'] > order:
-                            order = current_parcel['order']
-                            current_parcel['order'] = order + 1
+                        current_parcel['number_of_enrolledsubparcels'] = \
+                            current_parcel['number_of_enrolledsubparcels'] + 1
                     else:
                         resp.append({
-                            parcel_id: parcel_id,
-                            area_official: area_official,
-                            order: 1,
-                        })
-                # Provisional
-                print parcel_id
-                print area_official
-                print order
+                            'parcel_id': parcel_id,
+                            'area_official': area_official,
+                            'number_of_enrolledsubparcels': 1,
+                            })
         return resp
+
+    def is_close(self, a, b, rel_tol=1e-09, abs_tol=0.0):
+        return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+    def get_parcel_with_incorrect_subparcels_area(self, accumulative_data):
+        resp = 0
+        parcels = self.env['wua.parcel']
+        for parcel_data in accumulative_data:
+            parcel = parcels.browse(parcel_data['parcel_id'])
+            area_official_of_parcel = parcel.area_official
+            area_official_of_enrolledsubparcels = parcel_data['area_official']
+            areas_are_equal = self.is_close(
+                area_official_of_parcel, area_official_of_enrolledsubparcels,
+                1e-09, 0.00011)
+            if (not areas_are_equal and
+               not area_official_of_enrolledsubparcels <
+               area_official_of_parcel):
+                resp = parcel_data['parcel_id']
+                break
+        return resp
+
+    def all_enrolledparcels_with_correct_partner(self, partner_id,
+                                                 accumulative_data):
+        resp = True
+        parcels = self.env['wua.parcel']
+        for parcel_data in accumulative_data:
+            partner_of_parcel_data = \
+                parcels.browse(parcel_data['parcel_id']).partner_id
+            if partner_of_parcel_data.id != partner_id:
+                resp = False
+                break
+        return resp
+
+    def update_census(self, cropplan_id, accumulative_data,
+                      enrolledsubparcel_ids):
+        parcels = self.env['wua.parcel']
+        subparcels = self.env['wua.parcel.subparcel']
+        enrolledsubparcels = self.env['wua.enrolledsubparcel']
+        no_cultivation_subparcel_type = self.env.ref(
+            'base_wua_crop_planning.subparceltype_00')
+        for parcel_data in accumulative_data:
+            parcel = parcels.browse(parcel_data['parcel_id'])
+            area_official_of_parcel = parcel.area_official
+            area_official_of_enrolledsubparcels = parcel_data['area_official']
+            areas_are_equal = self.is_close(
+                area_official_of_parcel, area_official_of_enrolledsubparcels,
+                1e-09, 0.00011)
+            if (not areas_are_equal and
+               area_official_of_enrolledsubparcels <
+               area_official_of_parcel):
+                remaining_area = area_official_of_parcel - \
+                    area_official_of_enrolledsubparcels
+                enrolledsubparcel_ids_current_parcel = \
+                    enrolledsubparcel_ids.filtered(
+                        lambda x: x.parcel_id.id == parcel_data['parcel_id'])
+                max_order = 0
+                for enrolledsubparcel in enrolledsubparcel_ids_current_parcel:
+                    if enrolledsubparcel.order > max_order:
+                        max_order = enrolledsubparcel.order
+                max_order = max_order + 1
+                # Add enrolled subparcel with "no cultivation".
+                enrolledsubparcels.create({
+                    'cropplan_id': cropplan_id,
+                    'parcel_id': parcel.id,
+                    'order': max_order,
+                    'area_official': remaining_area,
+                    'area_perc': (remaining_area/parcel.area_official) * 100,
+                    'subparceltype_id': no_cultivation_subparcel_type.id})
+            # Renenerate subparcels in census.
+            subparcels.search([('parcel_id', '=', parcel.id)]).unlink()
+            enrolledsubparcels_to_add = enrolledsubparcels.search(
+                [('cropplan_id', '=', cropplan_id),
+                 ('parcel_id', '=', parcel.id)])
+            for enrolledsubparcel in enrolledsubparcels_to_add:
+                subparcels.create({
+                    'subparcel_code': parcel.name + '-' +
+                    str(enrolledsubparcel.order).
+                    zfill(parcel.SIZE_SUBPARCEL_SUFFIX),
+                    'parcel_id': parcel.id,
+                    'pos': enrolledsubparcel.order,
+                    'area_official': enrolledsubparcel.area_official,
+                    'area_perc': enrolledsubparcel.area_perc,
+                    'subparceltype_id': enrolledsubparcel.subparceltype_id.id,
+                    'cultivation_id': enrolledsubparcel.cultivation_id.id,
+                    'cultivationvariety_id':
+                        enrolledsubparcel.cultivationvariety_id.id,
+                    'irrigationsystem_id':
+                        enrolledsubparcel.irrigationsystem_id.id,
+                    'productionmethod_id':
+                        enrolledsubparcel.productionmethod_id.id})
+
+    def get_ids_parcel_from_enrolledsubparcels(self, enrolledsubparcel_ids):
+        resp = []
+        for enrolledsubparcel in enrolledsubparcel_ids:
+            parcel_id = enrolledsubparcel.parcel_id.id
+            if parcel_id not in resp:
+                resp.append(parcel_id)
+        return resp
+
+    def get_ids_parcel_from_accumulative_data(self, accumulative_data):
+        resp = []
+        for parcel_data in accumulative_data:
+            resp.append(parcel_data['parcel_id'])
+        return resp
+
+    def update_cropplan_for_parcels(self, ids_parcel, cropplan_id):
+        # If cropplan_id is zero, then set with null the crop plan of parcels
+        # "ids_parcel" and reset their subparcels (a only subparcel with
+        # "no-cultivation"). Else, assign to parcels the crop plan.
+        # Provisional
+        parcels = self.env['wua.parcel'].browse(ids_parcel)
+        subparcels = self.env['wua.parcel.subparcel']
+        no_cultivation_subparcel_type = self.env.ref(
+            'base_wua_crop_planning.subparceltype_00')
+        for parcel in parcels:
+            if cropplan_id > 0:
+                parcel.cropplan_id = cropplan_id
+            else:
+                parcel.cropplan_id = None
+                subparcels.search([('parcel_id', '=', parcel.id)]).unlink()
+                subparcels.create({
+                    'subparcel_code': parcel.name + '-' +
+                    '1'.zfill(parcel.SIZE_SUBPARCEL_SUFFIX),
+                    'parcel_id': parcel.id,
+                    'pos': 1,
+                    'area_official': parcel.area_official,
+                    'area_perc': 100,
+                    'subparceltype_id': no_cultivation_subparcel_type.id})
+
+    def update_cropplan_for_waterconnections(self, ids_parcel, cropplan_id):
+        # If cropplan_id is zero, then get the water connections of parcels
+        # "ids_parcel" and set with "False" the "registered_cropplan" field
+        # of these water connections (if there is not other parcels with crop
+        # plan). Else, set with "True" the "registered_cropplan" field of
+        # the water connections.
+        # Provisional
+        if cropplan_id > 0:
+            print "registered_cropplan is True for the water conn. of..."
+            print ids_parcel
+        else:
+            print "registered_cropplan is False for the water conn. of..."
+            print ids_parcel
+
+    def update_cropplan_for_partner(self, partner_id, cropplan_id):
+        # If croppan_id is zero, then set with null the crop plan of
+        # partner "partner_id". Else, assign to partner the crop plan.
+        partner = self.env['res.partner'].browse(partner_id)
+        if cropplan_id > 0:
+            partner.cropplan_id = cropplan_id
+        else:
+            partner.cropplan_id = None
 
 
 class WuaEnrolledsubparcel(models.Model):
@@ -442,3 +756,31 @@ class WuaEnrolledsubparcel(models.Model):
                 'domain': {'cultivationvariety_id':
                            [('cultivation_id', '=', self.cultivation_id.id)]}
             }
+
+    @api.model
+    def create(self, vals):
+        if 'subparceltype_id' in vals:
+            subparceltype_id = vals['subparceltype_id']
+            if subparceltype_id:
+                if not self.env['wua.subparceltype'].browse(
+                   subparceltype_id).is_cultivable:
+                    vals['cultivation_id'] = None
+                    vals['cultivationvariety_id'] = None
+                    vals['irrigationsystem_id'] = None
+                    vals['productionmethod_id'] = None
+        new_enrolledsubparcel = super(WuaEnrolledsubparcel, self).create(vals)
+        return new_enrolledsubparcel
+
+    @api.multi
+    def write(self, vals):
+        if 'subparceltype_id' in vals:
+            subparceltype_id = vals['subparceltype_id']
+            if subparceltype_id:
+                if not self.env['wua.subparceltype'].browse(
+                   subparceltype_id).is_cultivable:
+                    vals['cultivation_id'] = None
+                    vals['cultivationvariety_id'] = None
+                    vals['irrigationsystem_id'] = None
+                    vals['productionmethod_id'] = None
+        super(WuaEnrolledsubparcel, self).write(vals)
+        return True

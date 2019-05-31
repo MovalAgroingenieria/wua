@@ -7,3 +7,5 @@ from . import wua_parcel
 from . import wua_agriculturalseason
 from . import wua_subparceltype
 from . import wua_cropplan
+from . import res_partner
+from . import wua_waterconnection
