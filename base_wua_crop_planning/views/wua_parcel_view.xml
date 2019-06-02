@@ -10,19 +10,38 @@
             <xpath expr="//button[@name='%(base_wua.action_change_parcel_name)d']"
              position="after">
                 <field name="registered_cropplan" invisible="1"/>
+                <field name="exists_active_agriculturalseason" invisible="1"/>
                 <div name="cropplanregistered"
                      style="display: inline-block;color:black;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
-                     attrs="{'invisible':[('registered_cropplan','=',False)]}">
+                     attrs="{'invisible':['|',('registered_cropplan','=',False),('exists_active_agriculturalseason','=',False)]}">
                     ( CROP PLAN REGISTERED )
                 </div>
                 <div name="cropplannotregistered"
                      style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
-                     attrs="{'invisible':[('registered_cropplan','=',True)]}">
+                     attrs="{'invisible':['|',('registered_cropplan','=',True),('exists_active_agriculturalseason','=',False)]}">
                     ( CROP PLAN NOT REGISTERED )
                 </div>
             </xpath>
+            <xpath expr="//button[@name='action_see_cadastral_report']"
+                   position="after">
+                <button name="action_see_enrolledsubparcels"
+                    attrs="{'invisible':[('number_of_enrolledsubparcels','=',0)]}"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-book">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_enrolledsubparcels"/>
+                        </span>                    
+                        <span class="o_stat_text">
+                            enrollments
+                        </span>
+                    </div>
+                </button>
+            </xpath>            
             <xpath expr="//field[@name='tag_ids']" position="before">
-                <field name="cropplan_id" colspan="8"/>
+                <field name="cropplan_id" colspan="4"/>
+                <field name="permanent" colspan="4"/>
                 <newline/>
             </xpath>            
             <xpath expr="//field[@name='with_cultivationplan']"
@@ -34,7 +53,7 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='subparcel_ids']" position="attributes">
-                <attribute name="attrs">{'readonly': [('hydraulic_infrastructure_type','=',1)]}</attribute>
+                <attribute name="attrs">{'readonly': [('hydraulic_infrastructure_type','=',1),('exists_active_agriculturalseason','=',True)]}</attribute>
             </xpath>
         </field>
     </record>
@@ -59,12 +78,23 @@
                ref="base_wua.wua_parcel_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='inactive']" position="before">
+                <filter string="Permanent Cultivation: Yes" name="permanentyes"
+                 domain="[('permanent','=',True)]"/>
+                <filter string="Permanent Cultivation: No" name="permanentno"
+                 domain="[('permanent','=',False)]"/>
+                <separator/>
                 <filter string="Registered Crop Plan: Yes" name="registeredcropplanyes"
                  domain="[('registered_cropplan','=',True)]"/>
                 <filter string="Registered Crop Plan: No" name="registeredcropplanno"
                  domain="[('registered_cropplan','=',False)]"/>
                 <separator/>                 
             </xpath>
+        </field>
+    </record>
+
+    <record id="base_wua.wua_parcel_action" model="ir.actions.act_window">
+        <field name="context">
+            {'reduced_name_get_for_cropplan': True}
         </field>
     </record>
 

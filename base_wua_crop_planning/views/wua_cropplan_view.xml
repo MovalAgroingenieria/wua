@@ -267,6 +267,12 @@
         </field>
     </record>
 
+    <record id="wua_technical_regenerate_census_action" model="ir.actions.server">
+        <field name="name">Regenerate census</field>
+        <field name="model_id" ref="base_wua_crop_planning.model_wua_cropplan"/>
+        <field name="code">action = env["wua.cropplan"].action_regenerate_census()</field>
+    </record>
+
     <menuitem id="wua_cropplan_menu"
               name="Crop Plans"
               parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
@@ -290,5 +296,11 @@
               parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
               action="base_wua_pressurized_irrigation.wua_presconsumption_action"
               sequence="5"/>
+
+    <menuitem id="wua_technical_regenerate_census_menu"
+              name="Calculation: regenerate census"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_regenerate_census_action"
+              sequence="7"/>
 
 </odoo>

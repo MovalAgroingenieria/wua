@@ -192,8 +192,8 @@ class WuaCropplan(models.Model):
                 accumulative_data)
             self.update_cropplan_for_parcels(new_ids_parcel,
                                              new_cropplan.id)
-            self.update_cropplan_for_waterconnections(new_ids_parcel,
-                                                      new_cropplan.id)
+            self.update_registered_cropplan_for_waterconnections(
+                new_ids_parcel, new_cropplan.id)
             self.update_cropplan_for_partner(vals['partner_id'],
                                              new_cropplan.id)
         return new_cropplan
@@ -223,10 +223,11 @@ class WuaCropplan(models.Model):
                     old_ids_parcel.remove(parcel_id)
                     new_ids_parcel.remove(parcel_id)
                 self.update_cropplan_for_parcels(old_ids_parcel, 0)
-                self.update_cropplan_for_waterconnections(old_ids_parcel, 0)
+                self.update_registered_cropplan_for_waterconnections(
+                    old_ids_parcel, 0)
                 self.update_cropplan_for_parcels(
                     new_ids_parcel, self.id)
-                self.update_cropplan_for_waterconnections(
+                self.update_registered_cropplan_for_waterconnections(
                     new_ids_parcel, self.id)
         else:
             super(WuaCropplan, self).write(vals)
@@ -238,6 +239,8 @@ class WuaCropplan(models.Model):
             old_ids_parcel = self.get_ids_parcel_from_enrolledsubparcels(
                 record.enrolledsubparcel_ids)
             self.update_cropplan_for_parcels(old_ids_parcel, 0)
+            self.update_registered_cropplan_for_waterconnections(
+                old_ids_parcel, 0)
             self.update_cropplan_for_partner(record.partner_id.id, 0)
         return super(WuaCropplan, self).unlink()
 
@@ -247,9 +250,10 @@ class WuaCropplan(models.Model):
             [('is_the_active', '=', True)])
         if active_agriculturalseason:
             active_agriculturalseason = active_agriculturalseason[0]
-            if self.env['wua.cropplan'].search(
-              [('partner_id', '=', partner_id),
-               ('agriculturalseason_id', '=', active_agriculturalseason.id)]):
+            cropplan = self.env['wua.cropplan'].search(
+                [('partner_id', '=', partner_id),
+                 ('agriculturalseason_id', '=', active_agriculturalseason.id)])
+            if cropplan:
                 resp = True
         return resp
 
@@ -382,6 +386,36 @@ class WuaCropplan(models.Model):
                             })
         return resp
 
+    # Simillar to "get_accumulative_data", but directly from the
+    # enrolledsubparcel_ids field (not from "vals").
+    def get_accumulative_data_from_cropplan(self, cropplan):
+        resp = []
+        for enrolledsubparcel in cropplan.enrolledsubparcel_ids:
+            parcel_id = enrolledsubparcel.parcel_id.id
+            area_official = enrolledsubparcel.area_official
+            if not resp:
+                resp.append({
+                    'parcel_id': parcel_id,
+                    'area_official': area_official,
+                    'number_of_enrolledsubparcels': 1,
+                    })
+            else:
+                current_parcel = filter(
+                    lambda parcel: parcel['parcel_id'] == parcel_id, resp)
+                if current_parcel:
+                    current_parcel = current_parcel[0]
+                    current_parcel['area_official'] = \
+                        current_parcel['area_official'] + area_official
+                    current_parcel['number_of_enrolledsubparcels'] = \
+                        current_parcel['number_of_enrolledsubparcels'] + 1
+                else:
+                    resp.append({
+                        'parcel_id': parcel_id,
+                        'area_official': area_official,
+                        'number_of_enrolledsubparcels': 1,
+                        })
+        return resp
+
     def is_close(self, a, b, rel_tol=1e-09, abs_tol=0.0):
         return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
@@ -490,7 +524,6 @@ class WuaCropplan(models.Model):
         # If cropplan_id is zero, then set with null the crop plan of parcels
         # "ids_parcel" and reset their subparcels (a only subparcel with
         # "no-cultivation"). Else, assign to parcels the crop plan.
-        # Provisional
         parcels = self.env['wua.parcel'].browse(ids_parcel)
         subparcels = self.env['wua.parcel.subparcel']
         no_cultivation_subparcel_type = self.env.ref(
@@ -499,7 +532,6 @@ class WuaCropplan(models.Model):
             if cropplan_id > 0:
                 parcel.cropplan_id = cropplan_id
             else:
-                parcel.cropplan_id = None
                 subparcels.search([('parcel_id', '=', parcel.id)]).unlink()
                 subparcels.create({
                     'subparcel_code': parcel.name + '-' +
@@ -509,20 +541,36 @@ class WuaCropplan(models.Model):
                     'area_official': parcel.area_official,
                     'area_perc': 100,
                     'subparceltype_id': no_cultivation_subparcel_type.id})
+                parcel.cropplan_id = None
 
-    def update_cropplan_for_waterconnections(self, ids_parcel, cropplan_id):
+    def update_registered_cropplan_for_waterconnections(
+            self, ids_parcel, cropplan_id):
         # If cropplan_id is zero, then get the water connections of parcels
         # "ids_parcel" and set with "False" the "registered_cropplan" field
         # of these water connections (if there is not other parcels with crop
         # plan). Else, set with "True" the "registered_cropplan" field of
         # the water connections.
-        # Provisional
-        if cropplan_id > 0:
-            print "registered_cropplan is True for the water conn. of..."
-            print ids_parcel
-        else:
-            print "registered_cropplan is False for the water conn. of..."
-            print ids_parcel
+        parcels = self.env['wua.parcel'].browse(ids_parcel)
+        for parcel in parcels:
+            irrigationpointwcs = \
+                self.env['wua.parcel.irrigationpointwc'].search(
+                    [('parcel_id', '=', parcel.id)])
+            for irrigationpointwc in irrigationpointwcs:
+                waterconnection = irrigationpointwc.waterconnection_id
+                if cropplan_id > 0:
+                    if not waterconnection.registered_cropplan:
+                        waterconnection.registered_cropplan = True
+                else:
+                    unregister_cropplan = True
+                    for ipwc_of_wc in waterconnection.irrigationpointwc_ids:
+                        if (ipwc_of_wc.parcel_id != parcel.id and
+                           ipwc_of_wc.parcel_id.registered_cropplan):
+                            unregister_cropplan = False
+                            break
+                    if unregister_cropplan:
+                        waterconnection.registered_cropplan = False
+                        if waterconnection.working:
+                            waterconnection.working = False
 
     def update_cropplan_for_partner(self, partner_id, cropplan_id):
         # If croppan_id is zero, then set with null the crop plan of
@@ -532,6 +580,68 @@ class WuaCropplan(models.Model):
             partner.cropplan_id = cropplan_id
         else:
             partner.cropplan_id = None
+
+    @api.multi
+    def action_regenerate_census(self, go_to_partners=True):
+        active_agriculturalseasons = \
+            self.env['wua.agriculturalseason'].search(
+                [('is_the_active', '=', True)])
+        if not active_agriculturalseasons:
+            raise exceptions.UserError(_('There is no active agricultural '
+                                         'season.'))
+        # First: Reset all (virtual closing of agricultural season)
+        partners = self.env['res.partner'].search(
+            [('is_wua_partner', '=', True)])
+        if not partners:
+            return True
+        for partner in partners:
+            partner.cropplan_id = None
+        parcels = self.env['wua.parcel'].search([])
+        ids_parcel = []
+        for parcel in parcels:
+            ids_parcel.append(parcel.id)
+        self.update_cropplan_for_parcels(ids_parcel, 0)
+        waterconnections = self.env['wua.waterconnection'].search([])
+        for waterconnection in waterconnections:
+            waterconnection.write({
+                'registered_cropplan': False,
+                'working': False})
+        # Second: Update census from all crop plans.
+        cropplans = self.env['wua.cropplan'].search([])
+        for cropplan in cropplans:
+            accumulative_data = \
+                self.get_accumulative_data_from_cropplan(cropplan)
+            if accumulative_data:
+                self.update_census(cropplan.id, accumulative_data,
+                                   cropplan.enrolledsubparcel_ids)
+                new_ids_parcel = self.get_ids_parcel_from_accumulative_data(
+                    accumulative_data)
+                self.update_cropplan_for_parcels(new_ids_parcel, cropplan.id)
+                self.update_registered_cropplan_for_waterconnections(
+                    new_ids_parcel, cropplan.id)
+                self.update_cropplan_for_partner(cropplan.partner_id.id,
+                                                 cropplan.id)
+        # Third: Go to res_partner tree view.
+        if go_to_partners:
+            condition = [('is_wua_partner', '=', True)]
+            id_form_view = self.env.ref('base_wua.view_partner_form').id
+            id_tree_view = self.env.ref('base_wua.view_partner_tree').id
+            search_view = self.env.ref('base_wua.view_partner_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Partners'),
+                'res_model': 'res.partner',
+                'view_type': 'form',
+                'view_mode': 'tree,form,kanban',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'domain': condition,
+                'target': 'current',
+                'context': {'wua': '1', 'default_is_wua_partner': True}
+                }
+            return act_window
+        else:
+            return True
 
 
 class WuaEnrolledsubparcel(models.Model):

@@ -16,19 +16,50 @@
                             attrs="{'invisible':
                                     [('is_the_active', '=', True)]}"                            
                             groups="base_wua_crop_planning.group_wua_technical_director"
-                            confirm="IMPORTANT: This operation will delete all parcels of census and it is not possible to do roollback. Are you sure you want to do the operation?"/>
+                            confirm="IMPORTANT: This operation will delete all parcels of census. Are you sure you want to do the operation?"/>
                     <button name="close_agriculturalseason"
                             type="object" string="Close"
                             attrs="{'invisible':
                                     [('is_the_active', '=', False)]}"                            
                             groups="base_wua_crop_planning.group_wua_technical_director"
-                            confirm="IMPORTANT: After closing the agricultural season it is not possible to add new cultivation plans, and it is not possible to do roollback. Are you sure you want to do the operation?"/>
+                            confirm="IMPORTANT: After closing the agricultural season it is not possible to add new cultivation plans. Are you sure you want to do the operation?"/>
                     <div name="activeagriculturalseason"
                          style="display: inline-block;color:black;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
                          attrs="{'invisible':[('is_the_active', '=' , False)]}">
                         ( ACTIVE AGRICULTURAL SEASON )
                     </div>
                 </header>
+            </xpath>
+            <xpath expr="//button[@name='action_see_presconsumptions']"
+                   position="after">
+                <button name="action_see_cropplans"
+                    attrs="{'invisible':[('number_of_cropplans','=',0)]}"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-files-o">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_cropplans"/>
+                        </span>                    
+                        <span class="o_stat_text">
+                            crop plans
+                        </span>
+                    </div>
+                </button>
+                <button name="action_see_enrolledsubparcels"
+                    attrs="{'invisible':[('number_of_enrolledsubparcels','=',0)]}"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-book">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_enrolledsubparcels"/>
+                        </span>                    
+                        <span class="o_stat_text">
+                            enrollments
+                        </span>
+                    </div>
+                </button>                   
             </xpath>
             <xpath expr="//field[@name='end_date']" position="after">
                 <field name="enrollment_initial_date"/>
@@ -39,10 +70,6 @@
             </xpath>
             <xpath expr="//field[@name='end_date']" position="attributes">
                 <attribute name="attrs">{'readonly': [('initialized','=',True)]}</attribute>
-            </xpath>
-            <xpath expr="//field[@name='description']" position="after">
-                <field name="number_of_cropplans"/>
-                <field name="number_of_enrolledsubparcels"/>
             </xpath>
             <xpath expr="//sheet" position="after">
                 <div class="oe_chatter">
