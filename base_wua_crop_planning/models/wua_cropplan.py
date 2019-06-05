@@ -607,7 +607,9 @@ class WuaCropplan(models.Model):
                 'registered_cropplan': False,
                 'working': False})
         # Second: Update census from all crop plans.
-        cropplans = self.env['wua.cropplan'].search([])
+        active_agriculturalseason = active_agriculturalseasons[0]
+        cropplans = self.env['wua.cropplan'].search(
+            [('agriculturalseason_id', '=', active_agriculturalseason.id)])
         for cropplan in cropplans:
             accumulative_data = \
                 self.get_accumulative_data_from_cropplan(cropplan)
