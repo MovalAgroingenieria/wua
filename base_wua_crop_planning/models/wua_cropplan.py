@@ -236,12 +236,13 @@ class WuaCropplan(models.Model):
     @api.multi
     def unlink(self):
         for record in self:
-            old_ids_parcel = self.get_ids_parcel_from_enrolledsubparcels(
-                record.enrolledsubparcel_ids)
-            self.update_cropplan_for_parcels(old_ids_parcel, 0)
-            self.update_registered_cropplan_for_waterconnections(
-                old_ids_parcel, 0)
-            self.update_cropplan_for_partner(record.partner_id.id, 0)
+            if record.agriculturalseason_id.is_the_active:
+                old_ids_parcel = self.get_ids_parcel_from_enrolledsubparcels(
+                    record.enrolledsubparcel_ids)
+                self.update_cropplan_for_parcels(old_ids_parcel, 0)
+                self.update_registered_cropplan_for_waterconnections(
+                    old_ids_parcel, 0)
+                self.update_cropplan_for_partner(record.partner_id.id, 0)
         return super(WuaCropplan, self).unlink()
 
     def has_a_cropplan(self, partner_id):
