@@ -31,7 +31,7 @@ class WuaParcel(models.Model):
 
     can_be_watered = fields.Boolean(
         string='Can be watered',
-        default=False,
+        default=True,
         store=True,
         compute='_compute_can_be_watered')
 
@@ -72,16 +72,13 @@ class WuaParcel(models.Model):
             record.exists_active_agriculturalseason = \
                 exists_active_agriculturalseason
 
-    @api.depends('enrolledsubparcel_ids',
-                 'enrolledsubparcel_ids.is_cultivable')
+    @api.depends('subparcel_ids', 'subparcel_ids.is_cultivable')
     def _compute_can_be_watered(self):
         for record in self:
             can_be_watered = False
-            cultivable_enrolledsubparcels = \
-                record.enrolledsubparcel_ids.filtered(
-                    lambda x: x.agriculturalseason_id.is_the_active and
-                    x.is_cultivable)
-            if cultivable_enrolledsubparcels:
+            cultivable_subparcels = \
+                record.subparcel_ids.filtered(lambda x: x.is_cultivable)
+            if cultivable_subparcels:
                 can_be_watered = True
             record.can_be_watered = can_be_watered
 

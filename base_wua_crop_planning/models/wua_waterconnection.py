@@ -31,3 +31,16 @@ class WuaWaterconnection(models.Model):
         for record in self:
             record.exists_active_agriculturalseason = \
                 exists_active_agriculturalseason
+
+
+class WuaParcelIrrigationpoint(models.Model):
+    _inherit = 'wua.parcel.irrigationpoint'
+
+    can_be_watered = fields.Boolean(
+        string='Can be watered',
+        compute='_compute_can_be_watered')
+
+    @api.multi
+    def _compute_can_be_watered(self):
+        for record in self:
+            record.can_be_watered = record.parcel_id.can_be_watered

@@ -15,6 +15,7 @@
         "base_wua_invoicing_pressurized_irrigation",],
     "data": [
         "security/security.xml",
+        "security/ir.model.access.csv",
         "data/wua_subparceltype_data.xml",
         "views/resources.xml",        
         "views/wua_cultivation_view.xml",
@@ -23,7 +24,8 @@
         "views/wua_subparceltype_view.xml",
         "views/wua_cropplan_view.xml",
         "views/wua_waterconnection_view.xml",
-        "views/res_partner_view.xml",],
+        "views/res_partner_view.xml",
+        "reports/wua_cropplan_report.xml",],
     "installable": True,
     "application": True,
 }

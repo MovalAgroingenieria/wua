@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="action_wua_cropplan_report"
+            string="Crop Plan"
+            model="wua.cropplan"
+            report_type="qweb-pdf"
+            name="base_wua_crop_planning.report_wua_cropplan"
+            paperformat="base_wua_report.paperformat_wua_reports"
+            groups="base_wua.group_wua_user"/>
+
+    <template id="report_wua_cropplan">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <t t-call="base_wua_crop_planning.report_wua_cropplan_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_cropplan_document">
+        <div class="page" style="font-family: dejavusansmono;font-size: 12;">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            @font-face {
+                font-family: 'dejavusansmono';
+                src: local('DejaVu Sans Mono');
+            }
+            ]]>
+            </style>
+            <div name="section_master" class="row">
+                <div name="partner_id" class="col-xs-8" style="font-family: verdana;font-size: 14;text-align: left;">
+                    <span t-esc="('[' + str(o.partner_id.partner_code) + '] ' + o.partner_id.name)"/>
+                </div>
+                <div name="agriculturalseason_id" class="col-xs-4" style="font-family: verdana;font-size: 14;text-align: right;">
+                    <span t-field="o.agriculturalseason_id"/>
+                </div>                
+            </div>
+            <div name="section_detail" class="row" style="margin-left: 0px; margin-right: 0px;">
+                <div name="detail_title" class="col-xs-12" style="font-size: 13;text-align: center;margin-top: 50px;margin-bottom: 30px;">
+                    E N R O L L M E N T S
+                </div>
+                <table class="table table-condensed">
+                    <thead>
+                        <tr style="background-color: #e9e9e9">
+                            <th class="text-left">Parcel</th>
+                            <th class="text-center">Order</th>
+                            <th class="text-left">Type</th>
+                            <th class="text-left">Cultivation</th>
+                            <th class="text-left">Variety</th>
+                            <th class="text-left">Irrig. System</th>
+                            <th class="text-left">Prod. Method</th>
+                            <th class="text-right">Area</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.enrolledsubparcel_ids" t-as="l">
+                            <td align="left"><span t-field="l.parcel_id"/></td>
+                            <td align="center"><span t-field="l.order"/></td>
+                            <td align="left"><span t-field="l.subparceltype_id"/></td>
+                            <td align="left"><span t-field="l.cultivation_id"/></td>
+                            <td align="left"><span t-field="l.cultivationvariety_id"/></td>
+                            <td align="left"><span t-field="l.irrigationsystem_id"/></td>
+                            <td align="left"><span t-field="l.productionmethod_id"/></td>
+                            <td align="right"><span t-field="l.area_official"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row" name="section_total">
+                    <div class="col-xs-8"><![CDATA[&nbsp;]]></div>
+                    <div class="col-xs-2 text-right">Total Area :</div>
+                    <div class="col-xs-2 text-right"><span t-field="o.area_official" style="margin-right: 4px;"/></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</odoo>
