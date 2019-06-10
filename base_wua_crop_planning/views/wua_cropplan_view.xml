@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cropplan_view_form" model="ir.ui.view">
+        <field name="name">Crop Plans (form view)</field>
+        <field name="model">wua.cropplan</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <field name="out_of_time" invisible="1"/>
+                <header>
+                    <div name="cropplanoutoftime"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('out_of_time','=',False)]}">
+                        ( OUT OF TIME )
+                    </div>
+                </header>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="partner_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   domain="[('is_wua_partner', '=', True)]"
+                                   attrs="{'readonly':[('id','>',0)]}"/>
+                            <field name="user_id"/>
+                            <field name="number_of_enrolledsubparcels"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="agriculturalseason_id"/>
+                            <field name="request_date"/>
+                            <field name="area_official"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook>
+                            <page name="enrolledsubparcels" string="Subparcels">
+                                <field name="enrolledsubparcel_ids"
+                                 context="{'tree_view_ref':
+                                 'base_wua_crop_planning.wua_edit_enrolledsubparcel_view_tree'}"/>
+                            </page>
+                            <page name="notes" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_cropplan_view_tree" model="ir.ui.view">
+        <field name="name">Crop Plans (tree view)</field>
+        <field name="model">wua.cropplan</field>
+        <field name="arch" type="xml">
+            <tree colors="red:out_of_time==True"
+                  class="o_base_wua_crop_planning_cropplan_view_tree">
+                <field name="agriculturalseason_id"/>
+                <field name="partner_id"/>
+                <field name="request_date"/>
+                <field name="out_of_time"/>
+                <field name="number_of_enrolledsubparcels"/>
+                <field name="area_official"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_cropplan_view_search" model="ir.ui.view">
+        <field name="name">Crop Plans (search view)</field>
+        <field name="model">wua.cropplan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <filter string="Active Agricultural Season" name="active_agriculturalseason"
+                 domain="[('agriculturalseason_id.is_the_active','=',True)]"/>
+                <separator/>
+                <filter string="Out of time" name="outoftime"
+                 domain="[('out_of_time','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season" name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Irrigation Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="User" name="user"
+                     context="{'group_by':'user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_enrolledsubparcel_view_form" model="ir.ui.view" >
+        <field name="name">Enrolled Subparcels (form view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="fields">
+                    <group name="fields_left">
+                        <field name="agriculturalseason_id"/>
+                        <field name="parcel_id"/>
+                        <field name="subparcel_code"/>
+                        <field name="partner_id"/>
+                        <field name="profile"/>
+                        <field name="cropplan_id"/>
+                    </group>
+                    <group name="fields_right">
+                        <field name="area_official"/>
+                        <field name="subparceltype_id"/>
+                        <field name="cultivation_id"/>
+                        <field name="cultivationvariety_id"/>
+                        <field name="irrigationsystem_id"/>
+                        <field name="productionmethod_id"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_enrolledsubparcel_view_tree" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (tree view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                class="o_base_wua_crop_planning_enrolledsubparcel_view_tree">
+                <field name="agriculturalseason_id"/>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <field name="subparcel_code"/>
+                <field name="cropplan_id"/>
+                <field name="subparceltype_id"/>
+                <field name="area_official"/>
+                <field name="cultivation_id"/>
+                <field name="cultivationvariety_id"/>
+                <field name="irrigationsystem_id"/>
+                <field name="productionmethod_id"/>
+                <field name="profile"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_enrolledsubparcel_view_search" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (search view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="subparceltype_id"/>
+                <field name="cultivation_id"/>
+                <field name="cultivationvariety_id"/>
+                <field name="irrigationsystem_id"/>
+                <field name="productionmethod_id"/>
+                <field name="profile"/>
+                <filter string="Active Agricultural Season" name="active_agriculturalseason"
+                 domain="[('agriculturalseason_id.is_the_active','=',True)]"/>
+                <separator/>
+                <filter string="Cultivable" name="cultivable"
+                 domain="[('is_cultivable','=',True)]"/>
+                <filter string="Not Cultivable" name="notcultivable"
+                 domain="[('is_cultivable','=',False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season" name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Crop Plan" name="cropplan"
+                     context="{'group_by':'cropplan_id'}"/>
+                    <filter string="Hydraulic Sector" name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Parcel" name="parcel"
+                     context="{'group_by':'parcel_id'}"/>                
+                    <filter string="Type" name="type"
+                     context="{'group_by':'subparceltype_id'}"/>
+                    <filter string="Cultivation" name="cultivation"
+                     context="{'group_by':'cultivation_id'}"/>
+                    <filter string="Variety" name="variety"
+                     context="{'group_by':'cultivationvariety_id'}"/>
+                    <filter string="Irrigation System" name="irrigationsystem"
+                     context="{'group_by':'irrigationsystem_id'}"/>
+                    <filter string="Production Method" name="productionmethod"
+                     context="{'group_by':'productionmethod_id'}"/>
+                    <filter string="Profile" name="profile"
+                     context="{'group_by':'profile'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_edit_enrolledsubparcel_view_tree" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (tree view for edition)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom"
+                class="o_base_wua_crop_planning_enrolledsubparcel_edit_view_tree">
+                <field name="is_cultivable" invisible="1"/>
+                <field name="parcel_id" context="{'in_combo': True}"
+                       domain="[('partner_id', '=', parent.partner_id),
+                                ('hydraulic_infrastructure_type', '=', 1)]"/>
+                <field name="subparceltype_id" widget="many2one_unclickable"
+                       domain="[('is_read_only', '=', False)]"/>
+                <field name="area_perc"/>
+                <field name="area_official"/>
+                <field name="cultivation_id" widget="many2one_unclickable"
+                       attrs="{'readonly':[('is_cultivable','=', False)],
+                               'required':[('cultivationvariety_id','!=', False)]}"/>
+                <field name="cultivationvariety_id" widget="many2one_unclickable"
+                       attrs="{'readonly':[('is_cultivable','=', False)]}"/>
+                <field name="irrigationsystem_id" widget="many2one_unclickable"
+                       attrs="{'readonly':[('is_cultivable','=', False)]}"/>
+                <field name="productionmethod_id" widget="many2one_unclickable"
+                       attrs="{'readonly':[('is_cultivable','=', False)]}"/>                
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_enrolledsubparcel_view_pivot" model="ir.ui.view" >
+        <field name="name">Enrolled Subparcels (pivot view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <pivot string="Subparcels" display_quantity="true">
+                <field name="cultivation_id"/>
+                <field name="area_official" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_enrolledsubparcel_view_graph" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (graph view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <graph string="Subparcels">
+                <field name="cultivation_id"/>
+                <field name="area_official" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_cropplan_action" model="ir.actions.act_window">
+        <field name="name">Crop Plans</field>
+        <field name="res_model">wua.cropplan</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_cropplan_view_tree"/>
+        <field name="search_view_id" ref="wua_cropplan_view_search"/>
+        <field name="context">{'search_default_active_agriculturalseason': 1}</field>         
+    </record>
+
+    <record id="wua_enrolledsubparcel_action" model="ir.actions.act_window">
+        <field name="name">Enrolled Subparcels</field>
+        <field name="res_model">wua.enrolledsubparcel</field>
+        <field name="view_mode">tree,graph,pivot</field>
+        <field name="view_id" ref="wua_enrolledsubparcel_view_tree"/>
+        <field name="search_view_id" ref="wua_enrolledsubparcel_view_search"/>
+        <field name="context">
+            {'search_default_active_agriculturalseason': 1,
+             'reduced_name_get_for_agriculturalseason': True,
+             'reduced_name_get_for_cropplan': True,
+             'graph_mode': 'pie'}
+        </field>
+    </record>
+
+    <record id="wua_technical_regenerate_census_action" model="ir.actions.server">
+        <field name="name">Regenerate census</field>
+        <field name="model_id" ref="base_wua_crop_planning.model_wua_cropplan"/>
+        <field name="code">action = env["wua.cropplan"].action_regenerate_census()</field>
+    </record>
+
+    <menuitem id="wua_cropplan_menu"
+              name="Crop Plans"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="wua_cropplan_action"
+              sequence="2"/>
+
+    <menuitem id="wua_enrolledsubparcel_menu"
+              name="Enrolled Subparcels"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="wua_enrolledsubparcel_action"
+              sequence="3"/>
+
+    <menuitem id="base_wua_pressurized_irrigation.wua_reading_menu"
+              name="Readings"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="base_wua_pressurized_irrigation.wua_reading_action"
+              sequence="4"/>
+
+    <menuitem id="base_wua_pressurized_irrigation.wua_presconsumption_menu"
+              name="Consumptions"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="base_wua_pressurized_irrigation.wua_presconsumption_action"
+              sequence="5"/>
+
+    <menuitem id="wua_technical_regenerate_census_menu"
+              name="Calculation: regenerate census"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_regenerate_census_action"
+              sequence="7"/>
+
+</odoo>

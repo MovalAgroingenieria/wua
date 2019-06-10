@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+        
+        <record id="make_invisible_cultivationplan_menu" model="res.groups">
+            <field name="name">Cultivation Plan Menu: Invisible</field>
+        </record>
+
+        <record id="base_wua.wua_cultivationplan_menu" model="ir.ui.menu">
+            <field name="groups_id"
+                   eval="[(6,0,[ref('make_invisible_cultivationplan_menu')])]"/>
+        </record>
+
+        <record id="group_wua_technical_director" model="res.groups">
+            <field name="name">Technical Director</field>
+            <field name="category_id"
+                ref="base.module_category_water_users_associations"/>
+            <field name="implied_ids"
+                eval="[(4, ref('base_wua.group_wua_manager'))]"/>
+            <field name="users"
+                eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+    </data>
+
+</odoo>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <field name="registered_cropplan" invisible="1"/>
+                <field name="exists_active_agriculturalseason" invisible="1"/>
+                <header>
+                    <div name="cropplanregistered"
+                         style="display: inline-block;color:black;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':['|',('registered_cropplan','=',False),('exists_active_agriculturalseason','=',False)]}">
+                        ( CROP PLAN REGISTERED )
+                    </div>
+                    <div name="cropplannotregistered"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':['|',('registered_cropplan','=',True),('exists_active_agriculturalseason','=',False)]}">                         
+                        ( CROP PLAN NOT REGISTERED )
+                    </div>
+                </header>
+            </xpath>
+            <xpath expr="//field[@name='watermeter_id']" position="after">
+                <field name="working"
+                 attrs="{'readonly':[('registered_cropplan','=',False)]}"/>
+            </xpath>
+            <xpath expr="//button[@name='action_see_street_view']" position="after">
+                <field name="can_be_watered"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_tree" model="ir.ui.view">
+        <field name="name">Water Connections (tree view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class">o_base_wua_crop_planning_waterconnection_view_tree</attribute>
+            </xpath>
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="registered_cropplan"/>
+                <field name="working"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_search" model="ir.ui.view">
+        <field name="name">Water Connections (search view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_search"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='withoutwatermeter']" position="after">
+                <separator/>
+                <filter string="Registered Crop Plan: Yes" name="registeredcropplanyes"
+                 domain="[('registered_cropplan','=',True)]"/>
+                <filter string="Registered Crop Plan: No" name="registeredcropplanno"
+                 domain="[('registered_cropplan','=',False)]"/>
+                <separator/>
+                <filter string="Working: Yes" name="workingyes"
+                 domain="[('working','=',True)]"/>
+                <filter string="Working: No" name="workingno"
+                 domain="[('working','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

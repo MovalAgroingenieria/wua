@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_agriculturalseason_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <field name="is_the_active" invisible="1"/>
+                <field name="initialized" invisible="1"/>
+                <header>
+                    <button name="open_agriculturalseason"
+                            type="object" string="Open"
+                            attrs="{'invisible':
+                                    [('is_the_active', '=', True)]}"                            
+                            groups="base_wua_crop_planning.group_wua_technical_director"
+                            confirm="IMPORTANT: This operation will delete all parcels of census. Are you sure you want to do the operation?"/>
+                    <button name="close_agriculturalseason"
+                            type="object" string="Close"
+                            attrs="{'invisible':
+                                    [('is_the_active', '=', False)]}"                            
+                            groups="base_wua_crop_planning.group_wua_technical_director"
+                            confirm="IMPORTANT: After closing the agricultural season it is not possible to add new cultivation plans. Are you sure you want to do the operation?"/>
+                    <div name="activeagriculturalseason"
+                         style="display: inline-block;color:black;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('is_the_active', '=' , False)]}">
+                        ( ACTIVE AGRICULTURAL SEASON )
+                    </div>
+                </header>
+            </xpath>
+            <xpath expr="//button[@name='action_see_presconsumptions']"
+                   position="after">
+                <button name="action_see_cropplans"
+                    attrs="{'invisible':[('number_of_cropplans','=',0)]}"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-files-o">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_cropplans"/>
+                        </span>                    
+                        <span class="o_stat_text">
+                            crop plans
+                        </span>
+                    </div>
+                </button>
+                <button name="action_see_enrolledsubparcels"
+                    attrs="{'invisible':[('number_of_enrolledsubparcels','=',0)]}"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-book">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_enrolledsubparcels"/>
+                        </span>                    
+                        <span class="o_stat_text">
+                            enrollments
+                        </span>
+                    </div>
+                </button>                   
+            </xpath>
+            <xpath expr="//field[@name='end_date']" position="after">
+                <field name="enrollment_initial_date"/>
+                <field name="enrollment_end_date"/>
+            </xpath>
+            <xpath expr="//field[@name='initial_date']" position="attributes">
+                <attribute name="attrs">{'readonly': [('initialized','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='end_date']" position="attributes">
+                <attribute name="attrs">{'readonly': [('initialized','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//sheet" position="after">
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_tree" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (tree view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_agriculturalseason_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class">o_base_wua_crop_planning_agriculturalseason_view_tree</attribute>
+            </xpath>
+            <xpath expr="//field[@name='description']"
+                   position="after">
+                <field name="enrollment_initial_date"/>
+                <field name="enrollment_end_date"/>
+                <field name="number_of_cropplans"
+                 string="Crop Plans"/>
+                <field name="number_of_enrolledsubparcels"
+                 string="Enrolled Subparcels"/>
+            </xpath>
+            <xpath expr="//field[@name='number_of_presconsumptions']"
+                   position="after">
+                <field name="is_the_active"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_search" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (search view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_agriculturalseason_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <filter string="Active Agricultural Season" name="active_agriculturalseason"
+                 domain="[('is_the_active','=',True)]"/>
+                <filter string="Closed Agricultural Seasons" name="closed_agriculturalseasons"
+                 domain="[('is_the_active','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
