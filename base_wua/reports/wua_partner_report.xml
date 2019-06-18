@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner report -->
+    <template id="wua_partner_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+
+                        <div name="wua_partner_data">
+                            <h4 style="margin-top: 8px; margin-bottom: 2px; padding-bottom: 0xp;">Wua Partner Data</h4>
+                            <div class="row" style="border: 1px solid lightgray;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="border-right: 1px solid lightgray; width: 50%; display: table-cell;">
+                                        <div class="h5">
+
+                                            <!-- Name -->
+                                            <t t-if="o.name"><strong><span t-field="o.name"/></strong></t>
+                                            <br/>
+
+                                            <!-- Address -->
+                                            <t t-if="o.street"><span t-field="o.street"/></t>
+                                            <t t-if="o.street2"><span t-field="o.street2"/></t>
+                                            <br/>
+                                            <t t-if="o.city"><span t-field="o.city"/></t>
+                                            <t t-if="o.zip"><span>&amp;nbsp;-&amp;nbsp;</span><span t-field="o.zip"/></t>
+                                            <br/>
+                                            <t t-if="o.state_id"><span t-field="o.state_id"/></t>
+                                            <t t-if="o.country_id"><span>-</span><span t-field="o.country_id"></span></t>
+                                            <br/>
+
+                                            <!-- Phone -->
+                                            <t t-if="o.phones"><span t-field="o.phones"/></t>
+                                            <t t-else=""><t t-if="o.phone"><span t-field="o.phone"/>
+                                                </t>
+                                                <t t-if="o.mobile">
+                                                    <span t-field="o.mobile"/>
+                                                </t>
+                                            </t>
+                                         </div>
+                                     </div>
+                                     <div style="width: 50%; display: table-cell; padding: 0px 16px;">
+                                         <div class="h5">
+                                             <t t-if="o.partner_code">
+                                                 <span >Wua partner code:</span>
+                                                 <span t-field="o.partner_code"/>
+                                             </t>
+                                             <br/>
+                                             <t t-if="o.number_of_votes">
+                                                 <span >Number of votes:</span>
+                                                 <span t-field="o.number_of_votes"/>
+                                             </t>
+                                             <br/>
+                                             <t t-if="o.parcel_number">
+                                                 <span >Number of parcels:</span>
+                                                 <span t-field="o.parcel_number"/>
+                                             </t>
+                                             <br/>
+                                             <t t-if="o.parcel_total_area">
+                                                 <span >Total area:</span>
+                                                 <span t-field="o.parcel_total_area"/>
+                                                 <!-- @ TODO add units -->
+                                             </t>
+                                         </div>
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div name="wua_partnerlinks_ids">
+                            <t t-if="o.partnerlink_ids">
+                                <h4 style="margin-top: 8px; margin-bottom: 2px; padding-bottom: 0xp;">Partner Parcels</h4>
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th>Parcel</th>
+                                            <th>Cadastral reference</th>
+                                            <th>Irrigation partner</th>
+                                            <th class="text-right">Declared area</th>
+                                            <th class="text-right">Ownership (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="o.partnerlink_ids" t-as="p">
+                                            <td><span t-field="p.parcel_id"/></td>
+                                            <td><span t-field="p.parcel_id.cadastral_reference"/></td>
+                                            <td><span t-field="p.irrigation_partner"/></td>
+                                            <td class="text-right">
+                                                <span t-field="p.area_official"/>
+                                                (<t t-esc="p.parcel_id._compute_area_measurement_name()"/>)
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="p.ownership_percentage"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </t>
+                        </div>
+
+
+
+
+
+                    </div><!-- end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

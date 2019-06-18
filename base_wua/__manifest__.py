@@ -33,7 +33,9 @@
         "web_listview_invert_selection",
         "portal",
         "portal_sale",
-        "dev_export_excel",],
+        "dev_export_excel",
+        "base_wua_report",
+    ],
     "data": [
         "security/wua_security.xml",
         "security/ir.model.access.csv",
@@ -62,7 +64,10 @@
         "views/wua_parceltag_view.xml",
         "views/wua_parceltag_view.xml",
         "views/res_partner_view.xml",
-        "views/res_users_view.xml",],
+        "views/res_users_view.xml",
+        "views/wua_partner_report_views.xml",
+        "reports/wua_partner_report.xml",
+    ],
     "installable": True,
     "application": True,
 }
