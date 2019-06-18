@@ -717,6 +717,13 @@ class WuaParcel(models.Model):
             res['arch'] = etree.tostring(doc)
         return res
 
+    # This method is used by wua_partner_report
+    @api.model
+    def _compute_area_measurement_name(self):
+        area_measurement_name = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_name')
+        return area_measurement_name.decode('utf_8')
+
     @api.multi
     def unlink(self):
         # This variable is for partnerlinks not deleted before real "unlink".

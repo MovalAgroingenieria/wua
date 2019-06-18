@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-05 19:11+0000\n"
-"PO-Revision-Date: 2018-11-05 19:11+0000\n"
+"POT-Creation-Date: 2019-06-20 07:51+0000\n"
+"PO-Revision-Date: 2019-06-20 07:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -187,8 +187,8 @@ msgstr "Descripción"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wizard_change_parcel_name
-msgid "Dialog box to change the parcel name (code), with irrigation infrastructure"
-msgstr "Dialog box to change the parcel name (code), with irrigation infrastructure"
+msgid "Dialog box to change the parcel name (code), for Almassora"
+msgstr "Cuadro de diálogo para cambiar el nombre de la parcela (código), con infraestructura de riego"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_display_name
@@ -233,11 +233,11 @@ msgstr "Cota (m)"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_hr_employee
 msgid "Employee of a WUA with irrigation infrastructure (with consumptions)"
-msgstr "Employee of a WUA with irrigation infrastructure (with consumptions)"
+msgstr "Empleado de una C.R. con infraestructura de riego (con consumos)"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:974
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:993
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:987
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1006
 #, python-format
 msgid "Empty Irrigation Point."
 msgstr "Punto de suministro en blanco."
@@ -254,8 +254,13 @@ msgstr "Valor en blanco."
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel
-msgid "Entity (parcel, with possible irrigation infrastructure)"
-msgstr "Elemento (parcela, con posible infraestructura de riego)"
+msgid "Entity (parcel of Almassora)"
+msgstr "Elemento (parcela)"
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection
+msgid "Entity (water connection)"
+msgstr "Elemento (toma)"
 
 #. module: base_wua_infrastructure
 #: sql_constraint:wua.irrigationshed:0
@@ -327,7 +332,7 @@ msgstr "Cálculo global de puntos de suministro"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationgate_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_form
 msgid "Google Maps"
-msgstr "Google Maps"
+msgstr ""
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_flowdivider_view_form
@@ -385,12 +390,13 @@ msgstr "Rango de orden hidráulico: ["
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_subparcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Hydraulic Sector"
 msgstr "Sector hidráulico"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:742
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:755
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_hydraulicsector_action
 #: model:ir.ui.menu,name:base_wua_infrastructure.wua_hydraulicsector_menu
 #, python-format
@@ -418,7 +424,7 @@ msgstr "Orden hidráulico:"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_id
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_number_of_irrigationgates
@@ -448,11 +454,11 @@ msgstr "Si el acceso al riego a presión no se permite, este grupo será asignad
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_active
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_waterconnection_active
 msgid "If the active field is set to False, it will allow you to hide the register without removing it. For see archived register, go to \"Search-Filters\" in tree view"
-msgstr "Si el campo activo está como falso, ello le permitirá ocultar el registro sin borrarlo. Para ver los registros archivados, ir a \"Buscar-Filtros\" en la vista árbol"
+msgstr "Si el campo activo está como falso, ello le permitirá ocultar el registro sin borrarlo. Para ver los registros archivados, ir a \"Buscar-Filtros\" en la vista lista"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:949
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:955
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:962
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:968
 #, python-format
 msgid "Incompatible irrigation point type."
 msgstr "Tipo de punto de suministro incompatible."
@@ -494,6 +500,11 @@ msgid "Initial HO"
 msgstr "Orden inicial"
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
+msgid "Intake"
+msgstr "Toma"
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_subparcel_irrigation_duration_coefficient
 msgid "Irrigation Coef."
 msgstr "Coef. Ponderación"
@@ -513,7 +524,7 @@ msgid "Irrigation Ditch"
 msgstr "Acequia"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:747
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:760
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_irrigationditch_action
 #: model:ir.ui.menu,name:base_wua_infrastructure.wua_irrigationditch_menu
 #, python-format
@@ -523,7 +534,7 @@ msgstr "Acequias"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_irrigationditch
 msgid "Irrigation Ditches (gravity irrigation)"
-msgstr "Irrigation Ditches (gravity irrigation)"
+msgstr "Acequia (riego por gravedad)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_subparcel_irrigationgate_id
@@ -550,7 +561,7 @@ msgstr "Tablachos"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_irrigationgate
 msgid "Irrigation Gates (with consumptions)"
-msgstr "Irrigation Gates (with consumptions)"
+msgstr "Tablachos (con consumos)"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_flowdivider_view_kanban
@@ -608,6 +619,7 @@ msgstr "Puntos de suministro (a bajo nivel)"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_irrigationshed_id
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Irrigation Shed"
 msgstr "Caseta"
@@ -634,6 +646,21 @@ msgid "Irrigation Worker"
 msgstr "Regador"
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
+msgid "Irrigation ditch"
+msgstr "Acequia"
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
+msgid "Irrigation gate"
+msgstr "Tablacho"
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
+msgid "Irrigation gates"
+msgstr "Tablachos"
+
+#. module: base_wua_infrastructure
 #: code:addons/base_wua_infrastructure/models/wua_flowdivider.py:179
 #, python-format
 msgid "Irrigation gates of a different irrigation ditch."
@@ -646,7 +673,7 @@ msgstr "Punto de suministro de una parcela"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel_irrigationpointwc
-msgid "Irrigation point of a parcel (WC)"
+msgid "Irrigation point of a parcel (WC), with pressurized irrigation"
 msgstr "Punto de suministro de una parcela (toma)"
 
 #. module: base_wua_infrastructure
@@ -706,7 +733,7 @@ msgstr "Nombre"
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_irrigationshed_param
 msgid "Name of irrigation-shed param in the GIS viewer url"
-msgstr "Nombre del parámetro caseta en la url del visor GIS"
+msgstr "Nombre del parámetro caseta en la URL del visor GIS"
 
 #. module: base_wua_infrastructure
 #: selection:wua.parcel,hydraulic_infrastructure_type:0
@@ -720,7 +747,6 @@ msgstr "Nota: ycval y xcval son parámetros"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_notes
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_notes
@@ -742,7 +768,7 @@ msgstr "Número"
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_number_of_flowdividers
 msgid "Number of flow dividers"
-msgstr "Number of flow dividers"
+msgstr "Número de partidores"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_number_of_irrigationgates
@@ -789,6 +815,7 @@ msgstr "Parámetros"
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_parcel_cadastral_parcel
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
 msgid "Parcel"
 msgstr "Parcela"
 
@@ -832,7 +859,7 @@ msgstr "Parcelas:"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner
 msgid "Partner of a WUA with gravity irrigation infrastructure"
-msgstr "Partner of a WUA with gravity irrigation infrastructure"
+msgstr "Socio de una C.R. con infraestructura de riego por gravedad."
 
 #. module: base_wua_infrastructure
 #: model:ir.actions.server,name:base_wua_infrastructure.res_partner_irrigationpoints_action
@@ -890,7 +917,7 @@ msgstr "Acceso restringido a riego a presión"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_form
 msgid "Street View"
-msgstr "Street View"
+msgstr ""
 
 #. module: base_wua_infrastructure
 #: code:addons/base_wua_infrastructure/models/wua_parcel.py:348
@@ -906,7 +933,7 @@ msgstr "Tablachos"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel_subparcel
 msgid "Subparcel of a parcel with irrigation infrastructure"
-msgstr "Subparcel of a parcel with irrigation infrastructure"
+msgstr "Subparcela de una parcela con infraestructura de riego."
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.menu,name:base_wua_infrastructure.base_wua_infrastructure_technical_menu
@@ -916,7 +943,7 @@ msgstr "Técnico"
 #. module: base_wua_infrastructure
 #: sql_constraint:wua.flowdivider:0
 msgid "The drainage coefficient must be a value from 0 to 1."
-msgstr "El coeficiente de escurrimiento debe ser un valor de 0 a 1."
+msgstr "El coeficiente de escurrimiento debe ser un valor entre 0 y 1."
 
 #. module: base_wua_infrastructure
 #: sql_constraint:wua.irrigationditch:0
@@ -940,7 +967,7 @@ msgstr "El código de sector hidráulico debe ser un valor positivo."
 #: code:addons/base_wua_infrastructure/models/wua_parcel.py:519
 #, python-format
 msgid "The hydraulic sectors are differents."
-msgstr "Sectores hidráulicos distintos."
+msgstr "Los sectores hidráulicos son distintos."
 
 #. module: base_wua_infrastructure
 #: sql_constraint:wua.irrigationgate:0
@@ -1056,11 +1083,6 @@ msgid "Water Connections (low-level)"
 msgstr "Tomas (a bajo nivel)"
 
 #. module: base_wua_infrastructure
-#: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection
-msgid "Water Connections (with based-sets invoicing)"
-msgstr "Tomas (con facturación por lotes)"
-
-#. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_kanban
 msgid "Water Connections:"
 msgstr "Tomas:"
@@ -1089,6 +1111,11 @@ msgstr "Derecho de riego: Riego por gravedad"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_view_search
 msgid "Water Right: Pressurized Irrigation"
 msgstr "Derecho de riego: Riego a presión"
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
+msgid "Water connection points"
+msgstr "Tomas"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_wateringduration_area_ratio
