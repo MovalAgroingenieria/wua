@@ -56,4 +56,18 @@
         </field>
     </record>
 
+    <record id="wua_parcel_partnerlink_view_tree" model="ir.ui.view">
+        <field name="name">Partner Links (tree view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_tree"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='area_official_other_costs_net']" position="after">
+                <field name="rurallocation"/>                
+                <field name="pressurized_irrigation_right"/>
+                <field name="gravityfed_irrigation_right"/>
+            </xpath>        
+        </field>
+    </record>
+
+
 </odoo>

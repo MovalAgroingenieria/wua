@@ -110,3 +110,35 @@ class WuaParcelSubparcel(models.Model):
                 name = str(id_bancal) + ' ' + name
             result.append((record.id, name))
         return result
+
+
+class WuaParcelPartnerlink(models.Model):
+    _inherit = 'wua.parcel.partnerlink'
+
+    rurallocation = fields.Char(
+        compute='_get_rurallocation_id',
+        string="Rural Location",
+        size=255)
+    pressurized_irrigation_right = fields.Boolean(
+        compute='_get_pressurized_irrigation_right',
+        string="Irrigation Right")
+    gravityfed_irrigation_right = fields.Boolean(
+        compute='_get_gravityfed_irrigation_right',
+        string="Gravityfed Right")
+
+    @api.multi
+    def _get_rurallocation_id(self):
+        for record in self:
+            record.rurallocation = record.parcel_id.rurallocation_id.name
+
+    @api.multi
+    def _get_pressurized_irrigation_right(self):
+        for record in self:
+            record.pressurized_irrigation_right = \
+                record.parcel_id.pressurized_irrigation_right
+
+    @api.multi
+    def _get_gravityfed_irrigation_right(self):
+        for record in self:
+            record.gravityfed_irrigation_right = \
+                record.parcel_id.gravityfed_irrigation_right
