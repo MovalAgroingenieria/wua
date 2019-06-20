@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner infrastrucure report (continuation of wua partner report) -->
+    <template id="wua_partner_infrastructure_report_document" inherit_id="base_wua.wua_partner_report_document">
+        <xpath expr="//div[@name='wua_partnerlinks_ids']" position="after">
+            <div name="wua_irrigationpoint_ids" style="margin-top: 20px;">
+
+                <!-- Determine number of IG and WC points -->
+                <t t-set="pressure_type" t-value="0"/>
+                <t t-set="gravity_type" t-value="0"/>
+                <t t-foreach="o.partnerlink_ids" t-as="p">
+                    <t t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
+                        <t t-if="ip.type == 'WC' and p.irrigation_partner == True">
+                            <t t-set="pressure_type" t-value="pressure_type + 1"/>
+                        </t>
+                        <t t-elif="ip.type == 'IG' and p.irrigation_partner == True">
+                            <t t-set="gravity_type" t-value="gravity_type + 1"/>
+                        </t>
+                    </t>
+                </t>
+
+                <!-- Show Pressure irrigation points if any -->
+                <t t-if="pressure_type != 0">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <div class="col-xs-12" style="background: lightgray; padding: 1px 16px;">Water connection points</div>
+                    </div>
+                    <table class="table table-condensed" style="margin-top: 2px;">
+                        <thead>
+                            <tr>
+                                <th>Parcel</th>
+                                <th>Intake</th>
+                                <th>Irrigation Shed</th>
+                                <th>Hydraulic Sector</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.partnerlink_ids" t-as="p">
+                                <tr t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
+                                    <t t-if="ip.type == 'WC' and p.irrigation_partner == True">
+                                        <td><span t-field="p.parcel_id"/></td>
+                                        <td><span t-field="ip.waterconnection_id"/></td>
+                                        <td><span t-field="ip.irrigationshed_id"/></td>
+                                        <td><span t-field="ip.hydraulicsector_id"/></td>
+                                    </t>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+
+                <!-- Show Gravity irrigation points if any -->
+                <t t-if="gravity_type != 0">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <div class="col-xs-12" style="background: lightgray; padding: 1px 16px;">Irrigation gates</div>
+                    </div>
+                    <table class="table table-condensed" style="margin-top: 2px;">
+                        <thead>
+                            <tr>
+                                <th>Parcel</th>
+                                <th>Irrigation gate</th>
+                                <th>Irrigation ditch</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.partnerlink_ids" t-as="p">
+                                <tr t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
+                                    <t t-if="ip.type == 'IG' and p.irrigation_partner == True">
+                                        <td><span t-field="p.parcel_id"/></td>
+                                        <td><span t-field="ip.irrigationgate_id"/></td>
+                                        <td><span t-field="ip.irrigationditch_id"/></td>
+                                    </t>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
