@@ -7,6 +7,8 @@
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
                     <div class="page">
+
+                        <!-- Partner data -->
                         <div name="wua_partner_data">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                                 <div class="col-xs-12" style="background: lightgray; padding: 1px 16px;">Partner</div>
@@ -25,23 +27,23 @@
                                             <br/>
                                         </t>
                                         <t t-if="o.city or o.zip">
-	                                        <t t-if="o.city"><span t-field="o.city"/></t>
-	                                        <t t-if="o.zip"><span>-&amp;nbsp;</span><span t-field="o.zip"/></t>
-	                                        <br/>
+                                            <t t-if="o.city"><span t-field="o.city"/></t>
+                                            <t t-if="o.zip"><span>-&amp;nbsp;</span><span t-field="o.zip"/></t>
+                                            <br/>
                                         </t>
                                         <t t-if="o.state_id or o.country_id">
-	                                        <t t-if="o.state_id"><span t-field="o.state_id"/></t>
-	                                        <t t-if="o.country_id"><span>-&amp;nbsp;</span><span t-field="o.country_id"></span></t>
-	                                        <br/>
-	                                    </t>
-	                                    <t t-if="o.phones or o.phone or o.mobile">
-	                                        <t t-if="o.phones"><span t-field="o.phones"/></t>
-	                                        <t t-else="">
-	                                            <t t-if="o.phone"><span t-field="o.phone"/></t>
-	                                            <t t-if="o.mobile"><span t-field="o.mobile"/></t>
-	                                        </t>
-	                                        <br/>
-	                                    </t>
+                                            <t t-if="o.state_id"><span t-field="o.state_id"/></t>
+                                            <t t-if="o.country_id"><span>-&amp;nbsp;</span><span t-field="o.country_id"></span></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.phones or o.phone or o.mobile">
+                                            <t t-if="o.phones"><span t-field="o.phones"/></t>
+                                            <t t-else="">
+                                                <t t-if="o.phone"><span t-field="o.phone"/></t>
+                                                <t t-if="o.mobile"><span t-field="o.mobile"/></t>
+                                            </t>
+                                            <br/>
+                                        </t>
                                         <t t-if="o.email"><span t-field="o.email"/><br/></t>
                                         <t t-if="o.bank_ids">
                                             <t t-foreach="o.bank_ids" t-as="bank_acc">
@@ -90,6 +92,7 @@
                             </div>
                         </div>
 
+                        <!-- Parcels data -->
                         <div name="wua_partnerlinks_ids" style="margin-top: 20px;">
                             <t t-if="o.partnerlink_ids">
                                 <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
@@ -126,7 +129,7 @@
                                 </table>
                             </t>
                         </div>
-                        <!-- 
+                        <!--
                          If base_wua_infrastructure module is installed this report continues
                          with wua_partner_infrastructure_report_document
                         -->
