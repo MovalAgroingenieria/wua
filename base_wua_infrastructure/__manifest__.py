@@ -30,7 +30,9 @@
         "views/wua_flowdivider_view.xml",
         "views/wua_parcel_view.xml",
         "views/res_partner_view.xml",
-        "views/hr_views.xml",],
+        "views/hr_views.xml",
+        "reports/wua_partner_infrastructure_report.xml",
+    ],
     "installable": True,
     "application": True,
 }

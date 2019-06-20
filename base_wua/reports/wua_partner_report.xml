@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner report -->
+    <template id="wua_partner_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+
+                        <!-- Partner data -->
+                        <div name="wua_partner_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12" style="background: lightgray; padding: 1px 16px;">Partner</div>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="width: 60%; display: table-cell;">
+                                        <t t-if="o.name">
+                                            <strong><span t-field="o.name"/></strong>
+                                            <t t-if="o.vat"><span>(NIF:&amp;nbsp;<span t-field="o.vat"/>)</span></t>
+                                        <br/>
+                                        </t>
+                                        <t t-if="o.street or o.street2">
+                                            <t t-if="o.street"><span t-field="o.street"/></t>
+                                            <t t-if="o.street2"><span t-field="o.street2"/></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.city or o.zip">
+                                            <t t-if="o.city"><span t-field="o.city"/></t>
+                                            <t t-if="o.zip"><span>-&amp;nbsp;</span><span t-field="o.zip"/></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.state_id or o.country_id">
+                                            <t t-if="o.state_id"><span t-field="o.state_id"/></t>
+                                            <t t-if="o.country_id"><span>-&amp;nbsp;</span><span t-field="o.country_id"></span></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.phones or o.phone or o.mobile">
+                                            <t t-if="o.phones"><span t-field="o.phones"/></t>
+                                            <t t-else="">
+                                                <t t-if="o.phone"><span t-field="o.phone"/></t>
+                                                <t t-if="o.mobile"><span t-field="o.mobile"/></t>
+                                            </t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.email"><span t-field="o.email"/><br/></t>
+                                        <t t-if="o.bank_ids">
+                                            <t t-foreach="o.bank_ids" t-as="bank_acc">
+                                                <t t-if="bank_acc.acc_number">
+                                                    <t t-set="hidden_acc_number" t-value="bank_acc.acc_number[:24] + ' XXXX'"/>
+                                                    <span t-esc="hidden_acc_number"/>
+                                                </t>
+                                                <t t-if="bank_acc.bank_name">
+                                                    <span>-</span>
+                                                    <span t-field="bank_acc.bank_name"></span>
+                                                </t>
+                                                <br/>
+                                            </t>
+                                        </t>
+                                    </div>
+                                    <div style="width: 40%; display: table-cell; padding: 0px 32px;">
+                                        <div>&amp;nbsp;</div>
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td><span>Wua partner code:</span></td>
+                                                    <td class="text-right"><span t-field="o.partner_code"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Number of votes:</span></td>
+                                                    <td class="text-right"><span t-field="o.number_of_votes"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Number of parcels:</span></td>
+                                                    <td class="text-right"><span t-field="o.parcel_number"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Total area:</span></td>
+                                                    <td class="text-right" style="padding: 0 0 0 28px;">
+                                                        <span t-field="o.parcel_total_area"/>
+                                                        <t t-if="o.partnerlink_ids">
+                                                            <t t-set="measurement_unit" t-value="o.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
+                                                            <span>(<t t-esc="measurement_unit"/>)</span>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Parcels data -->
+                        <div name="wua_partnerlinks_ids" style="margin-top: 20px;">
+                            <t t-if="o.partnerlink_ids">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <div class="col-xs-12" style="background: lightgray; padding: 1px 16px;">Parcels</div>
+                                </div>
+                                <table class="table table-striped" style="margin-top: 2px;">
+                                    <thead>
+                                        <tr>
+                                            <th>Parcel</th>
+                                            <th>Cadastral reference</th>
+                                            <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
+                                            <th class="text-center">Irrigation partner</th>
+                                            <th>Profile</th>
+                                            <th class="text-right">Ownership (%)</th>
+                                            <th class="text-right">Water (%)</th>
+                                            <th class="text-right">Costs (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="o.partnerlink_ids" t-as="p">
+                                            <td><span t-field="p.parcel_id"/></td>
+                                            <td><span t-field="p.parcel_id.cadastral_reference"/></td>
+                                            <td class="text-right"><span t-field="p.area_official"/></td>
+                                            <td class="text-center">
+                                                <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
+                                                <t t-else=""><span>No</span></t>
+                                            </td>
+                                            <td><span t-field="p.profile"/></td>
+                                            <td class="text-right"><span t-field="p.ownership_percentage"/></td>
+                                            <td class="text-right"><span t-field="p.water_costs_percentage"/></td>
+                                            <td class="text-right"><span t-field="p.other_costs_percentage"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </t>
+                        </div>
+                        <!--
+                         If base_wua_infrastructure module is installed this report continues
+                         with wua_partner_infrastructure_report_document
+                        -->
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
