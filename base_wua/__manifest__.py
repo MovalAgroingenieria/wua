@@ -65,7 +65,6 @@
         "views/wua_parceltag_view.xml",
         "views/res_partner_view.xml",
         "views/res_users_view.xml",
-        "views/wua_partner_report_views.xml",
         "reports/wua_partner_report.xml",
     ],
     "installable": True,
