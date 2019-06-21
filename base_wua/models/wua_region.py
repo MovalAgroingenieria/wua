@@ -90,7 +90,7 @@ class WuaRegion(models.Model):
 
 class WuaRegionState(models.Model):
     _name = 'wua.region.state'
-    _description = 'State'
+    _description = 'State of region'
     _order = 'cadastral_code'
 
     name = fields.Char(
@@ -190,7 +190,7 @@ class WuaRegionStateCounty(models.Model):
         required=True)
 
     state_id = fields.Many2one(
-        string='State',
+        string='State Name',
         comodel_name='wua.region.state',
         required=True,
         ondelete='restrict')
