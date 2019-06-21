@@ -16,7 +16,7 @@
                 </xpath>
             
                 <xpath expr="//field[@name='subparcel_id']" position="attributes">
-                    <t t-if="o.with_agent">
+                    <t t-if="o.agent_id">
                         <attribute name='domain'>[('partner_id', '=', parent.partner_id),
                                                 ('irrigationgate_id', '!=', False),
                                                 ('parcel_id.gravityfed_irrigation_right', '=', True),
