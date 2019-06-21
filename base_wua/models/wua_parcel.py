@@ -720,9 +720,21 @@ class WuaParcel(models.Model):
     # This method is used by wua_partner_report
     @api.model
     def _compute_area_measurement_name(self):
-        area_measurement_name = self.env['ir.values'].get_default(
-            'wua.configuration', 'area_measurement_name')
-        return area_measurement_name.decode('utf_8')
+        area__measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        results = ""
+
+        if area__measurement_type:
+            if area__measurement_type == 0:
+                results = 'ha'
+            else:
+                area_measurement_name = self.env['ir.values'].get_default(
+                    'wua.configuration', 'area_measurement_name')
+                if area_measurement_name:
+                    results = area_measurement_name.decode('utf_8')
+                else:
+                    results = ""
+        return results
 
     @api.multi
     def unlink(self):
