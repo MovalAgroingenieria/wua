@@ -725,7 +725,7 @@ class WuaParcel(models.Model):
         results = ""
 
         if area__measurement_type:
-            if area__measurement_type == 0:
+            if area__measurement_type == 0 :
                 results = 'ha'
             else:
                 area_measurement_name = self.env['ir.values'].get_default(
@@ -734,6 +734,8 @@ class WuaParcel(models.Model):
                     results = area_measurement_name.decode('utf_8')
                 else:
                     results = ""
+        else:
+            results = 'ha'
         return results
 
     @api.multi
