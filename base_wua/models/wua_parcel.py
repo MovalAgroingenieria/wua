@@ -723,10 +723,9 @@ class WuaParcel(models.Model):
         area__measurement_type = self.env['ir.values'].get_default(
             'wua.configuration', 'area_measurement_type')
         results = ""
-
         if area__measurement_type:
-            if area__measurement_type == 0 :
-                results = 'ha'
+            if area__measurement_type == 0:
+                results = _('ha')
             else:
                 area_measurement_name = self.env['ir.values'].get_default(
                     'wua.configuration', 'area_measurement_name')
@@ -735,7 +734,7 @@ class WuaParcel(models.Model):
                 else:
                     results = ""
         else:
-            results = 'ha'
+            results = _('ha')
         return results
 
     @api.multi
