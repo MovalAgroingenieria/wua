@@ -109,6 +109,57 @@
                 </table>
             </div>
         </xpath>
+        
+            <xpath expr="//div[@id='partner_info']" position="after">
+                <t t-if="o.with_agent">
+                <br/>
+                <div id="partner_agent_info">
+                    <div class="row">
+                        <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                            <span style="font-family: verdana">AGENT NAME</span>
+                        </div>
+                        <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
+                            <span style="font-family: verdana">DNI/CIF</span>
+                        </div>
+                        <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
+                            <span style="font-family: verdana">PHONE</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6" style="border: 1px solid black;">
+                            <span t-field="o.agent_id.name"/>
+                        </div>
+                        <div class="col-xs-3" style="border: 1px solid black;">
+                            <t t-if="o.agent_id.vat"><span t-field="o.agent_id.vat"/></t>
+                            <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                        </div>
+                        <div class="col-xs-3 text-center" style="border: 1px solid black;">
+                            <t t-if="o.agent_id.phones"><span t-field="o.agent_id.phones"/></t>
+                            <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                            <span style="font-family: verdana">ADDRESS</span>
+                        </div>
+                        <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                            <span style="font-family: verdana">LOCATION</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6" style="border: 1px solid black;">
+                            <t t-if="o.agent_id.street_name"><span t-field="o.agent_id.street_name"/> <span t-field="o.agent_id.street_number"/> <span t-field="o.agent_id.zip"/></t>
+                            <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                        </div>
+                        <div class="col-xs-6" style="border: 1px solid black;">
+                            <t t-if="o.agent_id.city"><span t-field="o.agent_id.city"/> (<span t-field="o.agent_id.state_id"/>)</t>
+                            <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+            </xpath>
+       
     </template>
 
     <template id="report_wua_wateringrequest_external_layout_header" inherit_id="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_header">

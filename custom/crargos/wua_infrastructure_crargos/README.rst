@@ -30,6 +30,7 @@ Contributors
 * Alberto Hernández <ahernandez@moval.es>
 * Eduardo Iniesta <einiesta@moval.es>
 * Miguel Mora <mmora@moval.es>
+* Salvador Sánchez Aroca <ssanchez@moval.es>
 * Jorge Vera <jvera@moval.es>
 
 Maintainer

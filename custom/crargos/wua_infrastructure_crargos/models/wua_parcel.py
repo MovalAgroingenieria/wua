@@ -11,16 +11,16 @@ class WuaParcel(models.Model):
                    '(C.R.Argos)'
 
     agent_id = fields.Many2one(
-    string='Agent',
-    comodel_name='res.partner',
-    required=False,
-    index=True)
-        
+        string='Agent',
+        comodel_name='res.partner',
+        required=False,
+        index=True)
+
     with_agent = fields.Boolean(
-    string="With Agent",
-    store=True,
-    compute='_calculate_with_agent')
-    
+        string="With Agent",
+        store=True,
+        compute='_compute_with_agent')
+
     def test_other_slave_data(self, vals):
         super(WuaParcel, self).test_other_slave_data(vals)
         if ('subparcel_ids' in vals):
@@ -94,14 +94,15 @@ class WuaParcel(models.Model):
              ('parcel_id', '!=', parcel_id)])
         resp = len(other_subparcels) > 0
         return resp
+
     @api.multi
     @api.depends('agent_id')
-    def _calculate_with_agent(self):
+    def _compute_with_agent(self):
         for record in self:
-            if(record.agent_id == None):
-                record.with_agent = False
-            else:
+            if(record.agent_id):
                 record.with_agent = True
+            else:
+                record.with_agent = False
 
 
 class WuaParcelSubparcel(models.Model):

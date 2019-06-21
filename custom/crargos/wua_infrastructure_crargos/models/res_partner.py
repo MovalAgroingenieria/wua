@@ -6,24 +6,24 @@ from odoo import models, fields, api, exceptions, _
 
 
 class ResPartner(models.Model):
-    
+
     _inherit = 'res.partner'
 
     parcel_agent_ids = fields.One2many(
         string='Parcels represented',
         comodel_name='wua.parcel',
         inverse_name='agent_id')
-        
+
     is_agent = fields.Boolean(
         string='Is agent',
         store=True,
-        compute='_calculate_is_agent')
+        compute='_compute_is_agent')
 
     @api.multi
     @api.depends('parcel_agent_ids')
-    def _calculate_is_agent(self):
+    def _compute_is_agent(self):
         for record in self:
-            if(record.parcel_agent_ids == None):
-                record.is_agent = False
-            else:
+            if(record.parcel_agent_ids):
                 record.is_agent = True
+            else:
+                record.is_agent = False

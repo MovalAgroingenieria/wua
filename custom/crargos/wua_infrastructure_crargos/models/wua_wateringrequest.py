@@ -7,22 +7,23 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaWateringrequest(models.Model):
     _inherit = 'wua.wateringrequest'
-    
+
     agent_id = fields.Many2one(
-    string='Agent',
-    required=False,
-    index=True)
-        
+        string='Agent',
+        comodel_name='res.partner',
+        required=False,
+        index=True)
+
     with_agent = fields.Boolean(
-    string="With Agent",
-    store=True,
-    compute='_calculate_with_agent')
-    
+        string="With Agent",
+        store=True,
+        compute='_compute_with_agent')
+
     @api.multi
     @api.depends('agent_id')
-    def _calculate_with_agent(self):
+    def _compute_with_agent(self):
         for record in self:
-            if(record.agent_id == None):
-                record.with_agent = False
-            else:
+            if(record.agent_id):
                 record.with_agent = True
+            else:
+                record.with_agent = False
