@@ -6,8 +6,10 @@
         <field name="model">wua.parcel</field>
         <field name="inherit_id" ref="base_wua_gravity_irrigation.wua_parcel_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='tag_ids']" position="before">
-                <field name="agent_id" colspan="8"/>
+            <xpath expr="//field[@name='street_view_y']" position="after">
+                <field name="agent_id" colspan="8"
+                 domain="[('is_wua_partner', '=', True)]"
+                 context="{'wua':'1','default_is_wua_partner':True}"/>
             </xpath>        
         </field>
     </record> 
@@ -38,7 +40,7 @@
                  domain="[('with_agent','=',False)]"/>                
                 <separator/>
             </xpath>
-            <xpath expr="//filter[@name='irrigationworker']" position="after">
+            <xpath expr="//filter[@name='partner']" position="after">
                 <filter string="Agent" name="agent"
                     context="{'group_by':'agent_id'}"/>
             </xpath>
@@ -56,8 +58,6 @@
         </field>
     </record>
  
-
-
     <record id="wua_parcel_subparcel_view_form" model="ir.ui.view">
         <field name="name">Subparcels (form view)</field>
         <field name="model">wua.parcel.subparcel</field>
@@ -114,6 +114,5 @@
             </xpath>        
         </field>
     </record>
-
 
 </odoo>

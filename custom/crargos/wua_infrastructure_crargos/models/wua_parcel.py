@@ -17,7 +17,7 @@ class WuaParcel(models.Model):
         index=True)
 
     with_agent = fields.Boolean(
-        string="With Agent",
+        string="With agent",
         store=True,
         compute='_compute_with_agent')
 
@@ -95,11 +95,10 @@ class WuaParcel(models.Model):
         resp = len(other_subparcels) > 0
         return resp
 
-    @api.multi
     @api.depends('agent_id')
     def _compute_with_agent(self):
         for record in self:
-            if(record.agent_id):
+            if record.agent_id:
                 record.with_agent = True
             else:
                 record.with_agent = False
@@ -136,29 +135,31 @@ class WuaParcelPartnerlink(models.Model):
     _inherit = 'wua.parcel.partnerlink'
 
     rurallocation = fields.Char(
-        compute='_get_rurallocation_id',
+        compute='_compute_rurallocation_id',
         string="Rural Location",
         size=255)
+
     pressurized_irrigation_right = fields.Boolean(
-        compute='_get_pressurized_irrigation_right',
+        compute='_compute_pressurized_irrigation_right',
         string="Irrigation Right")
+
     gravityfed_irrigation_right = fields.Boolean(
-        compute='_get_gravityfed_irrigation_right',
+        compute='_compute_gravityfed_irrigation_right',
         string="Gravityfed Right")
 
     @api.multi
-    def _get_rurallocation_id(self):
+    def _compute_rurallocation_id(self):
         for record in self:
             record.rurallocation = record.parcel_id.rurallocation_id.name
 
     @api.multi
-    def _get_pressurized_irrigation_right(self):
+    def _compute_pressurized_irrigation_right(self):
         for record in self:
             record.pressurized_irrigation_right = \
                 record.parcel_id.pressurized_irrigation_right
 
     @api.multi
-    def _get_gravityfed_irrigation_right(self):
+    def _compute_gravityfed_irrigation_right(self):
         for record in self:
             record.gravityfed_irrigation_right = \
                 record.parcel_id.gravityfed_irrigation_right
