@@ -54,46 +54,48 @@
             }
             ]]>
             </style>
-            <div class="row">
-                <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                    <span style="font-family: verdana">NOMBRE Y APELLIDOS O RAZÓN SOCIAL</span>
+            <div id="partner_info">
+                <div class="row">
+                    <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                        <span style="font-family: verdana">NOMBRE Y APELLIDOS O RAZÓN SOCIAL</span>
+                    </div>
+                    <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
+                        <span style="font-family: verdana">DNI/CIF</span>
+                    </div>
+                    <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
+                        <span style="font-family: verdana">TELÉFONO</span>
+                    </div>
                 </div>
-                <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
-                    <span style="font-family: verdana">DNI/CIF</span>
+                <div class="row">
+                    <div class="col-xs-6" style="border: 1px solid black;">
+                        <span t-field="o.partner_id"/>
+                    </div>
+                    <div class="col-xs-3" style="border: 1px solid black;">
+                        <t t-if="o.partner_id.vat"><span t-field="o.partner_id.vat"/></t>
+                        <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                    </div>
+                    <div class="col-xs-3 text-center" style="border: 1px solid black;">
+                        <t t-if="o.partner_id.phones"><span t-field="o.partner_id.phones"/></t>
+                        <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                    </div>
                 </div>
-                <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
-                    <span style="font-family: verdana">TELÉFONO</span>
+                <div class="row">
+                    <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                        <span style="font-family: verdana">DOMICILIO</span>
+                    </div>
+                    <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
+                        <span style="font-family: verdana">LOCALIDAD</span>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-6" style="border: 1px solid black;">
-                    <span t-field="o.partner_id"/>
-                </div>
-                <div class="col-xs-3" style="border: 1px solid black;">
-                    <t t-if="o.partner_id.vat"><span t-field="o.partner_id.vat"/></t>
-                    <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                </div>
-                <div class="col-xs-3 text-center" style="border: 1px solid black;">
-                    <t t-if="o.partner_id.phones"><span t-field="o.partner_id.phones"/></t>
-                    <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                    <span style="font-family: verdana">DOMICILIO</span>
-                </div>
-                <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                    <span style="font-family: verdana">LOCALIDAD</span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-6" style="border: 1px solid black;">
-                    <t t-if="o.partner_id.street_name"><span t-field="o.partner_id.street_name"/> <span t-field="o.partner_id.street_number"/> <span t-field="o.partner_id.zip"/></t>
-                    <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                </div>
-                <div class="col-xs-6" style="border: 1px solid black;">
-                    <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/> (<span t-field="o.partner_id.state_id"/>)</t>
-                    <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                <div class="row">
+                    <div class="col-xs-6" style="border: 1px solid black;">
+                        <t t-if="o.partner_id.street_name"><span t-field="o.partner_id.street_name"/> <span t-field="o.partner_id.street_number"/> <span t-field="o.partner_id.zip"/></t>
+                        <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                    </div>
+                    <div class="col-xs-6" style="border: 1px solid black;">
+                        <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/> (<span t-field="o.partner_id.state_id"/>)</t>
+                        <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
+                    </div>
                 </div>
             </div>
             <div class="row" style="border: 1px solid black;margin-top: 10px">

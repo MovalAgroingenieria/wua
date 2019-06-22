@@ -201,7 +201,7 @@ class WuaWateringrequest(models.Model):
         for record in self:
             editable_record = True
             if ((not record.is_portal_user) and
-               (self.env.user.id != record.user_id) and
+               (self.env.user != record.user_id) and
                (self.env.user.partner_id.is_wua_partner)):
                 editable_record = False
             record.editable_record = editable_record

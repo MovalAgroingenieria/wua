@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="base_wua_gravity_irrigation.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_votes']"
+                   position="after">
+                <field name="is_agent"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_tree" model="ir.ui.view">
+        <field name="name">Partners (tree view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="base_wua.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_lessee_area']"
+                   position="after">
+                <field name="is_agent"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_search" model="ir.ui.view">
+        <field name="name">Partners (tree view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id"
+               ref="base_wua.view_partner_search"/>
+        <field name="arch" type="xml">
+           <!-- <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="agent_id"/>
+            </xpath> -->
+            <xpath expr="//filter[@name='ispayer']" position="after">
+                <separator/>
+                <filter string="Agent: Yes" name="with_agent_1"
+                 domain="[('is_agent','=',True)]"/>
+                <filter string="Agent: No" name="with_agent_0"
+                 domain="[('is_agent','=',False)]"/>                
+            </xpath> 
+        </field>
+    </record>
+
+</odoo>

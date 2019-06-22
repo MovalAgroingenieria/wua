@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-# Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
+# -*- coding: utf-8 -*-).
+# 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, exceptions, _
@@ -9,6 +9,17 @@ class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
     _description = 'Parcel of a WUA with irrigation infrastructure ' \
                    '(C.R.Argos)'
+
+    agent_id = fields.Many2one(
+        string='Agent',
+        comodel_name='res.partner',
+        required=False,
+        index=True)
+
+    with_agent = fields.Boolean(
+        string="With agent",
+        store=True,
+        compute='_compute_with_agent')
 
     def test_other_slave_data(self, vals):
         super(WuaParcel, self).test_other_slave_data(vals)
@@ -84,6 +95,14 @@ class WuaParcel(models.Model):
         resp = len(other_subparcels) > 0
         return resp
 
+    @api.depends('agent_id')
+    def _compute_with_agent(self):
+        for record in self:
+            if record.agent_id:
+                record.with_agent = True
+            else:
+                record.with_agent = False
+
 
 class WuaParcelSubparcel(models.Model):
     _inherit = 'wua.parcel.subparcel'
@@ -116,29 +135,31 @@ class WuaParcelPartnerlink(models.Model):
     _inherit = 'wua.parcel.partnerlink'
 
     rurallocation = fields.Char(
-        compute='_get_rurallocation_id',
+        compute='_compute_rurallocation_id',
         string="Rural Location",
         size=255)
+
     pressurized_irrigation_right = fields.Boolean(
-        compute='_get_pressurized_irrigation_right',
+        compute='_compute_pressurized_irrigation_right',
         string="Irrigation Right")
+
     gravityfed_irrigation_right = fields.Boolean(
-        compute='_get_gravityfed_irrigation_right',
+        compute='_compute_gravityfed_irrigation_right',
         string="Gravityfed Right")
 
     @api.multi
-    def _get_rurallocation_id(self):
+    def _compute_rurallocation_id(self):
         for record in self:
             record.rurallocation = record.parcel_id.rurallocation_id.name
 
     @api.multi
-    def _get_pressurized_irrigation_right(self):
+    def _compute_pressurized_irrigation_right(self):
         for record in self:
             record.pressurized_irrigation_right = \
                 record.parcel_id.pressurized_irrigation_right
 
     @api.multi
-    def _get_gravityfed_irrigation_right(self):
+    def _compute_gravityfed_irrigation_right(self):
         for record in self:
             record.gravityfed_irrigation_right = \
                 record.parcel_id.gravityfed_irrigation_right

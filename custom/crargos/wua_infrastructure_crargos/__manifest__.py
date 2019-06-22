@@ -15,6 +15,8 @@
         "base_wua_gravity_irrigation", ],
     "data": [
         "views/wua_parcel_view.xml",
+        "views/res_partner_view.xml",
+        "views/wua_wateringrequest_view.xml",
         "views/resources.xml",
         "reports/wua_wateringrequest_report.xml",
         "reports/wua_reservoiremptyingorder_report.xml", ],
