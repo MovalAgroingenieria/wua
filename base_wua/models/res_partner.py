@@ -276,7 +276,8 @@ class ResPartner(models.Model):
                         sep_char = '&'
                     url_for_record = url_for_record + sep_char + \
                         partner_param + '=' + str(record.partner_code)
-            if url_for_record and username and password:
+            if (url_for_record and username and password and (not
+               self.env.user.has_group('base_wua.group_wua_portal_user'))):
                 credentials = username + "-" + password
                 credentials = credentials.ljust(32)
                 current_datetime = pytz.utc.localize(datetime.datetime.now())
@@ -494,7 +495,7 @@ class ResPartner(models.Model):
             for node in doc.xpath("//field[@name="
                                   "'parcel_owner_area']"):
                 original_label = \
-                    self.get_value_from_translation(
+                    self.sudo().get_value_from_translation(
                         'base_wua',
                         self.__class__.parcel_owner_area.string)
                 posBracket = original_label.find(' (')
@@ -505,7 +506,7 @@ class ResPartner(models.Model):
             for node in doc.xpath("//field[@name="
                                   "'parcel_lessee_area']"):
                 original_label = \
-                    self.get_value_from_translation(
+                    self.sudo().get_value_from_translation(
                         'base_wua',
                         self.__class__.parcel_lessee_area.string)
                 posBracket = original_label.find(' (')

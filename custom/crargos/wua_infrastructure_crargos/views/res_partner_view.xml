@@ -9,7 +9,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='number_of_votes']"
                    position="after">
-                <field name="is_agent"/>
+                <field name="is_agent"
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
             </xpath>
         </field>
     </record>
