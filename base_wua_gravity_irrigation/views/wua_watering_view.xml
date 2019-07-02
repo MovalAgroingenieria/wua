@@ -263,8 +263,10 @@
                 <field name="cadastral_reference"/>
                 <field name="partner_id"/>
                 <field name="vat"/>
-                <filter string="Created by the partner" name="isportaluser"
+                <filter string="Created by the partner: Yes" name="isportaluseryes"
                  domain="[('is_portal_user','=',True)]"/>
+                <filter string="Created by the partner: No" name="isportaluserno"
+                 domain="[('is_portal_user','=',False)]"/>
                 <separator/>
                 <filter string="Extra Consumption" name="extra"
                  domain="[('extra','=',True)]"/>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-28 17:30+0000\n"
-"PO-Revision-Date: 2019-03-28 17:30+0000\n"
+"POT-Creation-Date: 2019-07-01 17:21+0000\n"
+"PO-Revision-Date: 2019-07-01 17:21+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,9 +21,9 @@ msgid "After watering calculation, distribute extra volume"
 msgstr "Después de calcular el entande, repartir entre los consumos el volumen extra sobrante"
 
 #. module: wua_structure_irrigation
-#: model:ir.model,name:wua_structure_irrigation.model_wua_agriculturalseason
-msgid "Agricultural Seasons"
-msgstr "Campañas"
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_name
+msgid "Agricultural Season"
+msgstr "Campaña"
 
 #. module: wua_structure_irrigation
 #: model:ir.ui.view,arch_db:wua_structure_irrigation.wua_irrigation_config_settings_view_form
@@ -51,6 +51,11 @@ msgid "Configuration"
 msgstr "Configuración"
 
 #. module: wua_structure_irrigation
+#: model:ir.model,name:wua_structure_irrigation.model_wua_irrigation_configuration
+msgid "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
+msgstr "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
+
+#. module: wua_structure_irrigation
 #: model:ir.actions.act_window,name:wua_structure_irrigation.wua_irrigation_configuration_action
 msgid "Configure Irrigation"
 msgstr "Configurar riego"
@@ -61,11 +66,13 @@ msgid "Constant Irrigation Allocation"
 msgstr "Dotación fija por parcela"
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_create_uid
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_create_date
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_create_date
 msgid "Created on"
 msgstr "Creado el"
@@ -86,6 +93,12 @@ msgid "Default watering time per area unit (if the chosen irrigation ditch does 
 msgstr "Dotación de riego por defecto (si la acequia elegida no tiene este valor)"
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_description
+msgid "Description"
+msgstr "Descripción"
+
+#. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_display_name
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
@@ -107,6 +120,16 @@ msgid "Empty Value (description)."
 msgstr "Valor en blanco (descripción)."
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_end_date
+msgid "End Date"
+msgstr "Fecha finalización"
+
+#. module: wua_structure_irrigation
+#: model:ir.model,name:wua_structure_irrigation.model_wua_agriculturalseason
+msgid "Entity (agricultural season)"
+msgstr "Elemento (campaña)"
+
+#. module: wua_structure_irrigation
 #: sql_constraint:wua.agriculturalseason:0
 msgid "Existing Agricultural Season."
 msgstr "Campaña ya existente."
@@ -123,6 +146,7 @@ msgid "Gravity Irrigation"
 msgstr "Riego por Gravedad"
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_id
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_id
 msgid "ID"
 msgstr "ID"
@@ -138,6 +162,11 @@ msgid "Incorrect dates."
 msgstr "Fechas incorrectas."
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_initial_date
+msgid "Initial Date"
+msgstr "Initial Date"
+
+#. module: wua_structure_irrigation
 #: model:ir.ui.menu,name:wua_structure_irrigation.base_wua_irrigation_menu
 msgid "Irrigation Management"
 msgstr "Gestión de Riegos"
@@ -148,16 +177,19 @@ msgid "Irrigation Settings"
 msgstr "Configuración de los riegos"
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason___last_update
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_write_uid
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_write_date
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
@@ -176,6 +208,11 @@ msgstr "Modo mixto"
 #: selection:wua.irrigation.configuration,default_watermeter_type:0
 msgid "Multi-stream"
 msgstr "Multichorro"
+
+#. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_notes
+msgid "Notes"
+msgstr "Notas"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_default_only_cultivable_subparcel

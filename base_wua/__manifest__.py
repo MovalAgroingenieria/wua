@@ -34,6 +34,7 @@
         "portal",
         "portal_sale",
         "dev_export_excel",
+        "web_favicon",
         "base_wua_report",
     ],
     "data": [

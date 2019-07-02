@@ -7,7 +7,6 @@ from odoo import models, api, _
 
 class WuaHydraulicsector(models.Model):
     _inherit = 'wua.hydraulicsector'
-    _description = 'Hydraulic Sectors (with based-sets invoicing)'
 
     @api.multi
     def action_see_invoice_lines(self):

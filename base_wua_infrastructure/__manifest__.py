@@ -15,7 +15,7 @@
         "base_wua",
         "hr",],
     "data": [
-        "security/base_wua_infrastructure_security.xml",
+        "security/security.xml",
         "security/ir.model.access.csv",
         "data/wua_infrastructure_config_settings_data.xml",
         "data/res_groups_data.xml",

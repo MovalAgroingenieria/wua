@@ -7,7 +7,6 @@ from odoo import models
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
-    _description = 'Partner of a WUA with irrigation infrastructure'
 
     def get_res_partner_irrigationpoints_action(self):
         current_partner_id = self.env.context.get('active_id')

@@ -8,7 +8,6 @@ from odoo import models, fields, api, _
 
 class WuaWaterconnection(models.Model):
     _inherit = 'wua.waterconnection'
-    _description = 'Water Connections (with water meters)'
 
     watermeter_id = fields.Many2one(
         string='Water Meter',

@@ -7,8 +7,6 @@ from odoo import models, fields, api, _
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
-    _description = 'Partner of a WUA with irrigation infrastructure' \
-        '(and with based-sets invoicing)'
 
     credit_overdue = fields.Monetary(
         compute='_compute_credit_overdue',
@@ -58,6 +56,29 @@ class ResPartner(models.Model):
             'view_type': 'form',
             'view_mode': 'tree',
             'views': [(id_tree_view, 'tree')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            }
+        return act_window
+
+    @api.multi
+    def action_see_invoices(self):
+        self.ensure_one()
+        condition = [('partner_id', '=', self.id)]
+        id_tree_view = self.env.ref(
+            'base_wua_invoicing.invoice_tree').id
+        id_form_view = self.env.ref(
+            'base_wua_invoicing.invoice_form').id
+        search_view = self.env.ref(
+            'base_wua_invoicing.view_account_invoice_filter')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Invoices'),
+            'res_model': 'account.invoice',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',

@@ -8,7 +8,7 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaWateringperiod(models.Model):
     _name = 'wua.wateringperiod'
-    _description = 'Watering Periods'
+    _description = 'Entity (watering period)'
     _order = 'name'
 
     # Size of field "name".

@@ -7,7 +7,6 @@ from odoo import models, fields, api
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
-    _description = 'Journal Item (WUA invoice set)'
 
     invoiceset_id = fields.Many2one(
         string='Invoice Set',

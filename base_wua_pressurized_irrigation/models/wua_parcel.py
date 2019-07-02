@@ -7,8 +7,6 @@ from odoo import models, fields, api
 
 class WuaParcelIrrigationpointWC(models.Model):
     _inherit = 'wua.parcel.irrigationpointwc'
-    _description = 'Irrigation point of a parcel (WC), with ' + \
-                   'pressurized irrigation'
 
     watermeter_id = fields.Many2one(
         string='Water Meter',

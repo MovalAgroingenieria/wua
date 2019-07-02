@@ -16,7 +16,7 @@
             </t>
             <t t-if="with_presconsumptions">
                 <t t-set="consumptions"
-                   t-value="o._get_presconsumptions_from_lines(o.invoice_line_ids)"/>
+                   t-value="o.sudo()._get_presconsumptions_from_lines(o.invoice_line_ids)"/>
                 <t t-if="consumptions">
                 <!-- <p style="page-break-after:always;"></p> -->
                     <div name="consumptions">

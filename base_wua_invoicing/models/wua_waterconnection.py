@@ -7,7 +7,6 @@ from odoo import models, api, _
 
 class WuaWaterconnection(models.Model):
     _inherit = 'wua.waterconnection'
-    _description = 'Water Connections (with based-sets invoicing)'
 
     @api.multi
     def action_see_invoice_lines(self):

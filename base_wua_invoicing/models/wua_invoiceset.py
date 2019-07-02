@@ -11,7 +11,7 @@ from operator import itemgetter
 class WuaInvoiceset(models.Model):
     _inherit = 'mail.thread'
     _name = 'wua.invoiceset'
-    _description = 'Invoice Set of a WUA'
+    _description = 'Entity (invoice set)'
     _order = 'name'
 
     SIZE_NAME = 20

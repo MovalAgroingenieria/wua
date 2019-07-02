@@ -8,7 +8,7 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaGravconsumption(models.Model):
     _name = 'wua.gravconsumption'
-    _description = 'Gravity Consumption'
+    _description = 'Entity (gravity consumption)'
     _order = 'watering_id,watering_initial_time,subparcel_id,number'
 
     # Size of field "name".

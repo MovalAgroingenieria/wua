@@ -7,7 +7,7 @@ from odoo import models, fields, api, _
 
 class WuaWatermeter(models.Model):
     _name = 'wua.watermeter'
-    _description = 'Water Meters'
+    _description = 'Entity (water meter)'
     _order = 'name'
 
     # Size of field "name".

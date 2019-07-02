@@ -9,7 +9,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaWateringrequest(models.Model):
     _inherit = 'mail.thread'
     _name = 'wua.wateringrequest'
-    _description = 'Watering Requests'
+    _description = 'Entity (watering request)'
     _order = 'name'
 
     # Size of field "name".
@@ -102,18 +102,13 @@ class WuaWateringrequest(models.Model):
         compute='_compute_number_of_subparcels')
 
     signature_image = fields.Binary(
-        string='Signature',
-        attachment=True)
+        string='Signature')
 
     is_portal_user = fields.Boolean(
-        string='Created by a partner',
+        string='Created by the partner',
         default=False,
         store=True,
         compute='_compute_is_portal_user')
-
-    editable_record = fields.Boolean(
-        string='Editable',
-        compute='_compute_editable_record')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -189,25 +184,13 @@ class WuaWateringrequest(models.Model):
                     is_portal_user = True
             record.is_portal_user = is_portal_user
 
-    @api.multi
-    def _compute_editable_record(self):
-        # All records are editable, except:
-        # is_portal_user = False (request from a normal user, not from a portal
-        # user), and
-        # self.env.user.partner_id.is_wua_partner = True (the current user is
-        # a partner), and
-        # self.env.user.id != record.user_id (the current user is not the
-        # user of the record).
-        for record in self:
-            editable_record = True
-            if ((not record.is_portal_user) and
-               (self.env.user != record.user_id) and
-               (self.env.user.partner_id.is_wua_partner)):
-                editable_record = False
-            record.editable_record = editable_record
-
     @api.model
     def create(self, vals):
+        if (not self.env.user.has_group('base_wua.group_wua_user') and
+           not self.env['ir.values'].get_default(
+               'wua.configuration', 'wua_portal_user_can_edit')):
+            raise exceptions.UserError(_(
+                'You do not have permission to edit data.'))
         if 'irrigationditch_id' in vals:
             del vals['irrigationditch_id']
         self.populate_gravconsumptions_number(vals)
@@ -218,10 +201,12 @@ class WuaWateringrequest(models.Model):
         if 'irrigationditch_id' in vals:
             del vals['irrigationditch_id']
         if len(self) == 1:
+            if (not self.env.user.has_group('base_wua.group_wua_user') and
+               not self.env['ir.values'].get_default(
+                   'wua.configuration', 'wua_portal_user_can_edit')):
+                raise exceptions.UserError(_(
+                    'You do not have permission to edit data.'))
             self.populate_gravconsumptions_number(vals)
-            if 'signature_image' not in vals:
-                if self.signature_image:
-                    vals['signature_image'] = ''
         return super(WuaWateringrequest, self).write(vals)
 
     @api.multi
@@ -253,10 +238,11 @@ class WuaWateringrequest(models.Model):
             if record.state == 'executed':
                 raise exceptions.UserError(_(
                     'You cannot delete a executed watering request.'))
-            if not record.editable_record:
+            if (not self.env.user.has_group('base_wua.group_wua_user') and
+               not self.env['ir.values'].get_default(
+                   'wua.configuration', 'wua_portal_user_can_edit')):
                 raise exceptions.UserError(_(
-                    'You cannot delete a watering request generated '
-                    'by another user.'))
+                    'You do not have permission to edit data.'))
         return super(WuaWateringrequest, self).unlink()
 
     def populate_gravconsumptions_number(self, vals):

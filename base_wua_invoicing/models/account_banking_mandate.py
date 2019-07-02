@@ -7,7 +7,6 @@ from odoo import models, fields
 
 class AccountBankingMandate(models.Model):
     _inherit = 'account.banking.mandate'
-    _description = 'Banking Mandate (WUA invoice set)'
 
     last_debit_date = fields.Date(string='Date of the Last Debit',
                                   readonly=False)

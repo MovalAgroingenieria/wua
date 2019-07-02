@@ -50,7 +50,8 @@
                         <group name="master_data_right">
                             <field name="end_date"/>
                             <field name="predicted_watering"/>
-                            <field name="number_of_requests"/>
+                            <field name="number_of_requests"
+                                   groups="base_wua.group_wua_user"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -139,7 +140,7 @@
               parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
               action="wua_wateringperiod_action"
               sequence="2"
-              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>    
+              groups="base_wua.group_wua_user"/>    
 
     <record id="wua_set_wateringperiod_as_open" model="ir.actions.server">
         <field name="name">Open period</field>

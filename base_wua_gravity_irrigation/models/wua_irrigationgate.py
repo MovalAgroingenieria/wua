@@ -7,7 +7,6 @@ from odoo import models, fields, api, _
 
 class WuaIrrigationgate(models.Model):
     _inherit = 'wua.irrigationgate'
-    _description = 'Irrigation Gates (with consumptions)'
 
     gravconsumption_ids = fields.One2many(
         string='Gravity Consumptions',

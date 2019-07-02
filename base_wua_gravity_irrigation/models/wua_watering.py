@@ -10,7 +10,7 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaWatering(models.Model):
     _name = 'wua.watering'
-    _description = 'Waterings'
+    _description = 'Entity (watering)'
     _order = 'agriculturalseason_id, irrigationditch_id, ' + \
         'wateringperiod_id, number'
 
