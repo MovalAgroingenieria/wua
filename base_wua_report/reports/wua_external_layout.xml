@@ -9,12 +9,12 @@
         <field name="page_height">0</field>
         <field name="page_width">0</field>
         <field name="orientation">Portrait</field>
-        <field name="margin_top">34</field>
+        <field name="margin_top">40</field>
         <field name="margin_bottom">24</field>
         <field name="margin_left">7</field>
         <field name="margin_right">7</field>
         <field name="header_line" eval="False"/>
-        <field name="header_spacing">32</field>
+        <field name="header_spacing">38</field>
         <field name="dpi">90</field>
     </record>
 
@@ -77,9 +77,9 @@
             <div class="row">
                 <div class="col-xs-2">
                     <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
-                         style="max-height: 100px; max-width: 150px; margin-top: 4px; margin-bottom: 4px; margin-left: 4px;"/>
+                         style="max-height: 130px; max-width: 130px; margin-top: 4px; margin-bottom: 4px; margin-left: 4px;"/>
                 </div>
-                <div class="col-xs-7" style="margin-bottom: 6px">
+                <div class="col-xs-7" style="margin-bottom: 6px;">
                     <!-- This subdivision is the anchor for picking operations barcode insert -->
                     <div name="company_address">
                         <t t-set="company" t-value="company.sudo()"/>
