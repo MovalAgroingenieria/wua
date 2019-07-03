@@ -12,7 +12,8 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_invoicing_pressurized_irrigation",],
+        "base_wua_invoicing_pressurized_irrigation",
+        "web_widget_digitized_signature",],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",

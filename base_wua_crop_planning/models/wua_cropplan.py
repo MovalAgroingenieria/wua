@@ -100,10 +100,19 @@ class WuaCropplan(models.Model):
 
     notes = fields.Html(string='Notes')
 
+    signature_image = fields.Binary(
+        string='Signature')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Crop Plan.'),
         ]
+
+    is_portal_user = fields.Boolean(
+        string='Created by the partner',
+        default=False,
+        store=True,
+        compute='_compute_is_portal_user')
 
     @api.multi
     def name_get(self):
@@ -166,13 +175,35 @@ class WuaCropplan(models.Model):
                 out_of_time = True
             record.out_of_time = out_of_time
 
+    @api.depends('user_id')
+    def _compute_is_portal_user(self):
+        partners = self.env['res.partner']
+        for record in self:
+            is_portal_user = False
+            user = self.env.user
+            if not user.has_group('base_wua.group_wua_user'):
+                partner = partners.browse(user.partner_id.id)
+                if partner.is_wua_partner:
+                    is_portal_user = True
+            record.is_portal_user = is_portal_user
+
     @api.model
     def create(self, vals):
+        if (not self.env.user.has_group('base_wua.group_wua_user') and
+           not self.env['ir.values'].get_default(
+               'wua.configuration', 'wua_portal_user_can_edit')):
+            raise exceptions.UserError(_(
+                'You do not have permission to edit data.'))
         accumulative_data = []
+        user = self.env.user
+        if not user.has_group('base_wua.group_wua_user'):
+            partner_id = self.env['res.partner'].browse(user.partner_id.id).id
+        else:
+            partner_id = vals['partner_id']
         if vals['enrolledsubparcel_ids'] is not None:
             accumulative_data = self.process_vals_enrolledsubparcel_ids(
                 vals['enrolledsubparcel_ids'])
-        if self.has_a_cropplan(vals['partner_id']):
+        if self.has_a_cropplan(partner_id):
             raise exceptions.UserError(_('The partner already has a previous '
                                          'crop plan. For each agricultural '
                                          'season, only one crop plan '
@@ -183,24 +214,33 @@ class WuaCropplan(models.Model):
                                          'or more parcels.'))
         if accumulative_data:
             if not self.all_enrolledparcels_with_correct_partner(
-               vals['partner_id'], accumulative_data):
+               partner_id, accumulative_data):
                 raise exceptions.UserError(_('There is some parcel with a '
                                              'different partner.'))
-            self.update_census(new_cropplan.id, accumulative_data,
-                               new_cropplan.enrolledsubparcel_ids)
+            self.sudo().update_census(new_cropplan.id, accumulative_data,
+                                      new_cropplan.enrolledsubparcel_ids)
             new_ids_parcel = self.get_ids_parcel_from_accumulative_data(
                 accumulative_data)
-            self.update_cropplan_for_parcels(new_ids_parcel,
-                                             new_cropplan.id)
-            self.update_registered_cropplan_for_waterconnections(
+            self.sudo().update_cropplan_for_parcels(new_ids_parcel,
+                                                    new_cropplan.id)
+            self.sudo().update_registered_cropplan_for_waterconnections(
                 new_ids_parcel, new_cropplan.id)
-            self.update_cropplan_for_partner(vals['partner_id'],
-                                             new_cropplan.id)
+            self.sudo().update_cropplan_for_partner(partner_id,
+                                                    new_cropplan.id)
         return new_cropplan
 
     @api.multi
     def write(self, vals):
         if len(self) == 1:
+            if (not self.env.user.has_group('base_wua.group_wua_user') and
+               (not self.env['ir.values'].get_default(
+                   'wua.configuration', 'wua_portal_user_can_edit') or
+               not self.agriculturalseason_id.is_the_active)):
+                raise exceptions.UserError(_(
+                    'You do not have permission to edit data.'))
+            if not self.agriculturalseason_id.is_the_active:
+                super(WuaCropplan, self).write(vals)
+                return True
             accumulative_data = []
             new_ids_parcel = []
             if 'enrolledsubparcel_ids' in vals:
@@ -213,8 +253,8 @@ class WuaCropplan(models.Model):
                 raise exceptions.UserError(_('The crop plan must have one '
                                              'or more parcels.'))
             if accumulative_data:
-                self.update_census(self.id, accumulative_data,
-                                   self.enrolledsubparcel_ids)
+                self.sudo().update_census(self.id, accumulative_data,
+                                          self.enrolledsubparcel_ids)
                 new_ids_parcel = self.get_ids_parcel_from_accumulative_data(
                     accumulative_data)
                 invariable_ids_parcel = \
@@ -222,12 +262,12 @@ class WuaCropplan(models.Model):
                 for parcel_id in invariable_ids_parcel:
                     old_ids_parcel.remove(parcel_id)
                     new_ids_parcel.remove(parcel_id)
-                self.update_cropplan_for_parcels(old_ids_parcel, 0)
-                self.update_registered_cropplan_for_waterconnections(
+                self.sudo().update_cropplan_for_parcels(old_ids_parcel, 0)
+                self.sudo().update_registered_cropplan_for_waterconnections(
                     old_ids_parcel, 0)
-                self.update_cropplan_for_parcels(
+                self.sudo().update_cropplan_for_parcels(
                     new_ids_parcel, self.id)
-                self.update_registered_cropplan_for_waterconnections(
+                self.sudo().update_registered_cropplan_for_waterconnections(
                     new_ids_parcel, self.id)
         else:
             super(WuaCropplan, self).write(vals)
@@ -236,13 +276,20 @@ class WuaCropplan(models.Model):
     @api.multi
     def unlink(self):
         for record in self:
+            if (not self.env.user.has_group('base_wua.group_wua_user') and
+               (not self.env['ir.values'].get_default(
+                   'wua.configuration', 'wua_portal_user_can_edit') or
+               not self.agriculturalseason_id.is_the_active)):
+                raise exceptions.UserError(_(
+                    'You do not have permission to edit data.'))
             if record.agriculturalseason_id.is_the_active:
                 old_ids_parcel = self.get_ids_parcel_from_enrolledsubparcels(
                     record.enrolledsubparcel_ids)
-                self.update_cropplan_for_parcels(old_ids_parcel, 0)
-                self.update_registered_cropplan_for_waterconnections(
+                self.sudo().update_cropplan_for_parcels(old_ids_parcel, 0)
+                self.sudo().update_registered_cropplan_for_waterconnections(
                     old_ids_parcel, 0)
-                self.update_cropplan_for_partner(record.partner_id.id, 0)
+                self.sudo().update_cropplan_for_partner(
+                    record.partner_id.id, 0)
         return super(WuaCropplan, self).unlink()
 
     def has_a_cropplan(self, partner_id):

@@ -13,7 +13,8 @@
                                  'no_create_edit':True}"
                        domain="[('is_agent', '=', True)]"
                        attrs="{'readonly':
-                               ['|',('is_open','=',False),'|',('id','>',0),('is_portal_user','=',True)]}"/>
+                               ['|',('is_open','=',False),('id','>',0)]}"
+                       groups="base_wua.group_wua_user"/>
             </xpath>
             <xpath expr="//field[@name='subparcel_id']" position="attributes">
                 <attribute name='domain'>[('partner_id', '=', parent.partner_id),

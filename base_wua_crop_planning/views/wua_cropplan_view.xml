@@ -16,19 +16,29 @@
                     </div>
                 </header>
                 <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <span class="oe_edit_only"
+                              style="color:Red;font-weight: bold;"
+                              attrs="{'invisible':['|',('is_portal_user','=',False),('signature_image','!=',False)]}">
+                                NOTICE: It will be necessary to sign
+                        </span>
+                    </div>                
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="partner_id"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    domain="[('is_wua_partner', '=', True)]"
-                                   attrs="{'readonly':[('id','>',0)]}"/>
-                            <field name="user_id"/>
+                                   attrs="{'readonly':
+                                            ['|',('id','>',0),('is_portal_user','=',True)]}"/>
+                            <field name="user_id"
+                                   groups="base_wua.group_wua_user"/>
                             <field name="number_of_enrolledsubparcels"/>
+                            <field name="is_portal_user"/>                            
                         </group>
                         <group name="master_data_right">
                             <field name="agriculturalseason_id"/>
-                            <field name="request_date"/>
+                            <field name="request_date"/>                            
                             <field name="area_official"/>
                         </group>
                     </group>
@@ -39,6 +49,9 @@
                                  context="{'tree_view_ref':
                                  'base_wua_crop_planning.wua_edit_enrolledsubparcel_view_tree'}"/>
                             </page>
+                            <page name="signature_page" string="Signature">
+                                <field name="signature_image" widget="signature"/>
+                            </page>                            
                             <page name="notes" string="Notes">
                                 <field name="notes"/>
                             </page>
@@ -64,6 +77,7 @@
                 <field name="agriculturalseason_id"/>
                 <field name="partner_id"/>
                 <field name="request_date"/>
+                <field name="is_portal_user"/>
                 <field name="out_of_time"/>
                 <field name="number_of_enrolledsubparcels"/>
                 <field name="area_official"/>
@@ -80,6 +94,11 @@
                 <field name="user_id"/>
                 <filter string="Active Agricultural Season" name="active_agriculturalseason"
                  domain="[('agriculturalseason_id.is_the_active','=',True)]"/>
+                <separator/>
+                <filter string="Created by the partner: Yes" name="isportaluseryes"
+                 domain="[('is_portal_user','=',True)]"/>
+                <filter string="Created by the partner: No" name="isportaluserno"
+                 domain="[('is_portal_user','=',False)]"/>
                 <separator/>
                 <filter string="Out of time" name="outoftime"
                  domain="[('out_of_time','=',True)]"/>
