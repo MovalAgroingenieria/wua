@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association Management",
     "summary": "In a water users association, management of users "
-               "and parcels.",
+               "and parcels",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
