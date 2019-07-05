@@ -11,9 +11,7 @@
              position="after">
                 <field name="product_id"
                  domain="[('categ_id.productcategory_code','=',8)]"
-                 attrs="{'readonly':[('id','>',0),
-                                     '|',('editable_record','=',False),
-                                         ('is_open','=',False)]}"/>
+                 attrs="{'readonly':['|',('is_open','=',False),('id','>',0)]}"/>
             </xpath>
         </field>
     </record>
