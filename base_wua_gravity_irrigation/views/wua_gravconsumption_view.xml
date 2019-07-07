@@ -141,6 +141,11 @@
                 <field name="cadastral_reference"/>
                 <field name="subparcel_id"/>
                 <field name="agriculturalseason_id"/>
+                <filter string="Created by the partner: Yes" name="isportaluseryes"
+                 domain="[('is_portal_user','=',True)]"/>
+                <filter string="Created by the partner: No" name="isportaluserno"
+                 domain="[('is_portal_user','=',False)]"/>
+                <separator/>
                 <filter string="Explicit Request" name="request_type"
                  domain="[('gravconsumption_type','=','request')]"/>
                 <filter string="Distribution" name="distribution_type"
@@ -480,88 +485,5 @@
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_planned'))"/>
     </record>
-
-    <record id="wua_gravconsumption_portal_user_view_tree" model="ir.ui.view">
-        <field name="name">Gravity Consumptions (tree view)</field>
-        <field name="model">wua.gravconsumption</field>
-        <field name="arch" type="xml">
-            <tree class="o_base_wua_gravity_irrigation_gravconsumption_portal_user_view_tree">
-                <field name="watering_id" widget="many2one_unclickable"/>
-                <field name="wateringperiod_id" widget="many2one_unclickable"/>
-                <field name="subparcel_id" widget="many2one_unclickable"/>
-                <field name="watering_initial_time"/>
-                <field name="watering_end_time"/>
-                <field name="watering_duration"/>
-                <field name="area_official"/>
-                <field name="watering_volume"/>
-                <field name="extra_volume" string="Extra (m3)"/>
-                <field name="watering_volume_real"/>
-                <field name="state"/>
-                <field name="gravconsumption_type" invisible="1"/>
-                <button type="object" class="oe_stat_button"
-                        icon="fa-file"
-                        attrs="{'invisible':
-                                [('gravconsumption_type','=','distribution')],
-                                'readonly':'1'}"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="wua_gravconsumption_portal_user_view_search" model="ir.ui.view">
-        <field name="name">Gravity Consumptions (search view)</field>
-        <field name="model">wua.gravconsumption</field>
-        <field name="arch" type="xml">
-            <search>
-                <field name="cadastral_reference"/>
-                <field name="subparcel_id"/>
-                <filter string="Modified" name="altered"
-                 domain="[('altered','=',True)]"/>
-                <separator/>
-                <filter string="Discarted" name="discarted"
-                 domain="[('discarted','=',True)]"/>
-                <separator/>
-                <filter string="Proposed" name="proposed"
-                 domain="[('state','=','proposed')]"/>
-                <filter string="Planned" name="planned"
-                 domain="[('state','=','planned')]"/>
-                <filter string="Executed" name="executed"
-                 domain="[('state','=','executed')]"/>
-                <group expand="0" string="Group By">
-                    <filter string="Agricultural Season"
-                     name="agriculturalseason"
-                     context="{'group_by':'agriculturalseason_id'}"/>
-                    <filter string="Irrigation Ditch"
-                     name="irrigationditch"
-                     context="{'group_by':'irrigationditch_id'}"/>
-                    <filter string="Watering Period"
-                     name="wateringperiod"
-                     context="{'group_by':'wateringperiod_id'}"/>
-                    <filter string="Watering"
-                     name="watering"
-                     context="{'group_by':'watering_id'}"/>
-                </group>                 
-            </search>
-        </field>
-    </record>
-
-    <record id="wua_gravconsumption_portal_user_action" model="ir.actions.act_window">
-        <field name="name">Consumptions (read only)</field>
-        <field name="res_model">wua.gravconsumption</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="wua_gravconsumption_portal_user_view_tree"/>
-        <field name="search_view_id"
-         ref="wua_gravconsumption_portal_user_view_search"/>
-        <field name="context">{'search_default_executed': 1,
-                               'search_default_agriculturalseason': 1,
-                               'search_default_watering': 1}</field>
-    </record>
-
-    <menuitem id="wua_gravconsumption_portal_user_menu"
-              name="Consumptions"
-              parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
-              action="wua_gravconsumption_portal_user_action"
-              sequence="5"
-              groups="base_wua.group_wua_portal_user"/>
 
 </odoo>

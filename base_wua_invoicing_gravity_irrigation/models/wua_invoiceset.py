@@ -8,7 +8,6 @@ from operator import itemgetter
 
 class WuaInvoiceset(models.Model):
     _inherit = 'wua.invoiceset'
-    _description = 'Entity (invoice set of a WUA)'
 
     # If a invoice set is deleted, it is necessary to reset the invoiceset_id
     # and invoiced_consumption fields for the affected consumptions.

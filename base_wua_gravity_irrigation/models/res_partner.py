@@ -7,7 +7,6 @@ from odoo import models, fields, api, _
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
-    _description = 'Partner of a WUA with gravity irrigation infrastructure'
 
     wateringrequest_ids = fields.One2many(
         string='Watering Requests',

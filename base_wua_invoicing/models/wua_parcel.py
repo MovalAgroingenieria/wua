@@ -7,7 +7,6 @@ from odoo import models, api, _
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
-    _description = 'Entity (parcel, with possible based-sets invoicing)'
 
     @api.multi
     def action_see_invoice_lines(self):

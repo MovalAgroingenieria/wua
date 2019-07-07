@@ -7,7 +7,6 @@ from odoo import models, fields
 
 class WuaWaterconnection(models.Model):
     _inherit = 'wua.waterconnection'
-    _description = 'Entity (water connection)'
 
     def _default_product_id(self):
         resp = None

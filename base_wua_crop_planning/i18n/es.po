@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-05 06:59+0000\n"
-"PO-Revision-Date: 2019-06-05 06:59+0000\n"
+"POT-Creation-Date: 2019-07-03 16:06+0000\n"
+"PO-Revision-Date: 2019-07-03 16:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:272
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:318
 #, python-format
 msgid " is grather than the area of the parcel."
 msgstr " supera el área de esa parcela."
@@ -78,6 +78,15 @@ msgstr "<span class=\"o_stat_text\">\n"
 "                        </span>"
 
 #. module: base_wua_crop_planning
+#: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_form
+msgid "<span class=\"oe_edit_only\" style=\"color:Red;font-weight: bold;\" attrs=\"{'invisible':['|',('is_portal_user','=',False),('signature_image','!=',False)]}\">\n"
+"                                NOTICE: It will be necessary to sign\n"
+"                        </span>"
+msgstr "<span class=\"oe_edit_only\" style=\"color:Red;font-weight: bold;\" attrs=\"{'invisible':['|',('is_portal_user','=',False),('signature_image','!=',False)]}\">\n"
+"                                AVISO: Debe firmar este documento\n"
+"                        </span>"
+
+#. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_agriculturalseason_is_the_active
 msgid "Active"
 msgstr "Activo"
@@ -96,11 +105,6 @@ msgstr "Campaña activa"
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_enrolledsubparcel_view_search
 msgid "Agricultural Season"
 msgstr "Campaña"
-
-#. module: base_wua_crop_planning
-#: model:ir.model,name:base_wua_crop_planning.model_wua_agriculturalseason
-msgid "Agricultural Seasons"
-msgstr "Campañas"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.report_wua_cropplan_document
@@ -143,6 +147,21 @@ msgstr "Campañas cerradas"
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_create_uid
 msgid "Created by"
 msgstr "Creado por"
+
+#. module: base_wua_crop_planning
+#: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_is_portal_user
+msgid "Created by the partner"
+msgstr "Creado por el regante"
+
+#. module: base_wua_crop_planning
+#: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_search
+msgid "Created by the partner: No"
+msgstr "Creado por el regante: No"
+
+#. module: base_wua_crop_planning
+#: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_search
+msgid "Created by the partner: Yes"
+msgstr "Creado por el regante: Sí"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_create_date
@@ -216,7 +235,7 @@ msgstr "Subparcela inscrita"
 #: code:addons/base_wua_crop_planning/models/res_partner.py:80
 #: code:addons/base_wua_crop_planning/models/wua_agriculturalseason.py:242
 #: code:addons/base_wua_crop_planning/models/wua_cultivation.py:48
-#: code:addons/base_wua_crop_planning/models/wua_parcel.py:115
+#: code:addons/base_wua_crop_planning/models/wua_parcel.py:118
 #: model:ir.actions.act_window,name:base_wua_crop_planning.wua_enrolledsubparcel_action
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_res_partner_enrolledsubparcel_ids
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_res_users_enrolledsubparcel_ids
@@ -241,13 +260,18 @@ msgid "Enrollment Initial Date"
 msgstr "Inicio plazo inscripción"
 
 #. module: base_wua_crop_planning
+#: model:ir.model,name:base_wua_crop_planning.model_wua_agriculturalseason
+msgid "Entity (agricultural season)"
+msgstr "Elemento (campaña)"
+
+#. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_invoiceset
-msgid "Entity (invoice set of a WUA)"
+msgid "Entity (invoice set)"
 msgstr "Elemento (lote de facturas)"
 
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_parcel
-msgid "Entity (parcel, with possible based-sets invoicing)"
+msgid "Entity (parcel)"
 msgstr "Elemento (parcela)"
 
 #. module: base_wua_crop_planning
@@ -337,8 +361,8 @@ msgstr "Punto de suministro de una parcela"
 
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_parcel_irrigationpointwc
-msgid "Irrigation point of a parcel (WC), with pressurized irrigation"
-msgstr "Punto de suministro de una parcela, con riego a presión"
+msgid "Irrigation point of a parcel (WC)"
+msgstr "Punto de suministro de una parcela (toma)"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan___last_update
@@ -436,11 +460,11 @@ msgstr "Parcela"
 
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_res_partner
-msgid "Partner of a WUA with irrigation infrastructure(and with based-sets invoicing)"
-msgstr "Elemento (socio)"
+msgid "Partner of a WUA"
+msgstr "Socio"
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:632
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:680
 #, python-format
 msgid "Partners"
 msgstr "Socios"
@@ -537,6 +561,12 @@ msgid "Request Date"
 msgstr "Fecha solicitud"
 
 #. module: base_wua_crop_planning
+#: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_signature_image
+#: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_form
+msgid "Signature"
+msgstr "Firma"
+
+#. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_subparcel_code
 msgid "Subparcel Code"
 msgstr "Código de subparcela"
@@ -576,32 +606,32 @@ msgid "The area percentage must be a value from 0 to 100."
 msgstr "El porcentaje de área debe ser un valor entre 0 y 100."
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:182
 #: code:addons/base_wua_crop_planning/models/wua_cropplan.py:213
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:252
 #, python-format
 msgid "The crop plan must have one or more parcels."
 msgstr "El plan de cultivo debe contar con, al menos, una inscripción de subparcela."
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:176
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:207
 #, python-format
 msgid "The partner already has a previous crop plan. For each agricultural season, only one crop plan per partner is accepted."
 msgstr "El socio ya tiene un plan de cultivo en esta campaña."
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:270
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:316
 #, python-format
 msgid "The sum of the areas of the subparcels of parcel "
 msgstr "La suma de las áreas de las subparcelas de la parcela "
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:590
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:636
 #, python-format
 msgid "There is no active agricultural season."
 msgstr "No hay campaña activa."
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:187
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:218
 #, python-format
 msgid "There is some parcel with a different partner."
 msgstr "Algunas de las parcelas inscritas son de otro socio."
@@ -659,7 +689,15 @@ msgid "You cannot delete this subparcel type."
 msgstr "No es posible suprimir este tipo de subparcela."
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_parcel.py:91
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:195
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:238
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:281
+#, python-format
+msgid "You do not have permission to edit data."
+msgstr "No tiene permiso para añadir, actualizar o eliminar datos."
+
+#. module: base_wua_crop_planning
+#: code:addons/base_wua_crop_planning/models/wua_parcel.py:94
 #, python-format
 msgid "area:"
 msgstr "área:"

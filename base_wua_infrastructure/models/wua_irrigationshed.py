@@ -11,7 +11,7 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaIrrigationshed(models.Model):
     _name = 'wua.irrigationshed'
-    _description = 'Irrigation Sheds'
+    _description = 'Entity (irrigation shed)'
     _order = 'name'
 
     # Sizes of fields "name" and "description".

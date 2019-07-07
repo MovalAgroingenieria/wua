@@ -8,7 +8,7 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaIrrigationditch(models.Model):
     _name = 'wua.irrigationditch'
-    _description = 'Irrigation Ditches'
+    _description = 'Entity (irrigation ditch)'
     _order = 'irrigationditch_code'
 
     # Sizes of fields "name" and "description".

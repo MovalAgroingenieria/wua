@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+        
+        <record id="group_wua_portal_user" model="res.groups">
+            <field name="name">WUA Portal User</field>
+            <field name="category_id"
+                ref="base.module_category_water_users_associations"/>
+            <field name="implied_ids"
+                eval="[(4, ref('base.group_portal')),
+                       (4, ref('analytic.group_analytic_accounting'))]"/>
+            <field name="is_portal">True</field>
+        </record>
+        
+        <record id="group_wua_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="category_id"
+                ref="base.module_category_water_users_associations"/>
+            <field name="implied_ids"
+                eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        
+        <record id="group_wua_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id"
+                ref="base.module_category_water_users_associations"/>
+            <field name="implied_ids"
+                eval="[(4, ref('group_wua_user'))]"/>
+            <field name="users"
+                eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
+    </data>
+
+    <data noupdate="0">
+    
+        <record id="portal.access_ir_attachment_portal" model="ir.model.access">
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>    
+
+    </data>
+
+    <data noupdate="0">
+
+        <!-- disabled record rules: if the partner is not the main, he must
+             also to get his parcels. -->
+             
+        <!-- <record id="rule_wua_parcel_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on parcels</field>
+            <field name="model_id" ref="model_wua_parcel"/>
+            <field name="domain_force">[('partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record> -->
+
+        <!-- <record id="rule_wua_subparcel_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on subparcels</field>
+            <field name="model_id" ref="model_wua_parcel_subparcel"/>
+            <field name="domain_force">[('partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record> -->
+
+        <!-- <record id="rule_wua_partnerlink_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on partner links</field>
+            <field name="model_id" ref="model_wua_parcel_partnerlink"/>
+            <field name="domain_force">[('partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record> -->
+
+        <record id="rule_res_partner_bank_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on bank account numbers</field>
+            <field name="model_id" ref="model_res_partner_bank"/>
+            <field name="domain_force">[('partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record>
+
+    </data>
+
+</odoo>

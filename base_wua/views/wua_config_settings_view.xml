@@ -39,6 +39,9 @@
                     <field name="url_gis_viewer_password"/>
                     <field name="url_gis_viewer_epsg_code"/>                    
                 </group>
+                <group string="WUA Portal Users">
+                    <field name="wua_portal_user_can_edit"/>
+                </group>
             </form>
         </field>
     </record>
@@ -54,7 +57,8 @@
     <menuitem id="base_wua_census_configuration_menu"
               name="Configuration"
               parent="base_wua_census_menu"
-              sequence="1001"/>
+              sequence="1001"
+              groups="group_wua_user"/>
 
     <menuitem id="wua_configuration_menu"
               name="Parameters"

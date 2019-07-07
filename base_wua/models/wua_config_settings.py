@@ -108,6 +108,12 @@ class WuaConfiguration(models.TransientModel):
         size=17,
         help='Password for authentication')
 
+    wua_portal_user_can_edit = fields.Boolean(
+        string='Portal User can edit',
+        default=False,
+        help='Allow to WUA portal users to edit their data '
+             '(except census data)')
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
@@ -158,3 +164,5 @@ class WuaConfiguration(models.TransientModel):
                            self.url_gis_viewer_username)
         values.set_default('wua.configuration', 'url_gis_viewer_password',
                            self.url_gis_viewer_password)
+        values.set_default('wua.configuration', 'wua_portal_user_can_edit',
+                           self.wua_portal_user_can_edit)

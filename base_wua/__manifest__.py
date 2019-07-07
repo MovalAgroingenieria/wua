@@ -34,10 +34,11 @@
         "portal",
         "portal_sale",
         "dev_export_excel",
+        "web_favicon",
         "base_wua_report",
     ],
     "data": [
-        "security/wua_security.xml",
+        "security/security.xml",
         "security/ir.model.access.csv",
         "data/wua_region_data.xml",
         "data/wua_config_settings_data.xml",

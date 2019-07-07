@@ -15,7 +15,7 @@
         "wua_structure_irrigation",
         "web_widget_digitized_signature",],
     "data": [
-        "security/base_wua_gravity_irrigation_security.xml",
+        "security/security.xml",
         "security/ir.model.access.csv",
         "wizard/wizard_generate_periods_view.xml",
         "wizard/wizard_copy_requests_view.xml",

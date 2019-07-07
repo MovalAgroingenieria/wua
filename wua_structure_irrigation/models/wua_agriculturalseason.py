@@ -9,7 +9,7 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaAgriculturalseason(models.Model):
     _name = 'wua.agriculturalseason'
-    _description = 'Agricultural Seasons'
+    _description = 'Entity (agricultural season)'
     _order = 'name'
 
     # Size of fields "name" and "description".

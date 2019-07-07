@@ -7,8 +7,6 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
-    _description = 'Parcel of a WUA with irrigation infrastructure ' \
-                   '(C.R.Argos)'
 
     agent_id = fields.Many2one(
         string='Agent',

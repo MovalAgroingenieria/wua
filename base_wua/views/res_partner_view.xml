@@ -20,6 +20,9 @@
             <xpath expr="//form" position="attributes">
                 <attribute name="duplicate">0</attribute>
             </xpath>
+            <xpath expr="//button[@name='toggle_active']" position="attributes">
+                <attribute name="groups">base_wua.group_wua_user</attribute>
+            </xpath>
             <xpath expr="//button[@name='toggle_active']" position="after">
                 <field name="is_wua_partner" invisible="1"/>
                 <field name="gis_viewer_link" invisible="1"/>
@@ -30,7 +33,8 @@
                         type="action"
                         class="oe_stat_button"
                         icon="fa-square-o"
-                        groups="base_wua.group_wua_user">
+                        groups="base_wua.group_wua_user,
+                                base_wua.group_wua_portal_user">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_value">
                                 <field name="parcel_total_area"/> (<field name="parcel_number"/>)
@@ -48,7 +52,8 @@
                         class="oe_stat_button"
                         string="GIS Viewer"
                         icon="fa-map-marker"
-                        groups="base_wua.group_wua_user"/>
+                        groups="base_wua.group_wua_user,
+                                base_wua.group_wua_portal_user"/>
             </xpath>
             <xpath expr="//h1//field[@name='name']/.." position="after">
                 <group attrs="{'invisible':[('is_wua_partner','=',False)]}">
@@ -63,8 +68,7 @@
             </xpath>
             <xpath expr="//field[@name='website']" position="after">
                 <field name="number_of_votes" readonly="1"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}"
-                 groups="base_wua.group_wua_user"/>
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
             </xpath>
             <xpath expr="//field[@name='category_id']" position="replace">
                 <field name="category_id" widget="many2many_tags"
@@ -86,14 +90,11 @@
                 <field name="birthdate"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_owner" readonly="1"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}"
-                 groups="base_wua.group_wua_user"/>
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_lessee" readonly="1"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}"
-                 groups="base_wua.group_wua_user"/>                 
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>                 
                 <field name="is_payer" readonly="1"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}"
-                 groups="base_wua.group_wua_user"/>
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <!-- <separator string="Provisional" colspan="2"/>
                 <field name="parcel_owner_number"/>
                 <field name="parcel_owner_area"/>
@@ -278,7 +279,8 @@
     <menuitem id="base_wua_census_partners_menu"
               name="Partners"
               parent="base_wua_census_menu"
-              sequence="1"/>
+              sequence="1"
+              groups="group_wua_user,group_wua_portal_user"/>
 
     <menuitem id="res_partner_menu"
               name="Partners"

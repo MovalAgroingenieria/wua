@@ -7,7 +7,6 @@ from odoo import models, api, _
 
 class WuaIrrigationditch(models.Model):
     _inherit = 'wua.irrigationditch'
-    _description = 'Irrigation Ditches (with based-sets invoicing)'
 
     @api.multi
     def action_see_invoice_lines(self):

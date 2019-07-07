@@ -8,7 +8,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaHydraulicsector(models.Model):
     _inherit = 'wua.mastertable'
     _name = 'wua.hydraulicsector'
-    _description = 'Hydraulic Sectors'
+    _description = 'Entity (hydraulic sector)'
     _order = 'hydraulicsector_code'
 
     _size_name = 50

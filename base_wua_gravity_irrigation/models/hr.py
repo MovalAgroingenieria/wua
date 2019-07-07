@@ -7,8 +7,6 @@ from odoo import models, fields, api, _
 
 class Employee(models.Model):
     _inherit = 'hr.employee'
-    _description = 'Employee of a WUA with irrigation infrastructure ' \
-                   '(with consumptions)'
 
     gravconsumption_ids = fields.One2many(
         string='Gravity Consumptions',

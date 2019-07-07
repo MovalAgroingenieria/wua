@@ -9,7 +9,6 @@ from odoo import models, fields, api,  exceptions, _
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
-    _description = 'Entity (parcel, with possible irrigation infrastructure)'
 
     SIZE_IRRIGATIONPOINT_SUFFIX = 2
     SIZE_TRACK = 510
@@ -1166,7 +1165,6 @@ class WuaParcelIrrigationpoint(models.Model):
 
 class WuaParcelSubparcel(models.Model):
     _inherit = 'wua.parcel.subparcel'
-    _description = 'Subparcel of a parcel with irrigation infrastructure'
 
     hydraulicsector_id = fields.Many2one(
         string='Hydraulic Sector',

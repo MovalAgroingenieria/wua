@@ -8,7 +8,7 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaFlowdivider(models.Model):
     _name = 'wua.flowdivider'
-    _description = 'Flow Dividers'
+    _description = 'Entity (flow divider)'
     _order = 'irrigationditch_id, name'
 
     # Sizes of fields "name" and "description".

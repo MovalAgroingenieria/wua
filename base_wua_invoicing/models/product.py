@@ -7,7 +7,6 @@ from odoo import models, fields, api, exceptions, _
 
 class ProductCategory(models.Model):
     _inherit = 'product.category'
-    _description = 'WUA Product Category'
     _order = 'productcategory_code'
 
     productcategory_code = fields.Integer(
@@ -120,7 +119,6 @@ class ProductCategory(models.Model):
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
-    _description = 'WUA Product Template'
 
     is_wua_product = fields.Boolean(
         string='WUA Product',

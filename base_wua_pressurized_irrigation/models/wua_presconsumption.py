@@ -9,7 +9,7 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaPresconsumption(models.Model):
     _name = 'wua.presconsumption'
-    _description = 'Pressurized Consumption'
+    _description = 'Entity (pressurized consumption)'
     _order = 'name'
 
     MAX_SIZE_NAME = 52

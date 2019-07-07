@@ -7,7 +7,6 @@ from odoo import models, fields
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
-    _description = 'Partner of a WUA'
 
     share = fields.Integer(
         string='Share',

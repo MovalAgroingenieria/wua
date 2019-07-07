@@ -16,13 +16,12 @@
                 </header>
                 <field name="id" invisible="1"/>
                 <field name="is_open" invisible="1"/>
-                <field name="editable_record" invisible="1"/>
                 <sheet>
                     <div name="buttons" class="oe_button_box">
                         <span class="oe_edit_only"
                               style="color:Red;font-weight: bold;"
-                              attrs="{'invisible':[('signature_image','=',False)]}">
-                                NOTICE: It will be necessary to sign again
+                              attrs="{'invisible':['|',('is_portal_user','=',False),('signature_image','!=',False)]}">
+                                NOTICE: It will be necessary to sign
                         </span>
                         <img src="/base_wua_gravity_irrigation/static/image/img_unlock.png"
                              hspace="10"
@@ -35,8 +34,7 @@
                         <group name="master_data_left">
                             <field name="wateringperiod_id"
                                    domain="[('state', '=', 'open')]"
-                                   attrs="{'readonly':
-                                           [('id','>',0),'|',('editable_record','=',False),('is_open','=',False)]}"/>
+                                   attrs="{'readonly': [('id','>',0)]}"/>
                             <field name="partner_id"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
@@ -48,13 +46,13 @@
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    attrs="{'invisible': 
-                                           [('id','>',0),'|',('editable_record','=',False),('is_open','=',False)]}"/>
+                                           ['|',('is_open','=',False),('id','>',0)]}"/>
                         </group>
                         <group name="master_data_right">
                             <field name="agriculturalseason_id"/>
                             <field name="request_date"
                                    attrs="{'readonly':
-                                           [('id','>',0),'|',('editable_record','=',False),('is_open','=',False)]}"/>
+                                           ['|',('is_open','=',False),('id','>',0)]}"/>
                             <field name="number_of_subparcels"/>
                             <field name="is_portal_user"/>
                         </group>
@@ -65,7 +63,7 @@
                                   string="Requested Subparcels">
                                 <field name="gravconsumption_ids"
                                        attrs="{'readonly':
-                                               [('id','>',0),'|',('editable_record','=',False),('is_open','=',False)]}">                                       
+                                               ['|',('is_open','=',False),('id','>',0)]}">                                       
                                     <tree class="o_base_wua_gravity_irrigation_gravconsumption_view_tree_notebook"
                                           editable="bottom">
                                         <field name="gis_viewer_link" invisible="1"/>
@@ -100,14 +98,11 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page name="signature_page" string="Signature"
-                                  groups="base_wua.group_wua_user">
+                            <page name="signature_page" string="Signature">
                                 <field name="signature_image" widget="signature"/>
                             </page>                        
                             <page name="notes_page" string="Notes">
-                                <field name="notes"
-                                       attrs="{'readonly':
-                                               [('id','>',0),('editable_record','=',False)]}"/>
+                                <field name="notes"/>
                             </page>                        
                         </notebook>
                     </group>                    
@@ -148,8 +143,10 @@
                 <field name="partner_id"/>
                 <field name="user_id"/>
                 <field name="agriculturalseason_id"/>
-                <filter string="Created by the partner" name="isportaluser"
+                <filter string="Created by the partner: Yes" name="isportaluseryes"
                  domain="[('is_portal_user','=',True)]"/>
+                <filter string="Created by the partner: No" name="isportaluserno"
+                 domain="[('is_portal_user','=',False)]"/>
                 <separator/>
                 <filter string="Open" name="isopen"
                  domain="[('is_open','=',True)]"/>
@@ -240,7 +237,6 @@
               name="Watering Requests"
               parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
               action="wua_wateringrequest_action"
-              sequence="3"
-              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
+              sequence="3"/>
 
 </odoo>

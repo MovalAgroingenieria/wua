@@ -8,7 +8,6 @@ from odoo import models, fields, api
 
 class Employee(models.Model):
     _inherit = 'hr.employee'
-    _description = 'Employee of a WUA with irrigation infrastructure'
 
     is_irrigation_worker = fields.Boolean(
         string="Irrigation Worker",
