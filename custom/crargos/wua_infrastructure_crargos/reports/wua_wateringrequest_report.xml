@@ -127,14 +127,14 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-6" style="border: 1px solid black;">
-                            <span t-field="o.agent_id.name"/>
+                            <span t-field="o.sudo().agent_id.name"/>
                         </div>
                         <div class="col-xs-3" style="border: 1px solid black;">
-                            <t t-if="o.agent_id.vat"><span t-field="o.agent_id.vat"/></t>
+                            <t t-if="o.sudo().agent_id.vat"><span t-field="o.sudo().agent_id.vat"/></t>
                             <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
                         </div>
                         <div class="col-xs-3 text-center" style="border: 1px solid black;">
-                            <t t-if="o.agent_id.phones"><span t-field="o.agent_id.phones"/></t>
+                            <t t-if="o.sudo().agent_id.phones"><span t-field="o.sudo().agent_id.phones"/></t>
                             <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
                         </div>
                     </div>
@@ -148,11 +148,11 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-6" style="border: 1px solid black;">
-                            <t t-if="o.agent_id.street_name"><span t-field="o.agent_id.street_name"/> <span t-field="o.agent_id.street_number"/> <span t-field="o.agent_id.zip"/></t>
+                            <t t-if="o.sudo().agent_id.street_name"><span t-field="o.sudo().agent_id.street_name"/> <span t-field="o.sudo().agent_id.street_number"/> <span t-field="o.sudo().agent_id.zip"/></t>
                             <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
                         </div>
                         <div class="col-xs-6" style="border: 1px solid black;">
-                            <t t-if="o.agent_id.city"><span t-field="o.agent_id.city"/> (<span t-field="o.agent_id.state_id"/>)</t>
+                            <t t-if="o.sudo().agent_id.city"><span t-field="o.sudo().agent_id.city"/> (<span t-field="o.sudo().agent_id.state_id"/>)</t>
                             <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
                         </div>
                     </div>
