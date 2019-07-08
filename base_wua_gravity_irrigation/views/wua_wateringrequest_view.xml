@@ -46,13 +46,13 @@
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    attrs="{'invisible': 
-                                           ['|',('is_open','=',False),('id','>',0)]}"/>
+                                           [('is_open','=',False)]}"/>
                         </group>
                         <group name="master_data_right">
                             <field name="agriculturalseason_id"/>
                             <field name="request_date"
                                    attrs="{'readonly':
-                                           ['|',('is_open','=',False),('id','>',0)]}"/>
+                                           [('is_open','=',False)]}"/>
                             <field name="number_of_subparcels"/>
                             <field name="is_portal_user"/>
                         </group>
@@ -63,7 +63,7 @@
                                   string="Requested Subparcels">
                                 <field name="gravconsumption_ids"
                                        attrs="{'readonly':
-                                               ['|',('is_open','=',False),('id','>',0)]}">                                       
+                                               [('is_open','=',False)]}">                                       
                                     <tree class="o_base_wua_gravity_irrigation_gravconsumption_view_tree_notebook"
                                           editable="bottom">
                                         <field name="gis_viewer_link" invisible="1"/>
