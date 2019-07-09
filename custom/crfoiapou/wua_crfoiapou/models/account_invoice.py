@@ -38,7 +38,8 @@ class AccountInvoice(models.Model):
                                 current_parcel.rurallocation_id.name
                 if consumptions_of_current_wc:
                     consumptions.extend(consumptions_of_current_wc)
-                    rural_locations.append(rural_location)
+                    for consum in consumptions_of_current_wc:
+                        rural_locations.append(rural_location)
             i = 0
             for consumption in consumptions:
                 item = {
