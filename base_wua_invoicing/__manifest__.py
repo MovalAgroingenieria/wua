@@ -22,6 +22,7 @@
         "account_due_list_days_overdue",
         "account_due_list_payment_mode",],
     "data": [
+        "security/security.xml",
         "security/ir.model.access.csv",
         "data/product_category_data.xml",
         "views/resources.xml",
