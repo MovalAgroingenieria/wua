@@ -113,11 +113,32 @@
                     {'invisible':[('is_wua_partner','=',False)]}
                 </attribute>
             </xpath>
+            <xpath expr="//page[@name='internal_notes']"
+                   position="attributes">
+                <attribute name="groups">base_wua.group_wua_user</attribute>
+            </xpath>
+            <xpath expr="//page[@name='sales_purchases']"
+                   position="attributes">
+                <attribute name="groups">base_wua.group_wua_user</attribute>
+            </xpath>
             <notebook>
                 <page string="Quotas"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}">
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"
+                 groups="base_wua.group_wua_user">
                 </page>
             </notebook>
+        </field>
+    </record>
+
+    <record id="view_emails_partner_info_form" model="ir.ui.view">
+        <field name="name">Partners (form view, without messages for WUA portal users)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="mail.view_emails_partner_info_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='message_ids']"
+                   position="attributes">
+                <attribute name="groups">base.group_user</attribute>
+            </xpath>
         </field>
     </record>
 
