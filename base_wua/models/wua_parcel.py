@@ -41,6 +41,27 @@ class WuaParcel(models.Model):
             self.env.cr.execute("""
                 DELETE from ir_values WHERE model = 'wua.configuration'
                 """)
+        # For all window actions without group assigned related to
+        # res.partner and wua.parcel models: assign the "employee" group
+        # (hide the window actions to portal users).
+        group_user_id = self.env.ref('base.group_user').id
+        self.env.cr.execute("""
+            SELECT id FROM ir_act_window
+            WHERE src_model = 'res.partner' OR src_model = 'wua.parcel'
+            """)
+        action_ids = self.env.cr.fetchall()
+        if action_ids:
+            for action in action_ids:
+                action_id = action[0]
+                sql_find_group_rel = 'SELECT EXISTS (SELECT * FROM ' + \
+                    'ir_act_window_group_rel WHERE act_id = ' + \
+                    str(action_id) + ')'
+                self.env.cr.execute(sql_find_group_rel)
+                if not self.env.cr.fetchone()[0]:
+                    sql_insert_group_rel = 'INSERT INTO ' + \
+                        'ir_act_window_group_rel(act_id, gid) VALUES(' + \
+                        str(action_id) + ', ' + str(group_user_id) + ')'
+                    self.env.cr.execute(sql_insert_group_rel)
 
     name = fields.Char(
         string='Code',
