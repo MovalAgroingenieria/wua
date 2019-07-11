@@ -290,34 +290,16 @@ class WuaParcel(models.Model):
                             waterconnection_id.id)
         return waterconnections_to_del
 
-    @api.multi
-    def action_update_gis_link(self):
-        if self.check_gis():
-            self.set_gis_fields()
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Parcels',
-                'res_model': 'wua.parcel',
-                'view_type': 'form',
-                'view_mode': 'tree,form',
-                'target': 'current',
-                'context': self.env.context,
-                }
-
     def check_gis(self):
-        resp = False
-        self.env.cr.execute("""
-               SELECT EXISTS(SELECT * FROM information_schema.tables
-               WHERE table_name='wua_gis_parcel')
-               """)
-        if self.env.cr.fetchone()[0]:
-            resp = True
+        resp = super(WuaParcel, self).check_gis()
+        if resp:
+            resp = False
             self.env.cr.execute("""
                 SELECT EXISTS(SELECT * FROM information_schema.tables
                 WHERE table_name='wua_gis_irrigationshed')
                 """)
-        if not self.env.cr.fetchone()[0]:
-            resp = False
+            if self.env.cr.fetchone()[0]:
+                resp = True
         return resp
 
     def set_gis_fields(self):
