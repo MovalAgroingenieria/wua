@@ -23,7 +23,9 @@
                                 class="oe_stat_button"
                                 string="GIS Viewer"
                                 icon="fa-map-marker"
-                                attrs="{'invisible': ['|',('gis_viewer_link','=',False), ('with_gis_irrigationshed','=',False)]}"/>                                       
+                                attrs="{'invisible': 
+                                        ['|',('gis_viewer_link','=',False), 
+                                        ('with_gis_irrigationshed','=',False)]}"/>                                       
                     </div>                
                     <group name="master_data" col="9">
                         <group name="master_data_image" colspan="3">
@@ -34,8 +36,8 @@
                             <field name="name"/>
                             <field name="elevation"/>
                             <newline/>
-                            <field name="gis_viewer_x"/>
-                            <field name="gis_viewer_y"/>
+                            <field name="gis_viewer_x" readonly="1"/>
+                            <field name="gis_viewer_y" readonly="1"/>
                             <field name="description" colspan="4"/>
                             <field name="number_of_parcels"/>
                             <field name="total_affected_area_official"/>
@@ -116,9 +118,7 @@
                         type="object" class="oe_stat_button"
                         string="GIS Viewer (zoom to point)"
                         icon="fa-map-marker"
-                        attrs="{'invisible': [('gis_viewer_link','=','')]}"/>                        
-	                                ['|',('gis_viewer_link','=',False),		
-	                                     ('with_gis_irrigationshed','=',False)]}"/>/>                       
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_irrigationshed','=',False)]}"/>                       
                 <button name="action_see_gis_googlemaps"
                         type="object" class="oe_stat_button"
                         string="Google Maps (zoom to point)"
