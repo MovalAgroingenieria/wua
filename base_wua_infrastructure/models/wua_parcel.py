@@ -324,8 +324,8 @@ class WuaParcel(models.Model):
         gis_parcels_ok = True
         try:
             self.env.cr.execute("""
-            SELECT name, geom FROM public.wua_gis_parcel
-            """)
+                SELECT name, geom FROM public.wua_gis_parcel
+                """)
         except:
             gis_parcels_ok = False
         if gis_parcels_ok:
@@ -350,27 +350,24 @@ class WuaParcel(models.Model):
                     geom = gis_parcel[1]
                     decoded_geom = wkb.loads(geom, True)
                     area_gis_m2 = decoded_geom.area
-                    area_gis = (
-                                area_gis_m2 * 0.0001 /
+                    area_gis = (area_gis_m2 * 0.0001 /
                                 area_measurement_equivalence)
                     filtered_parcels = \
                         parcels.filtered(lambda x: x.name == name)
                     if len(filtered_parcels) == 1:
                         parcel = filtered_parcels[0]
                         parcel.area_gis = area_gis
-                    _logger = logging.getLogger(self.__class__.__name__)
-                    _logger.info('Matching GIS info...')
-                    _logger.info(
-                                'Number of Odoo-Parcels: ' +
-                                str(number_of_parcels))
-                    _logger.info(
-                                'Number of GIS-Parcels : ' +
-                                str(number_of_gis_parcels))
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info('Matching GIS info...')
+                _logger.info('Number of Odoo-Parcels: ' +
+                             str(number_of_parcels))
+                _logger.info('Number of GIS-Parcels : ' +
+                             str(number_of_gis_parcels))
         gis_irrigationsheds_ok = True
         try:
             self.env.cr.execute("""
-            SELECT name, geom FROM public.wua_gis_irrigationshed
-            """)
+                SELECT name, geom FROM public.wua_gis_irrigationshed
+                """)
         except:
             gis_irrigationsheds_ok = False
         if gis_irrigationsheds_ok:
@@ -393,18 +390,16 @@ class WuaParcel(models.Model):
                     if len(filtered_irrigationsheds) == 1:
                         irrigationshed = filtered_irrigationsheds[0]
                         irrigationshed.write({
-                                            'with_gis_irrigationshed': True,
-                                            'gis_viewer_x': point_gis.x,
-                                            'gis_viewer_y': point_gis.y
-                                            })
-                        _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.info('Matching GIS info...')
-                        _logger.info(
-                                    'Number of Odoo-Irrigationsheds: ' +
-                                    str(number_of_irrigationsheds))
-                        _logger.info(
-                                    'Number of GIS-Irrigationsheds : ' +
-                                    str(number_of_gis_irrigationsheds))
+                            'with_gis_irrigationshed': True,
+                            'gis_viewer_x': point_gis.x,
+                            'gis_viewer_y': point_gis.y
+                        })
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info('Matching GIS info...')
+                _logger.info('Number of Odoo-Irrigationsheds: ' +
+                             str(number_of_irrigationsheds))
+                _logger.info('Number of GIS-Irrigationsheds : ' +
+                             str(number_of_gis_irrigationsheds))
         return gis_irrigationsheds_ok and gis_parcels_ok
 
     def populate_irrigationgates_to_add(self, vals):

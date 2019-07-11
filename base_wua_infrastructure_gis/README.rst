@@ -2,9 +2,9 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-==========================================
-GIS for Water Users Association Management
-==========================================
+===========================================================================
+GIS for Water Users Association Management (with irrigation infrastructure)
+===========================================================================
 
 base_wua_infrastructure module plus GIS functions.
 
@@ -27,7 +27,8 @@ Contributors
 * Alberto Hernández <ahernandez@moval.es>
 * Eduardo Iniesta <einiesta@moval.es>
 * Miguel Mora <mmora@moval.es>
-* Salvador Sánchez Aroca <ssanchez@moval.es>
+* Juanu Sandoval <jsandoval@moval.es>
+* Salvador Sánchez <ssanchez@moval.es>
 * Jorge Vera <jvera@moval.es>
 
 Maintainer
