@@ -117,6 +117,10 @@ class WuaIrrigationshed(models.Model):
         store=True,
         compute='_compute_total_affected_area_official_hec')
 
+    with_gis_irrigationshed = fields.Boolean(		
+        string='GIS Irrigationshed',		
+        store=True)
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Identifier.'),
         ]
