@@ -290,18 +290,6 @@ class WuaParcel(models.Model):
                             waterconnection_id.id)
         return waterconnections_to_del
 
-    def check_gis(self):
-        resp = super(WuaParcel, self).check_gis()
-        if resp:
-            resp = False
-            self.env.cr.execute("""
-                SELECT EXISTS(SELECT * FROM information_schema.tables
-                WHERE table_name='wua_gis_irrigationshed')
-                """)
-            if self.env.cr.fetchone()[0]:
-                resp = True
-        return resp
-
     def set_gis_fields(self):
         gis_parcels_ok = True
         try:
