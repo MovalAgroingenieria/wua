@@ -292,7 +292,8 @@ class WuaParcel(models.Model):
 
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
-        
+        if (not gis_parcels_ok):
+                return False
         gis_irrigationsheds_ok = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
