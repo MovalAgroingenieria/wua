@@ -331,7 +331,7 @@ class WuaParcel(models.Model):
                                  str(number_of_irrigationsheds))
                     _logger.info('Number of GIS-Irrigationsheds : ' +
                                  str(number_of_gis_irrigationsheds))
-        return gis_irrigationsheds_ok and gis_parcels_ok
+        return True
 
     def populate_irrigationgates_to_add(self, vals):
         irrigationgates_to_add = []
