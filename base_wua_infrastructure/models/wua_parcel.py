@@ -291,87 +291,46 @@ class WuaParcel(models.Model):
         return waterconnections_to_del
 
     def set_gis_fields(self):
-        gis_parcels_ok = True
-        try:
-            self.env.cr.execute("""
-                SELECT name, geom FROM public.wua_gis_parcel
-                """)
-        except:
-            gis_parcels_ok = False
-        if gis_parcels_ok:
-            gis_parcels = self.env.cr.fetchall()
-            area_measurement_equivalence = 1
-            area_measurement_type = self.env['ir.values'].get_default(
-                'wua.configuration', 'area_measurement_type')
-            if area_measurement_type == 1:
-                area_measurement_equivalence = \
-                    self.env['ir.values'].get_default(
-                        'wua.configuration', 'area_measurement_equivalence')
-            if gis_parcels:
-                parcels = self.env['wua.parcel'].search([])
-                number_of_gis_parcels = len(gis_parcels)
-                number_of_parcels = len(parcels)
+        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
+        gis_irrigationsheds_ok = False
+        if (gis_parcels_ok):        
+            gis_irrigationsheds_ok = True
+            try:
                 self.env.cr.execute("""
-                    UPDATE public.wua_parcel
-                    SET area_gis = 0, with_gis_parcel = FALSE
+                    SELECT name, geom FROM public.wua_gis_irrigationshed
                     """)
-                for gis_parcel in gis_parcels:
-                    name = gis_parcel[0]
-                    geom = gis_parcel[1]
-                    decoded_geom = wkb.loads(geom, True)
-                    area_gis_m2 = decoded_geom.area
-                    area_gis = (area_gis_m2 * 0.0001 /
-                                area_measurement_equivalence)
-                    filtered_parcels = \
-                        parcels.filtered(lambda x: x.name == name)
-                    if len(filtered_parcels) == 1:
-                        parcel = filtered_parcels[0]
-                        _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.info(area_gis)
-                        parcel.area_gis = area_gis
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info('Matching GIS info...')
-                _logger.info('Number of Odoo-Parcels: ' +
-                             str(number_of_parcels))
-                _logger.info('Number of GIS-Parcels : ' +
-                             str(number_of_gis_parcels))
-        gis_irrigationsheds_ok = True
-        try:
-            self.env.cr.execute("""
-                SELECT name, geom FROM public.wua_gis_irrigationshed
-                """)
-        except:
-            gis_irrigationsheds_ok = False
-        if gis_irrigationsheds_ok:
-            gis_irrigationsheds = self.env.cr.fetchall()
-            if gis_irrigationsheds:
-                irrigationsheds = self.env['wua.irrigationshed'].search([])
-                number_of_gis_irrigationsheds = len(gis_irrigationsheds)
-                number_of_irrigationsheds = len(irrigationsheds)
-                self.env.cr.execute("""
-                    UPDATE public.wua_irrigationshed
-                    SET with_gis_irrigationshed = FALSE
-                    """)
-                for gis_irrigationshed in gis_irrigationsheds:
-                    name = gis_irrigationshed[0]
-                    geom = gis_irrigationshed[1]
-                    decoded_geom = wkb.loads(geom, True)
-                    point_gis = decoded_geom
-                    filtered_irrigationsheds = \
-                        irrigationsheds.filtered(lambda x: x.name == name)
-                    if len(filtered_irrigationsheds) == 1:
-                        irrigationshed = filtered_irrigationsheds[0]
-                        irrigationshed.write({
-                            'with_gis_irrigationshed': True,
-                            'gis_viewer_x': point_gis.x,
-                            'gis_viewer_y': point_gis.y
-                        })
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info('Matching GIS info...')
-                _logger.info('Number of Odoo-Irrigationsheds: ' +
-                             str(number_of_irrigationsheds))
-                _logger.info('Number of GIS-Irrigationsheds : ' +
-                             str(number_of_gis_irrigationsheds))
+            except:
+                gis_irrigationsheds_ok = False
+            if gis_irrigationsheds_ok:
+                gis_irrigationsheds = self.env.cr.fetchall()
+                if gis_irrigationsheds:
+                    irrigationsheds = self.env['wua.irrigationshed'].search([])
+                    number_of_gis_irrigationsheds = len(gis_irrigationsheds)
+                    number_of_irrigationsheds = len(irrigationsheds)
+                    self.env.cr.execute("""
+                        UPDATE public.wua_irrigationshed
+                        SET with_gis_irrigationshed = FALSE
+                        """)
+                    for gis_irrigationshed in gis_irrigationsheds:
+                        name = gis_irrigationshed[0]
+                        geom = gis_irrigationshed[1]
+                        decoded_geom = wkb.loads(geom, True)
+                        point_gis = decoded_geom
+                        filtered_irrigationsheds = \
+                            irrigationsheds.filtered(lambda x: x.name == name)
+                        if len(filtered_irrigationsheds) == 1:
+                            irrigationshed = filtered_irrigationsheds[0]
+                            irrigationshed.write({
+                                'with_gis_irrigationshed': True,
+                                'gis_viewer_x': point_gis.x,
+                                'gis_viewer_y': point_gis.y
+                            })
+                    _logger = logging.getLogger(self.__class__.__name__)
+                    _logger.info('Matching GIS info...')
+                    _logger.info('Number of Odoo-Irrigationsheds: ' +
+                                 str(number_of_irrigationsheds))
+                    _logger.info('Number of GIS-Irrigationsheds : ' +
+                                 str(number_of_gis_irrigationsheds))
         return gis_irrigationsheds_ok and gis_parcels_ok
 
     def populate_irrigationgates_to_add(self, vals):
