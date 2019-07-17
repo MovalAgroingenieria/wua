@@ -315,6 +315,7 @@ class WuaParcel(models.Model):
                     UPDATE public.wua_parcel
                     SET area_gis = 0, with_gis_parcel = FALSE
                     """)
+                _logger = logging.getLogger(self.__class__.__name__)
                 for gis_parcel in gis_parcels:
                     name = gis_parcel[0]
                     geom = gis_parcel[1]
@@ -328,7 +329,7 @@ class WuaParcel(models.Model):
                         parcel = filtered_parcels[0]
                         _logger.info(area_gis)
                         parcel.area_gis = area_gis
-                _logger = logging.getLogger(self.__class__.__name__)
+                
                 _logger.info('Matching GIS info...')
                 _logger.info('Number of Odoo-Parcels: ' +
                              str(number_of_parcels))
