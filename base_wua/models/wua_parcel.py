@@ -991,6 +991,8 @@ class WuaParcel(models.Model):
                     if len(filtered_parcels) == 1:
                         parcel = filtered_parcels[0]
                         parcel.area_gis = area_gis
+                        _logger = logging.getLogger(self.__class__.__name__)
+                        _logger.info('Area Gis= '+area_gis +' parcelAreaGis = ' + parcel.area_gis)
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info('Matching GIS info...')
                 _logger.info('Number of Odoo-Parcels: ' +

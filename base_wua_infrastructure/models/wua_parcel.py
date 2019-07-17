@@ -292,6 +292,8 @@ class WuaParcel(models.Model):
 
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
+        _logger = logging.getLogger(self.__class__.__name__)
+        _logger.info('gis hijo')
         gis_irrigationsheds_ok = False
         if (gis_parcels_ok):        
             gis_irrigationsheds_ok = True
