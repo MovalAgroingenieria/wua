@@ -326,6 +326,7 @@ class WuaParcel(models.Model):
                         parcels.filtered(lambda x: x.name == name)
                     if len(filtered_parcels) == 1:
                         parcel = filtered_parcels[0]
+                        _logger.info(area_gis)
                         parcel.area_gis = area_gis
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info('Matching GIS info...')
