@@ -293,7 +293,7 @@ class WuaParcel(models.Model):
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         if (not gis_parcels_ok):
-                return False
+            return False
         gis_irrigationsheds_ok = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
@@ -331,7 +331,7 @@ class WuaParcel(models.Model):
                              str(number_of_irrigationsheds))
                 _logger.info('Number of GIS-Irrigationsheds : ' +
                              str(number_of_gis_irrigationsheds))
-        return  gis_parcels_ok and gis_irrigationsheds_ok
+        return gis_parcels_ok and gis_irrigationsheds_ok
 
     def populate_irrigationgates_to_add(self, vals):
         irrigationgates_to_add = []
