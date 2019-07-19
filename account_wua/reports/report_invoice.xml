@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-        <record id="account.account_invoices" model="ir.actions.report.xml">
-        
-            <field name="attachment_use" eval="False"/>
-        
-        </record>
+    <!-- Avoid reload from attached files -->
+    <record id="account.account_invoices" model="ir.actions.report.xml">
+        <field name="attachment_use" eval="False"/>
+    </record>
+
     <!-- Modification report invoice -->
     <template id="wua_report_invoice_document" inherit_id="account.report_invoice_document">
 
@@ -121,46 +121,46 @@
         <!-- Overwrite table -->
         <xpath expr="//table[@class='table table-condensed'][1]" position="replace">
             <table class="table">
-                <col width="10%"/>
-                <col width="44%"/>
-                <col width="12%"/>
-                <col width="12%"/>
-                <col width="12%"/>
-                <col width="10%"/>
+                <col name="product" width="10%"/>
+                <col name="description" width="44%"/>
+                <col name="quantity" width="12%"/>
+                <col name="price" width="12%"/>
+                <col name="taxes" width="12%"/>
+                <col name="amount" width="10%"/>
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th>Description</th>
-                        <th class="hidden">Source Document</th>
-                        <th class="text-right">Quantity</th>
-                        <th class="text-right">Price</th>
-                        <th t-if="display_discount" class="text-right">Disc.(%)</th>
-                        <th>Taxes</th>
-                        <th class="text-right">Amount</th>
+                        <th name="product">Product</th>
+                        <th name="description">Description</th>
+                        <th name="src_document" class="hidden">Source Document</th>
+                        <th name="quantity" class="text-right">Quantity</th>
+                        <th name="price" class="text-right">Price</th>
+                        <th t-if="display_discount" name="discount" class="text-right">Disc.(%)</th>
+                        <th name="taxes">Taxes</th>
+                        <th name="amount" class="text-right">Amount</th>
                     </tr>
                 </thead>
                 <tbody class="invoice_tbody">
                     <tr t-foreach="o.invoice_line_ids" t-as="l">
-                        <td><span t-field="l.product_id"/></td>
-                        <td><span t-field="l.name"/></td>
-                        <td class="hidden"><span t-field="l.origin"/></td>
-                        <td class="text-right">
+                        <td name="product"><span t-field="l.product_id"/></td>
+                        <td name="description"><span t-field="l.name"/></td>
+                        <td name="src_document" class="hidden"><span t-field="l.origin"/></td>
+                        <td name="quantity" class="text-right">
                             <span t-field="l.quantity"/>
                             <span t-field="l.uom_id" groups="product.group_uom"/>
                         </td>
-                        <td class="text-right">
+                        <td name="price" class="text-right">
                             <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
                             <span>/</span>
                             <span t-field="l.uom_id" groups="product.group_uom"/>
                         </td>
-                        <td t-if="display_discount" class="text-right">
+                        <td t-if="display_discount" name="discount" class="text-right">
                             <span t-field="l.discount"/>
                         </td>
-                        <td>
+                        <td name="taxes">
                             <!-- Change tax column from tax description to tax name (see below) -->
                             <span t-esc="', '.join(map(lambda x: (x.name), l.invoice_line_tax_ids))"/>
                         </td>
-                        <td class="text-right">
+                        <td name="amount" class="text-right">
                             <span t-field="l.price_subtotal" 
                                 t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                         </td>

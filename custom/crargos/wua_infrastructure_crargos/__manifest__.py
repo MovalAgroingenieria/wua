@@ -12,14 +12,21 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_gravity_irrigation", ],
+        "account",
+        "account_wua",
+        "base_wua_gravity_irrigation",
+        "base_wua_report",
+    ],
     "data": [
         "views/wua_parcel_view.xml",
         "views/res_partner_view.xml",
         "views/wua_wateringrequest_view.xml",
         "views/resources.xml",
+        "reports/wua_external_layout.xml",
         "reports/wua_wateringrequest_report.xml",
-        "reports/wua_reservoiremptyingorder_report.xml", ],
+        "reports/wua_reservoiremptyingorder_report.xml",
+        "reports/report_invoice.xml",
+    ],
     "installable": True,
     "application": False,
 }

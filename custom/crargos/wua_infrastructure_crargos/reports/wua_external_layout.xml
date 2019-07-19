@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Header modification for argos -->
+    <template id="external_layout_header_argos" inherit_id="base_wua_report.external_layout_header">
+
+        <xpath expr="//div[@class='row']" position="replace">
+            <div class="row">
+                <div class="col-xs-6">
+                    <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
+                         style="max-width: 322px; margin-top: 4px;"/>
+                         <!-- style="max-height: 130px; max-width: 130px; margin-top: 4px; margin-bottom: 4px; margin-left: 4px;" -->
+                </div>
+                <div class="col-xs-6" name="part3" style="margin-bottom: 6px;">
+                    <!-- This subdivision is the anchor for picking operations barcode insert -->
+                    <div name="company_address">
+                        <t t-if="company.vat">
+                            <!-- The two first chars are sliced -->
+                            <t t-set="mod_vat" t-value="company.vat[2:]"/>
+                            <li class="text-right" style="list-style:none;">TIN: <span t-esc="mod_vat"/></li>
+                        </t>
+                        <t t-if="company.street or company.street2">
+                            <li class="text-right" style="list-style:none;">
+                                <span t-field="company.street"/>
+                                <t t-if="company.street2">
+                                    <span t-field="company.street"/>
+                                </t>
+                                <t t-if="company.city">
+                                    <span t-field="company.city"/>
+                                </t>
+                                <t t-if="company.zip">
+                                    <span t-field="company.zip"/>
+                                </t>
+                                <t t-if="company.state_id">
+                                    <span t-field="company.state_id"/>
+                                </t>
+                                <t t-if="company.country_id">
+                                    <span t-field="company.country_id"/>
+                                </t>
+                            </li>
+                        </t>
+                        <t t-if="company.partner_id">
+                            <li class="text-right" style="list-style:none; margin-left: 2px">
+                                <span t-field="company.partner_id"
+                                    t-field-options='{"widget": "contact", "fields": ["email"], "no_marker": false}'/>
+                                 <span t-field="company.partner_id"
+                                    t-field-options='{"widget": "contact", "fields": ["website"], "no_marker": false}'/>
+                                <span t-field="company.partner_id"
+                                    t-field-options='{"widget": "contact", "fields": ["phone"], "no_marker": false}'/>
+                            </li>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
