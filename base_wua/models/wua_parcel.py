@@ -1956,6 +1956,10 @@ class WuaParcelPartnerlink(models.Model):
         store=True,
         compute='_compute_area_official_other_costs_hec_net')
 
+    cadastral_reference = fields.Char(
+        string='Cadastral Reference',
+        compute='_compute_cadastral_reference')
+
     _sql_constraints = [
         ('valid_ownership_percentage',
          'CHECK (ownership_percentage >= 0 and ownership_percentage <= 100)',
@@ -2057,6 +2061,15 @@ class WuaParcelPartnerlink(models.Model):
                      partnerlink.other_costs_percentage)/100
                 partnerlink.area_official_other_costs_net_hec = \
                     factor * partnerlink.area_official_other_costs_net
+
+    @api.multi
+    def _compute_cadastral_reference(self):
+        for record in self:
+            cadastral_reference = ''
+            if record.parcel_id:
+                cadastral_reference = \
+                    record.parcel_id.cadastral_reference
+            record.cadastral_reference = cadastral_reference
 
     @api.onchange('profile')
     def _onchange_profile(self):

@@ -139,6 +139,10 @@ class WuaInvoiceset(models.Model):
     date_due_invoiceset = fields.Date(
         string='Due Date')
 
+    property_payment_term_invoiceset_id = fields.Many2one(
+        string='Customer Payment Terms',
+        comodel_name='account.payment.term')
+
     year_invoiceset = fields.Integer(
         string='Year',
         store=True,
@@ -209,6 +213,22 @@ class WuaInvoiceset(models.Model):
         store=True,
         compute='_compute_configured_invoiceset')
 
+    comment_template1_invoiceset_id = fields.Many2one(
+        string='Top Comment Template',
+        comodel_name='base.comment.template')
+
+    comment_template2_invoiceset_id = fields.Many2one(
+        string='Bottom Comment Template',
+        comodel_name='base.comment.template')
+
+    note1_invoiceset = fields.Html(
+        string='Top Comment',
+        translate=True)
+
+    note2_invoiceset = fields.Html(
+        string='Bottom Comment',
+        translate=True)
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
@@ -230,6 +250,18 @@ class WuaInvoiceset(models.Model):
                         configured = False
                         break
             record.configured_invoiceset = configured
+
+    @api.onchange('comment_template1_invoiceset_id')
+    def _set_note1_invoiceset(self):
+        comment = self.comment_template1_invoiceset_id
+        if comment:
+            self.note1_invoiceset = comment.get_value()
+
+    @api.onchange('comment_template2_invoiceset_id')
+    def _set_note2_invoiceset(self):
+        comment = self.comment_template2_invoiceset_id
+        if comment:
+            self.note2_invoiceset = comment.get_value()
 
     @api.model
     def create(self, vals):
@@ -943,7 +975,9 @@ class WuaInvoiceset(models.Model):
                 partner_id = invoice_data['partner_id']
                 date_invoice = record.date_invoiceset
                 date_due = record.date_due_invoiceset
-                payment_term_id = invoice_data['payment_term_id']
+                payment_term_id = record.property_payment_term_invoiceset_id.id
+                if not payment_term_id:
+                    payment_term_id = invoice_data['payment_term_id']
                 if not date_due:
                     if payment_term_id:
                         pterm = paymentterms.browse(payment_term_id)
@@ -954,6 +988,9 @@ class WuaInvoiceset(models.Model):
                             date_due = max(line[0] for line in pterm_list)
                     else:
                         date_due = date_invoice
+                lang = self.env['res.partner'].browse(partner_id).lang
+                note1 = record.with_context({'lang': lang}).note1_invoiceset
+                note2 = record.with_context({'lang': lang}).note2_invoiceset
                 invoice_vals = {
                     'partner_id': partner_id,
                     'date_invoice': date_invoice,
@@ -965,6 +1002,8 @@ class WuaInvoiceset(models.Model):
                     'transmit_method_id':
                         invoice_data['customer_invoice_transmit_method_id'],
                     'invoiceset_id': record.id,
+                    'note1': note1,
+                    'note2': note2,
                     'invoice_line_ids': lines,
                     }
                 partner = partners.browse(partner_id)

@@ -115,13 +115,16 @@ class WuaWaterconnection(models.Model):
                 'assign_start': current_date, }
             wc_wm_registers.create(vals_new_wc_wm_register)
             # It's necessary to create a initialization reading.
+            last_reading_time = current_date
             last_reading_value = 0
             watermeter = self.env['wua.watermeter'].browse(watermeter_id)
+            if watermeter.last_reading_time:
+                last_reading_time = watermeter.last_reading_time
             if watermeter.last_reading_value:
                 last_reading_value = watermeter.last_reading_value
             vals_new_initialization_reading = {
                 'watermeter_id': watermeter_id,
-                'reading_time': current_date,
+                'reading_time': last_reading_time,
                 'volume': last_reading_value,
                 'initialization_reading': True, }
             self.env['wua.reading'].create(
@@ -133,10 +136,12 @@ class WuaWaterconnection(models.Model):
         condition = [('waterconnection_id', '=', self.id)]
         id_form_view = self.env.ref('base_wua_pressurized_irrigation.'
                                     'wua_presconsumption_view_form').id
-        id_tree_view = self.env.ref('base_wua_pressurized_irrigation.'
-                                    'wua_presconsumption_one_waterconnection_view_tree').id
-        search_view = self.env.ref('base_wua_pressurized_irrigation.'
-                                   'wua_presconsumption_one_waterconnection_view_search')
+        id_tree_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_presconsumption_one_waterconnection_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_presconsumption_one_waterconnection_view_search')
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Consumptions'),

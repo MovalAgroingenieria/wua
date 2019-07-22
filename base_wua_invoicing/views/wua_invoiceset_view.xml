@@ -68,6 +68,9 @@
                             <field name="date_due_invoiceset"
                                    attrs="{'readonly':
                                            [('state','=','generated')]}"/>
+                            <field name="property_payment_term_invoiceset_id"
+                                   attrs="{'readonly':
+                                           [('state','=','generated')]}"/>
                         </group>
                         <group name="master_data_id02" colspan="4">
                             <field name="description"
@@ -99,6 +102,23 @@
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
                             </page>
+                            <page name="comments" string="Comments">
+                                <p style="margin-top: 10px;">The comments will be displayed on the printed document. You can load a predefined template, write your own text or load a template and then modify it only for this document.</p>
+                                <group string="Top Comments">
+                                    <field name="comment_template1_invoiceset_id"
+                                        string="Load a template"
+                                        domain="[('position','=','before_lines')]"
+                                        context="{'default_position': 'before_lines'}"/>
+                                    <field name="note1_invoiceset" nolabel="1" colspan="2"/>
+                                </group>
+                                <group string="Bottom Comments">
+                                    <field name="comment_template2_invoiceset_id"
+                                        string="Load a template"
+                                        context="{'default_position': 'after_lines'}"
+                                        domain="[('position','=','after_lines')]"/>
+                                    <field name="note2_invoiceset" nolabel="1" colspan="2"/>
+                                </group>
+                            </page>
                         </notebook>
                     </group>
                 </sheet>
@@ -122,6 +142,7 @@
                 <field name="journal_id"/>
                 <field name="date_invoiceset"/>
                 <field name="date_due_invoiceset"/>
+                <field name="property_payment_term_invoiceset_id"/>
                 <field name="user_id"/>
                 <field name="number_of_invoices"/>
                 <field name="amount_untaxed"/>
