@@ -11,4 +11,23 @@
         </record>
 
     </data>
+    
+    <data noupdate="0">
+
+        <record id="rule_account_invoice_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on invoices</field>
+            <field name="model_id" ref="model_account_invoice"/>
+            <field name="domain_force">[('partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record>
+
+        <record id="rule_account_invoice_line_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on invoice lines</field>
+            <field name="model_id" ref="model_account_invoice_line"/>
+            <field name="domain_force">[('invoice_id.partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record>
+
+    </data>
+    
 </odoo>
