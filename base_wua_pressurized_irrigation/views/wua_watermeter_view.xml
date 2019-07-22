@@ -6,6 +6,7 @@
         <field name="model">wua.watermeter</field>
         <field name="arch" type="xml">
             <form duplicate="0">
+                <field name="id" invisible="1"/>
                 <sheet>
                     <div name="buttons" class="oe_button_box">
                         <button name="action_see_readings"
@@ -31,8 +32,10 @@
                             <field name="waterconnection_id"/>
                             <field name="irrigationshed_id"/>
                             <field name="hydraulicsector_id"/>
-                            <field name="last_reading_time" readonly="1"/>
-                            <field name="last_reading_value" readonly="1"/>
+                            <field name="last_reading_time"
+                                   attrs="{'readonly': [('id','>',0)]}"/>
+                            <field name="last_reading_value"
+                                   attrs="{'readonly': [('id','>',0)]}"/>
                         </group>
                     </group>
                     <group name="slave_data">

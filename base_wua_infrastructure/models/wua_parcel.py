@@ -41,11 +41,13 @@ class WuaParcel(models.Model):
 
     pressurized_irrigation_right = fields.Boolean(
         string="Water Right (pres)",
-        default=True)
+        default=True,
+        track_visibility='onchange')
 
     gravityfed_irrigation_right = fields.Boolean(
         string="Water Right (grav)",
-        default=True)
+        default=True,
+        track_visibility='onchange')
 
     hydraulicsector_id = fields.Many2one(
         string='Hydraulic Sector',

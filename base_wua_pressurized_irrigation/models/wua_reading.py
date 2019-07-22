@@ -246,6 +246,16 @@ class WuaReading(models.Model):
 
     @api.multi
     def unlink(self):
+        # Special case: delete a single reading, and the water meter of that
+        # reading only has that reading.
+        if len(self) == 1:
+            watermeter = self.watermeter_id
+            readings_of_watermeter = self.env['wua.reading'].search(
+                [('watermeter_id', '=', watermeter.id)])
+            if len(readings_of_watermeter) == 1:
+                resp = super(WuaReading, self).unlink()
+                watermeter.unlink()
+                return resp
         # Loop to get the oldest reading to delete, and also the newest one.
         watermeter = None
         older_reading_time = None
