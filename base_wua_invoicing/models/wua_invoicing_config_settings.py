@@ -28,6 +28,25 @@ class WuaInvoicingConfiguration(models.TransientModel):
         comodel_name='account.journal',
         help='Default journal for invoice sets')
 
+    alter_invoicing_behavior = fields.Boolean(
+        string="Alter invoicing behavior",
+        help='if it is marked, it allows parameterization of \
+             the unit of measurement of the area')
+
+    invoicing_area_measurement_name = fields.Char(
+        string='Invoicing Area Unit Name',
+        size=20,
+        translate=True,
+        help='If the area unit type is not hectare, name of that area unit')
+
+    invoicing_area_measurement_equivalence = fields.Float(
+        string='Master unit equivalence',
+        digits=(32, 5),
+        default=0,
+        required=True,
+        help='If the area unit type is not hectare, number of hectares '
+        'in that area unit')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -40,3 +59,12 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'default_journal_id',
                            self.default_journal_id.id)
+        values.set_default('wua.invoicing.configuration',
+                           'alter_invoicing_behavior',
+                           self.alter_invoicing_behavior)
+        values.set_default('wua.invoicing.configuration',
+                           'invoicing_area_measurement_name',
+                           self.invoicing_area_measurement_name)
+        values.set_default('wua.invoicing.configuration',
+                           'invoicing_area_measurement_equivalence',
+                           self.invoicing_area_measurement_equivalence)

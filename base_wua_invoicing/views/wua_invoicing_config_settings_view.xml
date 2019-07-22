@@ -22,6 +22,13 @@
                     <field name="default_journal_id"
                            domain="[('type','=','sale')]"/>
                 </group>
+                <group string="Invoicing Area">
+                    <field name="alter_invoicing_behavior" widget="checkbox"/>
+                    <field name="invoicing_area_measurement_name" style="width:100px"
+                     attrs="{'invisible':[('alter_invoicing_behavior','=', False)]}"/>
+                    <field name="invoicing_area_measurement_equivalence" style="width:100px"
+                     attrs="{'invisible':[('alter_invoicing_behavior','=', False)]}"/>
+                </group>
             </form>
         </field>
     </record>

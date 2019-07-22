@@ -18,6 +18,7 @@
         "base_wua_report",
     ],
     "data": [
+        "data/wua_invoicing_config_settings_data.xml"
         "views/wua_parcel_view.xml",
         "views/res_partner_view.xml",
         "views/wua_wateringrequest_view.xml",
