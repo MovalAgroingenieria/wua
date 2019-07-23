@@ -562,6 +562,7 @@ class WuaInvoiceset(models.Model):
         return alter_invoicing_behavior
 
     def get_invoicing_area_measurement_name(self):
+        configured_invoicing_area_measurement_name = ''
         alter_invoicing_behavior = self.env['ir.values'].get_default(
             'wua.invoicing.configuration', 'alter_invoicing_behavior')
         if alter_invoicing_behavior:
@@ -574,6 +575,7 @@ class WuaInvoiceset(models.Model):
         return configured_invoicing_area_measurement_name
 
     def get_invoicing_area_measurement_equivalence(self):
+        configured_invoicing_area_measurement_equivalence = ''
         alter_invoicing_behavior = self.env['ir.values'].get_default(
             'wua.invoicing.configuration', 'alter_invoicing_behavior')
         if alter_invoicing_behavior:
@@ -634,7 +636,6 @@ class WuaInvoiceset(models.Model):
         parcels = self.env['wua.parcel'].browse(item_ids).filtered(
             lambda x: x.is_billable_expenses is True)
         area_measurement_name = self.get_area_measurement_name()
-
         # Get Invoicing Area settings
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
         if alter_invoicing_behavior:
@@ -642,7 +643,6 @@ class WuaInvoiceset(models.Model):
                 self.get_invoicing_area_measurement_name()
             area_invoicing_measurement_equivalence = \
                 self.get_invoicing_area_measurement_equivalence()
-
         for parcel in parcels:
             partnerlinks_of_parcel = partnerlinks.filtered(
                 lambda x: x.parcel_id.id == parcel.id and
@@ -717,7 +717,6 @@ class WuaInvoiceset(models.Model):
         parcels = self.env['wua.parcel'].browse(item_ids).filtered(
             lambda x: x.is_billable_expenses is True)
         area_measurement_name = self.get_area_measurement_name()
-
         # Get Invoicing Area settings
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
         if alter_invoicing_behavior:
@@ -725,7 +724,6 @@ class WuaInvoiceset(models.Model):
                 self.get_invoicing_area_measurement_name()
             area_invoicing_measurement_equivalence = \
                 self.get_invoicing_area_measurement_equivalence()
-
         for parcel in parcels:
             partnerlinks_of_parcel = partnerlinks.filtered(
                 lambda x: x.parcel_id.id == parcel.id and

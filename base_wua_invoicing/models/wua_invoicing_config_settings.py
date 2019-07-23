@@ -37,15 +37,16 @@ class WuaInvoicingConfiguration(models.TransientModel):
         string='Invoicing Area Unit Name',
         size=20,
         translate=True,
-        help='If the area unit type is not hectare, name of that area unit')
+        help='If the area unit type is not the official area unit,\
+            indicate here the name of that unit')
 
     invoicing_area_measurement_equivalence = fields.Float(
         string='Master unit equivalence',
         digits=(32, 5),
         default=0,
         required=True,
-        help='If the area unit type is not hectare, number of hectares '
-        'in that area unit')
+        help='If the area unit type is not the official area unit,\
+            indicate here equivalence factor')
 
     @api.multi
     def set_default_values(self):
