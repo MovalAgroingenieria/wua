@@ -575,7 +575,7 @@ class WuaInvoiceset(models.Model):
         return configured_invoicing_area_measurement_name
 
     def get_invoicing_area_measurement_equivalence(self):
-        configured_invoicing_area_measurement_equivalence = ''
+        configured_invoicing_area_measurement_equivalence = 0
         alter_invoicing_behavior = self.env['ir.values'].get_default(
             'wua.invoicing.configuration', 'alter_invoicing_behavior')
         if alter_invoicing_behavior:

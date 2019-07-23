@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-22 15:22+0000\n"
-"PO-Revision-Date: 2019-07-22 15:22+0000\n"
+"POT-Creation-Date: 2019-07-23 09:03+0000\n"
+"PO-Revision-Date: 2019-07-23 09:03+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -83,6 +83,11 @@ msgstr ""
 #: model:ir.actions.server,name:base_wua_invoicing.wua_add_partner_to_invoiceset
 #: model:ir.actions.server,name:base_wua_invoicing.wua_add_waterconnection_to_invoiceset
 msgid "Add to invoice set"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoicing_configuration_alter_invoicing_behavior
+msgid "Alter invoicing behavior"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -423,10 +428,10 @@ msgid "Entity (water connection)"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1490
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1521
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1548
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1575
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1579
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1610
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1637
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1664
 #, python-format
 msgid "Error when updating records."
 msgstr ""
@@ -495,6 +500,16 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoiceset_active
 msgid "If the active field is set to False, it will allow you to hide the register without removing it. For see archived register, go to \"Search-Filters\" in tree view"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoicing_configuration_invoicing_area_measurement_equivalence
+msgid "If the area unit type is not the official area unit,            indicate here equivalence factor"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoicing_configuration_invoicing_area_measurement_name
+msgid "If the area unit type is not the official area unit,            indicate here the name of that unit"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -602,11 +617,21 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/res_partner.py:77
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1139
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1228
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_invoice_ids
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_number_of_invoices
 #, python-format
 msgid "Invoices"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicing_config_settings_view_form
+msgid "Invoicing Area"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoicing_configuration_invoicing_area_measurement_name
+msgid "Invoicing Area Unit Name"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -629,7 +654,7 @@ msgid "Irrigation Ditch"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:827
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:916
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_irrigationgate_id
 #: model:product.category,name:base_wua_invoicing.categ_06
 #, python-format
@@ -637,7 +662,7 @@ msgid "Irrigation Gate"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1610
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1699
 #: selection:product.category,linkable_unit_type:0
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
@@ -829,6 +854,11 @@ msgid "Load a template"
 msgstr ""
 
 #. module: base_wua_invoicing
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoicing_configuration_invoicing_area_measurement_equivalence
+msgid "Master unit equivalence"
+msgstr ""
+
+#. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_partner_partner_id
 msgid "Name"
 msgstr ""
@@ -931,8 +961,8 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:518
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:623
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:675
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:673
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:754
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_parcel_id
 #: model:product.category,name:base_wua_invoicing.categ_01
 #, python-format
@@ -950,7 +980,7 @@ msgid "Parcel Tags"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1580
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1669
 #: selection:product.category,linkable_unit_type:0
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
@@ -993,7 +1023,7 @@ msgid "Partner of a WUA"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1590
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1679
 #: selection:product.category,linkable_unit_type:0
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
@@ -1231,7 +1261,7 @@ msgid "WUA Service"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:746
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:835
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_waterconnection_id
 #: model:product.category,name:base_wua_invoicing.categ_05
 #, python-format
@@ -1239,7 +1269,7 @@ msgid "Water Connection"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1600
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1689
 #: selection:product.category,linkable_unit_type:0
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
@@ -1309,7 +1339,7 @@ msgid "Year"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1106
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1195
 #, python-format
 msgid "You cannot cancel an invoice-set if there is a invoice which is not draft or cancelled."
 msgstr ""
@@ -1327,10 +1357,10 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:526
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:631
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:683
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:681
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:762
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:843
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:851
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:932
 #, python-format
 msgid "cost:"
 msgstr ""
@@ -1342,26 +1372,31 @@ msgid "ha"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:562
+#: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoicing_configuration_alter_invoicing_behavior
+msgid "if it is marked, it allows parameterization of              the unit of measurement of the area"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:593
 #, python-format
 msgid "lessee"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:561
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:592
 #, python-format
 msgid "owner"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:754
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:835
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:843
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:924
 #, python-format
 msgid "parcel"
 msgstr ""
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:563
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:594
 #, python-format
 msgid "payer"
 msgstr ""
