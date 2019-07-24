@@ -2,9 +2,9 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-=================================================================
-Water Users Association Invoicing (REST API based remote control)
-=================================================================
+==================================================================
+Water Users Association Irrigation (REST API based remote control)
+==================================================================
 
 Base module for other modules that implement communication dialogues with
 remote control systems for irrigation (with RESP API).

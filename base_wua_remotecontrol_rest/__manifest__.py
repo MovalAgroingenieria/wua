@@ -15,6 +15,7 @@
     "depends": [
         "base_wua_pressurized_irrigation",],
     "data": [
+        "security/security.xml",
         "views/wua_irrigation_config_settings_view.xml",],
     "installable": True,
     "application": False,
