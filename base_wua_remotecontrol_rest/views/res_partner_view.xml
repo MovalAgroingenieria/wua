@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="before">
+                <field name="updated_in_remotecontrol"
+                       string="In Remote Control" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_search" model="ir.ui.view">
+        <field name="name">Partners (search view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <filter string="In Remote control: Yes" name="updated_rc_yes"
+                 domain="[('updated_in_remotecontrol','=',True)]"/>
+                <filter string="In Remote control: No" name="updated_rc_no"
+                 domain="[('updated_in_remotecontrol','=',False)]"/>
+                <separator/>
+            </xpath> 
+        </field>
+    </record>
+
+</odoo>
