@@ -115,6 +115,46 @@ class ResPartner(models.Model):
                                  suffix_message)
         return resp
 
+    @api.multi
+    def unlink(self):
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        automatic_census_synchronization = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'automatic_census_synchronization')
+        if (enable_remotecontrol and automatic_census_synchronization):
+            url_remotecontrol_rest = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+            url_remotecontrol_rest_username = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_username')
+            url_remotecontrol_rest_password = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_password')
+            if (url_remotecontrol_rest and url_remotecontrol_rest_username and
+               url_remotecontrol_rest_password):
+                for record in self:
+                    data = self.populate_data_for_delete_partner(record)
+                    if data:
+                        synchronized_remotecontrol, error_message = \
+                            self.delete_partner(
+                                url_remotecontrol_rest,
+                                url_remotecontrol_rest_username,
+                                url_remotecontrol_rest_password,
+                                data)
+                        prefix_message = _('Deleting remote control for '
+                                           'partner ')
+                        suffix_message = 'OK'
+                        if not synchronized_remotecontrol:
+                            if not error_message:
+                                error_message = \
+                                    _('Update error in remote control')
+                            suffix_message = error_message
+                        _logger = logging.getLogger(self.__class__.__name__)
+                        _logger.info(prefix_message + ' ' +
+                                     str(self.partner_code) + '... ' +
+                                     suffix_message)
+        return super(ResPartner, self).unlink()
+
     # Hook
     def populate_data_for_send_new_partner(self, vals):
         return None
@@ -131,6 +171,16 @@ class ResPartner(models.Model):
 
     # Hook
     def update_partner(self, url_remotecontrol_rest,
+                       url_remotecontrol_rest_username,
+                       url_remotecontrol_rest_password, data):
+        return False
+
+    # Hook
+    def populate_data_for_delete_partner(self, vals):
+        return None
+
+    # Hook
+    def delete_partner(self, url_remotecontrol_rest,
                        url_remotecontrol_rest_username,
                        url_remotecontrol_rest_password, data):
         return False

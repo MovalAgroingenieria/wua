@@ -98,8 +98,6 @@ class ResPartner(models.Model):
                 'observaciones': _('Origen: Moval Regadío'),
                 'factPendientes': '',
                 }
-            # Provisional
-            # print url_send_new_partner
             resprest = requests.post(url_send_new_partner,
                                      data=json.dumps(payload_data),
                                      headers=headers_data)
@@ -204,13 +202,53 @@ class ResPartner(models.Model):
                 'observaciones': _('Origen: Moval Regadío'),
                 'factPendientes': '',
                 }
-            # Provisional
-            # print url_update_partner
             resprest = requests.put(url_update_partner,
                                     data=json.dumps(payload_data),
                                     headers=headers_data)
-            # print resprest.status_code
-            # print resprest.text
+            if resprest.status_code == 200:
+                outputrest = json.loads(resprest.text)
+                resp = outputrest['resultado'] == 'OK'
+                if not resp:
+                    error_message = outputrest['detalleError']
+            url_close_session = url_remotecontrol_rest + \
+                '/sesiones/' + id_session
+            resprest = requests.delete(url_close_session)
+        return resp, error_message
+
+    # Implemented hook
+    def populate_data_for_delete_partner(self, partner):
+        resp = None
+        if partner:
+            partner_code = partner.partner_code
+            resp = {
+                'partner_code': partner_code,
+                }
+        return resp
+
+    # Implemented hook
+    def delete_partner(self, url_remotecontrol_rest,
+                       url_remotecontrol_rest_username,
+                       url_remotecontrol_rest_password, data):
+        resp = False
+        error_message = ''
+        url_open_session = url_remotecontrol_rest + '/sesiones'
+        auth_data = {
+            'usuario': url_remotecontrol_rest_username,
+            'clave': url_remotecontrol_rest_password,
+            }
+        headers_data = {
+            'content-type': 'application/json',
+            }
+        resprest = requests.post(url_open_session,
+                                 data=json.dumps(auth_data),
+                                 headers=headers_data)
+        if resprest.status_code == 200 and resprest.text:
+            id_session = resprest.text
+            url_delete_partner = url_remotecontrol_rest + \
+                '/regantes/' + str(data['partner_code']) + \
+                '?sesion=' + id_session
+            resprest = requests.delete(url_delete_partner,
+                                       headers=headers_data)
             if resprest.status_code == 200:
                 outputrest = json.loads(resprest.text)
                 resp = outputrest['resultado'] == 'OK'
@@ -242,5 +280,7 @@ class ResPartner(models.Model):
             bankaccounts = self.env['res.partner.bank'].search(
                 [('partner_id', '=', partner.id)], limit=1)
             if bankaccounts:
-                resp = bankaccounts[0].acc_number
+                resp = bankaccounts[0].acc_number.replace(' ', '')
+                if len(resp) > 4:
+                    resp = resp[4:]
         return resp
