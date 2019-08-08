@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Assign paper format -->
+    <record id="account_credit_control.credit_control_summary" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
+    <!-- Modification of report -->
+    <template id="report_credit_control_summary_document" inherit_id="account_credit_control.report_credit_control_summary_document">
+
+        <!-- Change associated external layout -->
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        </xpath>
+
+        <!-- Change address format -->
+        <xpath expr="//div[@id='address']" position="replace">
+            <div class="row" id="address" style="border: 1px solid white; margin: 0px 20px;">
+                <div class="col-xs-12" style="display: table;">
+                    <div style="border-right: 1px solid white; width: 60%; display: table-cell;"/>
+                    <div style="width: 40%; display: table-cell; padding: 0px 8px;">
+                        <div>
+                            <t t-if="doc.partner_id.name">
+                                <strong><span t-field="doc.partner_id.name"/></strong>
+                            </t>
+                            <br/>
+                            <t t-if="doc.partner_id.street">
+                                <span t-field="doc.partner_id.street"/>
+                            </t>
+                            <t t-if="doc.partner_id.street2">
+                                <span t-field="doc.partner_id.street2"/>
+                            </t>
+                            <t t-if="doc.partner_id.street_number">
+                                <span>,&amp;nbsp;</span>
+                                <span t-field="doc.partner_id.street_number"/>
+                            </t>
+                            <br/>
+                            <t t-if="doc.partner_id.city">
+                                <span t-field="doc.partner_id.city"/>
+                            </t>
+                            <t t-if="doc.partner_id.zip">
+                                <span>&amp;nbsp;-&amp;nbsp;</span>
+                                <span t-field="doc.partner_id.zip"/>
+                            </t>
+                            <br/>
+                            <t t-if="doc.partner_id.state_id">
+                                <span t-field="doc.partner_id.state_id"/>
+                                <t t-if="doc.partner_id.country_id">
+                                    <span>-</span>
+                                </t>
+                            </t>
+                            <t t-if="doc.partner_id.country_id">
+                                <span t-field="doc.partner_id.country_id"/>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+    </template>
+
+</odoo>
