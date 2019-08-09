@@ -6,9 +6,25 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base_wua.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <field name="remotecontrol_enabled" invisible="1"/>            
+                <header>
+                    <button name="do_synchronization_partner"
+                            type="object" string="Synchronize"
+                            icon="fa-rss"
+                            attrs="{'invisible':
+                                    ['|', ('remotecontrol_enabled','=',False),
+                                          ('is_wua_partner','=',False)]}"
+                            groups="base_wua.group_wua_manager"/>
+                </header>
+            </xpath>
             <xpath expr="//field[@name='category_id']" position="before">
                 <field name="updated_in_remotecontrol"
-                       string="In Remote Control" readonly="1"/>
+                       string="In Remote Control" readonly="1"
+                       attrs="{'invisible': ['|', ('remotecontrol_enabled',
+                                                   '=', False),
+                                                  ('is_wua_partner',
+                                                   '=', False)]}"/>
             </xpath>
         </field>
     </record>
@@ -27,5 +43,35 @@
             </xpath> 
         </field>
     </record>
+
+    <record id="wua_synchronize_partners" model="ir.actions.server">
+        <field name="name">Synchronize partners with remote control</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['res.partner'].do_synchronization_partners(context['active_ids'], True)
+        </field>
+    </record>
+    
+    <record id="wua_action_synchronize_partners" model="ir.values">
+        <field name="name">Synchronize partners with remote control</field>
+        <field name="model">res.partner</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_synchronize_partners'))"/>
+    </record>
+
+    <record id="wua_technical_synchronize_partners_action" model="ir.actions.server">
+        <field name="name">Partners Synchronization (remote control)</field>
+        <field name="model_id" ref="base_wua.model_res_partner"/>
+        <field name="code">action = env["res.partner"].do_synchronization_all_partners(True)</field>
+    </record>
+
+    <menuitem id="wua_technical_synchronize_partners_menu"
+              name="Remote C.: Synch. Partners"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_synchronize_partners_action"
+              sequence="1001"/>
 
 </odoo>

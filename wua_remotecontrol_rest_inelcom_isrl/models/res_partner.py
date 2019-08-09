@@ -259,6 +259,137 @@ class ResPartner(models.Model):
             resprest = requests.delete(url_close_session)
         return resp, error_message
 
+    # Implemented hook
+    def synchronize_partner(self, url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password, data):
+        resp = False
+        error_message = ''
+        url_open_session = url_remotecontrol_rest + '/sesiones'
+        auth_data = {
+            'usuario': url_remotecontrol_rest_username,
+            'clave': url_remotecontrol_rest_password,
+            }
+        headers_data = {
+            'content-type': 'application/json',
+            }
+        resprest = requests.post(url_open_session,
+                                 data=json.dumps(auth_data),
+                                 headers=headers_data)
+        if resprest.status_code == 200 and resprest.text:
+            id_session = resprest.text
+            url_update_partner = url_remotecontrol_rest + \
+                '/regantes/' + str(data['partner_code']) + \
+                '?sesion=' + id_session
+            resprest = requests.get(url_update_partner)
+            exists_partner_in_remotecontrol = resprest.text != ''
+            payload_data = {
+                'nuevoNSocio': '',
+                'nombre': data['firstname'],
+                'apellido1': data['lastname'],
+                'apellido2': data['lastname2'],
+                'nif': data['vat'],
+                'direccion': data['street'],
+                'localidad': data['city'],
+                'municipio': '',
+                'provincia': data['state'],
+                'pais': data['country'],
+                'codPostal': data['zip'],
+                'cuentaFact': data['acc_number'],
+                'telf1': data['phone'],
+                'telf2': data['mobile'],
+                'email': data['email'],
+                'juntaLocal': '',
+                'cooperativa': '',
+                'observaciones': _('Origen: Moval Regadío'),
+                'factPendientes': '',
+                }
+            if exists_partner_in_remotecontrol:
+                resprest = requests.put(url_update_partner,
+                                        data=json.dumps(payload_data),
+                                        headers=headers_data)
+            else:
+                del payload_data['nuevoNSocio']
+                resprest = requests.post(url_update_partner,
+                                         data=json.dumps(payload_data),
+                                         headers=headers_data)
+            if resprest.status_code == 200:
+                outputrest = json.loads(resprest.text)
+                resp = outputrest['resultado'] == 'OK'
+                if not resp:
+                    error_message = outputrest['detalleError']
+            url_close_session = url_remotecontrol_rest + \
+                '/sesiones/' + id_session
+            resprest = requests.delete(url_close_session)
+        return resp, error_message
+
+    # Implemented hook
+    def synchronize_partners(self, url_remotecontrol_rest,
+                             url_remotecontrol_rest_username,
+                             url_remotecontrol_rest_password, list_of_data):
+        partners_ok = []
+        partners_not_ok = []
+        url_open_session = url_remotecontrol_rest + '/sesiones'
+        auth_data = {
+            'usuario': url_remotecontrol_rest_username,
+            'clave': url_remotecontrol_rest_password,
+            }
+        headers_data = {
+            'content-type': 'application/json',
+            }
+        resprest = requests.post(url_open_session,
+                                 data=json.dumps(auth_data),
+                                 headers=headers_data)
+        if resprest.status_code == 200 and resprest.text:
+            id_session = resprest.text
+            for data in list_of_data:
+                url_update_partner = url_remotecontrol_rest + \
+                    '/regantes/' + str(data['partner_code']) + \
+                    '?sesion=' + id_session
+                resprest = requests.get(url_update_partner)
+                exists_partner_in_remotecontrol = resprest.text != ''
+                payload_data = {
+                    'nuevoNSocio': '',
+                    'nombre': data['firstname'],
+                    'apellido1': data['lastname'],
+                    'apellido2': data['lastname2'],
+                    'nif': data['vat'],
+                    'direccion': data['street'],
+                    'localidad': data['city'],
+                    'municipio': '',
+                    'provincia': data['state'],
+                    'pais': data['country'],
+                    'codPostal': data['zip'],
+                    'cuentaFact': data['acc_number'],
+                    'telf1': data['phone'],
+                    'telf2': data['mobile'],
+                    'email': data['email'],
+                    'juntaLocal': '',
+                    'cooperativa': '',
+                    'observaciones': _('Origen: Moval Regadío'),
+                    'factPendientes': '',
+                    }
+                if exists_partner_in_remotecontrol:
+                    resprest = requests.put(url_update_partner,
+                                            data=json.dumps(payload_data),
+                                            headers=headers_data)
+                else:
+                    del payload_data['nuevoNSocio']
+                    resprest = requests.post(url_update_partner,
+                                             data=json.dumps(payload_data),
+                                             headers=headers_data)
+                if resprest.status_code == 200:
+                    outputrest = json.loads(resprest.text)
+                    resp = outputrest['resultado'] == 'OK'
+                    if resp:
+                        partners_ok.append(data['partner_code'])
+                    else:
+                        partners_not_ok.append(data['partner_code'])
+            url_close_session = url_remotecontrol_rest + \
+                '/sesiones/' + id_session
+            resprest = requests.delete(url_close_session)
+        return partners_ok, partners_not_ok
+
     def get_val(self, vals, key):
         resp = ''
         if vals[key]:
