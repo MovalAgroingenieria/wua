@@ -15,4 +15,3 @@ from . import wua_hydraulicsector
 from . import res_partner
 from . import account_banking_mandate
 from . import account_move
-from . import bank_payment_line
