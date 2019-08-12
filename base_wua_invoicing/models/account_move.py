@@ -99,7 +99,6 @@ class AccountMoveLine(models.Model):
                       sm_credit_move.id, amount_reconcile,
                       amount_reconcile_currency))
         self.env.cr.commit()
-        self.env.invalidate_all()
         self.env.cr.execute("""
             SELECT id FROM account_partial_reconcile ORDER BY id DESC LIMIT 1
             """)
