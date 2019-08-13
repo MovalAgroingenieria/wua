@@ -108,6 +108,8 @@ class AccountMoveLine(models.Model):
             created_record = self.env['account.partial.reconcile'].browse(
                 id_of_created_record)
             created_record._compute_partial_lines()
+            self.env.cr.commit()
+            self.env.invalidate_all()
 
         #Iterate process again on self
         return self.auto_reconcile_lines()
