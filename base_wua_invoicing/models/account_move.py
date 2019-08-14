@@ -78,38 +78,46 @@ class AccountMoveLine(models.Model):
 #             'amount_currency': amount_reconcile_currency,
 #             'currency_id': currency,
 #         })
-        if currency:
-            self.env.cr.execute("""
-                INSERT INTO account_partial_reconcile (create_uid,
-                company_id, write_uid, create_date, write_date, debit_move_id,
-                credit_move_id, amount, amount_currency, currency_id)
-                VALUES (%s, %s, %s, now(), now(), %s, %s, %s, %s, %s)
-                """, (self.env.user.id, sm_debit_move.company_id.id,
-                      self.env.user.id, sm_debit_move.id,
-                      sm_credit_move.id, amount_reconcile,
-                      amount_reconcile_currency, currency))
-        else:
-            self.env.cr.execute("""
-                INSERT INTO account_partial_reconcile (create_uid,
-                company_id, write_uid, create_date, write_date, debit_move_id,
-                credit_move_id, amount, amount_currency)
-                VALUES (%s, %s, %s, now(), now(), %s, %s, %s, %s)
-                """, (self.env.user.id, sm_debit_move.company_id.id,
-                      self.env.user.id, sm_debit_move.id,
-                      sm_credit_move.id, amount_reconcile,
-                      amount_reconcile_currency))
-        self.env.cr.commit()
-        self.env.invalidate_all()
-        self.env.cr.execute("""
-            SELECT id FROM account_partial_reconcile ORDER BY id DESC LIMIT 1
-            """)
-        id_of_created_record = self.env.cr.fetchone()[0]
-        if id_of_created_record:
-            created_record = self.env['account.partial.reconcile'].browse(
-                id_of_created_record)
-            created_record._compute_partial_lines()
+
+        if self._context.get('from_account_payment_order'):
+            if currency:
+                self.env.cr.execute("""
+                    INSERT INTO account_partial_reconcile (create_uid,
+                    company_id, write_uid, create_date, write_date, debit_move_id,
+                    credit_move_id, amount, amount_currency, currency_id)
+                    VALUES (%s, %s, %s, now(), now(), %s, %s, %s, %s, %s)
+                    """, (self.env.user.id, sm_debit_move.company_id.id,
+                          self.env.user.id, sm_debit_move.id,
+                          sm_credit_move.id, amount_reconcile,
+                          amount_reconcile_currency, currency))
+            else:
+                self.env.cr.execute("""
+                    INSERT INTO account_partial_reconcile (create_uid,
+                    company_id, write_uid, create_date, write_date, debit_move_id,
+                    credit_move_id, amount, amount_currency)
+                    VALUES (%s, %s, %s, now(), now(), %s, %s, %s, %s)
+                    """, (self.env.user.id, sm_debit_move.company_id.id,
+                          self.env.user.id, sm_debit_move.id,
+                          sm_credit_move.id, amount_reconcile,
+                          amount_reconcile_currency))
             self.env.cr.commit()
             self.env.invalidate_all()
+            self.env.cr.execute("""
+                SELECT id FROM account_partial_reconcile ORDER BY id DESC LIMIT 1
+                """)
+            id_of_created_record = self.env.cr.fetchone()[0]
+            if id_of_created_record:
+                created_record = self.env['account.partial.reconcile'].browse(
+                    id_of_created_record)
+                created_record._compute_partial_lines()
+        else:
+            self.env['account.partial.reconcile'].create({
+                'debit_move_id': sm_debit_move.id,
+                'credit_move_id': sm_credit_move.id,
+                'amount': amount_reconcile,
+                'amount_currency': amount_reconcile_currency,
+                'currency_id': currency,
+            })
 
         #Iterate process again on self
         return self.auto_reconcile_lines()
