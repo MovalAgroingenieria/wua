@@ -21,20 +21,29 @@ class AccountPaymentOrder(models.Model):
             })
         # New
         invoices = []
+        move_lines = []
         for order in self:
             for payment_line in order.payment_line_ids:
                 if payment_line.move_line_id.invoice_id:
                     invoices.append(payment_line.move_line_id.invoice_id.id)
+                    move_lines.append(payment_line.move_line_id.id)
         if invoices:
             invoices = list(set(invoices))
             invoices_str = ''
-            for item in invoices:
-                invoices_str = invoices_str + ', ' + str(item)
+            for invoice_id in invoices:
+                invoices_str = invoices_str + ', ' + str(invoice_id)
             invoices_str = invoices_str[2:]
             self.env.cr.execute("""
                 UPDATE account_invoice
-                set reconciled=TRUE, state='paid', residual_signed=0
+                set reconciled=TRUE, state='paid', residual=0,
+                    residual_signed=0, residual_company_signed=0
                 WHERE id in (""" + invoices_str + """)""")
             self.env.cr.commit()
             self.env.invalidate_all()
+            invoices_to_compute = \
+                self.env['account.invoice'].browse(invoices)
+            invoices_to_compute._compute_payments()
+            move_lines_to_compute = \
+                self.env['account.move.line'].browse(move_lines)
+            move_lines_to_compute._amount_residual()
         return True
