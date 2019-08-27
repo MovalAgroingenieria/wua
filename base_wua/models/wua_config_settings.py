@@ -114,6 +114,12 @@ class WuaConfiguration(models.TransientModel):
         help='Allow to WUA portal users to edit their data '
              '(except census data)')
 
+    path_frompgtoshp = fields.Char(
+        string='Path of frompgtoshp',
+        size=255,
+        help='Path of program "frompgtoshp" ' +
+             '(generate SHP from PostgreSql database)')
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
@@ -166,3 +172,5 @@ class WuaConfiguration(models.TransientModel):
                            self.url_gis_viewer_password)
         values.set_default('wua.configuration', 'wua_portal_user_can_edit',
                            self.wua_portal_user_can_edit)
+        values.set_default('wua.configuration', 'path_frompgtoshp',
+                           self.path_frompgtoshp)

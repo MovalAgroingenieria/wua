@@ -944,6 +944,28 @@ class WuaParcel(models.Model):
                 'context': self.env.context,
                 }
 
+    @api.multi
+    def action_regenerate_shp(self):
+        path_frompgtoshp = self.env['ir.values'].get_default(
+            'wua.configuration', 'path_frompgtoshp')
+        # Provisional
+        # if (not path_frompgtoshp or not self.check_gis()):
+        if (not path_frompgtoshp):
+            raise exceptions.UserError(_('The database has no GIS layers, or '
+                                         'the "Path of frompgtowhp" parameter '
+                                         'is not populated.'))
+        else:
+            self.regenerate_shp(path_frompgtoshp)
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Parcels',
+                'res_model': 'wua.parcel',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'target': 'current',
+                'context': self.env.context,
+                }
+
     def check_gis(self):
         resp = False
         self.env.cr.execute("""
@@ -998,6 +1020,11 @@ class WuaParcel(models.Model):
                 _logger.info('Number of GIS-Parcels : ' +
                              str(number_of_gis_parcels))
         return gis_parcels_ok
+
+    def regenerate_shp(self, path_frompgtoshp):
+        # Provisional
+        print "regenerate_shp..."
+        print path_frompgtoshp
 
     def do_process_slave_data_for_write(self, vals):
         self.populate_subparcelcode_pos(self.name, vals)

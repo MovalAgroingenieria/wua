@@ -703,6 +703,12 @@
         <field name="code">action = env["wua.parcel"].action_update_gis_link()</field>
     </record>
 
+    <record id="wua_technical_regenerate_shp_action" model="ir.actions.server">
+        <field name="name">Generate GIS layers (shp)</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">action = env["wua.parcel"].action_regenerate_shp()</field>
+    </record>
+
     <menuitem id="base_wua_technical_menu"
               name="Technical"
               parent="base_wua_census_menu"
@@ -744,5 +750,11 @@
               parent="base_wua_technical_menu"
               action="wua_technical_update_gis_link_action"
               sequence="6"/>
+
+    <menuitem id="wua_technical_regenerate_shp"
+              name="GIS layers generation (shp)"
+              parent="base_wua_technical_menu"
+              action="wua_technical_regenerate_shp_action"
+              sequence="7"/>
 
 </odoo>
