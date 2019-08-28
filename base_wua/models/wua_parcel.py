@@ -6,6 +6,7 @@ from Crypto.Cipher import AES
 import datetime
 import pytz
 import logging
+import subprocess
 from pyproj import Proj, transform
 from lxml import etree
 from collections import OrderedDict
@@ -948,11 +949,9 @@ class WuaParcel(models.Model):
     def action_regenerate_shp(self):
         path_frompgtoshp = self.env['ir.values'].get_default(
             'wua.configuration', 'path_frompgtoshp')
-        # Provisional
-        # if (not path_frompgtoshp or not self.check_gis()):
-        if (not path_frompgtoshp):
+        if (not path_frompgtoshp or not self.check_gis()):
             raise exceptions.UserError(_('The database has no GIS layers, or '
-                                         'the "Path of frompgtowhp" parameter '
+                                         'the "Path of frompgtoshp" parameter '
                                          'is not populated.'))
         else:
             self.regenerate_shp(path_frompgtoshp)
@@ -1022,9 +1021,12 @@ class WuaParcel(models.Model):
         return gis_parcels_ok
 
     def regenerate_shp(self, path_frompgtoshp):
-        # Provisional
-        print "regenerate_shp..."
-        print path_frompgtoshp
+        args = path_frompgtoshp.split()
+        args.append(self.env.cr.dbname)
+        returncode = subprocess.call(args)
+        if (returncode != 0):
+            raise exceptions.UserError(_('It is not possible to create the '
+                                         'files of SHP.'))
 
     def do_process_slave_data_for_write(self, vals):
         self.populate_subparcelcode_pos(self.name, vals)
