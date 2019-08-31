@@ -27,4 +27,19 @@
         </field>
     </record>
 
+    <record id="wua_parcel_view_tree" model="ir.ui.view">
+        <field name="name">Parcels (tree view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_parcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="colors">red:overdue==True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='number_of_subparcels']" position="after">
+                <field name="overdue" invisible="1"/>
+            </xpath>            
+        </field>
+    </record>
+
 </odoo>

@@ -42,15 +42,17 @@ class WizardChangeParcelName(models.TransientModel):
             parcel = parcels_filtered[0]
             parcel.name = new_parcel_name
             for subparcel in parcel.subparcel_ids:
-                new_subparcel_code = new_parcel_name + '-' + \
-                    subparcel.subparcel_code[
-                        -parcel.__class__.SIZE_SUBPARCEL_SUFFIX:]
-                subparcel.subparcel_code = new_subparcel_code
+                if subparcel.subparcel_code:
+                    new_subparcel_code = new_parcel_name + '-' + \
+                        subparcel.subparcel_code[
+                            -parcel.__class__.SIZE_SUBPARCEL_SUFFIX:]
+                    subparcel.subparcel_code = new_subparcel_code
             for partnerlink in parcel.partnerlink_ids:
-                new_partnerlink_code = new_parcel_name + '-' + \
-                    partnerlink.partnerlink_code[
-                        -parcel.__class__.SIZE_PARTNERLINK_SUFFIX:]
-                partnerlink.partnerlink_code = new_partnerlink_code
+                if partnerlink.partnerlink_code:
+                    new_partnerlink_code = new_parcel_name + '-' + \
+                        partnerlink.partnerlink_code[
+                            -parcel.__class__.SIZE_PARTNERLINK_SUFFIX:]
+                    partnerlink.partnerlink_code = new_partnerlink_code
             self.set_another_parcel_name(parcel, new_parcel_name)
 
     def set_another_parcel_name(self, parcel, new_parcel_name):

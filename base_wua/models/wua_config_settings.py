@@ -120,6 +120,13 @@ class WuaConfiguration(models.TransientModel):
         help='Path of program "frompgtoshp" ' +
              '(generate SHP from PostgreSql database)')
 
+    second_initial_partner_code = fields.Integer(
+        string='Second Initial Code',
+        default=0,
+        required=True,
+        help='Initial code for a possible alternative coding for ' +
+             'partners. Only enabled if this parameter is greater than 0.')
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
@@ -130,6 +137,10 @@ class WuaConfiguration(models.TransientModel):
         ('valid_polling_system_interval',
          'CHECK (polling_system_interval >= 0)',
          'The polling system interval must be a value zero or positive.'),
+        ('valid_second_initial_partner_code',
+         'CHECK (second_initial_partner_code >= 0)',
+         'The second initial code for partners must be a value zero or ' +
+         'positive.'),
         ]
 
     @api.multi
@@ -174,3 +185,5 @@ class WuaConfiguration(models.TransientModel):
                            self.wua_portal_user_can_edit)
         values.set_default('wua.configuration', 'path_frompgtoshp',
                            self.path_frompgtoshp)
+        values.set_default('wua.configuration', 'second_initial_partner_code',
+                           self.second_initial_partner_code)

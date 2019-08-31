@@ -2,11 +2,27 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, api, _
+from odoo import fields, models, api, _
 
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
+
+    overdue = fields.Boolean(
+        string='Overdue',
+        compute='_compute_overdue')
+
+    @api.multi
+    def _compute_overdue(self):
+        for record in self:
+            overdue = False
+            invoice_lines = self.env['account.invoice.line'].search(
+                [('parcel_id', '=', record.id)])
+            for invoice_line in invoice_lines:
+                if invoice_line.invoice_id.overdue:
+                    overdue = True
+                    break
+            record.overdue = overdue
 
     @api.multi
     def action_see_invoice_lines(self):

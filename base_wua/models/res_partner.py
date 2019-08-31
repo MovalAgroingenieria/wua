@@ -20,10 +20,20 @@ class ResPartner(models.Model):
         resp = 0
         wua_in_context = self.env.context.get('wua')
         if wua_in_context == '1':
-            partners = self.search([('is_wua_partner', '=', True)], limit=1,
+            conditions = [('is_wua_partner', '=', True)]
+            second_initial_partner_code = self.env['ir.values'].get_default(
+                'wua.configuration', 'second_initial_partner_code')
+            if second_initial_partner_code:
+                conditions.append(
+                    ('partner_code', '<', second_initial_partner_code))
+            partners = self.search(conditions, limit=1,
                                    order='partner_code desc')
             if len(partners) == 1:
                 resp = partners[0].partner_code + 1
+                if resp == second_initial_partner_code:
+                    partners = self.search([('is_wua_partner', '=', True)],
+                                           limit=1, order='partner_code desc')
+                    resp = partners[0].partner_code + 1
             else:
                 resp = 1
         return resp
@@ -159,6 +169,10 @@ class ResPartner(models.Model):
         string='Partner Links',
         comodel_name='wua.parcel.partnerlink',
         inverse_name='partner_id')
+
+    apply_second_partner_coding = fields.Boolean(
+        string='Second Coding',
+        default=False)
 
     _sql_constraints = [
         ('valid_parcel_owner_number',
@@ -371,6 +385,24 @@ class ResPartner(models.Model):
             raise exceptions.ValidationError(_('The partner code '
                                                'must be a positive value.'))
 
+    @api.onchange('apply_second_partner_coding')
+    def _onchange_apply_second_partner_coding(self):
+        second_initial_partner_code = self.env['ir.values'].get_default(
+            'wua.configuration', 'second_initial_partner_code')
+        if not second_initial_partner_code:
+            return None
+        if self.apply_second_partner_coding:
+            partners = self.search(
+                [('is_wua_partner', '=', True),
+                 ('partner_code', '>', second_initial_partner_code)],
+                limit=1, order='partner_code desc')
+            if len(partners) == 1:
+                self.partner_code = partners[0].partner_code + 1
+            else:
+                self.partner_code = second_initial_partner_code + 1
+        else:
+            self.partner_code = self._default_partner_code()
+
     @api.model
     def create(self, vals):
         set_is_wua_partner = False
@@ -434,6 +466,16 @@ class ResPartner(models.Model):
                                                       view_type=view_type,
                                                       toolbar=toolbar,
                                                       submenu=submenu)
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            second_initial_partner_code = self.env['ir.values'].get_default(
+                'wua.configuration', 'second_initial_partner_code')
+            if not second_initial_partner_code:
+                for node in doc.xpath(
+                        "//field[@name='apply_second_partner_coding']"):
+                    node.set('modifiers',
+                             '{"invisible": true}')
+            res['arch'] = etree.tostring(doc)
         if view_type == 'tree':
             doc = etree.XML(res['arch'])
             wua_in_context = self.env.context.get('wua')

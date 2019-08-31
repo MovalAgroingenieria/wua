@@ -2,6 +2,7 @@
 # Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from datetime import datetime
 from odoo import models, fields, api
 
 
@@ -56,6 +57,10 @@ class AccountInvoice(models.Model):
         store=True,
         compute='_compute_amount')
 
+    overdue = fields.Boolean(
+        string='Overdue',
+        compute='_compute_overdue')
+
     # It is not necessary "api.depends" (get from parent method).
     def _compute_amount(self):
         super(AccountInvoice, self)._compute_amount()
@@ -82,6 +87,15 @@ class AccountInvoice(models.Model):
                 record.amount_untaxed_categ01 + record.amount_untaxed_categ02 +
                 record.amount_untaxed_categ03 + record.amount_untaxed_categ04 +
                 record.amount_untaxed_categ05 + record.amount_untaxed_categ06)
+
+    @api.multi
+    def _compute_overdue(self):
+        for record in self:
+            overdue = False
+            if (record.state == 'open' and
+               record.date_due < datetime.now().strftime('%Y-%m-%d')):
+                overdue = True
+            record.overdue = overdue
 
     # A invoice in draft or cancel state can be deleted
     # (with or without number).

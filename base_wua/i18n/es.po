@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-28 10:39+0000\n"
-"PO-Revision-Date: 2019-08-28 10:39+0000\n"
+"POT-Creation-Date: 2019-08-30 10:26+0000\n"
+"PO-Revision-Date: 2019-08-30 10:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1226,6 +1226,11 @@ msgid "Industrial"
 msgstr "Industrial"
 
 #. module: base_wua
+#: model:ir.model.fields,help:base_wua.field_wua_configuration_second_initial_partner_code
+msgid "Initial code for a possible alternative coding for partners. Only enabled if this parameter is greater than 0."
+msgstr "Código de partida para la codificación alternativa de socios. Sólo tiene efecto si su valor es mayor que 0."
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_title_deed_inscription
 msgid "Inscription"
 msgstr "Inscripción"
@@ -1982,6 +1987,7 @@ msgstr "Socio"
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_track_partnerlink_ids
 #: model:ir.ui.menu,name:base_wua.base_wua_census_partners_menu
 #: model:ir.ui.menu,name:base_wua.res_partner_menu
+#: model:ir.ui.view,arch_db:base_wua.wua_config_settings_view_form
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_form
 msgid "Partners"
 msgstr "Socios"
@@ -2289,6 +2295,17 @@ msgid "Saffron"
 msgstr "Azafrán"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_res_partner_apply_second_partner_coding
+#: model:ir.model.fields,field_description:base_wua.field_res_users_apply_second_partner_coding
+msgid "Second Coding"
+msgstr "Codif. alternativa"
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_configuration_second_initial_partner_code
+msgid "Second Initial Code"
+msgstr "Inicio cod. alternativo"
+
+#. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:634
 #, python-format
 msgid "Sector, polygon or parcel is empty."
@@ -2468,8 +2485,8 @@ msgid "Technical"
 msgstr "Técnico"
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:404
-#: code:addons/base_wua/models/res_partner.py:426
+#: code:addons/base_wua/models/res_partner.py:436
+#: code:addons/base_wua/models/res_partner.py:458
 #, python-format
 msgid "The VAT code (TIN) already exists."
 msgstr "El código VAT (TIN) ya existe."
@@ -2585,14 +2602,14 @@ msgid "The orientation must be a value between 0 and 360 degrees."
 msgstr "La orientación debe ser un valor entre 0 y 360 grados."
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:399
-#: code:addons/base_wua/models/res_partner.py:414
+#: code:addons/base_wua/models/res_partner.py:431
+#: code:addons/base_wua/models/res_partner.py:446
 #, python-format
 msgid "The partner code already exists."
 msgstr "El código de socio ya existe."
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:371
+#: code:addons/base_wua/models/res_partner.py:385
 #, python-format
 msgid "The partner code must be a positive value."
 msgstr "El código de socio debe ser un valor positivo."
@@ -2601,6 +2618,11 @@ msgstr "El código de socio debe ser un valor positivo."
 #: sql_constraint:wua.configuration:0
 msgid "The polling system interval must be a value zero or positive."
 msgstr "El intervalo del sistema de votación debe ser un valor cero o positivo."
+
+#. module: base_wua
+#: sql_constraint:wua.configuration:0
+msgid "The second initial code for partners must be a value zero or positive."
+msgstr "El valor inicial para la codificación alternativa debe ser un valor cero o positivo."
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:806
