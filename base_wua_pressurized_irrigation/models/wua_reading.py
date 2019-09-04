@@ -10,7 +10,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaReading(models.Model):
     _name = 'wua.reading'
     _description = 'Entity (reading)'
-    _order = 'name'
+    _order = 'reading_time desc, name'
 
     MAX_SIZE_NAME = 52
 

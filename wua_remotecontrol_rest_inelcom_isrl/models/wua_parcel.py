@@ -20,3 +20,14 @@ class WuaParcel(models.Model):
                 'name': name,
                 }
         return resp
+
+    # Implemented hook
+    def populate_data_for_update_parcel(self, vals):
+        resp = None
+        if vals and 'name' in vals:
+            name = vals['name']
+            # Provisional
+            resp = {
+                'name': name,
+                }
+        return resp

@@ -173,7 +173,7 @@ class ResPartner(models.Model):
                             suffix_message = error_message
                         _logger = logging.getLogger(self.__class__.__name__)
                         _logger.info(prefix_message + ' ' +
-                                     str(self.partner_code) + '... ' +
+                                     str(record.partner_code) + '... ' +
                                      suffix_message)
         return super(ResPartner, self).unlink()
 
@@ -252,6 +252,9 @@ class ResPartner(models.Model):
 
     def do_synchronization_partners(self, active_partners,
                                     show_message=False):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
         can_be_sent_partners_census = self.env['ir.values'].get_default(
