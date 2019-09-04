@@ -21,7 +21,21 @@ ListView.include({
             var python_function = new Model('wua.reading').
                                   call("do_import_readings",[[]]);
             python_function.done(function(result) {
-                window.location.reload(false);
+                var title_number_of_readings = _t('Number of readings');
+                var title_error_message = _t('WARNING');
+                var number_of_readings = result[1];
+                var error_message = result[2];
+                var result_message = title_number_of_readings + ': ' +
+                                     number_of_readings.toString();
+                if (error_message != '') {
+                    result_message = result_message + '\n\n' + 
+                                     title_error_message + ': ' +
+                                     error_message;
+                }
+                window.alert(result_message);
+                if (number_of_readings > 0) {
+                    window.location.reload(false);
+                }
             });
         }
     }

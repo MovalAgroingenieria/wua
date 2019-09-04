@@ -260,7 +260,7 @@ class WuaParcel(models.Model):
                                    show_message=False):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):
             raise exceptions.UserError(_(
-                'You do not have permission to execute this action.'))        
+                'You do not have permission to execute this action.'))
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
@@ -302,6 +302,9 @@ class WuaParcel(models.Model):
                 if parcels_ok:
                     parcels_ok_str = ''
                     for name in parcels_ok:
+                        self.env['wua.parcel'].search(
+                            [('name', '=', name)]).\
+                            updated_in_remotecontrol = True
                         parcels_ok_str = parcels_ok_str + ', ' + \
                             str(name)
                     parcels_ok_str = parcels_ok_str[2:]
@@ -343,4 +346,4 @@ class WuaParcel(models.Model):
     def synchronize_parcels(self, url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password, list_of_data):
-        return False, ''
+        return None, None

@@ -294,6 +294,9 @@ class ResPartner(models.Model):
                 if partners_ok:
                     partners_ok_str = ''
                     for partner_code in partners_ok:
+                        self.env['res.partner'].search(
+                            [('partner_code', '=', partner_code)]).\
+                            updated_in_remotecontrol = True
                         partners_ok_str = partners_ok_str + ', ' + \
                             str(partner_code)
                     partners_ok_str = partners_ok_str[2:]
@@ -336,4 +339,4 @@ class ResPartner(models.Model):
     def synchronize_partners(self, url_remotecontrol_rest,
                              url_remotecontrol_rest_username,
                              url_remotecontrol_rest_password, list_of_data):
-        return False, ''
+        return None, None
