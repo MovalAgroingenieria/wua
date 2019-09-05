@@ -19,7 +19,7 @@ ListView.include({
         var confirmed = confirm(message);
         if (confirmed) {
             var python_function = new Model('wua.reading').
-                                  call("do_import_readings",[[]]);
+                                  call("do_import_readings",[]);
             python_function.done(function(result) {
                 var title_number_of_readings = _t('Number of readings');
                 var title_error_message = _t('WARNING');

@@ -71,8 +71,9 @@ class ResPartner(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    prefix_message = _('Updating remote control for '
-                                       'partner (new)')
+                    error_message = error_message.decode('utf_8')
+                    prefix_message = _('Remote Control: Updating remote '
+                                       'control for partner (new)')
                     suffix_message = 'OK'
                     if synchronized_remotecontrol:
                         self.env['res.partner'].browse(new_partner.id).\
@@ -120,8 +121,9 @@ class ResPartner(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    prefix_message = _('Updating remote control for '
-                                       'partner (existing)')
+                    error_message = error_message.decode('utf_8')
+                    prefix_message = _('Remote Control: Updating remote '
+                                       'control for partner (existing)')
                     suffix_message = 'OK'
                     if not synchronized_remotecontrol:
                         if not error_message:
@@ -163,8 +165,9 @@ class ResPartner(models.Model):
                                 url_remotecontrol_rest_username,
                                 url_remotecontrol_rest_password,
                                 data)
-                        prefix_message = _('Deleting remote control for '
-                                           'partner ')
+                        error_message = error_message.decode('utf_8')
+                        prefix_message = _('Remote Control: Deleting remote '
+                                           'control for partner ')
                         suffix_message = 'OK'
                         if not synchronized_remotecontrol:
                             if not error_message:
@@ -233,8 +236,9 @@ class ResPartner(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    prefix_message = _('Synchronizing remote control for '
-                                       'partner')
+                    error_message = error_message.decode('utf_8')
+                    prefix_message = _('Remote Control: Synchronizing remote '
+                                       'control for partner')
                     suffix_message = 'OK'
                     if not synchronized_remotecontrol:
                         if not error_message:
@@ -271,55 +275,54 @@ class ResPartner(models.Model):
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
                 partners = self.env['res.partner'].browse(active_partners)
-                if not partners:
-                    return False
-                list_of_data = []
-                for partner in partners:
-                    data = self.populate_data_for_update_partner(partner)
-                    list_of_data.append(data)
-                if not list_of_data:
-                    return False
-                partners_ok, partners_not_ok = \
-                    self.synchronize_partners(
-                        url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password,
-                        list_of_data)
-                if not partners_ok and not partners_not_ok:
-                    return False
-                _logger = logging.getLogger(self.__class__.__name__)
-                prefix_message = _('Synchronizing remote control for '
-                                   'partners')
-                suffix_message = 'OK'
-                if partners_ok:
-                    partners_ok_str = ''
-                    for partner_code in partners_ok:
-                        self.env['res.partner'].search(
-                            [('partner_code', '=', partner_code)]).\
-                            updated_in_remotecontrol = True
-                        partners_ok_str = partners_ok_str + ', ' + \
-                            str(partner_code)
-                    partners_ok_str = partners_ok_str[2:]
-                    _logger.info(prefix_message + ': ' +
-                                 partners_ok_str + '... ' +
-                                 suffix_message)
-                if partners_not_ok:
-                    suffix_message = _('Update error in remote control')
-                    partners_not_ok_str = ''
-                    for partner_code in partners_not_ok:
-                        partners_not_ok_str = partners_not_ok_str + ', ' + \
-                            str(partner_code)
-                    partners_not_ok_str = partners_not_ok_str[2:]
-                    _logger.info(prefix_message + ': ' +
-                                 partners_not_ok_str + '... ' +
-                                 suffix_message)
+                if partners:
+                    list_of_data = []
+                    for partner in partners:
+                        data = self.populate_data_for_update_partner(partner)
+                        list_of_data.append(data)
+                    if list_of_data:
+                        partners_ok, partners_not_ok = \
+                            self.synchronize_partners(
+                                url_remotecontrol_rest,
+                                url_remotecontrol_rest_username,
+                                url_remotecontrol_rest_password,
+                                list_of_data)
+                        if partners_ok or partners_not_ok:
+                            _logger = logging.getLogger(
+                                self.__class__.__name__)
+                            prefix_message = _('Remote Control: Synchronizing '
+                                               'remote control for partners')
+                            suffix_message = 'OK'
+                            if partners_ok:
+                                partners_ok_str = ''
+                                for partner_code in partners_ok:
+                                    self.env['res.partner'].search(
+                                        [('partner_code', '=',
+                                          partner_code)]).\
+                                        updated_in_remotecontrol = True
+                                    partners_ok_str = partners_ok_str + \
+                                        ', ' + str(partner_code)
+                                partners_ok_str = partners_ok_str[2:]
+                                _logger.info(prefix_message + ': ' +
+                                             partners_ok_str + '... ' +
+                                             suffix_message)
+                            if partners_not_ok:
+                                suffix_message = _('Update error in remote '
+                                                   'control')
+                                partners_not_ok_str = ''
+                                for partner_code in partners_not_ok:
+                                    partners_not_ok_str = \
+                                        partners_not_ok_str + ', ' + \
+                                        str(partner_code)
+                                partners_not_ok_str = partners_not_ok_str[2:]
+                                _logger.info(prefix_message + ': ' +
+                                             partners_not_ok_str + '... ' +
+                                             suffix_message)
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
                                              'the remote control is not '
                                              'enabled.'))
-            else:
-                return False
 
     def do_synchronization_all_partners(self, show_message=False):
         partner_ids = self.env['res.partner'].search(

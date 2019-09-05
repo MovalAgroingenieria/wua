@@ -71,8 +71,9 @@ class WuaParcel(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    prefix_message = _('Updating remote control for '
-                                       'parcel (new)')
+                    error_message = error_message.decode('utf_8')
+                    prefix_message = _('Remote Control: Updating remote '
+                                       'control for parcel (new)')
                     suffix_message = 'OK'
                     if synchronized_remotecontrol:
                         self.env['wua.parcel'].browse(new_parcel.id).\
@@ -122,8 +123,9 @@ class WuaParcel(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    prefix_message = _('Updating remote control for '
-                                       'parcel (existing)')
+                    error_message = error_message.decode('utf_8')
+                    prefix_message = _('Remote Control: Updating remote '
+                                       'control for parcel (existing)')
                     suffix_message = 'OK'
                     if not synchronized_remotecontrol:
                         if not error_message:
@@ -167,8 +169,9 @@ class WuaParcel(models.Model):
                                 url_remotecontrol_rest_username,
                                 url_remotecontrol_rest_password,
                                 data)
-                        prefix_message = _('Deleting remote control for '
-                                           'parcel ')
+                        error_message = error_message.decode('utf_8')
+                        prefix_message = _('Remote Control: Deleting remote '
+                                           'control for parcel ')
                         suffix_message = 'OK'
                         if not synchronized_remotecontrol:
                             if not error_message:
@@ -239,8 +242,9 @@ class WuaParcel(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    prefix_message = _('Synchronizing remote control for '
-                                       'parcel')
+                    error_message = error_message.decode('utf_8')
+                    prefix_message = _('Remote Control: Synchronizing '
+                                       'remote control for parcel')
                     suffix_message = 'OK'
                     if not synchronized_remotecontrol:
                         if not error_message:
@@ -277,57 +281,53 @@ class WuaParcel(models.Model):
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
                 parcels = self.env['wua.parcel'].browse(active_parcels)
-                if not parcels:
-                    return False
-                list_of_data = []
-                for parcel in parcels:
-                    data = self.populate_data_for_update_parcel(parcel)
-                    list_of_data.append(data)
-                if not list_of_data:
-                    return False
-                # Provisional
-                print list_of_data
-                parcels_ok, parcels_not_ok = \
-                    self.synchronize_parcels(
-                        url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password,
-                        list_of_data)
-                if not parcels_ok and not parcels_not_ok:
-                    return False
-                _logger = logging.getLogger(self.__class__.__name__)
-                prefix_message = _('Synchronizing remote control for '
-                                   'parcels')
-                suffix_message = 'OK'
-                if parcels_ok:
-                    parcels_ok_str = ''
-                    for name in parcels_ok:
-                        self.env['wua.parcel'].search(
-                            [('name', '=', name)]).\
-                            updated_in_remotecontrol = True
-                        parcels_ok_str = parcels_ok_str + ', ' + \
-                            str(name)
-                    parcels_ok_str = parcels_ok_str[2:]
-                    _logger.info(prefix_message + ': ' +
-                                 parcels_ok_str + '... ' +
-                                 suffix_message)
-                if parcels_not_ok:
-                    suffix_message = _('Update error in remote control')
-                    parcels_not_ok_str = ''
-                    for name in parcels_not_ok:
-                        parcels_not_ok_str = parcels_not_ok_str + ', ' + \
-                            str(name)
-                    parcels_not_ok_str = parcels_not_ok_str[2:]
-                    _logger.info(prefix_message + ': ' +
-                                 parcels_not_ok_str + '... ' +
-                                 suffix_message)
+                if parcels:
+                    list_of_data = []
+                    for parcel in parcels:
+                        data = self.populate_data_for_update_parcel(parcel)
+                        list_of_data.append(data)
+                    if list_of_data:
+                        parcels_ok, parcels_not_ok = \
+                            self.synchronize_parcels(
+                                url_remotecontrol_rest,
+                                url_remotecontrol_rest_username,
+                                url_remotecontrol_rest_password,
+                                list_of_data)
+                        if parcels_ok or parcels_not_ok:
+                            _logger = logging.getLogger(
+                                self.__class__.__name__)
+                            prefix_message = _('Remote Control: Synchronizing '
+                                               'remote control for parcels')
+                            suffix_message = 'OK'
+                            if parcels_ok:
+                                parcels_ok_str = ''
+                                for name in parcels_ok:
+                                    self.env['wua.parcel'].search(
+                                        [('name', '=', name)]).\
+                                        updated_in_remotecontrol = True
+                                    parcels_ok_str = parcels_ok_str + ', ' + \
+                                        str(name)
+                                parcels_ok_str = parcels_ok_str[2:]
+                                _logger.info(prefix_message + ': ' +
+                                             parcels_ok_str + '... ' +
+                                             suffix_message)
+                            if parcels_not_ok:
+                                suffix_message = _('Update error in remote '
+                                                   'control')
+                                parcels_not_ok_str = ''
+                                for name in parcels_not_ok:
+                                    parcels_not_ok_str = \
+                                        parcels_not_ok_str + ', ' + \
+                                        str(name)
+                                parcels_not_ok_str = parcels_not_ok_str[2:]
+                                _logger.info(prefix_message + ': ' +
+                                             parcels_not_ok_str + '... ' +
+                                             suffix_message)
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
                                              'the remote control is not '
                                              'enabled.'))
-            else:
-                return False
 
     def do_synchronization_all_parcels(self, show_message=False):
         parcel_ids = self.env['wua.parcel'].search([]).ids
