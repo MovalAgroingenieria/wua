@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+  <template id="report_invoice_document"
+   inherit_id="account_wua.wua_report_invoice_document">
+
+      <xpath expr="//table[@class='table']" position="replace">
+          <table class="table" id="invoice_data_table">
+              <col name="product" width="33%"/>
+              <col name="description" width="33%"/>
+              <col name="quantity" width="11%"/>
+              <col name="price" width="13%"/>
+              <col name="amount" width="10%"/>
+              <thead>
+                  <tr>
+                      <th name="product">Product</th>
+                      <th name="description">Description</th>
+                      <th name="src_document" class="hidden">Source Document</th>
+                      <th name="quantity" class="text-right">Quantity</th>
+                      <th name="price" class="text-right">Price</th>
+                      <th t-if="display_discount" name="discount" class="text-right">Disc.(%)</th>
+                      <th name="amount" class="text-right">Amount</th>
+                  </tr>
+              </thead>
+              <tbody class="invoice_tbody">
+                  <tr t-foreach="o.invoice_line_ids" t-as="l">
+                      <td name="product"><span t-field="l.product_id"/></td>
+                      <td name="description"><span t-field="l.name"/></td>
+                      <td name="src_document" class="hidden"><span t-field="l.origin"/></td>
+                      <td name="quantity" class="text-right">
+                          <span t-field="l.quantity"/>
+                          <span t-field="l.uom_id" groups="product.group_uom"/>
+                      </td>
+                      <td name="price" class="text-right">
+                          <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
+                          <span>/</span>
+                          <span t-field="l.uom_id" groups="product.group_uom"/>
+                      </td>
+                      <td t-if="display_discount" name="discount" class="text-right">
+                          <span t-field="l.discount"/>
+                      </td>
+                      <td name="amount" class="text-right">
+                          <span t-field="l.price_subtotal"
+                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </xpath>
+
+    </template>
+</odoo>
