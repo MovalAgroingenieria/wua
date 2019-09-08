@@ -45,54 +45,59 @@ class ResPartner(models.Model):
     def create(self, vals):
         self.__class__._in_create = True
         new_partner = super(ResPartner, self).create(vals)
-        enable_remotecontrol = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'enable_remotecontrol')
-        can_be_sent_partners_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_partners_census')
-        automatic_census_synchronization = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'automatic_census_synchronization')
-        if (enable_remotecontrol and can_be_sent_partners_census and
-           automatic_census_synchronization):
-            url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
-            url_remotecontrol_rest_username = self.env['ir.values'].\
-                get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
-            url_remotecontrol_rest_password = self.env['ir.values'].\
-                get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
-            if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
-                data = self.populate_data_for_send_new_partner(vals)
-                if data:
-                    synchronized_remotecontrol, error_message = \
-                        self.send_new_partner(
-                            url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password,
-                            data)
-                    prefix_message = _('Remote Control: Updating remote '
-                                       'control for partner (new)')
-                    suffix_message = 'OK'
-                    if synchronized_remotecontrol:
-                        self.env['res.partner'].browse(new_partner.id).\
-                            updated_in_remotecontrol = True
-                    else:
-                        if not error_message:
-                            error_message = \
-                                _('Update error in remote control')
-                        suffix_message = error_message
-                    _logger = logging.getLogger(self.__class__.__name__)
-                    _logger.info(prefix_message + ' ' +
-                                 str(new_partner.partner_code) + '... ' +
-                                 suffix_message)
+        if 'is_wua_partner' in vals and vals['is_wua_partner']:
+            enable_remotecontrol = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'enable_remotecontrol')
+            can_be_sent_partners_census = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'can_be_sent_partners_census')
+            automatic_census_synchronization = \
+                self.env['ir.values'].get_default(
+                    'wua.irrigation.configuration',
+                    'automatic_census_synchronization')
+            if (enable_remotecontrol and can_be_sent_partners_census and
+               automatic_census_synchronization):
+                url_remotecontrol_rest = self.env['ir.values'].get_default(
+                    'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                url_remotecontrol_rest_username = self.env['ir.values'].\
+                    get_default('wua.irrigation.configuration',
+                                'url_remotecontrol_rest_username')
+                url_remotecontrol_rest_password = self.env['ir.values'].\
+                    get_default('wua.irrigation.configuration',
+                                'url_remotecontrol_rest_password')
+                if (url_remotecontrol_rest and
+                   url_remotecontrol_rest_username and
+                   url_remotecontrol_rest_password):
+                    data = self.populate_data_for_send_new_partner(vals)
+                    if data:
+                        synchronized_remotecontrol, error_message = \
+                            self.send_new_partner(
+                                url_remotecontrol_rest,
+                                url_remotecontrol_rest_username,
+                                url_remotecontrol_rest_password,
+                                data)
+                        prefix_message = _('Remote Control: Updating remote '
+                                           'control for partner (new)')
+                        suffix_message = 'OK'
+                        if synchronized_remotecontrol:
+                            self.env['res.partner'].browse(new_partner.id).\
+                                updated_in_remotecontrol = True
+                        else:
+                            if not error_message:
+                                error_message = \
+                                    _('Update error in remote control')
+                            suffix_message = error_message
+                        _logger = logging.getLogger(self.__class__.__name__)
+                        _logger.info(prefix_message + ' ' +
+                                     str(new_partner.partner_code) + '... ' +
+                                     suffix_message)
         self.__class__._in_create = False
         return new_partner
 
     @api.multi
     def write(self, vals):
         resp = super(ResPartner, self).write(vals)
-        if (self.__class__._in_create or len(self) != 1):
+        if (self.__class__._in_create or len(self) != 1 or
+           not self.is_wua_partner):
             return resp
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
@@ -155,26 +160,28 @@ class ResPartner(models.Model):
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
                 for record in self:
-                    data = self.populate_data_for_delete_partner(record)
-                    if data:
-                        synchronized_remotecontrol, error_message = \
-                            self.delete_partner(
-                                url_remotecontrol_rest,
-                                url_remotecontrol_rest_username,
-                                url_remotecontrol_rest_password,
-                                data)
-                        prefix_message = _('Remote Control: Deleting remote '
-                                           'control for partner ')
-                        suffix_message = 'OK'
-                        if not synchronized_remotecontrol:
-                            if not error_message:
-                                error_message = \
-                                    _('Update error in remote control')
-                            suffix_message = error_message
-                        _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.info(prefix_message + ' ' +
-                                     str(record.partner_code) + '... ' +
-                                     suffix_message)
+                    if record.is_wua_partner:
+                        data = self.populate_data_for_delete_partner(record)
+                        if data:
+                            synchronized_remotecontrol, error_message = \
+                                self.delete_partner(
+                                    url_remotecontrol_rest,
+                                    url_remotecontrol_rest_username,
+                                    url_remotecontrol_rest_password,
+                                    data)
+                            prefix_message = _('Remote Control: Deleting '
+                                               'remote control for partner ')
+                            suffix_message = 'OK'
+                            if not synchronized_remotecontrol:
+                                if not error_message:
+                                    error_message = \
+                                        _('Update error in remote control')
+                                suffix_message = error_message
+                            _logger = logging.getLogger(
+                                self.__class__.__name__)
+                            _logger.info(prefix_message + ' ' +
+                                         str(record.partner_code) + '... ' +
+                                         suffix_message)
         return super(ResPartner, self).unlink()
 
     # Hook
