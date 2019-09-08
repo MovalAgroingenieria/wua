@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button" position="after">
+                <field name="remotecontrol_enabled" invisible="1"/>            
+                <button name="do_synchronization_parcel"
+                        type="object" string="Synchronize"
+                        icon="fa-rss"
+                        attrs="{'invisible':
+                                [('remotecontrol_enabled','=',False)]}"
+                        groups="base_wua.group_wua_manager"/>
+            </xpath>
+            <xpath expr="//field[@name='tag_ids']" position="before">
+                <field name="updated_in_remotecontrol"
+                       string="In Remote Control" readonly="1"
+                       attrs="{'invisible':
+                               [('remotecontrol_enabled', '=', False)]}"/>
+                <newline/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view">
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <filter string="In Remote control: Yes" name="updated_rc_yes"
+                 domain="[('updated_in_remotecontrol','=',True)]"/>
+                <filter string="In Remote control: No" name="updated_rc_no"
+                 domain="[('updated_in_remotecontrol','=',False)]"/>
+                <separator/>
+            </xpath> 
+        </field>
+    </record>
+
+    <record id="wua_synchronize_parcels" model="ir.actions.server">
+        <field name="name">Synchronize parcel with remote control</field>
+        <field name="model_id" ref="model_wua_parcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.parcel'].do_synchronization_parcels(context['active_ids'], True)
+        </field>
+    </record>
+    
+    <record id="wua_action_synchronize_parcel" model="ir.values">
+        <field name="name">Synchronize parcels with remote control</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_synchronize_parcels'))"/>
+    </record>
+
+    <record id="wua_technical_synchronize_parcels_action" model="ir.actions.server">
+        <field name="name">Parcels Synchronization (remote control)</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">action = env["wua.parcel"].do_synchronization_all_parcels(True)</field>
+    </record>
+
+    <menuitem id="wua_technical_synchronize_parcels_menu"
+              name="Remote C.: Synch. Parcels"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_synchronize_parcels_action"
+              sequence="1001"/>
+
+</odoo>
