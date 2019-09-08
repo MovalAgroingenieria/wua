@@ -71,7 +71,6 @@ class ResPartner(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    error_message = error_message.decode('utf_8')
                     prefix_message = _('Remote Control: Updating remote '
                                        'control for partner (new)')
                     suffix_message = 'OK'
@@ -121,7 +120,6 @@ class ResPartner(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    error_message = error_message.decode('utf_8')
                     prefix_message = _('Remote Control: Updating remote '
                                        'control for partner (existing)')
                     suffix_message = 'OK'
@@ -165,7 +163,6 @@ class ResPartner(models.Model):
                                 url_remotecontrol_rest_username,
                                 url_remotecontrol_rest_password,
                                 data)
-                        error_message = error_message.decode('utf_8')
                         prefix_message = _('Remote Control: Deleting remote '
                                            'control for partner ')
                         suffix_message = 'OK'
@@ -201,7 +198,7 @@ class ResPartner(models.Model):
         return False, ''
 
     # Hook
-    def populate_data_for_delete_partner(self, vals):
+    def populate_data_for_delete_partner(self, partner):
         return None
 
     # Hook
@@ -236,7 +233,6 @@ class ResPartner(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    error_message = error_message.decode('utf_8')
                     prefix_message = _('Remote Control: Synchronizing remote '
                                        'control for partner')
                     suffix_message = 'OK'

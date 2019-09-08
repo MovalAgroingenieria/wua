@@ -28,7 +28,7 @@ class WuaReading(models.Model):
             'target': 'new', }
 
     @api.model
-    def do_import_readings(self, save_data=True, show_message=False):
+    def do_import_readings(self, save_data=True, show_message=True):
         # for resp: item 1: list of readings, item 2: number of readings,
         # item 3: possible error message, item 4: list of problematic
         # water meters
@@ -58,7 +58,6 @@ class WuaReading(models.Model):
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password, data)
-                    error_message = error_message.decode('utf_8')
                     readings = self.refine_readings(readings)
                     if readings:
                         resp[0] = readings

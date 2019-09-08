@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationshed_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (form view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_irrigationshed_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <field name="remotecontrol_enabled" invisible="1"/>
+                <field name="id" invisible="1"/>            
+                <header>
+                    <button name="do_import_readings_from_irrigationshed"
+                            type="object" string="Get readings"
+                            icon="fa-rss"
+                            attrs="{'invisible':
+                                    ['|', ('remotecontrol_enabled','=',False),
+                                          ('id', '=', 0)]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Import readings?"/>
+                </header>
+            </xpath>        
+        </field>
+    </record>
+    
+    <record id="wua_import_readings_from_irrigationsheds" model="ir.actions.server">
+        <field name="name">Get readings</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.irrigationshed'].do_import_readings_from_irrigationsheds(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_import_readings_from_irrigationsheds" model="ir.values">
+        <field name="name">Get readings</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_import_readings_from_irrigationsheds'))"/>
+    </record>
+
+</odoo>

@@ -63,15 +63,12 @@ class WuaParcel(models.Model):
                url_remotecontrol_rest_password):
                 data = self.populate_data_for_send_new_parcel(vals)
                 if data:
-                    # Provisional
-                    print data
                     synchronized_remotecontrol, error_message = \
                         self.send_new_parcel(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    error_message = error_message.decode('utf_8')
                     prefix_message = _('Remote Control: Updating remote '
                                        'control for parcel (new)')
                     suffix_message = 'OK'
@@ -115,15 +112,12 @@ class WuaParcel(models.Model):
                url_remotecontrol_rest_password):
                 data = self.populate_data_for_update_parcel(self)
                 if data:
-                    # Provisional
-                    print data
                     synchronized_remotecontrol, error_message = \
                         self.update_parcel(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    error_message = error_message.decode('utf_8')
                     prefix_message = _('Remote Control: Updating remote '
                                        'control for parcel (existing)')
                     suffix_message = 'OK'
@@ -161,15 +155,12 @@ class WuaParcel(models.Model):
                 for record in self:
                     data = self.populate_data_for_delete_parcel(record)
                     if data:
-                        # Provisional
-                        print data
                         synchronized_remotecontrol, error_message = \
                             self.delete_parcel(
                                 url_remotecontrol_rest,
                                 url_remotecontrol_rest_username,
                                 url_remotecontrol_rest_password,
                                 data)
-                        error_message = error_message.decode('utf_8')
                         prefix_message = _('Remote Control: Deleting remote '
                                            'control for parcel ')
                         suffix_message = 'OK'
@@ -205,7 +196,7 @@ class WuaParcel(models.Model):
         return False, ''
 
     # Hook
-    def populate_data_for_delete_parcel(self, vals):
+    def populate_data_for_delete_parcel(self, parcel):
         return None
 
     # Hook
@@ -234,15 +225,12 @@ class WuaParcel(models.Model):
                url_remotecontrol_rest_password):
                 data = self.populate_data_for_update_parcel(self)
                 if data:
-                    # Provisional
-                    print data
                     synchronized_remotecontrol, error_message = \
                         self.synchronize_parcel(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
                             data)
-                    error_message = error_message.decode('utf_8')
                     prefix_message = _('Remote Control: Synchronizing '
                                        'remote control for parcel')
                     suffix_message = 'OK'

@@ -6,3 +6,6 @@ from . import wua_irrigation_config_settings
 from . import wua_reading
 from . import res_partner
 from . import wua_parcel
+from . import wua_waterconnection
+from . import wua_irrigationshed
+from . import wua_hydraulicsector
