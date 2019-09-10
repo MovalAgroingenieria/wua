@@ -15,6 +15,7 @@ class WuaCropplan(models.Model):
     # Size of field "name".
     MAX_SIZE_PARTNER_CODE = 6
     MAX_SIZE_NAME = 22 + MAX_SIZE_PARTNER_CODE
+    ORDER_NUMBER_SIZE = 6
 
     def _default_agriculturalseason_id(self):
         resp = 0
@@ -102,6 +103,12 @@ class WuaCropplan(models.Model):
 
     signature_image = fields.Binary(
         string='Signature')
+
+    order_number = fields.Char(
+        string='Order Number',
+        size=ORDER_NUMBER_SIZE,
+        index=True,
+        readonly=True)
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
