@@ -68,7 +68,7 @@ class WuaParcel(models.Model):
                 '/parcelas/' + data['name'] + \
                 '?sesion=' + id_session + '&&uso=1'
             payload_data = {
-                # 'codigosContadores': [110100701],
+                'codigosContadores': data['watermeters'],
                 'localidad': data['county'],
                 'poligono': data['cadastral_polygon'],
                 'parcela': data['cadastral_parcel'],
@@ -144,7 +144,7 @@ class WuaParcel(models.Model):
                 '/parcelas/' + data['name'] + \
                 '?sesion=' + id_session + '&uso=1'
             payload_data = {
-                # 'codigosContadores': ['110100701'],
+                'codigosContadores': data['watermeters'],
                 'localidad': data['county'],
                 'poligono': data['cadastral_polygon'],
                 'parcela': data['cadastral_parcel'],
@@ -235,7 +235,7 @@ class WuaParcel(models.Model):
             resprest = requests.get(url_update_parcel)
             exists_parcel_in_remotecontrol = resprest.text != ''
             payload_data = {
-                # 'codigosContadores': ['110100701'],
+                'codigosContadores': data['watermeters'],
                 'localidad': data['county'],
                 'poligono': data['cadastral_polygon'],
                 'parcela': data['cadastral_parcel'],
@@ -288,7 +288,7 @@ class WuaParcel(models.Model):
                 resprest = requests.get(url_update_parcel)
                 exists_parcel_in_remotecontrol = resprest.text != ''
                 payload_data = {
-                    # 'codigosContadores': ['110100701'],
+                    'codigosContadores': data['watermeters'],
                     'localidad': data['county'],
                     'poligono': data['cadastral_polygon'],
                     'parcela': data['cadastral_parcel'],
