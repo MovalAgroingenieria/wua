@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Modify SUMA form -->
+    <record id="wua_account_payment_order_form_suma" model="ir.ui.view">
+        <field name="name">wua.account.payment.order.form.suma</field>
+        <field name="model">account.payment.order</field>
+        <field name="inherit_id" ref="account_banking_debit_suma.account_payment_order_form_suma"/>
+        <field name="arch" type="xml">
+
+            <!-- Title -->
+            <xpath expr="//group[@name='suma']" position="attributes">
+                <attribute name="string">SUMA options for WUAs</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
