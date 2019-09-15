@@ -327,9 +327,7 @@ class WuaParcel(models.Model):
             waterconnection_ids)
         for waterconnection in waterconnections:
             if waterconnection.watermeter_id:
-                watermeter_code_str = waterconnection.watermeter_id.name
-                if watermeter_code_str.isdigit():
-                    resp.append(int(watermeter_code_str))
+                resp.append(waterconnection.name)
         return resp
 
     def get_area_official_hec(self, area_official):
@@ -349,10 +347,7 @@ class WuaParcel(models.Model):
         if parcel.irrigationpointwc_ids:
             for irrigationpointwc in parcel.irrigationpointwc_ids:
                 if irrigationpointwc.waterconnection_id.watermeter_id:
-                    watermeter_code_str = irrigationpointwc.\
-                        waterconnection_id.watermeter_id.name
-                    if watermeter_code_str.isdigit():
-                        resp.append(int(watermeter_code_str))
+                    resp.append(irrigationpointwc.waterconnection_id.name)
         return resp
 
     def get_partner_of_vals(self, partnerlink_ids):

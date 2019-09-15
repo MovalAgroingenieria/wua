@@ -9,29 +9,6 @@ from odoo import models, fields, api
 class WuaIrrigationConfiguration(models.TransientModel):
     _inherit = 'wua.irrigation.configuration'
 
-    @api.model_cr
-    def init(self):
-        is_update = self.env['ir.module.module'].\
-            search([('name', '=', 'base_wua_remotecontrol_rest'),
-                    ('state', '=', 'to upgrade')])
-        if not is_update:
-            self.env.cr.execute("""
-                DELETE from ir_values
-                WHERE model = 'wua.irrigation.configuration'
-                      and (name = 'enable_remotecontrol' or
-                           name = 'url_remotecontrol_rest' or
-                           name = 'url_remotecontrol_rest_username' or
-                           name = 'url_remotecontrol_rest_password' or
-                           name = 'url_remotecontrol_application' or
-                           name = 'automatic_census_synchronization' or
-                           name = 'can_be_sent_partners_census' or
-                           name = 'can_be_sent_parcels_census' or
-                           name = 'import_from_readings' or
-                           name = 'import_from_waterconnection' or
-                           name = 'import_from_irrigationshed' or
-                           name = 'import_from_hydraulicsector')
-                """)
-
     enable_remotecontrol = fields.Boolean(
         string='Enabled',
         help='if it is marked, it is required set the next url ' +
@@ -88,6 +65,12 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'url_remotecontrol_rest',
                            self.url_remotecontrol_rest)
+        values.set_default('wua.irrigation.configuration',
+                           'url_remotecontrol_rest_username',
+                           self.url_remotecontrol_rest_username)
+        values.set_default('wua.irrigation.configuration',
+                           'url_remotecontrol_rest_password',
+                           self.url_remotecontrol_rest_password)
         values.set_default('wua.irrigation.configuration',
                            'url_remotecontrol_application',
                            self.url_remotecontrol_application)
