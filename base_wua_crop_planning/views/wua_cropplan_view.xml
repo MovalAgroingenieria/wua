@@ -9,11 +9,27 @@
                 <field name="id" invisible="1"/>
                 <field name="out_of_time" invisible="1"/>
                 <header>
+                    <button name="validate_cropplan"
+                            string="Validate"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|',('id','=',False),
+                                                  ('state','=','validated')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="cancel_cropplan"
+                            string="Cancel"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|',('id','=',False),
+                                                  ('state','=','draft')]}"
+                            groups="base_wua.group_wua_manager"/>
                     <div name="cropplanoutoftime"
                          style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
                          attrs="{'invisible':[('out_of_time','=',False)]}">
                         ( OUT OF TIME )
                     </div>
+                   <field name="state" widget="statusbar"
+                          statusbar_visible="draft,validated"/>                    
                 </header>
                 <sheet>
                     <div name="buttons" class="oe_button_box">
@@ -40,6 +56,7 @@
                             <field name="agriculturalseason_id"/>
                             <field name="request_date"/>                            
                             <field name="area_official"/>
+                            <field name="order_number"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -81,6 +98,8 @@
                 <field name="out_of_time"/>
                 <field name="number_of_enrolledsubparcels"/>
                 <field name="area_official"/>
+                <field name="order_number"/>                
+                <field name="state"/>
             </tree>
         </field>
     </record>
@@ -91,6 +110,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="partner_id"/>
+                <field name="order_number"/>
                 <field name="user_id"/>
                 <filter string="Active Agricultural Season" name="active_agriculturalseason"
                  domain="[('agriculturalseason_id.is_the_active','=',True)]"/>
@@ -102,6 +122,11 @@
                 <separator/>
                 <filter string="Out of time" name="outoftime"
                  domain="[('out_of_time','=',True)]"/>
+                <separator/> 
+                <filter string="State: Draft" name="state_draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter string="State: Validated" name="state_validated"
+                        domain="[('state', '=', 'validated')]"/>
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season" name="agriculturalseason"
                      context="{'group_by':'agriculturalseason_id'}"/>
@@ -109,6 +134,8 @@
                      context="{'group_by':'partner_id'}"/>
                     <filter string="User" name="user"
                      context="{'group_by':'user_id'}"/>
+                    <filter string="State" name="state"
+                     context="{'group_by':'state'}"/>                     
                 </group>
             </search>
         </field>
@@ -269,7 +296,8 @@
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="wua_cropplan_view_tree"/>
         <field name="search_view_id" ref="wua_cropplan_view_search"/>
-        <field name="context">{'search_default_active_agriculturalseason': 1}</field>         
+        <field name="context">{'search_default_active_agriculturalseason': 1,
+                               'default_state': 'draft'}</field>         
     </record>
 
     <record id="wua_enrolledsubparcel_action" model="ir.actions.act_window">
@@ -290,6 +318,42 @@
         <field name="name">Regenerate census</field>
         <field name="model_id" ref="base_wua_crop_planning.model_wua_cropplan"/>
         <field name="code">action = env["wua.cropplan"].action_regenerate_census()</field>
+    </record>
+
+    <record id="wua_validate_cropplans" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_cropplan"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.cropplan'].validate_cropplans(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_validate_cropplans" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.cropplan</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_cropplans'))"/>
+    </record>
+
+    <record id="wua_cancel_cropplans" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_cropplan"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.cropplan'].cancel_cropplans(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_cancel_cropplans" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.cropplan</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_cropplans'))"/>
     </record>
 
     <menuitem id="wua_cropplan_menu"

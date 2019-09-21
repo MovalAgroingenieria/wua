@@ -135,6 +135,15 @@ class WuaAgriculturalseason(models.Model):
     @api.multi
     def close_agriculturalseason(self):
         self.ensure_one()
+        # First requirement: Are there crop plans in draft state?
+        cropplans_draft_of_current_agriculturalseason = \
+            self.env['wua.cropplan'].search(
+                [('agriculturalseason_id', '=', self.id),
+                 ('state', '=', 'draft')])
+        if cropplans_draft_of_current_agriculturalseason:
+            raise exceptions.UserError(_('This agricultural season has '
+                                         'crop plans in draft state: '
+                                         'it is not possible to close it.'))
         self.is_the_active = False
         if not self.initialized:
             return True
@@ -231,9 +240,6 @@ class WuaAgriculturalseason(models.Model):
             id_tree_view = self.env.ref(
                 'base_wua_crop_planning.'
                 'wua_enrolledsubparcel_view_tree').id
-            id_form_view = self.env.ref(
-                'base_wua_crop_planning.'
-                'wua_enrolledsubparcel_view_form').id
             search_view = self.env.ref(
                 'base_wua_crop_planning.'
                 'wua_enrolledsubparcel_view_search')
@@ -241,9 +247,8 @@ class WuaAgriculturalseason(models.Model):
                 'type': 'ir.actions.act_window',
                 'name': _('Enrolled Subparcels'),
                 'res_model': 'wua.enrolledsubparcel',
-                'view_type': 'form',
                 'view_mode': 'tree',
-                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'views': [(id_tree_view, 'tree')],
                 'search_view_id': (search_view.id, search_view.name),
                 'target': 'current',
                 'domain': [('id', 'in', self.enrolledsubparcel_ids.ids)],
