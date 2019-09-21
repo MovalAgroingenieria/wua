@@ -18,6 +18,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/wua_subparceltype_data.xml",
+        "data/wua_sequences.xml",
         "views/resources.xml",        
         "views/wua_cultivation_view.xml",
         "views/wua_parcel_view.xml",

@@ -12,9 +12,25 @@ class WuaCropplan(models.Model):
     _description = 'Crop Plan'
     _order = 'name'
 
-    # Size of field "name".
+    # Size of fields.
     MAX_SIZE_PARTNER_CODE = 6
     MAX_SIZE_NAME = 22 + MAX_SIZE_PARTNER_CODE
+    ORDER_NUMBER_SIZE = 6
+
+    @api.model_cr
+    def init(self):
+        cropplans_with_order_number = self.env['wua.cropplan'].search(
+            [('order_number', '!=', '')])
+        if not cropplans_with_order_number:
+            cropplans = self.env['wua.cropplan'].search([], order='id')
+            for cropplan in cropplans:
+                cropplan.order_number = self.env['ir.sequence'].next_by_code(
+                    'wua.cropplan.ordernumber')
+        cropplans_with_state = self.env['wua.cropplan'].search(
+            [('state', '!=', '')])
+        if not cropplans_with_state:
+            cropplans = self.env['wua.cropplan'].search([])
+            cropplans.write({'state': 'validated'})
 
     def _default_agriculturalseason_id(self):
         resp = 0
@@ -102,6 +118,22 @@ class WuaCropplan(models.Model):
 
     signature_image = fields.Binary(
         string='Signature')
+
+    order_number = fields.Char(
+        string='Order Number',
+        size=ORDER_NUMBER_SIZE,
+        index=True,
+        readonly=True)
+
+    state = fields.Selection(
+        selection=[
+            ('draft', 'Draft'),
+            ('validated', 'Validated'),
+        ],
+        index=True,
+        required=True,
+        string='State',
+        track_visibility='onchange')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -208,6 +240,9 @@ class WuaCropplan(models.Model):
                                          'crop plan. For each agricultural '
                                          'season, only one crop plan '
                                          'per partner is accepted.'))
+        vals['order_number'] = self.env['ir.sequence'].next_by_code(
+            'wua.cropplan.ordernumber')
+        vals['state'] = 'draft'
         new_cropplan = super(WuaCropplan, self).create(vals)
         if new_cropplan.number_of_enrolledsubparcels == 0:
             raise exceptions.UserError(_('The crop plan must have one '
@@ -232,9 +267,9 @@ class WuaCropplan(models.Model):
     @api.multi
     def write(self, vals):
         if len(self) == 1:
-            if (not self.env.user.has_group('base_wua.group_wua_user') and
+            if ((not self.env.user.has_group('base_wua.group_wua_user') and
                (not self.env['ir.values'].get_default(
-                   'wua.configuration', 'wua_portal_user_can_edit') or
+                   'wua.configuration', 'wua_portal_user_can_edit')) or
                not self.agriculturalseason_id.is_the_active)):
                 raise exceptions.UserError(_(
                     'You do not have permission to edit data.'))
@@ -276,9 +311,9 @@ class WuaCropplan(models.Model):
     @api.multi
     def unlink(self):
         for record in self:
-            if (not self.env.user.has_group('base_wua.group_wua_user') and
+            if ((not self.env.user.has_group('base_wua.group_wua_user') and
                (not self.env['ir.values'].get_default(
-                   'wua.configuration', 'wua_portal_user_can_edit') or
+                   'wua.configuration', 'wua_portal_user_can_edit')) or
                not self.agriculturalseason_id.is_the_active)):
                 raise exceptions.UserError(_(
                     'You do not have permission to edit data.'))
@@ -692,6 +727,34 @@ class WuaCropplan(models.Model):
             return act_window
         else:
             return True
+
+    @api.multi
+    def validate_cropplan(self):
+        self.ensure_one()
+        self.state = 'validated'
+
+    @api.multi
+    def cancel_cropplan(self):
+        self.ensure_one()
+        self.state = 'draft'
+
+    def validate_cropplans(self, active_cropplans):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        cropplans = self.env['wua.cropplan'].browse(active_cropplans)
+        for cropplan in cropplans:
+            if cropplan.state == 'draft':
+                cropplan.validate_cropplan()
+
+    def cancel_cropplans(self, active_cropplans):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        cropplans = self.env['wua.cropplan'].browse(active_cropplans)
+        for cropplan in cropplans:
+            if cropplan.state == 'validated':
+                cropplan.cancel_cropplan()
 
 
 class WuaEnrolledsubparcel(models.Model):
