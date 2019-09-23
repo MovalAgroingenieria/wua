@@ -13,7 +13,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua",
-        "hr",],
+        "hr", ],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",

@@ -14,13 +14,23 @@
             <form duplicate="0">
                 <sheet>
                     <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_irrigationditch" invisible="1"/>
                         <button name="%(wua_irrigationditch_parcels_action)d"
                                 type="action"
                                 class="oe_stat_button"
                                 icon="fa-square-o"
                                 string="Parcels"
                                 attrs="{'invisible': [('number_of_parcels', '=', 0)]}"/>
-                    </div>                
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                      ['|',('gis_viewer_link','=',False),
+                                      ('with_gis_irrigationditch','=',False)]}"/>
+                    </div>
                     <group name="master_data">
                         <group name="master_data_id">
                             <field name="name"/>
@@ -39,7 +49,7 @@
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
                             <page name="irrigationgates_page" string="Irrigation Gates">
-                                <field name="irrigationgate_ids">                                
+                                <field name="irrigationgate_ids">
                                     <tree class="o_base_wua_infrastructure_irrigationgate_view_tree_notebook"
                                      create="false" edit="false" delete="false">
                                         <field name="gis_googlemaps_link" invisible="1"/>
@@ -50,14 +60,14 @@
                                                 icon="fa-map-marker"
                                                 attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>
                                         <field name="description"/>
-                                        <field name="hydraulic_order"/>                                        
+                                        <field name="hydraulic_order"/>
                                         <field name="total_affected_area_official"/>
                                         <field name="number_of_parcels"/>
                                     </tree>
                                 </field>
                             </page>
                             <page name="flowdividers_page" string="Flow Dividers">
-                                <field name="flowdivider_ids">                                
+                                <field name="flowdivider_ids">
                                     <tree class="o_base_wua_infrastructure_flowdivider_view_tree_notebook"
                                      create="false" edit="false" delete="false">
                                         <field name="gis_googlemaps_link" invisible="1"/>
@@ -73,7 +83,7 @@
                                         <field name="number_of_irrigationgates"/>
                                     </tree>
                                 </field>
-                            </page>                            
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
                             </page>
@@ -91,6 +101,13 @@
             <tree class="o_base_wua_infrastructure_irrigationditch_view_tree">
                 <field name="irrigationditch_code"/>
                 <field name="name"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_irrigationditch" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_irrigationditch','=',False)]}"/>
                 <field name="description"/>
                 <field name="number_of_irrigationgates"/>
                 <field name="total_affected_area_official"/>
@@ -107,6 +124,10 @@
                 <field name="irrigationditch_code"/>
                 <field name="name"/>
                 <field name="description"/>
+                <filter string="GIS Irrigationditch: Yes" name="gisirrigationditchyes"
+                 domain="[('with_gis_irrigationditch','=',True)]"/>
+                <filter string="GIS Irrigationditch: No" name="gisirrigationditchno"
+                 domain="[('with_gis_irrigationditch','=',False)]"/>
             </search>
         </field>
     </record>

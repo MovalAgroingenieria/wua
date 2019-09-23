@@ -304,6 +304,9 @@ class WuaParcel(models.Model):
         if self.env.cr.fetchone()[0]:
             gis_irrigationsheds_ok = True
         if gis_irrigationsheds_ok:
+            self.env.cr.execute("""
+                SELECT name, geom FROM public.wua_gis_irrigationshed
+                """)
             gis_irrigationsheds = self.env.cr.fetchall()
             if gis_irrigationsheds:
                 irrigationsheds = self.env['wua.irrigationshed'].search([])
@@ -333,7 +336,44 @@ class WuaParcel(models.Model):
                              str(number_of_irrigationsheds))
                 _logger.info('Number of GIS-Irrigationsheds : ' +
                              str(number_of_gis_irrigationsheds))
-        return gis_parcels_ok and gis_irrigationsheds_ok
+        gis_irrigationditch_ok = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_irrigationditch')
+            """)
+        if self.env.cr.fetchone()[0]:
+            gis_irrigationditch_ok = True
+        if gis_irrigationditch_ok:
+            self.env.cr.execute("""
+                SELECT name, geom FROM public.wua_gis_irrigationditch
+                """)
+            gis_irrigationditchs = self.env.cr.fetchall()
+            if gis_irrigationditchs:
+                irrigationditchs = self.env['wua.irrigationditch'].search([])
+                number_of_gis_irrigationditchs = len(gis_irrigationditchs)
+                number_of_irrigationditchs = len(irrigationditchs)
+                self.env.cr.execute("""
+                    UPDATE public.wua_irrigationditch
+                    SET with_gis_irrigationditch = FALSE
+                    """)
+                for gis_irrigationditch in gis_irrigationditchs:
+                    name = gis_irrigationditch[0]
+                    geom = gis_irrigationditch[1]
+                    filtered_irrigationditchs = \
+                        irrigationditchs.filtered(lambda x: x.name == name)
+                    if len(filtered_irrigationditchs) == 1:
+                        irrigationditch = filtered_irrigationditchs[0]
+                        irrigationditch.write({
+                            'with_gis_irrigationditch': True
+                        })
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info('Matching GIS info...')
+                _logger.info('Number of Odoo-Irrigationditchs: ' +
+                             str(number_of_irrigationditchs))
+                _logger.info('Number of GIS-Irrigationditchs : ' +
+                             str(number_of_gis_irrigationditchs))
+        return gis_parcels_ok and gis_irrigationsheds_ok and \
+            gis_irrigationditch_ok
 
     def populate_irrigationgates_to_add(self, vals):
         irrigationgates_to_add = []

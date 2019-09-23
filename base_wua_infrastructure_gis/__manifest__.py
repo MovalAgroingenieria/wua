@@ -13,9 +13,10 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_infrastructure",
-	    "base_wua_gis",],
+        "base_wua_gis", ],
     "data": [
-        "views/wua_irrigationshed_view.xml",],
+        "views/wua_irrigationshed_view.xml",
+        "views/wua_irrigationditch_view.xml", ],
     "installable": True,
     "application": False,
 }

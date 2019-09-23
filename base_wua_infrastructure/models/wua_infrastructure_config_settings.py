@@ -27,6 +27,11 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         size=20,
         help='Name of irrigation-shed param in the GIS viewer url')
 
+    url_gis_viewer_irrigationditch_param = fields.Char(
+        string='Param for irr. ditch',
+        size=20,
+        help='Name of irrigation-ditch param in the GIS viewer url')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -39,6 +44,9 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_irrigationshed_param',
                            self.url_gis_viewer_irrigationshed_param)
+        values.set_default('wua.infrastructure.configuration',
+                           'url_gis_viewer_irrigationditch_param',
+                           self.url_gis_viewer_irrigationditch_param)
         self.assign_groups_id_to_menus()
 
     def assign_groups_id_to_menus(self):
@@ -61,7 +69,7 @@ class WuaInfrastructureConfiguration(models.TransientModel):
                 self.env.ref('base_wua_infrastructure.'
                              'base_wua_infrastructure_'
                              'gravityfed_irrigation_menu').id
-        except:
+        except Exception:
             id_group_no_pressurized_irrigation = 0
             id_group_no_gravityfed_irrigation = 0
             id_base_wua_inf_pressurized_irrig_menu = 0
