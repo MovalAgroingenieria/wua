@@ -155,7 +155,8 @@ class WuaIrrigationditch(models.Model):
                     if url_for_record.find('?') != -1:
                         sep_char = '&'
                     url_for_record = url_for_record + sep_char + \
-                        irrigationditch_param + '=' + str(record.name)
+                        irrigationditch_param + '=' + \
+                        str(record.irrigationditch_code)
             if url_for_record and username and password:
                 credentials = username + "-" + password
                 credentials = credentials.ljust(32)
