@@ -345,7 +345,7 @@ class WuaParcel(models.Model):
             gis_irrigationditch_ok = True
         if gis_irrigationditch_ok:
             self.env.cr.execute("""
-                SELECT name, geom FROM public.wua_gis_irrigationditch
+                SELECT code, geom FROM public.wua_gis_irrigationditch
                 """)
             gis_irrigationditchs = self.env.cr.fetchall()
             if gis_irrigationditchs:
@@ -357,10 +357,10 @@ class WuaParcel(models.Model):
                     SET with_gis_irrigationditch = FALSE
                     """)
                 for gis_irrigationditch in gis_irrigationditchs:
-                    name = gis_irrigationditch[0]
-                    geom = gis_irrigationditch[1]
+                    code = gis_irrigationditch[0]
                     filtered_irrigationditchs = \
-                        irrigationditchs.filtered(lambda x: x.name == name)
+                        irrigationditchs.filtered(
+                            lambda x: x.irrigationditch_code == code)
                     if len(filtered_irrigationditchs) == 1:
                         irrigationditch = filtered_irrigationditchs[0]
                         irrigationditch.write({
