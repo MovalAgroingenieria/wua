@@ -16,6 +16,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "wizard/wizard_remove_readings_view.xml",
         "views/resources.xml",
         "views/wua_watermeter_view.xml",
         "views/wua_waterconnection_view.xml",
@@ -23,7 +24,6 @@
         "views/wua_presconsumption_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_agriculturalseason_view.xml",
-        "wizard/wizard_remove_readings_view.xml",
     ],
     "installable": True,
     "application": True,
