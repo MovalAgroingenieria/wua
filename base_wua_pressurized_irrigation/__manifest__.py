@@ -12,16 +12,19 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "wua_structure_irrigation",],
+        "wua_structure_irrigation",
+    ],
     "data": [
         "security/ir.model.access.csv",
+        "wizard/wizard_remove_readings_view.xml",
         "views/resources.xml",
         "views/wua_watermeter_view.xml",
         "views/wua_waterconnection_view.xml",
         "views/wua_reading_view.xml",
         "views/wua_presconsumption_view.xml",
         "views/wua_parcel_view.xml",
-        "views/wua_agriculturalseason_view.xml",],
+        "views/wua_agriculturalseason_view.xml",
+    ],
     "installable": True,
     "application": True,
 }

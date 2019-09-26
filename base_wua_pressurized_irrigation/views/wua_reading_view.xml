@@ -6,6 +6,11 @@
         <field name="model">wua.reading</field>
         <field name="arch" type="xml">
             <form duplicate="0">
+                <header>
+                    <button name="%(action_delete_readings)d"
+                            type="action" string="Delete readings"
+                            groups="base_wua.group_wua_manager"/>
+                </header>
                 <field name="id" invisible="1"/>
                 <field name="is_last_reading" invisible="1"/>
                 <sheet>
@@ -38,7 +43,7 @@
                         <notebook name="slave_data_notebook">
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
-                            </page>                        
+                            </page>
                         </notebook>
                     </group>
                 </sheet>
@@ -85,14 +90,14 @@
                      context="{'group_by':'hydraulicsector_id'}"/>
                     <filter string="Irrigation Shed"
                      name="irrigationshed"
-                     context="{'group_by':'irrigationshed_id'}"/>                
+                     context="{'group_by':'irrigationshed_id'}"/>
                     <filter string="Water Connection"
                      name="waterconnection"
-                     context="{'group_by':'waterconnection_id'}"/>                
+                     context="{'group_by':'waterconnection_id'}"/>
                     <filter string="Water Meter"
                      name="watermeter"
-                     context="{'group_by':'watermeter_id'}"/>                
-                </group>                                 
+                     context="{'group_by':'watermeter_id'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -133,11 +138,11 @@
                      context="{'group_by':'hydraulicsector_id'}"/>
                     <filter string="Irrigation Shed"
                      name="irrigationshed"
-                     context="{'group_by':'irrigationshed_id'}"/>                
+                     context="{'group_by':'irrigationshed_id'}"/>
                     <filter string="Water Connection"
                      name="waterconnection"
-                     context="{'group_by':'waterconnection_id'}"/>                
-                </group>                                 
+                     context="{'group_by':'waterconnection_id'}"/>
+                </group>
             </search>
         </field>
     </record>
