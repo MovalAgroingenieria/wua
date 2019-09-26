@@ -40,7 +40,6 @@
         "views/wua_irrigationditch_view.xml",
         "views/wua_irrigationshed_view.xml",
         "views/wua_hydraulicsector_view.xml",
-        "views/wua_invoiceline_view.xml",
         "views/res_partner_view.xml",
         "views/account_view.xml",
     ],
