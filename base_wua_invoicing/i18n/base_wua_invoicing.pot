@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-23 09:03+0000\n"
-"PO-Revision-Date: 2019-07-23 09:03+0000\n"
+"POT-Creation-Date: 2019-09-25 11:06+0000\n"
+"PO-Revision-Date: 2019-09-25 11:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -58,6 +58,16 @@ msgstr ""
 msgid "<span class=\"o_stat_text\">\n"
 "                                Overdue Credit\n"
 "                            </span>"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.report_credit_control_summary_document
+msgid "<span>&amp;nbsp;-&amp;nbsp;</span>"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.report_credit_control_summary_document
+msgid "<span>,&amp;nbsp;</span>"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -215,6 +225,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Cancelled Invoice"
 msgstr ""
 
@@ -363,6 +374,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Draft Invoice"
 msgstr ""
 
@@ -419,7 +431,7 @@ msgstr ""
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_parcel
-msgid "Entity (parcel)"
+msgid "Entity (parcel of Almassora)"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -458,6 +470,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_irrigationgate_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_parcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_partner_view_search
@@ -475,6 +488,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_parcel_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_waterconnection_hydraulicsector_id
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_parcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_waterconnection_view_search
 msgid "Hydraulic Sector"
@@ -553,6 +567,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Invoice"
 msgstr ""
 
@@ -573,9 +588,11 @@ msgstr ""
 #: code:addons/base_wua_invoicing/models/wua_irrigationditch.py:21
 #: code:addons/base_wua_invoicing/models/wua_irrigationgate.py:21
 #: code:addons/base_wua_invoicing/models/wua_irrigationshed.py:21
-#: code:addons/base_wua_invoicing/models/wua_parcel.py:21
+#: code:addons/base_wua_invoicing/models/wua_parcel.py:37
 #: code:addons/base_wua_invoicing/models/wua_waterconnection.py:21
 #: model:ir.actions.act_window,name:base_wua_invoicing.wua_invoice_line_product_action
+#: model:ir.actions.act_window,name:base_wua_invoicing.wua_invoicelines_action
+#: model:ir.ui.menu,name:base_wua_invoicing.wua_invoicelines_menu
 #, python-format
 msgid "Invoice Lines"
 msgstr ""
@@ -591,6 +608,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Invoice Set"
 msgstr ""
 
@@ -692,6 +710,21 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset_line_irrigationgate
 msgid "Irrigation gates of a invoice-set line"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
+msgid "Irrigationditch"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
+msgid "Irrigationgate"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
+msgid "Irrigationshed"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -931,7 +964,14 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Open Invoice"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_overdue
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_parcel_overdue
+msgid "Overdue"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -956,6 +996,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Paid Invoice"
 msgstr ""
 
@@ -964,6 +1005,7 @@ msgstr ""
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:673
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:754
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_parcel_id
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 #: model:product.category,name:base_wua_invoicing.categ_01
 #, python-format
 msgid "Parcel"
@@ -1013,6 +1055,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_categ_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 #: model:product.category,name:base_wua_invoicing.categ_02
 msgid "Partner"
 msgstr ""
@@ -1039,6 +1082,11 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_partner_view_search
 msgid "Payer"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_account_payment_order
+msgid "Payment Order"
 msgstr ""
 
 #. module: base_wua_invoicing
@@ -1078,6 +1126,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_categ_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Product"
 msgstr ""
 
@@ -1091,6 +1140,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.product_template_search_view
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Product Category"
 msgstr ""
 
@@ -1104,6 +1154,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_search
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 msgid "Proforma Invoice"
 msgstr ""
 
@@ -1213,6 +1264,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_partner_view_tree
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_product_view_tree
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoice_line_view_tree
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_tree
 msgid "Total"
 msgstr ""
 
@@ -1300,6 +1352,11 @@ msgstr ""
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset_line_waterconnection
 msgid "Water connections of a invoice-set line"
+msgstr ""
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
+msgid "Waterconnection"
 msgstr ""
 
 #. module: base_wua_invoicing

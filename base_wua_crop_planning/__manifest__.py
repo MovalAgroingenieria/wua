@@ -13,13 +13,13 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_invoicing_pressurized_irrigation",
-        "web_widget_digitized_signature",],
+        "web_widget_digitized_signature", ],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/wua_subparceltype_data.xml",
         "data/wua_sequences.xml",
-        "views/resources.xml",        
+        "views/resources.xml",
         "views/wua_cultivation_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_agriculturalseason_view.xml",
@@ -27,7 +27,7 @@
         "views/wua_cropplan_view.xml",
         "views/wua_waterconnection_view.xml",
         "views/res_partner_view.xml",
-        "reports/wua_cropplan_report.xml",],
+        "reports/wua_cropplan_report.xml", ],
     "installable": True,
     "application": True,
 }
