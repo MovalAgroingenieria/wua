@@ -266,7 +266,7 @@ class WuaCropplan(models.Model):
 
     @api.multi
     def write(self, vals):
-        if len(self) == 1:
+        if len(self) == 1 and 'order_number' not in vals:
             if ((not self.env.user.has_group('base_wua.group_wua_user') and
                (not self.env['ir.values'].get_default(
                    'wua.configuration', 'wua_portal_user_can_edit')) or
