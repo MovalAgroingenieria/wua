@@ -276,8 +276,6 @@
 
     <record id="wua_invoicelines_view_tree" model="ir.ui.view">
         <field name="name">Invoice Lines (tree view)</field>
-        <field name="domain">[('type','in',('out_invoice', 'out_refund'))]</field>
-        <field name="context">{'type':'out_invoice', 'journal_type': 'sale'}</field>
         <field name="model">account.invoice.line</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_invoicing_invoicelines_view_tree">
@@ -297,8 +295,6 @@
     <record id="wua_invoicelines_view_pivot" model="ir.ui.view" >
         <field name="name">Invoice Lines (pivot view)</field>
         <field name="model">account.invoice.line</field>
-        <field name="domain">[('type','in',('out_invoice', 'out_refund'))]</field>
-        <field name="context">{'type':'out_invoice', 'journal_type': 'sale'}</field>
         <field name="arch" type="xml">
             <pivot string="Invoice Lines" display_quantity="true">
                 <field name="partner_id"/>
@@ -310,8 +306,6 @@
     <record id="wua_invoicelines_view_graph" model="ir.ui.view">
         <field name="name">Invoice Lines (graph view)</field>
         <field name="model">account.invoice.line</field>
-        <field name="domain">[('type','in',('out_invoice', 'out_refund'))]</field>
-        <field name="context">{'type':'out_invoice', 'journal_type': 'sale'}</field>
         <field name="arch" type="xml">
             <graph string="Invoice Lines">
                 <field name="partner_id"/>
@@ -384,11 +378,8 @@
         <field name="view_mode">tree,graph,pivot</field>
         <field name="view_id" ref="wua_invoicelines_view_tree"/>
         <field name="search_view_id" ref="wua_invoicelines_view_search"/>
-        <field name="context">
-            {
-              'graph_mode': 'pie'
-            }
-        </field>
+        <field name="domain">[('invoice_type', '=', 'out_invoice')]</field>
+        <field name="context">{'graph_mode': 'pie'}</field>
     </record>
 
     <menuitem id="wua_invoicelines_menu"

@@ -175,6 +175,16 @@ class AccountInvoiceLine(models.Model):
         index=True,
         compute='_compute_irrigationditch_id')
 
+    invoice_type = fields.Selection([
+        ('out_invoice', 'Customer Invoice'),
+        ('in_invoice', 'Vendor Bill'),
+        ('out_refund', 'Customer Refund'),
+        ('in_refund', 'Vendor Refund')],
+        string='Invoice Type',
+        store=True,
+        index=True,
+        compute='_compute_invoice_type')
+
     @api.depends('product_id')
     def _compute_categ_id(self):
         for record in self:
@@ -198,6 +208,11 @@ class AccountInvoiceLine(models.Model):
         for record in self:
             record.irrigationditch_id = \
                 record.irrigationgate_id.irrigationditch_id
+
+    @api.depends('invoice_id', 'invoice_id.type')
+    def _compute_invoice_type(self):
+        for record in self:
+            record.invoice_type = record.invoice_id.type
 
     # No summary for: quantity, price_unit
     @api.model
