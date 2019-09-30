@@ -317,8 +317,6 @@
     <record id="wua_invoicelines_view_search" model="ir.ui.view">
         <field name="name">Invoice Lines (search view)</field>
         <field name="model">account.invoice.line</field>
-        <field name="domain">[('type','in',('out_invoice', 'out_refund'))]</field>
-        <field name="context">{'type':'out_invoice', 'journal_type': 'sale'}</field>
         <field name="arch" type="xml">
             <search>
                 <field name="invoiceset_id"/>
