@@ -20,7 +20,6 @@ class WuaParcelPartnerlink(models.Model):
     extra_code = fields.Char(
         string='Historical Code',
         size=40,
-        index=True,
         compute="_compute_extra_code")
 
     @api.multi
@@ -35,7 +34,6 @@ class WuaParcelIrrigationpoint(models.Model):
     extra_code = fields.Char(
         string='Historical Code',
         size=40,
-        index=True,
         compute="_compute_extra_code")
 
     @api.multi
