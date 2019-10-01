@@ -5,7 +5,7 @@
         <field name="name">Parcels (form view)</field>
         <field name="model">wua.parcel</field>
         <field name="inherit_id"
-               ref="base_wua.wua_parcel_view_form"/>        
+               ref="base_wua.wua_parcel_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='cadastral_sector']"
                    position="before">
@@ -31,10 +31,32 @@
         <field name="name">Parcels (search view)</field>
         <field name="model">wua.parcel</field>
         <field name="inherit_id"
-               ref="base_wua.wua_parcel_view_search"/>        
+               ref="base_wua.wua_parcel_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='name']"
                    position="after">
+                <field name="extra_code"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_partnerlink_view_tree" model="ir.ui.view" >
+        <field name="name">Partner Links extra code (tree view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']" position="after">
+                <field name="extra_code"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections extra code (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']" position="after">
                 <field name="extra_code"/>
             </xpath>
         </field>

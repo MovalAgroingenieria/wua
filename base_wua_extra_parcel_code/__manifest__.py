@@ -11,10 +11,12 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua",],
+        "base_wua_infrastructure",
+    ],
     "data": [
         "views/resources.xml",
-        "views/wua_parcel_view.xml",],
+        "views/wua_parcel_view.xml",
+    ],
     "installable": True,
     "application": False,
 }
