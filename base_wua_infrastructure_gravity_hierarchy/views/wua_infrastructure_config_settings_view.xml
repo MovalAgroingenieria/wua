@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add Max. Levels field -->
+            <xpath expr="//group[1]" position="after">
+                 <group string="Hierarchical Gravity">
+                    <field name="max_levels_gravity_irrigation" style="width:100px"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

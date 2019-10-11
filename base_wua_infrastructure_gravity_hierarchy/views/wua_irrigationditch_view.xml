@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Action -->
+    <record id="wua_irrigationditch_parcels_action_gh" model="ir.actions.server">
+        <field name="name">Parcels</field>
+        <field name="model_id" ref="base_wua_infrastructure_gravity_hierarchy.model_wua_irrigationditch"/>
+        <field name="code">action = env["wua.irrigationditch"].get_wua_irrigationditch_parcels_action_gh()</field>
+    </record>
+
+    <!-- Form view -->
+    <record id="wua_irrigationditch_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Ditches Gravity hierarchy (form view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationditch_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Hide unnecessary fields -->
+            <xpath expr="//field[@name='number_of_irrigationgates']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='irrigationgates_page']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='flowdividers_page']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Override smart button Parcels -->
+            <xpath expr="//button[@type='action']" position="replace">
+                <button name="%(wua_irrigationditch_parcels_action_gh)d" type="action"
+                    class="oe_stat_button" icon="fa-square-o" string="Parcels"
+                    attrs="{'invisible': [('number_of_parcels', '=', 0)]}"/>
+            </xpath>
+
+            <!-- Add gravity hierarchy fields -->
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="is_main"/>
+                <field name="irrigationditch_id" attrs="{'invisible':[('is_main', '=', True)],
+                                                         'required':[('is_main', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='total_affected_area_official']" position="after">
+                <field name="level"/>
+                <field name="path"/>
+            </xpath>
+            <xpath expr="//page[@name='notes_page']" position="before">
+                <page name="irrigationditch_ids_page" string="Supplied irrigation ditches" autofocus="True">
+                    <field name="irrigationditch_ids">
+                        <tree create="false" edit="false" delete="false">
+                            <field name="irrigationditch_code"/>
+                            <field name="name"/>
+                            <field name="level"/>
+                            <field name="path"/>
+                            <field name="total_affected_area_official"/>
+                            <field name="number_of_parcels"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Tree view -->
+    <record id="wua_irrigationditch_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Ditches Gravity hierarchy (tree view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationditch_view_tree"/>
+        <field name="arch" type="xml">
+
+            <!-- Hide unnecessary fields -->
+            <xpath expr="//field[@name='description']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='number_of_irrigationgates']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Add gravity hierarchy fields -->
+            
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="path"/>            
+                <field name="is_main"/>
+                <field name="level"/>
+                <field name="irrigationditch_id"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="wua_irrigationditch_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Ditches Gravity hierarchy (search view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationditch_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="is_main"/>
+                <field name="path"/>
+                <filter string="Is main: Yes" name="irrigationditchmainyes" domain="[('is_main','=',True)]"/>
+                <filter string="Is main: No" name="irrigationditchmainno" domain="[('is_main','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

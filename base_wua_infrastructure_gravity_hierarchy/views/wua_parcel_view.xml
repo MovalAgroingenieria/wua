@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form view -->
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels Gravity hierarchy (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Change irrigationditch_id by irrigationditch_direct_id -->
+            <xpath expr="//field[@name='irrigationditch_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='irrigationditch_id']" position="before">
+                <field name="irrigationditch_direct_id" colspan="4"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="wua_parcel_view_search" model="ir.ui.view">
+        <field name="name">Parcels Gravity hierarchy (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='irrigationditch_id']" position="after">
+                <field name="path"/>
+            </xpath>
+            <xpath expr="//filter[@name='irrigationworker']" position="after">
+                <filter string="Full name" name="path" context="{'group_by':'path'}"/>
+                <filter string="Ditch level 1" name="ditchlevel1" context="{'group_by':'irrigationditch_01_id'}"/>
+                <filter string="Ditch level 2" name="ditchlevel2" context="{'group_by':'irrigationditch_02_id'}"/>
+                <filter string="Ditch level 3" name="ditchlevel3" context="{'group_by':'irrigationditch_03_id'}"/>
+                <filter string="Ditch level 4" name="ditchlevel4" context="{'group_by':'irrigationditch_04_id'}"/>
+                <filter string="Ditch level 5" name="ditchlevel5" context="{'group_by':'irrigationditch_05_id'}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
