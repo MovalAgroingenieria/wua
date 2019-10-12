@@ -486,47 +486,51 @@ class WuaGravconsumption(models.Model):
 
     @api.multi
     def set_as_selected(self, active_gravconsumptions):
-        gravconsumptions = self.env['wua.gravconsumption'].browse(
-            active_gravconsumptions)
-        for record in gravconsumptions:
-            if record.state == 'proposed':
-                vals = {
-                    'selected': True,
-                    }
-                record.write(vals)
+        if self.env.user.has_group('base_wua.group_wua_manager'):
+            gravconsumptions = self.env['wua.gravconsumption'].browse(
+                active_gravconsumptions)
+            for record in gravconsumptions:
+                if record.state == 'proposed':
+                    vals = {
+                        'selected': True,
+                        }
+                    record.write(vals)
 
     @api.multi
     def set_as_unselected(self, active_gravconsumptions):
-        gravconsumptions = self.env['wua.gravconsumption'].browse(
-            active_gravconsumptions)
-        for record in gravconsumptions:
-            if record.state == 'proposed':
-                vals = {
-                    'selected': False,
-                    }
-                record.write(vals)
+        if self.env.user.has_group('base_wua.group_wua_manager'):
+            gravconsumptions = self.env['wua.gravconsumption'].browse(
+                active_gravconsumptions)
+            for record in gravconsumptions:
+                if record.state == 'proposed':
+                    vals = {
+                        'selected': False,
+                        }
+                    record.write(vals)
 
     @api.multi
     def set_as_executed(self, active_gravconsumptions):
-        gravconsumptions = self.env['wua.gravconsumption'].browse(
-            active_gravconsumptions)
-        for record in gravconsumptions:
-            if record.state == 'planned':
-                vals = {
-                    'state': 'executed',
-                    }
-                record.write(vals)
+        if self.env.user.has_group('base_wua.group_wua_manager'):
+            gravconsumptions = self.env['wua.gravconsumption'].browse(
+                active_gravconsumptions)
+            for record in gravconsumptions:
+                if record.state == 'planned':
+                    vals = {
+                        'state': 'executed',
+                        }
+                    record.write(vals)
 
     @api.multi
     def set_as_planned(self, active_gravconsumptions):
-        gravconsumptions = self.env['wua.gravconsumption'].browse(
-            active_gravconsumptions)
-        for record in gravconsumptions:
-            if record.state == 'executed':
-                vals = {
-                    'state': 'planned',
-                    }
-                record.write(vals)
+        if self.env.user.has_group('base_wua.group_wua_manager'):
+            gravconsumptions = self.env['wua.gravconsumption'].browse(
+                active_gravconsumptions)
+            for record in gravconsumptions:
+                if record.state == 'executed':
+                    vals = {
+                        'state': 'planned',
+                        }
+                    record.write(vals)
 
     @api.multi
     def action_see_gis_viewer(self):

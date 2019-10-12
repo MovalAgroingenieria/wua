@@ -220,7 +220,30 @@
               parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
               action="wua_gravconsumption_action"
               sequence="5"
-              groups="base_wua.group_wua_user"/>    
+              groups="base_wua.group_wua_user"/>
+
+    <record id="wua_gravconsumption_portal_user_action" model="ir.actions.act_window">
+        <field name="name">Consumptions</field>
+        <field name="res_model">wua.gravconsumption</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_id" ref="wua_gravconsumption_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_gravconsumption_view_search"/>
+        <field name="context">{'create': False,
+                               'edit': False,
+                               'delete': False,
+                               'search_default_agriculturalseason': 1,
+                               'search_default_irrigationditch': 1,
+                               'search_default_wateringperiod': 1}</field>
+    </record>
+
+    <menuitem id="wua_gravconsumption_portal_user_menu"
+              name="Consumptions"
+              parent="wua_structure_irrigation.base_wua_gravity_irrigation_menu"
+              action="wua_gravconsumption_portal_user_action"
+              sequence="5"
+              groups="base_wua.group_wua_portal_user"/>
 
     <record id="wua_gravconsumption_one_watering_view_tree" model="ir.ui.view">
         <field name="name">Gravity Consumptions (tree view)</field>
