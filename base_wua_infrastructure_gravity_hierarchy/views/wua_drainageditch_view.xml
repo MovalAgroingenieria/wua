@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Action -->
+    <record id="wua_drainageditch_parcels_action_gh" model="ir.actions.server">
+        <field name="name">Parcels</field>
+        <field name="model_id" ref="base_wua_infrastructure_gravity_hierarchy.model_wua_drainageditch"/>
+        <field name="code">action = env["wua.drainageditch"].get_wua_drainageditch_parcels_action_gh()</field>
+    </record>
+
+    <!-- Form view -->
+    <record id="wua_drainageditch_view_form" model="ir.ui.view">
+        <field name="name">Drainage Ditches Gravity hierarchy (form view)</field>
+        <field name="model">wua.drainageditch</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_drainageditch" invisible="1"/>
+                        <button name="%(wua_drainageditch_parcels_action_gh)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-square-o"
+                                string="Parcels"
+                                attrs="{'invisible': [('number_of_parcels', '=', 0)]}"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                      ['|',('gis_viewer_link','=',False),
+                                      ('with_gis_drainageditch','=',False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_id">
+                            <field name="name"/>
+                            <field name="drainageditch_code"/>
+                            <field name="description"/>
+                            <field name="is_main"/>
+                            <field name="drainageditch_id" attrs="{'invisible':[('is_main', '=', True)],
+                                                                   'required':[('is_main', '=', False)]}"/>
+                            <field name="number_of_parcels"/>
+                        </group>
+                        <group name="master_data_desc">
+                            <field name="level"/>
+                            <field name="path"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="drainageditch_ids_page" string="Drained drainage ditches" autofocus="True">
+                                <field name="drainageditch_ids">
+                                    <tree create="false" edit="false" delete="false">
+                                        <field name="drainageditch_code"/>
+                                        <field name="name"/>
+                                        <field name="level"/>
+                                        <field name="path"/>
+                                        <field name="number_of_parcels"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+
+        </field>
+    </record>
+
+    <!-- Tree view -->
+    <record id="wua_drainageditch_view_tree" model="ir.ui.view">
+        <field name="name">Drainage Ditches Gravity hierarchy (tree view)</field>
+        <field name="model">wua.drainageditch</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_drainageditch_view_tree">
+                <field name="drainageditch_code"/>
+                <field name="name"/>
+                <field name="path"/>
+                <field name="is_main"/>
+                <field name="level"/>
+                <field name="drainageditch_id"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_drainageditch" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),
+                               ('with_gis_drainageditch','=',False)]}"/>
+                <field name="description"/>
+                <field name="number_of_parcels"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_drainageditch_view_search" model="ir.ui.view">
+        <field name="name">Drainage Ditches (search view)</field>
+        <field name="model">wua.drainageditch</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="drainageditch_code"/>
+                <field name="name"/>
+                <field name="description"/>
+                <filter string="GIS Drainageditch: Yes" name="gisdrainageditchyes"
+                        domain="[('with_gis_drainageditch','=',True)]"/>
+                <filter string="GIS Drainageditch: No" name="gisdrainageditchno"
+                        domain="[('with_gis_drainageditch','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_drainageditch_action" model="ir.actions.act_window">
+        <field name="name">Drainage Ditches</field>
+        <field name="res_model">wua.drainageditch</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_drainageditch_view_tree"/>
+        <field name="search_view_id" ref="wua_drainageditch_view_search"/>
+    </record>
+
+    <menuitem id="wua_drainageditch_menu"
+              name="Drainage Ditches"
+              parent="base_wua_infrastructure.base_wua_infrastructure_gravityfed_irrigation_menu"
+              action="wua_drainageditch_action"
+              sequence="4"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

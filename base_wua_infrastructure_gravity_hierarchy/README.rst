@@ -14,6 +14,7 @@ Description
 Hierarchical infrastructure management.
 
 * Irrigation ditches hierchical gravity.
+* Drainage ditches.
 * Etc.
 
 Credits

@@ -9,11 +9,13 @@
         <field name="arch" type="xml">
 
             <!-- Change irrigationditch_id by irrigationditch_direct_id -->
-            <xpath expr="//field[@name='irrigationditch_id']" position="attributes">
-                <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//field[@name='irrigationditch_id']" position="before">
+            <xpath expr="//field[@name='irrigationditch_id']" position="replace">
                 <field name="irrigationditch_direct_id" colspan="4"/>
+            </xpath>
+
+            <!-- Add drainage ditch -->
+            <xpath expr="//field[@name='gravityfed_irrigation_right']" position="after">
+                <field name="drainageditch_id" colspan="4"/>
             </xpath>
 
         </field>
@@ -28,14 +30,24 @@
 
             <xpath expr="//field[@name='irrigationditch_id']" position="after">
                 <field name="path"/>
+                <field name="drain_path"/>
             </xpath>
             <xpath expr="//filter[@name='irrigationworker']" position="after">
-                <filter string="Full name" name="path" context="{'group_by':'path'}"/>
+                <filter string="Irrigation Full name" name="path" context="{'group_by':'path'}"/>
+                <filter string="Drainage full name" name="drain_path" context="{'group_by':'drain_path'}"/>
                 <filter string="Ditch level 1" name="ditchlevel1" context="{'group_by':'irrigationditch_01_id'}"/>
+                <filter string="Drainage ditch level 1" name="drainageditchlevel1" context="{'group_by':'drainageditch_01_id'}"/>
+
+                <!-- Filter not used
                 <filter string="Ditch level 2" name="ditchlevel2" context="{'group_by':'irrigationditch_02_id'}"/>
                 <filter string="Ditch level 3" name="ditchlevel3" context="{'group_by':'irrigationditch_03_id'}"/>
                 <filter string="Ditch level 4" name="ditchlevel4" context="{'group_by':'irrigationditch_04_id'}"/>
                 <filter string="Ditch level 5" name="ditchlevel5" context="{'group_by':'irrigationditch_05_id'}"/>
+                <filter string="Drainage ditch level 2" name="drainageditchlevel2" context="{'group_by':'drainageditch_02_id'}"/>
+                <filter string="Drainage ditch level 3" name="drainageditchlevel3" context="{'group_by':'drainageditch_03_id'}"/>
+                <filter string="Drainage ditch level 4" name="drainageditchlevel4" context="{'group_by':'drainageditch_04_id'}"/>
+                <filter string="Drainage ditch level 5" name="drainageditchlevel5" context="{'group_by':'drainageditch_05_id'}"/>
+                -->
             </xpath>
 
         </field>

@@ -20,6 +20,7 @@
         "views/wua_irrigationditch_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_invoiceset_view.xml",
+        "views/wua_drainageditch_view.xml",
     ],
     "installable": True,
     "application": False,

@@ -145,8 +145,32 @@ class WuaIrrigationditch(models.Model):
                                     'that depends on a ditch of the highest '
                                     'level (%s).' % max_level))
 
+    @api.model
+    def create(self, vals):
+        # Prevent character / in the ditch name
+        if 'name' in vals:
+            if '/' in vals['name']:
+                raise ValidationError(_('The character "/" '
+                                        'cannot be used in the name of the '
+                                        'irrigation ditch'))
+            else:
+                new_irrigationditch = \
+                    super(WuaIrrigationditch, self).create(vals)
+                return new_irrigationditch
+
     @api.multi
     def write(self, vals):
+        # Prevent a ditch from connecting with itself
+        if 'irrigationditch_id' in vals:
+            if self.id == vals['irrigationditch_id']:
+                raise ValidationError(_('A ditch cannot be '
+                                        'supplied by itself'))
+        # Prevent character / in the ditch name
+        if 'name' in vals:
+            if '/' in vals['name']:
+                raise ValidationError(_('The character "/" '
+                                        'cannot be used in the '
+                                        'name of the irrigation ditch'))
         if len(self) == 1:
             # Call to inherited method.
             old_name = self.name
@@ -171,7 +195,7 @@ class WuaIrrigationditch(models.Model):
                             else:
                                 new_path += item + '/'
                         irrigationditch.write({'path': new_path})
-            return True
+                return True
         else:
             return super(WuaIrrigationditch, self).write(vals)
 
