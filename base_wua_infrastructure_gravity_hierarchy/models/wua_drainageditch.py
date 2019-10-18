@@ -371,3 +371,13 @@ class WuaDrainageditch(models.Model):
                 'context': self.env.context,
                 }
             return act_window
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-11 17:31+0000\n"
-"PO-Revision-Date: 2019-10-11 17:31+0000\n"
+"POT-Creation-Date: 2019-10-18 10:55+0000\n"
+"PO-Revision-Date: 2019-10-18 10:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,10 +16,33 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:166
+#, python-format
+msgid "A ditch cannot be supplied by itself"
+msgstr "Una sèquia no pot proveir-se a si mateixa."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:261
+#, python-format
+msgid "A drainage ditch cannot drain to itself"
+msgstr "Un assarb no pot proveir-se a si mateix."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:135
 #, python-format
 msgid "A non-main ditch must be supplied by another."
 msgstr "Una sèquia que no sigui sèquia principal necessàriament ha de ser proveïda per una altra."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:224
+#, python-format
+msgid "A non-main drainage ditch must                                    drain to another."
+msgstr "Un assarb no principal ha de drenar a un altre."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_drainageditch_code
+msgid "Code"
+msgstr "Codi"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_infrastructure_configuration
@@ -27,29 +50,82 @@ msgid "Configuration of base_wua_infrastructure module"
 msgstr "Configuració del mòdul base_wua_infrastructure"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_create_uid
+msgid "Created by"
+msgstr "Creat per"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_create_date
+msgid "Created on"
+msgstr "Creat el"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_number_of_parcels
+msgid "Cumulative number of parcels"
+msgstr "Nº parcel·les (valor acumulatiu)"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_description
+msgid "Description"
+msgstr "Descripció"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_display_name
+msgid "Display Name"
+msgstr "Veure el nom"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
 msgid "Ditch level 1"
 msgstr "Sèquia de nivell 1"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
-msgid "Ditch level 2"
-msgstr "Sèquia de nivell 2"
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_drainageditch_id
+msgid "Drainage Ditch"
+msgstr "Assarb"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_drain_path
+msgid "Drainage Ditch Full name"
+msgstr "Nom complet assarb"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.actions.act_window,name:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_action
+#: model:ir.ui.menu,name:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_menu
+msgid "Drainage Ditches"
+msgstr "Assarbs"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
-msgid "Ditch level 3"
-msgstr "Sèquia de nivell 3"
+msgid "Drainage ditch level 1"
+msgstr "Assarb (nivell 1)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
-msgid "Ditch level 4"
-msgstr "Sèquia de nivell 4"
+msgid "Drainage full name"
+msgstr "Nom complet assarb"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
-msgid "Ditch level 5"
-msgstr "Sèquia de nivell 5"
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_drainageditch_ids
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
+msgid "Drained drainage ditches"
+msgstr "Assarbs drenants"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_drainageditch_id
+msgid "Drained to"
+msgstr "Drenat a"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:210
+#, python-format
+msgid "Empty Value."
+msgstr "Valor buit."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_drainageditch
+msgid "Entity (drainage ditch)"
+msgstr "Element (assarb)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_irrigationditch
@@ -57,9 +133,9 @@ msgid "Entity (irrigation ditch)"
 msgstr "Element (sèquia)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr "Element (parcel·la)"
+#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_invoiceset_line
+msgid "Entity (line of a WUA invoice set)"
+msgstr "Element (línia de lot de factures)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_invoiceset.py:63
@@ -68,16 +144,52 @@ msgid "Error when updating records."
 msgstr "Error en actualitzar registres a la base de dades."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: sql_constraint:wua.drainageditch:0
+msgid "Existing Name."
+msgstr "El nom de l'assarb ja existeix."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_path
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_path
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_invoiceset_line_parcel_view_search
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
 msgid "Full name"
 msgstr "Nom complet"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_with_gis_drainageditch
+msgid "GIS Drainageditch"
+msgstr "Assarb GIS"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_search
+msgid "GIS Drainageditch: No"
+msgstr "Assarb GIS: No"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_search
+msgid "GIS Drainageditch: Yes"
+msgstr "Assarb GIS: Si"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_gis_viewer_link
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
+msgid "GIS Viewer"
+msgstr "Visor GIS"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_tree
+msgid "GIS Viewer (zoom to point)"
+msgstr "Visor GIS (zoom a punt)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_infrastructure_config_settings_view_form
 msgid "Hierarchical Gravity"
 msgstr "Reg per gravetat jeràrquic"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_id
+msgid "ID"
+msgstr "ID"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_irrigationditch_direct_id
@@ -91,6 +203,11 @@ msgid "Irrigation Ditch Full name"
 msgstr "Nom complet de la sèquia"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
+msgid "Irrigation Full name"
+msgstr "Nom complet de la sèquia"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_view_search
 msgid "Is main: No"
 msgstr "Principal: No"
@@ -98,12 +215,33 @@ msgstr "Principal: No"
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_view_search
 msgid "Is main: Yes"
-msgstr "Principal: Yes"
+msgstr "Principal: Si"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch___last_update
+msgid "Last Modified on"
+msgstr "Darrera modificació el"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_write_uid
+msgid "Last Updated by"
+msgstr "Darrera Actualització per"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_write_date
+msgid "Last Updated on"
+msgstr "Darrera Actualització el"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_level
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_level
 msgid "Level"
 msgstr "Nivell"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_drainageditch_01_id
+msgid "Level 1 Drainage Ditch"
+msgstr "Assarb de nivell 1"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_irrigationditch_01_id
@@ -111,9 +249,19 @@ msgid "Level 1 Irrigation Ditch"
 msgstr "Sèquia de nivell 1"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_drainageditch_02_id
+msgid "Level 2 Drainage Ditch"
+msgstr "Assarb de nivell 2"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_irrigationditch_02_id
 msgid "Level 2 Irrigation Ditch"
 msgstr "Sèquia de nivell 2"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_drainageditch_03_id
+msgid "Level 3 Drainage Ditch"
+msgstr "Assarb de nivell 3"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_irrigationditch_03_id
@@ -121,9 +269,19 @@ msgid "Level 3 Irrigation Ditch"
 msgstr "Sèquia de nivell 3"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_drainageditch_04_id
+msgid "Level 4 Drainage Ditch"
+msgstr "Assarb de nivell 4"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_irrigationditch_04_id
 msgid "Level 4 Irrigation Ditch"
 msgstr "Sèquia de nivell 4"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_drainageditch_05_id
+msgid "Level 5 Drainage Ditch"
+msgstr "Assarb de nivell 5"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_irrigationditch_05_id
@@ -131,11 +289,7 @@ msgid "Level 5 Irrigation Ditch"
 msgstr "Sèquia de nivell 5"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_invoiceset_line
-msgid "Line of a WUA invoice set"
-msgstr "Línia de detall de lot de factures"
-
-#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_is_main
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_is_main
 msgid "Main"
 msgstr "Principal"
@@ -143,15 +297,49 @@ msgstr "Principal"
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_infrastructure_configuration_max_levels_gravity_irrigation
 msgid "Max. Levels"
-msgstr "Nº màx. nivells"
+msgstr "Nº màx. nivells sèquias"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:201
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_infrastructure_configuration_max_levels_gravity_drainage
+msgid "Max. Levels drainage"
+msgstr "Nº màx. nivells assarbs"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_name
+msgid "Name"
+msgstr "Nom"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,help:base_wua_infrastructure_gravity_hierarchy.field_wua_infrastructure_configuration_url_gis_viewer_drainageditch_param
+msgid "Name of drainage-ditch param in the GIS viewer url"
+msgstr "Nom del paràmetre de assarb a la URL del visor GIS"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_notes
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
+msgid "Notes"
+msgstr "Notes"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_infrastructure_configuration_url_gis_viewer_drainageditch_param
+msgid "Param for drainage ditch"
+msgstr "Paràmetre per assarb"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:364
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:225
+#: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_parcels_action_gh
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_parcels_action_gh
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_view_form
 #, python-format
 msgid "Parcels"
 msgstr "Parcel·les"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_parcel
+msgid "Parcels (integrated GIS)"
+msgstr "Parcel·les (GIS integrat)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_parcel_01_ids
@@ -159,9 +347,19 @@ msgid "Parcels at level 1 ditch"
 msgstr "Parcel·les de la sèquia (nivell 1)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_parcel_01_ids
+msgid "Parcels at level 1 drainage ditch"
+msgstr "Parcel·les del assarb (nivell 1)"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_parcel_02_ids
 msgid "Parcels at level 2 ditch"
 msgstr "Parcel·les de la sèquia (nivell 2)"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_parcel_02_ids
+msgid "Parcels at level 2 drainage ditch"
+msgstr "Parcel·les del assarb (nivell 2)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_parcel_03_ids
@@ -169,14 +367,29 @@ msgid "Parcels at level 3 ditch"
 msgstr "Parcel·les de la sèquia (nivell 3)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_parcel_03_ids
+msgid "Parcels at level 3 drainage ditch"
+msgstr "Parcel·les del assarb (nivell 3)"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_parcel_04_ids
 msgid "Parcels at level 4 ditch"
 msgstr "Parcel·les de la sèquia (nivell 4)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_parcel_04_ids
+msgid "Parcels at level 4 drainage ditch"
+msgstr "Parcel·les del assarb (nivell 4)"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_parcel_05_ids
 msgid "Parcels at level 5 ditch"
 msgstr "Parcel·les de la sèquia (nivell 5)"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_parcel_05_ids
+msgid "Parcels at level 5 drainage ditch"
+msgstr "Parcel·les del assarb (nivell 5)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_invoiceset_line_parcel
@@ -200,14 +413,68 @@ msgstr "Sèquies proveïdes"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: sql_constraint:wua.infrastructure.configuration:0
+msgid "The \"Max. Levels drainage\" value has to be between 1 and 5."
+msgstr "El \"Nº màx. Nivells de assarbs\" ha de ser un valor entre 1 i 5."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: sql_constraint:wua.infrastructure.configuration:0
 msgid "The \"Max. Levels\" value has to be between 1 and 5."
-msgstr "El \"Nº màx. Nivells\" ha de ser un valor entre 1 i 5."
+msgstr "El \"Nº màx. Nivells de sèquies\" ha de ser un valor entre 1 i 5."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:252
+#, python-format
+msgid "The character \"/\"                    cannot be used in the name of the drainage ditch"
+msgstr "El caràcter '/' no es pot usar en el nom d'un assarb."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:266
+#, python-format
+msgid "The character \"/\" cannot be used in the name of the drainage ditch"
+msgstr "El caràcter '/' no es pot usar en el nom d'un assarb."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:153
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:171
+#, python-format
+msgid "The character \"/\" cannot be used in the name of the irrigation ditch"
+msgstr "El caràcter '/' no es pot usar en el nom d'una sèquia."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:247
+#, python-format
+msgid "The drainage ditch                                             code already exists."
+msgstr "El codi del assarb ja existeix."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:215
+#, python-format
+msgid "The drainage ditch code                                               must be a positive value."
+msgstr "El codi de l'assarb ha de ser un valor positiu."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:297
+#, python-format
+msgid "The drainage ditch code                                             already exists."
+msgstr "El codi del assarb ja existeix."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:132
 #, python-format
 msgid "The main ditch cannot be supplied by any other."
 msgstr "Una sèquia principal no pot ser proveïda per una altra."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:221
+#, python-format
+msgid "The main drainage ditch cannot                                    drains to any other."
+msgstr "Un assarb principal no pot drenar a cap altre."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:233
+#, python-format
+msgid "You cannot create a drainage ditch that depends on a ditch of the highest level (%s)."
+msgstr "No és possible donar d'alta un assarb que depengui d'un altre del nivell màxim (%s)."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:144
