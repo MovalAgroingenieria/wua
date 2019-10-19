@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='internal_notes']" position="after">
+                <page name="payment_modes" string="Separate Billing">
+                    <field name="watercosts_partner_id"/>
+                    <field name="othercosts_partner_id"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
