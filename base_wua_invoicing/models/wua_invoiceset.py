@@ -1059,6 +1059,8 @@ class WuaInvoiceset(models.Model):
                         data = \
                             self.add_to_invoice_data_line_ref_to_other_types(
                                 categ_code, invoice_data_line, data)
+                    data = self.add_to_invoice_data_line_other_data(
+                        categ_code, invoice_data_line, data)
                     lines.append((0, 0, data))
             if len(lines) > 0:
                 partner_id = invoice_data['partner_id']
@@ -1135,6 +1137,11 @@ class WuaInvoiceset(models.Model):
 
     # Hook
     def add_to_invoice_data_line_ref_to_other_types(
+            self, categ_code, invoice_data_line, data):
+        return data
+
+    # Hook
+    def add_to_invoice_data_line_other_data(
             self, categ_code, invoice_data_line, data):
         return data
 

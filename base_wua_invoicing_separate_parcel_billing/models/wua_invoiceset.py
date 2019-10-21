@@ -87,42 +87,10 @@ class WuaInvoiceset(models.Model):
                 invoices_data.append(result)
         return invoices_data
 
-    def add_to_invoice_data_line_ref_to_parcel(self, invoice_data_line, data):
-        data = super(WuaInvoiceset,
-                     self).add_to_invoice_data_line_ref_to_parcel(
-                         invoice_data_line, data)
-        if 'payment_mode_id' in invoice_data_line:
-            data['payment_mode_id'] = invoice_data_line['payment_mode_id']
-        if 'mandate_id' in invoice_data_line:
-            data['mandate_id'] = invoice_data_line['mandate_id']
-        return data
-
-    def add_to_invoice_data_line_ref_to_wc(
-            self, invoice_data_line, data):
-        data = super(WuaInvoiceset,
-                     self).add_to_invoice_data_line_ref_to_wc(
-                         invoice_data_line, data)
-        if 'payment_mode_id' in invoice_data_line:
-            data['payment_mode_id'] = invoice_data_line['payment_mode_id']
-        if 'mandate_id' in invoice_data_line:
-            data['mandate_id'] = invoice_data_line['mandate_id']
-        return data
-
-    def add_to_invoice_data_line_ref_to_ig(
-            self, invoice_data_line, data):
-        data = super(WuaInvoiceset,
-                     self).add_to_invoice_data_line_ref_to_ig(
-                         invoice_data_line, data)
-        if 'payment_mode_id' in invoice_data_line:
-            data['payment_mode_id'] = invoice_data_line['payment_mode_id']
-        if 'mandate_id' in invoice_data_line:
-            data['mandate_id'] = invoice_data_line['mandate_id']
-        return data
-
-    def add_to_invoice_data_line_ref_to_other_types(
+    def add_to_invoice_data_line_other_data(
             self, categ_code, invoice_data_line, data):
         data = super(WuaInvoiceset,
-                     self).add_to_invoice_data_line_ref_to_other_types(
+                     self).add_to_invoice_data_line_other_data(
                          categ_code, invoice_data_line, data)
         if 'payment_mode_id' in invoice_data_line:
             data['payment_mode_id'] = invoice_data_line['payment_mode_id']
