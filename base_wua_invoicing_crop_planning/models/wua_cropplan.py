@@ -5,6 +5,28 @@
 from odoo import models, fields, api
 
 
+class WuaCropplan(models.Model):
+    _inherit = 'wua.cropplan'
+
+    contracted_volume = fields.Float(
+        string='Contracted Water (m3)',
+        store=True,
+        index=True,
+        compute='_compute_contracted_volume'
+    )
+
+    @api.depends('enrolledsubparcel_ids',
+                 'enrolledsubparcel_ids.contracted_volume')
+    def _compute_contracted_volume(self):
+        for record in self:
+            total_volume = 0
+            if (record.enrolledsubparcel_ids):
+                for enrolledsubparcel in record.enrolledsubparcel_ids:
+                    if (enrolledsubparcel.contracted_volume):
+                        total_volume += enrolledsubparcel.contracted_volume
+            record.contracted_volume = total_volume
+
+
 class WuaEnrolledsubparcel(models.Model):
     _inherit = 'wua.enrolledsubparcel'
 
