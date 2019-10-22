@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association: Invoicing Crop Planning",
     "summary": "In a water users association, invoicing crop "
-                "planning for agricultural seasons",
+               "planning for agricultural seasons",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
@@ -17,6 +17,7 @@
     "data": [
         "views/resources.xml",
         "views/wua_agriculturalseason_view.xml",
+        "views/wua_cropplan_view.xml",
      ],
     "installable": True,
     "application": True,
