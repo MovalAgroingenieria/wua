@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+  <record id="wua_cropplan_view_tree" model="ir.ui.view">
+      <field name="name">Crop Plans (tree view)</field>
+      <field name="model">wua.cropplan</field>
+      <field name="inherit_id" ref="base_wua_crop_planning.wua_cropplan_view_tree"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='area_official']" position="after">
+            <field name="contracted_volume"/>
+        </xpath>
+      </field>
+  </record>
+
+  <record id="wua_cropplan_view_form" model="ir.ui.view">
+      <field name="name">Crop Plans (form view)</field>
+      <field name="model">wua.cropplan</field>
+      <field name="inherit_id" ref="base_wua_crop_planning.wua_cropplan_view_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='area_official']" position="after">
+            <field name="contracted_volume"/>
+        </xpath>
+      </field>
+  </record>
+
   <record id="wua_enrolledsubparcel_view_tree" model="ir.ui.view">
       <field name="name">Enrolled Subparcels (tree view)</field>
       <field name="model">wua.enrolledsubparcel</field>
