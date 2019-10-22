@@ -16,6 +16,7 @@
      ],
     "data": [
         "views/resources.xml",
+        "views/wua_agriculturalseason_view.xml",
      ],
     "installable": True,
     "application": True,
