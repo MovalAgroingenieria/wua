@@ -36,6 +36,7 @@ class WuaInfrastructureConfiguration(models.TransientModel):
 
     @api.multi
     def set_default_values(self):
+        super(WuaInfrastructureConfiguration, self).set_default_values()
         values = self.env['ir.values'].sudo()
         values.set_default('wua.infrastructure.configuration',
                            'max_levels_gravity_irrigation',
@@ -46,4 +47,3 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_drainageditch_param',
                            self.url_gis_viewer_drainageditch_param)
-

@@ -4,7 +4,8 @@
 
 {
     "name": "Hierarchical Infrastructure for Gravity Irrigation",
-    "summary": "Hierarchical infrastructure management",
+    "summary": "Hierarchical infrastructure management, for "
+               "gravity irrigation",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
@@ -14,6 +15,7 @@
         "base_wua_invoicing",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "data/base_infrastructe_gravity_hierarchy_config_settings_data.xml",
         "views/resources.xml",
         "views/wua_infrastructure_config_settings_view.xml",

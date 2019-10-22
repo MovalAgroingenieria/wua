@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-18 10:55+0000\n"
-"PO-Revision-Date: 2019-10-18 10:55+0000\n"
+"POT-Creation-Date: 2019-10-22 15:20+0000\n"
+"PO-Revision-Date: 2019-10-22 15:20+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,28 +16,23 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:166
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:270
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:171
 #, python-format
-msgid "A ditch cannot be supplied by itself"
+msgid "A ditch cannot be supplied by itself."
 msgstr "Una sèquia no pot proveir-se a si mateixa."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:261
-#, python-format
-msgid "A drainage ditch cannot drain to itself"
-msgstr "Un assarb no pot proveir-se a si mateix."
-
-#. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:135
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:134
 #, python-format
 msgid "A non-main ditch must be supplied by another."
 msgstr "Una sèquia que no sigui sèquia principal necessàriament ha de ser proveïda per una altra."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:224
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:223
 #, python-format
-msgid "A non-main drainage ditch must                                    drain to another."
-msgstr "Un assarb no principal ha de drenar a un altre."
+msgid "A non-main drainage ditch must drain to another."
+msgstr "Un assarb no principal necessàriament ha de abocar aigua sobre un altre."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_drainageditch_code
@@ -109,7 +104,7 @@ msgstr "Nom complet assarb"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_drainageditch_ids
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
 msgid "Drained drainage ditches"
-msgstr "Assarbs drenants"
+msgstr "Assarbs d'origen"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_drainageditch_id
@@ -117,7 +112,7 @@ msgid "Drained to"
 msgstr "Drenat a"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:210
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:209
 #, python-format
 msgid "Empty Value."
 msgstr "Valor buit."
@@ -133,15 +128,15 @@ msgid "Entity (irrigation ditch)"
 msgstr "Element (sèquia)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_invoiceset_line
-msgid "Entity (line of a WUA invoice set)"
-msgstr "Element (línia de lot de factures)"
+#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Entity (parcel)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_invoiceset.py:63
 #, python-format
 msgid "Error when updating records."
-msgstr "Error en actualitzar registres a la base de dades."
+msgstr "Error when updating records."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: sql_constraint:wua.drainageditch:0
@@ -157,7 +152,7 @@ msgstr "Nom complet"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_with_gis_drainageditch
-msgid "GIS Drainageditch"
+msgid "GIS Drainage Ditch"
 msgstr "Assarb GIS"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
@@ -200,7 +195,7 @@ msgstr "Sèquia"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_invoiceset_line_parcel_path
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_path
 msgid "Irrigation Ditch Full name"
-msgstr "Nom complet de la sèquia"
+msgstr "Irrigation Ditch Full name"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_parcel_view_search
@@ -289,6 +284,11 @@ msgid "Level 5 Irrigation Ditch"
 msgstr "Sèquia de nivell 5"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_invoiceset_line
+msgid "Line of a WUA invoice set"
+msgstr "Línia de detall de lot de factures"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_is_main
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_is_main
 msgid "Main"
@@ -297,7 +297,7 @@ msgstr "Principal"
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_infrastructure_configuration_max_levels_gravity_irrigation
 msgid "Max. Levels"
-msgstr "Nº màx. nivells sèquias"
+msgstr "Nº màx. nivells sèquies"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_infrastructure_configuration_max_levels_gravity_drainage
@@ -323,11 +323,11 @@ msgstr "Notes"
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_infrastructure_configuration_url_gis_viewer_drainageditch_param
 msgid "Param for drainage ditch"
-msgstr "Paràmetre per assarb"
+msgstr "Paràmetre Assarb"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:364
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:225
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:372
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:223
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_parcels_action_gh
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_parcels_action_gh
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
@@ -335,11 +335,6 @@ msgstr "Paràmetre per assarb"
 #, python-format
 msgid "Parcels"
 msgstr "Parcel·les"
-
-#. module: base_wua_infrastructure_gravity_hierarchy
-#: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcel·les (GIS integrat)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_parcel_01_ids
@@ -422,62 +417,52 @@ msgid "The \"Max. Levels\" value has to be between 1 and 5."
 msgstr "El \"Nº màx. Nivells de sèquies\" ha de ser un valor entre 1 i 5."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:252
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:263
 #, python-format
-msgid "The character \"/\"                    cannot be used in the name of the drainage ditch"
-msgstr "El caràcter '/' no es pot usar en el nom d'un assarb."
+msgid "The character \"/\" cannot be used in the name of the drainage ditch."
+msgstr "El caràcter \"/\" no es pot usar en el nom d'un assarb."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:266
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:251
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:152
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:165
 #, python-format
-msgid "The character \"/\" cannot be used in the name of the drainage ditch"
-msgstr "El caràcter '/' no es pot usar en el nom d'un assarb."
-
-#. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:153
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:171
-#, python-format
-msgid "The character \"/\" cannot be used in the name of the irrigation ditch"
-msgstr "El caràcter '/' no es pot usar en el nom d'una sèquia."
+msgid "The character \"/\" cannot be used in the name of the irrigation ditch."
+msgstr "El caràcter \"/\" no es pot usar en el nom d'una sèquia."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:247
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:280
 #, python-format
-msgid "The drainage ditch                                             code already exists."
-msgstr "El codi del assarb ja existeix."
+msgid "The drainage ditch code already exists."
+msgstr "El codi de l'assarb ja existeix."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:215
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:214
 #, python-format
-msgid "The drainage ditch code                                               must be a positive value."
-msgstr "El codi de l'assarb ha de ser un valor positiu."
+msgid "The drainage ditch code must be a positive value."
+msgstr "El codi de assarb ha de ser un valor positiu."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:297
-#, python-format
-msgid "The drainage ditch code                                             already exists."
-msgstr "El codi del assarb ja existeix."
-
-#. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:132
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:131
 #, python-format
 msgid "The main ditch cannot be supplied by any other."
 msgstr "Una sèquia principal no pot ser proveïda per una altra."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:221
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:220
 #, python-format
-msgid "The main drainage ditch cannot                                    drains to any other."
-msgstr "Un assarb principal no pot drenar a cap altre."
+msgid "The main drainage ditch cannot drains to any other."
+msgstr "Un assarb principal no pot enviar aigua a un altre."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:233
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:232
 #, python-format
 msgid "You cannot create a drainage ditch that depends on a ditch of the highest level (%s)."
 msgstr "No és possible donar d'alta un assarb que depengui d'un altre del nivell màxim (%s)."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:144
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:143
 #, python-format
 msgid "You cannot create a irrigation ditch that depends on a ditch of the highest level (%s)."
 msgstr "No és possible donar d'alta una sèquia que depengui d'una altra del nivell màxim (% s)."

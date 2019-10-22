@@ -6,16 +6,15 @@
 Hierarchical Infrastructure For Gravity Irrigation
 ==================================================
 
-This module allows you to manage hierarchically the infrastructure of water users associations.
+This module allows you to manage hierarchically the infrastructure of water users associations, for gravity irrigation.
 
 Description
 ===========
 
-Hierarchical infrastructure management.
+Hierarchical infrastructure management for:
 
-* Irrigation ditches hierchical gravity.
+* Irrigation ditches.
 * Drainage ditches.
-* Etc.
 
 Credits
 =======

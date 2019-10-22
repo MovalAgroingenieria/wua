@@ -20,7 +20,6 @@ class WuaParcel(models.Model):
         string='Drainage Ditch',
         comodel_name='wua.drainageditch',
         index=True,
-        store=True,
         ondelete='restrict')
 
     path = fields.Char(
@@ -120,7 +119,7 @@ class WuaParcel(models.Model):
         for record in self:
             drain_path = ''
             if record.drainageditch_id:
-                path = record.drainageditch_id.path
+                drain_path = record.drainageditch_id.path
             record.drain_path = drain_path
 
     @api.depends('irrigationditch_direct_id')
@@ -159,18 +158,6 @@ class WuaParcel(models.Model):
             record.irrigationditch_05_id = \
                 self.get_irrigationditch(record, 5)
 
-    def get_irrigationditch(self, parcel, level):
-        resp = None
-        if (parcel.irrigationditch_id and
-           parcel.irrigationditch_id.level >= level):
-            irrigationditch = parcel.irrigationditch_id
-            current_level = irrigationditch.level
-            while current_level > level:
-                irrigationditch = irrigationditch.irrigationditch_id
-                current_level = irrigationditch.level
-            resp = irrigationditch
-        return resp
-
     @api.depends('drainageditch_id', 'drainageditch_id.level')
     def _compute_drainageditch_id_01(self):
         for record in self:
@@ -201,6 +188,18 @@ class WuaParcel(models.Model):
             record.drainageditch_05_id = \
                 self.get_drainageditch(record, 5)
 
+    def get_irrigationditch(self, parcel, level):
+        resp = None
+        if (parcel.irrigationditch_id and
+           parcel.irrigationditch_id.level >= level):
+            irrigationditch = parcel.irrigationditch_id
+            current_level = irrigationditch.level
+            while current_level > level:
+                irrigationditch = irrigationditch.irrigationditch_id
+                current_level = irrigationditch.level
+            resp = irrigationditch
+        return resp
+
     def get_drainageditch(self, parcel, level):
         resp = None
         if (parcel.drainageditch_id and
@@ -221,7 +220,7 @@ class WuaParcel(models.Model):
         #        fail. Only gis_parcels_ok is needed, but if any fail
         #        the return is False.
         # Temporally do not check the return
-        #if (not gis_parcels_ok):
+        # if (not gis_parcels_ok):
         #    return False
         gis_drainageditch_ok = False
         self.env.cr.execute("""

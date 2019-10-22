@@ -3,10 +3,10 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, exceptions, _
-from odoo.exceptions import ValidationError
 from Crypto.Cipher import AES
 import datetime
 import pytz
+
 
 class WuaDrainageditch(models.Model):
     _name = 'wua.drainageditch'
@@ -27,8 +27,7 @@ class WuaDrainageditch(models.Model):
     def _default_drainageditch_code(self):
         resp = 0
         drainageditches = self.search([('drainageditch_code', '>', 0)],
-                                        limit=1,
-                                        order='drainageditch_code desc')
+                                      limit=1, order='drainageditch_code desc')
         if len(drainageditches) == 1:
             resp = drainageditches[0].drainageditch_code + 1
         else:
@@ -58,7 +57,7 @@ class WuaDrainageditch(models.Model):
         compute='_compute_gis_viewer_link')
 
     with_gis_drainageditch = fields.Boolean(
-        string='GIS Drainageditch',
+        string='GIS Drainage Ditch',
         store=True)
 
     is_main = fields.Boolean(
@@ -212,17 +211,17 @@ class WuaDrainageditch(models.Model):
     @api.constrains('drainageditch_code')
     def _check_drainageditch_code(self):
         if self.drainageditch_code <= 0:
-            raise exceptions.ValidationError(_('The drainage ditch code\
-                                               must be a positive value.'))
+            raise exceptions.ValidationError(_('The drainage ditch code '
+                                               'must be a positive value.'))
 
     @api.constrains('is_main', 'drainageditch_id')
     def _check_drainageditch_id(self):
         if self.is_main and self.drainageditch_id:
-            raise ValidationError(_('The main drainage ditch cannot\
-                                    drains to any other.'))
+            raise exceptions.ValidationError(_('The main drainage ditch '
+                                               'cannot drains to any other.'))
         if not self.is_main and not self.drainageditch_id:
-            raise ValidationError(_('A non-main drainage ditch must\
-                                    drain to another.'))
+            raise exceptions.ValidationError(_('A non-main drainage ditch '
+                                               'must drain to another.'))
 
     @api.constrains('level')
     def _check_level(self):
@@ -230,9 +229,10 @@ class WuaDrainageditch(models.Model):
             'wua.infrastructure.configuration',
             'max_levels_gravity_irrigation')
         if self.level > max_level:
-            raise ValidationError(_('You cannot create a drainage ditch '
-                                    'that depends on a ditch of the highest '
-                                    'level (%s).' % max_level))
+            raise exceptions.ValidationError(_('You cannot create a drainage '
+                                               'ditch that depends on a ditch '
+                                               'of the highest level '
+                                               '(%s).' % max_level))
 
     @api.model
     def create(self, vals):
@@ -244,59 +244,67 @@ class WuaDrainageditch(models.Model):
                 not self.exists_drainageditch_code(
                     vals['drainageditch_code'], new_drainageditch.id)
             if not correct_drainageditch_code:
-                raise exceptions.UserError(_('The drainage ditch\
-                                             code already exists.'))
-        # Prevent character / in the ditch name
-        if 'name' in vals:
-            if '/' in vals['name']:
-                raise ValidationError(_('The character "/"\
-                    cannot be used in the name of the drainage ditch'))
+                raise exceptions.UserError(_('The drainage ditch '
+                                             'code already exists.'))
+        # Prevent character / in the ditch name.
+        if ('name' in vals and '/' in vals['name']):
+            raise exceptions.ValidationError(_('The character "/" cannot '
+                                               'be used in the name of the '
+                                               'irrigation ditch.'))
         return new_drainageditch
 
     @api.multi
     def write(self, vals):
-        # Prevent a drainage ditch from connecting with itself
-        if 'drainageditch_id' in vals:
-            if self.id == vals['drainageditch_id']:
-                raise ValidationError(_('A drainage ditch cannot '
-                                        'drain to itself'))
-        # Prevent character / in the drainage ditch name
-        if 'name' in vals:
-            if '/' in vals['name']:
-                raise ValidationError(_('The character "/" '
-                                        'cannot be used in the '
-                                        'name of the drainage ditch'))
-            self.refine_name(vals)
-            # If name is changed, update all irrigationditches that
-            # contain the old name (except for the current record).
-            new_name = vals['name']
-            drainageditches = self.env['wua.drainageditch'].search(
-                [('id', '!=', self.id)])
+        if len(self) == 1:
+            # Prevent character / in the ditch name.
+            if 'name' in vals:
+                self.refine_name(vals)
+                if '/' in vals['name']:
+                    raise exceptions.ValidationError(_('The character "/" '
+                                                       'cannot be used in '
+                                                       'the name of the '
+                                                       'drainage ditch.'))
+            # Prevent a ditch from connecting with itself
+            if ('drainageditch_id' in vals and
+               self.id == vals['drainageditch_id']):
+                raise exceptions.ValidationError(_('A ditch cannot be '
+                                                   'supplied by itself.'))
+            # Check a valid drainageditch_code.
+            if 'description' in vals:
+                self.refine_description(vals)
+            if 'drainageditch_code' in vals:
+                correct_drainageditch_code = \
+                    not self.exists_drainageditch_code(
+                        vals['drainageditch_code'], self.id)
+                if not correct_drainageditch_code:
+                    raise exceptions.UserError(_('The drainage ditch code '
+                                                 'already exists.'))
+            # Call to inherited method.
             old_name = self.name
-            for drainageditch in drainageditches:
-                path_parts = drainageditch.path.split('/')
-                new_path = ""
-                if old_name in path_parts:
-                    for item in path_parts:
-                        if item == old_name:
-                            item = new_name
-                        if len(path_parts) == 1:
-                            new_path += item
-                        elif item == path_parts[-1]:
-                            new_path += item
-                        else:
-                            new_path += item + '/'
-                    drainageditch.write({'path': new_path})
-        if 'description' in vals:
-            self.refine_description(vals)
-        if 'drainageditch_code' in vals:
-            correct_drainageditch_code = \
-                not self.exists_drainageditch_code(
-                    vals['drainageditch_code'], self.id)
-            if not correct_drainageditch_code:
-                raise exceptions.UserError(_('The drainage ditch code\
-                                             already exists.'))
-        return super(WuaDrainageditch, self).write(vals)
+            super(WuaDrainageditch, self).write(vals)
+            # If name is changed, update all drainageditches that
+            # contain the old name (except for the current record).
+            if 'name' in vals:
+                new_name = vals['name']
+                drainageditches = self.env['wua.drainageditch'].search(
+                    [('id', '!=', self.id)])
+                for drainageditch in drainageditches:
+                    path_parts = drainageditch.path.split('/')
+                    new_path = ""
+                    if old_name in path_parts:
+                        for item in path_parts:
+                            if item == old_name:
+                                item = new_name
+                            if len(path_parts) == 1:
+                                new_path += item
+                            elif item == path_parts[-1]:
+                                new_path += item
+                            else:
+                                new_path += item + '/'
+                        drainageditch.write({'path': new_path})
+            return True
+        else:
+            return super(WuaDrainageditch, self).write(vals)
 
     @api.multi
     def name_get(self):

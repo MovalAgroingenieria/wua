@@ -2,8 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaIrrigationditch(models.Model):
@@ -129,11 +128,11 @@ class WuaIrrigationditch(models.Model):
     @api.constrains('is_main', 'irrigationditch_id')
     def _check_irrigationditch_id(self):
         if self.is_main and self.irrigationditch_id:
-            raise ValidationError(_('The main ditch cannot '
-                                    'be supplied by any other.'))
+            raise exceptions.ValidationError(_('The main ditch cannot '
+                                               'be supplied by any other.'))
         if not self.is_main and not self.irrigationditch_id:
-            raise ValidationError(_('A non-main ditch must be '
-                                    'supplied by another.'))
+            raise exceptions.ValidationError(_('A non-main ditch must be '
+                                               'supplied by another.'))
 
     @api.constrains('level')
     def _check_level(self):
@@ -141,37 +140,36 @@ class WuaIrrigationditch(models.Model):
             'wua.infrastructure.configuration',
             'max_levels_gravity_irrigation')
         if self.level > max_level:
-            raise ValidationError(_('You cannot create a irrigation ditch '
-                                    'that depends on a ditch of the highest '
-                                    'level (%s).' % max_level))
+            raise exceptions.ValidationError(_('You cannot create a '
+                                               'irrigation ditch that depends '
+                                               'on a ditch of the highest '
+                                               'level (%s).' % max_level))
 
     @api.model
     def create(self, vals):
-        # Prevent character / in the ditch name
-        if 'name' in vals:
-            if '/' in vals['name']:
-                raise ValidationError(_('The character "/" '
-                                        'cannot be used in the name of the '
-                                        'irrigation ditch'))
-            else:
-                new_irrigationditch = \
-                    super(WuaIrrigationditch, self).create(vals)
-                return new_irrigationditch
+        # Prevent character / in the ditch name.
+        if ('name' in vals and '/' in vals['name']):
+            raise exceptions.ValidationError(_('The character "/" cannot '
+                                               'be used in the name of the '
+                                               'irrigation ditch.'))
+        # Call to inherited method.
+        new_irrigationditch = \
+            super(WuaIrrigationditch, self).create(vals)
+        return new_irrigationditch
 
     @api.multi
     def write(self, vals):
-        # Prevent a ditch from connecting with itself
-        if 'irrigationditch_id' in vals:
-            if self.id == vals['irrigationditch_id']:
-                raise ValidationError(_('A ditch cannot be '
-                                        'supplied by itself'))
-        # Prevent character / in the ditch name
-        if 'name' in vals:
-            if '/' in vals['name']:
-                raise ValidationError(_('The character "/" '
-                                        'cannot be used in the '
-                                        'name of the irrigation ditch'))
         if len(self) == 1:
+            # Prevent character / in the ditch name.
+            if ('name' in vals and '/' in vals['name']):
+                raise exceptions.ValidationError(_('The character "/" cannot '
+                                                   'be used in the name of '
+                                                   'the irrigation ditch.'))
+            # Prevent a ditch from connecting with itself
+            if ('irrigationditch_id' in vals and
+               self.id == vals['irrigationditch_id']):
+                raise exceptions.ValidationError(_('A ditch cannot be '
+                                                   'supplied by itself.'))
             # Call to inherited method.
             old_name = self.name
             super(WuaIrrigationditch, self).write(vals)
@@ -195,7 +193,7 @@ class WuaIrrigationditch(models.Model):
                             else:
                                 new_path += item + '/'
                         irrigationditch.write({'path': new_path})
-                return True
+            return True
         else:
             return super(WuaIrrigationditch, self).write(vals)
 
