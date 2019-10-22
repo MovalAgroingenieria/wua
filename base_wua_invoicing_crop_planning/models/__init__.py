@@ -4,3 +4,5 @@
 
 from . import wua_agriculturalseason
 from . import wua_cropplan
+from . import product
+from . import wua_invoiceset
