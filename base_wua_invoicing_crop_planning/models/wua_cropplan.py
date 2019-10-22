@@ -15,14 +15,11 @@ class WuaEnrolledsubparcel(models.Model):
         compute='_compute_contracted_volume'
     )
 
-    @api.depends('area_official')
-#  , 'agriculturalseason_id.volume_perunitarea')
+    @api.depends('area_official', 'agriculturalseason_id.volume_perunitarea')
     def _compute_contracted_volume(self):
         for record in self:
             contracted_volume = 0
-            """
             if (record.agriculturalseason_id.volume_perunitarea):
                 contracted_volume = record.area_official * \
                     record.agriculturalseason_id.volume_perunitarea
-            """
             record.contracted_volume = contracted_volume
