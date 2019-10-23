@@ -21,7 +21,8 @@ class AccountBankingMandate(models.Model):
     @api.constrains('state',
                     'watercosts_parcel_ids')
     def _check_watercosts_parcel_ids(self):
-        if (self.state != 'valid' and self.watercosts_parcel_ids):
+        if (len(self) == 1 and
+           (self.state != 'valid' and self.watercosts_parcel_ids)):
             raise exceptions.ValidationError(_('Separate parcel billing: '
                                                'The mandate must be a valid '
                                                'mandate, because there are '
@@ -31,7 +32,8 @@ class AccountBankingMandate(models.Model):
     @api.constrains('state',
                     'othercosts_parcel_ids')
     def _check_othercosts_parcel_ids(self):
-        if (self.state != 'valid' and self.othercosts_parcel_ids):
+        if (len(self) == 1 and
+           (self.state != 'valid' and self.othercosts_parcel_ids)):
             raise exceptions.ValidationError(_('Separate parcel billing: '
                                                'The mandate must be a valid '
                                                'mandate, because there are '

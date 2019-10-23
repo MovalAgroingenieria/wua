@@ -8,6 +8,40 @@ from odoo import models, fields, api, exceptions, _
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
+    @api.model_cr
+    def init(self):
+        parcels_with_populated_partner_id = self.env['wua.parcel'].search(
+            ['|', ('watercosts_partner_id', '!=', None),
+             ('othercosts_partner_id', '!=', None)])
+        if not parcels_with_populated_partner_id:
+            parcels = self.env['wua.parcel'].search([])
+            for parcel in parcels:
+                watercosts_partner_id = None
+                othercosts_partner_id = None
+                number_of_partnerlinks_with_watercosts = 0
+                number_of_partnerlinks_with_othercosts = 0
+                possible_partner_id_for_watercosts = None
+                possible_partner_id_for_othercosts = None
+                for partnerlink in parcel.partnerlink_ids:
+                    if partnerlink.water_costs_percentage > 0:
+                        possible_partner_id_for_watercosts = \
+                            partnerlink.partner_id
+                        number_of_partnerlinks_with_watercosts = \
+                            number_of_partnerlinks_with_watercosts + 1
+                    if partnerlink.other_costs_percentage > 0:
+                        possible_partner_id_for_othercosts = \
+                            partnerlink.partner_id
+                        number_of_partnerlinks_with_othercosts = \
+                            number_of_partnerlinks_with_othercosts + 1
+                if number_of_partnerlinks_with_watercosts == 1:
+                    watercosts_partner_id = possible_partner_id_for_watercosts
+                if number_of_partnerlinks_with_othercosts == 1:
+                    othercosts_partner_id = possible_partner_id_for_othercosts
+                if watercosts_partner_id is not None:
+                    parcel.watercosts_partner_id = watercosts_partner_id
+                if othercosts_partner_id is not None:
+                    parcel.othercosts_partner_id = othercosts_partner_id
+
     watercosts_partner_id = fields.Many2one(
         string='Partner for water costs',
         comodel_name='res.partner',
@@ -165,8 +199,8 @@ class WuaParcel(models.Model):
     @api.constrains('watercosts_payment_mode_id',
                     'watercosts_potentially_billable')
     def _check_watercosts_payment_mode_id(self):
-        if (self.watercosts_payment_mode_id and
-           not self.watercosts_potentially_billable):
+        if (len(self) == 1 and (self.watercosts_payment_mode_id and
+           not self.watercosts_potentially_billable)):
             raise exceptions.ValidationError(_('Separate parcel billing: '
                                                'there can be no more one '
                                                'water payer.'))
@@ -174,8 +208,8 @@ class WuaParcel(models.Model):
     @api.constrains('othercosts_payment_mode_id',
                     'watercosts_potentially_billable')
     def _check_othercosts_payment_mode_id(self):
-        if (self.othercosts_payment_mode_id and
-           not self.othercosts_potentially_billable):
+        if (len(self) == 1 and (self.othercosts_payment_mode_id and
+           not self.othercosts_potentially_billable)):
             raise exceptions.ValidationError(_('Separate parcel billing: '
                                                'there can be no more one '
                                                'payer for the other costs.'))
@@ -183,7 +217,7 @@ class WuaParcel(models.Model):
     @api.constrains('watercosts_mandate_id',
                     'watercosts_partner_id')
     def _check_watercosts_mandate_id(self):
-        if self.watercosts_mandate_required:
+        if (len(self) == 1 and self.watercosts_mandate_required):
             if (not self.watercosts_mandate_id or
                not self.watercosts_partner_id or
                self.watercosts_mandate_id.partner_id !=
@@ -198,7 +232,7 @@ class WuaParcel(models.Model):
     @api.constrains('othercosts_mandate_id',
                     'othercosts_partner_id')
     def _check_othercosts_mandate_id(self):
-        if self.othercosts_mandate_required:
+        if (len(self) == 1 and self.othercosts_mandate_required):
             if (not self.othercosts_mandate_id or
                not self.othercosts_partner_id or
                self.othercosts_mandate_id.partner_id !=
