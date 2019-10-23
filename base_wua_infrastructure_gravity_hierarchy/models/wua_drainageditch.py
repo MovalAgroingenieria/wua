@@ -282,7 +282,7 @@ class WuaDrainageditch(models.Model):
             # Call to inherited method.
             old_name = self.name
             super(WuaDrainageditch, self).write(vals)
-            # If name is changed, update all drainageditches that
+            # If name is changed, update all drainage ditches that
             # contain the old name (except for the current record).
             if 'name' in vals:
                 new_name = vals['name']
