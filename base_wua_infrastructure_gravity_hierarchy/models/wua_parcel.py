@@ -188,6 +188,32 @@ class WuaParcel(models.Model):
             record.drainageditch_05_id = \
                 self.get_drainageditch(record, 5)
 
+    @api.depends('irrigationpoint_ids', 'irrigationditch_id')
+    def _compute_hydraulic_infrastructure_type(self):
+        for record in self:
+            hydraulic_infrastructure_type = 0
+            for irrigation_point in record.irrigationpoint_ids:
+                if hydraulic_infrastructure_type == 0:
+                    if irrigation_point.type == 'WC':
+                        hydraulic_infrastructure_type = 1
+                    if irrigation_point.type == 'IG':
+                        hydraulic_infrastructure_type = 2
+                if (hydraulic_infrastructure_type == 1 and
+                   irrigation_point.type == 'IG'):
+                    hydraulic_infrastructure_type = 3
+                if (hydraulic_infrastructure_type == 2 and
+                   irrigation_point.type == 'WC'):
+                    hydraulic_infrastructure_type = 3
+                if hydraulic_infrastructure_type == 3:
+                    break
+            if record.irrigationditch_id:
+                if hydraulic_infrastructure_type == 1:
+                    hydraulic_infrastructure_type = 3
+                else:
+                    hydraulic_infrastructure_type = 2
+            record.hydraulic_infrastructure_type = \
+                hydraulic_infrastructure_type
+
     def get_irrigationditch(self, parcel, level):
         resp = None
         if (parcel.irrigationditch_id and
