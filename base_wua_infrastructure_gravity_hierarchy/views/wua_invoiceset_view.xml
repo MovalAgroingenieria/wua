@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_parcel_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for parcels (search view)</field>
+        <field name="model">wua.invoiceset.line.parcel</field>
+        <field name="inherit_id" ref="base_wua_invoicing.wua_invoiceset_line_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='irrigationditch_id']" position="after">
+                <field name="path"/>
+            </xpath>
+            <xpath expr="//filter[@name='irrigationworker']" position="after">
+                <filter string="Full name" name="path" context="{'group_by':'path'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
