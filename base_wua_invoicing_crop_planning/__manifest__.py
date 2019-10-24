@@ -20,6 +20,7 @@
         "views/resources.xml",
         "views/wua_agriculturalseason_view.xml",
         "views/wua_cropplan_view.xml",
+        "views/wua_invoiceset_view.xml",
      ],
     "installable": True,
     "application": False,
