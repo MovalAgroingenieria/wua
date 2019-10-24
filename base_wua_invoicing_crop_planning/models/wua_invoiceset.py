@@ -4,6 +4,7 @@
 
 
 from odoo import models, fields, api, exceptions, _
+from lxml import etree
 
 
 class WuaInvoicesetLine(models.Model):
@@ -132,7 +133,8 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
         ondelete='restrict')
 
     area_official =  fields.Float(
-        string='Official area (U. area)')
+        string='Official Area',
+        digits=(32, 4))
 
     cultivation_id = fields.Many2one(
         string='Cultivation',
@@ -211,4 +213,52 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
             }
         self.write(vals)
 
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaInvoicesetLineEnrolledsubparcel, self).fields_view_get(
+            view_id=view_id,
+            view_type=view_type,
+            toolbar=toolbar,
+            submenu=submenu)
 
+        doc = etree.XML(res['arch'])
+
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        area_measurement_name = ''
+        if area_measurement_type == 1:
+            area_measurement_name = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_name')
+            area_measurement_name = area_measurement_name.decode(
+                'utf_8')
+        if area_measurement_name != '':
+            area_measurement_name = area_measurement_name.lower()
+            for node in doc.xpath("//field[@name='area_official']"):
+                original_label = \
+                    self.sudo().get_value_from_translation(
+                        'wua_invoiceset_line_enrolledsubparcel',
+                        self.__class__.area_official.string)
+                node.set('string',
+                         original_label + ' (' + area_measurement_name + ')')
+        else:
+            for node in doc.xpath("//field[@name='area_official']"):
+                original_label = \
+                    self.sudo().get_value_from_translation(
+                        'wua_invoiceset_line_enrolledsubparcel',
+                        self.__class__.area_official.string)
+                node.set('string', original_label + ' (' + _('hectares') + ')')
+        res['arch'] = etree.tostring(doc)
+        return res
+
+    def get_value_from_translation(self, module, src):
+        resp = src
+        lang = self.env.context.get('lang')
+        translations = self.env['ir.translation']
+        condition = [('lang', '=', lang),
+                     ('module', '=', module),
+                     ('src', '=', src)]
+        filtered_translations = translations.search(condition)
+        if len(filtered_translations) > 0:
+            resp = filtered_translations[0].value
+        return resp

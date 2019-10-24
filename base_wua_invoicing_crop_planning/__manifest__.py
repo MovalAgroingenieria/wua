@@ -17,6 +17,7 @@
     "data": [
         "data/product_category_data.xml",
         "reports/wua_invoicing_cropplan_report.xml",
+        "views/account_invoice_view.xml",
         "views/resources.xml",
         "views/wua_agriculturalseason_view.xml",
         "views/wua_cropplan_view.xml",
