@@ -18,6 +18,14 @@ class WuaInvoicesetLine(models.Model):
         comodel_name='wua.invoiceset.line.enrolledsubparcel',
         inverse_name='invoicesetline_id')
 
+    @api.depends('line_enrolledsubparcel_ids')
+    def _compute_configured_line(self):
+        super(WuaInvoicesetLine, self)._compute_configured_line()
+        for record in self:
+            if record.linkable_unit_type == 'enrolledsubparcel':
+                record.configured_line = \
+                    len(record.line_enrolledsubparcel_ids) > 0
+
     def populate_items_select(self):
         if self.linkable_unit_type == 'enrolledsubparcel':
             self.populate_items_select_enrolledsubparcel(self.product_id.id)
@@ -105,13 +113,8 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
         comodel_name='wua.parcel.subparcel',
         ondelete='restrict')
 
-    #@TODO
-    subparcel_code = fields.Many2one(
-        string='Subparcel Code',
-        comodel_name='wua.enrolledsubparcel',
-        store=True,
-        index=True,
-        ondelete='restrict')
+    subparcel_code = fields.Char(
+        string='Subparcel Code')
 
     partner_id = fields.Many2one(
         string='Irrigation Partner',
@@ -121,50 +124,40 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
     cropplan_id = fields.Many2one(
         string='Crop Plan',
         comodel_name='wua.cropplan',
-        ondelete='set null',
-        readonly=True)
+        ondelete='set null')
 
     subparceltype_id = fields.Many2one(
         string='Type',
         comodel_name='wua.subparceltype',
-        required=True,
-        index=True,
         ondelete='restrict')
 
-    
-    area_official = fields.Float(
-        string='Area',
-        digits=(32, 4),
-        )
+    area_official =  fields.Float(
+        string='Official area (U. area)')
 
     cultivation_id = fields.Many2one(
         string='Cultivation',
         comodel_name='wua.cultivation',
-        index=True,
         ondelete='restrict')
 
     cultivationvariety_id = fields.Many2one(
         string='Variety',
         comodel_name='wua.cultivation.variety',
-        index=True,
         ondelete='restrict')
 
-    profile = fields.Many2one(
-        string='Profile',
-        comodel_name='wua.enrolledsubparcel',
-        index=True,
-        ondelete='restrict')
+    profile = fields.Selection([
+        ('O', 'Owner'),
+        ('L', 'Lessee'),
+        ('P', 'Payer'),
+        ], string='Profile')
 
     irrigationsystem_id = fields.Many2one(
         string='Irrigation System',
         comodel_name='wua.irrigationsystem',
-        index=True,
         ondelete='restrict')
 
     productionmethod_id = fields.Many2one(
         string='Production Method',
         comodel_name='wua.productionmethod',
-        index=True,
         ondelete='restrict')
 
     hydraulicsector_id = fields.Many2one(
@@ -172,16 +165,37 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
         comodel_name='wua.hydraulicsector',
         ondelete='restrict')
 
-    sum_price_subtotal = fields.Char(
-        string='asdfc Sector'        )
+    sum_price_subtotal = fields.Float(
+        string='Amount')
 
-    number_of_invoicing_processes =fields.Char(
-        string='asdfcasdf')
+    number_of_invoicing_processes = fields.Float(
+        string='Number of invoicing processes')
 
     @api.depends('enrolledsubparcel_id')
     def _compute_subparcel_code(self):
         for record in self:
             record.subparcel_code = record.subparcel_code
+
+    @api.depends('invoicesetline_id')
+    def _compute_sum_price_subtotal(self):
+        for record in self:
+            sum_price_subtotal = 0
+            if (record.invoiceline_ids):
+                for invoiceline in record.invoiceline_ids:
+                    sum_price_subtotal += invoiceline.price_subtotal
+            record.sum_price_subtotal = sum_price_subtotal
+
+    @api.depends('invoicesetline_id')
+    def _compute_number_of_invoicing_processes(self):
+        for record in self:
+            number_of_invoicing_processes = 0
+            invoiceset_ids = []
+            for invoiceline in record.invoiceline_ids:
+                if (invoiceline.invoiceset_id not in invoiceset_ids):
+                    number_of_invoicing_processes += 1
+                    invoiceset_ids.appends(invoiceline.invoiceset_id)
+            record.number_of_invoicing_processes = \
+                number_of_invoicing_processes
 
     @api.multi
     def add_to_invoiceset(self):
@@ -196,13 +210,5 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
             'selected': False,
             }
         self.write(vals)
-
-    @api.depends('line_enrolledsubparcel_ids')
-    def _compute_configured_line(self):
-        super(WuaInvoicesetLine, self)._compute_configured_line()
-        for record in self:
-            if record.linkable_unit_type == 'enrolledsubparcel':
-                record.configured_line = \
-                    len(record.line_enrolledsubparcel_ids) > 0
 
 
