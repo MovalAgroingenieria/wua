@@ -7,6 +7,114 @@ from odoo import models, fields, api, exceptions, _
 from lxml import etree
 
 
+class WuaInvoiceset(models.Model):
+    _inherit = 'wua.invoiceset'
+
+    def select_invoice_items_other_types(self, productcategory_code,
+                                         invoiceset_line):
+        if productcategory_code != 9:
+            return super(WuaInvoiceset,
+                         self).select_invoice_items_other_types(
+                             productcategory_code, invoiceset_line)
+        enrolledsubparcel_ids = []
+        for enrolledsubparcel in \
+            invoiceset_line.line_enrolledsubparcel_ids.filtered(
+                lambda x: x.selected is True):
+            enrolledsubparcel_ids.append(
+                enrolledsubparcel.enrolledsubparcel_id.id)
+        return enrolledsubparcel_ids
+
+    def get_description(self, partnerlink, enrolledsubparcel,
+                        product, quantity):
+        description = ""
+        parcel_label = self.get_value_from_translation(
+            'base_wua_invoicing', 'Parcel', partnerlink.partner_id.lang
+        )
+        parcel_code = enrolledsubparcel.parcel_id.name
+        subparcel_cultivation = enrolledsubparcel.cultivation_id.name.lower()
+        subparcel_area = ('%.4f' %
+                          enrolledsubparcel.area_official).replace('.', ',')
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        area_measurement_name = ''
+        if area_measurement_type == 0:
+            area_measurement_name = 'ha'
+        else:
+            area_measurement_name = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_name')
+        area_measurement_name = area_measurement_name.decode('utf_8')
+        profile_label = self.get_value_from_translation(
+            'base_wua_invoicing_crop_planning', _('profile'),
+            partnerlink.partner_id.lang
+        )
+        profile_name = self.get_profile_name(
+            partnerlink.profile, partnerlink.partner_id.lang).lower()
+        volume_label = self.get_value_from_translation(
+            'base_wua_invoicing_crop_planning', _('Total vol.'),
+            partnerlink.partner_id.lang)
+        uom = product.uom_id.name
+        contracted_volume = (
+            '%.2f' % enrolledsubparcel.contracted_volume).replace('.', ',')
+        costs_label = self.get_value_from_translation(
+            'base_wua_invoicing_crop_planning', _('costs'),
+            partnerlink.partner_id.lang
+        )
+        cost_percentage = '%.2f %' % partnerlink.water_costs_percentage
+        volume_real_label = self.get_value_from_translation(
+            'base_wua_invoicing_crop_planning', _('Real vol.'),
+            partnerlink.partner_id.lang
+        )
+        net_volume = ('%.2f' % quantity).replace('.', ',')
+        description = parcel_label + ' ' + parcel_code + ', ' + \
+            subparcel_cultivation + '(' + subparcel_area + ' ' + \
+            area_measurement_name + '), ' + profile_label + ': ' + \
+            profile_name + "\n" + volume_label + ': ' + contracted_volume + \
+            ' ' + uom + ', ' + costs_label + ': ' + cost_percentage + \
+            ' %, ' + volume_real_label + ': ' + net_volume + ' ' + uom
+        return description
+
+    def calculate_invoice_details_others_categ(self, product_id, categ_code,
+                                               item_ids, partnerlinks):
+        if categ_code != 9:
+            return super(WuaInvoiceset,
+                         self).calculate_invoice_details_others_categ(
+                             product_id, categ_code, item_ids, partnerlinks)
+        invoice_details_categ09 = []
+        enrolledsubparcels = self.env['wua.enrolledsubparcel'].browse(item_ids)
+        for enrolledsubparcel in enrolledsubparcels:
+            partnerlinks_of_parcel = partnerlinks.filtered(
+                lambda x: x.parcel_id.id == enrolledsubparcel.parcel_id.id)
+            for partnerlink in partnerlinks_of_parcel:
+                partner_id = partnerlink.partner_id.id
+                contracted_volume = enrolledsubparcel.contracted_volume
+                percentage = partnerlink.water_costs_percentage
+                quantity = contracted_volume * (percentage / 100)
+                description = \
+                    self.get_description(
+                        partnerlink, enrolledsubparcel, product_id, quantity)
+                result = {
+                    'partner_id': partner_id,
+                    'product_id': product_id,
+                    'categ_code': categ_code,
+                    'key1': enrolledsubparcel.id,
+                    'key2': enrolledsubparcel.parcel_id.id,
+                    'quantity': quantity,
+                    'description': description,
+                    }
+                invoice_details_categ09.append(result)
+        return invoice_details_categ09
+
+    def add_to_invoice_data_line_ref_to_other_types(
+            self, categ_code, invoice_data_line, data):
+        if categ_code != 9:
+            return super(WuaInvoiceset,
+                         self).add_to_invoice_data_line_ref_to_other_types(
+                             categ_code, invoice_data_line, data)
+        data['waterconnection_id'] = invoice_data_line['key1']
+        data['parcel_id'] = invoice_data_line['key2']
+        return data
+
+
 class WuaInvoicesetLine(models.Model):
     _inherit = 'wua.invoiceset.line'
     _description = 'Entity (line of a WUA invoice set)'
@@ -132,7 +240,7 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
         comodel_name='wua.subparceltype',
         ondelete='restrict')
 
-    area_official =  fields.Float(
+    area_official = fields.Float(
         string='Official Area',
         digits=(32, 4))
 
