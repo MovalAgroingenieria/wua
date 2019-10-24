@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_enrolledsubparcel_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for enrolled subparcels (tree view)</field>
+        <field name="model">wua.invoiceset.line.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="subparcel_code"/>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <field name="cropplan_id"/>
+                <field name="subparceltype_id"/>
+                <field name="area_official"/>
+                <field name="cultivation_id"/>
+                <field name="cultivationvariety_id"/>
+                <field name="profile"/>
+                <field name="sum_price_subtotal"/>
+                <field name="number_of_invoicing_processes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_enrolledsubparcel_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for enrolled subparcels (search view)</field>
+        <field name="model">wua.invoiceset.line.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <field name="croppan_id"/>
+                <field name="subparceltype_id"/>
+                <field name="cultivation_id"/>
+                <field name="cultivationvariety_id"/>
+                <filter string="Cultivable" name="cultivable"
+                 domain="[('enrolledsubparcel_id.is_cultivable','=',True)]"/>
+                <filter string="Not Cultivable" name="notcultivable"
+                 domain="[('enrolledsubparcel_id.is_cultivable','!=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Cropplan)"
+                     name="cropplan"
+                     context="{'group_by':'cropplan_id'}"/>
+                    <filter string="Hydraulic Sector"
+                     name="hydraulic_sector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Parcel"
+                     name="parcel"
+                     context="{'group_by':'parcel_id'}"/>
+                    <filter string="Subparcel Type"
+                     name="subparcel_type"
+                     context="{'group_by':'subparceltype_id'}"/>
+                    <filter string="Cultivation"
+                     name="cultivation"
+                     context="{'group_by':'cultivation_id'}"/>
+                    <filter string="Cultivation Variety"
+                     name="cultivation_variety"
+                     context="{'group_by':'cultivationvariety_id'}"/>
+                    <filter string="Irrigation System"
+                     name="irrigation_system"
+                     context="{'group_by':'irrigationsystem_id'}"/>
+                   <filter string="Production Method"
+                     name="production_method"
+                     context="{'group_by':'productionmethod_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_enrolledsubparcel_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_enrolledsubparcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.enrolledsubparcel'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_enrolledsubparcel_to_invoiceset" model="ir.values">
+        <field name="name">Add enrolled subparcel to invoice set</field>
+        <field name="model">wua.invoiceset.line.enrolledsubparcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_enrolledsubparcel_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_enrolledsubparcel_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_enrolledsubparcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.enrolledsubparcel'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_enrolledsubparcel_to_invoiceset" model="ir.values">
+        <field name="name">Remove enrolled subparcel from invoice set</field>
+        <field name="model">wua.invoiceset.line.enrolledsubparcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_enrolledsubparcel_to_invoiceset'))"/>
+    </record>
+
+</odoo>
