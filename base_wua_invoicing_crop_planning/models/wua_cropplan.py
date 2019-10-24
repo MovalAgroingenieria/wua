@@ -172,4 +172,3 @@ class WuaEnrolledsubparcel(models.Model):
         if len(filtered_translations) > 0:
             resp = filtered_translations[0].value
         return resp
-

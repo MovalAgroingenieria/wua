@@ -25,13 +25,16 @@ class WuaInvoiceset(models.Model):
         return enrolledsubparcel_ids
 
     def get_description(self, partnerlink, enrolledsubparcel,
-                        product, quantity):
+                        product_id, quantity):
         description = ""
         parcel_label = self.get_value_from_translation(
             'base_wua_invoicing', 'Parcel', partnerlink.partner_id.lang
         )
         parcel_code = enrolledsubparcel.parcel_id.name
-        subparcel_cultivation = enrolledsubparcel.cultivation_id.name.lower()
+        subparcel_cultivation = ""
+        if(enrolledsubparcel.cultivation_id):
+            subparcel_cultivation = \
+                enrolledsubparcel.cultivation_id.name.lower()
         subparcel_area = ('%.4f' %
                           enrolledsubparcel.area_official).replace('.', ',')
         area_measurement_type = self.env['ir.values'].get_default(
@@ -52,6 +55,7 @@ class WuaInvoiceset(models.Model):
         volume_label = self.get_value_from_translation(
             'base_wua_invoicing_crop_planning', _('Total vol.'),
             partnerlink.partner_id.lang)
+        product = self.env['product.product'].browse(product_id)
         uom = product.uom_id.name
         contracted_volume = (
             '%.2f' % enrolledsubparcel.contracted_volume).replace('.', ',')
@@ -59,7 +63,7 @@ class WuaInvoiceset(models.Model):
             'base_wua_invoicing_crop_planning', _('costs'),
             partnerlink.partner_id.lang
         )
-        cost_percentage = '%.2f %' % partnerlink.water_costs_percentage
+        cost_percentage = '%.2f' % partnerlink.water_costs_percentage
         volume_real_label = self.get_value_from_translation(
             'base_wua_invoicing_crop_planning', _('Real vol.'),
             partnerlink.partner_id.lang
