@@ -2,7 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaCropplan(models.Model):
@@ -25,6 +25,17 @@ class WuaCropplan(models.Model):
                     if (enrolledsubparcel.contracted_volume):
                         total_volume += enrolledsubparcel.contracted_volume
             record.contracted_volume = total_volume
+
+    @api.multi
+    def cancel_cropplan(self):
+        for enrolledsubparcel in self.enrolledsubparcel_ids:
+            if enrolledsubparcel.invoiced:
+                raise exceptions.ValidationError(_('The cultivation plan '
+                                                   'cannot be canceled, '
+                                                   'there is at least one'
+                                                   'subparcel that has '
+                                                   'already been invoiced.'))
+            super(WuaCropplan, self).cancel_cropplan()
 
 
 class WuaEnrolledsubparcel(models.Model):
@@ -63,6 +74,12 @@ class WuaEnrolledsubparcel(models.Model):
         compute='_compute_invoiced'
     )
 
+    is_validated = fields.Boolean(
+        string='Validated',
+        store=True,
+        index=True,
+        compute='_compute_validated')
+
     @api.depends('area_official', 'agriculturalseason_id.volume_perunitarea')
     def _compute_contracted_volume(self):
         for record in self:
@@ -98,3 +115,9 @@ class WuaEnrolledsubparcel(models.Model):
     def _compute_invoiced(self):
         for record in self:
             record.invoiced = record.number_of_invoicing_processes > 0
+
+    @api.depends('cropplan_id.state')
+    def _compute_validated(self):
+        for record in self:
+            if record.cropplan_id.state == 'validated':
+                record.is_validated = True
