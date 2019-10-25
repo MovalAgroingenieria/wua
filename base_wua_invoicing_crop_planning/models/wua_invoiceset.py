@@ -70,7 +70,7 @@ class WuaInvoiceset(models.Model):
         )
         net_volume = ('%.2f' % quantity).replace('.', ',')
         description = parcel_label + ' ' + parcel_code + ', ' + \
-            subparcel_cultivation + '(' + subparcel_area + ' ' + \
+            subparcel_cultivation + ' (' + subparcel_area + ' ' + \
             area_measurement_name + '), ' + profile_label + ': ' + \
             profile_name + "\n" + volume_label + ': ' + contracted_volume + \
             ' ' + uom + ', ' + costs_label + ': ' + cost_percentage + \
@@ -114,7 +114,7 @@ class WuaInvoiceset(models.Model):
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
-        data['waterconnection_id'] = invoice_data_line['key1']
+        data['enrolledsubparcel_id'] = invoice_data_line['key1']
         data['parcel_id'] = invoice_data_line['key2']
         return data
 

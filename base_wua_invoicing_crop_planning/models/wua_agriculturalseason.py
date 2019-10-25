@@ -2,9 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
-from datetime import timedelta
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, _
 from lxml import etree
 
 
@@ -15,7 +13,6 @@ class WuaAgriculturalseason(models.Model):
         string="Volumen (m3/U. Area)",
         required=True,
         default="5000")
-
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,

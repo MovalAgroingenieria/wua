@@ -108,7 +108,7 @@ class WuaEnrolledsubparcel(models.Model):
             for invoiceline in record.invoiceline_ids:
                 if (invoiceline.invoiceset_id not in invoiceset_ids):
                     number_of_invoicing_processes += 1
-                    invoiceset_ids.appends(invoiceline.invoiceset_id)
+                    invoiceset_ids.append(invoiceline.invoiceset_id)
             record.number_of_invoicing_processes = \
                 number_of_invoicing_processes
 
