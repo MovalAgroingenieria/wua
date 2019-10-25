@@ -38,6 +38,17 @@ class WuaCropplan(models.Model):
                                                    'already been invoiced.'))
             super(WuaCropplan, self).cancel_cropplan()
 
+    def get_area_unit(self):
+        area_unit_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        area_unit = ''
+        if area_unit_type == 1:
+            area_unit = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_name').decode(
+                'utf_8').lower()
+        else:
+            area_unit = ('ha')
+        return area_unit
 
 class WuaEnrolledsubparcel(models.Model):
     _inherit = 'wua.enrolledsubparcel'
