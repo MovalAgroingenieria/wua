@@ -9,7 +9,7 @@ WUA Account Banking Debit SUMA
 Description
 ===========
 
-This module adds specific features of irrigators communities to the 'account_banking_debit_suma'module.
+This module adds specific features of irrigators communities to the 'account_banking_debit_suma' module.
 
 
 Credits

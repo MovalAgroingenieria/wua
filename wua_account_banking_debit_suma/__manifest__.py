@@ -3,7 +3,7 @@
 
 {
     "name": "WUA Account Banking Debit SUMA",
-    "summary": "This module generate a normalized payment file for (SUMA) for WUAs'",
+    "summary": "This module generate a normalized payment file for (SUMA) for WUA's",
     "version": '10.0.1.1.0',
     "category": "Moval WUA Addons",
     "website": "http://www.moval.es",
