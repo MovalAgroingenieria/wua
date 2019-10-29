@@ -17,11 +17,12 @@
                                 <div class="o_form_field o_stat_info">
                                     <span class="o_stat_text">Readings</span>
                                 </div>
-                        </button>                             
+                        </button>
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="name"/>
+                            <field name="serial_number"/>
                             <field name="state"/>
                             <field name="type"/>
                             <field name="nominal_diameter"/>
@@ -56,7 +57,7 @@
                             </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
-                            </page>                        
+                            </page>
                         </notebook>
                     </group>
                 </sheet>
@@ -71,6 +72,7 @@
             <tree
              class="o_base_wua_pressurized_irrigation_watermeters_view_tree">
                 <field name="name"/>
+                <field name="serial_number"/>
                 <field name="type"/>
                 <field name="waterconnection_id"/>
                 <field name="irrigationshed_id"/>
@@ -94,6 +96,7 @@
                 <field name="waterconnection_id"/>
                 <field name="irrigationshed_id"/>
                 <field name="hydraulicsector_id"/>
+                <field name="serial_number"/>
                 <filter string="Multi-stream" name="multistream"
                  domain="[('type','=','multistream')]"/>
                 <filter string="Woltmann" name="woltmann"

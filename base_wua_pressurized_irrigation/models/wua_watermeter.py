@@ -100,6 +100,11 @@ class WuaWatermeter(models.Model):
 
     notes = fields.Html(string='Notes')
 
+    serial_number = fields.Char(
+        size=40,
+        string="Serial Number",
+        index=True)
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_nominal_diameter',
