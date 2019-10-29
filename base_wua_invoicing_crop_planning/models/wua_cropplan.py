@@ -13,8 +13,7 @@ class WuaCropplan(models.Model):
         string='Contracted Water (m3)',
         store=True,
         index=True,
-        compute='_compute_contracted_volume'
-    )
+        compute='_compute_contracted_volume')
 
     @api.depends('enrolledsubparcel_ids',
                  'enrolledsubparcel_ids.contracted_volume')
@@ -33,7 +32,7 @@ class WuaCropplan(models.Model):
             if enrolledsubparcel.invoiced:
                 raise exceptions.ValidationError(_('The cultivation plan '
                                                    'cannot be canceled, '
-                                                   'there is at least one'
+                                                   'there is at least one '
                                                    'subparcel that has '
                                                    'already been invoiced.'))
             super(WuaCropplan, self).cancel_cropplan()
@@ -50,6 +49,7 @@ class WuaCropplan(models.Model):
             area_unit = ('ha')
         return area_unit
 
+
 class WuaEnrolledsubparcel(models.Model):
     _inherit = 'wua.enrolledsubparcel'
 
@@ -57,40 +57,35 @@ class WuaEnrolledsubparcel(models.Model):
         string='Contracted Water (m3)',
         store=True,
         index=True,
-        compute='_compute_contracted_volume'
-    )
+        compute='_compute_contracted_volume')
 
     invoiceline_ids = fields.One2many(
         string='Invoice Lines',
         comodel_name='account.invoice.line',
-        inverse_name='enrolledsubparcel_id'
-    )
+        inverse_name='enrolledsubparcel_id')
 
     sum_price_subtotal = fields.Float(
-        string='Amount',
+        string='Invoiced Amount',
         store=True,
         index=True,
-        compute='_compute_sum_price_subtotal'
-    )
+        compute='_compute_sum_price_subtotal')
 
-    number_of_invoicing_processes = fields.Float(
-        string='Number of invoicing processes',
+    number_of_invoicing_processes = fields.Integer(
+        string='Invoicing Processes',
         store=True,
         index=True,
-        compute='_compute_number_of_invoicing_processes'
-    )
+        compute='_compute_number_of_invoicing_processes')
 
     invoiced = fields.Boolean(
         string='Invoiced',
         store=True,
-        compute='_compute_invoiced'
-    )
+        compute='_compute_invoiced')
 
     is_validated = fields.Boolean(
         string='Validated',
         store=True,
         index=True,
-        compute='_compute_validated')
+        compute='_compute_is_validated')
 
     @api.depends('area_official', 'agriculturalseason_id.volume_perunitarea')
     def _compute_contracted_volume(self):
@@ -129,10 +124,9 @@ class WuaEnrolledsubparcel(models.Model):
             record.invoiced = record.number_of_invoicing_processes > 0
 
     @api.depends('cropplan_id.state')
-    def _compute_validated(self):
+    def _compute_is_validated(self):
         for record in self:
-            if record.cropplan_id.state == 'validated':
-                record.is_validated = True
+            record.is_validated = record.cropplan_id.state == 'validated'
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
@@ -142,9 +136,7 @@ class WuaEnrolledsubparcel(models.Model):
             view_type=view_type,
             toolbar=toolbar,
             submenu=submenu)
-
         doc = etree.XML(res['arch'])
-
         area_measurement_type = self.env['ir.values'].get_default(
             'wua.configuration', 'area_measurement_type')
         area_measurement_name = ''
@@ -168,7 +160,7 @@ class WuaEnrolledsubparcel(models.Model):
                     self.sudo().get_value_from_translation(
                         'wua.enrolledsubparcel',
                         self.__class__.area_official.string)
-                node.set('string', original_label + ' (' + _('hectares') + ')')
+                node.set('string', original_label + ' (' + _('ha') + ')')
         res['arch'] = etree.tostring(doc)
         return res
 

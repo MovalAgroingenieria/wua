@@ -10,7 +10,7 @@ class WuaAgriculturalseason(models.Model):
     _inherit = 'wua.agriculturalseason'
 
     volume_perunitarea = fields.Integer(
-        string="Volumen (m3/U. Area)",
+        string="Volume (m3/Area U.)",
         required=True,
         default="5000")
 
@@ -22,9 +22,7 @@ class WuaAgriculturalseason(models.Model):
             view_type=view_type,
             toolbar=toolbar,
             submenu=submenu)
-
         doc = etree.XML(res['arch'])
-
         area_measurement_type = self.env['ir.values'].get_default(
             'wua.configuration', 'area_measurement_type')
         area_measurement_name = ''
@@ -54,7 +52,7 @@ class WuaAgriculturalseason(models.Model):
                 preBar = original_label.find('/')
                 if preBar != -1:
                     original_label = original_label[:preBar + 1]
-                node.set('string', original_label + _('hectares') + ')')
+                node.set('string', original_label + _('ha') + ')')
         res['arch'] = etree.tostring(doc)
         return res
 

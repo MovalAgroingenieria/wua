@@ -10,6 +10,29 @@ from lxml import etree
 class WuaInvoiceset(models.Model):
     _inherit = 'wua.invoiceset'
 
+    # If a invoice set is deleted, it is necessary to recompute the
+    # sum_price_subtotal and number_of_invoicing_processes fields
+    # (model: wua.enrolledparcel), because these functions are not
+    # called when the "invoiceline_ids" field of wua.enrolledparcel
+    # model is None.
+    @api.multi
+    def unlink(self):
+        enrolledsubparcel_ids = []
+        for record in self:
+            for line in record.line_ids:
+                if line.categ_id.productcategory_code == 9:
+                    for l_enrolledsubparcel in line.line_enrolledsubparcel_ids:
+                        enrolledsubparcel_ids.append(
+                            l_enrolledsubparcel.enrolledsubparcel_id.id)
+        res = super(WuaInvoiceset, self).unlink()
+        if enrolledsubparcel_ids:
+            enrolledsubparcel_ids = list(set(enrolledsubparcel_ids))
+            enrolledsubparcels = \
+                self.env['wua.enrolledsubparcel'].browse(enrolledsubparcel_ids)
+            enrolledsubparcels._compute_sum_price_subtotal()
+            enrolledsubparcels._compute_number_of_invoicing_processes()
+        return res
+
     def select_invoice_items_other_types(self, productcategory_code,
                                          invoiceset_line):
         if productcategory_code != 9:
@@ -65,16 +88,26 @@ class WuaInvoiceset(models.Model):
         )
         cost_percentage = '%.2f' % partnerlink.water_costs_percentage
         volume_real_label = self.get_value_from_translation(
-            'base_wua_invoicing_crop_planning', _('Real vol.'),
+            'base_wua_invoicing_crop_planning', _('real vol.'),
             partnerlink.partner_id.lang
         )
         net_volume = ('%.2f' % quantity).replace('.', ',')
-        description = parcel_label + ' ' + parcel_code + ', ' + \
-            subparcel_cultivation + ' (' + subparcel_area + ' ' + \
-            area_measurement_name + '), ' + profile_label + ': ' + \
-            profile_name + "\n" + volume_label + ': ' + contracted_volume + \
-            ' ' + uom + ', ' + costs_label + ': ' + cost_percentage + \
-            ' %, ' + volume_real_label + ': ' + net_volume + ' ' + uom
+        if subparcel_cultivation:
+            description = parcel_label + ' ' + parcel_code + ', ' + \
+                subparcel_cultivation + ' (' + subparcel_area + ' ' + \
+                area_measurement_name + '), ' + profile_label + ': ' + \
+                profile_name + ".\n" + volume_label + ': ' + \
+                contracted_volume + ' ' + uom + ', ' + costs_label + ': ' + \
+                cost_percentage + ' %, ' + volume_real_label + ': ' + \
+                net_volume + ' ' + uom + '.'
+        else:
+            description = parcel_label + ' ' + parcel_code + ', ' + \
+                subparcel_area + ' ' + \
+                area_measurement_name + ', ' + profile_label + ': ' + \
+                profile_name + ".\n" + volume_label + ': ' + \
+                contracted_volume + ' ' + uom + ', ' + costs_label + ': ' + \
+                cost_percentage + ' %, ' + volume_real_label + ': ' + \
+                net_volume + ' ' + uom + '.'
         return description
 
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
@@ -87,7 +120,8 @@ class WuaInvoiceset(models.Model):
         enrolledsubparcels = self.env['wua.enrolledsubparcel'].browse(item_ids)
         for enrolledsubparcel in enrolledsubparcels:
             partnerlinks_of_parcel = partnerlinks.filtered(
-                lambda x: x.parcel_id.id == enrolledsubparcel.parcel_id.id)
+                lambda x: x.parcel_id.id == enrolledsubparcel.parcel_id.id and
+                x.water_costs_percentage > 0)
             for partnerlink in partnerlinks_of_parcel:
                 partner_id = partnerlink.partner_id.id
                 contracted_volume = enrolledsubparcel.contracted_volume
@@ -118,6 +152,22 @@ class WuaInvoiceset(models.Model):
         data['parcel_id'] = invoice_data_line['key2']
         return data
 
+    # See comment of "unlink".
+    def after_cancel_invoiceset(self, invoiceset):
+        super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
+        enrolledsubparcel_ids = []
+        for line in invoiceset.line_ids:
+            if line.categ_id.productcategory_code == 9:
+                for line_enrolledsubparcel in line.line_enrolledsubparcel_ids:
+                    enrolledsubparcel_ids.append(
+                        line_enrolledsubparcel.enrolledsubparcel_id.id)
+        if enrolledsubparcel_ids:
+            enrolledsubparcel_ids = list(set(enrolledsubparcel_ids))
+            enrolledsubparcels = \
+                self.env['wua.enrolledsubparcel'].browse(enrolledsubparcel_ids)
+            enrolledsubparcels._compute_sum_price_subtotal()
+            enrolledsubparcels._compute_number_of_invoicing_processes()
+
 
 class WuaInvoicesetLine(models.Model):
     _inherit = 'wua.invoiceset.line'
@@ -127,7 +177,7 @@ class WuaInvoicesetLine(models.Model):
         ('enrolledsubparcel', 'Enrolled Subparcels')])
 
     line_enrolledsubparcel_ids = fields.One2many(
-        string='Lines for enrolled subparcel',
+        string='Lines for enrolled subparcels',
         comodel_name='wua.invoiceset.line.enrolledsubparcel',
         inverse_name='invoicesetline_id')
 
@@ -146,7 +196,8 @@ class WuaInvoicesetLine(models.Model):
             super(WuaInvoicesetLine, self).populate_items_select()
 
     def populate_items_select_enrolledsubparcel(self, product_id):
-        enrolledsubparcels = self.env['wua.enrolledsubparcel'].search([])
+        enrolledsubparcels = self.env['wua.enrolledsubparcel'].search(
+            [('is_validated', '=', True)])
         if len(enrolledsubparcels) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
@@ -182,7 +233,7 @@ class WuaInvoicesetLine(models.Model):
 
     def get_data_items_select(self, desc):
         if self.linkable_unit_type == 'enrolledsubparcel':
-            name = _('Enrolled Subparcel')
+            name = _('Enrolled Subparcels')
             if desc != '':
                 name = name + ' (' + desc + ')'
             res_model = 'wua.invoiceset.line.enrolledsubparcel'
@@ -199,6 +250,8 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
     _name = 'wua.invoiceset.line.enrolledsubparcel'
     _description = 'Enrolled subparcel of a invoice-set line'
     _order = 'invoicesetline_id,enrolledsubparcel_id'
+
+    MAX_SIZE_SUBPARCEL_CODE = 25
 
     invoicesetline_id = fields.Many2one(
         string='Line',
@@ -227,7 +280,8 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
         ondelete='restrict')
 
     subparcel_code = fields.Char(
-        string='Subparcel Code')
+        string='Subparcel Code',
+        size=MAX_SIZE_SUBPARCEL_CODE)
 
     partner_id = fields.Many2one(
         string='Irrigation Partner',
@@ -237,7 +291,7 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
     cropplan_id = fields.Many2one(
         string='Crop Plan',
         comodel_name='wua.cropplan',
-        ondelete='set null')
+        ondelete='restrict')
 
     subparceltype_id = fields.Many2one(
         string='Type',
@@ -280,10 +334,10 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
         ondelete='restrict')
 
     sum_price_subtotal = fields.Float(
-        string='Amount')
+        string='Invoiced Amount')
 
-    number_of_invoicing_processes = fields.Float(
-        string='Number of invoicing processes')
+    number_of_invoicing_processes = fields.Integer(
+        string='Invoicing Processes')
 
     @api.depends('enrolledsubparcel_id')
     def _compute_subparcel_code(self):
@@ -333,9 +387,7 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
             view_type=view_type,
             toolbar=toolbar,
             submenu=submenu)
-
         doc = etree.XML(res['arch'])
-
         area_measurement_type = self.env['ir.values'].get_default(
             'wua.configuration', 'area_measurement_type')
         area_measurement_name = ''
@@ -359,7 +411,7 @@ class WuaInvoicesetLineEnrolledsubparcel(models.Model):
                     self.sudo().get_value_from_translation(
                         'wua_invoiceset_line_enrolledsubparcel',
                         self.__class__.area_official.string)
-                node.set('string', original_label + ' (' + _('hectares') + ')')
+                node.set('string', original_label + ' (' + _('ha') + ')')
         res['arch'] = etree.tostring(doc)
         return res
 

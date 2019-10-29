@@ -5,16 +5,6 @@
 from odoo import models, fields
 
 
-class AccountInvoiceLine(models.Model):
-    _inherit = 'account.invoice.line'
-
-    enrolledsubparcel_id = fields.Many2one(
-        string='Enrolled Subparcel',
-        comodel_name='wua.enrolledsubparcel',
-        index=True,
-        ondelete='restrict')
-
-
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
@@ -33,3 +23,13 @@ class AccountInvoice(models.Model):
                     filtered(lambda x: x.categ_id.productcategory_code == 9))
             record.amount_untaxed_nocateg = record.amount_untaxed_nocateg - \
                 record.amount_untaxed_categ09
+
+
+class AccountInvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    enrolledsubparcel_id = fields.Many2one(
+        string='Enrolled Subparcel',
+        comodel_name='wua.enrolledsubparcel',
+        index=True,
+        ondelete='restrict')

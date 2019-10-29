@@ -2,23 +2,20 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-===============================================
-Water Users Association Invoicing Crop Planning
-===============================================
+============================================================================================
+Water Users Association Invoicing (contracted irrigation volume for each enrolled subparcel)
+============================================================================================
 
-This module allows you to manage the invoicing of a plan of
-cultivation for each partner and for each agricultural season.
+This module allows you to invoice contracted irrigation volumes, making a set
+of invoices based on a selection of enrolled subparcels of the current
+agricultural season.
 
 Description
 ===========
 
-Crop Planning:
+Global Invoicing based on:
 
-* A crop plan for each partner and for each agricultural season.
-* Enrolled subparcels in plans.
-* Management of subparcels census based on crop plans.
-* Historical data of crop planning.
-* Etc.
+* Contracted irrigation volume of a selection of enrolled subparcels for the current agricultural season.
 
 Credits
 =======

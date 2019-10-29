@@ -3,9 +3,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    "name": "Water Users Association: Invoicing Crop Planning",
-    "summary": "In a water users association, invoicing crop "
-               "planning for agricultural seasons",
+    "name": "Water Users Association: Crop Planning Invoicing",
+    "summary": "In a water users association, crop planning "
+               "invoicing for agricultural seasons",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
@@ -13,8 +13,10 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_crop_planning",
+        "base_wua_invoicing",        
      ],
     "data": [
+        "security/ir.model.access.csv",
         "data/product_category_data.xml",
         "reports/wua_invoicing_cropplan_report.xml",
         "views/account_invoice_view.xml",
@@ -24,5 +26,5 @@
         "views/wua_invoiceset_view.xml",
      ],
     "installable": True,
-    "application": False,
+    "application": True,
 }

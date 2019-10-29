@@ -94,7 +94,7 @@
                                      </t>
                                 </td>
                             </tr>
-                            <t t-if="'bancari' in o.partner_id.customer_payment_mode_id.name">
+                            <t t-if="(o.partner_id.customer_payment_mode_id and 'bancari' in o.partner_id.customer_payment_mode_id.name)">
                                 <tr>
                                     <td><strong>Bank account</strong></td>
                                     <t t-if="o.partner_id.bank_ids">
