@@ -125,7 +125,6 @@
                             <th class="text-right">Contracted water (m3)</th>
                             <th class="text-right">Area
                                 <t t-set="area_unit" t-value="o.get_area_unit()"></t>
-                                
                                 <span t-esc="('(' + area_unit + ')')"></span>
                             </th>
                         </tr>
@@ -145,8 +144,9 @@
                         <tr>
                             <td></td><td></td><td></td><td></td><td></td>
                             <td align="right">
-                                <span  style="margin-right:10%;"><strong>Totals:</strong></span>
-                                <span t-esc="str(total_contracted_volume).replace('.', ',')"/></td>
+                                <span style="margin-right:10%;"><strong>Totals:</strong></span>
+                                <span t-esc="'{:,.1f}'.format(total_contracted_volume).replace('.','=').replace(',','.').replace('=',',')"/>
+                            </td>
                             <td align="right"><span t-field="o.area_official"/></td>
                         </tr>
                     </tbody>
