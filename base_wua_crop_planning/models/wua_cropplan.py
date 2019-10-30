@@ -30,7 +30,8 @@ class WuaCropplan(models.Model):
             [('state', '!=', '')])
         if not cropplans_with_state:
             cropplans = self.env['wua.cropplan'].search([])
-            cropplans.write({'state': 'validated'})
+            if cropplans:
+                cropplans.write({'state': 'validated'})
 
     def _default_agriculturalseason_id(self):
         resp = 0

@@ -13,7 +13,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_crop_planning",
-        "base_wua_invoicing",        
+        "base_wua_invoicing",
      ],
     "data": [
         "security/ir.model.access.csv",
