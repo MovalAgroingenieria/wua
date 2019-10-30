@@ -174,7 +174,7 @@ class WuaInvoicesetLine(models.Model):
     _description = 'Entity (line of a WUA invoice set)'
 
     linkable_unit_type = fields.Selection(selection_add=[
-        ('enrolledsubparcel', 'Enrolled Subparcels')])
+        ('enrolledsubparcel', (_('Enrolled Subparcels')))])
 
     line_enrolledsubparcel_ids = fields.One2many(
         string='Lines for enrolled subparcels',
