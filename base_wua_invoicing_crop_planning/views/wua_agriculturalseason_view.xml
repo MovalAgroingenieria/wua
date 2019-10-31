@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Tree -->
+    <record id="wua_agriculturalseason_view_tree" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (tree view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id" ref="base_wua_crop_planning.wua_agriculturalseason_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='enrollment_initial_date']" position="before">
+                <field name="volume_perunitarea"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="wua_agriculturalseason_view_form_readonly" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id" ref="base_wua_crop_planning.wua_agriculturalseason_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="volume_perunitarea" attrs="{'readonly':True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_form_editable" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id" ref="base_wua_invoicing_crop_planning.wua_agriculturalseason_view_form_readonly"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base_wua_crop_planning.group_wua_technical_director')])]"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='volume_perunitarea']" position="attributes">
+                <attribute name="readonly">False</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
