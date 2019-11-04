@@ -29,7 +29,7 @@
                         ( OUT OF TIME )
                     </div>
                    <field name="state" widget="statusbar"
-                          statusbar_visible="draft,validated"/>                    
+                          statusbar_visible="draft,validated"/>
                 </header>
                 <sheet>
                     <div name="buttons" class="oe_button_box">
@@ -38,7 +38,7 @@
                               attrs="{'invisible':['|',('is_portal_user','=',False),('signature_image','!=',False)]}">
                                 NOTICE: It will be necessary to sign
                         </span>
-                    </div>                
+                    </div>
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="partner_id"
@@ -50,11 +50,11 @@
                             <field name="user_id"
                                    groups="base_wua.group_wua_user"/>
                             <field name="number_of_enrolledsubparcels"/>
-                            <field name="is_portal_user"/>                            
+                            <field name="is_portal_user"/>
                         </group>
                         <group name="master_data_right">
                             <field name="agriculturalseason_id"/>
-                            <field name="request_date"/>                            
+                            <field name="request_date"/>
                             <field name="area_official"/>
                             <field name="order_number"/>
                         </group>
@@ -68,7 +68,7 @@
                             </page>
                             <page name="signature_page" string="Signature">
                                 <field name="signature_image" widget="signature"/>
-                            </page>                            
+                            </page>
                             <page name="notes" string="Notes">
                                 <field name="notes"/>
                             </page>
@@ -98,7 +98,7 @@
                 <field name="out_of_time"/>
                 <field name="number_of_enrolledsubparcels"/>
                 <field name="area_official"/>
-                <field name="order_number"/>                
+                <field name="order_number"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -135,7 +135,7 @@
                     <filter string="User" name="user"
                      context="{'group_by':'user_id'}"/>
                     <filter string="State" name="state"
-                     context="{'group_by':'state'}"/>                     
+                     context="{'group_by':'state'}"/>
                 </group>
             </search>
         </field>
@@ -190,6 +190,19 @@
         </field>
     </record>
 
+    <record id="wua_enrolledsubparcel_editable_tree_view" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (editable tree view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="inherit_id" ref="wua_enrolledsubparcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree[1]" position="attributes">
+                <attribute name="create">true</attribute>
+                <attribute name="edit">true</attribute>
+                <attribute name="delete">true</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <record id="wua_enrolledsubparcel_view_search" model="ir.ui.view">
         <field name="name">Enrolled Subparcels (search view)</field>
         <field name="model">wua.enrolledsubparcel</field>
@@ -222,7 +235,7 @@
                     <filter string="Irrigation Partner" name="partner"
                      context="{'group_by':'partner_id'}"/>
                     <filter string="Parcel" name="parcel"
-                     context="{'group_by':'parcel_id'}"/>                
+                     context="{'group_by':'parcel_id'}"/>
                     <filter string="Type" name="type"
                      context="{'group_by':'subparceltype_id'}"/>
                     <filter string="Cultivation" name="cultivation"
@@ -262,7 +275,7 @@
                 <field name="irrigationsystem_id" widget="many2one_unclickable"
                        attrs="{'readonly':[('is_cultivable','=', False)]}"/>
                 <field name="productionmethod_id" widget="many2one_unclickable"
-                       attrs="{'readonly':[('is_cultivable','=', False)]}"/>                
+                       attrs="{'readonly':[('is_cultivable','=', False)]}"/>
             </tree>
         </field>
     </record>
@@ -297,7 +310,7 @@
         <field name="view_id" ref="wua_cropplan_view_tree"/>
         <field name="search_view_id" ref="wua_cropplan_view_search"/>
         <field name="context">{'search_default_active_agriculturalseason': 1,
-                               'default_state': 'draft'}</field>         
+                               'default_state': 'draft'}</field>
     </record>
 
     <record id="wua_enrolledsubparcel_action" model="ir.actions.act_window">
@@ -347,7 +360,7 @@
                 action = env['wua.cropplan'].cancel_cropplans(context['active_ids'])
         </field>
     </record>
-    
+
     <record id="wua_action_cancel_cropplans" model="ir.values">
         <field name="name">Cancel</field>
         <field name="model">wua.cropplan</field>
@@ -355,6 +368,14 @@
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_cropplans'))"/>
     </record>
+
+    <record id="wua_enrolledsubparcel_editable_tree_view_action" model="ir.actions.act_window">
+        <field name="name">Enrolled Subparcels Editable (action)</field>
+        <field name="res_model">wua.enrolledsubparcel</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_enrolledsubparcel_editable_tree_view"/>
+    </record>
+
 
     <menuitem id="wua_cropplan_menu"
               name="Crop Plans"
@@ -385,5 +406,11 @@
               parent="base_wua.base_wua_technical_menu"
               action="wua_technical_regenerate_census_action"
               sequence="7"/>
+
+    <menuitem id="wua_technical_wua_enrolledsubparcel_menu"
+              name="Enrolled subparcels"
+              parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+              action="wua_enrolledsubparcel_editable_tree_view_action"
+              sequence="2"/>
 
 </odoo>
