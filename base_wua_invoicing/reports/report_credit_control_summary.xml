@@ -59,6 +59,38 @@
             </div>
         </xpath>
 
+        <!-- Add other partner personal data -->
+        <xpath expr="//table[@id='summary_table']" position="before">
+            <table border="0" name="other_personal_data"
+                style="margin-bottom:10px; margin-left: 30px;">
+                <t t-if="doc.partner_id.partner_code">
+                    <tr>
+                        <td><strong>Partner num.</strong></td>
+                        <td style="padding-left: 10px;">
+                            <span t-field="doc.partner_id.partner_code" class="text-left"/>
+                        </td>
+                    </tr>
+                </t>
+                <t t-if="doc.partner_id.name">
+                    <tr>
+                        <td><strong>Name</strong></td>
+                        <td style="padding-left: 10px;">
+                            <span t-field="doc.partner_id.name" class="text-left"/>
+                        </td>
+                    </tr>
+                </t>
+                <t t-if="doc.partner_id.vat">
+                    <tr>
+                        <td><strong>VAT</strong></td>
+                        <td style="padding-left: 10px;">
+                            <t t-set="mod_vat" t-value="doc.partner_id.vat[2:]"/>
+                            <span t-esc="mod_vat" class="text-left"/>
+                        </td>
+                    </tr>
+                </t>
+            </table>
+        </xpath>
+
     </template>
 
 </odoo>

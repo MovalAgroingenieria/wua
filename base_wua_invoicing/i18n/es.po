@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-30 18:21+0000\n"
-"PO-Revision-Date: 2019-10-30 18:21+0000\n"
+"POT-Creation-Date: 2019-11-04 16:19+0000\n"
+"PO-Revision-Date: 2019-11-04 16:19+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -84,6 +84,21 @@ msgid "<span>,&amp;nbsp;</span>"
 msgstr "<span>,&amp;nbsp;</span>"
 
 #. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.report_credit_control_summary_document
+msgid "<strong>Name</strong>"
+msgstr "<strong>Nombre</strong>"
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.report_credit_control_summary_document
+msgid "<strong>Partner num.</strong>"
+msgstr "<strong>Nº Socio</strong>"
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.report_credit_control_summary_document
+msgid "<strong>VAT</strong>"
+msgstr "<strong>NIF/CIF</strong>"
+
+#. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/product.py:164
 #: code:addons/base_wua_invoicing/models/product.py:179
 #, python-format
@@ -93,7 +108,7 @@ msgstr "Un producto de una C.R. no puede ser comprado (sólo puede ser vendido),
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_account_banking_mandate
 msgid "A generic banking mandate"
-msgstr "Un mandato genérico del banco"
+msgstr "Un mandato bancario genérico"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_active
@@ -159,6 +174,11 @@ msgstr "Área, como propietario"
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_partner_parcel_payer_area
 msgid "Area, as payer"
 msgstr "Área, como pagador"
+
+#. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_bank_payment_line
+msgid "Bank Payment Lines"
+msgstr "Líneas de pago bancario"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_parcel_is_billable_expenses
@@ -332,7 +352,12 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_waterconnection_create_date
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoicing_configuration_create_date
 msgid "Created on"
-msgstr "Creado el"
+msgstr "Creado en"
+
+#. module: base_wua_invoicing
+#: model:product.template,name:base_wua_invoicing.product_03
+msgid "Cuota Comunidad 2019"
+msgstr "Cuota Comunidad 2019"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_currency_id
@@ -417,17 +442,17 @@ msgstr "Deudas vencidas"
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
 msgid "Enrolled Subparcels"
-msgstr "Subparcelas inscritas"
+msgstr "Enrolled Subparcels"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_product_category
 msgid "Entity (WUA Product Category)"
-msgstr "Elemento (Categoría de producto)"
+msgstr "Elemento (categoría de productos)"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Elemento (Plantilla de producto)"
+msgstr "Elemento (producto C.R.)"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_hydraulicsector
@@ -458,11 +483,6 @@ msgstr "Elemento (caseta)"
 #: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset_line
 msgid "Entity (line of a WUA invoice set)"
 msgstr "Elemento (línea de lote de facturas)"
-
-#. module: base_wua_invoicing
-#: model:ir.model,name:base_wua_invoicing.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr "Elemento (parcela)"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_waterconnection
@@ -604,12 +624,12 @@ msgstr "Factura"
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_date_invoice
 msgid "Invoice Date"
-msgstr "Fecha factura"
+msgstr "Fecha de la factura"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_account_invoice_line
 msgid "Invoice Line"
-msgstr "Línea de factura"
+msgstr "Linea de Factura"
 
 #. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/product.py:108
@@ -825,7 +845,7 @@ msgstr "Diario"
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_account_move_line
 msgid "Journal Item"
-msgstr "Elemento de diario"
+msgstr "Apunte contable"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset___last_update
@@ -947,11 +967,6 @@ msgid "None"
 msgstr "Ninguno"
 
 #. module: base_wua_invoicing
-#: model:product.template,name:base_wua_invoicing.product_03
-msgid "Normal Contrib/hec"
-msgstr "Derrama por superficie normal"
-
-#. module: base_wua_invoicing
 #: model:product.template,name:base_wua_invoicing.product_01
 msgid "Normal Parcel Pay"
 msgstr "Pago por parcela normal"
@@ -1068,6 +1083,11 @@ msgid "Parcels"
 msgstr "Parcelas"
 
 #. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_wua_parcel
+msgid "Parcels (integrated GIS)"
+msgstr "Parcels (integrated GIS)"
+
+#. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset_line_parcel
 msgid "Parcels of a invoice-set line"
 msgstr "Parcelas de una línea de detalle de lote"
@@ -1095,7 +1115,7 @@ msgstr "Parcelas, como pagador"
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicelines_view_search
 #: model:product.category,name:base_wua_invoicing.categ_02
 msgid "Partner"
-msgstr "Socio"
+msgstr "Empresa"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_res_partner
@@ -1319,7 +1339,7 @@ msgstr "Totales"
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_price_unit
 msgid "Unit Price"
-msgstr "Precio unitario"
+msgstr "Precio unidad"
 
 #. module: base_wua_invoicing
 #: selection:account.invoice.line,invoice_type:0
@@ -1446,7 +1466,7 @@ msgstr "Año"
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1202
 #, python-format
 msgid "You cannot cancel an invoice-set if there is a invoice which is not draft or cancelled."
-msgstr "No es posible borrar un lote de facturas si tiene alguna factura que no esté en estado borrador o cancelada."
+msgstr "You cannot cancel an invoice-set if there is a invoice which is not draft or cancelled."
 
 #. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:291
