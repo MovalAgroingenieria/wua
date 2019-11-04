@@ -1465,13 +1465,13 @@ class WuaInvoicesetLine(models.Model):
     @api.depends('product_id')
     def _compute_price_unit(self):
         for record in self:
-            record.price_unit = record.product_id.list_price
+            record.price_unit = record.product_id.lst_price
 
     @api.depends('product_id', 'quantity')
     def _compute_amount_untaxed(self):
         for record in self:
             record.amount_untaxed = \
-                record.product_id.list_price * record.quantity
+                record.product_id.lst_price * record.quantity
 
     @api.depends('product_id')
     def _compute_taxes_id(self):
