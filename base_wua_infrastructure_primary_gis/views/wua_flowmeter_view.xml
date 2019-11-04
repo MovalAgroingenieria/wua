@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowmeter_view_form" model="ir.ui.view">
+        <field name="name">Flowmeter (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='slave_data']" position="after">
+                <templates>
+                    <t t-name="gisviewer">
+                         <field name="with_gis_flowmeter" invisible="1"/>
+                         <div id="gisviewer_flowmeter" attrs="{'invisible': [('with_gis_flowmeter','=',False)]}">
+                             <field name="html_gisviewer_frame" widget="html"/>
+                         </div>
+                    </t>
+                </templates>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

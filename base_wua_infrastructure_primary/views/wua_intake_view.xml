@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_intake_view_form" model="ir.ui.view">
+        <field name="name">Intakes (form view)</field>
+        <field name="model">wua.intake</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <field name="gis_viewer_link" invisible="1"/>
+                    <field name="with_gis_intake" invisible="1"/>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="action_see_gis_viewer" type="object"
+                            class="oe_stat_button" string="GIS Viewer" icon="fa-map-marker"
+                            attrs="{'invisible': ['|',('gis_viewer_link','=',False), ('with_gis_intake','=',False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name"/>
+                            <field name="type"/>
+                            <field name="category"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="intake_code"/>
+                            <field name="flowmeter_id"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_intake_view_tree" model="ir.ui.view">
+        <field name="name">Intakes (tree view)</field>
+        <field name="model">wua.intake</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_primary_intakes_view_tree">
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_intake" invisible="1"/>
+                <field name="intake_code"/>
+                <field name="name"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_intake','=',False)]}"/>
+                <field name="type"/>
+                <field name="category"/>
+                <field name="flowmeter_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_intake_view_search" model="ir.ui.view">
+        <field name="name">Intakes (search view)</field>
+        <field name="model">wua.intake</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="intake_code"/>
+                <filter string="With flowmeter: Yes" name="with_flowmeter_yes" domain="[('with_flowmeter','=', True)]"/>
+                <filter string="With flowmeter: No" name="with_flowmeter_no" domain="[('with_flowmeter','=', False)]"/>
+                <separator/>
+                <filter string="Pressure" name="type_presssure" domain="[('type','=', 'pressure')]"/>
+                <filter string="Free Sheet" name="type_freesheet" domain="[('type','=', 'freesheet')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="category" context="{'group_by':'category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_intake_action" model="ir.actions.act_window">
+        <field name="name">Intakes</field>
+        <field name="res_model">wua.intake</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_intake_view_tree"/>
+        <field name="search_view_id" ref="wua_intake_view_search"/>
+    </record>
+
+    <menuitem
+        name="Intakes"
+        id="wua_intake_menu"
+        parent="base_wua_infrastructure_primary_menu"
+        sequence="1"
+        action="wua_intake_action"/>
+
+</odoo>
