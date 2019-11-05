@@ -19,6 +19,8 @@ Management of a water user association infrastructure.
 * Water connections.
 * Etc.
 
+This module also includes modifications of different reports according to the instructions of the Argos CR.
+
 Credits
 =======
 
