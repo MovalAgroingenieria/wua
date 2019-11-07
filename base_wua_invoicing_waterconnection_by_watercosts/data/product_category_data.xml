@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+        <record id="categ_10" model="product.category">
+            <field name="name">Water Connection (based on percentage of water costs)</field>
+            <field name="productcategory_code">10</field>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="categ_10" model="product.category">
+            <field name="parent_id" ref="base_wua_invoicing.categ_00"/>
+        </record>
+    </data>
+
+    <data noupdate="1">
+
+        <record id="product_10" model="product.template">
+            <field name="name">Standard Water Connection Maintenance (based on percentage of water costs)</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">10</field>
+            <field name="categ_id" ref="categ_10"/>
+        </record>
+
+    </data>
+    
+</odoo>
