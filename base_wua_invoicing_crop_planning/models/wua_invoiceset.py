@@ -152,6 +152,17 @@ class WuaInvoiceset(models.Model):
         data['parcel_id'] = invoice_data_line['key2']
         return data
 
+    # If this method is executed, then the
+    # "base_wua_invoicing_separate_parcel_billing" module is installed.
+    def get_parcel_id(self, invoice_detail):
+        if invoice_detail['categ_code'] == 9:
+            parcel_id = invoice_detail['key2']
+            is_watercosts = True
+        else:
+            parcel_id, is_watercosts = \
+                super(WuaInvoiceset, self).get_parcel_id(invoice_detail)
+        return parcel_id, is_watercosts
+
     # See comment of "unlink".
     def after_cancel_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
