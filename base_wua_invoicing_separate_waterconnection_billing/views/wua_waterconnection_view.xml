@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='notes_page']" position="after">
+                <page name="payment_modes" string="Separate Billing">
+                    <field name="watercosts_mandate_required" invisible="1"/>
+                    <field name="othercosts_mandate_required" invisible="1"/>
+                    <group name="container_payment_modes">
+                        <group name="water_costs" string="Water Costs">
+                            <field name="watercosts_partner_id"
+                             string="Partner"/>
+                            <field name="watercosts_payment_mode_id"
+                             string="Payment Mode"
+                             domain="[('payment_type','=','inbound')]"/>
+                            <field name="watercosts_mandate_id"
+                             string="Direct Debit Mandate"
+                             attrs="{'invisible':
+                                     [('watercosts_mandate_required',
+                                      '=',False)]}"
+                             domain="[('state','=','valid'),
+                                      ('partner_id','=',watercosts_partner_id)]"
+                             context="{'reduced_name_get_for_bankingmandate':
+                                       True}"/>
+                        </group>
+                        <group name="other_costs" string="Other Costs">
+                            <field name="othercosts_partner_id"
+                             string="Partner"/>
+                            <field name="othercosts_payment_mode_id"
+                             string="Payment Mode"
+                             domain="[('payment_type','=','inbound')]"/>
+                            <field name="othercosts_mandate_id"
+                             string="Direct Debit Mandate"
+                             attrs="{'invisible':
+                                     [('othercosts_mandate_required',
+                                      '=',False)]}"
+                             domain="[('state','=','valid'),
+                                      ('partner_id','=',othercosts_partner_id)]"
+                             context="{'reduced_name_get_for_bankingmandate':
+                                       True}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_search" model="ir.ui.view" >
+        <field name="name">Water Connections (search view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_waterconnection_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <filter string="Separate billing for water costs: Yes"
+                 name="watercosts_separate_billing_yes"
+                 domain="[('watercosts_separate_billing','=',True)]"/>
+                <filter string="Separate billing for water costs: No"
+                 name="watercosts_separate_billing_no"
+                 domain="[('watercosts_separate_billing','=',False)]"/>
+                <separator/>
+                <filter string="Separate billing for other costs: Yes"
+                 name="othercosts_separate_billing_yes"
+                 domain="[('othercosts_separate_billing','=',True)]"/>
+                <filter string="Separate billing for other costs: No"
+                 name="othercosts_separate_billing_no"
+                 domain="[('othercosts_separate_billing','=',False)]"/>
+                <separator/>                
+            </xpath>
+            <xpath expr="//filter[@name='irrigation_shed']" position="after">
+                <filter string="Payment mode for water costs"
+                        name="watercosts_payment_mode_id_group"
+                        context="{'group_by':'watercosts_payment_mode_id'}"/>
+                <filter string="Payment mode for other costs"
+                        name="othercosts_payment_mode_id_group"
+                        context="{'group_by':'othercosts_payment_mode_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

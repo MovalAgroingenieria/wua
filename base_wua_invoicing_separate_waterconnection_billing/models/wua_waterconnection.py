@@ -5,42 +5,19 @@
 from odoo import models, fields, api, exceptions, _
 
 
-class WuaParcel(models.Model):
-    _inherit = 'wua.parcel'
+class WuaWaterconnection(models.Model):
+    _inherit = 'wua.waterconnection'
 
     @api.model_cr
     def init(self):
-        parcels_with_populated_partner_id = self.env['wua.parcel'].search(
-            ['|', ('watercosts_partner_id', '!=', None),
-             ('othercosts_partner_id', '!=', None)])
-        if not parcels_with_populated_partner_id:
-            parcels = self.env['wua.parcel'].search([])
-            for parcel in parcels:
-                watercosts_partner_id = None
-                othercosts_partner_id = None
-                number_of_partnerlinks_with_watercosts = 0
-                number_of_partnerlinks_with_othercosts = 0
-                possible_partner_id_for_watercosts = None
-                possible_partner_id_for_othercosts = None
-                for partnerlink in parcel.partnerlink_ids:
-                    if partnerlink.water_costs_percentage > 0:
-                        possible_partner_id_for_watercosts = \
-                            partnerlink.partner_id
-                        number_of_partnerlinks_with_watercosts = \
-                            number_of_partnerlinks_with_watercosts + 1
-                    if partnerlink.other_costs_percentage > 0:
-                        possible_partner_id_for_othercosts = \
-                            partnerlink.partner_id
-                        number_of_partnerlinks_with_othercosts = \
-                            number_of_partnerlinks_with_othercosts + 1
-                if number_of_partnerlinks_with_watercosts == 1:
-                    watercosts_partner_id = possible_partner_id_for_watercosts
-                if number_of_partnerlinks_with_othercosts == 1:
-                    othercosts_partner_id = possible_partner_id_for_othercosts
-                if watercosts_partner_id is not None:
-                    parcel.watercosts_partner_id = watercosts_partner_id
-                if othercosts_partner_id is not None:
-                    parcel.othercosts_partner_id = othercosts_partner_id
+        waterconnections_with_populated_partner_id = \
+            self.env['wua.waterconnection'].search(
+                ['|', ('watercosts_partner_id', '!=', None),
+                 ('othercosts_partner_id', '!=', None)])
+        if not waterconnections_with_populated_partner_id:
+            waterconnections = self.env['wua.waterconnection'].search([])
+            waterconnections._compute_watercosts_partner_id()
+            waterconnections._compute_othercosts_partner_id()
 
     watercosts_partner_id = fields.Many2one(
         string='Partner for water costs',
@@ -106,36 +83,38 @@ class WuaParcel(models.Model):
         comodel_name='account.banking.mandate',
         ondelete='restrict')
 
-    @api.depends('partnerlink_ids')
+    @api.depends('irrigationpoint_ids.parcel_id',
+                 'irrigationpoint_ids.parcel_id.partnerlink_ids')
     def _compute_watercosts_partner_id(self):
         for record in self:
             watercosts_partner_id = None
-            number_of_partnerlinks = 0
-            possible_partner_id = None
-            for partnerlink in record.partnerlink_ids:
-                if partnerlink.water_costs_percentage > 0:
-                    possible_partner_id = partnerlink.partner_id
-                    number_of_partnerlinks = number_of_partnerlinks + 1
-                    if number_of_partnerlinks > 1:
-                        break
-            if number_of_partnerlinks == 1:
-                watercosts_partner_id = possible_partner_id
+            possible_partners = []
+            for irrigationpoint in record.irrigationpoint_ids:
+                parcel = irrigationpoint.parcel_id
+                for partnerlink in parcel.partnerlink_ids:
+                    if partnerlink.water_costs_percentage > 0:
+                        possible_partners.append(partnerlink.partner_id.id)
+            if possible_partners:
+                possible_partners = list(set(possible_partners))
+                if len(possible_partners) == 1:
+                    watercosts_partner_id = possible_partners[0]
             record.watercosts_partner_id = watercosts_partner_id
 
-    @api.depends('partnerlink_ids')
+    @api.depends('irrigationpoint_ids.parcel_id',
+                 'irrigationpoint_ids.parcel_id.partnerlink_ids')
     def _compute_othercosts_partner_id(self):
         for record in self:
             othercosts_partner_id = None
-            number_of_partnerlinks = 0
-            possible_partner_id = None
-            for partnerlink in record.partnerlink_ids:
-                if partnerlink.other_costs_percentage > 0:
-                    possible_partner_id = partnerlink.partner_id
-                    number_of_partnerlinks = number_of_partnerlinks + 1
-                    if number_of_partnerlinks > 1:
-                        break
-            if number_of_partnerlinks == 1:
-                othercosts_partner_id = possible_partner_id
+            possible_partners = []
+            for irrigationpoint in record.irrigationpoint_ids:
+                parcel = irrigationpoint.parcel_id
+                for partnerlink in parcel.partnerlink_ids:
+                    if partnerlink.other_costs_percentage > 0:
+                        possible_partners.append(partnerlink.partner_id.id)
+            if possible_partners:
+                possible_partners = list(set(possible_partners))
+                if len(possible_partners) == 1:
+                    othercosts_partner_id = possible_partners[0]
             record.othercosts_partner_id = othercosts_partner_id
 
     @api.depends('watercosts_partner_id')
@@ -201,18 +180,19 @@ class WuaParcel(models.Model):
     def _check_watercosts_payment_mode_id(self):
         if (len(self) == 1 and (self.watercosts_payment_mode_id and
            not self.watercosts_potentially_billable)):
-            raise exceptions.ValidationError(_('Separate parcel billing: '
-                                               'there can be no more one '
-                                               'water payer.'))
+            raise exceptions.ValidationError(_('Separate water connection '
+                                               'billing: there can be no more '
+                                               'one water payer.'))
 
     @api.constrains('othercosts_payment_mode_id',
                     'watercosts_potentially_billable')
     def _check_othercosts_payment_mode_id(self):
         if (len(self) == 1 and (self.othercosts_payment_mode_id and
            not self.othercosts_potentially_billable)):
-            raise exceptions.ValidationError(_('Separate parcel billing: '
-                                               'there can be no more one '
-                                               'payer for the other costs.'))
+            raise exceptions.ValidationError(_('Separate water connection '
+                                               'billing: there can be no more '
+                                               'one payer for the other '
+                                               'costs.'))
 
     @api.constrains('watercosts_mandate_id',
                     'watercosts_payment_mode_id',
@@ -224,11 +204,11 @@ class WuaParcel(models.Model):
                self.watercosts_mandate_id.partner_id !=
                self.watercosts_partner_id or
                self.watercosts_mandate_id.state != 'valid'):
-                raise exceptions.ValidationError(_('Separate parcel billing: '
-                                                   'It is mandatory to enter '
-                                                   'a valid mandate of the '
-                                                   'only partner that pays '
-                                                   'the water costs.'))
+                raise exceptions.ValidationError(_('Separate water connection '
+                                                   'billing: It is mandatory '
+                                                   'to enter a valid mandate '
+                                                   'of the only partner that '
+                                                   'pays the water costs.'))
 
     @api.constrains('othercosts_mandate_id',
                     'othercosts_payment_mode_id',
@@ -240,11 +220,11 @@ class WuaParcel(models.Model):
                self.othercosts_mandate_id.partner_id !=
                self.othercosts_partner_id or
                self.othercosts_mandate_id.state != 'valid'):
-                raise exceptions.ValidationError(_('Separate parcel billing: '
-                                                   'It is mandatory to enter '
-                                                   'a valid mandate of the '
-                                                   'only partner that pays '
-                                                   'the other costs.'))
+                raise exceptions.ValidationError(_('Separate water connection '
+                                                   'billing: It is mandatory '
+                                                   'to enter a valid mandate '
+                                                   'of the only partner that '
+                                                   'pays the other costs.'))
 
     @api.onchange('watercosts_payment_mode_id')
     def _onchange_watercosts_payment_mode_id(self):
@@ -277,7 +257,7 @@ class WuaParcel(models.Model):
             if self.reset_mandate_id(self.othercosts_payment_mode_id,
                                      vals['othercosts_payment_mode_id']):
                 vals['othercosts_mandate_id'] = False
-        return super(WuaParcel, self).write(vals)
+        return super(WuaWaterconnection, self).write(vals)
 
     def reset_mandate_id(self, old_payment_mode, new_payment_mode_id):
         resp = False
