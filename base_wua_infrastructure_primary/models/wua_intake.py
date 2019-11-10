@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api
@@ -10,7 +11,7 @@ import pytz
 class WuaIntake(models.Model):
     _name = 'wua.intake'
     _description = 'Entity (intake)'
-    _order = 'name'
+    _order = 'intake_code'
 
     def _default_intake_code(self):
         resp = 0
@@ -33,7 +34,7 @@ class WuaIntake(models.Model):
         size=30,
         required=True,
         index=True,
-        help='Intake name')
+        help='Intake Name')
 
     type = fields.Selection([
         ('pressure', 'Pressure'),
@@ -42,7 +43,7 @@ class WuaIntake(models.Model):
         required=True,
         index=True,
         default='pressure',
-        help='Type of flowmeter.')
+        help='Type of intake')
 
     category = fields.Selection([
         ('1', '1'),
@@ -52,14 +53,16 @@ class WuaIntake(models.Model):
         string="Category",
         required=True,
         index=True,
-        help='Intake category.')
+        help='Intake Category')
 
     flowmeter_id = fields.Many2one(
-        string='Flowmeter',
+        string='Flow Meter',
         comodel_name='wua.flowmeter')
 
     with_flowmeter = fields.Boolean(
-        string="With flowmeter")
+        string="With flowmeter",
+        store=True,
+        compute='_compute_with_flowmeter')
 
     with_gis_intake = fields.Boolean(
         string="GIS Intake",
@@ -74,8 +77,7 @@ class WuaIntake(models.Model):
         compute='_compute_gis_viewer_link')
 
     with_gis_intake = fields.Boolean(
-        string='GIS Intake',
-        store=True)
+        string='GIS Intake')
 
     _sql_constraints = [
         ('unique_intake_code',
@@ -84,6 +86,9 @@ class WuaIntake(models.Model):
         ('intake_code_positive',
          'CHECK (intake_code >= 0)',
          'Intake code can not be negative.'),
+        ('unique_name',
+         'UNIQUE (name)',
+         'Existing intake.'),
         ]
 
     @api.depends('flowmeter_id')

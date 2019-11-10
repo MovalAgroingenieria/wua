@@ -2,16 +2,16 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-==============================================
-Water Users Association Infrastructure Primary
-==============================================
+===============================================
+Water Users Association: Primary Infrastructure
+===============================================
 
 This module allows you to manage the primary infrastructure of water users associations.
 
 Description
 ===========
 
-Management of a water user association primary infrastructure.
+Management of the primary infrastructure of a water user association:
 
 * Flowmeters.
 * Intakes.

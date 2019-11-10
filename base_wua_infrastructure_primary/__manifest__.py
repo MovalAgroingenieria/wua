@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+# 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
-    "name": "Water Users Association Infrastructure Primary",
+    "name": "Primary Infrastructure for Water Users Associations",
     "summary": "In a water users association, management of its "
-               "infrastructure",
+               "primary infrastructure",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
@@ -14,11 +15,11 @@
         "base_wua_infrastructure",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/resources.xml",
         "views/wua_infrastructure_config_settings_view.xml",
         "views/wua_flowmeter_view.xml",
         "views/wua_intake_view.xml",
-        "security/ir.model.access.csv",
     ],
     "installable": True,
     "application": True,

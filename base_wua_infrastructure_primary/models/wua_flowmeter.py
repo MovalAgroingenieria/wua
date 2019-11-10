@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, exceptions, _
@@ -17,7 +18,7 @@ class WuaFlowmeter(models.Model):
         size=30,
         required=True,
         index=True,
-        help='The name that identify the flowmeter')
+        help='The name that identifies the flow-meter')
 
     state = fields.Selection([
         ('active', 'Active'),
@@ -27,7 +28,7 @@ class WuaFlowmeter(models.Model):
         required=True,
         index=True,
         default='active',
-        help='Flowmeter status.')
+        help='Flow-Meter Status')
 
     type = fields.Selection([
         ('undefined', 'Undefined'),
@@ -41,19 +42,19 @@ class WuaFlowmeter(models.Model):
         required=True,
         index=True,
         default='undefined',
-        help='Type of flowmeter.')
+        help='Type of flow-meter')
 
     nominal_water_flow = fields.Float(
-        string="Water (m3/hour)",
+        string="Water Flow (m3/hour)",
         digits=(32, 2),
         required=True,
-        help="The nominal flow rate of flowmeter.")
+        help="The nominal flow rate of flow-meter")
 
     intake_ids = fields.One2many(
         string='Intakes',
         comodel_name='wua.intake',
         inverse_name='flowmeter_id',
-        help="Intakes related to the flowmeter.")
+        help="Intakes related to the flow-meter")
 
     intake_id = fields.Many2one(
         string='Intake',
@@ -73,20 +74,19 @@ class WuaFlowmeter(models.Model):
 
     notes = fields.Html(
         string="Notes",
-        help="Notes about flowmeter")
+        help="Notes about flow-meter")
 
     gis_viewer_link = fields.Char(
         string='GIS Viewer',
         compute='_compute_gis_viewer_link')
 
     with_gis_flowmeter = fields.Boolean(
-        string='GIS Flowmeter',
-        store=True)
+        string='GIS Flow-Meter')
 
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
-         'Existing flowmeter identifier.'),
+         'Existing flow-meter identifier.'),
         ('nominal_water_flow',
          'CHECK (nominal_water_flow >= 0)',
          'Nominal water flow can not be negative.'),
@@ -154,6 +154,19 @@ class WuaFlowmeter(models.Model):
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
 
+    @api.constrains('name')
+    def _check_white_spaces_name(self):
+        if (len(self) == 1 and ' ' in self.name):
+            raise exceptions.ValidationError(_('Blanks are not '
+                                               'allowed in the name '
+                                               'of the flowmeter.'))
+
+    @api.constrains('intake_ids')
+    def _check_intake_ids(self):
+        if (len(self) == 1 and len(self.intake_ids) > 1):
+            raise exceptions.ValidationError(_('Only one intake per '
+                                               'flowmeter is allowed.'))
+
     @api.multi
     def action_see_gis_viewer(self):
         self.ensure_one()
@@ -163,17 +176,3 @@ class WuaFlowmeter(models.Model):
                 'url': self.gis_viewer_link,
                 'target': 'new',
             }
-
-    @api.constrains('name')
-    def _check_white_spaces_name(self):
-        for record in self:
-            if ' ' in record.name:
-                raise exceptions.ValidationError(_('Blanks are not '
-                                                   'allowed in the name '
-                                                   'of the flowmeter.'))
-
-    @api.constrains('intake_ids')
-    def _check_intake_ids(self):
-        if (len(self) == 1 and len(self.intake_ids) > 1):
-            raise exceptions.ValidationError(_('Only one intake per '
-                                               'flowmeter is allowed.'))
