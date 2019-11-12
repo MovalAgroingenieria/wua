@@ -9,7 +9,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
-    _in_create = False
+    _in_create_or_synchro = False
 
     @api.model_cr
     def init(self):
@@ -41,7 +41,7 @@ class WuaParcel(models.Model):
 
     @api.model
     def create(self, vals):
-        self.__class__._in_create = True
+        self.__class__._in_create_or_synchro = True
         new_parcel = super(WuaParcel, self).create(vals)
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
@@ -84,13 +84,13 @@ class WuaParcel(models.Model):
                     _logger.info(prefix_message + ' ' +
                                  new_parcel.name + '... ' +
                                  suffix_message)
-        self.__class__._in_create = False
+        self.__class__._in_create_or_synchro = False
         return new_parcel
 
     @api.multi
     def write(self, vals):
         resp = super(WuaParcel, self).write(vals)
-        if (self.__class__._in_create or len(self) != 1):
+        if (self.__class__._in_create_or_synchro or len(self) != 1):
             return resp
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
@@ -98,8 +98,14 @@ class WuaParcel(models.Model):
             'wua.irrigation.configuration', 'can_be_sent_parcels_census')
         automatic_census_synchronization = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'automatic_census_synchronization')
+        # If the parcel is archived / activated, then
+        # automatic_census_synchronization = True (allways).
+        active_in_vals = 'active' in vals
         if (enable_remotecontrol and can_be_sent_parcels_census and
-           automatic_census_synchronization):
+           (automatic_census_synchronization or active_in_vals)):
+            record_archived = False
+            if (active_in_vals and not vals['active']):
+                record_archived = True
             url_remotecontrol_rest = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'url_remotecontrol_rest')
             url_remotecontrol_rest_username = self.env['ir.values'].\
@@ -117,7 +123,7 @@ class WuaParcel(models.Model):
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
-                            data)
+                            data, record_archived)
                     prefix_message = _('Remote Control: Updating remote '
                                        'control for parcel (existing)')
                     suffix_message = 'OK'
@@ -192,7 +198,8 @@ class WuaParcel(models.Model):
     # Hook
     def update_parcel(self, url_remotecontrol_rest,
                       url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password, data):
+                      url_remotecontrol_rest_password,
+                      data, record_archived=False):
         return False, ''
 
     # Hook
@@ -213,6 +220,7 @@ class WuaParcel(models.Model):
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'can_be_sent_parcels_census')
         if (enable_remotecontrol and can_be_sent_parcels_census):
+            record_archived = not self.active
             url_remotecontrol_rest = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'url_remotecontrol_rest')
             url_remotecontrol_rest_username = self.env['ir.values'].\
@@ -230,7 +238,7 @@ class WuaParcel(models.Model):
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
-                            data)
+                            data, record_archived)
                     prefix_message = _('Remote Control: Synchronizing '
                                        'remote control for parcel')
                     suffix_message = 'OK'
@@ -246,7 +254,9 @@ class WuaParcel(models.Model):
                     if not synchronized_remotecontrol:
                         raise exceptions.UserError(_('ERROR ') + ':\n\n' +
                                                    suffix_message)
+                    self.__class__._in_create_or_synchro = True
                     self.updated_in_remotecontrol = True
+                    self.__class__._in_create_or_synchro = False
 
     def do_synchronization_parcels(self, active_parcels,
                                    show_message=False):
@@ -268,7 +278,8 @@ class WuaParcel(models.Model):
                             'url_remotecontrol_rest_password')
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
-                parcels = self.env['wua.parcel'].browse(active_parcels)
+                parcels = self.env['wua.parcel'].with_context(
+                    active_test=False).browse(active_parcels)
                 if parcels:
                     list_of_data = []
                     for parcel in parcels:
@@ -287,11 +298,13 @@ class WuaParcel(models.Model):
                             prefix_message = _('Remote Control: Synchronizing '
                                                'remote control for parcels')
                             suffix_message = 'OK'
+                            self.__class__._in_create_or_synchro = True
                             if parcels_ok:
                                 parcels_ok_str = ''
                                 for name in parcels_ok:
-                                    self.env['wua.parcel'].search(
-                                        [('name', '=', name)]).\
+                                    self.env['wua.parcel'].with_context(
+                                        active_test=False).search(
+                                            [('name', '=', name)]).\
                                         updated_in_remotecontrol = True
                                     parcels_ok_str = parcels_ok_str + ', ' + \
                                         str(name)
@@ -304,6 +317,10 @@ class WuaParcel(models.Model):
                                                    'control')
                                 parcels_not_ok_str = ''
                                 for name in parcels_not_ok:
+                                    self.env['wua.parcel'].with_context(
+                                        active_test=False).search(
+                                            [('name', '=', name)]).\
+                                        updated_in_remotecontrol = False
                                     parcels_not_ok_str = \
                                         parcels_not_ok_str + ', ' + \
                                         str(name)
@@ -311,6 +328,7 @@ class WuaParcel(models.Model):
                                 _logger.info(prefix_message + ': ' +
                                              parcels_not_ok_str + '... ' +
                                              suffix_message)
+                            self.__class__._in_create_or_synchro = False
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
@@ -318,7 +336,8 @@ class WuaParcel(models.Model):
                                              'enabled.'))
 
     def do_synchronization_all_parcels(self, show_message=False):
-        parcel_ids = self.env['wua.parcel'].search([]).ids
+        parcel_ids = self.env['wua.parcel'].with_context(
+            active_test=False).search([]).ids
         if parcel_ids:
             self.do_synchronization_parcels(parcel_ids, show_message)
         if not show_message:
@@ -327,7 +346,8 @@ class WuaParcel(models.Model):
     # Hook
     def synchronize_parcel(self, url_remotecontrol_rest,
                            url_remotecontrol_rest_username,
-                           url_remotecontrol_rest_password, data):
+                           url_remotecontrol_rest_password,
+                           data, record_archived=False):
         return False, ''
 
     # Hook
@@ -335,3 +355,49 @@ class WuaParcel(models.Model):
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password, list_of_data):
         return None, None
+
+    @api.multi
+    def do_unsynchronization_parcel(self):
+        self.ensure_one()
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        can_be_sent_parcels_census = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'can_be_sent_parcels_census')
+        if (enable_remotecontrol and can_be_sent_parcels_census):
+            url_remotecontrol_rest = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+            url_remotecontrol_rest_username = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_username')
+            url_remotecontrol_rest_password = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_password')
+            if (url_remotecontrol_rest and url_remotecontrol_rest_username and
+               url_remotecontrol_rest_password):
+                data = self.populate_data_for_delete_parcel(self)
+                if data:
+                    synchronized_remotecontrol, error_message = \
+                        self.delete_parcel(
+                            url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password,
+                            data)
+                    prefix_message = _('Remote Control: Unsynchronizing '
+                                       'remote control for parcel ')
+                    suffix_message = 'OK'
+                    if not synchronized_remotecontrol:
+                        if not error_message:
+                            error_message = \
+                                _('Update error in remote control')
+                        suffix_message = error_message
+                    _logger = logging.getLogger(
+                        self.__class__.__name__)
+                    _logger.info(prefix_message + ' ' +
+                                 str(self.name) + '... ' +
+                                 suffix_message)
+                    if not synchronized_remotecontrol:
+                        raise exceptions.UserError(_('ERROR ') + ':\n\n' +
+                                                   suffix_message)
+                    self.__class__._in_create_or_synchro = True
+                    self.updated_in_remotecontrol = False
+                    self.__class__._in_create_or_synchro = False
