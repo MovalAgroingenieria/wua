@@ -13,7 +13,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_pressurized_irrigation",],
+        "base_wua_invoicing_pressurized_irrigation",],
     "data": [
         "security/security.xml",
         "views/resources.xml",
@@ -22,7 +22,8 @@
         "views/wua_parcel_view.xml",
         "views/wua_waterconnection_view.xml",
         "views/wua_irrigationshed_view.xml",
-        "views/wua_hydraulicsector_view.xml",],
+        "views/wua_hydraulicsector_view.xml",
+        "views/wua_reading_view.xml",],
     'qweb': ['static/src/xml/button_import_readings.xml'],        
     "installable": True,
     "application": False,

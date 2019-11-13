@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_reading_view_tree" model="ir.ui.view">
+        <field name="name">Readings (tree view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_view_tree"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='presconsumption_id']" position="after">
+                <field name="from_import" string="Manual"/>
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_reading_view_search" model="ir.ui.view">
+        <field name="name">Readings (search view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='initreadingno']" position="after">
+                <separator/>
+                <filter string="Manual Introduction: Yes" name="fromimportyes"
+                 domain="[('from_import','=',True)]"/>
+                <filter string="Manual Introduction: No (from remote control)" name="fromimportno"
+                 domain="[('from_import','=',False)]"/>                
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_reading_one_watermeter_view_tree" model="ir.ui.view">
+        <field name="name">Readings (tree view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='presconsumption_id']" position="after">
+                <field name="from_import" string="Manual"/>
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_reading_one_watermeter_view_search" model="ir.ui.view">
+        <field name="name">Readings (search view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='initreadingno']" position="after">
+                <separator/>
+                <filter string="Manual Introduction: Yes" name="fromimportyes"
+                 domain="[('from_import','=',True)]"/>
+                <filter string="Manual Introduction: No (from remote control)" name="fromimportno"
+                 domain="[('from_import','=',False)]"/>                
+            </xpath>        
+        </field>
+    </record>
+
+</odoo>

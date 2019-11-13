@@ -4,12 +4,17 @@
 
 import datetime
 import logging
-from odoo import models, api, exceptions, _
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaReading(models.Model):
     _inherit = 'wua.reading'
     _order = 'reading_time desc, name'
+
+    from_import = fields.Boolean(
+        string='Manual Introduction',
+        default=True,
+        required=True)
 
     @api.model
     def run_remotecontrol_application_url(self):
@@ -131,6 +136,7 @@ class WuaReading(models.Model):
                     'reading_time': reading_time,
                     'volume': reading['volume'],
                     'initialization_reading': False,
+                    'from_import': False,
                     })
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)
