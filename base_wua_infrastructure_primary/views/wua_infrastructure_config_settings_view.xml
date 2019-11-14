@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_primary_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters (Primary Infrastucture)</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='url_gis_viewer_irrigationditch_param']" position="after">
+                <field name="url_gis_viewer_flowmeter_param"/>
+                <field name="url_gis_viewer_intake_param"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
