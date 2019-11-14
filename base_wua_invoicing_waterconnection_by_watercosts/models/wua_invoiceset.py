@@ -32,21 +32,35 @@ class WuaInvoiceset(models.Model):
         irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
             [('type', '=', 'WC')])
         area_measurement_name = self.get_area_measurement_name()
+        precision = self.env['decimal.precision'].precision_get(
+            'Product Unit of Measure')
         for waterconnection in waterconnections:
             waterconnection_code = waterconnection.name
             irrigationpoints_of_waterconnection = irrigationpoints.filtered(
                 lambda x: x.waterconnection_id.id == waterconnection.id)
             parcels_of_waterconnection = \
                 [x.parcel_id for x in irrigationpoints_of_waterconnection
-                 if x.parcel_id.is_billable_expenses]
-            if len(parcels_of_waterconnection) > 0:
+                 if x.parcel_id.is_billable_water]
+            number_of_parcels = len(parcels_of_waterconnection)
+            if number_of_parcels > 0:
                 total_area_official = \
                     sum(x.area_official for x in parcels_of_waterconnection)
+                single_payer = self.is_parcels_with_a_single_payer(
+                    parcels_of_waterconnection, True)
+                cumulative_quantity = 0
+                processed_parcels = 0
                 for parcel in parcels_of_waterconnection:
                     if total_area_official == 0:
                         continue
                     waterconnection_quantity = \
-                        parcel.area_official / total_area_official
+                        round(parcel.area_official / total_area_official,
+                              precision)
+                    processed_parcels = processed_parcels + 1
+                    if single_payer and processed_parcels == number_of_parcels:
+                        waterconnection_quantity = 1 - cumulative_quantity
+                    else:
+                        cumulative_quantity = cumulative_quantity + \
+                            waterconnection_quantity
                     waterconnection_quantity_str = \
                         '%.2f' % (waterconnection_quantity * 100)
                     partnerlinks_of_parcel = partnerlinks.filtered(
