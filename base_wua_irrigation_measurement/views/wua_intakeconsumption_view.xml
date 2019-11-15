@@ -1,3 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+
+    <record id="wua_intakeconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Intake Consuption (tree view)</field>
+        <field name="model">wua.intakeconsumption</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_irrigation_measurement_intakeconsumption_view_tree">
+
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_intakeconsumption_view_search" model="ir.ui.view">
+        <field name="name">Intake Consumption (search view)</field>
+        <field name="model">wua.intakeconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_intakeconsumption_action" model="ir.actions.act_window">
+        <field name="name">Intake Consumptions</field>
+        <field name="res_model">wua.intakeconsumption</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_intakeconsumption_view_tree"/>
+        <field name="search_view_id" ref="wua_intakeconsumption_view_search"/>
+    </record>
+
+    <menuitem
+        name="Intake Consumptions"
+        id="wua_intakeconsumption_menu"
+        parent="base_wua_primary_irrigation_menu"
+        sequence="2"
+        action="wua_intakeconsumption_action"/>
+
+
 </odoo>

@@ -1,3 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+  <record id="wua_flowreading_view_tree" model="ir.ui.view">
+      <field name="name">Flowreading (tree view)</field>
+      <field name="model">wua.flowreading</field>
+      <field name="arch" type="xml">
+          <tree class="o_base_wua_irrigation_measurement_flowreading_view_tree">
+
+          </tree>
+      </field>
+  </record>
+
+  <record id="wua_flowreading_view_search" model="ir.ui.view">
+      <field name="name">Flowreading (search view)</field>
+      <field name="model">wua.flowreading</field>
+      <field name="arch" type="xml">
+          <search>
+          </search>
+      </field>
+  </record>
+
+  <record id="wua_flowmeterreading_action" model="ir.actions.act_window">
+      <field name="name">Flowmeter Readings</field>
+      <field name="res_model">wua.flowreading</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="wua_flowreading_view_tree"/>
+      <field name="search_view_id" ref="wua_flowreading_view_search"/>
+  </record>
+
+  <menuitem
+      name="Flow Meter Readings"
+      id="wua_flowreading_menu"
+      parent="base_wua_primary_irrigation_menu"
+      sequence="1"
+      action="wua_flowmeterreading_action"/>
+
+
 </odoo>
