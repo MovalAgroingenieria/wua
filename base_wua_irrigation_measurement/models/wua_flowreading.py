@@ -13,7 +13,8 @@ class WuaFlowreading(models.Model):
         string='Flow-Meter Reading',
         index=True,
         store=True,
-        compute="_compute_name",)
+        compute="_compute_name",
+        size=52)
 
     flowmeter_id = fields.Many2one(
         string='Flow Meter',
@@ -71,7 +72,7 @@ class WuaFlowreading(models.Model):
          'Volume of water can\'t be negative.'),
         ]
 
-    @api.depends('flowmeter_id, reading_time')
+    @api.depends('flowmeter_id', 'reading_time')
     def _compute_name(self):
         for record in self:
             name = ''
