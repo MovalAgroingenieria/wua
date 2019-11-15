@@ -50,7 +50,7 @@ class WuaFlowreading(models.Model):
 
     intakeconsumption_id = fields.Many2one(
         string='Intake Consumption',
-        comodel_name='wua_intakeconsumption',
+        comodel_name='wua.intakeconsumption',
         ondelete='restrict',
         readonly=True)
 
