@@ -799,8 +799,10 @@ class WuaInvoiceset(models.Model):
         irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
             [('type', '=', 'WC')])
         area_measurement_name = self.get_area_measurement_name()
-        precision = self.env['decimal.precision'].precision_get(
-            'Product Unit of Measure')
+        # precision = self.env['decimal.precision'].precision_get(
+        #     'Product Unit of Measure')
+        # The invoice line quantity always has an accuracy equal to 2
+        precision = 2
         for waterconnection in waterconnections:
             waterconnection_code = waterconnection.name
             irrigationpoints_of_waterconnection = irrigationpoints.filtered(
