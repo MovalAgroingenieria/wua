@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+# 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+from odoo import models, fields, _
 from odoo.exceptions import ValidationError
 
 
@@ -32,12 +33,11 @@ class AccountPaymentOrder(models.Model):
         # @INFO: Is the wua associate number
         #        The format depends on each wua
         if partner_id.partner_code:
-            # Format 5 numbers padded with zeros and padded to 12 with white spaces
+            # Format 5 numbers padded with zeros and 
+            # padded to 12 with white spaces
             fixed_number = str(partner_id.partner_code).zfill(5).ljust(12)
         else:
-            raise ValidationError(_("The entry number %s has failed,\
-                the partner code not found for partner %s."
-                                    % (entry_num_padded,
-                                       partner_id.name)))
+            raise ValidationError(
+                _("Fail, partner code not found for partner %s." %
+                  (entry_num_padded, partner_id.name)))
         return fixed_number
-
