@@ -7,7 +7,8 @@
         <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_view_tree"/>        
         <field name="arch" type="xml">
             <xpath expr="//field[@name='presconsumption_id']" position="after">
-                <field name="from_import" string="Manual"/>
+                <field name="from_import" string="Man."/>
+                <field name="validated" string="Valid"/>
             </xpath>        
         </field>
     </record>
@@ -22,7 +23,12 @@
                 <filter string="Manual Introduction: Yes" name="fromimportyes"
                  domain="[('from_import','=',True)]"/>
                 <filter string="Manual Introduction: No (from remote control)" name="fromimportno"
-                 domain="[('from_import','=',False)]"/>                
+                 domain="[('from_import','=',False)]"/>
+                <separator/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+                <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
             </xpath>        
         </field>
     </record>
@@ -33,7 +39,8 @@
         <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree"/>        
         <field name="arch" type="xml">
             <xpath expr="//field[@name='presconsumption_id']" position="after">
-                <field name="from_import" string="Manual"/>
+                <field name="from_import" string="Man."/>
+                <field name="validated" string="Valid"/>
             </xpath>        
         </field>
     </record>
@@ -48,7 +55,12 @@
                 <filter string="Manual Introduction: Yes" name="fromimportyes"
                  domain="[('from_import','=',True)]"/>
                 <filter string="Manual Introduction: No (from remote control)" name="fromimportno"
-                 domain="[('from_import','=',False)]"/>                
+                 domain="[('from_import','=',False)]"/>
+                <separator/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+                <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
             </xpath>        
         </field>
     </record>
