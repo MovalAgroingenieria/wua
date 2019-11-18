@@ -33,8 +33,8 @@ class AccountPaymentOrder(models.Model):
         # @INFO: Is the wua associate number
         #        The format depends on each wua
         if partner_id.partner_code:
-            # Format 5 numbers padded with zeros and 
-            # padded to 12 with white spaces
+            # Format 5 numbers padded with zeros 
+            # and padded to 12 with white spaces
             fixed_number = str(partner_id.partner_code).zfill(5).ljust(12)
         else:
             raise ValidationError(
