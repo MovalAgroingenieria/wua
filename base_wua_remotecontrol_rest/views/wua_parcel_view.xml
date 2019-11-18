@@ -14,6 +14,13 @@
                         attrs="{'invisible':
                                 [('remotecontrol_enabled','=',False)]}"
                         groups="base_wua.group_wua_manager"/>
+                    <button name="do_unsynchronization_parcel"
+                            type="object" string="Unsynchronize"
+                            icon="fa-chain-broken"
+                            attrs="{'invisible':
+                                    ['|', ('updated_in_remotecontrol','=',False),
+                                     '|', ('remotecontrol_enabled','=',False)]}"
+                            groups="base_wua.group_wua_manager"/>
             </xpath>
             <xpath expr="//field[@name='tag_ids']" position="before">
                 <field name="updated_in_remotecontrol"

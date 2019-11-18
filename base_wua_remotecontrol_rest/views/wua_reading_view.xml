@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_reading_view_tree" model="ir.ui.view">
+        <field name="name">Readings (tree view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_view_tree"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='presconsumption_id']" position="after">
+                <field name="from_import" string="Man."/>
+                <field name="validated" string="Valid"/>
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_reading_view_search" model="ir.ui.view">
+        <field name="name">Readings (search view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='initreadingno']" position="after">
+                <separator/>
+                <filter string="Manual Introduction: Yes" name="fromimportyes"
+                 domain="[('from_import','=',True)]"/>
+                <filter string="Manual Introduction: No (from remote control)" name="fromimportno"
+                 domain="[('from_import','=',False)]"/>
+                <separator/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+                <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_reading_one_watermeter_view_tree" model="ir.ui.view">
+        <field name="name">Readings (tree view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='presconsumption_id']" position="after">
+                <field name="from_import" string="Man."/>
+                <field name="validated" string="Valid"/>
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_reading_one_watermeter_view_search" model="ir.ui.view">
+        <field name="name">Readings (search view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='initreadingno']" position="after">
+                <separator/>
+                <filter string="Manual Introduction: Yes" name="fromimportyes"
+                 domain="[('from_import','=',True)]"/>
+                <filter string="Manual Introduction: No (from remote control)" name="fromimportno"
+                 domain="[('from_import','=',False)]"/>
+                <separator/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+                <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
+            </xpath>        
+        </field>
+    </record>
+
+    <record id="wua_validate_readings" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.reading'].validate_readings(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_validate_readings" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.reading</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_readings'))"/>
+    </record>
+
+    <record id="wua_cancel_readings" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.reading'].cancel_readings(context['active_ids'])
+        </field>
+    </record>
+    
+    <record id="wua_action_cancel_readings" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.reading</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_readings'))"/>
+    </record>
+
+</odoo>

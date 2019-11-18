@@ -24,9 +24,17 @@ ListView.include({
                 var title_number_of_readings = _t('Number of readings');
                 var title_error_message = _t('WARNING');
                 var number_of_readings = result[1];
+                var number_of_negative_readings = result[4];
+                var suffix_negative_readings = _t('negative readings')
                 var error_message = result[2];
                 var result_message = title_number_of_readings + ': ' +
                                      number_of_readings.toString();
+                if (number_of_negative_readings > 0) {
+                    result_message = result_message + '\n\n' +
+                                     title_error_message + ': ' +
+                                     number_of_negative_readings.toString() +
+                                     ' ' + suffix_negative_readings;
+                }
                 if (error_message != '') {
                     result_message = result_message + '\n\n' + 
                                      title_error_message + ': ' +

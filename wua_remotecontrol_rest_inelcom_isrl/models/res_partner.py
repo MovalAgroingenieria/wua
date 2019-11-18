@@ -18,8 +18,6 @@ class ResPartner(models.Model):
             firstname = self.get_val(vals, 'firstname')
             lastname = self.get_val(vals, 'lastname')
             lastname2 = self.get_val(vals, 'lastname2')
-            if self.get_val(vals, 'is_company'):
-                firstname = '-'
             vat = self.get_val(vals, 'vat')
             if len(vat) > 2:
                 vat = vat[2:]
@@ -96,7 +94,7 @@ class ResPartner(models.Model):
                 'juntaLocal': '',
                 'cooperativa': '',
                 'observaciones': _('Origen: Moval Regadío'),
-                'factPendientes': '',
+                'factPendientes': 'NO',
                 }
             resprest = requests.post(url_send_new_partner,
                                      data=json.dumps(payload_data),
@@ -119,8 +117,6 @@ class ResPartner(models.Model):
             firstname = self.refine_value(partner.firstname)
             lastname = self.refine_value(partner.lastname)
             lastname2 = self.refine_value(partner.lastname2)
-            if partner.is_company:
-                firstname = '-'
             vat = self.refine_value(partner.vat)
             if vat and len(vat) > 2:
                 vat = vat[2:]
@@ -141,6 +137,7 @@ class ResPartner(models.Model):
             mobile = self.refine_value(partner.mobile)
             email = self.refine_value(partner.email)
             acc_number = self.get_bank_account(partner_code)
+            with_credit_overdue = partner.credit_overdue > 0
             resp = {
                 'partner_code': partner_code,
                 'firstname': firstname,
@@ -156,15 +153,24 @@ class ResPartner(models.Model):
                 'mobile': mobile,
                 'email': email,
                 'acc_number': acc_number,
+                'with_credit_overdue': with_credit_overdue,
                 }
         return resp
 
     # Implemented hook
     def update_partner(self, url_remotecontrol_rest,
                        url_remotecontrol_rest_username,
-                       url_remotecontrol_rest_password, data):
+                       url_remotecontrol_rest_password,
+                       data, record_archived=False):
         resp = False
         error_message = ''
+        observ = _('Source: Moval Regadío')
+        observ_archived_preffix = _('Archived Data')
+        if record_archived:
+            observ = observ_archived_preffix + '. ' + observ
+        pending_inv = 'NO'
+        if data['with_credit_overdue']:
+            pending_inv = 'SI'
         url_open_session = url_remotecontrol_rest + '/sesiones'
         auth_data = {
             'usuario': url_remotecontrol_rest_username,
@@ -199,8 +205,8 @@ class ResPartner(models.Model):
                 'email': data['email'],
                 'juntaLocal': '',
                 'cooperativa': '',
-                'observaciones': _('Origen: Moval Regadío'),
-                'factPendientes': '',
+                'observaciones': observ,
+                'factPendientes': pending_inv,
                 }
             resprest = requests.put(url_update_partner,
                                     data=json.dumps(payload_data),
@@ -262,9 +268,17 @@ class ResPartner(models.Model):
     # Implemented hook
     def synchronize_partner(self, url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, data):
+                            url_remotecontrol_rest_password,
+                            data, record_archived=False):
         resp = False
         error_message = ''
+        observ = _('Source: Moval Regadío')
+        observ_archived_preffix = _('Archived Data')
+        if record_archived:
+            observ = observ_archived_preffix + '. ' + observ
+        pending_inv = 'NO'
+        if data['with_credit_overdue']:
+            pending_inv = 'SI'
         url_open_session = url_remotecontrol_rest + '/sesiones'
         auth_data = {
             'usuario': url_remotecontrol_rest_username,
@@ -301,8 +315,8 @@ class ResPartner(models.Model):
                 'email': data['email'],
                 'juntaLocal': '',
                 'cooperativa': '',
-                'observaciones': _('Origen: Moval Regadío'),
-                'factPendientes': '',
+                'observaciones': observ,
+                'factPendientes': pending_inv,
                 }
             if exists_partner_in_remotecontrol:
                 resprest = requests.put(url_update_partner,
@@ -343,6 +357,17 @@ class ResPartner(models.Model):
         if resprest.status_code == 200 and resprest.text:
             id_session = resprest.text
             for data in list_of_data:
+                observ = _('Source: Moval Regadío')
+                observ_archived_preffix = _('Archived Data')
+                current_partner = self.env['res.partner'].with_context(
+                    active_test=False).search(
+                        [('partner_code', '=', data['partner_code'])])
+                record_archived = not current_partner.active
+                if record_archived:
+                    observ = observ_archived_preffix + '. ' + observ
+                pending_inv = 'NO'
+                if data['with_credit_overdue']:
+                    pending_inv = 'SI'
                 url_update_partner = url_remotecontrol_rest + \
                     '/regantes/' + str(data['partner_code']) + \
                     '?sesion=' + id_session
@@ -366,8 +391,8 @@ class ResPartner(models.Model):
                     'email': data['email'],
                     'juntaLocal': '',
                     'cooperativa': '',
-                    'observaciones': _('Origen: Moval Regadío'),
-                    'factPendientes': '',
+                    'observaciones': observ,
+                    'factPendientes': pending_inv,
                     }
                 if exists_partner_in_remotecontrol:
                     resprest = requests.put(url_update_partner,

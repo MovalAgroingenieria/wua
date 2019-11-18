@@ -30,9 +30,17 @@ class WuaParcel(models.Model):
             area_official_hec = self.get_area_official_hec(
                 vals['area_official'])
             partner_code = 0
-            if vals['partnerlink_ids']:
+            if 'partnerlink_ids' in vals:
                 partner_code = self.get_partner_of_vals(
                     vals['partnerlink_ids'])
+            hydraulicsector = ''
+            if 'hydraulicsector_id' in vals:
+                hydraulicsector = self.get_hydraulicsector_of_vals(
+                    vals['hydraulicsector_id'])
+            rurallocation = ''
+            if 'rurallocation_id' in vals:
+                rurallocation = self.get_rurallocation_of_vals(
+                    vals['rurallocation_id'])
             resp = {
                 'name': name,
                 'watermeters': watermeters,
@@ -42,6 +50,8 @@ class WuaParcel(models.Model):
                 'area_official_hec': area_official_hec,
                 'area_unit': 'ha',
                 'partner_code': partner_code,
+                'hydraulicsector': hydraulicsector,
+                'rurallocation': rurallocation,
                 }
         return resp
 
@@ -72,6 +82,8 @@ class WuaParcel(models.Model):
                 'localidad': data['county'],
                 'poligono': data['cadastral_polygon'],
                 'parcela': data['cadastral_parcel'],
+                'sector': data['hydraulicsector'],
+                'paraje': data['rurallocation'],
                 'superficie': data['area_official_hec'],
                 'unidad': data['area_unit'],
                 'regante': data['partner_code'],
@@ -109,6 +121,12 @@ class WuaParcel(models.Model):
             partner_code = 0
             if parcel.partner_id:
                 partner_code = parcel.partner_id.partner_code
+            hydraulicsector = ''
+            if parcel.hydraulicsector_id:
+                hydraulicsector = parcel.hydraulicsector_id.name
+            rurallocation = ''
+            if parcel.rurallocation_id:
+                rurallocation = parcel.rurallocation_id.name
             resp = {
                 'name': name,
                 'watermeters': watermeters,
@@ -118,15 +136,22 @@ class WuaParcel(models.Model):
                 'area_official_hec': area_official_hec,
                 'area_unit': 'ha',
                 'partner_code': partner_code,
+                'hydraulicsector': hydraulicsector,
+                'rurallocation': rurallocation,
                 }
         return resp
 
     # Implemented hook
     def update_parcel(self, url_remotecontrol_rest,
                       url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password, data):
+                      url_remotecontrol_rest_password,
+                      data, record_archived=False):
         resp = False
         error_message = ''
+        observ = _('Source: Moval Regadío')
+        observ_archived_preffix = _('Archived Data')
+        if record_archived:
+            observ = observ_archived_preffix + '. ' + observ
         url_open_session = url_remotecontrol_rest + '/sesiones'
         auth_data = {
             'usuario': url_remotecontrol_rest_username,
@@ -148,10 +173,12 @@ class WuaParcel(models.Model):
                 'localidad': data['county'],
                 'poligono': data['cadastral_polygon'],
                 'parcela': data['cadastral_parcel'],
+                'sector': data['hydraulicsector'],
+                'paraje': data['rurallocation'],
                 'superficie': data['area_official_hec'],
                 'unidad': data['area_unit'],
                 'regante': data['partner_code'],
-                'observaciones': _('Origen: Moval Regadío'),
+                'observaciones': observ,
                 }
             resprest = requests.put(url_update_parcel,
                                     data=json.dumps(payload_data),
@@ -213,9 +240,14 @@ class WuaParcel(models.Model):
     # Implemented hook
     def synchronize_parcel(self, url_remotecontrol_rest,
                            url_remotecontrol_rest_username,
-                           url_remotecontrol_rest_password, data):
+                           url_remotecontrol_rest_password,
+                           data, record_archived=False):
         resp = False
         error_message = ''
+        observ = _('Source: Moval Regadío')
+        observ_archived_preffix = _('Archived Data')
+        if record_archived:
+            observ = observ_archived_preffix + '. ' + observ
         url_open_session = url_remotecontrol_rest + '/sesiones'
         auth_data = {
             'usuario': url_remotecontrol_rest_username,
@@ -242,7 +274,7 @@ class WuaParcel(models.Model):
                 'superficie': data['area_official_hec'],
                 'unidad': data['area_unit'],
                 'regante': data['partner_code'],
-                'observaciones': _('Origen: Moval Regadío'),
+                'observaciones': observ,
                 }
             if exists_parcel_in_remotecontrol:
                 resprest = requests.put(url_update_parcel,
@@ -282,6 +314,14 @@ class WuaParcel(models.Model):
         if resprest.status_code == 200 and resprest.text:
             id_session = resprest.text
             for data in list_of_data:
+                observ = _('Source: Moval Regadío')
+                observ_archived_preffix = _('Archived Data')
+                current_parcel = self.env['wua.parcel'].with_context(
+                    active_test=False).search(
+                        [('name', '=', data['name'])])
+                record_archived = not current_parcel.active
+                if record_archived:
+                    observ = observ_archived_preffix + '. ' + observ
                 url_update_parcel = url_remotecontrol_rest + \
                     '/parcelas/' + data['name'] + \
                     '?sesion=' + id_session + '&uso=1'
@@ -295,7 +335,7 @@ class WuaParcel(models.Model):
                     'superficie': data['area_official_hec'],
                     'unidad': data['area_unit'],
                     'regante': data['partner_code'],
-                    'observaciones': _('Origen: Moval Regadío'),
+                    'observaciones': observ,
                     }
                 if exists_parcel_in_remotecontrol:
                     resprest = requests.put(url_update_parcel,
@@ -357,6 +397,20 @@ class WuaParcel(models.Model):
                 partner_id = data_partnerlink[2]['partner_id']
                 resp = self.env['res.partner'].browse(partner_id).partner_code
                 break
+        return resp
+
+    def get_hydraulicsector_of_vals(self, hydraulicsector_id):
+        resp = ''
+        if hydraulicsector_id:
+            resp = self.env['wua.hydraulicsector'].browse(
+                hydraulicsector_id).name
+        return resp
+
+    def get_rurallocation_of_vals(self, rurallocation_id):
+        resp = ''
+        if rurallocation_id:
+            resp = self.env['wua.rurallocation'].browse(
+                rurallocation_id).name
         return resp
 
     def get_val(self, vals, key):

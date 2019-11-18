@@ -16,6 +16,14 @@
                                     ['|', ('remotecontrol_enabled','=',False),
                                           ('is_wua_partner','=',False)]}"
                             groups="base_wua.group_wua_manager"/>
+                    <button name="do_unsynchronization_partner"
+                            type="object" string="Unsynchronize"
+                            icon="fa-chain-broken"
+                            attrs="{'invisible':
+                                    ['|', ('updated_in_remotecontrol','=',False),
+                                     '|', ('remotecontrol_enabled','=',False),
+                                          ('is_wua_partner','=',False)]}"
+                            groups="base_wua.group_wua_manager"/>
                 </header>
             </xpath>
             <xpath expr="//field[@name='category_id']" position="before">

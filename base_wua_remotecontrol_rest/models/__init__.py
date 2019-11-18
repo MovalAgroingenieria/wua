@@ -9,3 +9,6 @@ from . import wua_parcel
 from . import wua_waterconnection
 from . import wua_irrigationshed
 from . import wua_hydraulicsector
+from . import wua_negative_reading
+from . import wua_presconsumption
+from . import wua_invoiceset
