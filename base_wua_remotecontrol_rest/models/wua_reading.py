@@ -47,7 +47,13 @@ class WuaReading(models.Model):
             'wua.irrigation.configuration', 'enable_remotecontrol')
         import_from_readings = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'import_from_readings')
-        if (enable_remotecontrol and import_from_readings):
+        there_are_readings_not_validated = False
+        readings_not_validated = self.env['wua.reading'].search(
+            [('validated', '=', False)])
+        if readings_not_validated:
+            there_are_readings_not_validated = True
+        if (enable_remotecontrol and import_from_readings and
+           not there_are_readings_not_validated):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'url_remotecontrol_rest')
             url_remotecontrol_rest_username = self.env['ir.values'].\
@@ -94,9 +100,14 @@ class WuaReading(models.Model):
                                          suffix_message_02)
         else:
             if show_message:
-                raise exceptions.UserError(_('The communication with '
-                                             'the remote control is not '
-                                             'enabled.'))
+                if there_are_readings_not_validated:
+                    raise exceptions.UserError(_('There are readings not '
+                                                 'validated. Please, first '
+                                                 'validate or delete them.'))
+                else:
+                    raise exceptions.UserError(_('The communication with '
+                                                 'the remote control is not '
+                                                 'enabled.'))
         return resp
 
     # Hook
@@ -181,3 +192,36 @@ class WuaReading(models.Model):
             is_negative = True
             negative_volume = current_volume - previous_volume
         return is_negative, negative_volume
+
+    @api.multi
+    def validate_reading(self):
+        self.ensure_one()
+        self.validated = True
+
+    @api.multi
+    def cancel_reading(self):
+        self.ensure_one()
+        if not self.presconsumption_id.invoiced_consumption:
+            self.validated = False
+        else:
+            raise exceptions.UserError(_('The reading is mapped to a '
+                                         'invoiced consumption: it is not '
+                                         'possible to cancel the reading.'))
+
+    def validate_readings(self, active_readings):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        readings = self.env['wua.reading'].browse(active_readings)
+        for reading in readings:
+            if not reading.validated:
+                reading.validate_reading()
+
+    def cancel_readings(self, active_readings):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        readings = self.env['wua.reading'].browse(active_readings)
+        for reading in readings:
+            if reading.validated:
+                reading.cancel_reading()
