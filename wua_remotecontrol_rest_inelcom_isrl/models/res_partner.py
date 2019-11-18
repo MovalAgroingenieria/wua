@@ -93,7 +93,7 @@ class ResPartner(models.Model):
                 'email': data['email'],
                 'juntaLocal': '',
                 'cooperativa': '',
-                'observaciones': _('Origen: Moval Regadío'),
+                'observaciones': _('Source: Moval Regadío'),
                 'factPendientes': 'NO',
                 }
             resprest = requests.post(url_send_new_partner,

@@ -87,7 +87,7 @@ class WuaParcel(models.Model):
                 'superficie': data['area_official_hec'],
                 'unidad': data['area_unit'],
                 'regante': data['partner_code'],
-                'observaciones': _('Origen: Moval Regadío'),
+                'observaciones': _('Source: Moval Regadío'),
                 }
             resprest = requests.post(url_send_new_parcel,
                                      data=json.dumps(payload_data),
