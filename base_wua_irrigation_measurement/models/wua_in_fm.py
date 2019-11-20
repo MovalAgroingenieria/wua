@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api
-from datetime import datetime
+import datetime
 
 
 class WuaInFm(models.Model):
@@ -20,8 +20,27 @@ class WuaInFm(models.Model):
     intake_id = fields.Many2one(
         string='Intake',
         required=True,
-        comodel_name='wua.flowmeter',
+        comodel_name='wua.intake',
         ondelete='cascade')
+
+    intake_type = fields.Selection([
+        ('pressure', 'Pressure'),
+        ('freesheet', 'Free Sheet')],
+        string="Type",
+        index=True,
+        default='pressure',
+        help='Type of intake',
+        compute='_compute_values')
+
+    intake_category = fields.Selection([
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4')],
+        string="Category",
+        index=True,
+        help='Intake Category',
+        compute='_compute_values')
 
     flowmeter_id = fields.Many2one(
         string='Flowmeter',
@@ -31,12 +50,11 @@ class WuaInFm(models.Model):
 
     assign_start = fields.Date(
         string='From date',
-        required=True,
-        default=lambda self: fields.datetime.now())
+        default=lambda self: fields.datetime.now(),
+        required=True)
 
     assign_end = fields.Date(
-        string='To date',
-        required=True)
+        string='To date')
 
     days = fields.Integer(
         string='Days',
@@ -64,8 +82,8 @@ class WuaInFm(models.Model):
             name = ''
             if record.intake_id and record.flowmeter_id and \
                     record.assign_start:
-                name = '0' * (6 - len(record.intake_id.intake_code)) + \
-                    record.intake_id.intake_code + ' - ' + \
+                name = '0' * (6 - len(str(record.intake_id.intake_code))) + \
+                    str(record.intake_id.intake_code) + ' - ' + \
                     record.assign_start + ' - ' + record.flowmeter_id.name
             record.name = name
 
@@ -85,3 +103,5 @@ class WuaInFm(models.Model):
             record.flowmeter_nominal_water_flow = \
                 record.flowmeter_id.nominal_water_flow
             record.flowmeter_type = record.flowmeter_id.type
+            record.intake_type = record.intake_id.type
+            record.intake_category = record.intake_id.category

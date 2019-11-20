@@ -2,7 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class WuaAgriculturalseason(models.Model):
@@ -42,3 +42,26 @@ class WuaAgriculturalseason(models.Model):
                     if intake_consumption_id.volume_real:
                         total_volume += intake_consumption_id.volume_real
             record.total_volume = total_volume
+
+    @api.multi
+    def action_see_intakeconsumptions(self):
+        self.ensure_one()
+        condition = [('agriculturalseason_id', '=', self.id)]
+        id_form_view = self.env.ref('base_wua_irrigation_measurement.'
+                                    'wua_intakeconsumption_view_form').id
+        id_tree_view = self.env.ref('base_wua_irrigation_measurement.'
+                                    'wua_intakeconsumption_view_tree').id
+        search_view = self.env.ref('base_wua_irrigation_measurement.'
+                                   'wua_intakeconsumption_view_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Consumptions'),
+            'res_model': 'wua.intakeconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            }
+        return act_window

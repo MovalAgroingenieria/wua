@@ -2,7 +2,9 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+import datetime
+import pytz
+from odoo import models, fields, api, _
 
 
 class WuaIntakeconsumption(models.Model):
@@ -123,7 +125,7 @@ class WuaIntakeconsumption(models.Model):
         for record in self:
             flowreading_id = None
             if record.flowreading_ids:
-                flowreading_id = record.flowreadings_ids[0]
+                flowreading_id = record.flowreading_ids[0]
             record.flowreading_id = flowreading_id
 
     @api.depends('flowreading_id')
@@ -131,7 +133,7 @@ class WuaIntakeconsumption(models.Model):
         for record in self:
             flowmeter_id = None
             if record.flowreading_id and record.flowreading_id.flowmeter_id:
-                flowmeter_id = record.flowreadings_id.flowmeter_id
+                flowmeter_id = record.flowreading_id.flowmeter_id
             record.flowmeter_id = flowmeter_id
 
     @api.depends('flowmeter_id')
@@ -156,7 +158,62 @@ class WuaIntakeconsumption(models.Model):
             name = ''
             if (record.intake_id and record.intake_id.intake_code and
                     record.reading_end_time):
-                name_first_part = '0' * (6-len(record.intake_id.intake_code)) \
-                    + record.intake_id.intake_code
+                name_first_part = '0' * \
+                    (6-len(str(record.intake_id.intake_code))) \
+                    + str(record.intake_id.intake_code)
                 name = name_first_part + ' - ' + record.reading_end_time
             record.name = name
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            intake_name = record.intake_id.name
+            reading_end_time = \
+                fields.Datetime.from_string(record.reading_end_time)
+            if self.env.user.tz:
+                local_timezone = pytz.timezone(self.env.user.tz)
+                offset = local_timezone.utcoffset(reading_end_time)
+                reading_end_time = reading_end_time + offset
+            reading_end_time_str = str(reading_end_time)
+            date_str = reading_end_time_str[:10]
+            hour_str = reading_end_time_str[-8:]
+            name = intake_name + ' - ' + \
+                datetime.datetime.strptime(
+                    date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
+            result.append((record.id, name))
+        return result
+
+    @api.model
+    def create(self, vals):
+        agriculturalseasons = self.env['wua.agriculturalseason'].search(
+            [('initial_date', '<=', vals['reading_end_time']),
+             ('end_date', '>=', vals['reading_end_time'])])
+        if (len(agriculturalseasons) == 1):
+            vals['agriculturalseason_id'] = agriculturalseasons[0].id
+        return super(WuaIntakeconsumption, self).create(vals)
+
+    def action_assign_agriculturalseason_to_intakeconsumptions(self):
+        intakeconsumptions = self.env['wua.intakeconsumption']
+        all_intakeconsumptions = intakeconsumptions.search([])
+        all_intakeconsumptions.write({
+            'agriculturalseason_id': None,
+            })
+        agriculturalseasons = self.env['wua.agriculturalseason'].search([])
+        for agriculturalseason in agriculturalseasons:
+            intakeconsumptions_of_current_season = intakeconsumptions.search(
+                [('reading_end_time', '>=', agriculturalseason.initial_date),
+                 ('reading_end_time', '<=', agriculturalseason.end_date)])
+            if len(intakeconsumptions_of_current_season) > 0:
+                intakeconsumptions_of_current_season.write({
+                    'agriculturalseason_id': agriculturalseason.id,
+                    })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Intake Consumptions'),
+            'res_model': 'wua.intakeconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'target': 'current',
+            'context': self.env.context,
+            }

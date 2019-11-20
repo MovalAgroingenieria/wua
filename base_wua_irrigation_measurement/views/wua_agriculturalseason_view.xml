@@ -1,11 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+  <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+      <field name="name">Agricultural Seasons (form view)</field>
+      <field name="model">wua.agriculturalseason</field>
+      <field name="arch" type="xml">
+          <form duplicate="0">
+              <sheet>
+                  <field name='id' invisible="True"/>
+                  <div name="buttons" class="oe_button_box">
+                      <button name="action_see_intakeconsumptions"
+                              type="object"
+                              class="oe_stat_button"
+                              icon="fa-pagelines"
+                              groups="base_wua.group_wua_user"
+                               attrs="{'invisible':[('id', '=', False)]}">
+                              <div class="o_form_field o_stat_info">
+                                  <span class="o_stat_text">Consumptions</span>
+                              </div>
+                      </button>
+                  </div>
+                  <group name="master_data">
+                      <group name="master_data_left">
+                          <field name="initial_date" string="Initial Date"/>
+                          <field name="end_date" string="End Date"/>
+                          <field name="description" string="Description"/>
+                      </group>
+                      <group name="master_data_right">
+                          <field name="number_of_intakeconsumptions"/>
+                          <field name="total_volume"/>
+                      </group>
+                  </group>
+                  <group name="slave_data">
+                      <notebook name="slave_data_notebook">
+                          <page name="notes_page" string="Notes">
+                              <field name="notes"/>
+                          </page>
+                      </notebook>
+                  </group>
+              </sheet>
+          </form>
+      </field>
+  </record>
 
-  <menuitem id="base_wua_primary_irrigation_menu"
+  <record id="wua_agriculturalseason_view_tree" model="ir.ui.view">
+      <field name="name">Agricultural Seasons (tree view)</field>
+      <field name="model">wua.agriculturalseason</field>
+      <field name="arch" type="xml">
+          <tree class="o_base_wua_irrigation_measurement_agriculturalseason_view_tree">
+              <field name="initial_date" string="Initial Date"/>
+              <field name="end_date" string="End Date"/>
+              <field name="description" string="Description"/>
+              <field name="number_of_intakeconsumptions"/>
+              <field name="total_volume"/>
+          </tree>
+      </field>
+  </record>
+
+  <record id="wua_agriculturalseason_view_search" model="ir.ui.view">
+      <field name="name">Agricultural Seasons (search view)</field>
+      <field name="model">wua.agriculturalseason</field>
+      <field name="arch" type="xml">
+          <search>
+              <field name="name" string="Agricultural Season"/>
+              <field name="description" string="Description"/>
+          </search>
+      </field>
+  </record>
+
+  <record id="wua_agriculturalseason_action" model="ir.actions.act_window">
+      <field name="name">Agricultural Seasons</field>
+      <field name="res_model">wua.agriculturalseason</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_ids"
+       eval="[(5, 0),
+              (0, 0, {'view_mode': 'tree', 'view_id': ref('wua_agriculturalseason_view_tree')}),
+              (0, 0, {'view_mode': 'form', 'view_id': ref('wua_agriculturalseason_view_form')})]"/>
+      <field name="search_view_id"
+       ref="wua_agriculturalseason_view_search"/>
+  </record>
+
+  <menuitem id="base_wua_irrigation_measurement_menu"
             name="General Infrastructure"
             parent="wua_structure_irrigation.base_wua_irrigation_menu"
             sequence="0"
             groups="base_wua.group_wua_user"/>
 
+  <menuitem id="wua_agriculturalseason_menu"
+            name="Agricultural Seasons"
+            parent="base_wua_irrigation_measurement.base_wua_irrigation_measurement_menu"
+            action="wua_agriculturalseason_action"
+            sequence="1"
+            groups="base_wua.group_wua_user"/>
 </odoo>
