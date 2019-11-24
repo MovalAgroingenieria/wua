@@ -4,9 +4,9 @@
 from odoo import models, fields, api, exceptions, _
 
 
-class WizardRemoveReadings(models.TransientModel):
-    _name = 'wizard.remove.readings'
-    _description = 'Dialog box to delete readings'
+class WizardRemoveFlowmeterReadings(models.TransientModel):
+    _name = 'wizard.remove.flowmeter.readings'
+    _description = 'Dialog box to delete flow-meter readings'
 
     initial_date = fields.Datetime(
         string='Initial Date',
@@ -60,8 +60,7 @@ class WizardRemoveReadings(models.TransientModel):
             ('reading_time', '>=', initial_date),
             ('reading_time', '<=', end_date)],
             order='reading_time desc')
-
-        # Get watermeter list
+        # Get flow-meter list
         flowmeter_list = []
         for reading_to_delete in readings_to_delete:
             flowmeter_list.append(
@@ -69,7 +68,7 @@ class WizardRemoveReadings(models.TransientModel):
                     reading_to_delete.flowmeter_id.id))
         flowmeter_list = list(set(flowmeter_list))  # Delete repeated
 
-        # Get readings for watermeter in date range
+        # Get readings for flow-meter in date range
         for flowmeter in flowmeter_list:
             flowmeter_readings_to_delete = self.env['wua.flowreading'].search([
                 ('flowmeter_id', '=', flowmeter.id),
@@ -77,7 +76,6 @@ class WizardRemoveReadings(models.TransientModel):
                 ('reading_time', '<=', end_date),
                 ('initialization_reading', '=', False)],
                 order='reading_time desc')
-
             for read_to_del in flowmeter_readings_to_delete:
                 if read_to_del.is_last_reading:
                     read_to_del.unlink()

@@ -12,6 +12,7 @@
             <field name="initialization_reading"/>
             <field name="instant_flow"/>
             <field name="is_last_reading"/>
+            <field name="intakeconsumption_id"/>
           </tree>
       </field>
   </record>
@@ -22,7 +23,7 @@
       <field name="arch" type="xml">
         <form duplicate="0">
             <header>
-                <button name="%(action_delete_readings)d"
+                <button name="%(action_delete_flowmeter_readings)d"
                         type="action" string="Delete readings"
                         groups="base_wua.group_wua_manager"/>
             </header>
@@ -51,8 +52,8 @@
                                attrs="{'readonly': [('id', '>', 0)]}"/>
                     </group>
                     <group name="master_data_right">
-                        <field name="intake_id" attrs="{'invisible': [('reading_of_intake', '=', True)]}"/>
-                        <field name="intakeconsumption_id" attrs="{'invisible': [('reading_of_intake', '=', True)]}"/>
+                        <field name="intake_id" attrs="{'invisible': [('reading_of_intake', '=', False)]}"/>
+                        <field name="intakeconsumption_id" attrs="{'invisible': [('reading_of_intake', '=', False)]}"/>
                     </group>
                 </group>
                 <group name="slave_data">

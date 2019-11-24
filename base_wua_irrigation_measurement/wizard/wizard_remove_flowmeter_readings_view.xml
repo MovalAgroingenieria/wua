@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="wizard_remove_readings_view_form" model="ir.ui.view">
+    <record id="wizard_remove_flowmeter_readings_view_form" model="ir.ui.view">
         <field name="name">Wizard to delete flowmeter readings</field>
-        <field name="model">wizard.remove.readings</field>
+        <field name="model">wizard.remove.flowmeter.readings</field>
         <field name="arch" type="xml">
             <form string="Delete flowmeter readings">
                 <script>
@@ -33,9 +33,9 @@
         </field>
     </record>
 
-    <act_window id="action_delete_readings"
-        name="Delete readings"
-        res_model="wizard.remove.readings"
+    <act_window id="action_delete_flowmeter_readings"
+        name="Delete flow-meter readings"
+        res_model="wizard.remove.flowmeter.readings"
         src_model="wua.flowreading"
         view_mode="form"
         target="new"

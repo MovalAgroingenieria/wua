@@ -21,7 +21,7 @@ class WuaIntake(models.Model):
         compute='_compute_last_reading_value')
 
     last_reading_instantflow = fields.Float(
-        string='Last Reading Value',
+        string='Last Reading Instant Flow',
         store=True,
         digits=(32, 4),
         compute='_compute_last_reading_instantflow')
@@ -65,7 +65,7 @@ class WuaIntake(models.Model):
                     record.flowmeter_id.last_reading_instantflow:
                 last_reading_instantflow = \
                     record.flowmeter_id.last_reading_instantflow
-            record.last_reading_value = last_reading_instantflow
+            record.last_reading_instantflow = last_reading_instantflow
 
     @api.multi
     def action_see_intakeconsumptions(self):

@@ -9,6 +9,7 @@ import datetime
 class WuaInFm(models.Model):
     _name = 'wua.in.fm'
     _description = 'Entity (intake/flowmeter)'
+    _order = 'assign_start desc, assign_end desc'
 
     name = fields.Char(
         string='Identifier',

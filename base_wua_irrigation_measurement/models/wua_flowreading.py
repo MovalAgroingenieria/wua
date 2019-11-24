@@ -9,7 +9,8 @@ from odoo import models, fields, api, exceptions, _
 
 class WuaFlowreading(models.Model):
     _name = 'wua.flowreading'
-    _description = 'Entity (flowreading)'
+    _description = 'Entity (flow reading)'
+    _order = 'reading_time desc, name'
 
     name = fields.Char(
         string='Flow-Meter Reading',
@@ -38,6 +39,7 @@ class WuaFlowreading(models.Model):
     instant_flow = fields.Float(
         string='Flow (m3/h)',
         digits=(32, 4),
+        required=True,
         default=0)
 
     initialization_reading = fields.Boolean(
@@ -122,6 +124,17 @@ class WuaFlowreading(models.Model):
                     date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
             result.append((record.id, name))
         return result
+
+    @api.model
+    def read_group(self, domain, fields, groupby,
+                   offset=0, limit=None, orderby=False, lazy=True):
+        if ('volume' in fields or 'instant_flow' in fields):
+            if 'volume' in fields:
+                fields.remove('volume')
+            if 'instant_flow' in fields:
+                fields.remove('instant_flow')
+            return super(WuaFlowreading, self).read_group(
+                domain, fields, groupby, offset, limit, orderby, lazy)
 
     @api.model
     def create(self, vals):

@@ -9,7 +9,8 @@ from odoo import models, fields, api, _
 
 class WuaIntakeconsumption(models.Model):
     _name = 'wua.intakeconsumption'
-    _description = 'Entity (intakeconsumption)'
+    _description = 'Entity (intake consumption)'
+    _order = 'reading_end_time desc, name'
 
     name = fields.Char(
         string='Flow-Meter Reading',
@@ -81,6 +82,7 @@ class WuaIntakeconsumption(models.Model):
 
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
+        index=True,
         comodel_name='wua.agriculturalseason',
         ondelete='restrict')
 
@@ -98,12 +100,12 @@ class WuaIntakeconsumption(models.Model):
 
     notes = fields.Html(
         string="Notes",
-        help="Notes about intakeconsumption")
+        help="Notes about intake consumption")
 
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
-         'Existing flow-reading identifier.'),
+         'Existing intake consumption identifier.'),
         ('volume',
          'CHECK (volume >= 0)',
          'Volume of water can\'t be negative.'),
@@ -115,10 +117,7 @@ class WuaIntakeconsumption(models.Model):
     @api.depends('initial_volume', 'end_volume')
     def _compute_volume(self):
         for record in self:
-            volume = 0
-            if record.initial_volume and record.end_volume:
-                volume = record.end_volume - record.initial_volume
-            record.volume = volume
+            record.volume = record.end_volume - record.initial_volume
 
     @api.depends('flowreading_ids')
     def _compute_flowreading_id(self):
@@ -147,10 +146,7 @@ class WuaIntakeconsumption(models.Model):
     @api.depends('volume', 'adjustement_volume')
     def _compute_volume_real(self):
         for record in self:
-            volume_real = None
-            if record.volume and record.adjustement_volume:
-                volume_real = record.volume + record.adjustement_volume
-            record.volume_real = volume_real
+            record.volume_real = record.volume + record.adjustement_volume
 
     @api.depends('intake_id', 'reading_end_time')
     def _compute_name(self):
