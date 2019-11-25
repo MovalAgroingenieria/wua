@@ -38,6 +38,8 @@
                 </div>
                 <group name="master_data">
                     <group name="master_data_left">
+                      <field name="flowmeter_id"
+                             attrs="{'readonly': [('id', '>', 0)]}"/>
                         <field name="volume"
                                attrs="{'readonly':
                                        [('id', '>', 0),
@@ -45,8 +47,6 @@
                         <field name="reading_time"
                                attrs="{'readonly': [('id', '>', 0)]}"/>
                         <field name="instant_flow"
-                               attrs="{'readonly': [('id', '>', 0)]}"/>
-                        <field name="flowmeter_id"
                                attrs="{'readonly': [('id', '>', 0)]}"/>
                         <field name="initialization_reading"
                                attrs="{'readonly': [('id', '>', 0)]}"/>
