@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="wua_intakeconsumption_view_form" model="ir.ui.view">
+      <field name="name">Intake Consumptions (form view)</field>
+      <field name="model">wua.intakeconsumption</field>
+      <field name="arch" type="xml">
+          <form create="0" delete="0" duplicate="0">
+              <sheet>
+                  <group name="master_data">
+                      <group name="master_data_left">
+                          <field name="reading_initial_time"/>
+                          <field name="initial_volume"/>
+                          <field name="reading_end_time"/>
+                          <field name="end_volume"/>
+                          <field name="volume"/>
+                          <field name="adjustement_volume"/>
+                          <field name="volume_real"/>
+                      </group>
+                      <group name="master_data_right">
+                          <field name="flowmeter_id"/>
+                          <field name="intake_id"/>
+                          <field name="flowreading_id"/>
+                      </group>
+                  </group>
+                  <group name="slave_data">
+                      <notebook name="slave_data_notebook">
+                          <page name="notes_page" string="Notes">
+                              <field name="notes"/>
+                          </page>
+                      </notebook>
+                  </group>
+              </sheet>
+          </form>
+      </field>
+  </record>
+
+    <record id="wua_intakeconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Intake Consuption (tree view)</field>
+        <field name="model">wua.intakeconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="0" delete="0" duplicate="0" class="o_base_wua_irrigation_measurement_intakeconsumption_view_tree">
+              <field name="intake_id"/>
+              <field name="flowmeter_id"/>
+              <field name="reading_initial_time"/>
+              <field name="reading_end_time"/>
+              <field name="volume"/>
+              <field name="adjustement_volume"/>
+              <field name="volume_real"/>
+              <field name="flowreading_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_intakeconsumption_view_search" model="ir.ui.view">
+        <field name="name">Intake Consumption (search view)</field>
+        <field name="model">wua.intakeconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="intake_id"/>
+              <field name="flowmeter_id"/>
+              <filter string="With adjustement" name="withadjustement"
+               domain="[('adjustement_volume','!=',0)]"/>
+              <filter string="Without adjustement" name="withoutadjustement"
+               domain="[('adjustement_volume','=',0)]"/>
+              <group expand="0" string="Group By">
+                  <filter string="Agricultural Season"
+                    name="agriculturalseason"
+                    context="{'group_by':'agriculturalseason_id'}"/>
+                  <filter string="Intake"
+                    name="intake"
+                    context="{'group_by':'intake_id'}"/>
+                  <filter string="Date"
+                    name="date"
+                    context="{'group_by':'reading_end_time:month'}"/>
+              </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_intakeconsumption_action" model="ir.actions.act_window">
+        <field name="name">Intake Consumptions</field>
+        <field name="res_model">wua.intakeconsumption</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_intakeconsumption_view_tree"/>
+        <field name="search_view_id" ref="wua_intakeconsumption_view_search"/>
+    </record>
+
+    <menuitem
+        name="Intake Consumptions"
+        id="wua_intakeconsumption_menu"
+        parent="base_wua_irrigation_measurement_menu"
+        sequence="3"
+        action="wua_intakeconsumption_action"/>
+
+    <record id="wua_technical_assign_agriculturalseason_to_intakeconsumptions_action"
+            model="ir.actions.server">
+        <field name="name">Assign agricultural seasons to intake consumptions</field>
+        <field name="model_id" ref="base_wua_irrigation_measurement.model_wua_intakeconsumption"/>
+        <field name="code">action = env["wua.intakeconsumption"].action_assign_agriculturalseason_to_intakeconsumptions()</field>
+    </record>
+
+    <menuitem id="wua_technical_assign_agriculturalseason_to_intakeconsumptions_menu"
+        name="Calculation: intake consumptions"
+        parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+        action="wua_technical_assign_agriculturalseason_to_intakeconsumptions_action"
+        sequence="1"/>
+
+
+</odoo>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="wua_flowmeter_view_form" model="ir.ui.view">
+      <field name="name">Flowmeter (form view)</field>
+      <field name="model">wua.flowmeter</field>
+      <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//button[@name='action_see_gis_viewer']" position="before">
+          <button name="action_see_flowmeterconsumptions"
+                  type="object"
+                  class="oe_stat_button"
+                  icon="fa-pagelines"
+                  groups="base_wua.group_wua_user"
+                  attrs="{'invisible': [('id', '=', False)]}">
+                  <div class="o_form_field o_stat_info">
+                      <span class="o_stat_text">Consumptions</span>
+                  </div>
+          </button>
+        </xpath>
+        <xpath expr="//field[@name='intake_id']" position="after">
+            <field name="id" invisible="True"/>
+            <field name="last_reading_time"
+                   attrs="{'readonly': [('id', '>', 0)]}"/>
+            <field name="last_reading_value"
+                   attrs="{'readonly': [('id', '>', 0)]}"/>
+            <field readonly="True" name="last_reading_instantflow"/>
+        </xpath>
+        <xpath expr="//page[@name='notes_page']" position="before">
+          <page name="intake_page" string="Intakes">
+            <field name="infm_ids">
+                <tree create="false" edit="false" delete="false"
+                 class="o_base_wua_irrigation_measurement_intake_view_tree_notebook">
+                    <field name="assign_start"/>
+                    <field name="assign_end"/>
+                    <field name="intake_id"/>
+                    <field name="intake_type"/>
+                    <field name="intake_category"/>
+                    <field name="days" sum="Total"/>
+                </tree>
+            </field>
+          </page>
+        </xpath>
+      </field>
+  </record>
+
+  <record id="wua_flowmeter_view_tree" model="ir.ui.view">
+    <field name="name">Flowmeter (tree view)</field>
+    <field name="model">wua.flowmeter</field>
+    <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='state']" position="before">
+          <field name="last_reading_time"/>
+          <field name="last_reading_value"/>
+          <field name="last_reading_instantflow"/>
+      </xpath>
+    </field>
+  </record>
+
+</odoo>
