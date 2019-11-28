@@ -11,6 +11,7 @@
     "license": "AGPL-3",
     "depends": [
         "account_banking_debit_suma",
+        "base_wua",
     ],
     "data": [
         "views/account_payment_order_views.xml",
