@@ -20,7 +20,7 @@ class WuaParcel(models.Model):
             gis_flowmeter_ok = True
         if gis_flowmeter_ok:
             self.env.cr.execute("""
-                SELECT code, geom FROM public.wua_gis_flowmeter
+                SELECT name, geom FROM public.wua_gis_flowmeter
                 """)
             gis_flowmeters = self.env.cr.fetchall()
             if gis_flowmeters:
