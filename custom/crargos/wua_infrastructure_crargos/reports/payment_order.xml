@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Modification payment order for argos -->
+    <template id="account_payment_order_document" inherit_id="account_payment_order.print_account_payment_order_document">
+
+        <!-- Justify fields to the left -->
+        <xpath expr="//th[@class='text-center']" position="attributes">
+            <attribute name="class">text-left</attribute>
+        </xpath>
+        <xpath expr="//td[@class='text-center']" position="attributes">
+            <attribute name="class">text-left</attribute>
+        </xpath>
+
+    </template>
+
+</odoo>

@@ -12,7 +12,9 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
+        "account_payment_order",
         "base_wua_gravity_irrigation",
+        "base_wua_report",
     ],
     "data": [
         "data/wua_invoicing_config_settings_data.xml",
@@ -20,6 +22,7 @@
         "views/res_partner_view.xml",
         "views/wua_wateringrequest_view.xml",
         "views/resources.xml",
+        "reports/payment_order.xml",
         "reports/wua_external_layout.xml",
         "reports/wua_wateringrequest_report.xml",
         "reports/wua_reservoiremptyingorder_report.xml",
