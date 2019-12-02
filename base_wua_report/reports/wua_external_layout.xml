@@ -52,6 +52,11 @@
     <!-- Purchase -->
     <!-- @TODO -->
 
+    <!-- Payment Order (account_payment_order module dependence) -->
+    <record id="account_payment_order.action_print_payment_order" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
 
     <!-- Define external layout -->
     <template id="wua_external_layout">
@@ -66,7 +71,7 @@
             <t t-set="company" t-value="res_company"></t>
         </t>
         <t t-call="base_wua_report.external_layout_header"/>
-        <t t-raw="0" />
+        <t t-raw="0"/>
         <t t-call="base_wua_report.external_layout_footer"/>
     </template>
 
@@ -206,5 +211,12 @@
 
     <!-- Purchase -->
     <!-- @TODO -->
+
+    <!-- Payment Order (account_payment_order module dependence) -->
+    <template id="base_wua_report_account_payment_order_document" inherit_id="account_payment_order.print_account_payment_order_document">
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        </xpath>
+    </template>
 
 </odoo>

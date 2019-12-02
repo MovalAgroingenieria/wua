@@ -18,6 +18,7 @@
     "data": [
         "views/partner_view.xml",
         "reports/report_invoice.xml",
+        "reports/payment_order.xml",
     ],
     "installable": True,
     "application": False,

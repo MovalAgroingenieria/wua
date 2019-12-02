@@ -11,6 +11,7 @@
     "license": "AGPL-3",
     "depends": [
         "account",
+        "account_payment_order",
         "base_wua",
         "sale",
         "stock",

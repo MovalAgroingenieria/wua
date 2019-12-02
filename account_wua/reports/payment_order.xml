@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Modifications in payment order -->
+    <template id="wua_account_payment_order_document" inherit_id="account_payment_order.print_account_payment_order_document">
+
+        <!-- Do not show bank address (positional xpath) -->
+        <xpath expr="//div[@class='row'][1]" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+
+        <!-- Change infocell "Used account" format and position -->
+        <xpath expr="//div[@t-if='doc.company_partner_bank_id.bank_id.id']" position="replace"/>
+        <xpath expr="//div[@t-if='doc.payment_mode_id.name']" position="before">
+            <div t-if="doc.company_partner_bank_id.bank_id.id" style="margin-left: 14px;">
+                <strong>Used Account: </strong>
+                <span t-esc="get_bank_account_name(doc.company_partner_bank_id)"/>
+            </div>
+        </xpath>
+
+        <!-- Do no show "Company Currency" infocell -->
+        <xpath expr="//div[@t-if='doc.company_id.currency_id.name']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+
+        <!-- Do no show Currency column (positional xpath) -->
+        <xpath expr="//th[@class='text-right'][2]" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+        <xpath expr="//td[@class='text-right'][2]" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+
+        <!-- Simplify bank account info column -->
+        <xpath expr="//span[@t-esc='get_bank_account_name(line.partner_bank_id)']" position="replace">
+            <t t-if="line.partner_bank_id.acc_number">
+                <span t-field="line.partner_bank_id.acc_number"/>
+            </t>
+        </xpath>
+
+        <!-- Do no show "Currency" in summary table (positional xpath) -->
+        <xpath expr="//div[@class='col-xs-4 pull-right']/table/tr[2]" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+
+    </template>
+
+</odoo>
