@@ -11,7 +11,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_gravity_irrigation",
+        "base_wua_invoicing_gravity_irrigation",
         "base_wua_pressurized_irrigation", ],
     "data": [
         "data/wua_almazora_config_settings_data.xml",
