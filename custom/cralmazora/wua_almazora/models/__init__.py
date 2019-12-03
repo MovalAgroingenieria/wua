@@ -6,3 +6,4 @@ from . import wua_parcel
 from . import wua_irrigation_config_settings
 from . import wua_watering
 from . import wua_gravconsumption
+from . import wua_invoiceset
