@@ -12,7 +12,8 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_invoicing_gravity_irrigation",
-        "base_wua_pressurized_irrigation", ],
+        "base_wua_pressurized_irrigation",
+        "base_wua_parcel_areas", ],
     "data": [
         "data/wua_almazora_config_settings_data.xml",
         "views/wua_parcel_view.xml",
