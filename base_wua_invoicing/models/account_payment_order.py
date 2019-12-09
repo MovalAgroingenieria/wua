@@ -26,7 +26,7 @@ class AccountPaymentOrder(models.Model):
             for payment_line in order.payment_line_ids:
                 if payment_line.move_line_id.invoice_id:
                     invoices.append(payment_line.move_line_id.invoice_id.id)
-                    move_lines.append(payment_line.move_line_id.id)
+                move_lines.append(payment_line.move_line_id.id)
         if invoices:
             invoices = list(set(invoices))
             invoices_str = ''
@@ -43,7 +43,7 @@ class AccountPaymentOrder(models.Model):
             invoices_to_compute = \
                 self.env['account.invoice'].browse(invoices)
             invoices_to_compute._compute_payments()
-            move_lines_to_compute = \
-                self.env['account.move.line'].browse(move_lines)
-            move_lines_to_compute._amount_residual()
+        move_lines_to_compute = \
+            self.env['account.move.line'].browse(move_lines)
+        move_lines_to_compute._amount_residual()
         return True
