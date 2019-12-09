@@ -43,7 +43,8 @@ class AccountPaymentOrder(models.Model):
             invoices_to_compute = \
                 self.env['account.invoice'].browse(invoices)
             invoices_to_compute._compute_payments()
-        move_lines_to_compute = \
-            self.env['account.move.line'].browse(move_lines)
-        move_lines_to_compute._amount_residual()
+        if move_lines:
+            move_lines_to_compute = \
+                self.env['account.move.line'].browse(move_lines)
+            move_lines_to_compute._amount_residual()
         return True
