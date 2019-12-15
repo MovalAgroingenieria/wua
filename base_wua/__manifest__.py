@@ -22,6 +22,7 @@
         "web_tree_many2one_clickable",
         "partner_second_lastname",
         "web_searchbar_full_width",
+        "account_wua",
         "l10n_es",
         "account_accountant",
         "l10n_es_partner",
@@ -34,6 +35,7 @@
         "portal_sale",
         "dev_export_excel",
         "web_favicon",
+        "base_wua_report",
     ],
     "data": [
         "security/security.xml",

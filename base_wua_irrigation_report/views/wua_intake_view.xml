@@ -7,8 +7,8 @@
         <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@class='oe_button_box']" position="inside">
-                <button name="%(wua_irrigationreport_view_action)d"
-                        type="action"
+                <button name="action_see_irrigationreports"
+                        type="object"
                         class="oe_stat_button"
                         icon="fa-file"
                         groups="base_wua.group_wua_user"
@@ -18,10 +18,13 @@
                                 <field name="number_of_irrigationreports"/>
                             </span>
                             <span class="o_stat_text">
-                                Reports
+                                reports
                             </span>
                         </div>
                 </button>
+            </xpath>
+            <xpath expr="//field[@name='intake_code']" position="attributes">
+                <attribute name="attrs">{'readonly':[('number_of_irrigationreports','>', 0)]}</attribute>
             </xpath>
         </field>
     </record>

@@ -7,8 +7,8 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='toggle_active']" position="after">
-                <button name="%(wua_irrigationreport_view_action)d"
-                        type="action"
+                <button name="action_see_irrigationreports"
+                        type="object"
                         class="oe_stat_button"
                         icon="fa-file"
                         groups="base_wua.group_wua_user"
@@ -18,7 +18,7 @@
                                 <field name="number_of_irrigationreports"/>
                             </span>
                             <span class="o_stat_text">
-                                Reports
+                                reports
                             </span>
                         </div>
                 </button>

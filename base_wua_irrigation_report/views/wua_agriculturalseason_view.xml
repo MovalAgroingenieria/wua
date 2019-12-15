@@ -8,8 +8,8 @@
             <form duplicate="0">
                 <sheet>
                     <div name="buttons" class="oe_button_box">
-                        <button name="%(wua_irrigationreport_view_action)d"
-                                type="action"
+                        <button name="action_see_irrigationreports"
+                                type="object"
                                 class="oe_stat_button"
                                 icon="fa-file"
                                 groups="base_wua.group_wua_user"
@@ -19,15 +19,17 @@
                                         <field name="num_irrigationreports_stat"/>
                                     </span>
                                     <span class="o_stat_text">
-                                        Reports
+                                        reports
                                     </span>
                                 </div>
                         </button>
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
-                            <field name="initial_date"/>
-                            <field name="end_date"/>
+                            <field name="initial_date"
+                                   attrs="{'readonly':[('number_of_irrigationreports','>', 0)]}"/>
+                            <field name="end_date"
+                                   attrs="{'readonly':[('number_of_irrigationreports','>', 0)]}"/>
                             <field name="description"/>
                         </group>
                         <group name="master_data_right">
@@ -89,8 +91,8 @@
         <field name="search_view_id" ref="wua_agriculturalseason_view_search"/>
     </record>
 
-    <!-- Menuentry -->
-    <menuitem name="Agricultural Seasons" id="wua_agricultural_menu"
+    <!-- Menu entry -->
+    <menuitem name="Agricultural Seasons" id="wua_agriculturalseason_menu"
         parent="base_wua_irrigation_report_menu" sequence="1"
         action="base_wua_irrigationreport_agriculturalseason_action"/>
 

@@ -12,7 +12,6 @@
     "depends": [
         "account",
         "account_payment_order",
-        "base_wua",
         "sale",
         "stock",
         "report",

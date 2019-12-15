@@ -44,8 +44,9 @@ class WuaAgriculturalseason(models.Model):
 
     active_agriculturalseason = fields.Boolean(
         string="Active",
+        required=True,
         default=False,
-        help="Indicate if this campaign is active")
+        help="Indicate if this agricultural season is active")
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -69,8 +70,8 @@ class WuaAgriculturalseason(models.Model):
     @api.model
     def create(self, vals):
         # Check if there is already an active agricultural season
-        if 'active_agriculturalseason' in vals \
-                and vals['active_agriculturalseason'] == True:
+        if ('active_agriculturalseason' in vals and
+           vals['active_agriculturalseason']):
             active_agriculturalseasons = \
                 self.env['wua.agriculturalseason'].search(
                     [('active_agriculturalseason', '=', True)])
@@ -96,12 +97,12 @@ class WuaAgriculturalseason(models.Model):
     @api.multi
     def write(self, vals):
         # Check if there is already an active agricultural season
-        if 'active_agriculturalseason' in vals \
-            and vals['active_agriculturalseason'] == True:
+        if ('active_agriculturalseason' in vals and
+           vals['active_agriculturalseason']):
             active_agriculturalseasons = \
                 self.env['wua.agriculturalseason'].search(
                     [('active_agriculturalseason', '=', True),
-                     ('id','!=', self.id)])
+                     ('id', '!=', self.id)])
             if active_agriculturalseasons:
                 raise exceptions.ValidationError(
                     _('An active agricultural season already exists.'))

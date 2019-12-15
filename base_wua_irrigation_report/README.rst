@@ -2,18 +2,16 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-==========================================
-Water Users Associations Irrigation Report
-==========================================
+===============================================
+Irrigation Reports for Water Users Associations 
+===============================================
+
+This module allows you to manage the irrigation reports of water users associations.
 
 Description
 ===========
-Irrigation Reports management. It allows to register the water consumption by means of Irrigation Reports.
 
-Configuration
-=============
-
-In order to be able to edit Irrigation Report the technical setting 'WUA: can edit irrigation reports' has to be marked.
+Irrigation Reports Management. It allows to register the water consumption by means of irrigation reports.
 
 Credits
 =======
@@ -27,7 +25,7 @@ Contributors
 * Eduardo Iniesta <einiesta@moval.es>
 * Miguel Mora <mmora@moval.es>
 * Juanu Sandoval <jsandoval@moval.es>
-* Salvador sánchez <ssanchez@moval.es>
+* Salvador Sánchez <ssanchez@moval.es>
 * Jorge Vera <jvera@moval.es>
 
 Maintainer

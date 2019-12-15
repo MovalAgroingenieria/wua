@@ -7,25 +7,33 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <header>
-                        <field name="state" widget="statusbar"/>
+                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
                      <group name="master_data">
                         <group name="master_data_left">
                             <field name="id" invisible="1"/>
-                            <field name="intake_id" attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="intake_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="report_initial_time" attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="report_end_time" attrs="{'readonly': [('id', '>', 0)]}"/>
-                            <field name="partner_id"/>
-                            <field name="initial_volume" style="width:20%;"/>
-                            <field name="end_volume" style="width:20%;"/>
+                            <field name="partner_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   domain="[('is_wua_partner', '=', True)]"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="initial_volume" style="width:100px"/>
+                            <field name="end_volume" style="width:100px"/>
                         </group>
                         <group name="master_data_right">
-                            <field name="irrigationreport_number"/>
+                            <field name="irrigationreport_number"
+                                   attrs="{'invisible': [('id', '=', False)]}"/>
                             <field name="agriculturalseason_id"/>
                             <field name="user_id"/>
                             <field name="volume"/>
-                            <field name="adjustement_volume" style="width:20%;"/>
+                            <field name="adjustement_volume" style="width:100px"/>
                             <field name="volume_real"/>
                         </group>
                     </group>
@@ -34,7 +42,7 @@
                             <page name="notes_page" string="Notes">
                                 <field name="notes" widget="html" help="Add additional information for irrigation Report. It will be printed in Irrigation Report)"/>
                                 <div class="oe_edit_only">
-                                    (*) The notes will be printed in Irrigation Report.
+                                    (*) The notes will be printed in irrigation report
                                 </div>
                             </page>
                             <page name="signature_page" string="Signature">
@@ -64,6 +72,7 @@
                 <field name="volume"/>
                 <field name="adjustement_volume"/>
                 <field name="volume_real"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
@@ -84,7 +93,7 @@
                     <filter name="agriculturalseason" string="Active Agricultural Season"
                         context="{'group_by':'agriculturalseason_id'}"/>
                     <filter string="Intake" name="intake" context="{'group_by':'intake_id'}"/>
-                    <filter string="Partner" name="partner" context="{'group_by':'parner_id'}"/>
+                    <filter string="Partner" name="partner" context="{'group_by':'partner_id'}"/>
                 </group>
             </search>
         </field>
@@ -113,7 +122,7 @@
     </record>
 
     <!-- Window action -->
-    <record id="wua_irrigationreport_view_action" model="ir.actions.act_window">
+    <record id="wua_irrigationreport_action" model="ir.actions.act_window">
         <field name="name">Irrigation Reports</field>
         <field name="res_model">wua.irrigationreport</field>
         <field name="view_type">form</field>
@@ -126,13 +135,13 @@
         </field>
     </record>
 
-    <!-- Menuentries -->
+    <!-- Menu entries -->
     <menuitem name="Irrigation Reports" id="base_wua_irrigation_report_menu"
         parent="wua_structure_irrigation.base_wua_irrigation_menu" sequence="3"
-        groups="group_wua_irrigationreport_recorder"/>
+        groups="base_wua.group_wua_user"/>
 
     <menuitem name="Reports" id="base_wua_irrigationreport_menu"
         parent="base_wua_irrigation_report_menu" sequence="2"
-        action="wua_irrigationreport_view_action"/>
+        action="wua_irrigationreport_action"/>
 
 </odoo>
