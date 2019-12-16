@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 17:22+0000\n"
-"PO-Revision-Date: 2019-07-01 17:22+0000\n"
+"POT-Creation-Date: 2019-12-16 20:24+0000\n"
+"PO-Revision-Date: 2019-12-16 20:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_active_agriculturalseason
+msgid "Active"
+msgstr "Actiu"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,help:wua_structure_irrigation.field_wua_irrigation_configuration_default_distribute_extra_volume
@@ -24,6 +29,13 @@ msgstr "Després de calcular el entande, repartir entre els consums el volum ext
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_name
 msgid "Agricultural Season"
 msgstr "Campanya"
+
+#. module: wua_structure_irrigation
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:80
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:108
+#, python-format
+msgid "An active agricultural season already exists."
+msgstr "Ja hi ha una campanya activa."
 
 #. module: wua_structure_irrigation
 #: model:ir.ui.view,arch_db:wua_structure_irrigation.wua_irrigation_config_settings_view_form
@@ -101,7 +113,7 @@ msgstr "Descripció"
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_display_name
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_display_name
 msgid "Display Name"
-msgstr "Mostra el nom"
+msgstr "Mostrar Nom"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_default_distribute_extra_volume
@@ -114,7 +126,7 @@ msgid "Electromagnetic"
 msgstr "Electromagnètic"
 
 #. module: wua_structure_irrigation
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:62
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:68
 #, python-format
 msgid "Empty Value (description)."
 msgstr "Valor en blanc (descripció)."
@@ -122,12 +134,12 @@ msgstr "Valor en blanc (descripció)."
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_end_date
 msgid "End Date"
-msgstr "Data final"
+msgstr "Data finalització"
 
 #. module: wua_structure_irrigation
 #: model:ir.model,name:wua_structure_irrigation.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
 
 #. module: wua_structure_irrigation
 #: sql_constraint:wua.agriculturalseason:0
@@ -162,9 +174,14 @@ msgid "Incorrect dates."
 msgstr "Dates incorrectes."
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,help:wua_structure_irrigation.field_wua_agriculturalseason_active_agriculturalseason
+msgid "Indicate if this agricultural season is active"
+msgstr "Indica si aquesta campanya és la campanya activa"
+
+#. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_initial_date
 msgid "Initial Date"
-msgstr "Initial Date"
+msgstr "Data inicial"
 
 #. module: wua_structure_irrigation
 #: model:ir.ui.menu,name:wua_structure_irrigation.base_wua_irrigation_menu
@@ -180,19 +197,19 @@ msgstr "Configuració dels regs"
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason___last_update
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration___last_update
 msgid "Last Modified on"
-msgstr "Darrera modificació feta el"
+msgstr "Última modificació el "
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_write_uid
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_write_uid
 msgid "Last Updated by"
-msgstr "Actualitzat per última vegada per"
+msgstr "Última actualització per"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_write_date
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_write_date
 msgid "Last Updated on"
-msgstr "Actualitzat per última vegada el dia"
+msgstr "Última actualització el"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_irrigation_configuration_default_volume_perunitime
@@ -246,15 +263,15 @@ msgid "Technical"
 msgstr "Tècnic"
 
 #. module: wua_structure_irrigation
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:78
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:106
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:93
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:131
 #, python-format
 msgid "The agricultural season is overlapped on another season."
 msgstr "La campanya es solapa amb una altra."
 
 #. module: wua_structure_irrigation
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:71
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:99
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:86
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:124
 #, python-format
 msgid "The duration of an agricultural season can not be longer than one year."
 msgstr "La campanya no pot durar més d'un any."

@@ -19,6 +19,7 @@
     ],
     "data": [
         "views/resources.xml",
+        "security/security.xml",
         "security/ir.model.access.csv",
         "views/wua_irrigationreport_view.xml",
         "views/wua_agriculturalseason_view.xml",

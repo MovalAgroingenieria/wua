@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-01 17:21+0000\n"
-"PO-Revision-Date: 2019-07-01 17:21+0000\n"
+"POT-Creation-Date: 2019-12-16 20:24+0000\n"
+"PO-Revision-Date: 2019-12-16 20:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: wua_structure_irrigation
+#: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_active_agriculturalseason
+msgid "Active"
+msgstr "Activa"
 
 #. module: wua_structure_irrigation
 #: model:ir.model.fields,help:wua_structure_irrigation.field_wua_irrigation_configuration_default_distribute_extra_volume
@@ -24,6 +29,13 @@ msgstr "Después de calcular el entande, repartir entre los consumos el volumen 
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_name
 msgid "Agricultural Season"
 msgstr "Campaña"
+
+#. module: wua_structure_irrigation
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:80
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:108
+#, python-format
+msgid "An active agricultural season already exists."
+msgstr "Ya existe una campaña activa."
 
 #. module: wua_structure_irrigation
 #: model:ir.ui.view,arch_db:wua_structure_irrigation.wua_irrigation_config_settings_view_form
@@ -114,7 +126,7 @@ msgid "Electromagnetic"
 msgstr "Electromagnético"
 
 #. module: wua_structure_irrigation
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:62
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:68
 #, python-format
 msgid "Empty Value (description)."
 msgstr "Valor en blanco (descripción)."
@@ -162,9 +174,14 @@ msgid "Incorrect dates."
 msgstr "Fechas incorrectas."
 
 #. module: wua_structure_irrigation
+#: model:ir.model.fields,help:wua_structure_irrigation.field_wua_agriculturalseason_active_agriculturalseason
+msgid "Indicate if this agricultural season is active"
+msgstr "Indica si esta campaña es la campaña activa"
+
+#. module: wua_structure_irrigation
 #: model:ir.model.fields,field_description:wua_structure_irrigation.field_wua_agriculturalseason_initial_date
 msgid "Initial Date"
-msgstr "Initial Date"
+msgstr "Fecha inicial"
 
 #. module: wua_structure_irrigation
 #: model:ir.ui.menu,name:wua_structure_irrigation.base_wua_irrigation_menu
@@ -246,15 +263,15 @@ msgid "Technical"
 msgstr "Técnico"
 
 #. module: wua_structure_irrigation
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:78
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:106
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:93
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:131
 #, python-format
 msgid "The agricultural season is overlapped on another season."
 msgstr "La campaña se solapa con otra."
 
 #. module: wua_structure_irrigation
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:71
-#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:99
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:86
+#: code:addons/wua_structure_irrigation/models/wua_agriculturalseason.py:124
 #, python-format
 msgid "The duration of an agricultural season can not be longer than one year."
 msgstr "La campaña no puede durar más de un año."
