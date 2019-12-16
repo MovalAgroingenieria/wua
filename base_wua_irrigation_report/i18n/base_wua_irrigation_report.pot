@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-13 11:23+0000\n"
-"PO-Revision-Date: 2019-12-13 11:23+0000\n"
+"POT-Creation-Date: 2019-12-16 10:15+0000\n"
+"PO-Revision-Date: 2019-12-16 10:15+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,13 +22,13 @@ msgstr ""
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
-msgid "(*) The notes will be printed in Irrigation Report."
+msgid "(*) The notes will be printed in irrigation report"
 msgstr ""
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_form
 msgid "<span class=\"o_stat_text\">\n"
-"                                        Reports\n"
+"                                        reports\n"
 "                                    </span>"
 msgstr ""
 
@@ -36,7 +36,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.view_partner_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_intake_view_form
 msgid "<span class=\"o_stat_text\">\n"
-"                                Reports\n"
+"                                reports\n"
 "                            </span>"
 msgstr ""
 
@@ -161,7 +161,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_report
 #: model:ir.actions.act_window,name:base_wua_irrigation_report.base_wua_irrigationreport_agriculturalseason_action
-#: model:ir.ui.menu,name:base_wua_irrigation_report.wua_agricultural_menu
+#: model:ir.ui.menu,name:base_wua_irrigation_report.wua_agriculturalseason_menu
 msgid "Agricultural Seasons"
 msgstr ""
 
@@ -254,7 +254,10 @@ msgid "Intake"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: model:ir.actions.act_window,name:base_wua_irrigation_report.wua_irrigationreport_view_action
+#: code:addons/base_wua_irrigation_report/models/res_partner.py:45
+#: code:addons/base_wua_irrigation_report/models/wua_agriculturalseason.py:69
+#: code:addons/base_wua_irrigation_report/models/wua_intake.py:45
+#: model:ir.actions.act_window,name:base_wua_irrigation_report.wua_irrigationreport_action
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_res_partner_irrigationreport_ids
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_res_users_irrigationreport_ids
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_irrigationreport_ids
@@ -262,6 +265,7 @@ msgstr ""
 #: model:ir.ui.menu,name:base_wua_irrigation_report.base_wua_irrigation_report_menu
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_grap
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_pivot
+#, python-format
 msgid "Irrigation Reports"
 msgstr ""
 
@@ -323,7 +327,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_res_partner
-msgid "Partner (account for WUA)"
+msgid "Partner of a WUA"
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -368,14 +372,14 @@ msgid "State"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:160
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:210
 #, python-format
-msgid "The end time (%s) is out of agricultural season (%s)"
+msgid "The dates of the report are out of the agricultural season."
 msgstr ""
 
 #. module: base_wua_irrigation_report
 #: sql_constraint:wua.irrigationreport:0
-msgid "The end volume can not be a negative value."
+msgid "The final volume must be equal or greather than initial volume."
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -407,10 +411,5 @@ msgstr ""
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigationreport
 msgid "WUA Irrigation Report"
-msgstr ""
-
-#. module: base_wua_irrigation_report
-#: model:res.groups,name:base_wua_irrigation_report.group_wua_irrigationreport_recorder
-msgid "WUA: can edit irrigation reports"
 msgstr ""
 

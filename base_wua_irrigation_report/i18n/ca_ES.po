@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-13 11:34+0000\n"
-"PO-Revision-Date: 2019-12-13 11:34+0000\n"
+"POT-Creation-Date: 2019-12-16 10:29+0000\n"
+"PO-Revision-Date: 2019-12-16 10:29+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,13 +22,13 @@ msgstr "(*) A l'signar el Part de Reg serà validat."
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
-msgid "(*) The notes will be printed in Irrigation Report."
+msgid "(*) The notes will be printed in irrigation report"
 msgstr "(*) Les notes s'imprimiran al Part de Reg."
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_form
 msgid "<span class=\"o_stat_text\">\n"
-"                                        Reports\n"
+"                                        reports\n"
 "                                    </span>"
 msgstr "<span class=\"o_stat_text\">\n"
 "                                        Parts de Reg\n"
@@ -38,7 +38,7 @@ msgstr "<span class=\"o_stat_text\">\n"
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.view_partner_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_intake_view_form
 msgid "<span class=\"o_stat_text\">\n"
-"                                Reports\n"
+"                                reports\n"
 "                            </span>"
 msgstr "<span class=\"o_stat_text\">\n"
 "                                Parts de Reg\n"
@@ -136,7 +136,7 @@ msgstr "<strong>Campanya</strong>"
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
 msgid "<strong>Irrigation Report</strong>"
-msgstr "<strong>Part de Regt</strong>"
+msgstr "<strong>Part de Reg</strong>"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
@@ -167,7 +167,7 @@ msgstr "Campanya"
 
 #. module: base_wua_irrigation_report
 #: model:ir.actions.act_window,name:base_wua_irrigation_report.base_wua_irrigationreport_agriculturalseason_action
-#: model:ir.ui.menu,name:base_wua_irrigation_report.wua_agricultural_menu
+#: model:ir.ui.menu,name:base_wua_irrigation_report.wua_agriculturalseason_menu
 msgid "Agricultural Seasons"
 msgstr "Campanyes"
 
@@ -260,7 +260,10 @@ msgid "Intake"
 msgstr "Captació"
 
 #. module: base_wua_irrigation_report
-#: model:ir.actions.act_window,name:base_wua_irrigation_report.wua_irrigationreport_view_action
+#: code:addons/base_wua_irrigation_report/models/res_partner.py:45
+#: code:addons/base_wua_irrigation_report/models/wua_agriculturalseason.py:69
+#: code:addons/base_wua_irrigation_report/models/wua_intake.py:45
+#: model:ir.actions.act_window,name:base_wua_irrigation_report.wua_irrigationreport_action
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_res_partner_irrigationreport_ids
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_res_users_irrigationreport_ids
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_irrigationreport_ids
@@ -268,6 +271,7 @@ msgstr "Captació"
 #: model:ir.ui.menu,name:base_wua_irrigation_report.base_wua_irrigation_report_menu
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_grap
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_pivot
+#, python-format
 msgid "Irrigation Reports"
 msgstr "Parts de Reg"
 
@@ -329,8 +333,8 @@ msgstr "Soci"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_res_partner
-msgid "Partner (account for WUA)"
-msgstr "Soci (compte de CR)"
+msgid "Partner of a WUA"
+msgstr "Soci d’una CR"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
@@ -374,15 +378,15 @@ msgid "State"
 msgstr "Estat"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:160
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:210
 #, python-format
-msgid "The end time (%s) is out of agricultural season (%s)"
-msgstr "La data de finalització (%s) està fora de la campanya activa (%s)"
+msgid "The dates of the report are out of the agricultural season."
+msgstr "Les dates de el part estan fora de la campanya activa."
 
 #. module: base_wua_irrigation_report
 #: sql_constraint:wua.irrigationreport:0
-msgid "The end volume can not be a negative value."
-msgstr "El volum final no pot ser negatiu."
+msgid "The final volume must be equal or greather than initial volume."
+msgstr "El volum final ha de ser igual o superior al volum inicial."
 
 #. module: base_wua_irrigation_report
 #: sql_constraint:wua.irrigationreport:0
@@ -418,10 +422,5 @@ msgstr "Validat"
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigationreport
 msgid "WUA Irrigation Report"
-msgstr "Part de Reg WUA"
-
-#. module: base_wua_irrigation_report
-#: model:res.groups,name:base_wua_irrigation_report.group_wua_irrigationreport_recorder
-msgid "WUA: can edit irrigation reports"
-msgstr "WUA: pot editar parts de Reg"
+msgstr "Part de Reg CR"
 
