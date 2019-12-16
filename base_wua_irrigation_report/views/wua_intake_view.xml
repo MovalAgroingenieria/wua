@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_intake_view_form" model="ir.ui.view">
+        <field name="name">Intakes (form view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_button_box']" position="inside">
+                <button name="action_see_irrigationreports"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-file"
+                        groups="base_wua.group_wua_user"
+                        attrs="{'invisible':[('number_of_irrigationreports','=', 0)]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="number_of_irrigationreports"/>
+                            </span>
+                            <span class="o_stat_text">
+                                reports
+                            </span>
+                        </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='intake_code']" position="attributes">
+                <attribute name="attrs">{'readonly':[('number_of_irrigationreports','>', 0)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

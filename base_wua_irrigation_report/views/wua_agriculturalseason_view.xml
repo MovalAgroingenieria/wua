@@ -7,27 +7,34 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <sheet>
-                    <field name='id' invisible="True"/>
                     <div name="buttons" class="oe_button_box">
-                        <button name="action_see_intakeconsumptions"
+                        <button name="action_see_irrigationreports"
                                 type="object"
                                 class="oe_stat_button"
-                                icon="fa-pagelines"
+                                icon="fa-file"
                                 groups="base_wua.group_wua_user"
-                                 attrs="{'invisible':[('id', '=', False)]}">
+                                attrs="{'invisible':[('num_irrigationreports_stat','=', 0)]}">
                                 <div class="o_form_field o_stat_info">
-                                    <span class="o_stat_text">Consumptions</span>
+                                    <span class="o_stat_value">
+                                        <field name="num_irrigationreports_stat"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        reports
+                                    </span>
                                 </div>
                         </button>
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
-                            <field name="initial_date" string="Initial Date"/>
-                            <field name="end_date" string="End Date"/>
-                            <field name="description" string="Description"/>
+                            <field name="initial_date"
+                                   attrs="{'readonly':[('number_of_irrigationreports','>', 0)]}"/>
+                            <field name="end_date"
+                                   attrs="{'readonly':[('number_of_irrigationreports','>', 0)]}"/>
+                            <field name="description"/>
                         </group>
                         <group name="master_data_right">
-                            <field name="number_of_intakeconsumptions"/>
+                            <field name="active_agriculturalseason"/>
+                            <field name="number_of_irrigationreports"/>
                             <field name="total_volume"/>
                         </group>
                     </group>
@@ -47,12 +54,13 @@
         <field name="name">Agricultural Seasons (tree view)</field>
         <field name="model">wua.agriculturalseason</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_irrigation_measurement_agriculturalseason_view_tree">
+            <tree class="o_base_wua_irrigationreport_agriculturalseason_view_tree">
                 <field name="initial_date" string="Initial Date"/>
                 <field name="end_date" string="End Date"/>
                 <field name="description" string="Description"/>
-                <field name="number_of_intakeconsumptions"/>
+                <field name="number_of_irrigationreports"/>
                 <field name="total_volume"/>
+                <field name="active_agriculturalseason"/>
             </tree>
         </field>
     </record>
@@ -64,11 +72,14 @@
             <search>
                 <field name="name" string="Agricultural Season"/>
                 <field name="description" string="Description"/>
+                <filter name="active_agriculturalseason" string="Active Agricultural Season"
+                    domain="[('active_agriculturalseason','=',True)]"/>
             </search>
         </field>
     </record>
 
-    <record id="wua_agriculturalseason_action" model="ir.actions.act_window">
+    <!-- Window action -->
+    <record id="base_wua_irrigationreport_agriculturalseason_action" model="ir.actions.act_window">
         <field name="name">Agricultural Seasons</field>
         <field name="res_model">wua.agriculturalseason</field>
         <field name="view_type">form</field>
@@ -77,21 +88,12 @@
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree', 'view_id': ref('wua_agriculturalseason_view_tree')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('wua_agriculturalseason_view_form')})]"/>
-        <field name="search_view_id"
-         ref="wua_agriculturalseason_view_search"/>
+        <field name="search_view_id" ref="wua_agriculturalseason_view_search"/>
     </record>
 
-    <menuitem id="base_wua_irrigation_measurement_menu"
-              name="General Infrastructure"
-              parent="wua_structure_irrigation.base_wua_irrigation_menu"
-              sequence="0"
-              groups="base_wua.group_wua_user"/>
-
-    <menuitem id="wua_agriculturalseason_menu"
-              name="Agricultural Seasons"
-              parent="base_wua_irrigation_measurement.base_wua_irrigation_measurement_menu"
-              action="wua_agriculturalseason_action"
-              sequence="1"
-              groups="base_wua.group_wua_user"/>
+    <!-- Menu entry -->
+    <menuitem name="Agricultural Seasons" id="wua_agriculturalseason_menu"
+        parent="base_wua_irrigation_report_menu" sequence="1"
+        action="base_wua_irrigationreport_agriculturalseason_action"/>
 
 </odoo>

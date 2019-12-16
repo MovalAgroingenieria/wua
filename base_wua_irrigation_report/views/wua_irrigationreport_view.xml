@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationreport_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Reports (form view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                     <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                     <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="id" invisible="1"/>
+                            <field name="intake_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="report_initial_time" attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="report_end_time" attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="partner_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   domain="[('is_wua_partner', '=', True)]"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="initial_volume" style="width:100px"/>
+                            <field name="end_volume" style="width:100px"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="irrigationreport_number"
+                                   attrs="{'invisible': [('id', '=', False)]}"/>
+                            <field name="agriculturalseason_id"/>
+                            <field name="user_id"/>
+                            <field name="volume"/>
+                            <field name="adjustement_volume" style="width:100px"/>
+                            <field name="volume_real"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes" widget="html" help="Add additional information for irrigation Report. It will be printed in Irrigation Report)"/>
+                                <div class="oe_edit_only">
+                                    (*) The notes will be printed in irrigation report
+                                </div>
+                            </page>
+                            <page name="signature_page" string="Signature">
+                                <field name="partner_signature" widget="signature"/>
+                                <div class="oe_edit_only">
+                                    (*) In signing the document will be validated.
+                                </div>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Reports (tree view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_irrigationreport_irrigationreport_view_tree">
+                <field name="agriculturalseason_id"/>
+                <field name="intake_id"/>
+                <field name="irrigationreport_number"/>
+                <field name="report_initial_time"/>
+                <field name="report_end_time"/>
+                <field name="partner_id"/>
+                <field name="volume"/>
+                <field name="adjustement_volume"/>
+                <field name="volume_real"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Reports (search view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id" string="Partner"/>
+                <field name="irrigationreport_number" string="Number"/>
+                <filter name="active_agriculturalseason" string="Active Agricultural Season"
+                    domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <filter name="state" string="Draft" domain="[('state','=','draft')]"/>
+                <filter name="state" string="Validated" domain="[('state','=','validated')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="agriculturalseason" string="Active Agricultural Season"
+                        context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Intake" name="intake" context="{'group_by':'intake_id'}"/>
+                    <filter string="Partner" name="partner" context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_grap" model="ir.ui.view">
+        <field name="name">Irrigation Reports (graph view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="arch" type="xml">
+            <graph string="Irrigation Reports">
+                <field name="intake_id"/>
+                <field name="volume_real" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_pivot" model="ir.ui.view" >
+        <field name="name">Irrigation Reports (graph view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="arch" type="xml">
+            <pivot string="Irrigation Reports" display_quantity="true">
+                <field name="intake_id"/>
+                <field name="volume_real" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Window action -->
+    <record id="wua_irrigationreport_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Reports</field>
+        <field name="res_model">wua.irrigationreport</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="view_id" ref="wua_irrigationreport_view_tree"/>
+        <field name="search_view_id" ref="wua_irrigationreport_view_search"/>
+        <field name="context">
+            {'search_default_active_agriculturalseason': 1,
+             'graph_mode': 'pie'}
+        </field>
+    </record>
+
+    <!-- Menu entries -->
+    <menuitem name="Irrigation Reports" id="base_wua_irrigation_report_menu"
+        parent="wua_structure_irrigation.base_wua_irrigation_menu" sequence="3"
+        groups="base_wua.group_wua_user"/>
+
+    <menuitem name="Reports" id="base_wua_irrigationreport_menu"
+        parent="base_wua_irrigation_report_menu" sequence="2"
+        action="wua_irrigationreport_action"/>
+
+</odoo>

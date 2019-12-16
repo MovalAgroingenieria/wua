@@ -42,6 +42,12 @@ class WuaAgriculturalseason(models.Model):
 
     notes = fields.Html(string='Notes')
 
+    active_agriculturalseason = fields.Boolean(
+        string="Active",
+        required=True,
+        default=False,
+        help="Indicate if this agricultural season is active")
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Agricultural Season.'),
@@ -63,6 +69,15 @@ class WuaAgriculturalseason(models.Model):
 
     @api.model
     def create(self, vals):
+        # Check if there is already an active agricultural season
+        if ('active_agriculturalseason' in vals and
+           vals['active_agriculturalseason']):
+            active_agriculturalseasons = \
+                self.env['wua.agriculturalseason'].search(
+                    [('active_agriculturalseason', '=', True)])
+            if active_agriculturalseasons:
+                raise exceptions.ValidationError(
+                    _('An active agricultural season already exists.'))
         self.refine_description(vals)
         non_duration_greather_than_one_year = \
             self.test_non_duration_greather_than_one_year(
@@ -81,6 +96,16 @@ class WuaAgriculturalseason(models.Model):
 
     @api.multi
     def write(self, vals):
+        # Check if there is already an active agricultural season
+        if ('active_agriculturalseason' in vals and
+           vals['active_agriculturalseason']):
+            active_agriculturalseasons = \
+                self.env['wua.agriculturalseason'].search(
+                    [('active_agriculturalseason', '=', True),
+                     ('id', '!=', self.id)])
+            if active_agriculturalseasons:
+                raise exceptions.ValidationError(
+                    _('An active agricultural season already exists.'))
         if 'description' in vals:
             self.refine_description(vals)
         if 'initial_date' in vals or 'end_date' in vals:
