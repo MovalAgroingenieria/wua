@@ -16,6 +16,7 @@ class AccountPaymentOrder(models.Model):
         string="Entity type",
         help="The type of entity",
         default="C",
+        compute="get_entity_type_code",
         readonly=True)
 
     # Hooks (wua implemented)
