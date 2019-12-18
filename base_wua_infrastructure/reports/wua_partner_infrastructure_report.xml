@@ -28,21 +28,20 @@
                     <table class="table table-condensed" style="margin-top: 2px;">
                         <thead>
                             <tr>
-                                <th>Parcel</th>
-                                <th>Intake</th>
-                                <th>Irrigation Shed</th>
-                                <th>Hydraulic Sector</th>
-                                
+                                <th name="pression_parcel">Parcel</th>
+                                <th name="pression_intake">Intake</th>
+                                <th name="pression_irrigation_shed">Irrigation Shed</th>
+                                <th name="pression_hidraulicsector">Hydraulic Sector</th>
                             </tr>
                         </thead>
                         <tbody>
                             <t t-foreach="o.partnerlink_ids" t-as="p">
                                 <tr t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
                                     <t t-if="ip.type == 'WC' and p.irrigation_partner == True">
-                                        <td><span t-field="p.parcel_id"/></td>
-                                        <td><span t-field="ip.waterconnection_id"/></td>
-                                        <td><span t-field="ip.irrigationshed_id"/></td>
-                                        <td><span t-field="ip.hydraulicsector_id"/></td>
+                                        <td name="pression_parcel"><span t-field="p.parcel_id"/></td>
+                                        <td name="pression_intake"><span t-field="ip.waterconnection_id"/></td>
+                                        <td name="pression_irrigation_shed"><span t-field="ip.irrigationshed_id"/></td>
+                                        <td name="pression_hidraulicsector"><span t-field="ip.hydraulicsector_id"/></td>
                                     </t>
                                 </tr>
                             </t>
@@ -58,18 +57,18 @@
                     <table class="table table-condensed" style="margin-top: 2px;">
                         <thead>
                             <tr>
-                                <th>Parcel</th>
-                                <th>Irrigation gate</th>
-                                <th>Irrigation ditch</th>
+                                <th name="gravity_parcel">Parcel</th>
+                                <th name="gravity_irrigationgate">Irrigation gate</th>
+                                <th name="gravity_irrigationditch">Irrigation ditch</th>
                             </tr>
                         </thead>
                         <tbody>
                             <t t-foreach="o.partnerlink_ids" t-as="p">
                                 <tr t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
                                     <t t-if="ip.type == 'IG' and p.irrigation_partner == True">
-                                        <td><span t-field="p.parcel_id"/></td>
-                                        <td><span t-field="ip.irrigationgate_id"/></td>
-                                        <td><span t-field="ip.irrigationditch_id"/></td>
+                                        <td name="gravity_parcel"><span t-field="p.parcel_id"/></td>
+                                        <td name="gravity_irrigationgate"><span t-field="ip.irrigationgate_id"/></td>
+                                        <td name="gravity_irrigationditch"><span t-field="ip.irrigationditch_id"/></td>
                                     </t>
                                 </tr>
                             </t>
