@@ -20,7 +20,7 @@
         "views/wua_parcel_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/wua_gravconsumption_view.xml",
-        "reports/wua_irrigationlabel_report.xml",
+        "reports/wua_irrigationlabelmultiple_report.xml",
         "reports/wua_watering_report.xml",
         "reports/wua_partner_report.xml",
     ],
