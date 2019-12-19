@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-16 19:48+0000\n"
-"PO-Revision-Date: 2019-12-16 19:48+0000\n"
+"POT-Creation-Date: 2019-12-19 12:29+0000\n"
+"PO-Revision-Date: 2019-12-19 12:29+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -170,6 +170,12 @@ msgstr "Campanya"
 #: model:ir.ui.menu,name:base_wua_irrigation_report.wua_agriculturalseason_menu
 msgid "Agricultural Seasons"
 msgstr "Campanyes"
+
+#. module: base_wua_irrigation_report
+#: model:ir.actions.server,name:base_wua_irrigation_report.wua_cancel_irrigationreports
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
+msgid "Cancel"
+msgstr "Cancel·la"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_create_uid
@@ -354,7 +360,7 @@ msgstr "Volum real (m3)"
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_name
 msgid "Report Code"
-msgstr "Codi de rege"
+msgstr "Codi de reg"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_irrigationreport_number
@@ -383,7 +389,7 @@ msgid "State"
 msgstr "Estat"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:210
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:230
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr "Les dates de el part estan fora de la campanya activa."
@@ -404,11 +410,6 @@ msgid "The initial volume can not be a negative value."
 msgstr "El volum inicial no pot ser negatiu."
 
 #. module: base_wua_irrigation_report
-#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_total_volume
-msgid "Total Volume (m3)"
-msgstr "Volum total (m3)"
-
-#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_user_id
 msgid "User"
 msgstr "Usuari"
@@ -417,6 +418,12 @@ msgstr "Usuari"
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
 msgid "User signature"
 msgstr "Firma usuari"
+
+#. module: base_wua_irrigation_report
+#: model:ir.actions.server,name:base_wua_irrigation_report.wua_validate_irrigationreports
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
+msgid "Validate"
+msgstr "Validar"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
@@ -428,4 +435,11 @@ msgstr "Validat"
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigationreport
 msgid "WUA Irrigation Report"
 msgstr "Part de Reg CR"
+
+#. module: base_wua_irrigation_report
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:187
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:196
+#, python-format
+msgid "You do not have permission to execute this action."
+msgstr "No tens prou permisos per realitzar aquesta acció."
 

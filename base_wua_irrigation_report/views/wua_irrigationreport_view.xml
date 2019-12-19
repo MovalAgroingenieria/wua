@@ -6,7 +6,22 @@
         <field name="model">wua.irrigationreport</field>
         <field name="arch" type="xml">
             <form duplicate="0">
+                <field name="id" invisible="1"/>
                 <header>
+                    <button name="validate_irrigationreport"
+                            string="Validate"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|',('id','=',False),
+                                                  ('state','=','validated')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="cancel_irrigationreport"
+                            string="Cancel"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|',('id','=',False),
+                                                  ('state','=','draft')]}"
+                            groups="base_wua.group_wua_manager"/>
                      <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -121,7 +136,7 @@
         </field>
     </record>
 
-    <!-- Window action -->
+    <!-- Actions -->
     <record id="wua_irrigationreport_action" model="ir.actions.act_window">
         <field name="name">Irrigation Reports</field>
         <field name="res_model">wua.irrigationreport</field>
@@ -133,6 +148,42 @@
             {'search_default_active_agriculturalseason': 1,
              'graph_mode': 'pie'}
         </field>
+    </record>
+
+    <record id="wua_validate_irrigationreports" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_irrigationreport"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.irrigationreport'].validate_irrigationreports(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_validate_irrigationreports" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_irrigationreports'))"/>
+    </record>
+
+    <record id="wua_cancel_irrigationreports" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_irrigationreport"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.irrigationreport'].cancel_irrigationreports(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_cancel_irrigationreports" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_irrigationreports'))"/>
     </record>
 
     <!-- Menu entries -->

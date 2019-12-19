@@ -172,13 +172,33 @@ class WuaIrrigationReport(models.Model):
         for record in self:
             record.volume_real = record.volume + record.adjustement_volume
 
-    @api.depends('partner_signature')
-    def _compute_state(self):
-        for record in self:
-            if record.partner_signature:
-                record.state = "validated"
-            else:
-                record.state = "draft"
+    @api.multi
+    def validate_irrigationreport(self):
+        self.ensure_one()
+        self.state = 'validated'
+
+    @api.multi
+    def cancel_irrigationreport(self):
+        self.ensure_one()
+        self.state = 'draft'
+
+    def validate_irrigationreports(self, active_irrigationreports):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        irrigationreports = self.env['wua.irrigationreport'].browse(active_irrigationreports)
+        for irrigationreport in irrigationreports:
+            if irrigationreport.state == 'draft':
+                irrigationreport.validate_irrigationreport()
+
+    def cancel_irrigationreports(self, active_irrigationreports):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        irrigationreports = self.env['wua.irrigationreport'].browse(active_irrigationreports)
+        for irrigationreport in irrigationreports:
+            if irrigationreport.state == 'validated':
+                irrigationreport.cancel_irrigationreport()
 
     @api.depends('agriculturalseason_id',
                  'agriculturalseason_id.active_agriculturalseason')
