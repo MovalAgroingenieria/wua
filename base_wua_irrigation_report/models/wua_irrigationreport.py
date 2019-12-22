@@ -71,11 +71,19 @@ class WuaIrrigationReport(models.Model):
     initial_volume = fields.Float(
         string='Initial Value (m3)',
         digits=(32, 4),
+        default=0,
         required=True)
 
     end_volume = fields.Float(
         string='Final Value (m3)',
         digits=(32, 4),
+        default=0,
+        required=True)
+
+    hours = fields.Float(
+        string='Hours',
+        digits=(32, 4),
+        default=0,
         required=True)
 
     volume = fields.Float(
@@ -127,6 +135,9 @@ class WuaIrrigationReport(models.Model):
         ('valid_end_volume',
          'CHECK (end_volume >= initial_volume)',
          'The final volume must be equal or greather than initial volume.'),
+        ('valid_hours',
+         'CHECK (hours >= 0)',
+         'The number of hours can not be a negative value.'),
         ]
 
     @api.depends('intake_id', 'agriculturalseason_id')
@@ -159,10 +170,21 @@ class WuaIrrigationReport(models.Model):
             record.irrigationreport_number = irrigationreport_number
             record.name = name
 
-    @api.depends('initial_volume', 'end_volume')
+    @api.depends('initial_volume', 'end_volume', 'hours')
     def _compute_volume(self):
+        data_in_hours = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'data_in_hours')
+        agriculturalseasons = self.env['wua.agriculturalseason']
         for record in self:
-            volume = record.end_volume - record.initial_volume
+            volume = 0
+            if data_in_hours and record.agriculturalseason_id:
+                agriculturalseason = agriculturalseasons.browse(
+                    record.agriculturalseason_id.id)
+                volume_time_equivalence = \
+                    agriculturalseason[0].volume_time_equivalence
+                volume = record.hours * volume_time_equivalence
+            else:
+                volume = record.end_volume - record.initial_volume
             if volume < 0:
                 volume = 0
             record.volume = volume
@@ -171,34 +193,6 @@ class WuaIrrigationReport(models.Model):
     def _compute_volume_real(self):
         for record in self:
             record.volume_real = record.volume + record.adjustement_volume
-
-    @api.multi
-    def validate_irrigationreport(self):
-        self.ensure_one()
-        self.state = 'validated'
-
-    @api.multi
-    def cancel_irrigationreport(self):
-        self.ensure_one()
-        self.state = 'draft'
-
-    def validate_irrigationreports(self, active_irrigationreports):
-        if (not self.env.user.has_group('base_wua.group_wua_manager')):
-            raise exceptions.UserError(_(
-                'You do not have permission to execute this action.'))
-        irrigationreports = self.env['wua.irrigationreport'].browse(active_irrigationreports)
-        for irrigationreport in irrigationreports:
-            if irrigationreport.state == 'draft':
-                irrigationreport.validate_irrigationreport()
-
-    def cancel_irrigationreports(self, active_irrigationreports):
-        if (not self.env.user.has_group('base_wua.group_wua_manager')):
-            raise exceptions.UserError(_(
-                'You do not have permission to execute this action.'))
-        irrigationreports = self.env['wua.irrigationreport'].browse(active_irrigationreports)
-        for irrigationreport in irrigationreports:
-            if irrigationreport.state == 'validated':
-                irrigationreport.cancel_irrigationreport()
 
     @api.depends('agriculturalseason_id',
                  'agriculturalseason_id.active_agriculturalseason')
@@ -210,14 +204,18 @@ class WuaIrrigationReport(models.Model):
     @api.onchange('partner_id')
     def _change_partner_id(self):
         if self.agriculturalseason_id and self.intake_id and self.partner_id:
-            last_report = self.env['wua.irrigationreport'].search(
-                [('agriculturalseason_id', '=', self.agriculturalseason_id.id),
-                 ('intake_id', '=', self.intake_id.id)],
-                order='irrigationreport_number desc', limit=1)
-            if last_report:
-                end_volume_of_last_record = \
-                    last_report[0].end_volume
-                self.initial_volume = end_volume_of_last_record
+            data_in_hours = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'data_in_hours')
+            if not data_in_hours:
+                last_report = self.env['wua.irrigationreport'].search(
+                    [('agriculturalseason_id', '=',
+                      self.agriculturalseason_id.id),
+                     ('intake_id', '=', self.intake_id.id)],
+                    order='irrigationreport_number desc', limit=1)
+                if last_report:
+                    end_volume_of_last_record = \
+                        last_report[0].end_volume
+                    self.initial_volume = end_volume_of_last_record
 
     @api.model
     def create(self, vals):
@@ -242,3 +240,33 @@ class WuaIrrigationReport(models.Model):
                 fields.remove(field_to_remove)
         return super(WuaIrrigationReport, self).read_group(
             domain, fields, groupby, offset, limit, orderby, lazy)
+
+    @api.multi
+    def validate_irrigationreport(self):
+        self.ensure_one()
+        self.state = 'validated'
+
+    @api.multi
+    def cancel_irrigationreport(self):
+        self.ensure_one()
+        self.state = 'draft'
+
+    def validate_irrigationreports(self, active_irrigationreports):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        irrigationreports = self.env['wua.irrigationreport'].browse(
+            active_irrigationreports)
+        for irrigationreport in irrigationreports:
+            if irrigationreport.state == 'draft':
+                irrigationreport.validate_irrigationreport()
+
+    def cancel_irrigationreports(self, active_irrigationreports):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        irrigationreports = self.env['wua.irrigationreport'].browse(
+            active_irrigationreports)
+        for irrigationreport in irrigationreports:
+            if irrigationreport.state == 'validated':
+                irrigationreport.cancel_irrigationreport()

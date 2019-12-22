@@ -32,15 +32,25 @@
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
-                            <field name="report_initial_time" attrs="{'readonly': [('id', '>', 0)]}"/>
-                            <field name="report_end_time" attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="report_initial_time"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="report_end_time"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="partner_id"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    domain="[('is_wua_partner', '=', True)]"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
-                            <field name="initial_volume" style="width:100px"/>
-                            <field name="end_volume" style="width:100px"/>
+                            <field name="initial_volume" style="width:100px"
+                                   attrs="{'readonly':
+                                           [('state', '=', 'validated')]}"/>
+                            <field name="end_volume" style="width:100px"
+                                   attrs="{'readonly':
+                                           [('state', '=', 'validated')]}"/>                            
+                            <field name="hours" style="width:100px"
+                                   digits="[32, 2]"
+                                   attrs="{'readonly':
+                                           [('state', '=', 'validated')]}"/>
                         </group>
                         <group name="master_data_right">
                             <field name="irrigationreport_number"
@@ -48,23 +58,22 @@
                             <field name="agriculturalseason_id"/>
                             <field name="user_id"/>
                             <field name="volume"/>
-                            <field name="adjustement_volume" style="width:100px"/>
+                            <field name="adjustement_volume" style="width:100px"
+                                   attrs="{'readonly':
+                                           [('state', '=', 'validated')]}"/>                            
                             <field name="volume_real"/>
                         </group>
                     </group>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
                             <page name="notes_page" string="Notes">
-                                <field name="notes" widget="html" help="Add additional information for irrigation Report. It will be printed in Irrigation Report)"/>
+                                <field name="notes" widget="html"/>
                                 <div class="oe_edit_only">
                                     (*) The notes will be printed in irrigation report
                                 </div>
                             </page>
                             <page name="signature_page" string="Signature">
                                 <field name="partner_signature" widget="signature"/>
-                                <div class="oe_edit_only">
-                                    (*) In signing the document will be validated.
-                                </div>
                             </page>
                         </notebook>
                     </group>
@@ -99,16 +108,24 @@
             <search>
                 <field name="partner_id" string="Partner"/>
                 <field name="irrigationreport_number" string="Number"/>
-                <filter name="active_agriculturalseason" string="Active Agricultural Season"
-                    domain="[('of_active_agriculturalseason','=',True)]"/>
+                <filter name="active_agriculturalseason"
+                        string="Active Agricultural Season"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
                 <separator/>
-                <filter name="state" string="Draft" domain="[('state','=','draft')]"/>
-                <filter name="state" string="Validated" domain="[('state','=','validated')]"/>
+                <filter name="state" string="Draft"
+                        domain="[('state','=','draft')]"/>
+                <filter name="state" string="Validated"
+                        domain="[('state','=','validated')]"/>
                 <group expand="0" string="Group By">
-                    <filter name="agriculturalseason" string="Active Agricultural Season"
-                        context="{'group_by':'agriculturalseason_id'}"/>
-                    <filter string="Intake" name="intake" context="{'group_by':'intake_id'}"/>
-                    <filter string="Partner" name="partner" context="{'group_by':'partner_id'}"/>
+                    <filter name="agriculturalseason"
+                            string="Active Agricultural Season"
+                            context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter name="intake"
+                            string="Intake"
+                            context="{'group_by':'intake_id'}"/>
+                    <filter name="partner"
+                            string="Partner"
+                            context="{'group_by':'partner_id'}"/>
                 </group>
             </search>
         </field>
