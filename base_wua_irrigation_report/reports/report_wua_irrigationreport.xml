@@ -149,30 +149,51 @@
                          </table>
                     </div>
                     <div name="volume_info" style="width: 50%; display: table-cell; padding: 0px 8px;">
+                        <t t-set="data_in_hours" t-value="o._get_data_in_hours()"/>
+                        <t t-set="hours_sexagesimal" t-value="o._get_hours_sexagesimal()"/>
                         <table style="width: 80%;">
                             <tbody>
-                                <tr name="initial_volume">
-                                     <td><span>Initial Value</span></td>
-                                     <t t-if="o.volume">
-                                         <td class="text-right">
-                                             <strong>
-                                                  <span t-field="o.initial_volume"/>
-                                                  <span>(m3)</span>
-                                             </strong>
-                                         </td>
-                                     </t>
-                                </tr>
-                                <tr name="final_volume">
-                                     <td><span>Final Value</span></td>
-                                     <t t-if="o.volume">
-                                         <td class="text-right">
-                                             <strong>
-                                                  <span t-field="o.end_volume"/>
-                                                  <span>(m3)</span>
-                                             </strong>
-                                         </td>
-                                     </t>
-                                </tr>
+                                <t t-if="data_in_hours">
+                                    <tr name="hours">
+                                         <td><span>Hours</span></td>
+                                         <t t-if="o.hours">
+                                             <td class="text-right">
+                                                 <strong>
+                                                      <t t-if="hours_sexagesimal">
+                                                          <span t-esc="'%02d:%02d' % (int(o.hours), o.hours % 1 * 60)"/>
+                                                      </t>
+                                                      <t t-else="">
+                                                          <span t-field="o.hours"/>
+                                                      </t>
+                                                 </strong>
+                                             </td>
+                                         </t>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <tr name="initial_volume">
+                                         <td><span>Initial Value</span></td>
+                                         <t t-if="o.volume">
+                                             <td class="text-right">
+                                                 <strong>
+                                                      <span t-field="o.initial_volume"/>
+                                                      <span>(m3)</span>
+                                                 </strong>
+                                             </td>
+                                         </t>
+                                    </tr>
+                                    <tr name="final_volume">
+                                         <td><span>Final Value</span></td>
+                                         <t t-if="o.volume">
+                                             <td class="text-right">
+                                                 <strong>
+                                                      <span t-field="o.end_volume"/>
+                                                      <span>(m3)</span>
+                                                 </strong>
+                                             </td>
+                                         </t>
+                                    </tr>
+                                </t>
                                 <tr name="gross_value">
                                      <td><span>Gross Value</span></td>
                                      <t t-if="o.volume">

@@ -2,6 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
 
@@ -218,6 +219,46 @@ class WuaIrrigationReport(models.Model):
                     self.initial_volume = end_volume_of_last_record
 
     @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaIrrigationReport, self).fields_view_get(
+            view_id=view_id, view_type=view_type,
+            toolbar=toolbar, submenu=submenu)
+        data_in_hours = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'data_in_hours')
+        hours_sexagesimal = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'hours_sexagesimal')
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            if data_in_hours:
+                for node in doc.xpath("//field[@name='initial_volume']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"invisible": true}')
+                for node in doc.xpath("//field[@name='end_volume']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"invisible": true}')
+                if not hours_sexagesimal:
+                    for node in doc.xpath("//field[@name='hours']"):
+                        node.set('widget', '')
+            else:
+                for node in doc.xpath("//field[@name='hours']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"invisible": true}')
+            res['arch'] = etree.tostring(doc)
+        if view_type == 'tree':
+            doc = etree.XML(res['arch'])
+            if data_in_hours:
+                if not hours_sexagesimal:
+                    for node in doc.xpath("//field[@name='hours']"):
+                        node.set('widget', '')
+            else:
+                for node in doc.xpath("//field[@name='hours']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
+            res['arch'] = etree.tostring(doc)
+        return res
+
+    @api.model
     def create(self, vals):
         new_record = super(WuaIrrigationReport, self).create(vals)
         report_initial_time = new_record.report_initial_time
@@ -270,3 +311,13 @@ class WuaIrrigationReport(models.Model):
         for irrigationreport in irrigationreports:
             if irrigationreport.state == 'validated':
                 irrigationreport.cancel_irrigationreport()
+
+    # For reports
+    def _get_data_in_hours(self):
+        return self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'data_in_hours')
+
+    # For reports        
+    def _get_hours_sexagesimal(self):
+        return self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'hours_sexagesimal')

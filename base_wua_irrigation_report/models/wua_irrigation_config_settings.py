@@ -13,7 +13,7 @@ class WuaIrrigationConfiguration(models.TransientModel):
         string='Water Amount in hours',
         default=False,
         help='Enter the water amount of a irrigation report as a '
-             'hour-value (ir not, as a m3-value)')
+             'hour-value (if not, as a m3-value)')
 
     hours_sexagesimal = fields.Boolean(
         string='Sexagesimal Hours',

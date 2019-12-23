@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-19 12:29+0000\n"
-"PO-Revision-Date: 2019-12-19 12:29+0000\n"
+"POT-Creation-Date: 2019-12-23 15:48+0000\n"
+"PO-Revision-Date: 2019-12-23 15:48+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,13 +17,8 @@ msgstr ""
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
-msgid "(*) In signing the document will be validated."
-msgstr "(*) A l'signar el Part de Reg serà validat."
-
-#. module: base_wua_irrigation_report
-#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
 msgid "(*) The notes will be printed in irrigation report"
-msgstr "(*) Les notes s'imprimiran al Part de Reg."
+msgstr "(*) Les notes s'imprimiran al part de reg"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_form
@@ -91,6 +86,11 @@ msgstr "<span>Volum brut</span>"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
+msgid "<span>Hours</span>"
+msgstr "<span>Hores</span>"
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
 msgid "<span>Initial Value</span>"
 msgstr "<span>Valor inicial</span>"
 
@@ -150,11 +150,6 @@ msgid "Active Agricultural Season"
 msgstr "Campanya activa"
 
 #. module: base_wua_irrigation_report
-#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
-msgid "Add additional information for irrigation Report. It will be printed in Irrigation Report)"
-msgstr "Afegiu informació addicional a l'Part de Reg. Es imprimirà al Part de Reg"
-
-#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_adjustement_volume
 msgid "Adjust. Value (m3)"
 msgstr "Regularització (m3)"
@@ -176,6 +171,11 @@ msgstr "Campanyes"
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
 msgid "Cancel"
 msgstr "Cancel·la"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigation_configuration
+msgid "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
+msgstr "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_create_uid
@@ -215,6 +215,11 @@ msgid "End Time"
 msgstr "Data de fi"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigation_configuration_data_in_hours
+msgid "Enter the water amount of a irrigation report as a hour-value (if not, as a m3-value)"
+msgstr "Per indicar el valor de l'reg en hores (l'alternativa és indicar-ho en m3)"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
 msgstr "Element (campanya)"
@@ -245,6 +250,11 @@ msgid "Group By"
 msgstr "Agrupar per"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_hours
+msgid "Hours"
+msgstr "Hores"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_id
 msgid "ID"
 msgstr "ID"
@@ -267,7 +277,7 @@ msgstr "Captació"
 
 #. module: base_wua_irrigation_report
 #: code:addons/base_wua_irrigation_report/models/res_partner.py:45
-#: code:addons/base_wua_irrigation_report/models/wua_agriculturalseason.py:69
+#: code:addons/base_wua_irrigation_report/models/wua_agriculturalseason.py:142
 #: code:addons/base_wua_irrigation_report/models/wua_intake.py:45
 #: model:ir.actions.act_window,name:base_wua_irrigation_report.wua_irrigationreport_action
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_res_partner_irrigationreport_ids
@@ -275,6 +285,7 @@ msgstr "Captació"
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_irrigationreport_ids
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_intake_irrigationreport_ids
 #: model:ir.ui.menu,name:base_wua_irrigation_report.base_wua_irrigation_report_menu
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigation_config_settings_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_grap
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_pivot
 #, python-format
@@ -340,7 +351,7 @@ msgstr "De campanya activa"
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_partner_id
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
 msgid "Partner"
-msgstr "Soci"
+msgstr "Empresa"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_res_partner
@@ -373,6 +384,11 @@ msgid "Reports"
 msgstr "Parts"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigation_configuration_hours_sexagesimal
+msgid "Sexagesimal Hours"
+msgstr "En format HH:MM"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_partner_signature
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
 msgid "Signature"
@@ -389,7 +405,7 @@ msgid "State"
 msgstr "Estat"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:230
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:269
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr "Les dates de el part estan fora de la campanya activa."
@@ -408,6 +424,26 @@ msgstr "La data d'inici és posterior a la data de fi."
 #: sql_constraint:wua.irrigationreport:0
 msgid "The initial volume can not be a negative value."
 msgstr "El volum inicial no pot ser negatiu."
+
+#. module: base_wua_irrigation_report
+#: sql_constraint:wua.irrigationreport:0
+msgid "The number of hours can not be a negative value."
+msgstr "El nombre d'hores no pot ser un valor negatiu."
+
+#. module: base_wua_irrigation_report
+#: code:addons/base_wua_irrigation_report/models/wua_agriculturalseason.py:109
+#, python-format
+msgid "There are some validated irrigation reports for this agricultural season, and, therefore, it is not possible to change the \"Volume-per-hour\" field.\n"
+"\n"
+"Before it is necessary to change the state to \"draft\"."
+msgstr "Hi ha parts de reg validats en aquesta campanya, i, per tant, no és possible alterar el valor de camp \"Volum per hora\".\n"
+"\n"
+"Abans caldria posar tots els parts de la campanya en estat \"esborrany\"."
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_total_volume
+msgid "Total Volume (m3)"
+msgstr "Volum total (m3)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_user_id
@@ -432,13 +468,33 @@ msgid "Validated"
 msgstr "Validat"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigation_configuration_hours_sexagesimal
+msgid "Values of hour in the HH:MM format (if not, as decimal format)"
+msgstr "Per indicar les hores en format sexagesimal (l'alternativa és utilitzar el format decimal)"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_volume_time_equivalence
+msgid "Volume per hour (m3)"
+msgstr "Volum per hora (m3)"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_agriculturalseason_volume_time_equivalence
+msgid "Volume, in m3, which is equal to one hour"
+msgstr "Volum, en m3, equivalent a 1 hora"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigationreport
 msgid "WUA Irrigation Report"
 msgstr "Part de Reg CR"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:187
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:196
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigation_configuration_data_in_hours
+msgid "Water Amount in hours"
+msgstr "Volums d'aigua en hores"
+
+#. module: base_wua_irrigation_report
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:297
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:307
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tens prou permisos per realitzar aquesta acció."
