@@ -65,8 +65,10 @@
                                        attrs="{'readonly':
                                                [('is_open','=',False)]}">                                       
                                     <tree class="o_base_wua_gravity_irrigation_gravconsumption_view_tree_notebook"
-                                          editable="bottom">
+                                          editable="bottom"
+                                          colors="red:cancelled==True">
                                         <field name="gis_viewer_link" invisible="1"/>
+                                        <field name="cancelled" invisible="1"/>
                                         <field name="subparcel_id"
                                                domain="[('partner_id', '=', parent.partner_id),
                                                         ('irrigationgate_id', '!=', False),
