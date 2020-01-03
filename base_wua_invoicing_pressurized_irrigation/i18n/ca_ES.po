@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-13 17:29+0000\n"
-"PO-Revision-Date: 2018-12-13 17:29+0000\n"
+"POT-Creation-Date: 2020-01-03 19:54+0000\n"
+"PO-Revision-Date: 2020-01-03 19:54+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.actions.server,name:base_wua_invoicing_pressurized_irrigation.wua_add_presconsumption_to_invoiceset
 msgid "Add to invoice set"
-msgstr "Add to invoice set"
+msgstr "Afegir al lot"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.report_invoice_document
@@ -31,14 +31,19 @@ msgid "Adjust. Value (m3)"
 msgstr "Ajustar Valor (m3)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_invoicing_config_settings_view_form
+msgid "Based on Water Con."
+msgstr "Agrupa per toma"
+
+#. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_account_invoice_amount_untaxed_categ07
 msgid "C7: Press. Cons."
 msgstr "C7: Consums (pre)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: model:ir.model,name:base_wua_invoicing_pressurized_irrigation.model_wua_irrigation_configuration
-msgid "Configuration of irrigation with type of water"
-msgstr "Configuration of irrigation with type of water"
+#: model:ir.model,name:base_wua_invoicing_pressurized_irrigation.model_wua_invoicing_configuration
+msgid "Configuration of base_wua_invoicing module"
+msgstr "Configuration of base_wua_invoicing module"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption_create_uid
@@ -77,8 +82,8 @@ msgstr "Element (producte)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model,name:base_wua_invoicing_pressurized_irrigation.model_wua_invoiceset
-msgid "Entity (invoice set of a WUA)"
-msgstr "Element (lot de factures)"
+msgid "Entity (invoice set)"
+msgstr "Element (lot)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model,name:base_wua_invoicing_pressurized_irrigation.model_wua_invoiceset_line
@@ -96,7 +101,7 @@ msgid "Entity (water connection)"
 msgstr "Element (toma)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:333
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:444
 #, python-format
 msgid "Error when updating records."
 msgstr "Error actualitzant els registres."
@@ -148,6 +153,11 @@ msgid "Identifier"
 msgstr "Identificador"
 
 #. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.model.fields,help:base_wua_invoicing_pressurized_irrigation.field_wua_invoicing_configuration_invoicing_based_on_wc
+msgid "If enabled, invoicing will be based only on water connections, parcels will be ignored"
+msgstr "Si s'activa, cada factura estarà referida a una toma, i s'assumirà que totes les parcel·les de la toma tenen el mateix pagador d'aigua"
+
+#. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.report_invoice_document
 msgid "Initial Reading"
 msgstr "Lectura inicial"
@@ -187,6 +197,16 @@ msgid "Invoiced (Yes/No)"
 msgstr "Facturat (Sí/No)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoicing_configuration_invoicing_based_on_wc
+msgid "Invoicing based on water connections"
+msgstr "Facturació basada en preses"
+
+#. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_invoicing_config_settings_view_form
+msgid "Invoicing of Pressurized Irrigation"
+msgstr "Facturació de consums de pressió"
+
+#. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption_irrigationshed_id
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_invoiceset_line_presconsumption_view_search
 msgid "Irrigation Shed"
@@ -196,6 +216,12 @@ msgstr "Caseta"
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_invoiceset_line_presconsumption_view_search
 msgid "Is selected (marked)"
 msgstr "Seleccionat (marcat)"
+
+#. module: base_wua_invoicing_pressurized_irrigation
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:236
+#, python-format
+msgid "It is not possible to generate invoices. Check the census: the parcels of water connection %s do not have the same water payer."
+msgstr "No és possible crear les factures. Comproveu el cens: les parcel·les de la toma %s no tenen el mateix pagador d'aigua."
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption___last_update
@@ -239,13 +265,13 @@ msgid "Not invoiced"
 msgstr "No facturat"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:135
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:144
 #, python-format
 msgid "Parcel"
 msgstr "Parcel·la"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:337
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:448
 #, python-format
 msgid "Pressure Consumptions"
 msgstr "Consums de pressió"
@@ -288,7 +314,7 @@ msgstr "Vol. real (m3)"
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.actions.server,name:base_wua_invoicing_pressurized_irrigation.wua_remove_presconsumption_to_invoiceset
 msgid "Remove from invoice set"
-msgstr "Remove from invoice set"
+msgstr "Llevar del lot"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption_selected
@@ -312,7 +338,8 @@ msgid "Volume supplied from water connections"
 msgstr "Aigua subministrada per tomes"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:131
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:140
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:244
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption_waterconnection_id
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.report_invoice_document
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_invoiceset_line_presconsumption_view_search
@@ -335,35 +362,30 @@ msgid "Water Type"
 msgstr "Tipus d'aigua"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_waterconnection_view_search
-msgid "With water meter"
-msgstr "Amb comptador"
+#: model:product.uom,name:base_wua_invoicing_pressurized_irrigation.product_uom_m3
+msgid "m3"
+msgstr "m3"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_waterconnection_view_search
-msgid "Without water meter"
-msgstr "Sense comptador"
-
-#. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:151
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:160
 #, python-format
 msgid "of total consumption of water meter"
 msgstr "del consum total del comptador"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:155
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:164
 #, python-format
 msgid "of water payment for the parcel"
 msgstr "del pagament d'aigua a la parcel·la"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:141
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:150
 #, python-format
 msgid "profile"
 msgstr "perfil"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:147
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:156
 #, python-format
 msgid "total consumption"
 msgstr "consum total"

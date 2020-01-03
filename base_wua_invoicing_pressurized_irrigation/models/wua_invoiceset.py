@@ -49,6 +49,16 @@ class WuaInvoiceset(models.Model):
             return super(WuaInvoiceset,
                          self).calculate_invoice_details_others_categ(
                              product_id, categ_code, item_ids, partnerlinks)
+        if (self.env['ir.values'].get_default(
+           'wua.invoicing.configuration', 'invoicing_based_on_wc')):
+            return self.calculate_invoice_details_categ07_based_on_wc(
+                product_id, categ_code, item_ids, partnerlinks)
+        else:
+            return self.calculate_invoice_details_categ07_normal(
+                product_id, categ_code, item_ids, partnerlinks)
+
+    def calculate_invoice_details_categ07_normal(
+            self, product_id, categ_code, item_ids, partnerlinks):
         wc_presconsumptions = []
         presconsumptions = self.env['wua.presconsumption'].browse(item_ids)
         for presconsumption in presconsumptions:
@@ -181,6 +191,70 @@ class WuaInvoiceset(models.Model):
                             invoice_details_categ07.append(result)
         return invoice_details_categ07
 
+    def calculate_invoice_details_categ07_based_on_wc(
+            self, product_id, categ_code, item_ids, partnerlinks):
+        wc_ids = []
+        presconsumptions = self.env['wua.presconsumption'].browse(item_ids)
+        for presconsumption in presconsumptions:
+            wc_ids.append(presconsumption.waterconnection_id.id)
+        if len(wc_ids) == 0:
+            return []
+        wc_ids = sorted(list(set(wc_ids)))
+        invoice_details_categ07 = []
+        waterconnections = self.env['wua.waterconnection'].browse(wc_ids)
+        irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
+            [('type', '=', 'WC')])
+        # For each water connection: all parcels of this water connection
+        # must have the same water payer.
+        wc_partners = []
+        for waterconnection in waterconnections:
+            irrigationpoints_of_waterconnection = irrigationpoints.filtered(
+                lambda x: x.waterconnection_id.id == waterconnection.id)
+            parcels_of_waterconnection = \
+                [x.parcel_id for x in irrigationpoints_of_waterconnection
+                 if x.parcel_id.is_billable_water]
+            first_partnerlink = True
+            partner_of_wc_id = 0
+            for parcel in parcels_of_waterconnection:
+                partnerlinks_of_parcel = partnerlinks.filtered(
+                    lambda x: x.parcel_id.id == parcel.id and
+                    x.water_costs_percentage > 0)
+                for partnerlink in partnerlinks_of_parcel:
+                    if first_partnerlink:
+                        partner_of_wc_id = partnerlink.partner_id.id
+                        first_partnerlink = False
+                        wc_partners.append({
+                            'wc_id': waterconnection.id,
+                            'partner_id': partner_of_wc_id,
+                            })
+                    else:
+                        if partnerlink.partner_id.id != partner_of_wc_id:
+                            raise exceptions.UserError(
+                                _('It is not possible to generate '
+                                  'invoices. Check the census: the parcels of '
+                                  'water connection %s do not have the same '
+                                  'water payer.' % (waterconnection.name)))
+        # Loop on pressure consumptions to generate the invoice lines.
+        for presconsumption in presconsumptions:
+            waterconnection = presconsumption.waterconnection_id
+            partner_id = filter(lambda x: x['wc_id'] == waterconnection.id,
+                                wc_partners)[0]['partner_id']
+            waterconnection_label = self.get_value_from_translation(
+                'base_wua_invoicing_pressurized_irrigation',
+                _('Water Connection'),
+                self.env['res.partner'].browse(partner_id).lang)
+            description = waterconnection_label + ' ' + waterconnection.name
+            result = {
+                'partner_id': partner_id,
+                'product_id': product_id,
+                'categ_code': categ_code,
+                'key1': waterconnection.id,
+                'quantity': presconsumption.volume_real,
+                'description': description,
+                }
+            invoice_details_categ07.append(result)
+        return invoice_details_categ07
+
     def add_to_invoice_data_line_ref_to_other_types(
             self, categ_code, invoice_data_line, data):
         if categ_code != 7:
@@ -188,8 +262,59 @@ class WuaInvoiceset(models.Model):
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
         data['waterconnection_id'] = invoice_data_line['key1']
-        data['parcel_id'] = invoice_data_line['key2']
+        if 'key2' in invoice_data_line:
+            data['parcel_id'] = invoice_data_line['key2']
         return data
+
+    def group_invoice_details(self, invoice_details):
+        group_details_categ07_by_wc = False
+        invoice_details_categ07 = filter(
+            lambda x: x['categ_code'] == 7, invoice_details)
+        if (invoice_details_categ07 and self.env['ir.values'].get_default(
+           'wua.invoicing.configuration', 'invoicing_based_on_wc')):
+            group_details_categ07_by_wc = True
+        if group_details_categ07_by_wc:
+            invoice_details_not_categ07 = \
+                [x for x in invoice_details
+                 if x not in invoice_details_categ07]
+            invoices_data_grouped_by_wc = self.group_invoice_details_by_wc(
+                invoice_details_categ07)
+            if invoice_details_not_categ07:
+                return invoices_data_grouped_by_wc + \
+                    super(WuaInvoiceset, self).group_invoice_details(
+                        invoice_details_not_categ07)
+            else:
+                return invoices_data_grouped_by_wc
+        else:
+            return super(WuaInvoiceset, self).group_invoice_details(
+                invoice_details)
+
+    def group_invoice_details_by_wc(self, invoice_details):
+        invoices_data = []
+        wc_ids = []
+        for item in invoice_details:
+            wc_ids.append(item['key1'])
+        wc_ids = sorted(list(set(wc_ids)))
+        waterconnections = \
+            self.env['wua.waterconnection'].browse(wc_ids).sorted(
+                key=lambda x: x.name)
+        for waterconnection in waterconnections:
+            invoice_details_of_wc = filter(
+                lambda x: x['key1'] == waterconnection.id, invoice_details)
+            partner = self.env['res.partner'].browse(
+                invoice_details_of_wc[0]['partner_id'])
+            result = {
+                'partner_id': partner.id,
+                'partner_code': partner.partner_code,
+                'account_id': partner.property_account_receivable_id.id,
+                'payment_term_id': partner.property_payment_term_id.id,
+                'payment_mode_id': partner.customer_payment_mode_id.id,
+                'customer_invoice_transmit_method_id':
+                    partner.customer_invoice_transmit_method_id.id,
+                'detail': invoice_details_of_wc,
+                }
+            invoices_data.append(result)
+        return invoices_data
 
     def after_calculate_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_calculate_invoiceset(invoiceset)
