@@ -229,11 +229,16 @@ class WuaInvoiceset(models.Model):
                             })
                     else:
                         if partnerlink.partner_id.id != partner_of_wc_id:
+                            message_wc_more_one_water_payer_01 = \
+                                _('It is not possible to generate invoices. '
+                                  'Check the census: the parcels of water '
+                                  'connection')
+                            message_wc_more_one_water_payer_02 = \
+                                _('do not have the same water payer.')
                             raise exceptions.UserError(
-                                _('It is not possible to generate '
-                                  'invoices. Check the census: the parcels of '
-                                  'water connection %s do not have the same '
-                                  'water payer.' % (waterconnection.name)))
+                                message_wc_more_one_water_payer_01 + ' ' +
+                                waterconnection.name + ' ' +
+                                message_wc_more_one_water_payer_02)
         # Loop on pressure consumptions to generate the invoice lines.
         for presconsumption in presconsumptions:
             waterconnection = presconsumption.waterconnection_id
