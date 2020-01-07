@@ -643,7 +643,9 @@ class WuaWatering(models.Model):
                      ('irrigationditch_id', '=', self.irrigationditch_id.id),
                      ('gravconsumption_type', '=', 'request'),
                      ('watering_id', '=', False),
-                     ('subparcel_id.parcel_id.gravityfed_irrigation_right', '=', True)]
+                     ('subparcel_id.parcel_id.gravityfed_irrigation_right',
+                      '=', True),
+                     ('cancelled', '=', False)]
         if self.only_cultivable_subparcel:
             condition.append(('subparcel_id.is_cultivable', '=', True))
         gravconsumptions = self.env['wua.gravconsumption'].search(condition)

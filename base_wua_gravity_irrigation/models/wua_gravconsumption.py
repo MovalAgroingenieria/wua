@@ -236,11 +236,18 @@ class WuaGravconsumption(models.Model):
         store=True,
         compute='_compute_data_from_wateringrequest')
 
+    cancelled = fields.Boolean(
+        string="Cancelled",
+        default=False)
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Gravity Consumption.'),
         ('non_negative_duration', 'watering_duration >= 0',
          'The duration must be a non-negative value.'),
+        ('incompatible_states',
+         "CHECK (state != 'executed' OR cancelled = False)",
+         'A consumption cannot be canceled and executed at the same time.'),
         ]
 
     @api.depends('subparcel_id', 'wateringperiod_id', 'number')
@@ -514,7 +521,7 @@ class WuaGravconsumption(models.Model):
             gravconsumptions = self.env['wua.gravconsumption'].browse(
                 active_gravconsumptions)
             for record in gravconsumptions:
-                if record.state == 'planned':
+                if record.state == 'planned' and not record.cancelled:
                     vals = {
                         'state': 'executed',
                         }
@@ -531,6 +538,39 @@ class WuaGravconsumption(models.Model):
                         'state': 'planned',
                         }
                     record.write(vals)
+
+    @api.multi
+    def change_to_active(self):
+        self.ensure_one()
+        self.cancelled = False
+
+    @api.multi
+    def change_to_cancelled(self):
+        self.ensure_one()
+        self.cancelled = True
+
+    @api.multi
+    def set_as_active(self, active_gravconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        gravconsumptions = self.env['wua.gravconsumption'].browse(
+            active_gravconsumptions)
+        for gravconsumption in gravconsumptions:
+            if gravconsumption.cancelled:
+                gravconsumption.change_to_active()
+
+    @api.multi
+    def set_as_cancelled(self, active_gravconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        gravconsumptions = self.env['wua.gravconsumption'].browse(
+            active_gravconsumptions)
+        for gravconsumption in gravconsumptions:
+            if (not gravconsumption.cancelled and
+               not gravconsumption.state == 'executed'):
+                gravconsumption.change_to_cancelled()
 
     @api.multi
     def action_see_gis_viewer(self):

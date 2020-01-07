@@ -6,6 +6,7 @@
         <field name="model">wua.gravconsumption</field>
         <field name="arch" type="xml">
             <form duplicate="0" create="0">
+                <field name="cancelled" invisible="1"/>
                 <header>
                     <button name="change_to_executed"
                             type="object" string="Set as executed"
@@ -15,9 +16,23 @@
                             type="object" string="Set as planned"
                             states="executed"
                             groups="base_wua.group_wua_manager"/>
+                    <button name="change_to_active"
+                            type="object" string="Activate"
+                            groups="base_wua.group_wua_manager"
+                            attrs="{'invisible': [('cancelled','=',False)]}"/>
+                    <button name="change_to_cancelled"
+                            type="object" string="Cancel"
+                            groups="base_wua.group_wua_manager"
+                            attrs="{'invisible': ['|',('cancelled', '=', True),
+                                    ('state', '=', 'executed')]}"/>
+                    <div name="consumption_cancelled"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('cancelled','=',False)]}">
+                         ( CANCELLED )
+                    </div>
                     <field name="state"
                            widget="statusbar"
-                           statusbar_visible="proposed,planned,executed"/>                
+                           statusbar_visible="proposed,planned,executed"/>
                 </header>
                 <sheet>
                     <group name="master_data">
@@ -94,7 +109,7 @@
                             </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
-                            </page>                        
+                            </page>
                         </notebook>
                     </group>
                 </sheet>
@@ -106,7 +121,10 @@
         <field name="name">Gravity Consumptions (tree view)</field>
         <field name="model">wua.gravconsumption</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_gravity_irrigation_gravconsumption_view_tree">
+            <tree create="false"
+                  class="o_base_wua_gravity_irrigation_gravconsumption_view_tree"
+                  colors="red:cancelled==True">
+                <field name="cancelled" invisible="1"/>
                 <field name="watering_id"/>
                 <field name="wateringperiod_id"/>
                 <field name="subparcel_id"/>
@@ -168,6 +186,9 @@
                  domain="[('state','=','planned')]"/>
                 <filter string="Executed" name="executed"
                  domain="[('state','=','executed')]"/>
+                <separator/>
+                <filter string="Cancelled" name="cancelled"
+                 domain="[('cancelled','=', True)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season"
                      name="agriculturalseason"
@@ -184,7 +205,7 @@
                     <filter string="Partner"
                      name="partner"
                      context="{'group_by':'partner_id'}"/>
-                </group>                 
+                </group>
             </search>
         </field>
     </record>
@@ -305,7 +326,7 @@
                     <filter string="Partner"
                      name="partner"
                      context="{'group_by':'partner_id'}"/>
-                </group>                 
+                </group>
             </search>
         </field>
     </record>
@@ -375,7 +396,7 @@
                     <filter string="Watering Request"
                      name="wateringrequest"
                      context="{'group_by':'wateringrequest_id'}"/>
-                </group>                 
+                </group>
             </search>
         </field>
     </record>
@@ -432,7 +453,7 @@
                     <filter string="Partner"
                      name="partner"
                      context="{'group_by':'partner_id'}"/>
-                </group>                 
+                </group>
             </search>
         </field>
     </record>
@@ -500,13 +521,49 @@
                 action = env['wua.gravconsumption'].set_as_planned(context['active_ids'])
         </field>
     </record>
-    
+
     <record id="wua_action_set_consumption_as_planned" model="ir.values">
         <field name="name">Set consumption as planned</field>
         <field name="model">wua.gravconsumption</field>
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_planned'))"/>
+    </record>
+
+    <record id="wua_set_consumption_as_active" model="ir.actions.server">
+        <field name="name">Set as active</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_active(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_consumption_as_active" model="ir.values">
+        <field name="name">Set consumption as active</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_active'))"/>
+    </record>
+
+    <record id="wua_set_consumption_as_cancelled" model="ir.actions.server">
+        <field name="name">Set as cancelled (only if state is not 'executed')</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_cancelled(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_consumption_as_cancelled" model="ir.values">
+        <field name="name">Set consumption as cancelled</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_cancelled'))"/>
     </record>
 
 </odoo>
