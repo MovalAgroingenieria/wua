@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Modification account wua report invoice -->
+    <template id="wua_report_invoice_document_almazora" inherit_id="account_wua.wua_report_invoice_document">
+
+        <!-- Adapt columns width -->
+        <xpath expr="//col[@name='product']" position="attributes">
+            <attribute name="width">22%</attribute>
+        </xpath>
+        <xpath expr="//col[@name='description']" position="attributes">
+            <attribute name="width">38%</attribute>
+        </xpath>
+        <xpath expr="//col[@name='quantity']" position="attributes">
+            <attribute name="width">15%</attribute>
+        </xpath>
+        <xpath expr="//col[@name='price']" position="attributes">
+            <attribute name="width">16%</attribute>
+        </xpath>
+        <xpath expr="//col[@name='amount']" position="attributes">
+            <attribute name="width">10%</attribute>
+        </xpath>
+
+        <!-- Delete monetary widget to adapt decimal positions in price -->
+        <xpath expr="//td[@name='price']" position="replace">
+            <td name="price" class="text-right">
+                <span t-field="l.price_unit"/>
+                <span> € /</span>
+                <span t-field="l.uom_id" groups="product.group_uom"/>
+            </td>
+        </xpath>
+
+        <!-- Do not show taxes column -->
+        <xpath expr="//th[@name='taxes']" position="attributes">
+            <attribute name="class">hidden</attribute>
+        </xpath>
+        <xpath expr="//td[@name='taxes']" position="attributes">
+            <attribute name="class">hidden</attribute>
+        </xpath>
+
+    </template>
+
+</odoo>

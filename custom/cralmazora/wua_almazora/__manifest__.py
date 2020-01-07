@@ -14,6 +14,7 @@
         "base_wua_invoicing_gravity_irrigation",
         "base_wua_pressurized_irrigation",
         "base_wua_parcel_areas",
+        "account_wua",
     ],
     "data": [
         "data/wua_almazora_config_settings_data.xml",
@@ -23,6 +24,7 @@
         "reports/wua_irrigationlabelmultiple_report.xml",
         "reports/wua_watering_report.xml",
         "reports/wua_partner_report.xml",
+        "reports/report_invoice.xml",
     ],
     "installable": True,
     "application": True,
