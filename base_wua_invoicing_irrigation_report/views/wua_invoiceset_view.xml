@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_irrigationreport_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for irrigation reports (tree view)</field>
+        <field name="model">wua.invoiceset.line.irrigationreport</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false"
+                class="o_base_wua_invoicing_irrigationreport_wua_invoiceset_line_irrigationreport_view_tree">
+                <field name="irrigationreport_id"/>
+                <field name="selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="irrigationreport_number"/>
+                <field name="report_initial_time"/>
+                <field name="report_end_time"/>
+                <field name="intake_id"/>
+                <field name="product_id"/>
+                <field name="partner_id"/>
+                <field name="volume_real"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_irrigationreport_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for irrigation reports (search view)</field>
+        <field name="model">wua.invoiceset.line.irrigationreport</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="irrigationreport_number"/>
+                <field name="report_initial_time"/>
+                <field name="report_end_time"/>
+                <field name="intake_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Intake" name="intake_id" context="{'group_by':'intake_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_irrigationreport_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_irrigationreport"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.irrigationreport'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_irrigationreport_to_invoiceset" model="ir.values">
+        <field name="name">Add irrigation report to invoice set</field>
+        <field name="model">wua.invoiceset.line.irrigationreport</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_irrigationreport_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_irrigationreport_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_irrigationreport"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.irrigationreport'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_irrigationreport_to_invoiceset" model="ir.values">
+        <field name="name">Remove irrigation report from invoice set</field>
+        <field name="model">wua.invoiceset.line.irrigationreport</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_irrigationreport_to_invoiceset'))"/>
+    </record>
+
+</odoo>

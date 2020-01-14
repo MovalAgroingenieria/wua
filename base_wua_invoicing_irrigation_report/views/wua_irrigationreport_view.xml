@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationreport_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Reports (form view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='intake_id']" position="after">
+                <field name="product_id" domain="[('categ_id.productcategory_code','=',11)]"/>
+            </xpath>
+            <xpath expr="//field[@name='volume_real']" position="after">
+                <field name="invoiced" invisible="1"/>
+                <field name="price_unit" attrs="{'invisible': [('invoiced','=', False)]}"/>
+                <field name="sum_price_subtotal" attrs="{'invisible': [('invoiced','=', False)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='initial_volume']" position="attributes">
+                <attribute name="attrs">{'readonly':[('invoiced','=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='end_volume']" position="attributes">
+                <attribute name="attrs">{'readonly':[('invoiced','=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='hours']" position="attributes">
+                <attribute name="attrs">{'readonly':[('invoiced','=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='adjustement_volume']" position="attributes">
+                <attribute name="attrs">{'readonly':[('invoiced','=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Reports (tree view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='intake_id']" position="after">
+                <field name="product_id"/>
+            </xpath>
+            <xpath expr="//field[@name='volume_real']" position="after">
+                <field name="price_unit"/>
+                <field name="sum_price_subtotal"/>
+                <field name="invoiced"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Reports (search view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="product_id"/>
+            </xpath>
+            <xpath expr="//group[@expand='0']" position="before">
+                <separator/>
+                <filter name="invoiced" string="Invoiced: Yes"
+                    domain="[('invoiced','=',True)]"/>
+                <filter name="invoiced" string="Invoiced: No"
+                    domain="[('invoiced','=',False]"/>
+            </xpath>
+            <xpath expr="//filter[@name='intake']" position="after">
+                <filter name="invoiced_gb" string="Water Type"
+                    context="{'group_by':'product_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
