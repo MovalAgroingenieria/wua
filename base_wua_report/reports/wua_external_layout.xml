@@ -155,12 +155,18 @@
                         </t>
                     </div>
                 </t>
-                <!-- Page numbers -->
-                <div class="text-right">
-                    <span class="page" style="font-size: 8px;"/>
-                    <span style="font-size: 8px;">/</span>
-                    <span class="topage" style="font-size: 8px;"/>
-                </div>
+               <div class="text-right">
+                   <!-- Details according document type -->
+                   <t t-if="docs and docs[0]._name == 'account.invoice'">
+                       <span style="font-size: 8px;">[&amp;nbsp;</span>
+                       <span t-field="o.number" style="font-size: 8px;"/>
+                       <span style="font-size: 8px;">&amp;nbsp;]&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;</span>
+                   </t>
+                   <!-- Page numbers -->
+                   <span class="page" style="font-size: 8px;"/>
+                   <span style="font-size: 8px;">/</span>
+                   <span class="topage" style="font-size: 8px;"/>
+               </div>
             </div>
         </div>
     </template>
