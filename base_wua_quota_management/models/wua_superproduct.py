@@ -2,7 +2,7 @@
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class WuaSuperproduct(models.Model):
@@ -24,9 +24,7 @@ class WuaSuperproduct(models.Model):
     product_tmpl_id = fields.Many2one(
         string='Related Product',
         help='Product-related data of superproduct',
-        comodel_name='product.template',
-        required=True,
-        ondelete='cascade')
+        comodel_name='product.template')
 
     superproduct_code = fields.Integer(
         string='Code',
@@ -47,3 +45,27 @@ class WuaSuperproduct(models.Model):
         ('unique_superproduct_code', 'UNIQUE (superproduct_code)',
          'Existing Superproduct.'),
         ]
+
+    @api.multi
+    def unlink(self):
+        template_to_unlink_ids = []
+        for record in self:
+            template_to_unlink_ids.append(record.product_tmpl_id.id)
+        resp = super(WuaSuperproduct, self).unlink()
+        self.sudo()._force_unlink_residual(template_to_unlink_ids)
+        return resp
+
+    def _force_unlink_residual(self, template_to_unlink_ids):
+        if template_to_unlink_ids:
+            where = ''
+            for item in template_to_unlink_ids:
+                where = str(item) + ','
+            where = where[:-1]
+            where = '(' + where + ')'
+            try:
+                self.env.cr.execute("""
+                    DELETE FROM product_template WHERE id in """ + where)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except:
+                self.env.cr.rollback()
