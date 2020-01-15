@@ -613,7 +613,7 @@ class WuaInvoiceset(models.Model):
                                           item_ids, partnerlinks):
         invoice_details_categ02 = []
         description = ''
-        product = self.env['product.template'].browse(product_id)
+        product = self.env['product.product'].browse(product_id)
         for item in item_ids:
             if product:
                 partner = self.env['res.partner'].browse(item)
