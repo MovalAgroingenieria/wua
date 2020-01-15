@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_superproduct_view_form" model="ir.ui.view">
+        <field name="name">Superproducts (form view)</field>
+        <field name="model">wua.superproduct</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="superproduct_code"/>
+                            <field name="name"/>
+                            <field name="product_tmpl_id"
+                                   readonly="1"
+                                   required="0"
+                                   attrs="{'invisible': [('id','=',False)]}"
+                                   groups="base.group_no_one"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="uom_id"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_superproduct_view_tree" model="ir.ui.view">
+        <field name="name">Superproducts (tree view)</field>
+        <field name="model">wua.superproduct</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_quota_management_superproduct_view_tree">
+                <field name="superproduct_code"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_superproduct_view_search" model="ir.ui.view">
+        <field name="name">Superproducts (search view)</field>
+        <field name="model">wua.superproduct</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="superproduct_code"/>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="base_wua_quota_management_superproduct_action"
+            model="ir.actions.act_window">
+        <field name="name">Superproducts</field>
+        <field name="res_model">wua.superproduct</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_superproduct_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_superproduct_view_form')})]"/>
+        <field name="search_view_id" ref="wua_superproduct_view_search"/>
+    </record>
+
+    <menuitem id="superproduct_menu"
+              name="Superproducts"
+              parent="configuration_menu"
+              sequence="1"
+              action="base_wua_quota_management_superproduct_action"/>
+
+</odoo>
