@@ -2,12 +2,72 @@
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields
+from odoo import models, fields, api, exceptions, _
 
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     is_superproduct = fields.Boolean(
-        string='Superproduct',
+        string='Is superproduct',
         default=False)
+
+    superproduct_id = fields.Many2one(
+        string='Superproduct',
+        comodel_name='wua.superproduct',
+        ondelete='set null')
+
+    possible_superproduct = fields.Boolean(
+        string='It can be associated with a superproduct',
+        compute='_compute_possible_superproduct')
+
+    @api.multi
+    def _compute_possible_superproduct(self):
+        for record in self:
+            possible_superproduct = False
+            if record.categ_id.productcategory_code in {7, 8, 11}:
+                possible_superproduct = True
+            record.possible_superproduct = possible_superproduct
+
+    @api.onchange('categ_id')
+    def _onchange_categ_id(self):
+        if len(self) == 1:
+            self._compute_possible_superproduct()
+
+    @api.multi
+    def write(self, vals):
+        # Condition #1: if category is not 7, 8 or 11, and there is a
+        # superproduct, then error.
+        if (len(self) == 1 and 'categ_id' in vals and
+           vals['categ_id']):
+            new_categ_for_product = self.env['product.category'].browse(
+                vals['categ_id'])[0]
+            if new_categ_for_product.productcategory_code not in {7, 8, 9}:
+                superproduct_id = 0
+                if 'superproduct_id' in vals:
+                    if vals['superproduct_id']:
+                        superproduct_id = vals['superproduct_id']
+                else:
+                    superproduct_id = self.superproduct_id.id
+                if superproduct_id:
+                    raise exceptions.ValidationError(_(
+                        'This category is not compatible with a '
+                        'superproduct.'))
+        # Condition #2: it is not possible to break a link with a superproduct
+        # if this superproduct already has some hydric consumptions.
+        if (len(self) == 1 and 'superproduct_id' in vals and
+           not vals['superproduct_id'] and self.superproduct_id and
+           not self._context.get('uninstall')):
+            number_of_hydric_consumptions = \
+                self._get_number_of_hydric_consumptions(self.superproduct_id)
+            if number_of_hydric_consumptions > 0:
+                raise exceptions.ValidationError(_(
+                    'It is not possible to break a link with a superproduct '
+                    'if this superproduct already has some hydric '
+                    'consumptions.'))
+        return super(ProductTemplate, self).write(vals)
+
+    def _get_number_of_hydric_consumptions(self, superproduct):
+        # Provisional
+        resp = 0
+        return resp

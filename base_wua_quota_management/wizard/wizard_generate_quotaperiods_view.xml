@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_generate_quotaperiods_view_form" model="ir.ui.view">
+        <field name="name">Wizard to generate quota periods</field>
+        <field name="model">wizard.generate.quotaperiods</field>
+        <field name="arch" type="xml">
+            <form string="Generate quota periods of current agricultural season">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '720px'});
+                        $('.modal-dialog').css({'height': '420px'});
+                    });
+                </script>            
+                <div style="text-align:center">
+                    <field name="agriculturalseason_name"
+                           string="" readonly="1"/>
+                </div>
+                <group name="body">
+                    <field name="quotaperiod_01"/>
+                    <field name="quotaperiod_02"/>
+                    <field name="quotaperiod_03"/>
+                    <field name="quotaperiod_04"/>
+                </group>
+                <footer>
+                    <button name="generate_quotaperiods"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <act_window id="wizard_generate_quotaperiods_action"
+        name="Generate quota periods"
+        res_model="wizard.generate.quotaperiods"
+        src_model="wua.agriculturalseason"
+        view_mode="form"
+        target="new"/>    
+
+</odoo>

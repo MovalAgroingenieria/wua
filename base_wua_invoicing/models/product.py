@@ -170,16 +170,17 @@ class ProductTemplate(models.Model):
     @api.multi
     def write(self, vals):
         res = super(ProductTemplate, self).write(vals)
-        if 'is_wua_product' in vals:
-            test_fields = vals['is_wua_product']
-        else:
-            test_fields = self.is_wua_product
-        if test_fields:
-            if not self.fields_of_wua_product_ok(vals):
-                raise exceptions.UserError(_('A WUA product can not be '
-                                             'purchased, it can only be '
-                                             'sold, and its type must '
-                                             'be service.'))
+        if len(self) == 1:
+            if 'is_wua_product' in vals:
+                test_fields = vals['is_wua_product']
+            else:
+                test_fields = self.is_wua_product
+            if test_fields:
+                if not self.fields_of_wua_product_ok(vals):
+                    raise exceptions.UserError(_('A WUA product can not be '
+                                                 'purchased, it can only be '
+                                                 'sold, and its type must '
+                                                 'be service.'))
         return res
 
     def fields_of_wua_product_ok(self, vals):
