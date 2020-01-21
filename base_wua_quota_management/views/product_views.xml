@@ -10,10 +10,12 @@
             <xpath expr="//field[@name='is_wua_product']" position="before">
                 <field name="is_superproduct" invisible="1"/>
                 <field name="possible_superproduct" invisible="1"/>
+                <field name="is_quota_manager" invisible="1"/>
                 <field name="superproduct_id"
                        attrs="{'invisible':
                                ['|',('is_superproduct','=',True),
-                                    ('possible_superproduct','=',False)]}"/>
+                                    ('possible_superproduct','=',False)],
+                               'readonly':[('is_quota_manager','=',False)]}"/>
             </xpath>
         </field>
     </record>

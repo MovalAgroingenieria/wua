@@ -8,21 +8,26 @@
             <form duplicate="0">
                 <field name="number_of_quotaperiods" invisible="1"/>
                 <field name="initialized" invisible="1"/>
+                <field name="active_agriculturalseason" invisible="1"/>
                 <header>
                     <button name="%(wizard_generate_quotaperiods_action)d"
                             type="action" string="Create periods"
-                            icon="fa-calendar"/>
+                            icon="fa-calendar"
+                            attrs="{'invisible':
+                                    ['|',('number_of_quotaperiods','>',0),
+                                     ('active_agriculturalseason','=',False)]}"
+                            groups="base_wua_quota_management.group_wua_quota_manager"/>
                 </header>                
                 <sheet>
                     <div name="not_initialized"
                          style="display: inline-block;color:red;padding-top:10px;"
                          attrs="{'invisible':[('initialized','=',True)]}">
-                        ( NOT initialized agricultural season )
+                         WARNING: not initialized agricultural season (*)
                     </div>
                     <div name="initialized"
                          style="display: inline-block;padding-top:10px;"
                          attrs="{'invisible':[('initialized','=',False)]}">
-                        ( initialized agricultural season )
+                         ( initialized agricultural season )
                     </div>                    
                     <div class="oe_button_box" name="button_box">
                         <button name="action_get_quota_periods"
@@ -72,6 +77,14 @@
                             </page>
                         </notebook>
                     </group>
+                    <div name="not_initialized_footnote"
+                         style="display: inline-block;color:red;padding-top:10px;"
+                         attrs="{'invisible':[('initialized','=',True)]}">
+                        (*) The periods do not cover the whole agricultural
+                        season or there are days without quota period, or
+                        there is a quota period overlapped with another
+                        quota period.
+                    </div>
                 </sheet>
             </form>
         </field>

@@ -16,6 +16,8 @@
         "base_wua_invoicing_gravity_irrigation",
         "base_wua_irrigation_report",],
     "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
         "data/wua_quotas_config_settings_data.xml",
         "data/wua_superproduct_data.xml",
         "wizard/wizard_generate_quotaperiods_view.xml",

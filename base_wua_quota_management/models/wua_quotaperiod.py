@@ -45,6 +45,11 @@ class WuaQuotaperiod(models.Model):
         string='Description',
         size=MAX_SIZE_DESCRIPTION)
 
+    of_active_agriculturalseason = fields.Boolean(
+        string="Of active ag.season",
+        readonly=True,
+        default=False)
+
     name = fields.Char(
         string='Quota Period',
         size=MAX_SIZE_NAME,

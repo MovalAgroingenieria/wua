@@ -21,6 +21,10 @@ class ProductTemplate(models.Model):
         string='It can be associated with a superproduct',
         compute='_compute_possible_superproduct')
 
+    is_quota_manager = fields.Boolean(
+        string='Is quota manager',
+        compute='_compute_is_quota_manager')
+
     @api.multi
     def _compute_possible_superproduct(self):
         for record in self:
@@ -28,6 +32,16 @@ class ProductTemplate(models.Model):
             if record.categ_id.productcategory_code in {7, 8, 11}:
                 possible_superproduct = True
             record.possible_superproduct = possible_superproduct
+
+    @api.multi
+    def _compute_is_quota_manager(self):
+        for record in self:
+            is_quota_manager = False
+            user = self.env.user
+            if (user.has_group(
+               'base_wua_quota_management.group_wua_quota_manager')):
+                is_quota_manager = True
+            record.is_quota_manager = is_quota_manager
 
     @api.onchange('categ_id')
     def _onchange_categ_id(self):

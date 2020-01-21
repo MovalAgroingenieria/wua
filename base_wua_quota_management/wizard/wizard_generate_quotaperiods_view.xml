@@ -8,20 +8,133 @@
             <form string="Generate quota periods of current agricultural season">
                 <script>
                     $(document).ready(function(){
-                        $('.modal-dialog').css({'width': '720px'});
-                        $('.modal-dialog').css({'height': '420px'});
+                        $('.modal-dialog').css({'width': '640px'});
                     });
                 </script>            
                 <div style="text-align:center">
-                    <field name="agriculturalseason_name"
-                           string="" readonly="1"/>
+                    <h4><field name="agriculturalseason_name"
+                         readonly="1"/></h4>
                 </div>
-                <group name="body">
-                    <field name="quotaperiod_01"/>
-                    <field name="quotaperiod_02"/>
-                    <field name="quotaperiod_03"/>
-                    <field name="quotaperiod_04"/>
+                <div>Enter the initial date of each quota period and,
+                     optionally, its description. The maximun number of
+                     quota periods is 12. 
+                </div>
+                <br/>
+                <group name="body" col="6">
+                    <div style="width:40px;padding-left:10px;">
+                        <b>1 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_01_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_01_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>2 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_02_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_02_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>3 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_03_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_03_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>4 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_04_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_04_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>5 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_05_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_05_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>6 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_06_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_06_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>7 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_07_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_07_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>8 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_08_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_08_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>9 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_09_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_09_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>10 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_10_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_10_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>11 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_11_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_11_description"/>
+                    </div>
+                    <div style="width:40px;padding-left:10px;">
+                        <b>12 :</b>
+                    </div>
+                    <div style="width:110px;padding-right:20px;">
+                        <field name="quotaperiod_12_initial_date"/>
+                    </div>
+                    <div style="width:140px;padding-right:10px;">
+                        <field name="quotaperiod_12_description"/>
+                    </div>
                 </group>
+                <br/><br/>
+                <div>WARNING: The initial date of the first quota period is
+                     the initial date of agricultural season (mandatory),
+                     and it is not possible to have gaps. 
+                </div>
                 <footer>
                     <button name="generate_quotaperiods"
                             type="object"
