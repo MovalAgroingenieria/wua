@@ -305,6 +305,7 @@ class WuaInvoicesetLine(models.Model):
                     watering_volume_real
                     FROM wua_gravconsumption
                     WHERE product_id=%s and invoiceset_id is null and
+                          invoiced_consumption=FALSE and
                           state='executed' and watering_volume_real>0
                     """, (user_id, user_id, invoicesetline_id, product_id))
                 self.env.cr.execute("""
@@ -312,6 +313,7 @@ class WuaInvoicesetLine(models.Model):
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
                     invoiced_consumption=TRUE
                     WHERE product_id=""" + str(product_id) + """ and
+                    invoiced_consumption=FALSE and
                     invoiceset_id is null and state='executed' and
                     watering_volume_real>0""")
                 self.env.cr.commit()
