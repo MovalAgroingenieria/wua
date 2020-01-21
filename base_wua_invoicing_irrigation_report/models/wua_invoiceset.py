@@ -59,6 +59,7 @@ class WuaInvoiceset(models.Model):
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
                                                item_ids, False):
         if categ_code != 11:
+            partnerlinks = ""
             return super(WuaInvoiceset,
                          self).calculate_invoice_details_others_categ(
                              product_id, categ_code, item_ids, partnerlinks)
@@ -237,10 +238,10 @@ class WuaInvoicesetLineIrrigationreport(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {'selected': True,}
+        vals = {'selected': True, }
         self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {'selected': False,}
+        vals = {'selected': False, }
         self.write(vals)
