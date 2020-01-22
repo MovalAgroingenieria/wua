@@ -59,9 +59,11 @@ class WuaInvoiceset(models.Model):
         waterconnection_id = 0
         is_watercosts = False
         if (invoice_detail['categ_code'] == 5 or
+           invoice_detail['categ_code'] == 7 or
            invoice_detail['categ_code'] == 10):
             waterconnection_id = invoice_detail['key1']
-            if (invoice_detail['categ_code'] == 10):
+            if (invoice_detail['categ_code'] == 7 or
+               invoice_detail['categ_code'] == 10):
                 is_watercosts = True
         return waterconnection_id, is_watercosts
 
@@ -99,3 +101,30 @@ class WuaInvoiceset(models.Model):
                     }
                 invoices_data.append(result)
         return invoices_data
+
+    def add_to_invoice_data_line_other_data(
+            self, categ_code, invoice_data_line, data):
+        data = super(WuaInvoiceset,
+                     self).add_to_invoice_data_line_other_data(
+                         categ_code, invoice_data_line, data)
+        if 'payment_mode_id' in invoice_data_line:
+            data['wc_payment_mode_id'] = invoice_data_line['payment_mode_id']
+        if 'mandate_id' in invoice_data_line:
+            data['wc_mandate_id'] = invoice_data_line['mandate_id']
+        return data
+
+    def create_invoices(self, invoices_data, record, product_data):
+        number_of_invoices = \
+            super(WuaInvoiceset, self).create_invoices(
+                invoices_data, record, product_data)
+        if number_of_invoices > 0:
+            invoices = self.env['account.invoice'].search(
+                [('invoiceset_id', '=', record.id)])
+            for invoice in invoices:
+                first_detail_line = invoice.invoice_line_ids[0]
+                if first_detail_line.wc_payment_mode_id:
+                    invoice.payment_mode_id = \
+                        first_detail_line.wc_payment_mode_id
+                if first_detail_line.wc_mandate_id:
+                    invoice.mandate_id = first_detail_line.wc_mandate_id
+        return number_of_invoices
