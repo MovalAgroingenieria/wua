@@ -102,8 +102,29 @@ class WuaAgriculturalseason(models.Model):
     @api.multi
     def action_get_quota_periods(self):
         self.ensure_one()
-        # Provisional
-        print 'action_get_quota_periods'
+        if self.quotaperiod_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quotaperiod_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quotaperiod_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quotaperiod_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Quota Periods'),
+                'res_model': 'wua.quotaperiod',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.quotaperiod_ids.ids)],
+                'context': {'compressed_agriculturalseason': True}
+                }
+            return act_window
 
     @api.multi
     def action_get_partner_quotas(self):
@@ -142,3 +163,13 @@ class WuaAgriculturalseason(models.Model):
                 raise exceptions.UserError(_(
                     'Error when updating records '
                     '(\"of_active_agriculturalseason\" field).'))
+
+    @api.multi
+    def name_get(self):
+        if self.env.context.get('compressed_agriculturalseason', False):
+            result = []
+            for record in self:
+                result.append((record.id, record.description.strip()))
+        else:
+            result = super(WuaAgriculturalseason, self).name_get()
+        return result

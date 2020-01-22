@@ -100,8 +100,7 @@
                 <field name="end_date"/>
                 <field name="description"/>
                 <field name="initialized"/>
-                <field name="number_of_quotaperiods"
-                       string="N. of quota periods"/>
+                <field name="number_of_quotaperiods"/>
                 <field name="active_agriculturalseason"/>
             </tree>
         </field>
@@ -112,8 +111,8 @@
         <field name="model">wua.agriculturalseason</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name" string="Agricultural Season"/>
-                <field name="description" string="Description"/>
+                <field name="name"/>
+                <field name="description"/>
                 <filter string="Initialized: Yes" name="initialized_yes"
                  domain="[('initialized','=',True)]"/>
                 <filter string="Initialized: No" name="initialized_no"
