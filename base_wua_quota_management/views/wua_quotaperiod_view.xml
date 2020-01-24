@@ -4,9 +4,26 @@
     <record id="wua_quotaperiod_view_form" model="ir.ui.view">
         <field name="name">Quota Periods (form view)</field>
         <field name="model">wua.quotaperiod</field>
+        <field name="priority" eval="1"/>
         <field name="arch" type="xml">
             <form duplicate="0">
+                <field name="id" invisible="1"/>
                 <field name="is_closed" invisible="1"/>
+                <field name="initialized_agriculturalseason" invisible="1"/>
+                <field name="of_active_agriculturalseason" invisible="1"/>
+                <header>
+                    <button name="action_configure_quotaperiod"
+                            type="object" string="Configure"
+                            icon="fa-gear"
+                            attrs="{'invisible':
+                                    ['|',('state','!=','draft'),
+                                     '|',('initialized_agriculturalseason','=',False),
+                                     ('of_active_agriculturalseason','=',False)]}"
+                            groups="base_wua_quota_management.group_wua_quota_manager"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,configured,generated"/>
+                </header>
                 <sheet>
                     <div name="open_quotaperiod"
                          style="display: inline-block;"
@@ -39,10 +56,13 @@
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="agriculturalseason_id"
+                                   attrs="{'readonly': [('id','>',0)]}"
                                    context="{'form_view_ref':
                                    'base_wua_quota_management.wua_agriculturalseason_view_form'}"/>
-                            <field name="initial_date"/>
-                            <field name="end_date"/>
+                            <field name="initial_date"
+                                   attrs="{'readonly': [('id','>',0)]}"/>
+                            <field name="end_date"
+                                   attrs="{'readonly': [('id','>',0)]}"/>
                             <field name="description"/>
                             <field name="sorted_quotas"
                                    string="Sort in superpr."/>
@@ -56,6 +76,11 @@
                     </group>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
+                            <page name="lines_page" string="Lines">
+                                <field name="quotaperiodline_ids"
+                                       context="{'tree_view_ref':
+                                       'base_wua_quota_management.wua_quotaperiod_line_view_tree'}"/>                            
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
                             </page>
@@ -137,6 +162,205 @@
                 </group>
             </search>
         </field>
+    </record>
+
+    <record id="wua_quotaperiod_line_view_form" model="ir.ui.view">
+        <field name="name">Quota-Period Lines (form view)</field>
+        <field name="model">wua.quotaperiod.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '450px'});
+                    });
+                </script>            
+                <div style="text-align:center">
+                    <h1><field name="pos"/></h1>
+                </div>                
+                <group name="master_data">
+                    <field name="superproduct_id"/>
+                    <field name="provision"/>
+                    <field name="number_of_parcels"/>
+                    <field name="area_total"/>
+                    <field name="volume_total"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_quotaperiod_line_view_tree" model="ir.ui.view">
+        <field name="name">Quota-Period Lines (tree view)</field>
+        <field name="model">wua.quotaperiod.line</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_quotaperiod_line_view_tree"
+                  editable="bottom">
+                <field name="configured_line" invisible="1"/>
+                <field name="pos_str" string="Order"/>
+                <field name="superproduct_id" widget="many2one_unclickable"
+                       options="{'no_quick_create':True,
+                                 'no_create_edit':True}"
+                       attrs="{'readonly':[('configured_line','=',True)]}"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('configured_line','=',False)],
+                                'readonly':
+                                [('configured_line','=',True)]}"/>                
+                <field name="provision"/>
+                <field name="number_of_parcels"
+                       string="Parcels"/>
+                <field name="area_total"/>
+                <field name="volume_total"/>
+            </tree>        
+        </field>
+    </record>
+
+    <record id="wua_config_quotaperiod_view_form" model="ir.ui.view">
+        <field name="name">Quota Periods (configuration-form view)</field>
+        <field name="model">wua.quotaperiod</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <form>
+                <field name="quotaperiodline_ids" readonly="1"
+                 context="{'tree_view_ref':
+                 'base_wua_quotaperiod.wua_config_quotaperiod_line_view_tree'}"/>
+                <footer>
+                   <button name="auxbutton" type="object" string="aux"
+                           invisible="1"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_config_quotaperiod_line_view_tree" model="ir.ui.view">
+        <field name="name">Quota-Period Lines (configuration-tree view)</field>
+        <field name="model">wua.quotaperiod.line</field>
+        <field name="arch" type="xml">
+            <form>
+            <tree class="o_base_wua_quota_management_config_quotaperiod_line_view_tree">
+                <field name="pos_str"/>
+                <field name="superproduct_id" widget="many2one_unclickable"/>
+                <button name="action_select_quotaperiod_line_parcels"
+                        type="object"
+                        string="Select"/>
+            </tree>
+            </form>        
+        </field>
+    </record>
+
+    <record id="wua_quotaperiod_line_parcel_view_tree" model="ir.ui.view" >
+        <field name="name">Parcels of quota-period lines (tree view)</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_quotaperiod_line_parcel_view_tree"
+                  create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <field name="parcel_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="partner_id"/>
+                <field name="cadastral_reference"/>
+                <field name="area_official"/>
+                <field name="leased_parcel"/>
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationditch_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_quotaperiod_line_parcel_view_search" model="ir.ui.view" >
+        <field name="name">Parcels of quota-period lines (search view)</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="tag_ids" string="Parcel Tag"/>
+                <field name="partner_id"/>
+                <field name="cadastral_reference"/>
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationditch_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <separator/>
+                <filter string="Billable Water" name="billablewater"
+                 domain="[('is_billable_water','=',True)]"/>
+                <filter string="Billable Expenses" name="billableexpenses"
+                 domain="[('is_billable_expenses','=',True)]"/>
+                <separator/>
+                <filter string="Leased" name="leased"
+                 domain="[('leased_parcel','=',True)]"/>
+                <separator/>
+                <filter string="Infrastructure: None" name="hydraulic_infrastructure_type_0"
+                 domain="[('hydraulic_infrastructure_type','=',False)]"/>
+                <filter string="Infrastructure: Pressurized Irrigation" name="hydraulic_infrastructure_type_1"
+                 domain="[('hydraulic_infrastructure_type','=',1)]"/>
+                <filter string="Infrastructure: Gravity Irrigation" name="hydraulic_infrastructure_type_2"
+                 domain="[('hydraulic_infrastructure_type','=',2)]"/>
+                <filter string="Infrastructure: Pressurized and Gravity Irrigation" name="hydraulic_infrastructure_type_3"
+                 domain="[('hydraulic_infrastructure_type','=',3)]"/>
+                <separator/>
+                <filter string="Water Right: Pressurized Irrigation" name="pressurizedirrigation"
+                 domain="[('pressurized_irrigation_right','=',True)]"/>
+                <filter string="Water Right: Gravity Irrigation" name="gravityfedirrigation"
+                 domain="[('gravityfed_irrigation_right','=',True)]"/>
+                <separator/>
+                <filter string="With Irrigation Worker" name="withirrigationworker"
+                 domain="[('with_irrigation_worker','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Is selected (marked)"
+                     name="isselected"
+                     context="{'group_by':'selected'}"/>
+                    <filter string="Irrigation Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Hydraulic Sector" name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Ditch" name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                    <filter string="Irrigation Worker" name="irrigationworker"
+                     context="{'group_by':'employee_id'}"/>                     
+                </group>                
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_parcel_to_quotaperiod" model="ir.actions.server">
+        <field name="name">Add to quota period</field>
+        <field name="model_id" ref="model_wua_quotaperiod_line_parcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.quotaperiod.line.parcel'].browse(context['active_ids']).add_to_quotaperiod()
+        </field>
+    </record>
+    
+    <record id="wua_action_add_parcel_to_quotaperiod" model="ir.values">
+        <field name="name">Add parcel to quota period</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_parcel_to_quotaperiod'))"/>
+    </record>
+
+    <record id="wua_remove_parcel_to_quotaperiod" model="ir.actions.server">
+        <field name="name">Remove from quota period</field>
+        <field name="model_id" ref="model_wua_quotaperiod_line_parcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.quotaperiod.line.parcel'].browse(context['active_ids']).remove_from_quotaperiod()
+        </field>
+    </record>
+    
+    <record id="wua_action_remove_parcel_to_quotaperiod" model="ir.values">
+        <field name="name">Remove parcel from quota period</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_parcel_to_quotaperiod'))"/>
     </record>
 
     <record id="wua_quotaperiod_action"

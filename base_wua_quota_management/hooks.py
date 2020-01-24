@@ -34,6 +34,10 @@ def uninstall_hook(cr, registry):
         'base_wua_quota_management.param_wua_quotas_configuration')
     if param_wua_quotas_configuration:
         param_wua_quotas_configuration.unlink()
+    param_ir_values_sorted_quotas = env.ref(
+        'base_wua_quota_management.param_ir_values_sorted_quotas')
+    if param_ir_values_sorted_quotas:
+        param_ir_values_sorted_quotas.unlink()
     product_template_action = env.ref(
         'product.product_template_action')
     if product_template_action:
