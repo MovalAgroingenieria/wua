@@ -9,3 +9,4 @@ from . import wua_quotas_config_settings
 from . import res_partner
 from . import wua_waterconnection
 from . import wua_quotaperiod
+from . import wua_quota

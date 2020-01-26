@@ -63,6 +63,11 @@ class WuaSuperproduct(models.Model):
         store=True,
         compute='_compute_number_of_products')
 
+    quota_ids = fields.One2many(
+        string='Quotas',
+        comodel_name='wua.quota',
+        inverse_name='superproduct_id')
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [

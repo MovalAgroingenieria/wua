@@ -79,7 +79,7 @@ class WuaQuotaperiod(models.Model):
 
     volume_total = fields.Float(
         string='Total Volume (m3)',
-        digits=(32, 4),
+        digits=(32, 2),
         store=True,
         compute='_compute_volume_total')
 
@@ -94,15 +94,20 @@ class WuaQuotaperiod(models.Model):
             ('configured', 'Configured'),
             ('generated', 'Generated'),
         ],
-        index=True,
-        required=True,
         string='State',
-        default='draft',
+        store=True,
+        index=True,
+        compute='_compute_state',
         track_visibility='onchange')
 
     quotaperiodline_ids = fields.One2many(
         string='Associated Superproducts',
         comodel_name='wua.quotaperiod.line',
+        inverse_name='quotaperiod_id')
+
+    quota_ids = fields.One2many(
+        string='Quotas',
+        comodel_name='wua.quota',
         inverse_name='quotaperiod_id')
 
     notes = fields.Html(string='Notes')
@@ -158,6 +163,24 @@ class WuaQuotaperiod(models.Model):
                                    for x in record.quotaperiodline_ids)
             record.volume_total = volume_total
 
+    @api.depends('quotaperiodline_ids', 'quotaperiodline_ids.configured_line',
+                 'quota_ids')
+    def _compute_state(self):
+        for record in self:
+            state = 'draft'
+            if record.quotaperiodline_ids:
+                configured_lines = True
+                for quotaperiodline in record.quotaperiodline_ids:
+                    if not quotaperiodline.configured_line:
+                        configured_lines = False
+                        break
+                if configured_lines:
+                    if record.quota_ids:
+                        state = 'generated'
+                    else:
+                        state = 'configured'
+            record.state = state
+
     @api.constrains('initial_date', 'end_date')
     def _check_initial_end_dates(self):
         if (len(self) == 1 and
@@ -170,16 +193,12 @@ class WuaQuotaperiod(models.Model):
     @api.model
     def create(self, vals):
         self._populate_pos_in_quotaperiodlines(vals)
-        if not self._quotaperiodlines_no_repeat(vals):
-            raise exceptions.UserError(_('There are repeated lines.'))
         return super(WuaQuotaperiod, self).create(vals)
 
     @api.multi
     def write(self, vals):
         if len(self) == 1:
             self._populate_pos_in_quotaperiodlines(vals)
-            if not self._quotaperiodlines_no_repeat(vals):
-                raise exceptions.UserError(_('There are repeated lines.'))
         super(WuaQuotaperiod, self).write(vals)
         return True
 
@@ -238,6 +257,31 @@ class WuaQuotaperiod(models.Model):
             }
         return act_window
 
+    @api.multi
+    def action_apply_multiple_assignment(self):
+        self.ensure_one()
+        quotaperiod = self
+        self._delete_quotas_hydricmovements(quotaperiod)
+        quotaperiodlines = quotaperiod.quotaperiodline_ids
+        for quotaperiodline in quotaperiodlines:
+            assignment_for_current_superproduct_ok = \
+                self._apply_multiple_assignment_for_superproduct(
+                    quotaperiodline)
+            if not assignment_for_current_superproduct_ok:
+                suffix = _('there are not selected parcels or there are not '
+                           'water payers.')
+                raise exceptions.UserError(
+                    quotaperiodline.superproduct_id.name + ': ' + suffix)
+        self._delete_parcel_assignments(quotaperiod, only_unselected=True)
+
+    @api.multi
+    def action_cancel_quotaperiod(self):
+        self.ensure_one()
+        # Provisional (pending: delete individual inputs, cessions, etc)
+        self._delete_quotas_hydricmovements(self)
+        self._delete_parcel_assignments(self)
+        self._compute_state()
+
     def _populate_pos_in_quotaperiodlines(self, vals):
         if vals and 'quotaperiodline_ids' in vals:
             last_pos = 0
@@ -261,34 +305,101 @@ class WuaQuotaperiod(models.Model):
                     quotaperiodline_vals['pos'] = pos
                     pos = pos + 1
 
-    def _quotaperiodlines_no_repeat(self, vals):
+    def _delete_quotas_hydricmovements(self, quotaperiod):
+        if quotaperiod:
+            quotaperiod_id = quotaperiod.id
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    DELETE FROM wua_quota
+                    WHERE quotaperiod_id=""" + str(quotaperiod_id))
+                # Provisional (pending: hydric movements)
+                self.env.cr.commit()
+            except:
+                self.env.cr.rollback()
+                raise exceptions.UserError(_('Error when updating records.'))
+
+    def _apply_multiple_assignment_for_superproduct(self, quotaperiodline):
         resp = True
-        if vals and 'quotaperiodline_ids' in vals:
-            implied_ids = []
-            unchanged_ids = []
-            for quotaperiodline in vals['quotaperiodline_ids']:
-                quotaperiodline_oper = quotaperiodline[0]
-                quotaperiodline_id = quotaperiodline[1]
-                quotaperiodline_vals = quotaperiodline[2]
-                if quotaperiodline_oper == 4 or (quotaperiodline_oper == 1 and
-                   'superproduct_id' not in quotaperiodline_vals):
-                    unchanged_ids.append(quotaperiodline_id)
-                if quotaperiodline_oper == 0 or (quotaperiodline_oper == 1 and
-                   'superproduct_id' in quotaperiodline_vals):
-                    implied_ids.append(quotaperiodline_vals['superproduct_id'])
-            if len(unchanged_ids) > 0:
-                filtered_quotaperiodlines = \
-                    self.env['wua.quotaperiod.line'].search(
-                        [('id', 'in', unchanged_ids)])
-                for quotaperiodline in filtered_quotaperiodlines:
-                    implied_ids.append(quotaperiodline.superproduct_id.id)
-            len_of_implied_ids_original = len(implied_ids)
-            if len_of_implied_ids_original > 0:
-                implied_ids = list(set(implied_ids))
-                len_of_implied_ids_no_repeat = len(implied_ids)
-                resp = len_of_implied_ids_original == \
-                    len_of_implied_ids_no_repeat
+        if (not quotaperiodline or
+           not quotaperiodline.quotaperiodlineparcel_ids):
+            resp = False
+        if resp:
+            selected_parcels = filter(
+                lambda x: x['selected'] is True,
+                quotaperiodline.quotaperiodlineparcel_ids)
+            partnerlinks = self.env['wua.parcel.partnerlink'].search([])
+            if selected_parcels and partnerlinks:
+                quotaperiod = quotaperiodline.quotaperiod_id
+                superproduct = quotaperiodline.superproduct_id
+                provision = quotaperiodline.provision
+                partners_with_quota = []
+                partnerlinks_with_quota = []
+                # First: get water payers.
+                for selected_parcel in selected_parcels:
+                    partnerlinks_of_parcel = partnerlinks.filtered(
+                        lambda x: x.parcel_id.id ==
+                        selected_parcel.parcel_id.id and
+                        x.water_costs_percentage > 0)
+                    for partnerlink in partnerlinks_of_parcel:
+                        partners_with_quota.append(partnerlink.partner_id.id)
+                        partnerlinks_with_quota.append(partnerlink.id)
+                if partners_with_quota:
+                    # Second: loop on partners
+                    partners_with_quota = list(set(partners_with_quota))
+                    selected_partnerlinks = \
+                        self.env['wua.parcel.partnerlink'].browse(
+                            partnerlinks_with_quota)
+                    quota_model = self.env['wua.quota']
+                    for partner_id in partners_with_quota:
+                        selected_partnerlinks_of_partner = \
+                            selected_partnerlinks.search(
+                                [('partner_id', '=', partner_id)])
+                        area = sum(x.area_official_water_costs_net
+                                   for x in selected_partnerlinks_of_partner)
+                        initial_value = area * provision
+                        quota_model.create({
+                            'quotaperiod_id': quotaperiod.id,
+                            'partner_id': partner_id,
+                            'superproduct_id': superproduct.id,
+                            'initial_value': initial_value,
+                            })
+                        # Provisional
+                        print quotaperiod.initial_date
+                        print superproduct.name
+                        print partner_id
+                        print provision
+                        print area
+                        print initial_value
+            else:
+                resp = False
         return resp
+
+    def _delete_parcel_assignments(self, quotaperiod, only_unselected=False):
+        if quotaperiod:
+            quotaperiodlines = quotaperiod.quotaperiodline_ids
+            for quotaperiodline in quotaperiodlines:
+                quotaperiodline_id = quotaperiodline.id
+                sf = ''
+                if only_unselected:
+                    sf = ' AND selected=False'
+                try:
+                    self.env.cr.savepoint()
+                    self.env.cr.execute("""
+                        DELETE FROM wua_quotaperiod_line_parcel WHERE
+                        quotaperiodline_id=""" + str(quotaperiodline_id) + sf)
+                    self.env.cr.commit()
+                except:
+                    self.env.cr.rollback()
+                    raise exceptions.UserError(
+                        _('Error when updating records.'))
+                if not only_unselected:
+                    quotaperiodline._compute_number_of_parcels(
+                        test_parcel_assignments=False)
+                    quotaperiodline._compute_area_total(
+                        test_parcel_assignments=False)
+                    quotaperiodline._compute_configured_line(
+                        test_parcel_assignments=False)
 
 
 class WuaQuotaperiodLine(models.Model):
@@ -297,6 +408,7 @@ class WuaQuotaperiodLine(models.Model):
     _order = 'name'
 
     MAX_SIZE_NAME = 13
+    MAX_SIZE_ALTERNATIVE_NAME = 30
     MAX_SIZE_QUOTAPERIODLINE_SUFFIX = 2
 
     quotaperiod_id = fields.Many2one(
@@ -322,6 +434,12 @@ class WuaQuotaperiodLine(models.Model):
         index=True,
         compute='_compute_name')
 
+    alternative_name = fields.Char(
+        string='Quota-Period/Superproduct',
+        size=MAX_SIZE_ALTERNATIVE_NAME,
+        store=True,
+        compute='_compute_alternative_name')
+
     superproduct_id = fields.Many2one(
         string='Superproduct',
         comodel_name='wua.superproduct',
@@ -341,13 +459,13 @@ class WuaQuotaperiodLine(models.Model):
 
     area_total = fields.Float(
         string='Total Area',
-        digits=(32, 4),
+        digits=(32, 2),
         store=True,
         compute='_compute_area_total')
 
     volume_total = fields.Float(
         string='Total Volume (m3)',
-        digits=(32, 4),
+        digits=(32, 2),
         store=True,
         compute='_compute_volume_total')
 
@@ -364,6 +482,8 @@ class WuaQuotaperiodLine(models.Model):
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Quota-Period Line.'),
+        ('unique_alternative_name', 'UNIQUE (alternative_name)',
+         'Existing Quota-Period Line.'),
         ('valid_pos', 'CHECK (pos >= 0)',
          'Incorrect Position Value.'),
         ('valid_provision', 'CHECK (provision > 0)',
@@ -379,7 +499,8 @@ class WuaQuotaperiodLine(models.Model):
             else:
                 record.pos_str = ''
 
-    @api.depends('quotaperiod_id', 'quotaperiod_id.initial_date', 'pos')
+    @api.depends('quotaperiod_id', 'quotaperiod_id.initial_date',
+                 'pos')
     def _compute_name(self):
         for record in self:
             pos = 0
@@ -390,21 +511,42 @@ class WuaQuotaperiodLine(models.Model):
             record.name = initial_date + '-' + \
                 str(pos).zfill(self.MAX_SIZE_QUOTAPERIODLINE_SUFFIX)
 
-    @api.depends('quotaperiodlineparcel_ids')
-    def _compute_number_of_parcels(self):
+    @api.depends('quotaperiod_id', 'quotaperiod_id.initial_date',
+                 'superproduct_id')
+    def _compute_alternative_name(self):
+        for record in self:
+            alternative_name = ''
+            if record.quotaperiod_id and record.superproduct_id:
+                alternative_name = record.quotaperiod_id.initial_date + '-' + \
+                    str(record.superproduct_id.superproduct_code)
+            record.alternative_name = alternative_name
+
+    @api.depends('quotaperiodlineparcel_ids',
+                 'quotaperiodlineparcel_ids.selected')
+    def _compute_number_of_parcels(self, test_parcel_assignments=True):
         for record in self:
             number_of_parcels = 0
-            if record.quotaperiodlineparcel_ids:
-                number_of_parcels = len(record.quotaperiodlineparcel_ids)
+            if test_parcel_assignments and record.quotaperiodlineparcel_ids:
+                filtered_quotaperiodlineparcel_ids = filter(
+                    lambda x: x['selected'] is True,
+                    record.quotaperiodlineparcel_ids)
+                if filtered_quotaperiodlineparcel_ids:
+                    number_of_parcels = len(filtered_quotaperiodlineparcel_ids)
             record.number_of_parcels = number_of_parcels
 
-    @api.depends('quotaperiodlineparcel_ids')
-    def _compute_area_total(self):
+    @api.depends('quotaperiodlineparcel_ids',
+                 'quotaperiodlineparcel_ids.selected')
+    def _compute_area_total(self, test_parcel_assignments=True):
         for record in self:
             area_total = 0
-            if record.quotaperiodlineparcel_ids:
-                area_total = sum(x.area_official
-                                 for x in record.quotaperiodlineparcel_ids)
+            if test_parcel_assignments and record.quotaperiodlineparcel_ids:
+                filtered_quotaperiodlineparcel_ids = filter(
+                    lambda x: x['selected'] is True,
+                    record.quotaperiodlineparcel_ids)
+                if filtered_quotaperiodlineparcel_ids:
+                    area_total = \
+                        sum(x.area_official
+                            for x in filtered_quotaperiodlineparcel_ids)
             record.area_total = area_total
 
     @api.depends('provision', 'area_total')
@@ -413,12 +555,17 @@ class WuaQuotaperiodLine(models.Model):
             volume_total = record.provision * record.area_total
             record.volume_total = volume_total
 
-    @api.depends('quotaperiodlineparcel_ids')
-    def _compute_configured_line(self):
+    @api.depends('quotaperiodlineparcel_ids',
+                 'quotaperiodlineparcel_ids.selected')
+    def _compute_configured_line(self, test_parcel_assignments=True):
         for record in self:
             configured_line = False
-            if record.quotaperiodlineparcel_ids:
-                configured_line = True
+            if test_parcel_assignments and record.quotaperiodlineparcel_ids:
+                filtered_quotaperiodlineparcel_ids = filter(
+                    lambda x: x['selected'] is True,
+                    record.quotaperiodlineparcel_ids)
+                if filtered_quotaperiodlineparcel_ids:
+                    configured_line = True
             record.configured_line = configured_line
 
     @api.model
@@ -469,26 +616,64 @@ class WuaQuotaperiodLine(models.Model):
     @api.multi
     def action_select_quotaperiod_line_parcels(self):
         self.ensure_one()
-        # Provisional
-        print "action_select_quotaperiod_line_parcels"
-        # if not self.configured_line:
-        #     self.populate_items_select()
-        # data_items_select = self.get_data_items_select(self.product_id.name)
-        # if data_items_select:
-        #     if ('name' in data_items_select and
-        #        'res_model' in data_items_select):
-        #         if (data_items_select['name'] != '' and
-        #            data_items_select['res_model'] != ''):
-        #             act_window = {
-        #                 'type': 'ir.actions.act_window',
-        #                 'name': data_items_select['name'],
-        #                 'res_model': data_items_select['res_model'],
-        #                 'view_type': 'form',
-        #                 'view_mode': 'tree',
-        #                 'domain': [["invoicesetline_id", "=", self.id]],
-        #                 'limit': 10000000,
-        #                 }
-        #             return act_window
+        if not self.configured_line:
+            self._populate_items_select()
+            self._compute_number_of_parcels()
+            self._compute_area_total()
+            self._compute_configured_line()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Parcels') +
+            ' (' + self.superproduct_id.name.lower() + ')',
+            'res_model': 'wua.quotaperiod.line.parcel',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'domain': [["quotaperiodline_id", "=", self.id]],
+            'limit': 10000000,
+            }
+        return act_window
+
+    def _populate_items_select(self):
+        parcels = self.env['wua.parcel'].search([])
+        if len(parcels) > 0:
+            user_id = self.env.user.id
+            quotaperiodline_id = self.id
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    DELETE FROM wua_quotaperiod_line_parcel
+                    WHERE quotaperiodline_id=""" + str(quotaperiodline_id))
+                self.env.cr.execute("""
+                    INSERT INTO wua_quotaperiod_line_parcel (id, create_uid,
+                    write_uid, create_date, write_date, quotaperiodline_id,
+                    selected, parcel_id, cadastral_reference,
+                    is_billable_water, is_billable_expenses,
+                    leased_parcel, area_official, partner_id,
+                    hydraulic_infrastructure_type,
+                    pressurized_irrigation_right, gravityfed_irrigation_right,
+                    hydraulicsector_id, irrigationditch_id,
+                    with_watering_shift, with_irrigation_worker, employee_id)
+                    SELECT nextval('wua_quotaperiod_line_parcel_id_seq'), %s,
+                    %s, now(), now(), %s, TRUE, id, cadastral_reference,
+                    is_billable_water, is_billable_expenses, leased_parcel,
+                    area_official, partner_id, hydraulic_infrastructure_type,
+                    pressurized_irrigation_right, gravityfed_irrigation_right,
+                    hydraulicsector_id, irrigationditch_id,
+                    with_watering_shift, with_irrigation_worker, employee_id
+                    FROM wua_parcel WHERE active=TRUE
+                    """, (user_id, user_id, quotaperiodline_id))
+                self.env.cr.execute("""
+                    INSERT INTO wua_quotaperiod_line_parcel_parceltag_rel
+                    (quotaperiod_line_parcel_id, parceltag_id)
+                    SELECT l.id, r.parceltag_id
+                    FROM wua_quotaperiod_line_parcel AS l
+                    INNER JOIN wua_parcel_parceltag_rel AS r
+                    ON l.parcel_id=r.parcel_id
+                    WHERE l.quotaperiodline_id=""" + str(quotaperiodline_id))
+                self.env.cr.commit()
+            except:
+                self.env.cr.rollback()
+                raise exceptions.UserError(_('Error when updating records.'))
 
     def _get_value_from_translation(self, module, src):
         resp = src

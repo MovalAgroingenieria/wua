@@ -47,6 +47,7 @@ class ProductTemplate(models.Model):
     def _onchange_categ_id(self):
         if len(self) == 1:
             self._compute_possible_superproduct()
+            self._compute_is_quota_manager()
 
     @api.multi
     def write(self, vals):

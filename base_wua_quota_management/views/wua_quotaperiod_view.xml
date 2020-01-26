@@ -15,11 +15,35 @@
                     <button name="action_configure_quotaperiod"
                             type="object" string="Configure"
                             icon="fa-gear"
+                            class="oe_read_only"
                             attrs="{'invisible':
-                                    ['|',('state','!=','draft'),
+                                    ['|',('state','=','generated'),
                                      '|',('initialized_agriculturalseason','=',False),
-                                     ('of_active_agriculturalseason','=',False)]}"
+                                     '|',('of_active_agriculturalseason','=',False),
+                                     ('number_of_superproducts','=',0)]}"
                             groups="base_wua_quota_management.group_wua_quota_manager"/>
+                    <button name="action_apply_multiple_assignment"
+                            type="object" string="Assign"
+                            icon="fa-legal"
+                            class="oe_read_only"
+                            attrs="{'invisible':
+                                    ['|',('state','!=','configured'),
+                                     '|',('initialized_agriculturalseason','=',False),
+                                     '|',('of_active_agriculturalseason','=',False),
+                                     ('number_of_superproducts','=',0)]}"
+                            groups="base_wua_quota_management.group_wua_quota_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <button name="action_cancel_quotaperiod"
+                            type="object" string="Cancel"
+                            icon="fa-times"
+                            class="oe_read_only"
+                            attrs="{'invisible':
+                                    ['|',('state','=','draft'),
+                                     '|',('initialized_agriculturalseason','=',False),
+                                     '|',('of_active_agriculturalseason','=',False),
+                                     ('number_of_superproducts','=',0)]}"
+                            groups="base_wua_quota_management.group_wua_quota_manager"
+                            confirm="All quotas and hydric movements (including individual inputs and cessions) WILL BE DELETED. Are you sure you want to do this operation?"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,configured,generated"/>
@@ -151,7 +175,7 @@
                 <filter string="State: Configured"
                         name="state_configured"
                         domain="[('state','=','configured')]"/>
-                <filter string="State: Draft"
+                <filter string="State: Generated"
                         name="state_generated"
                         domain="[('state','=','generated')]"/>
                 <separator/>
@@ -236,15 +260,16 @@
         <field name="name">Quota-Period Lines (configuration-tree view)</field>
         <field name="model">wua.quotaperiod.line</field>
         <field name="arch" type="xml">
-            <form>
             <tree class="o_base_wua_quota_management_config_quotaperiod_line_view_tree">
-                <field name="pos_str"/>
+                <field name="pos_str" string="Order"/>
                 <field name="superproduct_id" widget="many2one_unclickable"/>
+                <field name="provision"/>
+                <field name="number_of_parcels"
+                       string="Currently selected parcels"/>
                 <button name="action_select_quotaperiod_line_parcels"
                         type="object"
                         string="Select"/>
             </tree>
-            </form>        
         </field>
     </record>
 
