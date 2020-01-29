@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_quota_view_form" model="ir.ui.view">
+        <field name="name">Quotas (form view)</field>
+        <field name="model">wua.quota</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false" duplicate="0">
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="agriculturalseason_id"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="initial_value"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_quota_view_tree" model="ir.ui.view">
+        <field name="name">Quotas (tree view)</field>
+        <field name="model">wua.quota</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_quota_view_tree"
+                  colors="red:balance&lt;0"
+                  create="false" delete="false">
+                <field name="quotaperiod_id"/>
+                <field name="partner_id"/>
+                <field name="superproduct_id"/>
+                <field name="initial_value"/>
+                <field name="accumulated_consumption" string="Consumption"/>
+                <field name="balance"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_quota_view_search" model="ir.ui.view">
+        <field name="name">Quotas (search view)</field>
+        <field name="model">wua.quota</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_quota_action"
+            model="ir.actions.act_window">
+        <field name="name">Quotas</field>
+        <field name="res_model">wua.quota</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_quota_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_quota_view_form')})]"/>
+        <field name="search_view_id" ref="wua_quota_view_search"/>
+        <field name="context">
+          {'compressed_agriculturalseason': True,
+           'compressed_quotaperiod': True,
+           'search_default_active_agriculturalseason': True}
+        </field>
+    </record>
+
+    <menuitem id="quota_menu"
+              name="Quotas"
+              parent="management_menu"
+              sequence="5"
+              action="wua_quota_action"/>
+
+</odoo>

@@ -55,13 +55,15 @@ class WuaQuota(models.Model):
         string='Initial Value',
         digits=(32, 4),
         required=True,
-        default=0)
+        default=0,
+        readonly=True)
 
     accumulated_consumption = fields.Float(
         string='Accumulated Consumption',
         digits=(32, 4),
         required=True,
-        default=0)
+        default=0,
+        readonly=True)
 
     balance = fields.Float(
         string='Balance',

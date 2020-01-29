@@ -231,7 +231,8 @@ class WuaQuotaperiod(models.Model):
                 record.end_date, '%Y-%m-%d').strftime('%x')
             name = initial_date_str + ' - ' + end_date_str
             description = ''
-            if record.description:
+            if (record.description and
+               (not self.env.context.get('compressed_quotaperiod', False))):
                 description = record.description.strip()
             if description:
                 name = name + ' (' + description + ')'
@@ -325,10 +326,11 @@ class WuaQuotaperiod(models.Model):
                             'superproduct_id': src_line.superproduct_id.id,
                             'provision': src_line.provision,
                             })
-                        new_quotaperiodline._populate_items_select()
+                        new_quotaperiodline._populate_items_select(
+                            selected=False)
                         self.env.invalidate_all()
-                        # Provisional
-                        print new_quotaperiodline
+                        self._update_selected_field_quotaperiodline(
+                            src_line, new_quotaperiodline)
                         new_quotaperiodline._compute_number_of_parcels()
                         new_quotaperiodline._compute_area_total()
                         new_quotaperiodline._compute_configured_line()
@@ -400,6 +402,7 @@ class WuaQuotaperiod(models.Model):
                 partners_with_quota = []
                 partnerlinks_with_quota = []
                 # First: get water payers.
+                selected_parcels_ids = []
                 for selected_parcel in selected_parcels:
                     partnerlinks_of_parcel = partnerlinks.filtered(
                         lambda x: x.parcel_id.id ==
@@ -408,6 +411,7 @@ class WuaQuotaperiod(models.Model):
                     for partnerlink in partnerlinks_of_parcel:
                         partners_with_quota.append(partnerlink.partner_id.id)
                         partnerlinks_with_quota.append(partnerlink.id)
+                    selected_parcels_ids.append(selected_parcel.parcel_id.id)
                 if partners_with_quota:
                     # Second: loop on partners
                     partners_with_quota = list(set(partners_with_quota))
@@ -419,7 +423,8 @@ class WuaQuotaperiod(models.Model):
                     for partner_id in partners_with_quota:
                         selected_partnerlinks_of_partner = \
                             selected_partnerlinks.search(
-                                [('partner_id', '=', partner_id)])
+                                [('partner_id', '=', partner_id),
+                                 ('parcel_id', 'in', selected_parcels_ids)])
                         area = sum(x.area_official_water_costs_net
                                    for x in selected_partnerlinks_of_partner)
                         initial_value = area * provision
@@ -464,6 +469,29 @@ class WuaQuotaperiod(models.Model):
                         test_parcel_assignments=False)
                     quotaperiodline._compute_configured_line(
                         test_parcel_assignments=False)
+
+    def _update_selected_field_quotaperiodline(self,
+                                               src_quotaperiodline,
+                                               dst_quotaperiodline):
+        if src_quotaperiodline and dst_quotaperiodline:
+            src_id = src_quotaperiodline.id
+            dst_id = dst_quotaperiodline.id
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE wua_quotaperiod_line_parcel d
+                    SET selected=TRUE
+                    WHERE
+                    d.quotaperiodline_id=%s AND
+                    d.parcel_id in
+                    (SELECT parcel_id
+                    FROM wua_quotaperiod_line_parcel s
+                    WHERE s.quotaperiodline_id=%s AND
+                    SELECTED=TRUE)""", (dst_id, src_id))
+                self.env.cr.commit()
+            except:
+                self.env.cr.rollback()
+                raise exceptions.UserError(_('Error when updating records.'))
 
 
 class WuaQuotaperiodLine(models.Model):
@@ -712,11 +740,14 @@ class WuaQuotaperiodLine(models.Model):
             }
         return act_window
 
-    def _populate_items_select(self):
+    def _populate_items_select(self, selected=True):
         parcels = self.env['wua.parcel'].search([])
         if len(parcels) > 0:
             user_id = self.env.user.id
             quotaperiodline_id = self.id
+            selected_val = 'TRUE'
+            if not selected:
+                selected_val = 'FALSE'
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -733,14 +764,14 @@ class WuaQuotaperiodLine(models.Model):
                     hydraulicsector_id, irrigationditch_id,
                     with_watering_shift, with_irrigation_worker, employee_id)
                     SELECT nextval('wua_quotaperiod_line_parcel_id_seq'), %s,
-                    %s, now(), now(), %s, TRUE, id, cadastral_reference,
+                    %s, now(), now(), %s, %s, id, cadastral_reference,
                     is_billable_water, is_billable_expenses, leased_parcel,
                     area_official, partner_id, hydraulic_infrastructure_type,
                     pressurized_irrigation_right, gravityfed_irrigation_right,
                     hydraulicsector_id, irrigationditch_id,
                     with_watering_shift, with_irrigation_worker, employee_id
                     FROM wua_parcel WHERE active=TRUE
-                    """, (user_id, user_id, quotaperiodline_id))
+                    """, (user_id, user_id, quotaperiodline_id, selected_val))
                 self.env.cr.execute("""
                     INSERT INTO wua_quotaperiod_line_parcel_parceltag_rel
                     (quotaperiod_line_parcel_id, parceltag_id)
