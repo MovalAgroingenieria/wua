@@ -60,13 +60,17 @@ class WuaQuotaperiod(models.Model):
         compute='_compute_name')
 
     of_active_agriculturalseason = fields.Boolean(
-        string="Of active ag.season",
+        string='Of active ag.season',
         store=True,
-        compute="_compute_of_active_agriculturalseason")
+        compute='_compute_of_active_agriculturalseason')
 
     initialized_agriculturalseason = fields.Boolean(
-        string="Initialized Agricultural Season",
-        compute="_compute_initialized_agriculturalseason")
+        string='Initialized Agricultural Season',
+        compute='_compute_initialized_agriculturalseason')
+
+    quotaperiods_in_draft_state_in_agriculturalseason = fields.Boolean(
+        string='Some quota period in draft state in the agricultural season',
+        compute='_compute_quotaperiods_in_draft_state_in_agriculturalseason')
 
     number_of_superproducts = fields.Integer(
         string='Number of superproducts',
@@ -110,6 +114,11 @@ class WuaQuotaperiod(models.Model):
         comodel_name='wua.quota',
         inverse_name='quotaperiod_id')
 
+    hydricmovement_ids = fields.One2many(
+        string='Hydric Movements',
+        comodel_name='wua.hydricmovement',
+        inverse_name='quotaperiod_id')
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
@@ -145,6 +154,16 @@ class WuaQuotaperiod(models.Model):
                 initialized_agriculturalseason = True
             record.initialized_agriculturalseason = \
                 initialized_agriculturalseason
+
+    @api.multi
+    def _compute_quotaperiods_in_draft_state_in_agriculturalseason(self):
+        for record in self:
+            quotaperiods_in_draft_state_in_agriculturalseason = False
+            if (record.agriculturalseason_id and
+               record.agriculturalseason_id.quotaperiods_in_draft_state):
+                quotaperiods_in_draft_state_in_agriculturalseason = True
+            record.quotaperiods_in_draft_state_in_agriculturalseason = \
+                quotaperiods_in_draft_state_in_agriculturalseason
 
     @api.depends('quotaperiodline_ids')
     def _compute_number_of_superproducts(self):
@@ -277,10 +296,53 @@ class WuaQuotaperiod(models.Model):
     @api.multi
     def action_cancel_quotaperiod(self):
         self.ensure_one()
+        quotaperiod = self
         # Provisional (pending: delete individual inputs, cessions, etc)
-        self._delete_quotas_hydricmovements(self)
-        self._delete_parcel_assignments(self)
-        self._compute_state()
+        self._delete_quotas_hydricmovements(quotaperiod)
+        self._delete_parcel_assignments(quotaperiod)
+        quotaperiod.action_open_quotaperiod()
+        quotaperiod._compute_state()
+
+    @api.multi
+    def action_copy_quotaperiod(self):
+        self.ensure_one()
+        src_quotaperiod = self
+        if (src_quotaperiod.state == 'configured' or
+           src_quotaperiod.state == 'generated'):
+            dst_quotaperiods = self.env['wua.quotaperiod'].search([
+                ('agriculturalseason_id', '=',
+                 src_quotaperiod.agriculturalseason_id.id),
+                ('id', '!=', src_quotaperiod.id),
+                ('state', '=', 'draft')])
+            if dst_quotaperiods:
+                quotaperiodline_model = self.env['wua.quotaperiod.line']
+                for dst_quotaperiod in dst_quotaperiods:
+                    dst_quotaperiod.quotaperiodline_ids.unlink()
+                    for src_line in src_quotaperiod.quotaperiodline_ids:
+                        new_quotaperiodline = quotaperiodline_model.create({
+                            'quotaperiod_id': dst_quotaperiod.id,
+                            'pos': src_line.pos,
+                            'superproduct_id': src_line.superproduct_id.id,
+                            'provision': src_line.provision,
+                            })
+                        new_quotaperiodline._populate_items_select()
+                        self.env.invalidate_all()
+                        # Provisional
+                        print new_quotaperiodline
+                        new_quotaperiodline._compute_number_of_parcels()
+                        new_quotaperiodline._compute_area_total()
+                        new_quotaperiodline._compute_configured_line()
+                    dst_quotaperiod._compute_state()
+
+    @api.multi
+    def action_close_quotaperiod(self):
+        self.ensure_one()
+        self.is_closed = True
+
+    @api.multi
+    def action_open_quotaperiod(self):
+        self.ensure_one()
+        self.is_closed = False
 
     def _populate_pos_in_quotaperiodlines(self, vals):
         if vals and 'quotaperiodline_ids' in vals:
@@ -311,9 +373,11 @@ class WuaQuotaperiod(models.Model):
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
+                    DELETE FROM wua_hydricmovement
+                    WHERE quotaperiod_id=""" + str(quotaperiod_id))
+                self.env.cr.execute("""
                     DELETE FROM wua_quota
                     WHERE quotaperiod_id=""" + str(quotaperiod_id))
-                # Provisional (pending: hydric movements)
                 self.env.cr.commit()
             except:
                 self.env.cr.rollback()
@@ -351,6 +415,7 @@ class WuaQuotaperiod(models.Model):
                         self.env['wua.parcel.partnerlink'].browse(
                             partnerlinks_with_quota)
                     quota_model = self.env['wua.quota']
+                    hydricmovement_model = self.env['wua.hydricmovement']
                     for partner_id in partners_with_quota:
                         selected_partnerlinks_of_partner = \
                             selected_partnerlinks.search(
@@ -358,19 +423,18 @@ class WuaQuotaperiod(models.Model):
                         area = sum(x.area_official_water_costs_net
                                    for x in selected_partnerlinks_of_partner)
                         initial_value = area * provision
-                        quota_model.create({
+                        new_quota = quota_model.create({
                             'quotaperiod_id': quotaperiod.id,
                             'partner_id': partner_id,
                             'superproduct_id': superproduct.id,
                             'initial_value': initial_value,
                             })
-                        # Provisional
-                        print quotaperiod.initial_date
-                        print superproduct.name
-                        print partner_id
-                        print provision
-                        print area
-                        print initial_value
+                        hydricmovement_model.create({
+                            'quota_id': new_quota.id,
+                            'event_time': datetime.datetime.now(),
+                            'type': 'multiple_assign',
+                            'volume': initial_value,
+                            })
             else:
                 resp = False
         return resp
@@ -470,7 +534,7 @@ class WuaQuotaperiodLine(models.Model):
         compute='_compute_volume_total')
 
     configured_line = fields.Boolean(
-        string="Configured",
+        string='Configured',
         store=True,
         compute='_compute_configured_line')
 
@@ -478,6 +542,12 @@ class WuaQuotaperiodLine(models.Model):
         string='Parcels of quota-period line',
         comodel_name='wua.quotaperiod.line.parcel',
         inverse_name='quotaperiodline_id')
+
+    selected_quotaperiodlineparcel_ids = fields.One2many(
+        string='Selected parcels of quota-period line',
+        comodel_name='wua.quotaperiod.line.parcel',
+        inverse_name='quotaperiodline_id',
+        domain=[('selected', '=', True)])
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -621,6 +691,12 @@ class WuaQuotaperiodLine(models.Model):
             self._compute_number_of_parcels()
             self._compute_area_total()
             self._compute_configured_line()
+        id_tree_view = self.env.ref(
+            'base_wua_quota_management.'
+            'wua_quotaperiod_line_parcel_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_quota_management.'
+            'wua_quotaperiod_line_parcel_view_search')
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Parcels') +
@@ -628,6 +704,9 @@ class WuaQuotaperiodLine(models.Model):
             'res_model': 'wua.quotaperiod.line.parcel',
             'view_type': 'form',
             'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree')],
+            'search_view_id': (search_view.id, search_view.name),
+            'target': 'current',
             'domain': [["quotaperiodline_id", "=", self.id]],
             'limit': 10000000,
             }
@@ -699,7 +778,7 @@ class WuaQuotaperiodLineParcel(models.Model):
         ondelete='cascade')
 
     selected = fields.Boolean(
-        string="Selected",
+        string='Selected',
         default=True)
 
     parcel_id = fields.Many2one(
@@ -740,11 +819,11 @@ class WuaQuotaperiodLineParcel(models.Model):
         default=0)
 
     pressurized_irrigation_right = fields.Boolean(
-        string="Water Right (pres)",
+        string='Water Right (pres)',
         default=True)
 
     gravityfed_irrigation_right = fields.Boolean(
-        string="Water Right (grav)",
+        string='Water Right (grav)',
         default=True)
 
     hydraulicsector_id = fields.Many2one(
@@ -758,11 +837,11 @@ class WuaQuotaperiodLineParcel(models.Model):
         ondelete='restrict')
 
     with_watering_shift = fields.Boolean(
-        string="With Watering Shift",
+        string='With Watering Shift',
         default=True)
 
     with_irrigation_worker = fields.Boolean(
-        string="With Irrig. Worker",
+        string='With Irrig. Worker',
         default=False)
 
     employee_id = fields.Many2one(

@@ -13,6 +13,11 @@ class ResPartner(models.Model):
         comodel_name='wua.quota',
         inverse_name='partner_id')
 
+    hydricmovement_ids = fields.One2many(
+        string='Hydric Movements',
+        comodel_name='wua.hydricmovement',
+        inverse_name='partner_id')
+
     @api.multi
     def action_get_partner_quotas(self):
         self.ensure_one()

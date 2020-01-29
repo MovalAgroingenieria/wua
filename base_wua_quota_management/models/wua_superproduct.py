@@ -68,6 +68,11 @@ class WuaSuperproduct(models.Model):
         comodel_name='wua.quota',
         inverse_name='superproduct_id')
 
+    hydricmovement_ids = fields.One2many(
+        string='Hydric Movements',
+        comodel_name='wua.hydricmovement',
+        inverse_name='superproduct_id')
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [

@@ -14,6 +14,16 @@ class WuaAgriculturalseason(models.Model):
         comodel_name='wua.quotaperiod',
         inverse_name='agriculturalseason_id')
 
+    quota_ids = fields.One2many(
+        string='Quotas',
+        comodel_name='wua.quota',
+        inverse_name='agriculturalseason_id')
+
+    hydricmovement_ids = fields.One2many(
+        string='Hydric Movements',
+        comodel_name='wua.hydricmovement',
+        inverse_name='agriculturalseason_id')
+
     number_of_quotaperiods = fields.Integer(
         string='Number of quota periods',
         store=True,
@@ -23,6 +33,11 @@ class WuaAgriculturalseason(models.Model):
         string='Initialized',
         store=True,
         compute='_compute_initialized')
+
+    quotaperiods_in_draft_state = fields.Boolean(
+        string='Some quota period in draft state',
+        store=True,
+        compute='_compute_quotaperiods_in_draft_state')
 
     @api.depends('quotaperiod_ids')
     def _compute_number_of_quotaperiods(self):
@@ -81,6 +96,17 @@ class WuaAgriculturalseason(models.Model):
                         if not error:
                             initialized = True
             record.initialized = initialized
+
+    @api.depends('quotaperiod_ids', 'quotaperiod_ids.state')
+    def _compute_quotaperiods_in_draft_state(self):
+        for record in self:
+            quotaperiods_in_draft_state = False
+            if record.quotaperiod_ids:
+                filtered_quotaperiod_ids = filter(
+                    lambda x: x['state'] == 'draft', record.quotaperiod_ids)
+                if filtered_quotaperiod_ids:
+                    quotaperiods_in_draft_state = True
+            record.quotaperiods_in_draft_state = quotaperiods_in_draft_state
 
     @api.multi
     def write(self, vals):

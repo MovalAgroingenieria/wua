@@ -43,6 +43,14 @@ class WuaQuota(models.Model):
         index=True,
         compute='_compute_name')
 
+    agriculturalseason_id = fields.Many2one(
+        string='Agricultural Season',
+        comodel_name='wua.agriculturalseason',
+        store=True,
+        index=True,
+        ondelete='restrict',
+        compute='_compute_agriculturalseason_id')
+
     initial_value = fields.Float(
         string='Initial Value',
         digits=(32, 4),
@@ -61,6 +69,13 @@ class WuaQuota(models.Model):
         store=True,
         compute='_compute_balance')
 
+    hydricmovement_ids = fields.One2many(
+        string='Hydric Movements',
+        comodel_name='wua.hydricmovement',
+        inverse_name='quota_id')
+
+    notes = fields.Html(string='Notes')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Quota.'),
@@ -74,12 +89,21 @@ class WuaQuota(models.Model):
             name = ''
             if (record.quotaperiod_id and record.partner_id and
                record.superproduct_id):
-                name = record.quotaperiod_id.initial_date + \
+                name = record.quotaperiod_id.initial_date + '-' + \
                     str(record.partner_id.partner_code).zfill(
-                        self.MAX_SIZE_PARTNER_CODE) + \
+                        self.MAX_SIZE_PARTNER_CODE) + '-' + \
                     str(record.superproduct_id.superproduct_code).zfill(
                         self.MAX_SIZE_SUPERPRODUCT_CODE)
             record.name = name
+
+    @api.depends('quotaperiod_id')
+    def _compute_agriculturalseason_id(self):
+        for record in self:
+            agriculturalseason_id = None
+            if record.quotaperiod_id:
+                agriculturalseason_id = \
+                    record.quotaperiod_id.agriculturalseason_id
+            record.agriculturalseason_id = agriculturalseason_id
 
     @api.depends('initial_value', 'accumulated_consumption')
     def _compute_balance(self):
