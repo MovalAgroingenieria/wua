@@ -5,15 +5,35 @@
         <field name="name">Quotas (form view)</field>
         <field name="model">wua.quota</field>
         <field name="arch" type="xml">
-            <form create="false" delete="false" duplicate="0">
+            <form create="false" duplicate="0">
                 <sheet>
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="agriculturalseason_id"/>
+                            <field name="quotaperiod_id"/>
+                            <field name="superproduct_id"/>
+                            <field name="partner_id"/>
                         </group>
-                        <group name="master_data_right">
+                        <group name="master_data_right" style="text-align:right;">
                             <field name="initial_value"/>
+                            <field name="accumulated_consumption"/>
+                            <field name="balance"
+                             attrs="{'invisible':[('balance','&lt;',0)]}"/>
+                            <field name="negative_balance" style="color:red"
+                             attrs="{'invisible':[('balance','>=',0)]}"/>
                         </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="hydricmovements_page" string="Movements">
+                                <field name="hydricmovement_ids"
+                                       context="{'tree_view_ref':
+                                                 'base_wua_quota_management.wua_hydricmovement_of_quota_view_tree'}"/>                        
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
                     </group>
                 </sheet>
                 <div class="oe_chatter">
@@ -32,12 +52,13 @@
         <field name="arch" type="xml">
             <tree class="o_base_wua_quota_management_quota_view_tree"
                   colors="red:balance&lt;0"
-                  create="false" delete="false">
-                <field name="quotaperiod_id"/>
+                  create="false">
+                <field name="superproduct_id"/>                
                 <field name="partner_id"/>
-                <field name="superproduct_id"/>
+                <field name="quotaperiod_id"
+                       widget="many2one_unclickable"/>
                 <field name="initial_value"/>
-                <field name="accumulated_consumption" string="Consumption"/>
+                <field name="accumulated_consumption"/>
                 <field name="balance"/>
             </tree>
         </field>
@@ -49,7 +70,54 @@
         <field name="arch" type="xml">
             <search>
                 <field name="partner_id"/>
+                <filter string="Active Agricultural Season"
+                        name="active_agriculturalseason"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <filter string="Positive Quotas"
+                        name="positive_quotas"
+                        domain="[('balance','&gt;=',0)]"/>
+                <filter string="Negative Quotas"
+                        name="negative_quotas"
+                        domain="[('balance','&lt;',0)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="grouped_agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Quota Period"
+                            name="grouped_quotaperiod"
+                     context="{'group_by':'quotaperiod_id'}"/>
+                    <filter string="Superproduct"
+                            name="grouped_superproduct"
+                     context="{'group_by':'superproduct_id'}"/>
+                    <filter string="Partner"
+                            name="grouped_partner"
+                     context="{'group_by':'partner_id'}"/>                     
+                </group>
             </search>
+        </field>
+    </record>
+
+    <record id="wua_quota_view_graph" model="ir.ui.view">
+        <field name="name">Quotas (graph view)</field>
+        <field name="model">wua.quota</field>
+        <field name="arch" type="xml">
+            <graph string="Quotas" stacked="False">
+                <field name="quotaperiod_id"/>
+                <field name="accumulated_consumption" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_quota_view_pivot" model="ir.ui.view" >
+        <field name="name">Quotas (pivot view)</field>
+        <field name="model">wua.quota</field>
+        <field name="arch" type="xml">
+            <pivot string="Quotas" display_quantity="true">
+                <field name="quotaperiod_id"/>
+                <field name="accumulated_consumption" type='measure'/>
+            </pivot>
         </field>
     </record>
 
@@ -58,7 +126,7 @@
         <field name="name">Quotas</field>
         <field name="res_model">wua.quota</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
@@ -69,12 +137,14 @@
         <field name="context">
           {'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
-           'search_default_active_agriculturalseason': True}
+           'search_default_active_agriculturalseason': True,
+           'search_default_grouped_quotaperiod': True,
+           'search_default_grouped_superproduct': True,}
         </field>
     </record>
 
     <menuitem id="quota_menu"
-              name="Quotas"
+              name="Partner Quotas"
               parent="management_menu"
               sequence="5"
               action="wua_quota_action"/>

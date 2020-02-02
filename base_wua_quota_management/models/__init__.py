@@ -11,3 +11,4 @@ from . import wua_waterconnection
 from . import wua_quotaperiod
 from . import wua_quota
 from . import wua_hydricmovement
+from . import wua_presconsumption

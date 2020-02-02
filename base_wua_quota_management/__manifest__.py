@@ -14,7 +14,8 @@
     "depends": [
         "base_wua_invoicing_pressurized_irrigation",
         "base_wua_invoicing_gravity_irrigation",
-        "base_wua_irrigation_report",],
+        "base_wua_irrigation_report",
+        "web_widget_bokeh_chart",],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
@@ -30,7 +31,8 @@
         "views/res_partner_view.xml",
         "views/wua_waterconnection_view.xml",
         "views/wua_quotaperiod_view.xml",
-        "views/wua_quota_view.xml",],
+        "views/wua_quota_view.xml",
+        "views/wua_hydricmovement_view.xml",],
     "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",
     "installable": True,

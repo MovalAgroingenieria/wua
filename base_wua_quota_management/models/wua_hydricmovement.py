@@ -3,14 +3,13 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-from odoo import models, fields, api, _
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaHydricmovement(models.Model):
     _name = 'wua.hydricmovement'
     _description = 'Hydric Movement'
-    _inherit = 'mail.thread'
-    _order = 'event_time desc, quota_name'
+    _order = 'event_time, quota_name'
 
     MAX_SIZE_PARTNER_CODE = 6
     MAX_SIZE_SUPERPRODUCT_CODE = 6
@@ -27,13 +26,15 @@ class WuaHydricmovement(models.Model):
     event_time = fields.Datetime(
         string='Time',
         required=True,
-        index=True)
+        index=True,
+        readonly=True)
 
     quota_id = fields.Many2one(
         string='Quota',
         comodel_name='wua.quota',
         required=True,
         index=True,
+        readonly=True,
         ondelete='cascade')
 
     quota_name = fields.Char(
@@ -82,6 +83,11 @@ class WuaHydricmovement(models.Model):
         ondelete='restrict',
         compute='_compute_agriculturalseason_id')
 
+    of_active_agriculturalseason = fields.Boolean(
+        string='Of active ag.season',
+        store=True,
+        compute='_compute_of_active_agriculturalseason')
+
     type = fields.Selection([
         ('multiple_assign', 'Multiple Assignment'),
         ('pos_indiv_assign', 'Individual Assignment'),
@@ -94,7 +100,8 @@ class WuaHydricmovement(models.Model):
         ('input_prev_quota', 'Input from previous quota'),
         ('output_next_quota', 'Output to next quota')],
         string='Type',
-        required=True)
+        required=True,
+        readonly=True,)
 
     is_consumption = fields.Boolean(
         string='Is consumption',
@@ -105,13 +112,24 @@ class WuaHydricmovement(models.Model):
         string='Volume (m3)',
         digits=(32, 4),
         default=0,
-        required=True)
+        required=True,
+        readonly=True)
 
     accounting_volume = fields.Float(
         string='Accounting Volume (m3)',
         digits=(32, 4),
         store=True,
         compute='_compute_accounting_volume')
+
+    balance = fields.Float(
+        string='Balance (m3)',
+        digits=(32, 4),
+        compute='_compute_balance')
+
+    negative_balance = fields.Float(
+        string='Balance (m3)',
+        digits=(32, 4),
+        compute='_compute_negative_balance')
 
     description = fields.Char(
         string='Description',
@@ -120,7 +138,11 @@ class WuaHydricmovement(models.Model):
         index=True,
         compute='_compute_description')
 
-    notes = fields.Html(string='Notes')
+    presconsumption_id = fields.Many2one(
+        string='Consumption',
+        comodel_name='wua.presconsumption',
+        readonly=True,
+        ondelete='cascade')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -178,6 +200,14 @@ class WuaHydricmovement(models.Model):
                     record.quotaperiod_id.agriculturalseason_id
             record.agriculturalseason_id = agriculturalseason_id
 
+    @api.depends('agriculturalseason_id')
+    def _compute_of_active_agriculturalseason(self):
+        for record in self:
+            of_active_agriculturalseason = False
+            if record.agriculturalseason_id.active_agriculturalseason:
+                of_active_agriculturalseason = True
+            record.of_active_agriculturalseason = of_active_agriculturalseason
+
     @api.depends('type')
     def _compute_is_consumption(self):
         for record in self:
@@ -192,11 +222,72 @@ class WuaHydricmovement(models.Model):
                 accounting_volume = -accounting_volume
             record.accounting_volume = accounting_volume
 
+    @api.multi
+    def _compute_balance(self):
+        for record in self:
+            balance = 0
+            previous_hydricmovements = self.env['wua.hydricmovement'].search([
+                ('quota_id', '=', record.quota_id.id),
+                ('event_time', '<=', record.event_time)])
+            balance = sum(x.accounting_volume
+                          for x in previous_hydricmovements)
+            record.balance = balance
+
+    @api.multi
+    def _compute_negative_balance(self):
+        # Auxiliary field for negative balances in red (form view).
+        for record in self:
+            record.negative_balance = record.balance
+
     @api.depends('type', 'quotaperiod_id')
     def _compute_description(self):
         for record in self:
             description = self._get_description(record)
             record.description = description
+
+    @api.constrains('type')
+    def _check_reference_id(self):
+        if len(self) == 1:
+            reference_ok = self._test_reference_id(self)
+            if not reference_ok:
+                error_message_01 = _('The reference of hydric movement '
+                                     'does not exist')
+                error_message_02 = _('Hydric Movement')
+                error_message_03 = _('Type')
+                raise exceptions.UserError(error_message_01 + '.\n' +
+                                           error_message_02 + ': ' +
+                                           self.name + '\n' +
+                                           error_message_03 + ': ' +
+                                           self.type)
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            initial_date_str = datetime.datetime.strptime(
+                record.quotaperiod_id.initial_date, '%Y-%m-%d').strftime('%x')
+            end_date_str = datetime.datetime.strptime(
+                record.quotaperiod_id.end_date, '%Y-%m-%d').strftime('%x')
+            superproduct_name = record.superproduct_id.name
+            partner_name = record.partner_id.name + \
+                ' [' + str(record.partner_id.partner_code) + ']'
+            event_time_day_and_hour = datetime.datetime.strptime(
+                record.event_time, '%Y-%m-%d %H:%M:%S')
+            event_time_day_str = event_time_day_and_hour.strftime('%x')
+            event_time_hour_str = event_time_day_and_hour.strftime('%X')
+            name = initial_date_str + ' - ' + end_date_str + \
+                ' (' + superproduct_name.lower() + '), ' + partner_name + \
+                ' / ' + event_time_day_str + ' ' + event_time_hour_str
+            result.append((record.id, name))
+        return result
+
+    @api.multi
+    def unlink(self):
+        for record in self:
+            raise exceptions.UserError(_(
+                'It is not possible to directly delete a hydric '
+                'consumption.'))
+        return super(WuaHydricmovement, self).unlink()
 
     def _is_consumption(self, type):
         resp = False
@@ -222,7 +313,12 @@ class WuaHydricmovement(models.Model):
                         strftime('%x')
                 resp = _('Multiple Assignment') + '.' + \
                     _('Quota Period') + ': ' + initial_date_str
-            # Provisional
+            if type == 'pres_consumption':
+                waterconnection_name = \
+                    hydricmovement.presconsumption_id.waterconnection_id.name
+                resp = _('Pressurized Consumption') + '.' + \
+                    _('Water connection') + ': ' + waterconnection_name
+            # Provisional (pending other types)
         else:
             resp = self._get_description_for_new_types(hydricmovement)
         return resp
@@ -231,3 +327,21 @@ class WuaHydricmovement(models.Model):
     # from the "_compute_description" method)
     def _get_description_for_new_types(self, hydricmovement):
         return ''
+
+    def _test_reference_id(self, hydricmovement):
+        resp = True
+        if (hydricmovement.type in self.OUTPUT_TYPES or
+           hydricmovement.type in self.INPUT_TYPES):
+            # Provisional (pending other types)
+            resp = not ((hydricmovement.type == 'multiple_assign' and
+                         (not hydricmovement.quotaperiod_id)) or
+                        (hydricmovement.type == 'pres_consumption' and
+                         (not hydricmovement.presconsumption_id)))
+        else:
+            resp = self._test_reference_id_for_new_types(hydricmovement)
+        return resp
+
+    # Hook for new hydric-movement types in other modules (it is called
+    # from the "_check_reference_id" method)
+    def _test_reference_id_for_new_types(self, hydricmovement):
+        return True

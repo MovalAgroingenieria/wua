@@ -251,14 +251,63 @@ class WuaQuotaperiod(models.Model):
     @api.multi
     def action_get_partner_quotas(self):
         self.ensure_one()
-        # Provisional
-        print 'action_get_partner_quotas'
+        if self.quota_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Quotas'),
+                'res_model': 'wua.quota',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.quota_ids.ids)],
+                'context': {'compressed_agriculturalseason': True,
+                            'compressed_quotaperiod': True,
+                            'search_default_active_agriculturalseason': True,
+                            'search_default_grouped_superproduct': True}
+                }
+            return act_window
 
     @api.multi
     def action_get_hydric_movements(self):
         self.ensure_one()
-        # Provisional
-        print 'action_get_hydric_movements'
+        if self.hydricmovement_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Hydric Movements'),
+                'res_model': 'wua.hydricmovement',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.hydricmovement_ids.ids)],
+                'context': {'compressed_agriculturalseason': True,
+                            'compressed_quotaperiod': True,
+                            'search_default_active_agriculturalseason': True,
+                            'search_default_grouped_superproduct': True,
+                            'search_default_grouped_partner': True}
+                }
+            return act_window
 
     @api.multi
     def action_configure_quotaperiod(self):
@@ -436,7 +485,7 @@ class WuaQuotaperiod(models.Model):
                             })
                         hydricmovement_model.create({
                             'quota_id': new_quota.id,
-                            'event_time': datetime.datetime.now(),
+                            'event_time': quotaperiod.initial_date,
                             'type': 'multiple_assign',
                             'volume': initial_value,
                             })

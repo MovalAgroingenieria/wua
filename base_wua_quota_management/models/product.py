@@ -83,6 +83,7 @@ class ProductTemplate(models.Model):
         return super(ProductTemplate, self).write(vals)
 
     def _get_number_of_hydric_consumptions(self, superproduct):
-        # Provisional
         resp = 0
+        if superproduct and superproduct.hydricmovement_ids:
+            resp = len(superproduct.hydricmovement_ids)
         return resp
