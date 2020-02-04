@@ -78,7 +78,7 @@
                                                     <td><span>Wua partner code:</span></td>
                                                     <td class="text-right"><span t-field="o.partner_code"/></td>
                                                 </tr>
-                                                <tr>
+                                                <tr name="tr_number_of_votes">
                                                     <td><span>Number of votes:</span></td>
                                                     <td class="text-right"><span t-field="o.number_of_votes"/></td>
                                                 </tr>
@@ -113,28 +113,28 @@
                                     <thead>
                                         <tr>
                                             <th>Parcel</th>
-                                            <th>Cadastral reference</th>
+                                            <th name="th_cadastral_reference_name">Cadastral reference</th>
                                             <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
-                                            <th class="text-center">Irrigation partner</th>
-                                            <th>Profile</th>
-                                            <th class="text-right">Ownership (%)</th>
-                                            <th class="text-right">Water (%)</th>
-                                            <th class="text-right">Costs (%)</th>
+                                            <th name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
+                                            <th name="th_profile_name">Profile</th>
+                                            <th name="th_ownership_name" class="text-right">Ownership (%)</th>
+                                            <th name="th_water_name" class="text-right">Water (%)</th>
+                                            <th name="th_costs_name" class="text-right">Costs (%)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr t-foreach="o.partnerlink_ids" t-as="p">
                                             <td><span t-field="p.parcel_id"/></td>
-                                            <td><span t-field="p.parcel_id.cadastral_reference"/></td>
+                                            <td name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
                                             <td class="text-right"><span t-field="p.area_official"/></td>
-                                            <td class="text-center">
+                                            <td name="td_irrigation_partner_name" class="text-center">
                                                 <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
                                                 <t t-else=""><span>No</span></t>
                                             </td>
-                                            <td><span t-field="p.profile"/></td>
-                                            <td class="text-right"><span t-field="p.ownership_percentage"/></td>
-                                            <td class="text-right"><span t-field="p.water_costs_percentage"/></td>
-                                            <td class="text-right"><span t-field="p.other_costs_percentage"/></td>
+                                            <td name="td_profile_name" ><span t-field="p.profile"/></td>
+                                            <td name="td_ownership_name" class="text-right"><span t-field="p.ownership_percentage"/></td>
+                                            <td name="td_water_name" class="text-right"><span t-field="p.water_costs_percentage"/></td>
+                                            <td name="td_costs_name" class="text-right"><span t-field="p.other_costs_percentage"/></td>
                                         </tr>
                                     </tbody>
                                 </table>
