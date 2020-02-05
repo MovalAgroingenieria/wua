@@ -38,7 +38,7 @@ class WuaWaterconnection(models.Model):
                 p = figure(sizing_mode='scale_width', plot_height=150,
                            x_axis_type='datetime',
                            toolbar_location=None)
-                p.line(x_values, y_values)
+                p.line(x_values, y_values, color='navy', line_width=2)
                 p.title.text = _('Consumptions of the active '
                                  'agricultural season')
                 p.xaxis.axis_label = _('Date')

@@ -20,21 +20,17 @@
                         <div t-attf-class="#{kanban_color(0)}">
                             <t t-call="superproduct_top"/>
                             <t t-if="record.active_agriculturalseason_id.raw_value">
-                                <div class="container o_kanban_card_content o_visible">
+                                <div class="container o_visible">
                                     <div class="row"
                                          style="margin-top: 10px;margin-bottom: 10px">
                                         <t t-call="superproduct_body_summary"/>
                                     </div>
                                     <t t-if="record.total_input.raw_value &gt; 0 || record.total_output.raw_value &gt; 0">
                                         <div class="row"
-                                             style="margin-top: 10px;margin-bottom: 10px">
+                                             style="margin-top: 10px;">
                                             <t t-call="superproduct_body_graphs"/>
                                         </div>
-                                        <div class="row"
-                                             style="margin-top: 10px;margin-bottom: 10px">
-                                            <t t-call="superproduct_body_graphs"/>
-                                        </div>
-                                    </t>
+                                    </t>                                    
                                 </div>
                             </t>
                         </div>
@@ -114,8 +110,17 @@
                     </t>
 
                     <t t-name="superproduct_body_graphs">
-                        <div class="o_kanban_graph_section">
-                            <field name="kanban_dashboard_graph" graph_type="bar" widget="dashboard_graph"/>
+                        <div class="row"
+                             style="margin-top: 10px;margin-bottom: 10px">
+                            <field name="kanban_dashboard_graph_inputs" graph_type="bar-values" widget="wua_dashboard_graph"/>
+                        </div>
+                        <div class="row"
+                             style="margin-top: 10px;margin-bottom: 10px">
+                            <field name="kanban_dashboard_graph_outputs" graph_type="bar-values" widget="wua_dashboard_graph"/>
+                        </div>
+                        <div class="row"
+                             style="margin-top: 10px;margin-bottom: 10px">
+                            <field name="kanban_dashboard_graph_balance" graph_type="bar-values" widget="wua_dashboard_graph"/>
                         </div>
                     </t>
 

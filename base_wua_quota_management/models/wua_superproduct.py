@@ -102,9 +102,17 @@ class WuaSuperproduct(models.Model):
         digits=(32, 2),
         compute='_compute_balance')
 
-    kanban_dashboard_graph = fields.Text(
-        string='Dashboard Graph for kanban view',
-        compute='_compute_kanban_dashboard_graph')
+    kanban_dashboard_graph_inputs = fields.Text(
+        string='Dashboard Graph of inputs for kanban view',
+        compute='_compute_kanban_dashboard_graph_inputs')
+
+    kanban_dashboard_graph_outputs = fields.Text(
+        string='Dashboard Graph of outputs for kanban view',
+        compute='_compute_kanban_dashboard_graph_outputs')
+
+    kanban_dashboard_graph_balance = fields.Text(
+        string='Dashboard Graph of balance for kanban view',
+        compute='_compute_kanban_dashboard_graph_balance')
 
     notes = fields.Html(string='Notes')
 
@@ -174,7 +182,7 @@ class WuaSuperproduct(models.Model):
                     superproduct_id=%s""", (active_agriculturalseason_id.id,
                                             record.id))
                 query_results = self.env.cr.dictfetchall()
-                if query_results and query_results[0].get('sum') != None:
+                if query_results and query_results[0].get('sum') is not None:
                     total_input = query_results[0].get('sum')
             record.total_input = total_input
 
@@ -191,7 +199,7 @@ class WuaSuperproduct(models.Model):
                     superproduct_id=%s""", (active_agriculturalseason_id.id,
                                             record.id))
                 query_results = self.env.cr.dictfetchall()
-                if query_results and query_results[0].get('sum') != None:
+                if query_results and query_results[0].get('sum') is not None:
                     total_output = query_results[0].get('sum')
             record.total_output = total_output
 
@@ -201,17 +209,22 @@ class WuaSuperproduct(models.Model):
             record.balance = record.total_input - record.total_output
 
     @api.multi
-    def _compute_kanban_dashboard_graph(self):
+    def _compute_kanban_dashboard_graph_inputs(self):
         for record in self:
-            record.kanban_dashboard_graph = \
-                json.dumps(self._get_dashboard_datas(record))
+            record.kanban_dashboard_graph_inputs = \
+                json.dumps(self._get_data_graph_inputs(record))
 
-    def _get_dashboard_datas(self, superproduct):
-        data = []
-        # Provisional
-        data.append({'label': _('Test'), 'value': 10.0})
-        data.append({'label': _('Test 2'), 'value': 100.0})
-        return [{'values': data}]
+    @api.multi
+    def _compute_kanban_dashboard_graph_outputs(self):
+        for record in self:
+            record.kanban_dashboard_graph_outputs = \
+                json.dumps(self._get_data_graph_outputs(record))
+
+    @api.multi
+    def _compute_kanban_dashboard_graph_balance(self):
+        for record in self:
+            record.kanban_dashboard_graph_balance = \
+                json.dumps(self._get_data_graph_balance(record))
 
     @api.multi
     def unlink(self):
@@ -227,22 +240,6 @@ class WuaSuperproduct(models.Model):
         else:
             resp = super(WuaSuperproduct, self).unlink()
         return resp
-
-    def _force_unlink_residual(self, template_to_unlink_ids):
-        if template_to_unlink_ids:
-            where = ''
-            for item in template_to_unlink_ids:
-                where = str(item) + ','
-            where = where[:-1]
-            where = '(' + where + ')'
-            try:
-                self.env.cr.savepoint()
-                self.env.cr.execute("""
-                    DELETE FROM product_template WHERE id in """ + where)
-                self.env.cr.commit()
-                self.env.invalidate_all()
-            except:
-                self.env.cr.rollback()
 
     @api.multi
     def action_get_partner_quotas(self):
@@ -339,7 +336,7 @@ class WuaSuperproduct(models.Model):
                 'views': [(id_form_view, 'form')],
                 'target': 'current',
                 'flags': {'mode': 'readonly'}
-               }
+                }
             return act_window
 
     @api.multi
@@ -353,5 +350,66 @@ class WuaSuperproduct(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {'refresh_view': True}
-           }
+            }
         return act_window
+
+    def _get_data_graph_inputs(self, superproduct):
+        data = []
+        ymin, ymax = self._get_limits_for_graphs(superproduct)
+        # Provisional
+        data.append({'label': _('1/4'), 'value': 66129.7112,
+                     'ymin': ymin, 'ymax': ymax, 'color': '#4169E1'})
+        data.append({'label': _('2/4'), 'value': 308.6351})
+        data.append({'label': _('3/4'), 'value': 0})
+        data.append({'label': _('4/4'), 'value': 0})
+        return [{'values': data, 'title': _('INPUTS')}]
+
+    def _get_data_graph_outputs(self, superproduct):
+        data = []
+        ymin, ymax = self._get_limits_for_graphs(superproduct)
+        # Provisional
+        data.append({'label': _('1/4'), 'value': 61323,
+                     'ymin': ymin, 'ymax': ymax, 'color': '#FFA500'})
+        data.append({'label': _('2/4'), 'value': 0})
+        data.append({'label': _('3/4'), 'value': 0})
+        data.append({'label': _('4/4'), 'value': 0})
+        return [{'values': data, 'title': _('OUTPUTS')}]
+
+    def _get_data_graph_balance(self, superproduct):
+        data = []
+        ymin, ymax = self._get_limits_for_graphs(superproduct)
+        # Provisional
+        data.append({'label': _('1/4'), 'value': 4806.7112,
+                     'ymin': ymin, 'ymax': ymax, 'color': '#696969'})
+        data.append({'label': _('2/4'), 'value': 308.6351})
+        data.append({'label': _('3/4'), 'value': 0})
+        data.append({'label': _('4/4'), 'value': 0})
+        return [{'values': data, 'title': _('BALANCE')}]
+
+    def _get_limits_for_graphs(self, superproduct):
+        ymin = 0
+        ymax = 0
+        if superproduct.balance < 0:
+            ymin = -1
+        if superproduct.total_input > superproduct.total_output:
+            ymax = superproduct.total_input
+        else:
+            ymax = superproduct.total_output
+        ymax = 1.05 * ymax
+        return ymin, ymax
+
+    def _force_unlink_residual(self, template_to_unlink_ids):
+        if template_to_unlink_ids:
+            where = ''
+            for item in template_to_unlink_ids:
+                where = str(item) + ','
+            where = where[:-1]
+            where = '(' + where + ')'
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    DELETE FROM product_template WHERE id in """ + where)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except:
+                self.env.cr.rollback()
