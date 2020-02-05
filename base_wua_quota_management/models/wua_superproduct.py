@@ -2,6 +2,7 @@
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import json
 from odoo import models, fields, api, _
 
 
@@ -73,6 +74,38 @@ class WuaSuperproduct(models.Model):
         comodel_name='wua.hydricmovement',
         inverse_name='superproduct_id')
 
+    active_agriculturalseason_id = fields.Many2one(
+        string='Active Agricultural Season',
+        comodel_name='wua.agriculturalseason',
+        compute='_compute_active_agriculturalseason_id')
+
+    number_of_quotas = fields.Integer(
+        string='Number of quotas (active agricultural season)',
+        compute='_compute_number_of_quotas')
+
+    number_of_hydricmovements = fields.Integer(
+        string='Number of hydric movements (active agricultural season)',
+        compute='_compute_number_of_hydricmovements')
+
+    total_input = fields.Float(
+        string='Total Input, in m3 (active agricultural season)',
+        digits=(32, 2),
+        compute='_compute_total_input')
+
+    total_output = fields.Float(
+        string='Total Output, in m3 (active agricultural season)',
+        digits=(32, 2),
+        compute='_compute_total_output')
+
+    balance = fields.Float(
+        string='Balance, in m3 (active agricultural season)',
+        digits=(32, 2),
+        compute='_compute_balance')
+
+    kanban_dashboard_graph = fields.Text(
+        string='Dashboard Graph for kanban view',
+        compute='_compute_kanban_dashboard_graph')
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
@@ -89,6 +122,96 @@ class WuaSuperproduct(models.Model):
             if record.product_tmpl_ids:
                 number_of_products = len(record.product_tmpl_ids)
             record.number_of_products = number_of_products
+
+    @api.multi
+    def _compute_active_agriculturalseason_id(self):
+        active_agriculturalseason_id = \
+            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
+        for record in self:
+            record.active_agriculturalseason_id = active_agriculturalseason_id
+
+    @api.multi
+    def _compute_number_of_quotas(self):
+        active_agriculturalseason_id = \
+            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
+        for record in self:
+            number_of_quotas = 0
+            if active_agriculturalseason_id:
+                filtered_quota_ids = filter(
+                    lambda x: x['agriculturalseason_id'] ==
+                    active_agriculturalseason_id,
+                    record.quota_ids)
+                if filtered_quota_ids:
+                    number_of_quotas = len(filtered_quota_ids)
+            record.number_of_quotas = number_of_quotas
+
+    @api.multi
+    def _compute_number_of_hydricmovements(self):
+        active_agriculturalseason_id = \
+            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
+        for record in self:
+            number_of_hydricmovements = 0
+            if active_agriculturalseason_id:
+                filtered_hydricmovement_ids = filter(
+                    lambda x: x['agriculturalseason_id'] ==
+                    active_agriculturalseason_id,
+                    record.hydricmovement_ids)
+                if filtered_hydricmovement_ids:
+                    number_of_hydricmovements = \
+                        len(filtered_hydricmovement_ids)
+            record.number_of_hydricmovements = number_of_hydricmovements
+
+    @api.multi
+    def _compute_total_input(self):
+        active_agriculturalseason_id = \
+            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
+        for record in self:
+            total_input = 0
+            if active_agriculturalseason_id:
+                self.env.cr.execute("""
+                    SELECT SUM(volume) FROM wua_hydricmovement
+                    WHERE is_consumption=FALSE AND agriculturalseason_id=%s AND
+                    superproduct_id=%s""", (active_agriculturalseason_id.id,
+                                            record.id))
+                query_results = self.env.cr.dictfetchall()
+                if query_results and query_results[0].get('sum') != None:
+                    total_input = query_results[0].get('sum')
+            record.total_input = total_input
+
+    @api.multi
+    def _compute_total_output(self):
+        active_agriculturalseason_id = \
+            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
+        for record in self:
+            total_output = 0
+            if active_agriculturalseason_id:
+                self.env.cr.execute("""
+                    SELECT SUM(volume) FROM wua_hydricmovement
+                    WHERE is_consumption=TRUE AND agriculturalseason_id=%s AND
+                    superproduct_id=%s""", (active_agriculturalseason_id.id,
+                                            record.id))
+                query_results = self.env.cr.dictfetchall()
+                if query_results and query_results[0].get('sum') != None:
+                    total_output = query_results[0].get('sum')
+            record.total_output = total_output
+
+    @api.depends('total_input', 'total_output')
+    def _compute_balance(self):
+        for record in self:
+            record.balance = record.total_input - record.total_output
+
+    @api.multi
+    def _compute_kanban_dashboard_graph(self):
+        for record in self:
+            record.kanban_dashboard_graph = \
+                json.dumps(self._get_dashboard_datas(record))
+
+    def _get_dashboard_datas(self, superproduct):
+        data = []
+        # Provisional
+        data.append({'label': _('Test'), 'value': 10.0})
+        data.append({'label': _('Test 2'), 'value': 100.0})
+        return [{'values': data}]
 
     @api.multi
     def unlink(self):
@@ -181,3 +304,54 @@ class WuaSuperproduct(models.Model):
                             'search_default_grouped_partner': True}
                 }
             return act_window
+
+    @api.multi
+    def action_open_superproduct_form(self):
+        self.ensure_one()
+        id_form_view = self.env.ref(
+            'base_wua_quota_management.'
+            'wua_superproduct_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Superproducts'),
+            'res_model': 'wua.superproduct',
+            'res_id': self.id,
+            'view_type': 'form',
+            'views': [(id_form_view, 'form')],
+            'target': 'current',
+            'flags': {'mode': 'readonly'}
+            }
+        return act_window
+
+    @api.multi
+    def action_open_active_agriculturalseason_form(self):
+        self.ensure_one()
+        if self.active_agriculturalseason_id:
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_agriculturalseason_view_form').id
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Agricultural Seasons'),
+                'res_model': 'wua.agriculturalseason',
+                'res_id': self.active_agriculturalseason_id.id,
+                'view_type': 'form',
+                'views': [(id_form_view, 'form')],
+                'target': 'current',
+                'flags': {'mode': 'readonly'}
+               }
+            return act_window
+
+    @api.multi
+    def action_set_active_agricultural_season(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Choose the active agricultural season'),
+            'res_model': 'wizard.set.activeagriculturalseason',
+            'src_model': 'wua.superproduct',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'refresh_view': True}
+           }
+        return act_window

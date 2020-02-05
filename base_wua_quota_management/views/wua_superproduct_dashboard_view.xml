@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_superproduct_view_kanban" model="ir.ui.view">
+        <field name="name">Superproducts (kanban view)</field>
+        <field name="model">wua.superproduct</field>
+        <field name="arch" type="xml">
+            <kanban create="false"
+                    class="oe_background_grey o_kanban_dashboard o_account_kanban">
+                <field name="superproduct_code"/>
+                <field name="active_agriculturalseason_id"/>
+                <field name="number_of_quotas"/>
+                <field name="number_of_hydricmovements"/>
+                <field name="total_input"/>
+                <field name="total_output"/>
+                <field name="balance"/>
+                <templates>
+
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(0)}">
+                            <t t-call="superproduct_top"/>
+                            <t t-if="record.active_agriculturalseason_id.raw_value">
+                                <div class="container o_kanban_card_content o_visible">
+                                    <div class="row"
+                                         style="margin-top: 10px;margin-bottom: 10px">
+                                        <t t-call="superproduct_body_summary"/>
+                                    </div>
+                                    <t t-if="record.total_input.raw_value &gt; 0 || record.total_output.raw_value &gt; 0">
+                                        <div class="row"
+                                             style="margin-top: 10px;margin-bottom: 10px">
+                                            <t t-call="superproduct_body_graphs"/>
+                                        </div>
+                                        <div class="row"
+                                             style="margin-top: 10px;margin-bottom: 10px">
+                                            <t t-call="superproduct_body_graphs"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                    <t t-name="superproduct_top">
+                        <div class="o_kanban_card_header">
+                            <div class="o_kanban_card_header_title">
+                                <div class="o_primary">
+                                    <a type="object"
+                                       name="action_open_superproduct_form">
+                                        <field name="name"/>
+                                    </a>
+                                </div>
+                                <div class="o_secondary">
+                                    <t t-if="record.active_agriculturalseason_id.raw_value">
+                                        <a type="object"
+                                           name="action_open_active_agriculturalseason_form">
+                                            <field name="active_agriculturalseason_id"/>
+                                        </a>
+                                    </t>
+                                    <t t-else="">
+                                        <span>(no active agricultural season)</span>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="o_kanban_manage_button_section">
+                                <button type="object"
+                                        name="action_set_active_agricultural_season"
+                                        class="btn btn-primary btn-sm"
+                                        groups="base_wua.group_wua_manager">
+                                    <span>Choose active agricultural season</span>
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                    
+                    <t t-name="superproduct_body_summary">
+                        <div class="col-xs-6">
+                            <t t-if="record.number_of_quotas.raw_value &gt; 0">
+                                <a type="object"
+                                   name="action_get_partner_quotas">
+                                    <span><t t-esc="record.number_of_quotas.value"/> quotas</span>
+                                </a>
+                            </t>
+                            <t t-else="">
+                                <span><t t-esc="record.number_of_quotas.value"/> quotas</span>
+                            </t>
+                        </div>
+                        <div class="col-xs-6">
+                            <span class="text-right">Inputs: <t t-esc="record.total_input.value"/> m3</span>
+                        </div>
+                        <div class="col-xs-6">
+                            <t t-if="record.number_of_hydricmovements.raw_value gt 0">
+                                <a type="object"
+                                   name="action_get_hydric_movements">
+                                     <span><t t-esc="record.number_of_hydricmovements.value"/> movements</span>
+                                </a>
+                            </t>
+                            <t t-else="">
+                                <span><t t-esc="record.number_of_hydricmovements.value"/> movements</span>
+                            </t>                            
+                        </div>
+                        <div class="col-xs-6">
+                            <span class="text-right">Outputs: <t t-esc="record.total_output.value"/> m3</span>
+                        </div>
+                        <div class="col-xs-6">
+                        </div>
+                        <div class="col-xs-6">
+                            <t t-if="record.balance.raw_value &gt;= 0">
+                                <span class="text-right">Balance: <t t-esc="record.balance.value"/> m3</span>
+                            </t>
+                            <t t-else="">
+                                <span class="text-right" style="color:red">Balance: <t t-esc="record.balance.value"/> m3</span>
+                            </t>
+                        </div>
+                    </t>
+
+                    <t t-name="superproduct_body_graphs">
+                        <div class="o_kanban_graph_section">
+                            <field name="kanban_dashboard_graph" graph_type="bar" widget="dashboard_graph"/>
+                        </div>
+                    </t>
+
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="wua_superproduct_dashboard_action"
+            model="ir.actions.act_window">
+        <field name="name">Quota Dashboard</field>
+        <field name="res_model">wua.superproduct</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,form</field>
+    </record>
+
+    <menuitem id="dashboard_menu"
+              name="Dashboard"
+              parent="main_menu"
+              action="wua_superproduct_dashboard_action"
+              sequence="1"/>
+
+</odoo>

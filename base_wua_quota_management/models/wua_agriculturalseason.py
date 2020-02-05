@@ -126,6 +126,16 @@ class WuaAgriculturalseason(models.Model):
         return resp
 
     @api.multi
+    def name_get(self):
+        if self.env.context.get('compressed_agriculturalseason', False):
+            result = []
+            for record in self:
+                result.append((record.id, record.description.strip()))
+        else:
+            result = super(WuaAgriculturalseason, self).name_get()
+        return result
+
+    @api.multi
     def action_get_quota_periods(self):
         self.ensure_one()
         if self.quotaperiod_ids:
@@ -213,6 +223,27 @@ class WuaAgriculturalseason(models.Model):
                 }
             return act_window
 
+    @api.multi
+    def action_generate_quotaperiods(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Generate quota periods'),
+            'res_model': 'wizard.generate.quotaperiods',
+            'src_model': 'wua.agriculturalseason',
+            'view_mode': 'form',
+            'target': 'new'
+           }
+        return act_window
+
+    def get_active_agriculturalseason(self):
+        resp = None
+        filtered_agriculturalseasons = self.search(
+            [('active_agriculturalseason', '=', True)])
+        if filtered_agriculturalseasons:
+            resp = filtered_agriculturalseasons[0]
+        return resp
+
     # This method changes the "of_active_agriculturalseason" field for
     # slave-models of the "wua.agriculturalseason" model ("wua.quotaperiod",
     # "wua.individualinput", "wua_cession", etc), using SQL (not ORM).
@@ -257,13 +288,3 @@ class WuaAgriculturalseason(models.Model):
                 raise exceptions.UserError(_(
                     'Error when updating records '
                     '(\"of_active_agriculturalseason\" field).'))
-
-    @api.multi
-    def name_get(self):
-        if self.env.context.get('compressed_agriculturalseason', False):
-            result = []
-            for record in self:
-                result.append((record.id, record.description.strip()))
-        else:
-            result = super(WuaAgriculturalseason, self).name_get()
-        return result
