@@ -40,5 +40,5 @@ class AccountPaymentOrder(models.Model):
         else:
             raise ValidationError(
                 _("Fail, partner code not found for partner %s." %
-                  (entry_num_padded, partner_id.name)))
+                  (partner_id.name)))
         return fixed_number
