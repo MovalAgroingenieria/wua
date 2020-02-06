@@ -13,6 +13,10 @@ class WuaSuperproduct(models.Model):
     _inherits = {'product.template': 'product_tmpl_id'}
     _order = 'superproduct_code'
 
+    COLOR_INPUTS = '#4169E1'
+    COLOR_OUTPUTS = '#FFA500'
+    COLOR_BALANCE = '#696969'
+
     def _default_superproduct_code(self):
         resp = 0
         superproducts = self.search([], limit=1,
@@ -210,21 +214,29 @@ class WuaSuperproduct(models.Model):
 
     @api.multi
     def _compute_kanban_dashboard_graph_inputs(self):
+        active_agriculturalseason_id = \
+            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
         for record in self:
-            record.kanban_dashboard_graph_inputs = \
-                json.dumps(self._get_data_graph_inputs(record))
+            record.kanban_dashboard_graph_inputs = json.dumps(
+                self._get_data_graph(record, active_agriculturalseason_id,
+                                     'inputs'))
 
     @api.multi
     def _compute_kanban_dashboard_graph_outputs(self):
+        active_agriculturalseason_id = \
+            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
         for record in self:
-            record.kanban_dashboard_graph_outputs = \
-                json.dumps(self._get_data_graph_outputs(record))
+            record.kanban_dashboard_graph_outputs = json.dumps(
+                self._get_data_graph(record, active_agriculturalseason_id,
+                                     'outputs'))
 
     @api.multi
     def _compute_kanban_dashboard_graph_balance(self):
+        active_agriculturalseason_id = \
+            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
         for record in self:
-            record.kanban_dashboard_graph_balance = \
-                json.dumps(self._get_data_graph_balance(record))
+            record.kanban_dashboard_graph_balance = json.dumps(
+                self._get_data_graph(record, active_agriculturalseason_id))
 
     @api.multi
     def unlink(self):
@@ -353,38 +365,64 @@ class WuaSuperproduct(models.Model):
             }
         return act_window
 
-    def _get_data_graph_inputs(self, superproduct):
+    def _get_data_graph(self, superproduct, agriculturalseason,
+                        type='balance'):
+        if (not superproduct or not agriculturalseason):
+            return [{'values': [], 'title': ''}]
         data = []
         ymin, ymax = self._get_limits_for_graphs(superproduct)
-        # Provisional
-        data.append({'label': _('1/4'), 'value': 66129.7112,
-                     'ymin': ymin, 'ymax': ymax, 'color': '#4169E1'})
-        data.append({'label': _('2/4'), 'value': 308.6351})
-        data.append({'label': _('3/4'), 'value': 0})
-        data.append({'label': _('4/4'), 'value': 0})
-        return [{'values': data, 'title': _('INPUTS')}]
-
-    def _get_data_graph_outputs(self, superproduct):
-        data = []
-        ymin, ymax = self._get_limits_for_graphs(superproduct)
-        # Provisional
-        data.append({'label': _('1/4'), 'value': 61323,
-                     'ymin': ymin, 'ymax': ymax, 'color': '#FFA500'})
-        data.append({'label': _('2/4'), 'value': 0})
-        data.append({'label': _('3/4'), 'value': 0})
-        data.append({'label': _('4/4'), 'value': 0})
-        return [{'values': data, 'title': _('OUTPUTS')}]
-
-    def _get_data_graph_balance(self, superproduct):
-        data = []
-        ymin, ymax = self._get_limits_for_graphs(superproduct)
-        # Provisional
-        data.append({'label': _('1/4'), 'value': 4806.7112,
-                     'ymin': ymin, 'ymax': ymax, 'color': '#696969'})
-        data.append({'label': _('2/4'), 'value': 308.6351})
-        data.append({'label': _('3/4'), 'value': 0})
-        data.append({'label': _('4/4'), 'value': 0})
-        return [{'values': data, 'title': _('BALANCE')}]
+        title = _('BALANCE')
+        color = self.COLOR_BALANCE
+        if type == 'balance':
+            inputs = self._get_data_graph(
+                superproduct, agriculturalseason, 'inputs')
+            outputs = self._get_data_graph(
+                superproduct, agriculturalseason, 'outputs')
+            data = inputs[0]['values']
+            data_outputs = outputs[0]['values']
+            length_data = len(data)
+            if (data and data_outputs and (length_data == len(data_outputs))):
+                data[0]['color'] = color
+                for i in range(length_data):
+                    data[i]['value'] = \
+                        data[i]['value'] - data_outputs[i]['value']
+        else:
+            title = _('INPUTS')
+            condition_is_consumption = 'FALSE'
+            color = self.COLOR_INPUTS
+            if type == 'outputs':
+                title = _('OUTPUTS')
+                condition_is_consumption = 'TRUE'
+                color = self.COLOR_OUTPUTS
+            quotaperiods = self.env['wua.quotaperiod'].search(
+                [('agriculturalseason_id', '=', agriculturalseason.id)],
+                order='initial_date')
+            if quotaperiods:
+                number_of_quotaperiods = len(quotaperiods)
+                index_current_period = 1
+                for quotaperiod in quotaperiods:
+                    label = str(index_current_period) + '/' + \
+                        str(number_of_quotaperiods)
+                    value = 0
+                    sql = """
+                        SELECT SUM(volume) FROM wua_hydricmovement
+                        WHERE is_consumption=%s AND quotaperiod_id=%s AND
+                        superproduct_id=%s"""
+                    self.env.cr.execute(sql, (condition_is_consumption,
+                                              quotaperiod.id, superproduct.id))
+                    query_results = self.env.cr.dictfetchall()
+                    if (query_results and
+                       query_results[0].get('sum') is not None):
+                        value = query_results[0].get('sum')
+                    node = {'label': label, 'value': value}
+                    if index_current_period == 1:
+                        node.update({
+                            'ymin': ymin, 'ymax': ymax,
+                            'color': color
+                            })
+                    data.append(node)
+                    index_current_period = index_current_period + 1
+        return [{'values': data, 'title': title}]
 
     def _get_limits_for_graphs(self, superproduct):
         ymin = 0
