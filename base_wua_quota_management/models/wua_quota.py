@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class WuaQuota(models.Model):
@@ -168,3 +168,20 @@ class WuaQuota(models.Model):
                 ' (' + superproduct_name.lower() + '), ' + partner_name
             result.append((record.id, name))
         return result
+
+    @api.multi
+    def action_open_individualinput_form(self):
+        self.ensure_one()
+        id_form_view = self.env.ref(
+            'base_wua_quota_management.'
+            'wua_individualinput_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Individual Input'),
+            'res_model': 'wua.individualinput',
+            'view_type': 'form',
+            'views': [(id_form_view, 'form')],
+            'target': 'new',
+            'context': {'agriculturalseason_id': self.agriculturalseason_id.id}
+            }
+        return act_window

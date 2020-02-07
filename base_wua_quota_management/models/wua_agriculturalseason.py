@@ -280,7 +280,16 @@ class WuaAgriculturalseason(models.Model):
                         UPDATE wua_hydricmovement
                         SET of_active_agriculturalseason=TRUE WHERE
                         agriculturalseason_id=""" + str(agriculturalseason_id))
-                # Provisional (pending: individual inputs, cessions, etc)
+                self.env.cr.execute("""
+                    UPDATE wua_individualinput
+                    SET of_active_agriculturalseason=FALSE WHERE
+                    of_active_agriculturalseason=TRUE""")
+                if active_agriculturalseason:
+                    self.env.cr.execute("""
+                        UPDATE wua_individualinput
+                        SET of_active_agriculturalseason=TRUE WHERE
+                        agriculturalseason_id=""" + str(agriculturalseason_id))
+                # Provisional (pending: cessions...)
                 self.env.cr.commit()
                 self.env.invalidate_all()
             except Exception:

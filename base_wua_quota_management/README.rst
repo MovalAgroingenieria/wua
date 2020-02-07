@@ -30,6 +30,13 @@ Functionality:
 * Operation reports.
 * Etc.
 
+Installation
+============
+
+You need to install the python bokeh library::
+
+    pip install bokeh==0.12.7
+
 Credits
 =======
 

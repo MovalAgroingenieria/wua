@@ -1,4 +1,4 @@
-odoo.define('journal_dashboard', function (require) {
+odoo.define('base_wua_quota_management.journal_dashboard', function (require) {
 'use strict';
 
 var kanban_widgets = require('web_kanban.widgets');

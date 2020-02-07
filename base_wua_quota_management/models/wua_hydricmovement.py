@@ -289,6 +289,24 @@ class WuaHydricmovement(models.Model):
                 'consumption.'))
         return super(WuaHydricmovement, self).unlink()
 
+    @api.multi
+    def action_open_quota_form(self):
+        self.ensure_one()
+        id_form_view = self.env.ref(
+            'base_wua_quota_management.'
+            'wua_quota_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Quotas'),
+            'res_model': 'wua.quota',
+            'res_id': self.quota_id.id,
+            'view_type': 'form',
+            'views': [(id_form_view, 'form')],
+            'target': 'current',
+            'flags': {'mode': 'readonly'}
+            }
+        return act_window
+
     def _is_consumption(self, type):
         resp = False
         if type in self.OUTPUT_TYPES:
