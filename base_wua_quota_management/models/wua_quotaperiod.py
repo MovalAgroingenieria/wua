@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import locale
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
@@ -224,11 +225,20 @@ class WuaQuotaperiod(models.Model):
     @api.multi
     def name_get(self):
         result = []
+        default_locale = locale.setlocale(locale.LC_TIME)
+        is_english = self.env.context['lang'] == 'en_US'
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.initial_date, '%Y-%m-%d').strftime('%x')
-            end_date_str = datetime.datetime.strptime(
-                record.end_date, '%Y-%m-%d').strftime('%x')
+            try:
+                if is_english:
+                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                initial_date_str = datetime.datetime.strptime(
+                    record.initial_date,
+                    '%Y-%m-%d').strftime('%x')
+                end_date_str = datetime.datetime.strptime(
+                    record.end_date,
+                    '%Y-%m-%d').strftime('%x')
+            finally:
+                locale.setlocale(locale.LC_TIME, default_locale)
             name = initial_date_str + ' - ' + end_date_str
             description = ''
             if (record.description and

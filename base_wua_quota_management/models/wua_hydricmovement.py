@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import locale
 from odoo import models, fields, api, exceptions, _
 
 
@@ -110,25 +111,25 @@ class WuaHydricmovement(models.Model):
 
     volume = fields.Float(
         string='Volume (m3)',
-        digits=(32, 4),
+        digits=(32, 2),
         default=0,
         required=True,
         readonly=True)
 
     accounting_volume = fields.Float(
         string='Accounting Volume (m3)',
-        digits=(32, 4),
+        digits=(32, 2),
         store=True,
         compute='_compute_accounting_volume')
 
     balance = fields.Float(
         string='Balance (m3)',
-        digits=(32, 4),
+        digits=(32, 2),
         compute='_compute_balance')
 
     negative_balance = fields.Float(
         string='Balance (m3)',
-        digits=(32, 4),
+        digits=(32, 2),
         compute='_compute_negative_balance')
 
     description = fields.Char(
@@ -141,6 +142,12 @@ class WuaHydricmovement(models.Model):
     presconsumption_id = fields.Many2one(
         string='Consumption',
         comodel_name='wua.presconsumption',
+        readonly=True,
+        ondelete='cascade')
+
+    individualinput_id = fields.Many2one(
+        string='Individual Input',
+        comodel_name='wua.individualinput',
         readonly=True,
         ondelete='cascade')
 
@@ -263,18 +270,27 @@ class WuaHydricmovement(models.Model):
     @api.multi
     def name_get(self):
         result = []
+        default_locale = locale.setlocale(locale.LC_TIME)
+        is_english = self.env.context['lang'] == 'en_US'
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.quotaperiod_id.initial_date, '%Y-%m-%d').strftime('%x')
-            end_date_str = datetime.datetime.strptime(
-                record.quotaperiod_id.end_date, '%Y-%m-%d').strftime('%x')
+            try:
+                if is_english:
+                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                initial_date_str = datetime.datetime.strptime(
+                    record.quotaperiod_id.initial_date,
+                    '%Y-%m-%d').strftime('%x')
+                end_date_str = datetime.datetime.strptime(
+                    record.quotaperiod_id.end_date,
+                    '%Y-%m-%d').strftime('%x')
+                event_time_day_and_hour = datetime.datetime.strptime(
+                    record.event_time, '%Y-%m-%d %H:%M:%S')
+                event_time_day_str = event_time_day_and_hour.strftime('%x')
+                event_time_hour_str = event_time_day_and_hour.strftime('%X')
+            finally:
+                locale.setlocale(locale.LC_TIME, default_locale)
             superproduct_name = record.superproduct_id.name
             partner_name = record.partner_id.name + \
                 ' [' + str(record.partner_id.partner_code) + ']'
-            event_time_day_and_hour = datetime.datetime.strptime(
-                record.event_time, '%Y-%m-%d %H:%M:%S')
-            event_time_day_str = event_time_day_and_hour.strftime('%x')
-            event_time_hour_str = event_time_day_and_hour.strftime('%X')
             name = initial_date_str + ' - ' + end_date_str + \
                 ' (' + superproduct_name.lower() + '), ' + partner_name + \
                 ' / ' + event_time_day_str + ' ' + event_time_hour_str
@@ -327,8 +343,8 @@ class WuaHydricmovement(models.Model):
         if (type in self.OUTPUT_TYPES or type in self.INPUT_TYPES):
             if type == 'multiple_assign':
                 initial_date_str = datetime.datetime.strptime(
-                    hydricmovement.quotaperiod_id.initial_date, '%Y-%m-%d').\
-                        strftime('%x')
+                    hydricmovement.quotaperiod_id.initial_date,
+                    '%Y-%m-%d').strftime('%x')
                 resp = _('Multiple Assignment') + '.' + \
                     _('Quota Period') + ': ' + initial_date_str
             if type == 'pres_consumption':
@@ -336,6 +352,14 @@ class WuaHydricmovement(models.Model):
                     hydricmovement.presconsumption_id.waterconnection_id.name
                 resp = _('Pressurized Consumption') + '.' + \
                     _('Water connection') + ': ' + waterconnection_name
+            if type == 'pos_indiv_assign':
+                reason = hydricmovement.individualinput_id.reason
+                suffix = ''
+                if reason:
+                    suffix = '. ' + _('Reason') + ': ' + reason
+                resp = _('Positive Individual-Input') + suffix
+            if type == 'neg_indiv_assign':
+                resp = _('Negative Individual-Output')
             # Provisional (pending other types)
         else:
             resp = self._get_description_for_new_types(hydricmovement)
@@ -354,7 +378,11 @@ class WuaHydricmovement(models.Model):
             resp = not ((hydricmovement.type == 'multiple_assign' and
                          (not hydricmovement.quotaperiod_id)) or
                         (hydricmovement.type == 'pres_consumption' and
-                         (not hydricmovement.presconsumption_id)))
+                         (not hydricmovement.presconsumption_id)) or
+                        (hydricmovement.type == 'pos_indiv_assign' and
+                         (not hydricmovement.individualinput_id)) or
+                        (hydricmovement.type == 'neg_indiv_assign' and
+                         (not hydricmovement.individualinput_id)))
         else:
             resp = self._test_reference_id_for_new_types(hydricmovement)
         return resp

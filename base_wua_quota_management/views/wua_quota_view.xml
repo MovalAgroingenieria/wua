@@ -9,21 +9,24 @@
                 <header>
                     <button name="action_open_individualinput_form"
                             type="object" string="Assign"
-                            icon="fa-legal"
+                            icon="fa-plus"
                             class="oe_read_only"
                             style="width: 90px;"
                             groups="base_wua_quota_management.group_wua_quota_manager"/>
                 </header>
                 <sheet>
-                    <group name="master_data">
-                        <group name="master_data_left">
+                    <group name="master_data" col="6">
+                        <group name="master_data_left"
+                               colspan="4">
                             <field name="agriculturalseason_id"/>
                             <field name="quotaperiod_id"/>
                             <field name="superproduct_id"/>
                             <field name="partner_id"/>
                         </group>
-                        <group name="master_data_right" style="text-align:right;">
-                            <field name="initial_value"/>
+                        <group name="master_data_right"
+                               colspan="2"
+                               style="text-align:right;">
+                            <field name="accumulated_input"/>
                             <field name="accumulated_consumption"/>
                             <field name="balance"
                              attrs="{'invisible':[('balance','&lt;',0)]}"/>
@@ -65,7 +68,7 @@
                 <field name="partner_id"/>
                 <field name="quotaperiod_id"
                        widget="many2one_unclickable"/>
-                <field name="initial_value"/>
+                <field name="accumulated_input"/>
                 <field name="accumulated_consumption"/>
                 <field name="balance"/>
             </tree>

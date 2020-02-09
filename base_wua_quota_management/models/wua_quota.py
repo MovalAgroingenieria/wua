@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import locale
 from odoo import models, fields, api, _
 
 
@@ -62,26 +63,32 @@ class WuaQuota(models.Model):
 
     initial_value = fields.Float(
         string='Initial Value',
-        digits=(32, 4),
+        digits=(32, 2),
         required=True,
         default=0,
         readonly=True)
 
+    accumulated_input = fields.Float(
+        string='Inputs',
+        digits=(32, 2),
+        store=True,
+        compute='_compute_accumulated_input')
+
     accumulated_consumption = fields.Float(
-        string='Consumption',
-        digits=(32, 4),
+        string='Consumptions',
+        digits=(32, 2),
         store=True,
         compute='_compute_accumulated_consumption')
 
     balance = fields.Float(
         string='Balance',
-        digits=(32, 4),
+        digits=(32, 2),
         store=True,
         compute='_compute_balance')
 
     negative_balance = fields.Float(
         string='Balance',
-        digits=(32, 4),
+        digits=(32, 2),
         compute='_compute_negative_balance')
 
     hydricmovement_ids = fields.One2many(
@@ -129,6 +136,18 @@ class WuaQuota(models.Model):
             record.of_active_agriculturalseason = of_active_agriculturalseason
 
     @api.depends('hydricmovement_ids', 'hydricmovement_ids.accounting_volume')
+    def _compute_accumulated_input(self):
+        for record in self:
+            accumulated_input = 0
+            positive_hydricmovements = filter(
+                lambda x: x['accounting_volume'] > 0,
+                record.hydricmovement_ids)
+            if positive_hydricmovements:
+                accumulated_input = \
+                    sum(x.accounting_volume for x in positive_hydricmovements)
+            record.accumulated_input = accumulated_input
+
+    @api.depends('hydricmovement_ids', 'hydricmovement_ids.accounting_volume')
     def _compute_accumulated_consumption(self):
         for record in self:
             accumulated_consumption = 0
@@ -141,10 +160,10 @@ class WuaQuota(models.Model):
             accumulated_consumption = -accumulated_consumption
             record.accumulated_consumption = accumulated_consumption
 
-    @api.depends('initial_value', 'accumulated_consumption')
+    @api.depends('accumulated_input', 'accumulated_consumption')
     def _compute_balance(self):
         for record in self:
-            balance = record.initial_value - record.accumulated_consumption
+            balance = record.accumulated_input - record.accumulated_consumption
             record.balance = balance
 
     @api.multi
@@ -153,14 +172,30 @@ class WuaQuota(models.Model):
         for record in self:
             record.negative_balance = record.balance
 
+    @api.model
+    def create(self, vals):
+        new_quota = super(WuaQuota, self).create(vals)
+        self._update_hydricmovements_from_consumptions(
+            new_quota.id, vals['quotaperiod_id'])
+        return new_quota
+
     @api.multi
     def name_get(self):
         result = []
+        default_locale = locale.setlocale(locale.LC_TIME)
+        is_english = self.env.context['lang'] == 'en_US'
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.quotaperiod_id.initial_date, '%Y-%m-%d').strftime('%x')
-            end_date_str = datetime.datetime.strptime(
-                record.quotaperiod_id.end_date, '%Y-%m-%d').strftime('%x')
+            try:
+                if is_english:
+                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                initial_date_str = datetime.datetime.strptime(
+                    record.quotaperiod_id.initial_date,
+                    '%Y-%m-%d').strftime('%x')
+                end_date_str = datetime.datetime.strptime(
+                    record.quotaperiod_id.end_date,
+                    '%Y-%m-%d').strftime('%x')
+            finally:
+                locale.setlocale(locale.LC_TIME, default_locale)
             superproduct_name = record.superproduct_id.name
             partner_name = record.partner_id.name + \
                 ' [' + str(record.partner_id.partner_code) + ']'
@@ -182,6 +217,22 @@ class WuaQuota(models.Model):
             'view_type': 'form',
             'views': [(id_form_view, 'form')],
             'target': 'new',
-            'context': {'agriculturalseason_id': self.agriculturalseason_id.id}
+            'context': {'agriculturalseason_id': self.agriculturalseason_id.id,
+                        'quotaperiod_id': self.quotaperiod_id.id,
+                        'superproduct_id': self.superproduct_id.id,
+                        'partner_id': self.partner_id.id,
+                        }
             }
         return act_window
+
+    # For client classes (individual inputs, cessions, etc), when the
+    # computed methods are not fired.
+    def refresh_quota(self, quota):
+        quota._compute_accumulated_input()
+        quota._compute_accumulated_consumption()
+        quota._compute_balance()
+
+    def _update_hydricmovements_from_consumptions(self, quota_id,
+                                                  quotaperiod_id):
+        # Provisional (pending: update hydric movements for new quota)
+        print '_update_hydricmovements_from_consumptions'

@@ -17,7 +17,8 @@
                             <field name="quota_id"/>
                         </group>
                         <group name="master_data_right">
-                            <field name="event_time"/>
+                            <field name="event_time"
+                                   string="Date" widget="date"/>
                             <field name="description"/>
                             <field name="accounting_volume"
                                    string="Volume (m3)"/>
@@ -41,7 +42,7 @@
         <field name="model">wua.hydricmovement</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_quota_management_hydricmovement_view_tree"
-                  colors="red:balance&lt;0"
+                  colors="orangered:is_consumption==True;royalblue:is_consumption==False"
                   create="false">
                 <field name="is_consumption" invisible="1"/>
                 <button type="object" class="oe_stat_button"
@@ -55,7 +56,8 @@
                         type="object"
                         class="oe_stat_button"
                         icon="fa-external-link"/>
-                <field name="event_time"/>
+                <field name="event_time"
+                       string="Date" widget="date"/>
                 <field name="description"/>
                 <field name="accounting_volume"
                        string="Value (m3)"/>
@@ -74,7 +76,7 @@
         <field name="model">wua.hydricmovement</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_quota_management_hydricmovement_of_quota_view_tree"
-                  colors="red:balance&lt;0"
+                  colors="orangered:is_consumption==True;royalblue:is_consumption==False"
                   create="false" edit="false" delete="false">
                 <field name="is_consumption" invisible="1"/>
                 <button type="object" class="oe_stat_button"
@@ -82,7 +84,8 @@
                         attrs="{'invisible':
                                 [('is_consumption','=',True)],
                                 'readonly':'1'}"/>
-                <field name="event_time"/>
+                <field name="event_time"
+                       string="Date" widget="date"/>
                 <field name="description"/>
                 <field name="accounting_volume"
                        string="Value (m3)"/>
@@ -151,7 +154,7 @@
                     <filter string="Quota Period"
                             name="grouped_quotaperiod"
                      context="{'group_by':'quotaperiod_id'}"/>
-                    <filter string="Time"
+                    <filter string="Date"
                             name="grouped_event_time"
                      context="{'group_by':'event_time'}"/>
                     <filter string="Superproduct"

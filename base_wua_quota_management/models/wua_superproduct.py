@@ -425,10 +425,10 @@ class WuaSuperproduct(models.Model):
         return [{'values': data, 'title': title}]
 
     def _get_limits_for_graphs(self, superproduct):
-        ymin = 0
+        ymin = -1
         ymax = 0
-        if superproduct.balance < 0:
-            ymin = -1
+        # if superproduct.balance < 0:
+        #     ymin = -1
         if superproduct.total_input > superproduct.total_output:
             ymax = superproduct.total_input
         else:
