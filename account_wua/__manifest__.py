@@ -14,6 +14,7 @@
         "account",
         "base_wua_report",
         "invoice_comment_template",
+        "sale",
     ],
     "data": [
         "views/partner_view.xml",
