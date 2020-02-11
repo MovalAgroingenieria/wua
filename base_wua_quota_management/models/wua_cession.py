@@ -8,9 +8,9 @@ from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
 
-class WuaIndividualinput(models.Model):
-    _name = 'wua.individualinput'
-    _description = 'Individual Input'
+class WuaCession(models.Model):
+    _name = 'wua.cession'
+    _description = 'Cession'
     _inherit = 'mail.thread'
     _order = 'name'
 
@@ -71,11 +71,11 @@ class WuaIndividualinput(models.Model):
             resp = proposed_superproduct_id
         return resp
 
-    def _default_partner_id(self):
+    def _default_quota_id(self):
         resp = 0
-        proposed_partner_id = self.env.context.get('partner_id', False)
-        if proposed_partner_id:
-            resp = proposed_partner_id
+        proposed_quota_id = self.env.context.get('quota_id', False)
+        if proposed_quota_id:
+            resp = proposed_quota_id
         return resp
 
     agriculturalseason_id = fields.Many2one(
@@ -102,13 +102,28 @@ class WuaIndividualinput(models.Model):
         ondelete='restrict',
         default=_default_superproduct_id)
 
+    quota_id = fields.Many2one(
+        string='Transferor Quota',
+        comodel_name='wua.quota',
+        required=True,
+        index=True,
+        ondelete='cascade',
+        default=_default_quota_id)
+
     partner_id = fields.Many2one(
-        string='Partner',
+        string='Transferor Partner',
+        comodel_name='res.partner',
+        store=True,
+        index=True,
+        ondelete='restrict',
+        compute='_compute_partner_id')
+
+    receiver_partner_id = fields.Many2one(
+        string='Receiver Partner',
         comodel_name='res.partner',
         required=True,
         index=True,
-        ondelete='restrict',
-        default=_default_partner_id)
+        ondelete='restrict')
 
     reason = fields.Char(
         string='Reason',
@@ -126,23 +141,10 @@ class WuaIndividualinput(models.Model):
         default=0,
         required=True)
 
-    is_negative = fields.Boolean(
-        string='Is negative',
-        store=True,
-        compute='_compute_is_negative')
-
     of_active_agriculturalseason = fields.Boolean(
         string='Of active ag.season',
         store=True,
         compute='_compute_of_active_agriculturalseason')
-
-    quota_id = fields.Many2one(
-        string='Quota',
-        comodel_name='wua.quota',
-        store=True,
-        index=True,
-        ondelete='cascade',
-        compute='_compute_quota_id')
 
     quota_name = fields.Char(
         string='Quota',
@@ -178,22 +180,34 @@ class WuaIndividualinput(models.Model):
         digits=(32, 2),
         compute='_compute_quota_negative_balance')
 
+    quota_readonly_id = fields.Many2one(
+        string='Quota (transferor)',
+        comodel_name='wua.quota',
+        compute='_compute_quota_readonly_id')
+
+    receiver_quota_id = fields.Many2one(
+        string='Quota (receiver)',
+        comodel_name='wua.quota',
+        store=True,
+        ondelete='restrict',
+        compute='_compute_receiver_quota_id')
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Individual Input.'),
-        ('no_zero_volume', 'CHECK (volume <> 0)',
-         'Zero is not a valid value for the volume field.'),
+        ('no_negative_volume', 'CHECK (volume > 0)',
+         'Then volume of cession must be a positive value.'),
         ]
 
-    @api.depends('volume')
-    def _compute_is_negative(self):
+    @api.depends('quota_id')
+    def _compute_partner_id(self):
         for record in self:
-            is_negative = False
-            if record.volume < 0:
-                is_negative = True
-            record.is_negative = is_negative
+            partner_id = None
+            if record.quota_id:
+                partner_id = record.quota_id.partner_id
+            record.partner_id = partner_id
 
     @api.depends('agriculturalseason_id')
     def _compute_of_active_agriculturalseason(self):
@@ -203,20 +217,6 @@ class WuaIndividualinput(models.Model):
                record.agriculturalseason_id.active_agriculturalseason):
                 of_active_agriculturalseason = True
             record.of_active_agriculturalseason = of_active_agriculturalseason
-
-    @api.depends('quotaperiod_id', 'superproduct_id', 'partner_id')
-    def _compute_quota_id(self):
-        for record in self:
-            quota_id = None
-            if (record.quotaperiod_id and record.superproduct_id and
-               record.partner_id):
-                filtered_quotas = self.env['wua.quota'].search(
-                    [('quotaperiod_id', '=', record.quotaperiod_id.id),
-                     ('superproduct_id', '=', record.superproduct_id.id),
-                     ('partner_id', '=', record.partner_id.id)])
-                if filtered_quotas:
-                    quota_id = filtered_quotas[0]
-            record.quota_id = quota_id
 
     @api.depends('quota_id', 'quota_id.name')
     def _compute_quota_name(self):
@@ -268,6 +268,30 @@ class WuaIndividualinput(models.Model):
         for record in self:
             record.quota_negative_balance = record.quota_balance
 
+    @api.multi
+    def _compute_quota_readonly_id(self):
+        for record in self:
+            quota_readonly_id = None
+            if record.quota_id:
+                quota_readonly_id = record.quota_id
+            record.quota_readonly_id = quota_readonly_id
+
+    @api.depends('quota_id', 'receiver_partner_id')
+    def _compute_receiver_quota_id(self):
+        for record in self:
+            receiver_quota_id = None
+            if record.quota_id and record.receiver_partner_id:
+                receiver_quotaperiod_id = record.quota_id.quotaperiod_id.id
+                receiver_superproduct_id = record.quota_id.superproduct_id.id
+                receiver_partner_id = record.receiver_partner_id.id
+                possible_receiver_quota = self.env['wua.quota'].search(
+                    [('quotaperiod_id', '=', receiver_quotaperiod_id),
+                     ('superproduct_id', '=', receiver_superproduct_id),
+                     ('partner_id', '=', receiver_partner_id)])
+                if possible_receiver_quota:
+                    receiver_quota_id = possible_receiver_quota
+            record.receiver_quota_id = receiver_quota_id
+
     @api.constrains('quotaperiod_id')
     def _check_quotaperiod_id(self):
         if len(self) == 1:
@@ -310,6 +334,29 @@ class WuaIndividualinput(models.Model):
                         _('The instant of this input is not within the '
                           'chosen quota period.'))
 
+    @api.constrains('quota_id')
+    def _check_quota_id(self):
+        if len(self) == 1:
+            if self.quota_id and self.quota_id.balance <= 0:
+                raise exceptions.UserError(
+                    _('The balance of chosen partner is zero o negative.'))
+
+    @api.constrains('partner_id', 'receiver_partner_id')
+    def _check_partner_and_receiver_id(self):
+        if len(self) == 1:
+            if (self.partner_id and self.receiver_partner_id and
+               self.partner_id == self.receiver_partner_id):
+                raise exceptions.UserError(
+                    _('The transferor and the receiver can not be '
+                      'the same partner.'))
+
+    @api.constrains('quota_id', 'volume')
+    def _check_volume(self):
+        if len(self) == 1:
+            if self.quota_id.balance < self.volume:
+                raise exceptions.UserError(
+                    _('The available balance is not sufficient.'))
+
     @api.onchange('agriculturalseason_id')
     def _onchange_agriculturalseason_id(self):
         if self.agriculturalseason_id:
@@ -333,33 +380,41 @@ class WuaIndividualinput(models.Model):
                                [('id', 'in', valid_superproduct_ids)]}
                     }
 
+    @api.onchange('quotaperiod_id', 'superproduct_id')
+    def _onchange_quotaperiod_or_superproduct_id(self):
+        condition = ('id', '=', 0)  # Default: it is not possible to select
+        if self.quotaperiod_id and self.superproduct_id:
+            valid_quotas = self.env['wua.quota'].search(
+                [('quotaperiod_id', '=', self.quotaperiod_id.id),
+                 ('superproduct_id', '=', self.superproduct_id.id),
+                 ('balance', '>', 0)])
+            if valid_quotas:
+                condition = ('id', 'in', valid_quotas.ids)
+        return {'domain': {'quota_id': [condition]}}
+
     @api.onchange('quota_id')
     def _onchange_quota_id(self):
         self._compute_quota_accumulated_input()
         self._compute_quota_accumulated_consumption()
         self._compute_quota_balance()
         self.quota_negative_balance = self.quota_balance
+        if self.quota_id:
+            return {'domain': {'receiver_partner_id':
+                               [('id', '!=', self.quota_id.partner_id.id),
+                                ('is_wua_partner', '=', True)]}
+                    }
 
     @api.model
     def create(self, vals):
-        new_individualinput = super(WuaIndividualinput, self).create(vals)
-        individual_assignment_ok = \
-            self._apply_individual_assignment_for_partner(new_individualinput)
-        if not individual_assignment_ok:
-            raise exceptions.UserError(
-                _('The chosen partner does not have a quota yet, and '
-                  'it is not possible to create a quota with a negative '
-                  'initial volume.'))
-        else:
-            # Recompute "quota_id": necessary if it is the first hydric
-            # movement.
-            new_individualinput._compute_quota_id()
-        return new_individualinput
+        new_cession = super(WuaCession, self).create(vals)
+        self._apply_cession_of_partner(new_cession)
+        new_cession._compute_receiver_quota_id()
+        return new_cession
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
                         submenu=False):
-        res = super(WuaIndividualinput, self).fields_view_get(
+        res = super(WuaCession, self).fields_view_get(
             view_id=view_id, view_type=view_type,
             toolbar=toolbar, submenu=submenu)
         if (view_type == 'form' and
@@ -377,7 +432,7 @@ class WuaIndividualinput(models.Model):
                 node.set('readonly', '1')
                 node.set('modifiers',
                          '{"readonly": true, "required": true}')
-            for node in doc.xpath("//field[@name='partner_id']"):
+            for node in doc.xpath("//field[@name='quota_id']"):
                 node.set('readonly', '1')
                 node.set('modifiers',
                          '{"readonly": true, "required": true}')
@@ -413,33 +468,6 @@ class WuaIndividualinput(models.Model):
         return result
 
     @api.multi
-    def unlink(self):
-        implied_quotas = []
-        for record in self:
-            quota = record.quota_id
-            if quota and quota.hydricmovement_ids:
-                hydric_outputs = filter(
-                    lambda x: x['is_consumption'] is True and
-                    x['event_time'] > record.event_time,
-                    quota.hydricmovement_ids)
-                if hydric_outputs:
-                    raise exceptions.UserError(_(
-                        'It is not possible to delete this individual input, '
-                        'because the quota has some hydric consumptions '
-                        'after the individual input.'))
-                implied_quotas.append(quota)
-        resp = super(WuaIndividualinput, self).unlink()
-        ids_of_quotas_to_delete = []
-        for quota in implied_quotas:
-            if len(quota.hydricmovement_ids) > 0:
-                self.env['wua.quota'].refresh_quota(quota)
-            else:
-                ids_of_quotas_to_delete.append(quota.id)
-        if ids_of_quotas_to_delete:
-            self.env['wua.quota'].browse(ids_of_quotas_to_delete).unlink()
-        return resp
-
-    @api.multi
     def action_open_quota_form(self):
         self.ensure_one()
         id_form_view = self.env.ref(
@@ -457,40 +485,38 @@ class WuaIndividualinput(models.Model):
             }
         return act_window
 
-    def _apply_individual_assignment_for_partner(self, individualinput):
-        resp = True
-        quotaperiod = individualinput.quotaperiod_id
-        superproduct = individualinput.superproduct_id
-        partner = individualinput.partner_id
-        event_time = individualinput.event_time
-        volume = individualinput.volume
-        possible_quota = self.env['wua.quota'].search(
+    def _apply_cession_of_partner(self, cession):
+        quota = cession.quota_id
+        quotaperiod = cession.quotaperiod_id
+        superproduct = cession.superproduct_id
+        receiver_partner = cession.receiver_partner_id
+        event_time = cession.event_time
+        volume = cession.volume
+        self.env['wua.hydricmovement'].create({
+            'quota_id': quota.id,
+            'event_time': event_time,
+            'type': 'granted_cession',
+            'volume': volume,
+            'cession_id': cession.id,
+            })
+        possible_receiver_quota = self.env['wua.quota'].search(
             [('quotaperiod_id', '=', quotaperiod.id),
              ('superproduct_id', '=', superproduct.id),
-             ('partner_id', '=', partner.id)])
-        quota = None
-        if possible_quota:
-            quota = possible_quota[0]
+             ('partner_id', '=', receiver_partner.id)])
+        receiver_quota = None
+        if possible_receiver_quota:
+            receiver_quota = possible_receiver_quota[0]
         else:
-            if volume < 0:
-                resp = False
-            else:
-                quota = self.env['wua.quota'].create({
-                    'quotaperiod_id': quotaperiod.id,
-                    'partner_id': partner.id,
-                    'superproduct_id': superproduct.id,
-                    'initial_value': volume,
-                    })
-        if resp:
-            type = 'pos_indiv_assign'
-            if volume < 0:
-                type = 'neg_indiv_assign'
-                volume = -volume
-            self.env['wua.hydricmovement'].create({
-                'quota_id': quota.id,
-                'event_time': event_time,
-                'type': type,
-                'volume': volume,
-                'individualinput_id': individualinput.id,
+            receiver_quota = self.env['wua.quota'].create({
+                'quotaperiod_id': quotaperiod.id,
+                'partner_id': receiver_partner.id,
+                'superproduct_id': superproduct.id,
+                'initial_value': volume,
                 })
-        return resp
+        self.env['wua.hydricmovement'].create({
+            'quota_id': receiver_quota.id,
+            'event_time': event_time,
+            'type': 'received_cession',
+            'volume': volume,
+            'source_cession_id': cession.id,
+            })

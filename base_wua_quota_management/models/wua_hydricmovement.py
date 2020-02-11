@@ -151,6 +151,18 @@ class WuaHydricmovement(models.Model):
         readonly=True,
         ondelete='cascade')
 
+    cession_id = fields.Many2one(
+        string='Cession',
+        comodel_name='wua.cession',
+        readonly=True,
+        ondelete='cascade')
+
+    source_cession_id = fields.Many2one(
+        string='Source Cession',
+        comodel_name='wua.cession',
+        readonly=True,
+        ondelete='cascade')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Hydric Movement.'),
@@ -302,7 +314,7 @@ class WuaHydricmovement(models.Model):
         for record in self:
             raise exceptions.UserError(_(
                 'It is not possible to directly delete a hydric '
-                'consumption.'))
+                'movement.'))
         return super(WuaHydricmovement, self).unlink()
 
     @api.multi
@@ -359,7 +371,31 @@ class WuaHydricmovement(models.Model):
                     suffix = '. ' + _('Reason') + ': ' + reason
                 resp = _('Positive Individual-Input') + suffix
             if type == 'neg_indiv_assign':
-                resp = _('Negative Individual-Output')
+                reason = hydricmovement.individualinput_id.reason
+                suffix = ''
+                if reason:
+                    suffix = '. ' + _('Reason') + ': ' + reason
+                resp = _('Negative Individual-Input') + suffix
+            if type == 'granted_cession':
+                reason = hydricmovement.cession_id.reason
+                suffix = ''
+                if reason:
+                    suffix = '. ' + _('Reason') + ': ' + reason
+                receiver = hydricmovement.cession_id.receiver_partner_id
+                resp = _('Granted cession') + '. ' + \
+                    _('Beneficiary partner') + ': ' + \
+                    receiver.name + ' [' + \
+                    str(receiver.partner_code) + ']' + suffix
+            if type == 'received_cession':
+                reason = hydricmovement.cession_id.reason
+                suffix = ''
+                if reason:
+                    suffix = '. ' + _('Reason') + ': ' + reason
+                transferor = hydricmovement.source_cession_id.partner_id
+                resp = _('Received cession') + '. ' + \
+                    _('Benefactor partner') + ': ' + \
+                    transferor.name + ' [' + \
+                    str(transferor.partner_code) + ']' + suffix
             # Provisional (pending other types)
         else:
             resp = self._get_description_for_new_types(hydricmovement)
@@ -382,7 +418,11 @@ class WuaHydricmovement(models.Model):
                         (hydricmovement.type == 'pos_indiv_assign' and
                          (not hydricmovement.individualinput_id)) or
                         (hydricmovement.type == 'neg_indiv_assign' and
-                         (not hydricmovement.individualinput_id)))
+                         (not hydricmovement.individualinput_id)) or
+                        (hydricmovement.type == 'granted_cession' and
+                         (not hydricmovement.cession_id)) or
+                        (hydricmovement.type == 'received_cession' and
+                         (not hydricmovement.source_cession_id)))
         else:
             resp = self._test_reference_id_for_new_types(hydricmovement)
         return resp

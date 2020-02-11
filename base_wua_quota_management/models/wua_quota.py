@@ -185,22 +185,26 @@ class WuaQuota(models.Model):
         default_locale = locale.setlocale(locale.LC_TIME)
         is_english = self.env.context['lang'] == 'en_US'
         for record in self:
-            try:
-                if is_english:
-                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                initial_date_str = datetime.datetime.strptime(
-                    record.quotaperiod_id.initial_date,
-                    '%Y-%m-%d').strftime('%x')
-                end_date_str = datetime.datetime.strptime(
-                    record.quotaperiod_id.end_date,
-                    '%Y-%m-%d').strftime('%x')
-            finally:
-                locale.setlocale(locale.LC_TIME, default_locale)
-            superproduct_name = record.superproduct_id.name
             partner_name = record.partner_id.name + \
                 ' [' + str(record.partner_id.partner_code) + ']'
-            name = initial_date_str + ' - ' + end_date_str + \
-                ' (' + superproduct_name.lower() + '), ' + partner_name
+            if self.env.context.get('show_only_partner_data', False):
+                name = partner_name + ' (' + _('quota') + ': ' + \
+                    '{0:.2f}'.format(round(record.balance, 2)) + ')'
+            else:
+                try:
+                    if is_english:
+                        locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                    initial_date_str = datetime.datetime.strptime(
+                        record.quotaperiod_id.initial_date,
+                        '%Y-%m-%d').strftime('%x')
+                    end_date_str = datetime.datetime.strptime(
+                        record.quotaperiod_id.end_date,
+                        '%Y-%m-%d').strftime('%x')
+                finally:
+                    locale.setlocale(locale.LC_TIME, default_locale)
+                superproduct_name = record.superproduct_id.name
+                name = initial_date_str + ' - ' + end_date_str + \
+                    ' (' + superproduct_name.lower() + '), ' + partner_name
             result.append((record.id, name))
         return result
 
@@ -221,6 +225,27 @@ class WuaQuota(models.Model):
                         'quotaperiod_id': self.quotaperiod_id.id,
                         'superproduct_id': self.superproduct_id.id,
                         'partner_id': self.partner_id.id,
+                        }
+            }
+        return act_window
+
+    @api.multi
+    def action_open_cession_form(self):
+        self.ensure_one()
+        id_form_view = self.env.ref(
+            'base_wua_quota_management.'
+            'wua_cession_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Cession'),
+            'res_model': 'wua.cession',
+            'view_type': 'form',
+            'views': [(id_form_view, 'form')],
+            'target': 'new',
+            'context': {'agriculturalseason_id': self.agriculturalseason_id.id,
+                        'quotaperiod_id': self.quotaperiod_id.id,
+                        'superproduct_id': self.superproduct_id.id,
+                        'quota_id': self.id,
                         }
             }
         return act_window

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="wua_individualinput_view_form" model="ir.ui.view">
-        <field name="name">Individual Inputs (form view)</field>
-        <field name="model">wua.individualinput</field>
+    <record id="wua_cession_view_form" model="ir.ui.view">
+        <field name="name">Cessions (form view)</field>
+        <field name="model">wua.cession</field>
         <field name="arch" type="xml">
             <form duplicate="0">
                 <field name="id" invisible="1"/>
@@ -23,12 +23,21 @@
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    attrs="{'readonly':[('id','>',0)]}"/>
-                            <field name="partner_id" colspan="4"
+                            <field name="quota_id" colspan="4"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
-                                   domain="[('is_wua_partner', '=', True)]"
+                                   string="Transferor Partner"
+                                   attrs="{'invisible':[('id','>',0)]}"
+                                   context="{'show_only_partner_data': True}"/>
+                            <field name="partner_id" colspan="4"
+                                   attrs="{'invisible':[('id','=',False)]}"/>
+                            <field name="quota_readonly_id" colspan="4"
+                                   attrs="{'invisible':[('id','=',False)]}"/>
+                            <field name="receiver_partner_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
                                    attrs="{'readonly':[('id','>',0)]}"/>
-                            <field name="quota_id" colspan="4"
+                            <field name="receiver_quota_id" colspan="4"
                                    attrs="{'invisible':[('id','=',False)]}"/>
                             <field name="event_time" colspan="3"
                                    attrs="{'readonly':[('id','>',0)]}"/>
@@ -67,12 +76,12 @@
         </field>
     </record>
 
-    <record id="wua_individualinput_view_tree" model="ir.ui.view">
-        <field name="name">Individual Inputs (tree view)</field>
-        <field name="model">wua.individualinput</field>
+    <record id="wua_cession_view_tree" model="ir.ui.view">
+        <field name="name">Cessions (tree view)</field>
+        <field name="model">wua.cession</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_quota_management_individualinput_view_tree">
-                <field name="superproduct_id"/>                
+            <tree class="o_base_wua_quota_management_cession_view_tree">
+                <field name="superproduct_id"/>
                 <field name="partner_id"/>
                 <field name="quotaperiod_id"
                        widget="many2one_unclickable"/>
@@ -82,29 +91,24 @@
                         icon="fa-external-link"/>
                 <field name="event_time"
                        string="Date" widget="date"/>
+                <field name="receiver_partner_id"/>
                 <field name="reason"/>
                 <field name="volume"/>
             </tree>
         </field>
     </record>
-
-    <record id="wua_individualinput_view_search" model="ir.ui.view">
-        <field name="name">Individual Inputs (search view)</field>
-        <field name="model">wua.individualinput</field>
+    
+    <record id="wua_cession_view_search" model="ir.ui.view">
+        <field name="name">Cessions (search view)</field>
+        <field name="model">wua.cession</field>
         <field name="arch" type="xml">
             <search>
                 <field name="partner_id"/>
+                <field name="receiver_partner_id"/>
                 <field name="reason"/>
                 <filter string="Active Agricultural Season"
                         name="active_agriculturalseason"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
-                <separator/>
-                <filter string="Positive Inputs"
-                        name="positive_inputs"
-                        domain="[('is_negative','=',False)]"/>
-                <filter string="Negative Inputs"
-                        name="negative_inputs"
-                        domain="[('is_negative','=',True)]"/>
                 <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season"
@@ -119,27 +123,30 @@
                     <filter string="Superproduct"
                             name="grouped_superproduct"
                      context="{'group_by':'superproduct_id'}"/>
-                    <filter string="Partner"
+                    <filter string="Transferor Partner"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>
+                    <filter string="Receiver Partner"
+                            name="grouped_receiver_partner"
+                     context="{'group_by':'receiver_partner_id'}"/>
                 </group>
             </search>
         </field>
     </record>
-
-    <record id="wua_individualinput_action"
+    
+    <record id="wua_cession_action"
             model="ir.actions.act_window">
-        <field name="name">Individual Inputs</field>
-        <field name="res_model">wua.individualinput</field>
+        <field name="name">Cessions</field>
+        <field name="res_model">wua.cession</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
-                        'view_id': ref('wua_individualinput_view_tree')}),
+                        'view_id': ref('wua_cession_view_tree')}),
                 (0, 0, {'view_mode': 'form',
-                        'view_id': ref('wua_individualinput_view_form')})]"/>
-        <field name="search_view_id" ref="wua_individualinput_view_search"/>
+                        'view_id': ref('wua_cession_view_form')})]"/>
+        <field name="search_view_id" ref="wua_cession_view_search"/>
         <field name="context">
           {'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
@@ -149,10 +156,10 @@
         </field>
     </record>
 
-    <menuitem id="individualinput_menu"
-              name="Individual Inputs"
+    <menuitem id="cession_menu"
+              name="Cessions"
               parent="management_menu"
-              sequence="3"
-              action="wua_individualinput_action"/>
-
+              sequence="4"
+              action="wua_cession_action"/>
+              
 </odoo>
