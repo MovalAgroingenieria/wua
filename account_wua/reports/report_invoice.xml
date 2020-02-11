@@ -35,13 +35,16 @@
                                     <!-- <span>,&amp;nbsp;</span><span t-field="o.partner_id.street_number"/> -->
                                 </t><br/>
                                 <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
-                                <t t-if="o.partner_id.zip"><span>&amp;nbsp;-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
-                                <t id="state_invoicing_address" t-if="o.partner_id.state_id">
+                                <t t-if="o.partner_id.zip">
+                                    <span>&amp;nbsp;-&amp;nbsp;</span>
+                                    <span t-field="o.partner_id.zip"/>
+                                </t>
+                                <t id="state_invoicing_address_1" t-if="o.partner_id.state_id">
                                     <span t-tag="span">(</span><span t-field="o.partner_id.state_id"/>
                                     <t t-if="not o.partner_id.country_id"><span>)</span></t>
                                     <t t-else=""><span>-</span></t>
                                 </t>
-                                <t id="country_invoicing_address" t-if="o.partner_id.country_id">
+                                <t id="country_invoicing_address_1" t-if="o.partner_id.country_id">
                                     <t t-if="not o.partner_id.state_id"><span>(</span></t>
                                     <span t-field="o.partner_id.country_id"></span><span>)</span>
                                 </t>
@@ -63,13 +66,16 @@
                                         <!-- <span>,&amp;nbsp;</span><span t-field="o.partner_id.street_number"/> -->
                                     </t><br/>
                                     <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
-                                    <t t-if="o.partner_id.zip"><span>&amp;nbsp;-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
-                                    <t id="state_invoicing_address" t-if="o.partner_id.state_id">
+                                    <t t-if="o.partner_id.zip">
+                                        <span>&amp;nbsp;-&amp;nbsp;</span>
+                                        <span t-field="o.partner_id.zip"/>
+                                    </t>
+                                    <t id="state_invoicing_address_2" t-if="o.partner_id.state_id">
                                         <span t-tag="span">(</span><span t-field="o.partner_id.state_id"/>
                                         <t t-if="not o.partner_id.country_id"><span>)</span></t>
                                         <t t-else=""><span>-</span></t>
                                     </t>
-                                    <t id="country_invoicing_address" t-if="o.partner_id.country_id">
+                                    <t id="country_invoicing_address_2" t-if="o.partner_id.country_id">
                                         <t t-if="not o.partner_id.state_id"><span>(</span></t>
                                         <span t-field="o.partner_id.country_id"></span><span>)</span>
                                     </t>
@@ -89,13 +95,16 @@
                                         <!-- <span>,&amp;nbsp;</span><span t-field="o.partner_id.street_number"/> -->
                                     </t><br/>
                                     <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
-                                    <t t-if="o.partner_id.zip"><span>&amp;nbsp;-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
-                                    <t id="state_invoicing_address" t-if="o.partner_id.state_id">
+                                    <t t-if="o.partner_id.zip">
+                                        <span>&amp;nbsp;-&amp;nbsp;</span>
+                                        <span t-field="o.partner_id.zip"/>
+                                    </t>
+                                    <t id="state_invoicing_address_3" t-if="o.partner_id.state_id">
                                         <span t-tag="span">(</span><span t-field="o.partner_id.state_id"/>
                                         <t t-if="not o.partner_id.country_id"><span>)</span></t>
                                         <t t-else=""><span>-</span></t>
                                     </t>
-                                    <t id="country_invoicing_address" t-if="o.partner_id.country_id">
+                                    <t id="country_invoicing_address_3" t-if="o.partner_id.country_id">
                                         <t t-if="not o.partner_id.state_id"><span>(</span></t>
                                         <span t-field="o.partner_id.country_id"></span><span>)</span>
                                     </t>
@@ -113,13 +122,16 @@
                                         <!-- <span>,&amp;nbsp;</span><span t-field="o.partner_id.street_number"/> -->
                                     </t><br/>
                                     <t t-if="o.partner_shipping_id.city"><span t-field="o.partner_shipping_id.city"/></t>
-                                    <t t-if="o.partner_shipping_id.zip"><span>&amp;nbsp;-&amp;nbsp;</span><span t-field="o.partner_shipping_id.zip"/></t>
-                                    <t id="state_invoicing_address" t-if="o.partner_shipping_id.state_id">
+                                    <t t-if="o.partner_shipping_id.zip">
+                                        <span>&amp;nbsp;-&amp;nbsp;</span>
+                                        <span t-field="o.partner_shipping_id.zip"/>
+                                    </t>
+                                    <t id="state_shipping_address" t-if="o.partner_shipping_id.state_id">
                                         <span t-tag="span">(</span><span t-field="o.partner_shipping_id.state_id"/>
                                         <t t-if="not o.partner_id.country_id"><span>)</span></t>
                                         <t t-else=""><span>-</span></t>
                                     </t>
-                                    <t id="country_invoicing_address" t-if="o.partner_shipping_id.country_id">
+                                    <t id="country_shipping_address" t-if="o.partner_shipping_id.country_id">
                                         <t t-if="not o.partner_shipping_id.state_id"><span>(</span></t>
                                         <span t-field="o.partner_shipping_id.country_id"></span><span>)</span>
                                     </t>

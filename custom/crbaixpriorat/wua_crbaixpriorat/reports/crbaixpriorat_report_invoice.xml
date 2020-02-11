@@ -1,31 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Modification layout report invoice 
+    <!-- Modification layout report invoice -->
     <template id="report_invoice_document_baix_priorat" inherit_id="account_wua.wua_report_invoice_document">
--->
-        <!-- Change infocell name 
-        <xpath expr="//t[@id='country_invoicing_address']" position="replace">
-        </xpath> -->
 
-<!-- 
-        <xpath expr="//t[@id='state_invoicing_address']" position="replace">
+        <!-- Do not show country in invoicing addresses -->
+        <xpath expr="//t[@id='country_invoicing_address_1']" position="replace"/>
+        <xpath expr="//t[@id='country_invoicing_address_2']" position="replace"/>
+        <xpath expr="//t[@id='country_invoicing_address_3']" position="replace"/>
+
+        <xpath expr="//t[@id='state_invoicing_address_1']" position="replace">
             <t  t-if="o.partner_id.state_id">
                 <span>(</span>
-                <span t-field="o.partner_id.state_id"/> 
+                <span t-field="o.partner_id.state_id"/>
                 <span>)</span>
             </t>
-
+        </xpath>
+        <xpath expr="//t[@id='state_invoicing_address_2']" position="replace">
+            <t  t-if="o.partner_id.state_id">
+                <span>(</span>
+                <span t-field="o.partner_id.state_id"/>
+                <span>)</span>
+            </t>
+        </xpath>
+        <xpath expr="//t[@id='state_invoicing_address_3']" position="replace">
+            <t  t-if="o.partner_id.state_id">
+                <span>(</span>
+                <span t-field="o.partner_id.state_id"/>
+                <span>)</span>
+            </t>
         </xpath>
 
+        <!-- Do not show country in shipping address -->
         <xpath expr="//t[@id='country_shipping_address']" position="replace">
         </xpath>
         <xpath expr="//t[@id='state_shipping_address']" position="replace">
-            <t t-if="o.partner_id.state_id">
-                <span t-field="o.partner_id.state_id"/>
+            <t  t-if="o.partner_shipping_id.state_id">
+                <span>(</span>
+                <span t-field="o.partner_shipping_id.state_id"/> 
+                <span>)</span>
             </t>
         </xpath>
 
    </template>
-    -->
+
 </odoo>
