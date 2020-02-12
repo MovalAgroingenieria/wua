@@ -2,21 +2,36 @@
 # 2020 - Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, api
+from odoo import models, fields, api
 
 
 class WuaPresconsumption(models.Model):
     _inherit = 'wua.presconsumption'
 
     _create_hydricmovements_when_create = True
+    _in_create = False
+
+    hydricmovement_ids = fields.One2many(
+        string='Hydric Consumptions',
+        comodel_name='wua.hydricmovement',
+        inverse_name='presconsumption_id')
+
+    # This method is reimplemented because in the create method is not
+    # available the waterconnection_id field. This computed method is called
+    # after the create method.
+    def _compute_hydraulic_infrastructure_data(self):
+        super(WuaPresconsumption, self)._compute_hydraulic_infrastructure_data(
+            )
+        if self.__class__._in_create:
+            self.__class__._in_create = False
+            if self.__class__._create_hydricmovements_when_create:
+                self.env['wua.quota'].create_hydricmovements_presconsumption(
+                    self)
 
     @api.model
     def create(self, vals):
         new_presconsumption = super(WuaPresconsumption, self).create(vals)
-        if (self.__class__._create_hydricmovements_when_create and
-           'waterconnection_id' in vals):
-            self.env['wua.quota'].create_hydricmovements_from_presconsumption(
-                new_presconsumption, vals['waterconnection_id'])
+        self.__class__._in_create = True
         return new_presconsumption
 
     @api.multi
@@ -39,12 +54,11 @@ class WuaPresconsumption(models.Model):
             if delete_hydricmovements or create_hydricmovements:
                 quota_model = self.env['wua.quota']
                 if delete_hydricmovements:
-                    quota_model.delete_hydricmovements_from_presconsumption(
+                    quota_model.delete_hydricmovements_presconsumption(
                         updated_presconsumption)
                 if create_hydricmovements:
-                    quota_model.create_hydricmovements_from_presconsumption(
-                        updated_presconsumption,
-                        updated_presconsumption.waterconnection_id.id)
+                    quota_model.create_hydricmovements_presconsumption(
+                        updated_presconsumption)
         return True
 
     # This funcion gets the pressurized consumptions of a water connection,

@@ -357,12 +357,12 @@ class WuaHydricmovement(models.Model):
                 initial_date_str = datetime.datetime.strptime(
                     hydricmovement.quotaperiod_id.initial_date,
                     '%Y-%m-%d').strftime('%x')
-                resp = _('Multiple Assignment') + '.' + \
+                resp = _('Multiple Assignment') + '. ' + \
                     _('Quota Period') + ': ' + initial_date_str
             if type == 'pres_consumption':
                 waterconnection_name = \
                     hydricmovement.presconsumption_id.waterconnection_id.name
-                resp = _('Pressurized Consumption') + '.' + \
+                resp = _('Pressurized Consumption') + '. ' + \
                     _('Water connection') + ': ' + waterconnection_name
             if type == 'pos_indiv_assign':
                 reason = hydricmovement.individualinput_id.reason

@@ -262,24 +262,115 @@ class WuaQuota(models.Model):
         quota._compute_accumulated_consumption()
         quota._compute_balance()
 
-    # For client classes (pressurized consumptions...)
-    def create_hydricmovements_from_presconsumption(self, presconsumption,
-                                                    waterconnection_id):
-        if not waterconnection_id:
-            return False
-        waterconnection = self.env['wua.waterconnection'].browse(
-            waterconnection_id)
-        if not waterconnection:
-            return False
+    def _get_quotaperiod(self, event_time):
+        resp = None
+        event_time = datetime.datetime.strptime(
+            event_time, '%Y-%m-%d %H:%M:%S')
+        quotaperiods = self.env['wua.quotaperiod'].search([])
+        for quotaperiod in (quotaperiods or []):
+            min_date = datetime.datetime.strptime(
+                quotaperiod.initial_date, '%Y-%m-%d')
+            max_date = datetime.datetime.strptime(
+                quotaperiod.end_date, '%Y-%m-%d') + \
+                datetime.timedelta(days=1)
+            if (event_time >= min_date and event_time < max_date):
+                resp = quotaperiod
+                break
+        return resp
+
+    def _adapt_hydricmovements_to_sorted_quotas(self, hydric_consumptions):
+        resp = []
         # Provisional
-        print 'create_hydricmovements_from_presconsumption for...'
-        print waterconnection.name
-        print presconsumption.volume_real
-        return True
+        print '_adapt_hydricmovements_to_sorted_quotas...'
+        return resp
+
+    def _group_hydricmovements(self, hydricmovements):
+        resp = []
+        for item in (hydricmovements or []):
+            if not resp:
+                resp.append(item)
+            else:
+                filtered_resp = filter(
+                    lambda x: x['quotaperiod_id'] == item['quotaperiod_id'] and
+                    x['superproduct_id'] == item['superproduct_id'] and
+                    x['partner_id'] == item['partner_id'], resp)
+                if not filtered_resp:
+                    resp.append(item)
+                else:
+                    item_to_update = filtered_resp[0]
+                    item_to_update.update(
+                        {'volume': item_to_update['volume'] + item['volume']})
+        return resp
 
     # For client classes (pressurized consumptions...)
-    def delete_hydricmovements_from_presconsumption(self, presconsumption):
+    def create_hydricmovements_presconsumption(self, presconsumption):
+        waterconnection = presconsumption.waterconnection_id
+        volume = presconsumption.volume_real
+        quotaperiod = self._get_quotaperiod(presconsumption.reading_end_time)
+        irrigationpoints = self.env['wua.parcel.irrigationpoint'].search(
+            [('waterconnection_id', '=', waterconnection.id)])
+        if irrigationpoints and quotaperiod:
+            parcels = [x.parcel_id for x in irrigationpoints]
+            total_area_official = sum(x.area_official for x in parcels)
+            superproduct_id = 0
+            if not quotaperiod.sorted_quotas or waterconnection.fixed_water:
+                if (waterconnection.product_id and
+                   waterconnection.product_id.superproduct_id):
+                    superproduct_id = \
+                        waterconnection.product_id.superproduct_id.id
+            if (total_area_official > 0 and
+               (quotaperiod.sorted_quotas or superproduct_id > 0)):
+                data_parcels = []
+                hydric_consumptions = []
+                for parcel in parcels:
+                    if parcel.area_official > 0:
+                        volume_of_parcel = \
+                            volume * parcel.area_official / total_area_official
+                        data_parcels.append({
+                            'parcel_id': parcel.id,
+                            'volume': volume_of_parcel,
+                            })
+                for data_parcel in (data_parcels or []):
+                    parcel = filter(lambda x: x['id'] ==
+                                    data_parcel['parcel_id'], parcels)[0]
+                    for partnerlink in (parcel.partnerlink_ids or []):
+                        volume_of_hydric_consumption = \
+                            (data_parcel['volume'] *
+                             partnerlink.water_costs_percentage / 100)
+                        hydric_consumptions.append({
+                            'quotaperiod_id': quotaperiod.id,
+                            'superproduct_id': superproduct_id,
+                            'partner_id': partnerlink.partner_id.id,
+                            'volume': volume_of_hydric_consumption,
+                            })
+                if hydric_consumptions:
+                    if quotaperiod.sorted_quotas:
+                        hydric_consumptions = \
+                            self._adapt_hydricmovements_to_sorted_quotas(
+                                hydric_consumptions)
+                    hydric_consumptions = self._group_hydricmovements(
+                        hydric_consumptions)
+                    for hydric_consumption in hydric_consumptions:
+                        quota = self.env['wua.quota'].search(
+                            [('quotaperiod_id', '=',
+                              hydric_consumption['quotaperiod_id']),
+                             ('superproduct_id', '=',
+                              hydric_consumption['superproduct_id']),
+                             ('partner_id', '=',
+                              hydric_consumption['partner_id'])])
+                        if quota:
+                            quota = quota[0]
+                            self.env['wua.hydricmovement'].sudo().create({
+                                'quota_id': quota.id,
+                                'event_time': presconsumption.reading_end_time,
+                                'type': 'pres_consumption',
+                                'volume': hydric_consumption['volume'],
+                                'presconsumption_id': presconsumption.id,
+                                })
+
+    # For client classes (pressurized consumptions...)
+    def delete_hydricmovements_presconsumption(self, presconsumption):
         # Provisional
-        print 'delete_hydricmovements_from_presconsumption for...'
+        print 'delete_hydricmovements_presconsumption for...'
         print presconsumption.waterconnection_id.name
         print presconsumption.volume_real
