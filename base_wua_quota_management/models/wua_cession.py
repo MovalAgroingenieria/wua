@@ -19,7 +19,7 @@ class WuaCession(models.Model):
     MAX_SIZE_QUOTA_NAME = 12 + MAX_SIZE_PARTNER_CODE + \
         MAX_SIZE_SUPERPRODUCT_CODE
     MAX_SIZE_NAME = 22 + MAX_SIZE_QUOTA_NAME
-    MAX_SIZE_REASON = 75
+    MAX_SIZE_REASON = 60
 
     def _default_agriculturalseason_id(self):
         resp = 0
@@ -466,6 +466,27 @@ class WuaCession(models.Model):
                 ' / ' + event_time_day_str
             result.append((record.id, name))
         return result
+
+    @api.multi
+    def unlink(self):
+        implied_quotas = []
+        for record in self:
+            quota = record.quota_id
+            receiver_quota = record.receiver_quota_id
+            if quota and quota.hydricmovement_ids:
+                implied_quotas.append(quota)
+            if receiver_quota and receiver_quota.hydricmovement_ids:
+                implied_quotas.append(receiver_quota)
+        resp = super(WuaCession, self).unlink()
+        ids_of_quotas_to_delete = []
+        for quota in implied_quotas:
+            if len(quota.hydricmovement_ids) > 0:
+                self.env['wua.quota'].refresh_quota(quota)
+            else:
+                ids_of_quotas_to_delete.append(quota.id)
+        if ids_of_quotas_to_delete:
+            self.env['wua.quota'].browse(ids_of_quotas_to_delete).unlink()
+        return resp
 
     @api.multi
     def action_open_quota_form(self):

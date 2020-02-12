@@ -17,7 +17,7 @@ class WuaHydricmovement(models.Model):
     MAX_SIZE_QUOTA_NAME = 12 + MAX_SIZE_PARTNER_CODE + \
         MAX_SIZE_SUPERPRODUCT_CODE
     MAX_SIZE_NAME = 22 + MAX_SIZE_QUOTA_NAME
-    MAX_SIZE_MOVEMENT_DESCRIPTION = 100
+    MAX_SIZE_MOVEMENT_DESCRIPTION = 115
     OUTPUT_TYPES = {'pres_consumption', 'grav_consumption',
                     'irrig_report', 'neg_indiv_assign',
                     'granted_cession', 'output_next_quota'}
@@ -387,7 +387,7 @@ class WuaHydricmovement(models.Model):
                     receiver.name + ' [' + \
                     str(receiver.partner_code) + ']' + suffix
             if type == 'received_cession':
-                reason = hydricmovement.cession_id.reason
+                reason = hydricmovement.source_cession_id.reason
                 suffix = ''
                 if reason:
                     suffix = '. ' + _('Reason') + ': ' + reason

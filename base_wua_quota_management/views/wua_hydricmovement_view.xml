@@ -23,13 +23,29 @@
                             <field name="accounting_volume"
                                    string="Volume (m3)"/>
                             <field name="balance"
-                                   attrs="{'invisible':[('balance','&lt;',0)]}"/>
+                                   attrs="{'invisible':
+                                           [('balance','&lt;',0)]}"/>
                             <field name="negative_balance"
                                    style="color:red"
-                                   attrs="{'invisible':[('balance','>=',0)]}"/>
+                                   attrs="{'invisible':
+                                           [('balance','>=',0)]}"/>
                             <field name="presconsumption_id"
                                    string="Link"
-                                   attrs="{'invisible': [('type','!=','pres_consumption')]}"/>
+                                   attrs="{'invisible':
+                                           [('type','!=','pres_consumption')]}"/>
+                            <field name="individualinput_id"
+                                   string="Link"
+                                   attrs="{'invisible':
+                                           [('type','!=','pos_indiv_assign'), 
+                                            ('type','!=','neg_indiv_assign')]}"/>
+                            <field name="cession_id"
+                                   string="Link"
+                                   attrs="{'invisible':
+                                           [('type','!=','granted_cession')]}"/>
+                            <field name="source_cession_id"
+                                   string="Link"
+                                   attrs="{'invisible':
+                                           [('type','!=','received_cession')]}"/>
                         </group>
                     </group>
                 </sheet>

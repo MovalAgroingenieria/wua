@@ -250,6 +250,11 @@ class WuaQuota(models.Model):
             }
         return act_window
 
+    def _update_hydricmovements_from_consumptions(self, quota_id,
+                                                  quotaperiod_id):
+        # Provisional (pending: update hydric movements for new quota)
+        print '_update_hydricmovements_from_consumptions'
+
     # For client classes (individual inputs, cessions, etc), when the
     # computed methods are not fired.
     def refresh_quota(self, quota):
@@ -257,7 +262,24 @@ class WuaQuota(models.Model):
         quota._compute_accumulated_consumption()
         quota._compute_balance()
 
-    def _update_hydricmovements_from_consumptions(self, quota_id,
-                                                  quotaperiod_id):
-        # Provisional (pending: update hydric movements for new quota)
-        print '_update_hydricmovements_from_consumptions'
+    # For client classes (pressurized consumptions...)
+    def create_hydricmovements_from_presconsumption(self, presconsumption,
+                                                    waterconnection_id):
+        if not waterconnection_id:
+            return False
+        waterconnection = self.env['wua.waterconnection'].browse(
+            waterconnection_id)
+        if not waterconnection:
+            return False
+        # Provisional
+        print 'create_hydricmovements_from_presconsumption for...'
+        print waterconnection.name
+        print presconsumption.volume_real
+        return True
+
+    # For client classes (pressurized consumptions...)
+    def delete_hydricmovements_from_presconsumption(self, presconsumption):
+        # Provisional
+        print 'delete_hydricmovements_from_presconsumption for...'
+        print presconsumption.waterconnection_id.name
+        print presconsumption.volume_real
