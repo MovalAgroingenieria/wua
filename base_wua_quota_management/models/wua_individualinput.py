@@ -481,6 +481,8 @@ class WuaIndividualinput(models.Model):
                     'superproduct_id': superproduct.id,
                     'initial_value': volume,
                     })
+                self.env['wua.quota'].update_hydricmovements_from_consumptions(
+                    quotaperiod)
         if resp:
             type = 'pos_indiv_assign'
             if volume < 0:

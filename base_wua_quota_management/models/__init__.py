@@ -14,3 +14,6 @@ from . import wua_hydricmovement
 from . import wua_presconsumption
 from . import wua_individualinput
 from . import wua_cession
+from . import wua_reading
+from . import wua_gravconsumption
+from . import wua_wateringrequest

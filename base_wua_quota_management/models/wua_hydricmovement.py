@@ -140,8 +140,14 @@ class WuaHydricmovement(models.Model):
         compute='_compute_description')
 
     presconsumption_id = fields.Many2one(
-        string='Consumption',
+        string='Pressurized Consumption',
         comodel_name='wua.presconsumption',
+        readonly=True,
+        ondelete='cascade')
+
+    gravconsumption_id = fields.Many2one(
+        string='Gravity Consumption',
+        comodel_name='wua.gravconsumption',
         readonly=True,
         ondelete='cascade')
 
@@ -279,6 +285,31 @@ class WuaHydricmovement(models.Model):
                                            error_message_03 + ': ' +
                                            self.type)
 
+    @api.model
+    def create(self, vals):
+        # Only for hydric movements of "pres_consumption" type:
+        # two or more water-connections can create repeated
+        # hydric consumptions (to avoid excepcion).
+        # More secure: for all types, add one second to "event_time" field.
+        quota_id = vals['quota_id']
+        event_time = vals['event_time']
+        exists_hydricmovement = self.search([('quota_id', '=', quota_id),
+                                             ('event_time', '=', event_time)])
+        if exists_hydricmovement:
+            i = 1
+            while exists_hydricmovement:
+                event_time = datetime.datetime.strptime(
+                    event_time, '%Y-%m-%d %H:%M:%S') + \
+                    datetime.timedelta(seconds=i)
+                event_time = event_time.strftime('%Y-%m-%d %H:%M:%S')
+                exists_hydricmovement = self.search(
+                    [('quota_id', '=', quota_id),
+                     ('event_time', '=', event_time)])
+                i = i + 1
+            vals['event_time'] = event_time
+        new_hydricmovement = super(WuaHydricmovement, self).create(vals)
+        return new_hydricmovement
+
     @api.multi
     def name_get(self):
         result = []
@@ -311,11 +342,12 @@ class WuaHydricmovement(models.Model):
 
     @api.multi
     def unlink(self):
-        for record in self:
+        if self.env.context.get('force_unlink', False):
+            return super(WuaHydricmovement, self).unlink()
+        else:
             raise exceptions.UserError(_(
                 'It is not possible to directly delete a hydric '
                 'movement.'))
-        return super(WuaHydricmovement, self).unlink()
 
     @api.multi
     def action_open_quota_form(self):
@@ -363,7 +395,14 @@ class WuaHydricmovement(models.Model):
                 waterconnection_name = \
                     hydricmovement.presconsumption_id.waterconnection_id.name
                 resp = _('Pressurized Consumption') + '. ' + \
-                    _('Water connection') + ': ' + waterconnection_name
+                    _('Water connection') + ': ' + \
+                    waterconnection_name
+            if type == 'grav_consumption':
+                parcel_name = \
+                    hydricmovement.gravconsumption_id.parcel_id.name
+                resp = _('Gravity Consumption') + '. ' + \
+                    _('Parcel') + ': ' + \
+                    parcel_name
             if type == 'pos_indiv_assign':
                 reason = hydricmovement.individualinput_id.reason
                 suffix = ''
@@ -415,6 +454,8 @@ class WuaHydricmovement(models.Model):
                          (not hydricmovement.quotaperiod_id)) or
                         (hydricmovement.type == 'pres_consumption' and
                          (not hydricmovement.presconsumption_id)) or
+                        (hydricmovement.type == 'grav_consumption' and
+                         (not hydricmovement.gravconsumption_id)) or
                         (hydricmovement.type == 'pos_indiv_assign' and
                          (not hydricmovement.individualinput_id)) or
                         (hydricmovement.type == 'neg_indiv_assign' and

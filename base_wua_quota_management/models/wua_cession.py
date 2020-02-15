@@ -534,6 +534,8 @@ class WuaCession(models.Model):
                 'superproduct_id': superproduct.id,
                 'initial_value': volume,
                 })
+            self.env['wua.quota'].update_hydricmovements_from_consumptions(
+                quotaperiod)
         self.env['wua.hydricmovement'].create({
             'quota_id': receiver_quota.id,
             'event_time': event_time,

@@ -352,12 +352,15 @@ class WuaQuotaperiod(models.Model):
                 raise exceptions.UserError(
                     quotaperiodline.superproduct_id.name + ': ' + suffix)
         self._delete_parcel_assignments(quotaperiod, only_unselected=True)
+        self.env['wua.quota'].update_hydricmovements_from_consumptions(
+            quotaperiod)
 
     @api.multi
     def action_cancel_quotaperiod(self):
         self.ensure_one()
         quotaperiod = self
-        # Provisional (pending: delete individual inputs, cessions, etc)
+        self._delete_individualinputs_cessions(quotaperiod)
+        self._delete_other_entities(quotaperiod)
         self._delete_quotas_hydricmovements(quotaperiod)
         self._delete_parcel_assignments(quotaperiod)
         quotaperiod.action_open_quotaperiod()
@@ -427,6 +430,26 @@ class WuaQuotaperiod(models.Model):
                 if quotaperiodline_oper == 0:
                     quotaperiodline_vals['pos'] = pos
                     pos = pos + 1
+
+    def _delete_individualinputs_cessions(self, quotaperiod):
+        if quotaperiod:
+            quotaperiod_id = quotaperiod.id
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    DELETE FROM wua_individualinput
+                    WHERE quotaperiod_id=""" + str(quotaperiod_id))
+                self.env.cr.execute("""
+                    DELETE FROM wua_cession
+                    WHERE quotaperiod_id=""" + str(quotaperiod_id))
+                self.env.cr.commit()
+            except:
+                self.env.cr.rollback()
+                raise exceptions.UserError(_('Error when updating records.'))
+
+    # Hook (only cessions and individual inputs?)
+    def _delete_other_entities(self, quotaperiod):
+        pass
 
     def _delete_quotas_hydricmovements(self, quotaperiod):
         if quotaperiod:
