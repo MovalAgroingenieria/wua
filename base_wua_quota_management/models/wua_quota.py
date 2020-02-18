@@ -330,13 +330,14 @@ class WuaQuota(models.Model):
 
     # For client classes (pressurized consumptions...)
     def delete_hydricmovements_presconsumption(self, presconsumption):
-        presconsumption.hydricmovement_ids.with_context(
-            force_unlink=True).sudo().unlink()
+        if presconsumption.hydricmovement_ids:
+            presconsumption.hydricmovement_ids.with_context(
+                force_unlink=True).sudo().unlink()
 
     # For client classes (gravity consumptions...)
     def create_hydricmovements_gravconsumption_of_request(
-            self, quotaperiod, superproduct, parcel, watering_duration,
-            gravconsumption):
+            self, quotaperiod, wateringperiod, superproduct, parcel,
+            watering_duration, gravconsumption):
         volume_perunittime = 0
         if parcel.irrigationditch_id:
             volume_perunittime = parcel.irrigationditch_id.water_flow
@@ -362,7 +363,7 @@ class WuaQuota(models.Model):
                     quota = quota[0]
                     available_quota = quota.balance
                     event_time = datetime.datetime.strptime(
-                        quotaperiod.initial_date, '%Y-%m-%d')
+                        wateringperiod.initial_date, '%Y-%m-%d')
                     event_time = \
                         event_time.strftime('%Y-%m-%d %H:%M:%S')
                     self.env['wua.hydricmovement'].sudo().create({
@@ -382,6 +383,54 @@ class WuaQuota(models.Model):
                             '{0:.2f}'.format(round(available_quota, 2)) + \
                             ' ' + suffix_message
                         raise exceptions.UserError(error_message)
+
+    # For client classes (gravity consumptions...)
+    def create_hydricmovements_gravconsumption(self, gravconsumption):
+        parcel = gravconsumption.subparcel_id.parcel_id
+        product = gravconsumption.product_id
+        superproduct = None
+        if product.product_tmpl_id.superproduct_id:
+            superproduct = product.product_tmpl_id.superproduct_id
+        if superproduct and gravconsumption.watering_end_time:
+            quotaperiod = self._get_quotaperiod(
+                gravconsumption.watering_end_time)
+            volume_perunittime = 0
+            if parcel.irrigationditch_id:
+                volume_perunittime = parcel.irrigationditch_id.water_flow
+            if volume_perunittime == 0:
+                default_volume_perunitime = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'default_volume_perunitime')
+                if default_volume_perunitime:
+                    volume_perunittime = default_volume_perunitime
+            if volume_perunittime > 0 and parcel.area_official > 0:
+                watering_duration = gravconsumption.watering_duration * 60
+                volume = watering_duration * volume_perunittime / 1000
+                for partnerlink in (parcel.partnerlink_ids or []):
+                    partner = partnerlink.partner_id
+                    volume_of_hydric_consumption = \
+                        (volume * partnerlink.water_costs_percentage / 100)
+                    quota = self.env['wua.quota'].search(
+                        [('quotaperiod_id', '=', quotaperiod.id),
+                         ('superproduct_id', '=', superproduct.id),
+                         ('partner_id', '=', partner.id)])
+                    if quota:
+                        quota = quota[0]
+                        event_time = gravconsumption.watering_end_time
+                        self.env['wua.hydricmovement'].sudo().create({
+                            'quota_id': quota.id,
+                            'event_time': event_time,
+                            'type': 'grav_consumption',
+                            'volume': volume_of_hydric_consumption,
+                            'gravconsumption_id': gravconsumption.id,
+                            })
+
+    # For client classes (gravity consumptions...)
+    def delete_hydricmovements_gravconsumption(self, gravconsumption):
+        if gravconsumption.hydricmovement_ids:
+            gravconsumption.hydricmovement_ids.with_context(
+                force_unlink=True).sudo().unlink()
 
     def _get_quotaperiod(self, event_time):
         resp = None
@@ -494,8 +543,30 @@ class WuaQuota(models.Model):
 
     def _create_hydricmovements_of_preexisting_gravconsumptions(self,
                                                                 quotaperiod):
-        # Provisional
-        pass
+        executed_gravconsumptions = \
+            self._get_gravconsumptions_without_hydricmovements_executed_state(
+                quotaperiod)
+        for gravconsumption in (executed_gravconsumptions or []):
+            self.create_hydricmovements_gravconsumption(gravconsumption)
+        requested_gravconsumptions = \
+            self._get_gravconsumptions_without_hydricmovements_type_request(
+                quotaperiod)
+        for gravconsumption in (requested_gravconsumptions or []):
+            wateringrequest = self.env['wua.wateringrequest'].browse(
+                gravconsumption.wateringrequest_id.id)
+            wateringperiod = wateringrequest.wateringperiod_id
+            product = wateringrequest.product_id
+            superproduct = None
+            if product.product_tmpl_id.superproduct_id:
+                superproduct = product.product_tmpl_id.superproduct_id
+            if superproduct:
+                subparcel = self.env['wua.parcel.subparcel'].browse(
+                    gravconsumption.subparcel_id.id)
+                parcel = subparcel.parcel_id
+                model_quota = self.env['wua.quota']
+                model_quota.create_hydricmovements_gravconsumption_of_request(
+                    quotaperiod, wateringperiod, superproduct, parcel,
+                    gravconsumption.watering_duration, gravconsumption)
 
     def _create_hydricmovements_of_preexisting_irrigationreports(self,
                                                                  quotaperiod):
@@ -522,5 +593,61 @@ class WuaQuota(models.Model):
             order='reading_end_time')
         for possible_presconsumption in (possible_presconsumptions or []):
             if not possible_presconsumption.hydricmovement_ids:
-                resp.append(possible_presconsumption)
+                is_valid_presconsumption = \
+                    self.env['wua.presconsumption'].is_valid_presconsumption(
+                        possible_presconsumption)
+                if is_valid_presconsumption:
+                    resp.append(possible_presconsumption)
+        return resp
+
+    def _get_gravconsumptions_without_hydricmovements_executed_state(
+            self, quotaperiod):
+        resp = []
+        min_date = datetime.datetime.strptime(
+            quotaperiod.initial_date, '%Y-%m-%d')
+        max_date = datetime.datetime.strptime(
+            quotaperiod.end_date, '%Y-%m-%d') + \
+            datetime.timedelta(days=1)
+        min_date = min_date.strftime('%Y-%m-%d %H:%M:%S')
+        max_date = max_date.strftime('%Y-%m-%d %H:%M:%S')
+        possible_gravconsumptions = self.env['wua.gravconsumption'].search(
+            [('watering_end_time', '>=', min_date),
+             ('watering_end_time', '<', max_date),
+             ('state', '=', 'executed')],
+            order='watering_end_time')
+        for possible_gravconsumption in (possible_gravconsumptions or []):
+            if not possible_gravconsumption.hydricmovement_ids:
+                is_valid_gravconsumption = \
+                    self.env['wua.gravconsumption'].is_valid_gravconsumption(
+                        possible_gravconsumption)
+                if is_valid_gravconsumption:
+                    resp.append(possible_gravconsumption)
+        return resp
+
+    def _get_gravconsumptions_without_hydricmovements_type_request(
+            self, quotaperiod):
+        resp = []
+        min_date = datetime.datetime.strptime(
+            quotaperiod.initial_date, '%Y-%m-%d')
+        max_date = datetime.datetime.strptime(
+            quotaperiod.end_date, '%Y-%m-%d') + \
+            datetime.timedelta(days=1)
+        min_date = min_date.strftime('%Y-%m-%d %H:%M:%S')
+        max_date = max_date.strftime('%Y-%m-%d %H:%M:%S')
+        wateringperiods = self.env['wua.wateringperiod'].search(
+            [('initial_date', '>=', quotaperiod.initial_date),
+             ('end_date', '<=', quotaperiod.end_date)])
+        possible_gravconsumptions = []
+        for wateringperiod in (wateringperiods or []):
+            possible_gravconsumptions_of_wateringperiod = \
+                self.env['wua.gravconsumption'].search(
+                    [('gravconsumption_type', '=', 'request'),
+                     ('state', '!=', 'executed'),
+                     ('wateringperiod_id', '=', wateringperiod.id)])
+            if possible_gravconsumptions_of_wateringperiod:
+                possible_gravconsumptions.extend(
+                    possible_gravconsumptions_of_wateringperiod)
+        for possible_gravconsumption in (possible_gravconsumptions or []):
+            if not possible_gravconsumption.hydricmovement_ids:
+                resp.append(possible_gravconsumption)
         return resp

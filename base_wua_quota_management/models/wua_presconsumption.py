@@ -42,13 +42,13 @@ class WuaPresconsumption(models.Model):
             delete_hydricmovements, create_hydricmovements = \
                 self._force_refresh_hydricmovements(updated_presconsumption,
                                                     vals)
-            # It is not possible to create water movements and not
+            # It is not possible to create hydric movements and not
             # eliminate previous movements.
             if (create_hydricmovements and (not delete_hydricmovements)):
                 create_hydricmovements = False
-            if ((not delete_hydricmovements) and not (create_hydricmovements)):
-                if ('adjustement_volume' in vals and
-                   self._is_valid_presconsumption(updated_presconsumption)):
+            if (self.is_valid_presconsumption(updated_presconsumption) and
+               (not delete_hydricmovements) and (not create_hydricmovements)):
+                if 'adjustement_volume' in vals:
                     delete_hydricmovements = True
                     create_hydricmovements = True
             if delete_hydricmovements or create_hydricmovements:
@@ -87,13 +87,13 @@ class WuaPresconsumption(models.Model):
             resp = self.search(condition, order='reading_end_time')
         return resp
 
+    # Hook ("False" when the consumption is not validated)
+    def is_valid_presconsumption(self, updated_presconsumption):
+        return True
+
     # Hook ("True" if changes the validation state). The first output
     # parameter indicates if something needs to be done (at least delete
     # the old hydric consumptions); the second output parameter indicates
     # if it is necessary to create the hydric consumptions again.
     def _force_refresh_hydricmovements(self, updated_presconsumption, vals):
         return False, False
-
-    # Hook ("False" when the consumption is not validated)
-    def _is_valid_presconsumption(self, updated_presconsumption):
-        return True

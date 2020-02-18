@@ -32,9 +32,57 @@ class WuaGravconsumption(models.Model):
                 parcel = subparcel.parcel_id
                 model_quota = self.env['wua.quota']
                 model_quota.create_hydricmovements_gravconsumption_of_request(
-                    quotaperiod, superproduct, parcel,
+                    quotaperiod, wateringperiod, superproduct, parcel,
                     vals['watering_duration'], new_gravconsumption)
         return new_gravconsumption
+
+    @api.multi
+    def write(self, vals):
+        super(WuaGravconsumption, self).write(vals)
+        if len(self) == 1:
+            updated_gravconsumption = self
+            delete_hydricmovements, create_hydricmovements = \
+                self._force_refresh_hydricmovements(updated_gravconsumption,
+                                                    vals)
+            # It is not possible to create hydric movements and not
+            # eliminate previous movements.
+            if (create_hydricmovements and (not delete_hydricmovements)):
+                create_hydricmovements = False
+            if (self.is_valid_gravconsumption(updated_gravconsumption) and
+               (not delete_hydricmovements) and (not create_hydricmovements)):
+                # Gravity consumptions based on requests.
+                if (updated_gravconsumption.gravconsumption_type ==
+                   'request'):
+                    watering_duration_modified = \
+                        ('watering_duration' in vals and
+                         updated_gravconsumption.state != 'proposed')
+                    to_executed_state = \
+                        ('state in vals' and
+                         updated_gravconsumption.state == 'executed')
+                    if watering_duration_modified or to_executed_state:
+                        delete_hydricmovements = True
+                        create_hydricmovements = True
+                # Gravity consumptions based on distribution.
+                else:
+                    if 'state' in vals:
+                        if updated_gravconsumption.state == 'executed':
+                            create_hydricmovements = True
+                        else:
+                            delete_hydricmovements = True
+                    else:
+                        if ('watering_duration' in vals and
+                           updated_gravconsumption.state == 'executed'):
+                            delete_hydricmovements = True
+                            create_hydricmovements = True
+            if delete_hydricmovements or create_hydricmovements:
+                quota_model = self.env['wua.quota']
+                if delete_hydricmovements:
+                    quota_model.delete_hydricmovements_gravconsumption(
+                        updated_gravconsumption)
+                if create_hydricmovements:
+                    quota_model.create_hydricmovements_gravconsumption(
+                        updated_gravconsumption)
+        return True
 
     @api.multi
     def unlink(self):
@@ -53,3 +101,11 @@ class WuaGravconsumption(models.Model):
             for quota in quotas_to_refresh:
                 self.env['wua.quota'].refresh_quota(quota)
         return super(WuaGravconsumption, self).unlink()
+
+    # Hook
+    def is_valid_gravconsumption(self, updated_gravconsumption):
+        return True
+
+    # Hook
+    def _force_refresh_hydricmovements(self, updated_gravconsumption, vals):
+        return False, False
