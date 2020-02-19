@@ -252,10 +252,10 @@ class WuaQuotaperiod(models.Model):
     @api.multi
     def unlink(self):
         for record in self:
-            if (record.state != 'draft' or record.state != 'configured'):
+            if (record.state != 'draft' and record.state != 'configured'):
                 raise exceptions.UserError(_(
                     'You can only delete a quota period if it is in '
-                    'draft state.'))
+                    'draft or configured state.'))
         return super(WuaQuotaperiod, self).unlink()
 
     @api.multi
