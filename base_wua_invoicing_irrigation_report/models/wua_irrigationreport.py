@@ -61,7 +61,7 @@ class WuaIrrigationReport(models.Model):
     _sql_constraints = [
         ('number_of_invoicing_processes_between_0_1',
          'CHECK ( number_of_invoicing_processes <= 1 )',
-         'At least one invoicing process must exist.'),
+         'A invoiced irrigation report cannot be invoiced again.'),
         ]
 
     @api.depends('invoiceline_ids',

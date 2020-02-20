@@ -50,16 +50,17 @@ class WuaInvoiceset(models.Model):
         description = ""
         if irrigationreport:
             intake_name = irrigationreport.intake_id.name
-            water_type = irrigationreport.product_id.product_tmpl_id.name
+            language = irrigationreport.partner_id.lang
+            water_type = irrigationreport.with_context(
+                {'lang': language}).product_id.product_tmpl_id.name
             irrigationreport_num = irrigationreport.irrigationreport_number
             description = intake_name + ', ' + water_type + ', ' + \
                 _('Report num. ') + str(irrigationreport_num)
         return description
 
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
-                                               item_ids, False):
+                                               item_ids, partnerlinks):
         if categ_code != 11:
-            partnerlinks = ""
             return super(WuaInvoiceset,
                          self).calculate_invoice_details_others_categ(
                              product_id, categ_code, item_ids, partnerlinks)
@@ -139,24 +140,26 @@ class WuaInvoicesetLine(models.Model):
              ('is_validated', '=', True),
              ('invoiced', '=', False),
              ('product_id.id', '=', product_id)])
-        if len(irrigationreports) > 0:
+        if irrigationreports:
             user_id = self.env.user.id
             invoicesetline_id = self.id
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
                 INSERT INTO wua_invoiceset_line_irrigationreport (id,
-                 create_uid,write_uid,create_date,write_date,invoicesetline_id,
-                 irrigationreport_id,selected,irrigationreport_number,
-                 report_initial_time,report_end_time,intake_id,product_id,
-                 partner_id,volume_real)
+                create_uid,write_uid,create_date,write_date,invoicesetline_id,
+                irrigationreport_id,selected,irrigationreport_number,
+                report_initial_time,report_end_time,intake_id,product_id,
+                partner_id,volume_real)
                 SELECT nextval('wua_invoiceset_line_irrigationreport_id_seq'),
-                 %s,%s,now(),now(),%s,e.id,TRUE,e.irrigationreport_number,
-                 e.report_initial_time,e.report_end_time,e.intake_id,
-                 e.product_id,e.partner_id,e.volume_real
-                FROM wua_irrigationreport e INNER JOIN wua_agriculturalseason a
-                ON e.agriculturalseason_id = a.id""", (user_id, user_id,
-                                                       invoicesetline_id))
+                %s,%s,now(),now(),%s,i.id,TRUE,i.irrigationreport_number,
+                i.report_initial_time,i.report_end_time,i.intake_id,
+                i.product_id,i.partner_id,i.volume_real
+                FROM wua_irrigationreport i INNER JOIN wua_agriculturalseason a
+                ON i.agriculturalseason_id = a.id WHERE i.is_validated AND
+                a.active_agriculturalseason AND i.invoiced=FALSE AND
+                i.product_id=%s""", (user_id, user_id, invoicesetline_id,
+                                     product_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-20 17:31+0000\n"
-"PO-Revision-Date: 2020-01-20 17:31+0000\n"
+"POT-Creation-Date: 2020-02-20 18:26+0000\n"
+"PO-Revision-Date: 2020-02-20 18:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,6 +31,11 @@ msgid "<span>Product</span>"
 msgstr "<span>Producto</span>"
 
 #. module: base_wua_invoicing_irrigation_report
+#: sql_constraint:wua.irrigationreport:0
+msgid "A invoiced irrigation report cannot be invoiced again."
+msgstr "Se está intentando volver a facturar un parte de riego ya facturado."
+
+#. module: base_wua_invoicing_irrigation_report
 #: model:ir.actions.server,name:base_wua_invoicing_irrigation_report.wua_add_irrigationreport_to_invoiceset
 msgid "Add to invoice set"
 msgstr "Añadir al lote"
@@ -41,11 +46,6 @@ msgstr "Añadir al lote"
 #, python-format
 msgid "An invoiced irrigation report cannot return to draft status."
 msgstr "Un parte de riego facturado no puede volver al estado borrador."
-
-#. module: base_wua_invoicing_irrigation_report
-#: sql_constraint:wua.irrigationreport:0
-msgid "At least one invoicing process must exist."
-msgstr "Debe existir al menos un proceso de facturación."
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_account_invoice_amount_untaxed_categ11
@@ -70,7 +70,7 @@ msgstr "Nombre a mostrar"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_report_end_time
 msgid "End Time"
-msgstr "Fin"
+msgstr "Fecha de fin"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_intake
@@ -83,7 +83,7 @@ msgid "Entity (invoice set)"
 msgstr "Elemento (lote de facturas)"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:164
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:168
 #, python-format
 msgid "Error when updating records."
 msgstr "Error actualizando el registro."
@@ -114,7 +114,7 @@ msgstr "Factura"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_account_invoice_line
 msgid "Invoice Line"
-msgstr "Línea de Factura"
+msgstr "Linea de Factura"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_invoiceline_ids
@@ -147,7 +147,7 @@ msgid "Invoicing Processes"
 msgstr "Nº facturaciones"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:176
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:180
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_account_invoice_line_irrigationreport_id
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_irrigationreport_id
 #, python-format
@@ -172,7 +172,7 @@ msgstr "Última actualización por"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_write_date
 msgid "Last Updated on"
-msgstr "Última actualización el"
+msgstr "Última actualización en"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_invoicesetline_id
@@ -182,12 +182,12 @@ msgstr "Linea"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_invoiceset_line
 msgid "Line of a WUA invoice set"
-msgstr "Línea de detalle de lote de facturas"
+msgstr "Line of a WUA invoice set"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_partner_id
 msgid "Partner"
-msgstr "Empresa"
+msgstr "Socio"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_price_unit
@@ -220,7 +220,7 @@ msgid "Report Number"
 msgstr "Nº Riego"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:56
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:58
 #, python-format
 msgid "Report num. "
 msgstr "parte nº "
@@ -238,7 +238,7 @@ msgstr "Artículos seleccionados para la línea de lote de facturas"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_report_initial_time
 msgid "Start Time"
-msgstr "Inicio"
+msgstr "Fecha de inicio"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_is_validated

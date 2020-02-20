@@ -17,7 +17,6 @@ def post_init_hook(cr, registry):
                 'product_id': default_product_intake,
                 }
             intakes_no_watertype.write(vals)
-
     default_product_irrigationreport = \
         env['wua.irrigationreport']._default_product_id()
     if default_product_irrigationreport:
