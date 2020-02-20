@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_set_activeagriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">Wizard to choose the active agricultural season</field>
+        <field name="model">wizard.set.activeagriculturalseason</field>
+        <field name="arch" type="xml">
+            <form string="Choose the active agricultural season">
+                <script>
+                    $(document).ready(function(){
+                        // alert('prueba');
+                        $('.modal-dialog').css({'width': '490px'});
+                    });
+                </script>
+                <group name="body">
+                    <field name="agriculturalseason_id"
+                     style="width:275px"
+                     options="{'no_quick_create':True,
+                               'no_create_edit':True,
+                               'no_open':True}"/>
+                </group>
+                <footer>
+                    <button name="set_active_agriculturalseason"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

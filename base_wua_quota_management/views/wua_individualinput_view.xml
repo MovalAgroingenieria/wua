@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_individualinput_view_form" model="ir.ui.view">
+        <field name="name">Individual Inputs (form view)</field>
+        <field name="model">wua.individualinput</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <sheet>
+                    <div class="panel-body text-center" style="background:#ededed;border-radius:4px;border-color:#696969;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:8px;margin-bottom:5px"><h2>INDIVIDUAL INPUT</h2></div>
+                    <group name="master_data" col="5">
+                        <group name="master_data_left"
+                               colspan="3" col="4">
+                            <field name="agriculturalseason_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('id','>',0)]}"/>
+                            <field name="quotaperiod_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('id','>',0)]}"/>
+                            <field name="superproduct_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('id','>',0)]}"/>
+                            <field name="partner_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   domain="[('is_wua_partner', '=', True)]"
+                                   attrs="{'readonly':[('id','>',0)]}"/>
+                            <field name="quota_id" colspan="4"
+                                   attrs="{'invisible':[('id','=',False)]}"/>
+                            <field name="event_time" colspan="3"
+                                   attrs="{'readonly':[('id','>',0)]}"/>
+                            <div colspan="1"></div>
+                            <field name="volume" colspan="3"
+                                   attrs="{'readonly':[('id','>',0)]}"/>
+                            <div colspan="1"></div>
+                            <field name="reason" colspan="4"/>
+                        </group>
+                        <group name="master_data_right"
+                               colspan="2"
+                               style="text-align:right;">
+                            <field name="quota_accumulated_input"/>
+                            <field name="quota_accumulated_consumption"/>
+                            <field name="quota_balance"
+                             attrs="{'invisible':[('quota_balance','&lt;',0)]}"/>
+                            <field name="quota_negative_balance" style="color:red"
+                             attrs="{'invisible':[('quota_balance','>=',0)]}"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base_wua.group_wua_manager"/>
+                    <field name="message_ids"
+                           widget="mail_thread" groups="base_wua.group_wua_manager"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_individualinput_view_tree" model="ir.ui.view">
+        <field name="name">Individual Inputs (tree view)</field>
+        <field name="model">wua.individualinput</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_individualinput_view_tree">
+                <field name="superproduct_id"/>                
+                <field name="partner_id"/>
+                <field name="quotaperiod_id"
+                       widget="many2one_unclickable"/>
+                <button name="action_open_quota_form"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-external-link"/>
+                <field name="event_time"
+                       string="Date" widget="date"/>
+                <field name="reason"/>
+                <field name="volume"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_individualinput_view_search" model="ir.ui.view">
+        <field name="name">Individual Inputs (search view)</field>
+        <field name="model">wua.individualinput</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="reason"/>
+                <filter string="Active Agricultural Season"
+                        name="active_agriculturalseason"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <filter string="Positive Inputs"
+                        name="positive_inputs"
+                        domain="[('is_negative','=',False)]"/>
+                <filter string="Negative Inputs"
+                        name="negative_inputs"
+                        domain="[('is_negative','=',True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="grouped_agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Quota Period"
+                            name="grouped_quotaperiod"
+                     context="{'group_by':'quotaperiod_id'}"/>
+                    <filter string="Date"
+                            name="grouped_event_time"
+                     context="{'group_by':'event_time'}"/>
+                    <filter string="Superproduct"
+                            name="grouped_superproduct"
+                     context="{'group_by':'superproduct_id'}"/>
+                    <filter string="Partner"
+                            name="grouped_partner"
+                     context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_individualinput_action"
+            model="ir.actions.act_window">
+        <field name="name">Individual Inputs</field>
+        <field name="res_model">wua.individualinput</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_individualinput_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_individualinput_view_form')})]"/>
+        <field name="search_view_id" ref="wua_individualinput_view_search"/>
+        <field name="context">
+          {'compressed_agriculturalseason': True,
+           'compressed_quotaperiod': True,
+           'search_default_active_agriculturalseason': True,
+           'search_default_grouped_quotaperiod': True,
+           'search_default_grouped_partner': True,}
+        </field>
+    </record>
+
+    <menuitem id="individualinput_menu"
+              name="Individual Inputs"
+              parent="management_menu"
+              sequence="3"
+              action="wua_individualinput_action"/>
+
+</odoo>

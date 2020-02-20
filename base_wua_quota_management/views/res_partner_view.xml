@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="action_get_partner_quotas"
+                        type="object" class="oe_stat_button"
+                        icon="fa-th"
+                        groups="base_wua.group_wua_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Partner</span>
+                        <span class="o_stat_text">Quotas</span>
+                    </div>
+                </button>
+                <button name="action_get_hydric_movements"
+                        type="object" class="oe_stat_button"
+                        icon="fa-list-ol"
+                        groups="base_wua.group_wua_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Hydric</span>
+                        <span class="o_stat_text">Movements</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

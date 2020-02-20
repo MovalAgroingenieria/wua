@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_superproduct_view_form" model="ir.ui.view">
+        <field name="name">Superproducts (form view)</field>
+        <field name="model">wua.superproduct</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_get_partner_quotas"
+                                type="object" class="oe_stat_button"
+                                icon="fa-th">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Partner</span>
+                                <span class="o_stat_text">Quotas</span>
+                            </div>
+                        </button>
+                        <button name="action_get_hydric_movements"
+                                type="object" class="oe_stat_button"
+                                icon="fa-list-ol">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Hydric</span>
+                                <span class="o_stat_text">Movements</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label class="oe_edit_only" for="name"
+                               string="Superproduct Name"/>
+                        <h1><field name="name"
+                             placeholder="Superproduct Name"/></h1>
+                        <div name="other_master_data">
+                            <div name="product_tmpl_id"
+                                 groups="base.group_no_one">
+                                <field name="product_tmpl_id"
+                                 readonly="1" required="0"
+                                 attrs="{'invisible': [('id','=',False)]}"/>
+                                <span attrs="{'invisible': [('id','=',False)]}">
+                                (related product)</span>
+                            </div>
+                            <div>
+                                <label for="superproduct_code"/>
+                                <field name="superproduct_code"
+                                       style="width:100px"
+                                       attrs="{'readonly': [('id','>',0)]}"/>
+                            </div>
+                            <div>
+                                <div class="oe_edit_only">
+                                    <label class="oe_edit_only"
+                                           for="product_tmpl_ids"/>                                
+                                </div>
+                                <div>
+                                    <field name="product_tmpl_ids"
+                                     widget="many2many_tags"
+                                     options="{'not_delete': True,
+                                               'no_quick_create': True,
+                                               'no_create_edit': True}"
+                                     domain="['|',('categ_id','=',%(base_wua_invoicing_pressurized_irrigation.categ_07)d),
+                                                  ('categ_id','=',%(base_wua_invoicing_gravity_irrigation.categ_08)d)]"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <notebook name="slave_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base_wua.group_wua_manager"/>
+                    <field name="message_ids"
+                           widget="mail_thread" groups="base_wua.group_wua_manager"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_superproduct_view_tree" model="ir.ui.view">
+        <field name="name">Superproducts (tree view)</field>
+        <field name="model">wua.superproduct</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_quota_management_superproduct_view_tree">
+                <field name="superproduct_code"/>
+                <field name="name"/>
+                <field name="number_of_products" string="Products"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_superproduct_view_search" model="ir.ui.view">
+        <field name="name">Superproducts (search view)</field>
+        <field name="model">wua.superproduct</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="superproduct_code"/>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_superproduct_action"
+            model="ir.actions.act_window">
+        <field name="name">Superproducts</field>
+        <field name="res_model">wua.superproduct</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_superproduct_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_superproduct_view_form')})]"/>
+        <field name="search_view_id" ref="wua_superproduct_view_search"/>
+    </record>
+
+    <menuitem id="superproduct_menu"
+              name="Superproducts"
+              parent="configuration_menu"
+              sequence="1"
+              action="wua_superproduct_action"/>
+
+</odoo>

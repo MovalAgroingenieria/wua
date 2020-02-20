@@ -1,0 +1,44 @@
+# -*- coding: utf-8 -*-
+# 2019 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+{
+    "name": "Water Users Association: Quota Management",
+    "summary": "Quota management for pressurized irrigation, gravity "
+               "irrigation and irrigation based on irrigation reports",
+    "version": '10.0.1.1.0',
+    "category": "Water Users Associations",
+    "website": "http://www.moval.es",
+    "author": "Moval Agroingeniería",
+    "license": "AGPL-3",
+    "depends": [
+        "base_wua_invoicing_pressurized_irrigation",
+        "base_wua_invoicing_gravity_irrigation",
+        "base_wua_irrigation_report",
+        "web_widget_bokeh_chart",],
+    "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "data/wua_quotas_config_settings_data.xml",
+        "data/wua_superproduct_data.xml",
+        "wizard/wizard_generate_quotaperiods_view.xml",
+        "wizard/wizard_set_activeagriculturalseason_view.xml",
+        "views/resources.xml",
+        "views/base_wua_quota_management_menus.xml",
+        "views/wua_quotas_config_settings_view.xml",
+        "views/product_views.xml",
+        "views/wua_superproduct_view.xml",
+        "views/wua_agriculturalseason_view.xml",
+        "views/res_partner_view.xml",
+        "views/wua_waterconnection_view.xml",
+        "views/wua_quotaperiod_view.xml",
+        "views/wua_quota_view.xml",
+        "views/wua_hydricmovement_view.xml",
+        "views/wua_superproduct_dashboard_view.xml",
+        "views/wua_individualinput_view.xml",
+        "views/wua_cession_view.xml",],
+    "post_init_hook": "post_init_hook",
+    "uninstall_hook": "uninstall_hook",
+    "installable": True,
+    "application": True,
+}

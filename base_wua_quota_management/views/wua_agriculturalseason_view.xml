@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="number_of_quotaperiods" invisible="1"/>
+                <field name="initialized" invisible="1"/>
+                <field name="active_agriculturalseason" invisible="1"/>
+                <header>
+                    <button name="action_generate_quotaperiods"
+                            type="object" string="Create periods"
+                            icon="fa-calendar"
+                            class="oe_read_only"
+                            attrs="{'invisible':
+                                    ['|',('number_of_quotaperiods','>',0),
+                                     ('active_agriculturalseason','=',False)]}"
+                            groups="base_wua_quota_management.group_wua_quota_manager"/>
+                </header>                
+                <sheet>
+                    <div name="not_initialized"
+                         style="display: inline-block;color:red;padding-top:10px;"
+                         attrs="{'invisible':[('initialized','=',True)]}">
+                         WARNING: not initialized agricultural season (*)
+                    </div>
+                    <div name="initialized"
+                         style="display: inline-block;padding-top:10px;"
+                         attrs="{'invisible':[('initialized','=',False)]}">
+                         ( initialized agricultural season )
+                    </div>                    
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_get_quota_periods"
+                                type="object" class="oe_stat_button"
+                                icon="fa-calendar">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Quota</span>
+                                <span class="o_stat_text">Periods</span>
+                            </div>
+                        </button>
+                        <button name="action_get_partner_quotas"
+                                type="object" class="oe_stat_button"
+                                icon="fa-th">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Partner</span>
+                                <span class="o_stat_text">Quotas</span>
+                            </div>
+                        </button>
+                        <button name="action_get_hydric_movements"
+                                type="object" class="oe_stat_button"
+                                icon="fa-list-ol">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Hydric</span>
+                                <span class="o_stat_text">Movements</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="initial_date"
+                                   attrs="{'readonly':
+                                   [('number_of_quotaperiods','>', 0)]}"/>
+                            <field name="end_date"
+                                   attrs="{'readonly':
+                                   [('number_of_quotaperiods','>', 0)]}"/>
+                            <field name="description"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="active_agriculturalseason"/>
+                            <field name="number_of_quotaperiods"
+                                   string="N. quota periods"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                    <div name="not_initialized_footnote"
+                         style="display: inline-block;color:red;padding-top:10px;"
+                         attrs="{'invisible':[('initialized','=',True)]}">
+                        (*) The periods do not cover the whole agricultural
+                        season or there are days without quota period, or
+                        there is a quota period overlapped with another
+                        quota period.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_tree" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (tree view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_quota_management_agriculturalseason_view_tree">
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="description"/>
+                <field name="initialized"/>
+                <field name="number_of_quotaperiods"/>
+                <field name="active_agriculturalseason"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_search" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (search view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <filter string="Initialized: Yes" name="initialized_yes"
+                 domain="[('initialized','=',True)]"/>
+                <filter string="Initialized: No" name="initialized_no"
+                 domain="[('initialized','=',False)]"/>
+                <separator/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_in_pressurized_irrigation_view_form"
+            model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+            ref="base_wua_pressurized_irrigation.wua_agriculturalseason_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_presconsumptions']"
+                   position="before">
+                <field name="active_agriculturalseason"/>
+            </xpath>            
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_in_pressurized_irrigation_view_tree"
+            model="ir.ui.view">
+        <field name="name">Agricultural Seasons (tree view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+            ref="base_wua_pressurized_irrigation.wua_agriculturalseason_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_presconsumptions']"
+                   position="after">
+                <field name="active_agriculturalseason"/>
+            </xpath>            
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_in_gravity_irrigation_view_form"
+            model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+            ref="base_wua_gravity_irrigation.wua_agriculturalseason_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_periods']"
+                   position="before">
+                <field name="active_agriculturalseason"/>
+            </xpath>            
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_in_gravity_irrigation_view_tree"
+            model="ir.ui.view">
+        <field name="name">Agricultural Seasons (tree view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+            ref="base_wua_gravity_irrigation.wua_agriculturalseason_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_waterings']"
+                   position="after">
+                <field name="active_agriculturalseason"/>
+            </xpath>            
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_action"
+            model="ir.actions.act_window">
+        <field name="name">Agricultural Seasons</field>
+        <field name="res_model">wua.agriculturalseason</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_agriculturalseason_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_agriculturalseason_view_form')})]"/>
+        <field name="search_view_id" ref="wua_agriculturalseason_view_search"/>
+    </record>
+
+    <menuitem id="agriculturalseason_menu"
+              name="Agricultural Seasons"
+              parent="management_menu"
+              sequence="1"
+              action="wua_agriculturalseason_action"/>
+
+</odoo>
