@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_intake_view_form" model="ir.ui.view">
+        <field name="name">Intakes (form view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='flowmeter_id']" position="after">
+                <field name="product_id" domain="[('categ_id.productcategory_code','=',11)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_intake_view_tree" model="ir.ui.view">
+        <field name="name">Intakes (tree view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='flowmeter_id']" position="after">
+                <field name="product_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_intake_view_search" model="ir.ui.view">
+        <field name="name">Intakes (search view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='intake_code']" position="after">
+                <field name="product_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='category']" position="after">
+                <filter string="Water Type" name="product_id" context="{'group_by':'product_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_wua_irrigationreport_document"
+        inherit_id="base_wua_irrigation_report.report_wua_irrigationreport_document">
+        <xpath expr="//tr[@name='initial_volume']" position="before">
+            <tr name="product_id">
+                <td><span>Product</span></td>
+                <t t-if="o.product_id">
+                    <td class="text-right">
+                        <strong>
+                             <span t-field="o.product_id"/>
+                        </strong>
+                    </td>
+                </t>
+           </tr>
+        </xpath>
+        <xpath expr="//tr[@name='volume_real']" position="after">
+            <tr name="price_unit">
+                <td><span>Price</span></td>
+                <t t-if="o.price_unit">
+                    <td class="text-right">
+                        <strong>
+                            <span t-field="o.price_unit"/>
+                            <span>€</span>
+                        </strong>
+                    </td>
+                </t>
+           </tr>
+            <tr name="sum_price_subtotal">
+                <td><span>Invoiced Amount</span></td>
+                <t t-if="o.sum_price_subtotal">
+                    <td class="text-right">
+                        <strong>
+                            <span t-field="o.sum_price_subtotal"/>
+                            <span>€</span>
+                        </strong>
+                    </td>
+                </t>
+           </tr>
+       </xpath>
+    </template>
+
+</odoo>

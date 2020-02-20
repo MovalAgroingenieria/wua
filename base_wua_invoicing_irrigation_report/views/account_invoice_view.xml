@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoicelines_view_search" model="ir.ui.view">
+        <field name="name">Invoice Lines (search view)</field>
+        <field name="model">account.invoice.line</field>
+        <field name="inherit_id" ref="base_wua_invoicing.wua_invoicelines_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='irrigationditch_id']" position="after">
+                <field name="intake_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='irrigationditch']" position="after">
+                 <filter string="Intake" name="intake_id"
+                     context="{'group_by':'intake_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_invoice_pivot" model="ir.ui.view">
+        <field name="name">Invoices (pivot view)</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="base_wua_invoicing.view_invoice_pivot"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_untaxed_categ06']" position="after">
+                <field name="amount_untaxed_categ11" type="measure"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
