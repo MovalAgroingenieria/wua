@@ -1127,6 +1127,11 @@ class WuaInvoiceset(models.Model):
                         mandate_id = mandates_of_partner_id[0].id
                 if mandate_id > 0:
                     invoice_vals.update({'mandate_id': mandate_id})
+                partner_shipping_id = partner.address_get(
+                    ['delivery']).get('delivery')
+                if partner.id != partner_shipping_id:
+                    invoice_vals.update({'partner_shipping_id':
+                                         partner_shipping_id })
                 self.env['account.invoice'].create(invoice_vals)
                 number_of_invoices = number_of_invoices + 1
         return number_of_invoices
