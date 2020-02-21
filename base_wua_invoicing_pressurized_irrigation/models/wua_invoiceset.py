@@ -242,22 +242,25 @@ class WuaInvoiceset(models.Model):
         # Loop on pressure consumptions to generate the invoice lines.
         for presconsumption in presconsumptions:
             waterconnection = presconsumption.waterconnection_id
-            partner_id = filter(lambda x: x['wc_id'] == waterconnection.id,
-                                wc_partners)[0]['partner_id']
-            waterconnection_label = self.get_value_from_translation(
-                'base_wua_invoicing_pressurized_irrigation',
-                _('Water Connection'),
-                self.env['res.partner'].browse(partner_id).lang)
-            description = waterconnection_label + ' ' + waterconnection.name
-            result = {
-                'partner_id': partner_id,
-                'product_id': product_id,
-                'categ_code': categ_code,
-                'key1': waterconnection.id,
-                'quantity': presconsumption.volume_real,
-                'description': description,
-                }
-            invoice_details_categ07.append(result)
+            filtered_partner = \
+                filter(lambda x: x['wc_id'] == waterconnection.id, wc_partners)
+            if filtered_partner:
+                partner_id = filtered_partner[0]['partner_id']
+                waterconnection_label = self.get_value_from_translation(
+                    'base_wua_invoicing_pressurized_irrigation',
+                    _('Water Connection'),
+                    self.env['res.partner'].browse(partner_id).lang)
+                description = waterconnection_label + ' ' + \
+                    waterconnection.name
+                result = {
+                    'partner_id': partner_id,
+                    'product_id': product_id,
+                    'categ_code': categ_code,
+                    'key1': waterconnection.id,
+                    'quantity': presconsumption.volume_real,
+                    'description': description,
+                    }
+                invoice_details_categ07.append(result)
         return invoice_details_categ07
 
     def add_to_invoice_data_line_ref_to_other_types(
