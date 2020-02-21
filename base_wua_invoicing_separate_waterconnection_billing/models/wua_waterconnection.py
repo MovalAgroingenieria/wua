@@ -185,7 +185,7 @@ class WuaWaterconnection(models.Model):
                                                'one water payer.'))
 
     @api.constrains('othercosts_payment_mode_id',
-                    'watercosts_potentially_billable')
+                    'othercosts_potentially_billable')
     def _check_othercosts_payment_mode_id(self):
         if (len(self) == 1 and (self.othercosts_payment_mode_id and
            not self.othercosts_potentially_billable)):
