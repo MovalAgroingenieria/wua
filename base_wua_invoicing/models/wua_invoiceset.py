@@ -1078,7 +1078,7 @@ class WuaInvoiceset(models.Model):
                     data = self.add_to_invoice_data_line_other_data(
                         categ_code, invoice_data_line, data)
                     lines.append((0, 0, data))
-            if len(lines) > 0:
+            if (len(lines) > 0 and (not self.is_invoice_zero(lines))):
                 partner_id = invoice_data['partner_id']
                 date_invoice = record.date_invoiceset
                 date_due = record.date_due_invoiceset
@@ -1131,7 +1131,7 @@ class WuaInvoiceset(models.Model):
                     ['delivery']).get('delivery')
                 if partner.id != partner_shipping_id:
                     invoice_vals.update({'partner_shipping_id':
-                                         partner_shipping_id })
+                                         partner_shipping_id})
                 self.env['account.invoice'].create(invoice_vals)
                 number_of_invoices = number_of_invoices + 1
         return number_of_invoices
@@ -1335,6 +1335,15 @@ class WuaInvoiceset(models.Model):
             implied_ids = list(set(implied_ids))
             len_of_implied_ids_no_repeat = len(implied_ids)
             resp = len_of_implied_ids_original == len_of_implied_ids_no_repeat
+        return resp
+
+    def is_invoice_zero(self, lines):
+        resp = True
+        for line in lines:
+            data = line[2]
+            if data['quantity'] != 0:
+                resp = False
+                break
         return resp
 
     def get_value_from_translation(self, module, src, lang):

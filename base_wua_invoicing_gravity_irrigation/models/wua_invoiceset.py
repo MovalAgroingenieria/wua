@@ -117,32 +117,51 @@ class WuaInvoiceset(models.Model):
                             percentage_str = '%.2f' % percentage
                             quantity = gravconsumption_quantity * \
                                 (percentage / 100)
+                            default_irrigationgate_label = \
+                                _('Irrigation Gate')
+                            default_parcel_label = _('Parcel')
+                            default_profile_name_label = _('profile')
+                            default_text01 = _('total consumption')
+                            default_text02 = \
+                                _('of water payment for the parcel')
                             irrigationgate_label = \
                                 self.get_value_from_translation(
                                     'base_wua_invoicing_'
                                     'gravity_irrigation',
-                                    _('Irrigation Gate'),
+                                    'Irrigation Gate',
                                     partnerlink.partner_id.lang)
                             parcel_label = self.get_value_from_translation(
                                 'base_wua_invoicing_gravity_irrigation',
-                                _('Parcel'),
+                                'Parcel',
                                 partnerlink.partner_id.lang)
                             profile_name_label = \
                                 self.get_value_from_translation(
                                     'base_wua_invoicing_'
                                     'gravity_irrigation',
-                                    _('profile'),
+                                    'profile',
                                     partnerlink.partner_id.lang)
                             profile_name = self.get_profile_name(
                                 profile, partnerlink.partner_id.lang)
                             text01 = self.get_value_from_translation(
                                 'base_wua_invoicing_gravity_irrigation',
-                                _('total consumption'),
+                                'total consumption',
                                 partnerlink.partner_id.lang)
                             text02 = self.get_value_from_translation(
                                 'base_wua_invoicing_gravity_irrigation',
-                                _('of water payment for the parcel'),
+                                'of water payment for the parcel',
                                 partnerlink.partner_id.lang)
+                            if not irrigationgate_label:
+                                irrigationgate_label = \
+                                    default_irrigationgate_label
+                            if not parcel_label:
+                                parcel_label = default_parcel_label
+                            if not profile_name_label:
+                                profile_name_label = \
+                                    default_profile_name_label
+                            if not text01:
+                                text01 = default_text01
+                            if not text02:
+                                text02 = default_text02
                             description = parcel_label + ' ' + \
                                 parcel_code + ' ' + \
                                 '(' + area_official_str + ' ' +  \
@@ -305,7 +324,6 @@ class WuaInvoicesetLine(models.Model):
                     watering_volume_real
                     FROM wua_gravconsumption
                     WHERE product_id=%s and invoiceset_id is null and
-                          invoiced_consumption=FALSE and
                           state='executed' and watering_volume_real>0
                     """, (user_id, user_id, invoicesetline_id, product_id))
                 self.env.cr.execute("""
@@ -313,7 +331,6 @@ class WuaInvoicesetLine(models.Model):
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
                     invoiced_consumption=TRUE
                     WHERE product_id=""" + str(product_id) + """ and
-                    invoiced_consumption=FALSE and
                     invoiceset_id is null and state='executed' and
                     watering_volume_real>0""")
                 self.env.cr.commit()

@@ -55,6 +55,23 @@
         </field>
     </record>
 
+    <record id="wua_technical_presconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Consumptions (tree view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_consumptions_view_tree">
+                <field name="waterconnection_id"/>
+                <field name="watermeter_id"/>
+                <field name="reading_initial_time"/>
+                <field name="reading_end_time"/>
+                <field name="volume"/>
+                <field name="adjustement_volume"/>
+                <field name="volume_real"/>
+                <field name="reading_id"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="wua_presconsumption_view_search" model="ir.ui.view">
         <field name="name">Consumptions (search view)</field>
         <field name="model">wua.presconsumption</field>
@@ -161,6 +178,15 @@
         <field name="code">action = env["wua.presconsumption"].action_assign_agriculturalseason_to_consumptions()</field>
     </record>
 
+    <record id="wua_technical_presconsumptions_action" model="ir.actions.act_window">
+        <field name="name">Consumptions (low-level)</field>
+        <field name="res_model">wua.presconsumption</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_technical_presconsumption_view_tree"/>
+        <field name="search_view_id" ref="wua_presconsumption_view_search"/>
+    </record>
+
     <menuitem id="wua_presconsumption_menu"
               name="Consumptions"
               parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
@@ -173,5 +199,11 @@
               parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
               action="wua_technical_assign_agriculturalseason_to_consumptions_action"
               sequence="1"/>
+
+    <menuitem id="wua_technical_presconsumptions_menu"
+              name="Pressurized Consumptions"
+              parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+              action="wua_technical_presconsumptions_action"
+              sequence="2"/>
 
 </odoo>

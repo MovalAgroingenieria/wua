@@ -31,7 +31,7 @@ class WuaInvoiceset(models.Model):
             watering = gravconsumption.watering_id
             if len(parcels_of_irrigationgate) > 0:
                 watering_volume_real_of_irrigationgate = \
-                           gravconsumption.watering_volume_real
+                    gravconsumption.watering_volume_real
                 total_area_official = \
                     sum(x.area_official for x in parcels_of_irrigationgate)
                 for parcel in parcels_of_irrigationgate:
@@ -53,28 +53,41 @@ class WuaInvoiceset(models.Model):
                             percentage_str = '%.2f' % percentage
                             quantity = area_irrigation * \
                                 (percentage / 100)
+                            default_parcel_label = _('Parcel')
+                            default_profile_name_label = _('profile')
+                            default_text02 = \
+                                _('of water payment for the parcel')
+                            default_watering_label = _('Watering')
                             parcel_label = self.get_value_from_translation(
                                 'base_wua_invoicing_gravity_irrigation',
-                                _('Parcel'),
+                                'Parcel',
                                 partnerlink.partner_id.lang)
                             profile_name_label = \
                                 self.get_value_from_translation(
                                     'base_wua_invoicing_'
                                     'gravity_irrigation',
-                                    _('profile'),
+                                    'profile',
                                     partnerlink.partner_id.lang)
                             profile_name = self.get_profile_name(
                                 profile, partnerlink.partner_id.lang)
                             text02 = self.get_value_from_translation(
                                 'base_wua_invoicing_gravity_irrigation',
-                                _('of water payment for the parcel'),
+                                'of water payment for the parcel',
                                 partnerlink.partner_id.lang)
                             watering_label = \
                                 self.get_value_from_translation(
                                     'base_wua_invoicing_'
                                     'gravity_irrigation',
-                                    _('Watering'),
+                                    'Watering',
                                     partnerlink.partner_id.lang)
+                            if not parcel_label:
+                                parcel_label = default_parcel_label
+                            if not profile_name_label:
+                                profile_name_label = default_profile_name_label
+                            if not text02:
+                                text02 = default_text02
+                            if not watering_label:
+                                watering_label = default_watering_label
                             watering_name = watering.wateringperiod_id.name + \
                                 ' ' + \
                                 str(watering.irrigationditch_id.name)

@@ -2,8 +2,9 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
+import datetime
 from operator import itemgetter
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaInvoiceset(models.Model):
@@ -49,6 +50,15 @@ class WuaInvoiceset(models.Model):
             return super(WuaInvoiceset,
                          self).calculate_invoice_details_others_categ(
                              product_id, categ_code, item_ids, partnerlinks)
+        wc_no_irrigationpoints = self.get_wc_no_irrigationpoints(item_ids)
+        if wc_no_irrigationpoints:
+            message_wc_no_irrigationpoints = \
+                _('It is not possible to generate invoices. The following '
+                  'water connections do not have irrigation points (and, '
+                  'therefore, their consumptions cannot be invoiced)')
+            raise exceptions.UserError(
+                message_wc_no_irrigationpoints + ': ' +
+                wc_no_irrigationpoints)
         if (self.env['ir.values'].get_default(
            'wua.invoicing.configuration', 'invoicing_based_on_wc')):
             return self.calculate_invoice_details_categ07_based_on_wc(
@@ -56,6 +66,23 @@ class WuaInvoiceset(models.Model):
         else:
             return self.calculate_invoice_details_categ07_normal(
                 product_id, categ_code, item_ids, partnerlinks)
+
+    def get_wc_no_irrigationpoints(self, presconsumption_ids):
+        resp = ''
+        wc_ids = []
+        presconsumptions = self.env['wua.presconsumption'].browse(
+            presconsumption_ids)
+        for presconsumption in (presconsumptions or []):
+            wc_ids.append(presconsumption.waterconnection_id.id)
+        if len(wc_ids) > 0:
+            wc_ids = sorted(list(set(wc_ids)))
+            waterconnections = self.env['wua.waterconnection'].browse(wc_ids)
+            for waterconnection in waterconnections:
+                if not waterconnection.irrigationpoint_ids:
+                    resp = resp + ', ' + waterconnection.name
+            if resp:
+                resp = resp[2:]
+        return resp
 
     def calculate_invoice_details_categ07_normal(
             self, product_id, categ_code, item_ids, partnerlinks):
@@ -133,36 +160,59 @@ class WuaInvoiceset(models.Model):
                                 (percentage / 100)
                             quantity_str = ('%.4f' % quantity).\
                                 replace('.', ',')
+                            default_waterconnection_label = \
+                                _('Water Connection')
+                            default_parcel_label = _('Parcel')
+                            default_profile_name_label = _('profile')
+                            default_text01 = _('total consumption')
+                            default_text02 = \
+                                _('of total consumption of water meter')
+                            default_text03 = \
+                                _('of water payment for the parcel')
                             waterconnection_label = \
                                 self.get_value_from_translation(
                                     'base_wua_invoicing_'
                                     'pressurized_irrigation',
-                                    _('Water Connection'),
+                                    'Water Connection',
                                     partnerlink.partner_id.lang)
                             parcel_label = self.get_value_from_translation(
                                 'base_wua_invoicing_pressurized_irrigation',
-                                _('Parcel'),
+                                'Parcel',
                                 partnerlink.partner_id.lang)
                             profile_name_label = \
                                 self.get_value_from_translation(
                                     'base_wua_invoicing_'
                                     'pressurized_irrigation',
-                                    _('profile'),
+                                    'profile',
                                     partnerlink.partner_id.lang)
                             profile_name = self.get_profile_name(
                                 profile, partnerlink.partner_id.lang)
                             text01 = self.get_value_from_translation(
                                 'base_wua_invoicing_pressurized_irrigation',
-                                _('total consumption'),
+                                'total consumption',
                                 partnerlink.partner_id.lang)
                             text02 = self.get_value_from_translation(
                                 'base_wua_invoicing_pressurized_irrigation',
-                                _('of total consumption of water meter'),
+                                'of total consumption of water meter',
                                 partnerlink.partner_id.lang)
                             text03 = self.get_value_from_translation(
                                 'base_wua_invoicing_pressurized_irrigation',
-                                _('of water payment for the parcel'),
+                                'of water payment for the parcel',
                                 partnerlink.partner_id.lang)
+                            if not waterconnection_label:
+                                waterconnection_label = \
+                                    default_waterconnection_label
+                            if not parcel_label:
+                                parcel_label = default_parcel_label
+                            if not profile_name_label:
+                                profile_name_label = \
+                                    default_profile_name_label
+                            if not text01:
+                                text01 = default_text01
+                            if not text02:
+                                text02 = default_text02
+                            if not text03:
+                                text03 = default_text03
                             description = parcel_label + ' ' + \
                                 parcel_code + ' ' + \
                                 '(' + area_official_str + ' ' +  \
@@ -246,12 +296,8 @@ class WuaInvoiceset(models.Model):
                 filter(lambda x: x['wc_id'] == waterconnection.id, wc_partners)
             if filtered_partner:
                 partner_id = filtered_partner[0]['partner_id']
-                waterconnection_label = self.get_value_from_translation(
-                    'base_wua_invoicing_pressurized_irrigation',
-                    _('Water Connection'),
-                    self.env['res.partner'].browse(partner_id).lang)
-                description = waterconnection_label + ' ' + \
-                    waterconnection.name
+                description = self.get_detail_of_presconsumption(
+                    presconsumption, partner_id)
                 result = {
                     'partner_id': partner_id,
                     'product_id': product_id,
@@ -262,6 +308,51 @@ class WuaInvoiceset(models.Model):
                     }
                 invoice_details_categ07.append(result)
         return invoice_details_categ07
+
+    def get_detail_of_presconsumption(self, presconsumption, partner_id):
+        resp = ''
+        lang = self.env['res.partner'].browse(partner_id).lang
+        default_waterconnection_label = _('Water Connection')
+        default_initial_reading_label = _('Initial Reading')
+        default_final_reading_label = _('Final Reading')
+        default_consumption_label = _('Consumption')
+        waterconnection_label = self.get_value_from_translation(
+            'base_wua_invoicing_pressurized_irrigation',
+            'Water Connection', lang)
+        initial_reading_label = self.get_value_from_translation(
+            'base_wua_invoicing_pressurized_irrigation',
+            'Initial Reading', lang)
+        final_reading_label = self.get_value_from_translation(
+            'base_wua_invoicing_pressurized_irrigation',
+            'Final Reading', lang)
+        consumption_label = self.get_value_from_translation(
+            'base_wua_invoicing_pressurized_irrigation',
+            'Consumption', lang)
+        if not waterconnection_label:
+            waterconnection_label = default_waterconnection_label
+        if not initial_reading_label:
+            initial_reading_label = default_initial_reading_label
+        if not final_reading_label:
+            final_reading_label = default_final_reading_label
+        if not consumption_label:
+            consumption_label = default_consumption_label
+        reading_initial_time = datetime.datetime.strptime(
+            presconsumption.reading_initial_time, '%Y-%m-%d %H:%M:%S')
+        reading_initial_time = reading_initial_time.strftime('%x')
+        reading_end_time = datetime.datetime.strptime(
+            presconsumption.reading_end_time, '%Y-%m-%d %H:%M:%S')
+        reading_end_time = reading_end_time.strftime('%x')
+        initial_volume = round(presconsumption.initial_volume)
+        end_volume = round(presconsumption.end_volume)
+        volume = end_volume - initial_volume
+        resp = waterconnection_label + ' ' + \
+            presconsumption.waterconnection_id.name + '. ' + \
+            initial_reading_label + ': ' + reading_initial_time + ' ' + \
+            '(' + '{0:.0f}'.format(initial_volume) + ' m3). ' + \
+            final_reading_label + ': ' + reading_end_time + ' ' + \
+            '(' + '{0:.0f}'.format(end_volume) + ' m3). ' + \
+            consumption_label + ': ' + '{0:.0f}'.format(volume) + ' m3'
+        return resp
 
     def add_to_invoice_data_line_ref_to_other_types(
             self, categ_code, invoice_data_line, data):
@@ -436,15 +527,13 @@ class WuaInvoicesetLine(models.Model):
                     waterconnection_id, irrigationshed_id, hydraulicsector_id,
                     adjustement_volume, volume_real
                     FROM wua_presconsumption
-                    WHERE product_id=%s and invoiceset_id is null and
-                          invoiced_consumption=FALSE
+                    WHERE product_id=%s and invoiceset_id is null
                     """, (user_id, user_id, invoicesetline_id, product_id))
                 self.env.cr.execute("""
                     UPDATE wua_presconsumption
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
                     invoiced_consumption=TRUE
                     WHERE product_id=""" + str(product_id) + """ and
-                    invoiced_consumption=FALSE and
                     invoiceset_id is null""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
