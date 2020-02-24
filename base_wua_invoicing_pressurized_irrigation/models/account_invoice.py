@@ -58,3 +58,7 @@ class AccountInvoice(models.Model):
                     }
                 lines.append(item)
         return lines
+
+    def _is_invoicing_based_on_wc(self):
+        return (self.env['ir.values'].get_default(
+           'wua.invoicing.configuration', 'invoicing_based_on_wc'))

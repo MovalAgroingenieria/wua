@@ -5,6 +5,7 @@
      inherit_id="account_wua.wua_report_invoice_document">
         <xpath expr="//p[@t-if='o.payment_term_id']" position="after">
             <t t-set="with_presconsumptions" t-value="False"/>
+            <t t-set="is_based_on_wc" t-value="o.sudo()._is_invoicing_based_on_wc()"/>
             <t t-foreach="o.invoice_line_ids" t-as="l">
                 <t t-if="l.categ_id.productcategory_code == 7">
                     <t t-set="with_presconsumptions" t-value="True"/>
@@ -14,7 +15,9 @@
                 <t t-set="consumptions"
                    t-value="o.sudo()._get_presconsumptions_from_lines(o.invoice_line_ids)"/>
                 <t t-if="consumptions">
-                    <p style="page-break-after:always;"></p>
+                    <t t-if="not is_based_on_wc">
+                      <p style="page-break-after:always;"></p>
+                    </t>
                     <div name="consumptions">
                     <table class="table table-condensed">
                         <thead>
@@ -31,45 +34,100 @@
                             </tr>
                         </thead>
                         <tbody class="invoice_tbody">
-                            <tr t-foreach="consumptions" t-as="c">
+                            <t t-if="is_based_on_wc">
+                              <!-- waterconnection group, dont need do much info-->
+                              <tr t-foreach="consumptions" t-as="c">
                                 <t t-set="reading_initial_time"
-                                 t-value="context_timestamp(
-                                     datetime.datetime.strptime(
-                                     c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).
-                                     strftime('%d/%m/%y, %H:%M')"/>
-                                <t t-set="reading_end_time"
-                                 t-value="context_timestamp(
-                                     datetime.datetime.strptime(
-                                     c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
-                                     strftime('%d/%m/%y, %H:%M')"/>
-                                <td>
-                                    <span t-esc="c['waterconnection']"/>
-                                </td>
-                                <td>
-                                    <span t-esc="c['watermeter']"/>
-                                </td>
-                                <td>
-                                    <span t-esc="reading_initial_time"/>
-                                </td>
-                                <td>
-                                    <span t-esc="reading_end_time"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-esc="'{:.3f}'.format(c['initial_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-esc="'{:.3f}'.format(c['end_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-esc="'{:.3f}'.format(c['volume']).replace('.','%').replace(',','.').replace('%',',')"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-esc="'{:.3f}'.format(c['adjustement_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-esc="'{:.3f}'.format(c['volume_real']).replace('.','%').replace(',','.').replace('%',',')"/>
-                                </td>
-                            </tr>
+                                   t-value="context_timestamp(
+                                       datetime.datetime.strptime(
+                                       c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).
+                                       strftime('%d/%m/%y')"/>
+                                  <t t-set="reading_end_time"
+                                   t-value="context_timestamp(
+                                       datetime.datetime.strptime(
+                                       c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
+                                       strftime('%d/%m/%y')"/>
+
+                                  <t t-set="initial_volume_rounded"
+                                   t-value="int(round(c['initial_volume']))"/>
+                                  <t t-set="end_volume_rounded"
+                                   t-value="int(round(c['end_volume']))"/>
+                                  <t t-set="adjustement_volume_rounded"
+                                   t-value="int(round(c['adjustement_volume']))"/>
+                                  <t t-set="total_volume_rounded"
+                                     t-value="end_volume_rounded - initial_volume_rounded"/>
+                                  <t t-set="real_volume_rounded"
+                                   t-value="total_volume_rounded + adjustement_volume_rounded"/>
+                                  <td>
+                                      <span t-esc="c['waterconnection']"/>
+                                  </td>
+                                  <td>
+                                      <span t-esc="c['watermeter']"/>
+                                  </td>
+                                  <td>
+                                      <span t-esc="reading_initial_time"/>
+                                  </td>
+                                  <td>
+                                      <span t-esc="reading_end_time"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="initial_volume_rounded"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="end_volume_rounded"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="total_volume_rounded"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="adjustement_volume_rounded"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="real_volume_rounded"/>
+                                  </td>
+                              </tr>
+                            </t>
+                            <t t-else="">
+                              <tr t-foreach="consumptions" t-as="c">
+                                  <t t-set="reading_initial_time"
+                                   t-value="context_timestamp(
+                                       datetime.datetime.strptime(
+                                       c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).
+                                       strftime('%d/%m/%y, %H:%M')"/>
+                                  <t t-set="reading_end_time"
+                                   t-value="context_timestamp(
+                                       datetime.datetime.strptime(
+                                       c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
+                                       strftime('%d/%m/%y, %H:%M')"/>
+                                  <td>
+                                      <span t-esc="c['waterconnection']"/>
+                                  </td>
+                                  <td>
+                                      <span t-esc="c['watermeter']"/>
+                                  </td>
+                                  <td>
+                                      <span t-esc="reading_initial_time"/>
+                                  </td>
+                                  <td>
+                                      <span t-esc="reading_end_time"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="'{:.3f}'.format(c['initial_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="'{:.3f}'.format(c['end_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="'{:.3f}'.format(c['volume']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="'{:.3f}'.format(c['adjustement_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                  </td>
+                                  <td class="text-right">
+                                      <span t-esc="'{:.3f}'.format(c['volume_real']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                  </td>
+                              </tr>
+                            </t>
                         </tbody>
                     </table>
                     </div>
