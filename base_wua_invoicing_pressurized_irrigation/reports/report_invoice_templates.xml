@@ -22,6 +22,18 @@
                     <table class="table table-condensed">
                         <thead>
                             <tr>
+                              <t t-if="is_based_on_wc">
+                                <th style="width: 15%;">Water Connection</th>
+                                <th style="width: 16%;">Water Meter</th>
+                                <th>Initial time date</th>
+                                <th>Final time date</th>
+                                <th class="text-right">Initial Reading</th>
+                                <th class="text-right">Final Reading</th>
+                                <th class="text-right">Gross Vol. (m3)</th>
+                                <th class="text-right">Adjust. (m3)</th>
+                                <th class="text-right">Real Vol. (m3)</th>
+                              </t>
+                              <t t-else="">
                                 <th>Water Connection</th>
                                 <th>Water Meter</th>
                                 <th>Initial time</th>
@@ -31,6 +43,7 @@
                                 <th class="text-right">Gross Vol. (m3)</th>
                                 <th class="text-right">Adjust. (m3)</th>
                                 <th class="text-right">Real Vol. (m3)</th>
+                              </t>
                             </tr>
                         </thead>
                         <tbody class="invoice_tbody">
@@ -47,7 +60,6 @@
                                        datetime.datetime.strptime(
                                        c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
                                        strftime('%d/%m/%y')"/>
-
                                   <t t-set="initial_volume_rounded"
                                    t-value="int(round(c['initial_volume']))"/>
                                   <t t-set="end_volume_rounded"
