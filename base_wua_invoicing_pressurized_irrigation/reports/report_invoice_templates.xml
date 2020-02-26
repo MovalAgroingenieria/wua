@@ -3,7 +3,7 @@
 
     <template id="report_invoice_document"
      inherit_id="account_wua.wua_report_invoice_document">
-        <xpath expr="//p[@t-if='o.payment_term_id']" position="after">
+        <xpath expr="//p[@t-if='o.fiscal_position_id.note']" position="after">
             <t t-set="with_presconsumptions" t-value="False"/>
             <t t-set="is_based_on_wc" t-value="o.sudo()._is_invoicing_based_on_wc()"/>
             <t t-foreach="o.invoice_line_ids" t-as="l">
