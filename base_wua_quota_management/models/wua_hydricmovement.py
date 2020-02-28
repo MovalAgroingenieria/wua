@@ -151,6 +151,12 @@ class WuaHydricmovement(models.Model):
         readonly=True,
         ondelete='cascade')
 
+    irrigationreport_id = fields.Many2one(
+        string='Irrigation Report',
+        comodel_name='wua.irrigationreport',
+        readonly=True,
+        ondelete='cascade')
+
     individualinput_id = fields.Many2one(
         string='Individual Input',
         comodel_name='wua.individualinput',
@@ -168,6 +174,22 @@ class WuaHydricmovement(models.Model):
         comodel_name='wua.cession',
         readonly=True,
         ondelete='cascade')
+
+    output_next_quota_id = fields.Many2one(
+        string='Quota to transfer',
+        comodel_name='wua.quota',
+        required=True,
+        index=True,
+        readonly=True,
+        ondelete='restrict')
+
+    input_prev_quota_id = fields.Many2one(
+        string='Source Quota',
+        comodel_name='wua.quota',
+        required=True,
+        index=True,
+        readonly=True,
+        ondelete='restrict')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -384,60 +406,83 @@ class WuaHydricmovement(models.Model):
     def _get_description(self, hydricmovement):
         resp = ''
         type = hydricmovement.type
-        if (type in self.OUTPUT_TYPES or type in self.INPUT_TYPES):
-            if type == 'multiple_assign':
-                initial_date_str = datetime.datetime.strptime(
-                    hydricmovement.quotaperiod_id.initial_date,
-                    '%Y-%m-%d').strftime('%x')
-                resp = _('Multiple Assignment') + '. ' + \
-                    _('Quota Period') + ': ' + initial_date_str
-            if type == 'pres_consumption':
-                waterconnection_name = \
-                    hydricmovement.presconsumption_id.waterconnection_id.name
-                resp = _('Pressurized Consumption') + '. ' + \
-                    _('Water connection') + ': ' + \
-                    waterconnection_name
-            if type == 'grav_consumption':
-                parcel_name = \
-                    hydricmovement.gravconsumption_id.parcel_id.name
-                resp = _('Gravity Consumption') + '. ' + \
-                    _('Parcel') + ': ' + \
-                    parcel_name
-            if type == 'pos_indiv_assign':
-                reason = hydricmovement.individualinput_id.reason
-                suffix = ''
-                if reason:
-                    suffix = '. ' + _('Reason') + ': ' + reason
-                resp = _('Positive Individual-Input') + suffix
-            if type == 'neg_indiv_assign':
-                reason = hydricmovement.individualinput_id.reason
-                suffix = ''
-                if reason:
-                    suffix = '. ' + _('Reason') + ': ' + reason
-                resp = _('Negative Individual-Input') + suffix
-            if type == 'granted_cession':
-                reason = hydricmovement.cession_id.reason
-                suffix = ''
-                if reason:
-                    suffix = '. ' + _('Reason') + ': ' + reason
-                receiver = hydricmovement.cession_id.receiver_partner_id
-                resp = _('Granted cession') + '. ' + \
-                    _('Beneficiary partner') + ': ' + \
-                    receiver.name + ' [' + \
-                    str(receiver.partner_code) + ']' + suffix
-            if type == 'received_cession':
-                reason = hydricmovement.source_cession_id.reason
-                suffix = ''
-                if reason:
-                    suffix = '. ' + _('Reason') + ': ' + reason
-                transferor = hydricmovement.source_cession_id.partner_id
-                resp = _('Received cession') + '. ' + \
-                    _('Benefactor partner') + ': ' + \
-                    transferor.name + ' [' + \
-                    str(transferor.partner_code) + ']' + suffix
-            # Provisional (pending other types)
+        if (type in self.INPUT_TYPES or type in self.OUTPUT_TYPES):
+            if type in self.INPUT_TYPES:
+                resp = self._get_description_for_input_types(hydricmovement)
+            if type in self.OUTPUT_TYPES:
+                resp = self._get_description_for_output_types(hydricmovement)
         else:
             resp = self._get_description_for_new_types(hydricmovement)
+        return resp
+
+    def _get_description_for_input_types(self, hydricmovement):
+        resp = ''
+        type = hydricmovement.type
+        if type == 'multiple_assign':
+            initial_date_str = datetime.datetime.strptime(
+                hydricmovement.quotaperiod_id.initial_date,
+                '%Y-%m-%d').strftime('%x')
+            resp = _('Multiple Assignment') + '. ' + \
+                _('Quota Period') + ': ' + initial_date_str
+        if type == 'pos_indiv_assign':
+            reason = hydricmovement.individualinput_id.reason
+            suffix = ''
+            if reason:
+                suffix = '. ' + _('Reason') + ': ' + reason
+            resp = _('Positive Individual-Input') + suffix
+        if type == 'received_cession':
+            reason = hydricmovement.source_cession_id.reason
+            suffix = ''
+            if reason:
+                suffix = '. ' + _('Reason') + ': ' + reason
+            transferor = hydricmovement.source_cession_id.partner_id
+            resp = _('Received cession') + '. ' + \
+                _('Benefactor partner') + ': ' + \
+                transferor.name + ' [' + \
+                str(transferor.partner_code) + ']' + suffix
+        if type == 'input_prev_quota':
+            resp = _('Surplus balance from previous quota period') + '. '
+        return resp
+
+    def _get_description_for_output_types(self, hydricmovement):
+        resp = ''
+        type = hydricmovement.type
+        if type == 'pres_consumption':
+            waterconnection_name = \
+                hydricmovement.presconsumption_id.waterconnection_id.name
+            resp = _('Pressurized Consumption') + '. ' + \
+                _('Water connection') + ': ' + \
+                waterconnection_name
+        if type == 'grav_consumption':
+            parcel_name = \
+                hydricmovement.gravconsumption_id.parcel_id.name
+            resp = _('Gravity Consumption') + '. ' + \
+                _('Parcel') + ': ' + \
+                parcel_name
+        if type == 'irrig_report':
+            intake_name = \
+                hydricmovement.irrigationreport_id.intake_id.name
+            resp = _('Irrigation Report') + '. ' + \
+                _('Intake') + ': ' + \
+                intake_name
+        if type == 'neg_indiv_assign':
+            reason = hydricmovement.individualinput_id.reason
+            suffix = ''
+            if reason:
+                suffix = '. ' + _('Reason') + ': ' + reason
+            resp = _('Negative Individual-Input') + suffix
+        if type == 'granted_cession':
+            reason = hydricmovement.cession_id.reason
+            suffix = ''
+            if reason:
+                suffix = '. ' + _('Reason') + ': ' + reason
+            receiver = hydricmovement.cession_id.receiver_partner_id
+            resp = _('Granted cession') + '. ' + \
+                _('Beneficiary partner') + ': ' + \
+                receiver.name + ' [' + \
+                str(receiver.partner_code) + ']' + suffix
+        if type == 'output_next_quota':
+            resp = _('Positive balance to next quota period') + '. '
         return resp
 
     # Hook for new hydric-movement types in other modules (it is called
@@ -449,13 +494,14 @@ class WuaHydricmovement(models.Model):
         resp = True
         if (hydricmovement.type in self.OUTPUT_TYPES or
            hydricmovement.type in self.INPUT_TYPES):
-            # Provisional (pending other types)
             resp = not ((hydricmovement.type == 'multiple_assign' and
                          (not hydricmovement.quotaperiod_id)) or
                         (hydricmovement.type == 'pres_consumption' and
                          (not hydricmovement.presconsumption_id)) or
                         (hydricmovement.type == 'grav_consumption' and
                          (not hydricmovement.gravconsumption_id)) or
+                        (hydricmovement.type == 'irrig_report' and
+                         (not hydricmovement.irrigationreport_id)) or
                         (hydricmovement.type == 'pos_indiv_assign' and
                          (not hydricmovement.individualinput_id)) or
                         (hydricmovement.type == 'neg_indiv_assign' and
@@ -463,7 +509,11 @@ class WuaHydricmovement(models.Model):
                         (hydricmovement.type == 'granted_cession' and
                          (not hydricmovement.cession_id)) or
                         (hydricmovement.type == 'received_cession' and
-                         (not hydricmovement.source_cession_id)))
+                         (not hydricmovement.source_cession_id)) or
+                        (hydricmovement.type == 'output_next_quota' and
+                         (not hydricmovement.output_next_quota_id)) or
+                        (hydricmovement.type == 'input_prev_quota' and
+                         (not hydricmovement.input_prev_quota_id)))
         else:
             resp = self._test_reference_id_for_new_types(hydricmovement)
         return resp

@@ -8,7 +8,6 @@ from odoo import models, fields, api
 class WuaPresconsumption(models.Model):
     _inherit = 'wua.presconsumption'
 
-    _create_hydricmovements_when_create = True
     _in_create = False
 
     hydricmovement_ids = fields.One2many(
@@ -24,9 +23,10 @@ class WuaPresconsumption(models.Model):
             )
         if self.__class__._in_create:
             self.__class__._in_create = False
-            if self.__class__._create_hydricmovements_when_create:
-                self.env['wua.quota'].create_hydricmovements_presconsumption(
-                    self)
+            quota_model = self.env['wua.quota']
+            for record in self:
+                if self.is_valid_presconsumption(record):
+                    quota_model.create_hydricmovements_presconsumption(record)
 
     @api.model
     def create(self, vals):

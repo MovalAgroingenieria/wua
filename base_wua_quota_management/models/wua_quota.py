@@ -243,6 +243,52 @@ class WuaQuota(models.Model):
             }
         return act_window
 
+    # Global recalculation of quotas (only "admin")
+    def action_recalculate_quotas(self):
+        quotaperiods_ok = False
+        active_agriculturalseason = \
+            (self.env['wua.agriculturalseason'].
+             get_active_agriculturalseason())
+        if active_agriculturalseason:
+            generated_quotaperiods = self.env['wua.quotaperiod'].search(
+                [('agriculturalseason_id', '=', active_agriculturalseason.id),
+                 ('state', '=', 'generated')])
+            if generated_quotaperiods:
+                quotaperiods_ok = True
+        if not quotaperiods_ok:
+            raise exceptions.UserError(_(
+                'Operation not allowed: there is not an active agricultural '
+                'season or the active agricultural season has no generated '
+                'period.'))
+        exist_transfer = False
+        for quotaperiod in generated_quotaperiods:
+            if (quotaperiod.balances_to_next_quotaperiod or
+               quotaperiod.balances_from_prev_quotaperiod):
+                exist_transfer = True
+                break
+        if exist_transfer:
+            raise exceptions.UserError(_(
+                'Operation not allowed: there are quota periods with '
+                'transferred balances. Before recalculating quotas, it is '
+                'mandatory to reverse the transferred balances.'))
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Global recalculation of quotas'),
+            'res_model': 'wizard.recalculate.quotas',
+            'src_model': 'wua.superproduct',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'refresh_view': True}
+            }
+        return act_window
+
+    def recalculate_quotas(self, agriculturalseason):
+        generated_quotaperiods = self.env['wua.quotaperiod'].search(
+            [('agriculturalseason_id', '=', agriculturalseason.id),
+             ('state', '=', 'generated')])
+        for quotaperiod in (generated_quotaperiods or []):
+            quotaperiod.action_apply_multiple_assignment()
+
     # For client classes (individual inputs, cessions, etc), when
     # it is necesary to test the preexisting consumptions, after
     # creating one or several quotas.
@@ -301,6 +347,7 @@ class WuaQuota(models.Model):
                             'superproduct_id': superproduct_id,
                             'partner_id': partnerlink.partner_id.id,
                             'volume': volume_of_hydric_consumption,
+                            'pos': 0,
                             })
                 if hydric_consumptions:
                     hydric_consumptions = self._group_hydricmovements(
@@ -318,11 +365,23 @@ class WuaQuota(models.Model):
                               hydric_consumption['superproduct_id']),
                              ('partner_id', '=',
                               hydric_consumption['partner_id'])])
+                        event_time = presconsumption.reading_end_time
+                        # If it is a sorted quota period, then the hydric
+                        # consumptions must be classified chronologically
+                        # according to the position of superproducts
+                        # in the quota period.
+                        seconds_to_add = hydric_consumption['pos']
+                        if seconds_to_add > 0:
+                            event_time = datetime.datetime.strptime(
+                                event_time, '%Y-%m-%d %H:%M:%S') + \
+                                datetime.timedelta(seconds=seconds_to_add)
+                            event_time = event_time.strftime(
+                                '%Y-%m-%d %H:%M:%S')
                         if quota and hydric_consumption['volume'] > 0:
                             quota = quota[0]
                             self.env['wua.hydricmovement'].sudo().create({
                                 'quota_id': quota.id,
-                                'event_time': presconsumption.reading_end_time,
+                                'event_time': event_time,
                                 'type': 'pres_consumption',
                                 'volume': hydric_consumption['volume'],
                                 'presconsumption_id': presconsumption.id,
@@ -432,6 +491,64 @@ class WuaQuota(models.Model):
             gravconsumption.hydricmovement_ids.with_context(
                 force_unlink=True).sudo().unlink()
 
+    # For client classes (irrigation reports...)
+    def create_hydricmovements_irrigationreport(self, irrigationreport):
+        quotaperiod = self._get_quotaperiod(irrigationreport.report_end_time)
+        if quotaperiod:
+            intake = irrigationreport.intake_id
+            superproduct_id = 0
+            if (intake.product_id and intake.product_id.superproduct_id):
+                superproduct_id = intake.product_id.superproduct_id.id
+            if superproduct_id:
+                hydric_consumptions = []
+                hydric_consumptions.append({
+                    'quotaperiod_id': quotaperiod.id,
+                    'superproduct_id': superproduct_id,
+                    'partner_id': irrigationreport.partner_id.id,
+                    'volume': irrigationreport.volume_real,
+                    'pos': 0,
+                    })
+                if hydric_consumptions:
+                    if quotaperiod.sorted_quotas:
+                        hydric_consumptions = \
+                            self._adapt_hydricmovements_to_sorted_quotas(
+                                hydric_consumptions)
+                    for hydric_consumption in hydric_consumptions:
+                        quota = self.env['wua.quota'].search(
+                            [('quotaperiod_id', '=',
+                              hydric_consumption['quotaperiod_id']),
+                             ('superproduct_id', '=',
+                              hydric_consumption['superproduct_id']),
+                             ('partner_id', '=',
+                              hydric_consumption['partner_id'])])
+                        event_time = irrigationreport.report_end_time
+                        # If it is a sorted quota period, then the hydric
+                        # consumptions must be classified chronologically
+                        # according to the position of superproducts
+                        # in the quota period.
+                        seconds_to_add = hydric_consumption['pos']
+                        if seconds_to_add > 0:
+                            event_time = datetime.datetime.strptime(
+                                event_time, '%Y-%m-%d %H:%M:%S') + \
+                                datetime.timedelta(seconds=seconds_to_add)
+                            event_time = event_time.strftime(
+                                '%Y-%m-%d %H:%M:%S')
+                        if quota and hydric_consumption['volume'] > 0:
+                            quota = quota[0]
+                            self.env['wua.hydricmovement'].sudo().create({
+                                'quota_id': quota.id,
+                                'event_time': event_time,
+                                'type': 'irrig_report',
+                                'volume': hydric_consumption['volume'],
+                                'irrigationreport_id': irrigationreport.id,
+                                })
+
+    # For client classes (irrigation reports...)
+    def delete_hydricmovements_irrigationreport(self, irrigationreport):
+        if irrigationreport.hydricmovement_ids:
+            irrigationreport.hydricmovement_ids.with_context(
+                force_unlink=True).sudo().unlink()
+
     def _get_quotaperiod(self, event_time):
         resp = None
         event_time = datetime.datetime.strptime(
@@ -488,6 +605,7 @@ class WuaQuota(models.Model):
                                     'superproduct_id': superproduct_id,
                                     'partner_id': partner_id,
                                     'volume': remaining_volume,
+                                    'pos': current_pos - 1,
                                     })
                                 remaining_volume = 0
                             else:
@@ -496,6 +614,7 @@ class WuaQuota(models.Model):
                                     'superproduct_id': superproduct_id,
                                     'partner_id': partner_id,
                                     'volume': current_quota.balance,
+                                    'pos': current_pos - 1,
                                     })
                                 remaining_volume = \
                                     remaining_volume - current_quota.balance
@@ -570,8 +689,11 @@ class WuaQuota(models.Model):
 
     def _create_hydricmovements_of_preexisting_irrigationreports(self,
                                                                  quotaperiod):
-        # Provisional
-        pass
+        irrigationreports = \
+            self._get_irrigationreports_without_hydricmovements_valid_state(
+                quotaperiod)
+        for irrigationreport in (irrigationreports or []):
+            self.create_hydricmovements_irrigationreport(irrigationreport)
 
     # Hook (for future types of hydric consumptions)
     def _create_hydricmovements_of_preexisting_other_consumptions(self,
@@ -650,4 +772,28 @@ class WuaQuota(models.Model):
         for possible_gravconsumption in (possible_gravconsumptions or []):
             if not possible_gravconsumption.hydricmovement_ids:
                 resp.append(possible_gravconsumption)
+        return resp
+
+    def _get_irrigationreports_without_hydricmovements_valid_state(
+            self, quotaperiod):
+        resp = []
+        min_date = datetime.datetime.strptime(
+            quotaperiod.initial_date, '%Y-%m-%d')
+        max_date = datetime.datetime.strptime(
+            quotaperiod.end_date, '%Y-%m-%d') + \
+            datetime.timedelta(days=1)
+        min_date = min_date.strftime('%Y-%m-%d %H:%M:%S')
+        max_date = max_date.strftime('%Y-%m-%d %H:%M:%S')
+        possible_irrigationreports = self.env['wua.irrigationreport'].search(
+            [('report_end_time', '>=', min_date),
+             ('report_end_time', '<', max_date),
+             ('state', '=', 'validated')],
+            order='report_end_time')
+        for possible_irrigationreport in (possible_irrigationreports or []):
+            if not possible_irrigationreport.hydricmovement_ids:
+                is_valid_irrigationreport = \
+                    self.env['wua.irrigationreport'].is_valid_irrigationreport(
+                        possible_irrigationreport)
+                if is_valid_irrigationreport:
+                    resp.append(possible_irrigationreport)
         return resp

@@ -13,6 +13,20 @@
                 eval="[(4, ref('base.user_root'))]"/>
         </record>
 
+        <record id="rule_wua_quota_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on quotas</field>
+            <field name="model_id" ref="model_wua_quota"/>
+            <field name="domain_force">[('partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record>
+
+        <record id="rule_wua_hydricmovement_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on hydric movements</field>
+            <field name="model_id" ref="model_wua_hydricmovement"/>
+            <field name="domain_force">[('partner_id','=',user.partner_id.id)]</field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record>
+
     </data>
 
 </odoo>

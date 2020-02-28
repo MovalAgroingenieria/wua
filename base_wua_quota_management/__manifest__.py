@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2019 Moval Agroingeniería
+# 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
@@ -14,7 +14,7 @@
     "depends": [
         "base_wua_invoicing_pressurized_irrigation",
         "base_wua_invoicing_gravity_irrigation",
-        "base_wua_irrigation_report",
+        "base_wua_invoicing_irrigation_report",
         "web_widget_bokeh_chart",],
     "data": [
         "security/security.xml",
@@ -23,6 +23,7 @@
         "data/wua_superproduct_data.xml",
         "wizard/wizard_generate_quotaperiods_view.xml",
         "wizard/wizard_set_activeagriculturalseason_view.xml",
+        "wizard/wizard_recalculate_quotas_view.xml",
         "views/resources.xml",
         "views/base_wua_quota_management_menus.xml",
         "views/wua_quotas_config_settings_view.xml",
@@ -31,6 +32,8 @@
         "views/wua_agriculturalseason_view.xml",
         "views/res_partner_view.xml",
         "views/wua_waterconnection_view.xml",
+        "views/wua_irrigationshed_view.xml",
+        "views/wua_hydraulicsector_view.xml",
         "views/wua_quotaperiod_view.xml",
         "views/wua_quota_view.xml",
         "views/wua_hydricmovement_view.xml",

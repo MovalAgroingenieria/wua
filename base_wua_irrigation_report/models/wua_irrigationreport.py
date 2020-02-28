@@ -110,8 +110,7 @@ class WuaIrrigationReport(models.Model):
         ('validated', 'Validated')],
         string="State",
         default="draft",
-        store=True,
-        compute="_compute_state")
+        requred=True)
 
     of_active_agriculturalseason = fields.Boolean(
         string="Of active ag.season",
@@ -317,7 +316,7 @@ class WuaIrrigationReport(models.Model):
         return self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'data_in_hours')
 
-    # For reports        
+    # For reports
     def _get_hours_sexagesimal(self):
         return self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'hours_sexagesimal')

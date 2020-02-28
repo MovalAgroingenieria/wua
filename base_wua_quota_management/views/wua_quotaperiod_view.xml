@@ -13,6 +13,8 @@
                 <field name="of_active_agriculturalseason" invisible="1"/>
                 <field name="quotaperiods_in_draft_state_in_agriculturalseason"
                        invisible="1"/>
+                <field name='balances_to_next_quotaperiod' invisible="1"/>
+                <field name='balances_from_prev_quotaperiod' invisible="1"/>
                 <header>
                     <button name="action_configure_quotaperiod"
                             type="object" string="Configure"
@@ -69,7 +71,8 @@
                     <span style="display: inline-block;padding-left: 6px;"
                             attrs="{'invisible':
                                     ['|',('state','!=','generated'),
-                                     ('is_closed','=',True)]}"/>
+                                     '|',('is_closed','=',True),
+                                     ('of_active_agriculturalseason','=',False)]}"/>
                     <button name="action_close_quotaperiod"
                             type="object" string="Close"
                             icon="fa-lock"
@@ -77,21 +80,60 @@
                             style="width: 95px;"
                             attrs="{'invisible':
                                     ['|',('state','!=','generated'),
-                                     ('is_closed','=',True)]}"
+                                     '|',('is_closed','=',True),
+                                     ('of_active_agriculturalseason','=',False)]}"
                             groups="base_wua_quota_management.group_wua_quota_manager"
                             confirm="This action will block the transfer of balances between quota-periods. Proceed?"/>
                     <span style="display: inline-block;padding-left: 6px;"
                             attrs="{'invisible':
-                                    [('is_closed','=',False)]}"/>
+                                    ['|',('is_closed','=',False),
+                                     ('of_active_agriculturalseason','=',False)]}"/>
                     <button name="action_open_quotaperiod"
                             type="object" string="Open"
                             icon="fa-unlock"
                             class="oe_read_only"
                             style="width: 95px;"
                             attrs="{'invisible':
-                                    [('is_closed','=',False)]}"
+                                    ['|',('is_closed','=',False),
+                                     ('of_active_agriculturalseason','=',False)]}"
                             groups="base_wua_quota_management.group_wua_quota_manager"
                             confirm="This action will open the transfer of balances between quota-periods. Proceed?"/>
+                    <span style="display: inline-block;padding-left: 12px;"
+                            attrs="{'invisible':
+                                    ['|',('is_closed','=',True),
+                                     '|',('balances_to_next_quotaperiod','=',True),
+                                     '|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"/>
+                    <button name="action_transfer_balances"
+                            type="object" string="Transfer"
+                            icon="fa-mail-forward"
+                            class="oe_read_only"
+                            style="width: 95px;"
+                            attrs="{'invisible':
+                                    ['|',('is_closed','=',True),
+                                     '|',('balances_to_next_quotaperiod','=',True),
+                                     '|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"                            
+                            groups="base_wua_quota_management.group_wua_quota_manager"
+                            confirm="Are you sure you want to transfer the positive balances to the next quota period?"/>
+                    <span style="display: inline-block;padding-left: 12px;"
+                            attrs="{'invisible':
+                                    ['|',('is_closed','=',True),
+                                     '|',('balances_to_next_quotaperiod','=',False),
+                                     '|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"/>
+                    <button name="action_revert_balances"
+                            type="object" string="Revert"
+                            icon="fa-mail-reply"
+                            class="oe_read_only"
+                            style="width: 95px;"
+                            attrs="{'invisible':
+                                    ['|',('is_closed','=',True),
+                                     '|',('balances_to_next_quotaperiod','=',False),
+                                     '|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"                            
+                            groups="base_wua_quota_management.group_wua_quota_manager"
+                            confirm="Are you sure you want to revert the balances given for the next quota period?"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,configured,generated"/>

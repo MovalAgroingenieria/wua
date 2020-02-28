@@ -30,26 +30,38 @@
                                    attrs="{'invisible':
                                            [('balance','>=',0)]}"/>
                             <field name="presconsumption_id"
-                                   string="Link"
+                                   string="Consumption (pres.)"
                                    attrs="{'invisible':
                                            [('type','!=','pres_consumption')]}"/>
                             <field name="gravconsumption_id"
-                                   string="Link"
+                                   string="Consumption (grav.)"
                                    attrs="{'invisible':
                                            [('type','!=','grav_consumption')]}"/>
+                            <field name="irrigationreport_id"
+                                   string="Irrigation Report"
+                                   attrs="{'invisible':
+                                           [('type','!=','irrig_report')]}"/>
                             <field name="individualinput_id"
-                                   string="Link"
+                                   string="Individual Input"
                                    attrs="{'invisible':
                                            [('type','!=','pos_indiv_assign'), 
                                             ('type','!=','neg_indiv_assign')]}"/>
                             <field name="cession_id"
-                                   string="Link"
+                                   string="Destination Quota"
                                    attrs="{'invisible':
                                            [('type','!=','granted_cession')]}"/>
                             <field name="source_cession_id"
-                                   string="Link"
+                                   string="Source Quota"
                                    attrs="{'invisible':
                                            [('type','!=','received_cession')]}"/>
+                            <field name="output_next_quota_id"
+                                   string="Destination Quota"
+                                   attrs="{'invisible':
+                                           [('type','!=','output_next_quota')]}"/>
+                            <field name="input_prev_quota_id"
+                                   string="Source Quota"
+                                   attrs="{'invisible':
+                                           [('type','!=','input_prev_quota')]}"/>
                         </group>
                     </group>
                 </sheet>
@@ -214,7 +226,7 @@
     <menuitem id="hydricmovement_menu"
               name="Hydric Movements"
               parent="management_menu"
-              sequence="6"
+              sequence="4"
               action="wua_hydricmovement_action"/>
 
 </odoo>

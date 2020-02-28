@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_hydraulicsector_view_form" model="ir.ui.view">
+        <field name="name">Hydraulic Sectors (form view)</field>
+        <field name="model">wua.hydraulicsector</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_hydraulicsector_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='irrigationsheds_page']" position="after">
+                <page name="consumptions_graph_page" string="Graph">
+                        <field name="consumptions_graph"
+                               widget="bokeh_chart" nolabel="1"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -14,7 +14,7 @@ class WizardGenerateQuotaperiods(models.TransientModel):
 
     agriculturalseason_name = fields.Char(
         string='Agricultural Season',
-        readOnly=True)
+        readonly=True)
 
     quotaperiod_01_initial_date = fields.Date(
         string='Quota Period #1, initial_date',
