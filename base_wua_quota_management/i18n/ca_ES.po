@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-29 08:46+0000\n"
-"PO-Revision-Date: 2020-02-29 08:46+0000\n"
+"POT-Creation-Date: 2020-03-02 08:31+0000\n"
+"PO-Revision-Date: 2020-03-02 08:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -265,7 +265,7 @@ msgstr "BALANÇ"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_negative_balance
 msgid "Balance"
-msgstr "Balanç"
+msgstr "Saldo pendent"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_balance
@@ -698,22 +698,22 @@ msgstr "Introduïu la data d'inici de cada període de quota i, opcionalment, un
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Element (producte)"
+msgstr "Entity (WUA Product Template)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_gravconsumption
 msgid "Entity (gravity consumption)"
-msgstr "Element (consum de gravetat)"
+msgstr "Entity (gravity consumption)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_hydraulicsector
 msgid "Entity (hydraulic sector)"
-msgstr "Element sector hidràulic)"
+msgstr "Element (sector hydràulic)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_irrigationshed
@@ -733,7 +733,7 @@ msgstr "Element (lecture)"
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_waterconnection
 msgid "Entity (water connection)"
-msgstr "Element (toma)"
+msgstr "Element (presa)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_wateringrequest
@@ -982,9 +982,7 @@ msgstr "Si la valoració perpètua s'activa per un producte, el sistema crearà 
 #: code:addons/base_wua_quota_management/models/wua_agriculturalseason.py:116
 #, python-format
 msgid "If the agricultural season has any quota period, then it is not possible to change its initial or end dates."
-msgstr "Si la campanya té ja algun període de quota, no es permet modificar la seva data inicial ni la seva data final.
- 
-"
+msgstr "Si la campanya té ja algun període de quota, no es permet modificar la seva data inicial ni la seva data final"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_active
@@ -1542,7 +1540,7 @@ msgstr "Operació no permesa: el període de quota té balanços traspassats a u
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_config_quotaperiod_line_view_tree
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_line_view_tree
 msgid "Order"
-msgstr "Nº ordre"
+msgstr "Ordre"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_invoice_policy
@@ -1622,7 +1620,7 @@ msgstr "Quotas de soci"
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Soci"
+msgstr "Soci (WUA)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_pos
@@ -1984,7 +1982,7 @@ msgstr "Període de quota/Supraproducte"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_pivot
 #, python-format
 msgid "Quotas"
-msgstr "Quotas"
+msgstr "Quotes"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotas_config_settings_view_form
@@ -2399,7 +2397,7 @@ msgstr "Data"
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_area_total
 msgid "Total Area"
-msgstr "Àrea total"
+msgstr "Total Area"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_total_input
@@ -2430,7 +2428,7 @@ msgstr "Seguiment"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "Transfer"
-msgstr "Traspassar"
+msgstr "Transferència"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession_partner_id
@@ -2603,11 +2601,19 @@ msgstr "Toma"
 
 #. module: base_wua_quota_management
 #: model:product.template,name:base_wua_quota_management.superproduct_gravity_irrigation_product_template
+#: model:wua.superproduct,name:base_wua_quota_management.superproduct_gravity_irrigation
 msgid "Waters of gravity irrigation"
 msgstr "Aigües per a reg per gravetat"
 
 #. module: base_wua_quota_management
+#: model:product.template,name:base_wua_quota_management.superproduct_irrigation_reports_product_template
+#: model:wua.superproduct,name:base_wua_quota_management.superproduct_irrigation_reports
+msgid "Waters of irrigation reports"
+msgstr "Aigües per parts de reg"
+
+#. module: base_wua_quota_management
 #: model:product.template,name:base_wua_quota_management.superproduct_pressurized_irrigation_product_template
+#: model:wua.superproduct,name:base_wua_quota_management.superproduct_pressurized_irrigation
 msgid "Waters of pressurized irrigation"
 msgstr "Aigües per a reg a pressió"
 
