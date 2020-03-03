@@ -179,13 +179,13 @@ class WuaHydricmovement(models.Model):
         string='Quota to transfer',
         comodel_name='wua.quota',
         readonly=True,
-        ondelete='restrict')
+        ondelete='cascade')
 
     input_prev_quota_id = fields.Many2one(
         string='Source Quota',
         comodel_name='wua.quota',
         readonly=True,
-        ondelete='restrict')
+        ondelete='cascade')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
