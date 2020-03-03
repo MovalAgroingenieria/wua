@@ -178,16 +178,12 @@ class WuaHydricmovement(models.Model):
     output_next_quota_id = fields.Many2one(
         string='Quota to transfer',
         comodel_name='wua.quota',
-        required=True,
-        index=True,
         readonly=True,
         ondelete='restrict')
 
     input_prev_quota_id = fields.Many2one(
         string='Source Quota',
         comodel_name='wua.quota',
-        required=True,
-        index=True,
         readonly=True,
         ondelete='restrict')
 

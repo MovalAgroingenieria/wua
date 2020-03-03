@@ -40,6 +40,8 @@
         "views/wua_superproduct_dashboard_view.xml",
         "views/wua_individualinput_view.xml",
         "views/wua_cession_view.xml",],
+    "external_dependencies": {
+        "python": ["numpy", "bokeh"]},        
     "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",
     "installable": True,
