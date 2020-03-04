@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_recalculate_quotas_view_form" model="ir.ui.view">
+        <field name="name">Wizard to do a global recalculation of quotas</field>
+        <field name="model">wizard.recalculate.quotas</field>
+        <field name="arch" type="xml">
+            <form string="Global recalculation of quotas">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '490px'});
+                    });
+                </script>
+                <div>Press "Apply" to do a global recalculation of the generated quota periods (in generated state) of the next agricultural season:
+                </div>
+                <br/>
+                <div style="text-align:center">
+                    <h4><field name="agriculturalseason_name"/></h4>
+                </div>
+                <div>WARNING: This process will delete individual inputs and cessions, if any.
+                </div>
+                <footer>
+                    <button name="do_recalculation_quotas"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

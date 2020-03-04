@@ -8,6 +8,8 @@ from . import wua_superproduct
 from . import wua_quotas_config_settings
 from . import res_partner
 from . import wua_waterconnection
+from . import wua_irrigationshed
+from . import wua_hydraulicsector
 from . import wua_quotaperiod
 from . import wua_quota
 from . import wua_hydricmovement
@@ -17,3 +19,4 @@ from . import wua_cession
 from . import wua_reading
 from . import wua_gravconsumption
 from . import wua_wateringrequest
+from . import wua_irrigationreport
