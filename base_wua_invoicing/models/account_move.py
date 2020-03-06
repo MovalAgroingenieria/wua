@@ -6,6 +6,18 @@
 from odoo import models, fields, api
 
 
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    @api.multi
+    def _check_lock_date(self):
+        if self._context.get('from_account_payment_order'):
+            return True
+        else:
+            res = super(AccountMove, self)._check_lock_date()
+            return res
+
+
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 

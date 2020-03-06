@@ -46,5 +46,6 @@ class AccountPaymentOrder(models.Model):
         if move_lines:
             move_lines_to_compute = \
                 self.env['account.move.line'].browse(move_lines)
-            move_lines_to_compute._amount_residual()
+            move_lines_to_compute.with_context(
+                from_account_payment_order=True)._amount_residual()
         return True
