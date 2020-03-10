@@ -11,8 +11,9 @@ class WizardChangeParcelName(models.TransientModel):
                    'with irrigation infrastructure'
 
     def set_another_parcel_name(self, parcel, new_parcel_name):
-        for irrigationpointwc in parcel.irrigationpointwc_ids:
-            irrigationpointwc.irrigationpointwc_code = \
-                new_parcel_name + '-' + \
-                irrigationpointwc.irrigationpointwc_code[
-                    -parcel.__class__.SIZE_IRRIGATIONPOINT_SUFFIX:]
+        for irrigationpointwc in (parcel.irrigationpointwc_ids or []):
+            if irrigationpointwc.irrigationpointwc_code:
+                irrigationpointwc.irrigationpointwc_code = \
+                    new_parcel_name + '-' + \
+                    irrigationpointwc.irrigationpointwc_code[
+                        -parcel.__class__.SIZE_IRRIGATIONPOINT_SUFFIX:]
