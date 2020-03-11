@@ -598,7 +598,7 @@ class WuaParcel(models.Model):
                 raise exceptions.ValidationError(_('Empty Cadastral Polygon.'))
             try:
                 proposed_cadastral_polygon = int(cadastral_polygon_no_blanks)
-            except:
+            except Exception:
                 proposed_cadastral_polygon = 0
             if proposed_cadastral_polygon <= 0:
                 raise exceptions.ValidationError(_('The cadastral polygon must'
@@ -614,7 +614,7 @@ class WuaParcel(models.Model):
                 raise exceptions.ValidationError(_('Empty Cadastral Parcel.'))
             try:
                 proposed_cadastral_parcel = int(cadastral_parcel_no_blanks)
-            except:
+            except Exception:
                 proposed_cadastral_parcel = 0
             if proposed_cadastral_parcel <= 0:
                 raise exceptions.ValidationError(_('The cadastral parcel must'
@@ -981,7 +981,7 @@ class WuaParcel(models.Model):
             self.env.cr.execute("""
                 SELECT name, geom FROM public.wua_gis_parcel
                 """)
-        except:
+        except Exception:
             gis_parcels_ok = False
         if gis_parcels_ok:
             gis_parcels = self.env.cr.fetchall()
