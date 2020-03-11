@@ -9,7 +9,7 @@
                 <header>
                     <button name="%(action_change_parcel_name)d"
                             type="action" string="Change Code"
-                            groups="base_wua.group_wua_manager"/>                
+                            groups="base_wua.group_wua_manager"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="notbillable,billable"/>
@@ -21,7 +21,7 @@
                         <field name="with_gis_parcel" invisible="1"/>
                         <button name="toggle_active"
                                 type="object"
-                                class="oe_stat_button" 
+                                class="oe_stat_button"
                                 icon="fa-archive"
                                 groups="base_wua.group_wua_user">
                                 <field name="active"
@@ -66,11 +66,11 @@
                         </h1>
                         <field name="county_id"
                          placeholder="County"
-                         style="width:270px"/>                             
+                         style="width:270px"/>
                     </div>
                     <group name="master_data">
                         <group>
-                            <group colspan="4" col="8">
+                            <group name="first_group" colspan="4" col="8">
                                 <field name="cadastral_sector"
                                  colspan="4"
                                  attrs="{'invisible':
@@ -81,7 +81,7 @@
                                     [('parcel_type','=', 'U')]}"/>
                                 <newline
                                  attrs="{'invisible':
-                                    [('parcel_type','=', 'U')]}"/>                                    
+                                    [('parcel_type','=', 'U')]}"/>
                                 <field name="cadastral_parcel"
                                  colspan="4"
                                  attrs="{'invisible':
@@ -89,7 +89,7 @@
                                 <field name="cadastral_subparcel"
                                  colspan="4"
                                  attrs="{'invisible':
-                                    [('parcel_type','=', 'U')]}"/>                                    
+                                    [('parcel_type','=', 'U')]}"/>
                                 <field name="cadastral_reference"
                                  colspan="4"/>
                                 <field name="area_cadaster"
@@ -290,7 +290,7 @@
                   <field name="irrigationsystem_id" widget="many2one_unclickable"
                          attrs="{'readonly':[('is_cultivable','=', False)]}"/>
                   <field name="productionmethod_id" widget="many2one_unclickable"/>
-            </tree>        
+            </tree>
         </field>
     </record>
 
@@ -357,7 +357,7 @@
                  domain="[('with_gis_parcel','=',True)]"/>
                 <filter string="GIS Parcel: No" name="gisparcelno"
                  domain="[('with_gis_parcel','=',False)]"/>
-                <separator/>                
+                <separator/>
                 <filter string="Archived" name="inactive"
                  domain="[('active','=',False)]"/>
                 <group expand="0" string="Group By">
@@ -404,7 +404,7 @@
             <tree create="false" edit="false" delete="false"
                 class="o_base_wua_parcel_subparcel_view_tree">
                 <field name="parcel_id"/>
-                <field name="partner_id"/>                
+                <field name="partner_id"/>
                 <field name="subparcel_code"/>
                 <field name="area_perc" widget="progressbar"/>
                 <field name="area_official"/>
@@ -435,12 +435,12 @@
                  domain="[('is_cultivable','=',False)]"/>
                 <separator/>
                 <filter string="Archived" name="inactive"
-                 domain="[('active','=',False)]"/>                 
+                 domain="[('active','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Irrigation Partner" name="partner"
                      context="{'group_by':'partner_id'}"/>
                     <filter string="Parcel" name="parcel"
-                     context="{'group_by':'parcel_id'}"/>                
+                     context="{'group_by':'parcel_id'}"/>
                     <filter string="Type" name="type"
                      context="{'group_by':'subparceltype_id'}"/>
                     <filter string="Cultivation" name="cultivation"
@@ -494,7 +494,7 @@
             <tree create="false" edit="false" delete="false"
                 class="o_base_wua_parcel_partnerlink_view_tree">
                 <field name="parcel_id"/>
-                <field name="cadastral_reference"/>                
+                <field name="cadastral_reference"/>
                 <field name="partnerlink_code"
                  invisible="1"/>
                 <field name="partner_id"
@@ -570,7 +570,7 @@
         <field name="model">wua.parcel.subparcel</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="parcel_id"/>                
+                <field name="parcel_id"/>
                 <field name="subparcel_code"/>
                 <field name="pos"/>
                 <field name="area_official"/>
@@ -589,7 +589,7 @@
         <field name="model">wua.parcel.partnerlink</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="parcel_id"/>                
+                <field name="parcel_id"/>
                 <field name="partnerlink_code"/>
                 <field name="pos"/>
                 <field name="partner_id"
@@ -620,7 +620,7 @@
         <field name="res_model">wua.parcel.subparcel</field>
         <field name="view_mode">tree,pivot</field>
         <field name="view_id" ref="wua_parcel_subparcel_view_tree"/>
-        <field name="search_view_id" ref="wua_parcel_subparcel_view_search"/>        
+        <field name="search_view_id" ref="wua_parcel_subparcel_view_search"/>
     </record>
 
     <record id="wua_gisviewer_action" model="ir.actions.server">
@@ -637,13 +637,13 @@
               sequence="-10"
               web_icon="base_wua,static/description/icon.png"
               groups="group_wua_user,group_wua_portal_user"/>
-        
+
     <menuitem id="base_wua_census_landparcels_menu"
               name="Land Parcels"
               parent="base_wua_census_menu"
               sequence="2"
               groups="group_wua_user"/>
-                  
+
     <menuitem id="wua_parcel_menu"
               name="Parcels"
               parent="base_wua_census_landparcels_menu"
