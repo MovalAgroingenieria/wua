@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='first_group']/field[1]" position="before">
+              <field colspan="4" name="company_id"/>
+              <newline />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view">
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>        
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="company_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='partner']" position="before">
+                <filter string="Company" name="comapany"
+                 context="{'group_by':'company_id'}"/>
+            </xpath>
+        </field>
+    </record>
+    
+</odoo>
