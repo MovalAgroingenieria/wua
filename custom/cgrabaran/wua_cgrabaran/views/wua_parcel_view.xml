@@ -28,4 +28,47 @@
         </field>
     </record>
     
+    
+    <record id="wua_parcel_partnerlink_view_tree" model="ir.ui.view" >
+        <field name="name">Partner Links (tree view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_tree"/>   
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='area_official_net']" position="after">
+              <field name="area_gis"/>
+          </xpath>
+        </field>
+    </record>
+    
+    <record id="wua_parcel_partnerlink_view_search" model="ir.ui.view">
+        <field name="name">Partner Links (search view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_search"/>
+        <field name="arch" type="xml">
+          <xpath expr="//filter[@name='profile']" position="after">
+            <filter string="Company"
+             name="company"
+             context="{'group_by':'company_id'}"/>
+          </xpath>
+        </field>
+    </record>
+    
+    <record id="base_wua.wua_technical_partnerlinks_action" model="ir.actions.act_window">
+      <field name="view_id" ref="base_wua.wua_technical_parcel_partnerlink_view_tree"/>
+      <field name="context">{"search_default_company":1,}</field>
+    </record>
+    <!--
+    <record id="wua_technical_partnerlinks_action" model="ir.actions.act_window">
+        <field name="name">Partner Links (low-level)</field>
+        <field name="res_model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_technical_partnerlinks_action"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='view_id']" position="after">
+            <field name="context"></field>
+          </xpath>
+        </field>
+    </record>-->
+    
+    <!-- <field name="context">{"search_default_customer":1,"search_default_type_person":1}</field>-->
+    
 </odoo>
