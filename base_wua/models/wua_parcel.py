@@ -397,6 +397,18 @@ class WuaParcel(models.Model):
             else:
                 record.with_gis_parcel = False
 
+    @api.model
+    def read_group(self, domain, fields, groupby,
+                   offset=0, limit=None, orderby=False, lazy=True):
+        if 'ownership_percentage' in fields:
+            fields.remove('ownership_percentage')
+        if 'water_costs_percentage' in fields:
+            fields.remove('water_costs_percentage')
+        if 'other_costs_percentage' in fields:
+            fields.remove('other_costs_percentage')
+        return super(WuaParcel, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
+
     @api.multi
     def _compute_cadastral_reference_link(self):
         url = self.env['ir.values'].get_default(
@@ -2104,6 +2116,18 @@ class WuaParcelPartnerlink(models.Model):
     def _onchange_profile(self):
         if self.profile != 'O':
             self.ownership_percentage = 0
+
+    @api.model
+    def read_group(self, domain, fields, groupby,
+                   offset=0, limit=None, orderby=False, lazy=True):
+        if 'ownership_percentage' in fields:
+            fields.remove('ownership_percentage')
+        if 'water_costs_percentage' in fields:
+            fields.remove('water_costs_percentage')
+        if 'other_costs_percentage' in fields:
+            fields.remove('other_costs_percentage')
+        return super(WuaParcelPartnerlink, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
 
     @api.model
     def create(self, vals):
