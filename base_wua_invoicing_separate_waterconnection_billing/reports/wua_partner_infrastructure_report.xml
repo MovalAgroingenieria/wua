@@ -8,7 +8,8 @@
           <t t-set="irrigationpoints_with_separated_billing" t-value="[]"/>
           <t t-foreach="partnerlinks_with_irrigationpartner" t-as="pwi">
             <t t-set="irrigationpoints_with_separated_billing"
-              t-value="irrigationpoints_with_separated_billing + list(pwi.parcel_id.irrigationpoint_ids.filtered(lambda y: y.waterconnection_id.watercosts_separate_billing or y.waterconnection_id.othercosts_separate_billing))"/>
+              t-value="irrigationpoints_with_separated_billing +
+                list(pwi.parcel_id.irrigationpoint_ids.filtered(lambda y: (y.type == 'WC') and (y.waterconnection_id.watercosts_separate_billing or y.waterconnection_id.othercosts_separate_billing)))"/>
           </t>
           <t t-if="len(irrigationpoints_with_separated_billing) > 0 ">
             <div name="wua_irrigationpoint_ids_with_separated_billing" style="margin-top: 20px;">
