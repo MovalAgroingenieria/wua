@@ -15,7 +15,9 @@
     ],
     "data": [
         "views/wua_parcel_view.xml",
-        "views/res_partner_view.xml"
+        "views/res_partner_view.xml",
+        "views/wua_config_settings_view.xml",
+        "reports/wua_partner_report.xml"
     ],
     "installable": True,
     "application": False,

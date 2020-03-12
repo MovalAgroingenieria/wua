@@ -12,5 +12,33 @@
       <field name="context">{'remove_master_field':'1', 'search_default_company': True}</field>
   </record>
 
+  <record id="view_partner_form" model="ir.ui.view">
+      <field name="name">Partners (form view)</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base_wua.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='number_of_votes']" position="attributes">
+            <attribute name="attrs">
+                {'invisible': True}
+            </attribute>
+        </xpath>
+        <xpath expr="//field[@name='number_of_votes']" position="after">
+          <field name="number_of_votes_company_01"/>
+          <field name="number_of_votes_company_02"/>
+          <field name="number_of_votes_company_03"/>
+        </xpath>
+      </field>
+  </record>
+
+  <record id="view_partner_tree" model="ir.ui.view">
+      <field name="name">Partners (form view)</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base_wua.view_partner_tree"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='number_of_votes']" position="attributes">
+            <attribute name="invisible">True</attribute>
+        </xpath>
+      </field>
+  </record>
 
 </odoo>
