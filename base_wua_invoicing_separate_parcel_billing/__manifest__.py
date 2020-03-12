@@ -14,6 +14,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
+        "base_wua",
         "base_wua_invoicing", ],
     "data": [
         "views/wua_parcel_view.xml",

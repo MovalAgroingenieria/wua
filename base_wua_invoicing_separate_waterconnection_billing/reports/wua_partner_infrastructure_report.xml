@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner infrastrucure report (continuation of wua partner report) -->
+    <template id="wua_partner_infrastructure_report_document" inherit_id="base_wua_infrastructure.wua_partner_infrastructure_report_document">
+        <xpath expr="//div[@name='wua_irrigationpoint_ids']" position="after">
+          <t t-set="partnerlinks_with_irrigationpartner" t-value='o.partnerlink_ids.filtered(lambda x: x.irrigation_partner)'/>
+          <t t-set="irrigationpoints_with_separated_billing" t-value="[]"/>
+          <t t-foreach="partnerlinks_with_irrigationpartner" t-as="pwi">
+            <t t-set="irrigationpoints_with_separated_billing"
+              t-value="irrigationpoints_with_separated_billing + list(pwi.parcel_id.irrigationpoint_ids.filtered(lambda y: y.waterconnection_id.watercosts_separate_billing or y.waterconnection_id.othercosts_separate_billing))"/>
+          </t>
+          <t t-if="len(irrigationpoints_with_separated_billing) > 0 ">
+            <div name="wua_irrigationpoint_ids_with_separated_billing" style="margin-top: 20px;">
+              <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                  <div class="col-xs-12" style="background: lightgray; padding: 1px 16px;">Irrigation points</div>
+              </div>
+              <table class="table table-condensed" style="margin-top: 2px;">
+                  <thead>
+                      <tr>
+                          <th class="text-center">Irrigation Point</th>
+                          <th class="text-center">Water costs Separated Billing</th>
+                          <th class="text-center">Other costs Separated Billing</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr t-foreach="irrigationpoints_with_separated_billing" t-as="ip">
+
+                          <td class="text-center">
+                            <t t-esc="ip.waterconnection_id.name"/>
+                          </td>
+                          <td class="text-center">
+                              <t t-if="ip.waterconnection_id.watercosts_separate_billing"><span>Yes</span></t>
+                              <t t-else=""><span>No</span></t>
+                          </td>
+                          <td class="text-center">
+                              <t t-if="ip.waterconnection_id.othercosts_separate_billing"><span>Yes</span></t>
+                              <t t-else=""><span>No</span></t>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+            </div>
+          </t>
+        </xpath>
+    </template>
+
+</odoo>
