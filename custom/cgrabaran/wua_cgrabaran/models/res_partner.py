@@ -194,13 +194,13 @@ class ResPartner(models.Model):
                         "//field[@name='number_of_votes_company_01']"):
                     node.set('string',
                              _('Votes of') + ' ' +
-                             company_01_abv.decode().encode('utf-8'))
+                             company_01_abv.decode('utf-8'))
             if company_02_abv:
                 for node in doc.xpath(
                         "//field[@name='number_of_votes_company_02']"):
                     node.set('string',
                              _('Votes of') + ' ' +
-                             company_02_abv.decode().encode('utf-8'))
+                             company_02_abv.decode('utf-8'))
             if company_03_abv:
                 for node in doc.xpath(
                         "//field[@name='number_of_votes_company_03']"):
