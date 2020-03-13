@@ -14,9 +14,11 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_invoicing",],
+        "base_wua",
+        "base_wua_invoicing", ],
     "data": [
-        "views/wua_parcel_view.xml",],
+        "views/wua_parcel_view.xml",
+        "reports/wua_partner_report.xml"],
     "installable": True,
     "application": False,
 }

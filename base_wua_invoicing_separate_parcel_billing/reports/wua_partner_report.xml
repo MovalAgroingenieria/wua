@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <template id="wua_partner_report_document" inherit_id="base_wua.wua_partner_report_document">
+
+    <xpath expr="//t[@t-if='o.bank_ids']" position="before">
+      <t t-if="o.customer_payment_mode_id">
+        <span>Default payment mode (DEF): <t t-esc="o.customer_payment_mode_id.name"/></span>
+        <br/>
+      </t>
+    </xpath>
+    <!--<t t-if="o.bank_ids">-->
+
+    <xpath expr="//div[@name='wua_partnerlinks_ids']" position="after">
+
+      <t t-if="o.partnerlink_ids">
+        <t t-set="partnerlinks_with_separate_billings"
+          t-value="o.partnerlink_ids.filtered(lambda x: x.parcel_id.watercosts_separate_billing or x.parcel_id.othercosts_separate_billing)"/>
+        <t t-if="len(partnerlinks_with_separate_billings) > 0">
+          <div>
+            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                <div class="col-xs-12" style="background: lightgray; padding: 1px 16px;">Parcels with separated billing</div>
+            </div>
+            <table class="table table-striped" style="margin-top: 2px;">
+                <thead>
+                    <tr>
+                        <th class="text-center">Parcel</th>
+                        <th class="text-center">Individual water payment mode</th>
+                        <th class="text-center">Individual water payment account</th>
+                        <th class="text-center">Individual others payment mode</th>
+                        <th class="text-center">Individual others payment account</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="partnerlinks_with_separate_billings" t-as="p">
+
+                        <td class="text-center">
+                          <t t-esc="p.parcel_id.name"/>
+                        </td>
+                        <td class="text-center">
+                            <t t-if="p.parcel_id.watercosts_payment_mode_id">
+                              <span><t t-esc="p.parcel_id.watercosts_payment_mode_id.name"/></span>
+                            </t>
+                            <t t-else="">
+                              <span>DEF</span>
+                            </t>
+                        </td>
+                        <td class="text-center">
+                            <t t-if="p.parcel_id.watercosts_mandate_id">
+                              <t t-if="p.parcel_id.watercosts_mandate_id.partner_bank_id">
+                                  <t t-set="hidden_acc_number" t-value="p.parcel_id.watercosts_mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                                  <span t-esc="hidden_acc_number"/>
+                              </t>
+                            </t>
+                            <t t-else="">
+                              <span>-</span>
+                            </t>
+                        </td>
+                        <td class="text-center">
+                            <t t-if="p.parcel_id.othercosts_payment_mode_id">
+                              <span><t t-esc="p.parcel_id.othercosts_payment_mode_id.name"/></span>
+                            </t>
+                            <t t-else="">
+                              <span>DEF</span>
+                            </t>
+                        </td>
+
+                        <td class="text-center">
+                            <t t-if="p.parcel_id.othercosts_mandate_id">
+                              <t t-if="p.parcel_id.othercosts_mandate_id.partner_bank_id">
+                                  <t t-set="hidden_acc_number" t-value="p.parcel_id.othercosts_mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                                  <span t-esc="hidden_acc_number"/>
+                              </t>
+                            </t>
+                            <t t-else="">
+                              <span>-</span>
+                            </t>
+                        </td>
+
+
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+        </t>
+      </t>
+    </xpath>
+  </template>
+
+</odoo>
