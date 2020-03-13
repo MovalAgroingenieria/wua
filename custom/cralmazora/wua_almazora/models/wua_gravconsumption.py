@@ -27,6 +27,13 @@ class WuaGravconsumption(models.Model):
         store=True,
         compute='_compute_net_worker_amount')
 
+    area_irrigation = fields.Float(
+        string='Irrigation Area',
+        digits=(32, 4),
+        index=True,
+        store=True,
+        compute='_compute_area_irrigation')
+
     @api.depends('parcel_id')
     def _compute_gross_amount(self):
         for record in self:
@@ -50,3 +57,11 @@ class WuaGravconsumption(models.Model):
             if record.parcel_id:
                 net_worker_amount = record.parcel_id.net_worker_amount
             record.net_worker_amount = net_worker_amount
+
+    @api.depends('parcel_id')
+    def _compute_area_irrigation(self):
+        for record in self:
+            area_irrigation = 0
+            if record.parcel_id:
+                area_irrigation = record.parcel_id.area_irrigation
+            record.area_irrigation = area_irrigation

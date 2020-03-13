@@ -53,7 +53,7 @@ class WuaParcel(models.Model):
             gross_price = 0
         for record in self:
             if record.with_irrigation_worker:
-                record.gross_amount = gross_price * record.area_official
+                record.gross_amount = gross_price * record.area_irrigation
             else:
                 record.gross_amount = 0
 
