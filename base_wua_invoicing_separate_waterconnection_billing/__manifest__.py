@@ -6,8 +6,8 @@
     "name": "Water Users Association: Separate invoicing of water connections "
             "with their own payment method",
     "summary": "It is allowed to assign a payment method to each water "
-               "connection, both for the billing of your water and for the "
-               "rest of the costs. In that case, the parcel will be "
+               "connection, both for the waterconnection of your water and "
+               "for the rest of the costs. In that case, the parcel will be "
                "billed separately. ",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",

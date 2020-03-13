@@ -22,6 +22,8 @@
                           <th class="text-center">Irrigation Point</th>
                           <th class="text-center">Water costs Separated Billing</th>
                           <th class="text-center">Other costs Separated Billing</th>
+                          <th class="text-center">Individual water payment mode</th>
+                          <th class="text-center">Individual others payment mode</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -37,6 +39,18 @@
                           <td class="text-center">
                               <t t-if="ip.waterconnection_id.othercosts_separate_billing"><span>Yes</span></t>
                               <t t-else=""><span>No</span></t>
+                          </td>
+                          <td class="text-center">
+                              <t t-if="ip.waterconnection_id.watercosts_payment_mode_id">
+                                <span><t t-esc="ip.waterconnection_id.watercosts_payment_mode_id.name"/></span>
+                              </t>
+                              <t t-else=""><span>-</span></t>
+                          </td>
+                          <td class="text-center">
+                              <t t-if="ip.waterconnection_id.othercosts_payment_mode_id">
+                                <span><t t-esc="ip.waterconnection_id.othercosts_payment_mode_id.name"/></span>
+                              </t>
+                              <t t-else=""><span>-</span></t>
                           </td>
                       </tr>
                   </tbody>
