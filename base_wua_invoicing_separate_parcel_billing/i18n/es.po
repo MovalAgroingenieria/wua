@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-20 17:47+0000\n"
-"PO-Revision-Date: 2019-10-20 17:47+0000\n"
+"POT-Creation-Date: 2020-03-13 10:44+0000\n"
+"PO-Revision-Date: 2020-03-13 10:44+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,19 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_invoicing_separate_parcel_billing
+#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_partner_report_document
+msgid "<span>DEF</span>"
+msgstr "<span>DEF</span>"
+
+#. module: base_wua_invoicing_separate_parcel_billing
 #: model:ir.model,name:base_wua_invoicing_separate_parcel_billing.model_account_banking_mandate
 msgid "A generic banking mandate"
 msgstr "Un mandato genérico del banco"
+
+#. module: base_wua_invoicing_separate_parcel_billing
+#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_partner_report_document
+msgid "Default payment mode (DEF):"
+msgstr "Modo de pago por defecto (DEF):"
 
 #. module: base_wua_invoicing_separate_parcel_billing
 #: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_parcel_view_form
@@ -33,12 +43,27 @@ msgstr "Mandato (facturación separada)"
 #. module: base_wua_invoicing_separate_parcel_billing
 #: model:ir.model,name:base_wua_invoicing_separate_parcel_billing.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Elemento (lote facturas)"
+msgstr "Elemento (lote de facturas)"
 
 #. module: base_wua_invoicing_separate_parcel_billing
-#: model:ir.model,name:base_wua_invoicing_separate_parcel_billing.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr "Elemento (parcela)"
+#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_partner_report_document
+msgid "Individual others payment account"
+msgstr "Cuenta para modo de pago individual otros gastos"
+
+#. module: base_wua_invoicing_separate_parcel_billing
+#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_partner_report_document
+msgid "Individual others payment mode"
+msgstr "Modo de pago individual otros gastos"
+
+#. module: base_wua_invoicing_separate_parcel_billing
+#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_partner_report_document
+msgid "Individual water payment account"
+msgstr "Cuenta para modo de pago individual agua"
+
+#. module: base_wua_invoicing_separate_parcel_billing
+#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_partner_report_document
+msgid "Individual water payment mode"
+msgstr "Modo de pago individual agua"
 
 #. module: base_wua_invoicing_separate_parcel_billing
 #: model:ir.model,name:base_wua_invoicing_separate_parcel_billing.model_account_invoice_line
@@ -71,9 +96,24 @@ msgid "Other Costs: Payment Mode"
 msgstr "Otros gastos: Modo de pago"
 
 #. module: base_wua_invoicing_separate_parcel_billing
+#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_partner_report_document
+msgid "Parcel"
+msgstr "Parcela"
+
+#. module: base_wua_invoicing_separate_parcel_billing
+#: model:ir.model,name:base_wua_invoicing_separate_parcel_billing.model_wua_parcel
+msgid "Parcels (integrated GIS)"
+msgstr "Parcelas (GIS Integrado)"
+
+#. module: base_wua_invoicing_separate_parcel_billing
+#: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_partner_report_document
+msgid "Parcels with separated billing"
+msgstr "Parcelas con facturación separada"
+
+#. module: base_wua_invoicing_separate_parcel_billing
 #: model:ir.ui.view,arch_db:base_wua_invoicing_separate_parcel_billing.wua_parcel_view_form
 msgid "Partner"
-msgstr "Socio"
+msgstr "Empresa"
 
 #. module: base_wua_invoicing_separate_parcel_billing
 #: model:ir.model.fields,field_description:base_wua_invoicing_separate_parcel_billing.field_wua_parcel_othercosts_partner_id
@@ -141,37 +181,37 @@ msgid "Separate billing for water costs: Yes"
 msgstr "Facturación separada de los gastos de agua: Sí"
 
 #. module: base_wua_invoicing_separate_parcel_billing
-#: code:addons/base_wua_invoicing_separate_parcel_billing/models/wua_parcel.py:207
+#: code:addons/base_wua_invoicing_separate_parcel_billing/models/wua_parcel.py:243
 #, python-format
 msgid "Separate parcel billing: It is mandatory to enter a valid mandate of the only partner that pays the other costs."
 msgstr "Facturación separada de parcelas: Es obligatorio indicar un mandato validado que pertenezca al socio (único) que se haga cargo de los gastos diferentes del agua."
 
 #. module: base_wua_invoicing_separate_parcel_billing
-#: code:addons/base_wua_invoicing_separate_parcel_billing/models/wua_parcel.py:192
+#: code:addons/base_wua_invoicing_separate_parcel_billing/models/wua_parcel.py:227
 #, python-format
 msgid "Separate parcel billing: It is mandatory to enter a valid mandate of the only partner that pays the water costs."
 msgstr "Facturación separada de parcelas: Es obligatorio indicar un mandado validado que pertenezca al socio (único) que se haga cargo de los gastos de agua."
 
 #. module: base_wua_invoicing_separate_parcel_billing
-#: code:addons/base_wua_invoicing_separate_parcel_billing/models/account_banking_mandate.py:35
+#: code:addons/base_wua_invoicing_separate_parcel_billing/models/account_banking_mandate.py:37
 #, python-format
 msgid "Separate parcel billing: The mandate must be a valid mandate, because there are some parcels associated with this mandate (other costs)."
 msgstr "Facturación separada de parcelas: El mandato debe ser obligatoriamente un mandato válido, ya que hay parcelas asociadas a este mandato (facturación separada por otros gastos)."
 
 #. module: base_wua_invoicing_separate_parcel_billing
-#: code:addons/base_wua_invoicing_separate_parcel_billing/models/account_banking_mandate.py:25
+#: code:addons/base_wua_invoicing_separate_parcel_billing/models/account_banking_mandate.py:26
 #, python-format
 msgid "Separate parcel billing: The mandate must be a valid mandate, because there are some parcels associated with this mandate (water costs)."
 msgstr "Facturación separada de parcelas: El mandato debe ser obligatoriamente un mandato válido, ya que hay parcelas asociadas a este mandato (facturación separada por gastos de agua)."
 
 #. module: base_wua_invoicing_separate_parcel_billing
-#: code:addons/base_wua_invoicing_separate_parcel_billing/models/wua_parcel.py:179
+#: code:addons/base_wua_invoicing_separate_parcel_billing/models/wua_parcel.py:213
 #, python-format
 msgid "Separate parcel billing: there can be no more one payer for the other costs."
 msgstr "Facturación separada de parcelas: No se permite que haya más de un socio a cargo de gastos distintos del agua."
 
 #. module: base_wua_invoicing_separate_parcel_billing
-#: code:addons/base_wua_invoicing_separate_parcel_billing/models/wua_parcel.py:170
+#: code:addons/base_wua_invoicing_separate_parcel_billing/models/wua_parcel.py:204
 #, python-format
 msgid "Separate parcel billing: there can be no more one water payer."
 msgstr "Facturación separada de parcelas: No se permite que haya más de un socio a cargo de los gastos de agua."
@@ -210,4 +250,3 @@ msgstr "Con un único socio para los otros gastos"
 #: model:ir.model.fields,field_description:base_wua_invoicing_separate_parcel_billing.field_wua_parcel_watercosts_potentially_billable
 msgid "With a single payer for water costs"
 msgstr "Con un único socio para los gastos de agua"
-

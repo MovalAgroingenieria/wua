@@ -2,6 +2,15 @@
 <odoo>
 
   <template id="wua_partner_report_document" inherit_id="base_wua.wua_partner_report_document">
+
+    <xpath expr="//t[@t-if='o.bank_ids']" position="before">
+      <t t-if="o.customer_payment_mode_id">
+        <span>Default payment mode (DEF): <t t-esc="o.customer_payment_mode_id.name"/></span>
+        <br/>
+      </t>
+    </xpath>
+    <!--<t t-if="o.bank_ids">-->
+
     <xpath expr="//div[@name='wua_partnerlinks_ids']" position="after">
 
       <t t-if="o.partnerlink_ids">
@@ -16,10 +25,10 @@
                 <thead>
                     <tr>
                         <th class="text-center">Parcel</th>
-                        <th class="text-center">Water costs Separated Billing</th>
-                        <th class="text-center">Other costs Separated Billing</th>
                         <th class="text-center">Individual water payment mode</th>
+                        <th class="text-center">Individual water payment account</th>
                         <th class="text-center">Individual others payment mode</th>
+                        <th class="text-center">Individual others payment account</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,27 +38,45 @@
                           <t t-esc="p.parcel_id.name"/>
                         </td>
                         <td class="text-center">
-                            <t t-if="p.parcel_id.watercosts_separate_billing"><span>Yes</span></t>
-                            <t t-else=""><span>No</span></t>
-                        </td>
-                        <td class="text-center">
-                            <t t-if="p.parcel_id.othercosts_separate_billing"><span>Yes</span></t>
-                            <t t-else=""><span>No</span></t>
-                        </td>
-                        <td class="text-center">
                             <t t-if="p.parcel_id.watercosts_payment_mode_id">
                               <span><t t-esc="p.parcel_id.watercosts_payment_mode_id.name"/></span>
                             </t>
                             <t t-else="">
-                              <span>-</span></t>
+                              <span>DEF</span>
+                            </t>
+                        </td>
+                        <td class="text-center">
+                            <t t-if="p.parcel_id.watercosts_mandate_id">
+                              <t t-if="p.parcel_id.watercosts_mandate_id.partner_bank_id">
+                                  <t t-set="hidden_acc_number" t-value="p.parcel_id.watercosts_mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                                  <span t-esc="hidden_acc_number"/>
+                              </t>
+                            </t>
+                            <t t-else="">
+                              <span>-</span>
+                            </t>
                         </td>
                         <td class="text-center">
                             <t t-if="p.parcel_id.othercosts_payment_mode_id">
                               <span><t t-esc="p.parcel_id.othercosts_payment_mode_id.name"/></span>
                             </t>
                             <t t-else="">
-                              <span>-</span></t>
+                              <span>DEF</span>
+                            </t>
                         </td>
+
+                        <td class="text-center">
+                            <t t-if="p.parcel_id.othercosts_mandate_id">
+                              <t t-if="p.parcel_id.othercosts_mandate_id.partner_bank_id">
+                                  <t t-set="hidden_acc_number" t-value="p.parcel_id.othercosts_mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                                  <span t-esc="hidden_acc_number"/>
+                              </t>
+                            </t>
+                            <t t-else="">
+                              <span>-</span>
+                            </t>
+                        </td>
+
 
                     </tr>
                 </tbody>
