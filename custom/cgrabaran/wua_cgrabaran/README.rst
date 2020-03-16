@@ -13,7 +13,6 @@ Description
 
 Moval-Regadío customization for C.G.R Abarán:
 
-*
 
 Credits
 =======

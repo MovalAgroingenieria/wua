@@ -8,17 +8,17 @@ class WuaConfiguration(models.TransientModel):
     _inherit = 'wua.configuration'
 
     company_01 = fields.Many2one(
-        string='Company associated with company 1',
+        string='Company 1',
         comodel_name='res.company',
         index=True)
 
     company_02 = fields.Many2one(
-        string='Company associated with company 2',
+        string='Company 2',
         comodel_name='res.company',
         index=True)
 
     company_03 = fields.Many2one(
-        string='Company associated with company 3',
+        string='Company 3',
         comodel_name='res.company',
         index=True)
 
