@@ -6,8 +6,6 @@
 Water Users Association (C.G.R Abarán)
 ======================================================
 
-Custom Moval-Regadío for C.G.R Abarán
-
 Description
 ===========
 

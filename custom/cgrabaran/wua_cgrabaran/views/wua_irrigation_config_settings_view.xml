@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id"
+               ref="wua_structure_irrigation.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='pres_irrig']"
+                   position="after">
+                <group name="" string="Server Remote">
+                    <field name="enable_remotecontrol"/>
+                    <field name="url_scada_server"
+                     attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                             'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="scada_server_database"
+                     attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                             'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="scada_server_username"
+                     attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                             'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="scada_server_password"
+                     attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                             'required': [('enable_remotecontrol', '=', True)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

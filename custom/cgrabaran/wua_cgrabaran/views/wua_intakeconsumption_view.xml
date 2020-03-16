@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_intakeconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Intakeconsumptions (tree view)</field>
+        <field name="model">wua.intakeconsumption</field>
+        <field name="inherit_id"
+         ref="base_wua_irrigation_measurement.wua_intakeconsumption_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='flowreading_id']" position="after">
+                <field name="validated" string="Valid"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_intakeconsumption_view_search" model="ir.ui.view">
+        <field name="name">Intakeconsumption (search view)</field>
+        <field name="model">wua.intakeconsumption</field>
+        <field name="inherit_id"
+         ref="base_wua_irrigation_measurement.wua_intakeconsumption_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='withadjustement']" position="after">
+                <separator/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+                <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
