@@ -1,0 +1,139 @@
+# -*- coding: utf-8 -*-
+# 2020 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+from odoo import models, fields, api
+
+
+class WuaFertconsumption(models.Model):
+    _name = 'wua.fertconsumption'
+    _description = 'Entity (fertilizer consumption)'
+
+    MAX_SIZE_NAME = 52
+
+    waterconnection_id = fields.Many2one(
+        string='Water Connection',
+        required=True,
+        index=True,
+        store=True,
+        comodel_name='wua.waterconnection',
+        ondelete='restrict')
+
+    reading_initial_time = fields.Datetime(
+        string='Reading Start Time',
+        required=True,
+        index=True)
+
+    reading_end_time = fields.Datetime(
+        string='Reading End Time',
+        required=True,
+        index=True)
+
+    name = fields.Char(
+        string='Fertilized Consumption',
+        size=MAX_SIZE_NAME,
+        store=True,
+        compute='_compute_name',
+        index=True)
+
+    notes = fields.Html(string='Notes')
+
+    agriculturalseason_id = fields.Many2one(
+        string='Agricultural Season',
+        comodel_name='wua.agriculturalseason',
+        index=True,
+        store=True,
+        ondelete='restrict',
+        compute='_compute_agriculturalseason_id')
+
+    amount = fields.Float(
+        string='Amount',
+        digits=(32, 4),
+        store=True,
+        required=True,
+        inndex=True,
+        default=0.0)
+
+    presconsumption_id = fields.Many2one(
+        string='Associated Consumption',
+        comodel_name='wua.presconsumption',
+        ondelete='restrict')
+
+    with_presconsumption = fields.Boolean(
+        string='With consumption',
+        store=True,
+        compute='_compute_with_presconsumption')
+
+    irrigationshed_id = fields.Many2one(
+        string='Irrigation Shed',
+        store=True,
+        index=True,
+        comodel_name='wua.irrigationshed',
+        compute='_compute_irrigationshed_id',
+        ondelete='restrict')
+
+    hydraulicsector_id = fields.Many2one(
+        string='Hydraulic Sector',
+        store=True,
+        index=True,
+        comodel_name='wua.hydraulicsector',
+        compute='_compute_hydraulicsector_id',
+        ondelete='restrict')
+
+    _sql_constraints = [
+        ('unique_name', 'UNIQUE (name)', 'Existing Fertconsumption.'),
+        ('valid_reading_limits',
+         'CHECK (reading_end_time >= reading_initial_time)',
+         'The reading end time must be greather than or equal to '
+         'reading initial time.'),
+        ('valid_amount',
+         'CHECK (amount >= 0)',
+         'The consumption amount can not be a negative value.'),
+        ]
+
+    @api.depends('reading_end_time', 'waterconnection_id')
+    def _compute_name(self):
+        for record in self:
+            value = ''
+            if record.waterconnection_id and record.reading_end_time:
+                value = record.waterconnection_id.name + ' - ' + \
+                    record.reading_end_time
+            record.name = value
+
+    @api.depends('reading_end_time')
+    def _compute_agriculturalseason_id(self):
+        agriculturalseasons = self.env['wua.agriculturalseason'].search([])
+        for record in self:
+            agr_season = None
+            if record.reading_end_time:
+                agr_season = agriculturalseasons.filtered(
+                    lambda x:
+                    record.reading_end_time >= x.initial_date and
+                    record.reading_end_time <= x.end_date)
+            record.agriculturalseason_id = agr_season
+
+    @api.depends('presconsumption_id')
+    def _compute_with_presconsumption(self):
+        for record in self:
+            with_presconsumption = False
+            if record.presconsumption_id:
+                with_presconsumption = True
+            record.with_presconsumption = with_presconsumption
+
+    @api.depends('waterconnection_id')
+    def _compute_irrigationshed_id(self):
+        for record in self:
+            irrigationshed_id = None
+            if record.waterconnection_id:
+                irrigationshed_id = record.waterconnection_id.irrigationshed_id
+            record.irrigationshed_id = irrigationshed_id
+
+    @api.depends('waterconnection_id')
+    def _compute_hydraulicsector_id(self):
+        for record in self:
+            hydraulicsector_id = None
+            if record.waterconnection_id and \
+                    record.waterconnection_id.hydraulicsector_id:
+                hydraulicsector_id = \
+                    record.waterconnection_id.hydraulicsector_id
+            record.hydraulicsector_id = hydraulicsector_id
