@@ -137,3 +137,41 @@ class WuaFertconsumption(models.Model):
                 hydraulicsector_id = \
                     record.waterconnection_id.hydraulicsector_id
             record.hydraulicsector_id = hydraulicsector_id
+
+    @api.model
+    def create(self, vals):
+        if ('presconsumption_id' in vals):
+            pres = self.env['wua.presconsumption'].browse(
+                vals['presconsumption_id'])
+            vals['reading_initial_time'] = pres.reading_initial_time
+            vals['reading_end_time'] = pres.reading_end_time
+            vals['waterconnection_id'] = pres.waterconnection_id.id
+        return super(WuaFertconsumption, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if ('presconsumption_id' in vals and vals['presconsumption_id']):
+            pres = self.env['wua.presconsumption'].browse(
+                vals['presconsumption_id'])
+            vals['reading_initial_time'] = pres.reading_initial_time
+            vals['reading_end_time'] = pres.reading_end_time
+            vals['waterconnection_id'] = pres.waterconnection_id.id
+        elif (('reading_initial_time' in vals or 'reading_end_time' in vals or
+               'waterconnection_id' in vals)
+              and self.presconsumption_id):
+            vals.pop('reading_initial_time', None)
+            vals.pop('reading_end_time', None)
+            vals.pop('waterconnection_id', None)
+        resp = super(WuaFertconsumption, self).write(vals)
+        return resp
+
+    @api.onchange('presconsumption_id')
+    def _onchange_presconsumption_id(self):
+        for record in self:
+            if record.presconsumption_id:
+                record.reading_initial_time = \
+                    record.presconsumption_id.reading_initial_time
+                record.reading_end_time = \
+                    record.presconsumption_id.reading_end_time
+                record.waterconnection_id = \
+                    record.presconsumption_id.waterconnection_id
