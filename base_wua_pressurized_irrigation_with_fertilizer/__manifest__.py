@@ -15,6 +15,12 @@
         "base_wua_pressurized_irrigation",
     ],
     "data": [
+        "security/ir.model.access.csv",
+        'views/resources.xml',
+        'views/wua_fertconsumption_view.xml',
+        'views/wua_waterconnection_view.xml',
+        'views/wua_agriculturalseason_view.xml',
+        'views/wua_presconsumption_view.xml'
     ],
     "installable": True,
     "application": True,
