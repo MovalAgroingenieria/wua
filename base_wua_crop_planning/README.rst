@@ -38,7 +38,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: http://moval.es/wp-content/uploads/2017/01/LOGO-MOVAL-2017_HOME-e1483490247394.png
+.. image:: https://services.moval.es/static/images/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 

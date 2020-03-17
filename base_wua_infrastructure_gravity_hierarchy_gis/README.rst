@@ -2,10 +2,9 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-===========================================================================
-GIS for Water Users Association Management (with irrigation infrastructure
-hierarchy)
-===========================================================================
+=====================================================================================
+GIS for Water Users Association Management (with irrigation infrastructure hierarchy)
+=====================================================================================
 
 base_wua_infrastructure_gravity_hierarchy module plus GIS functions.
 
@@ -35,7 +34,7 @@ Contributors
 Maintainer
 ----------
 
-.. image:: http://moval.es/wp-content/uploads/2017/01/LOGO-MOVAL-2017_HOME-e1483490247394.png
+.. image:: https://services.moval.es/static/images/logo_moval_small.png
    :target: http://moval.es
    :alt: Moval Agroingeniería
 
