@@ -2,21 +2,16 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-==============================================================
-Pressurized Irrigation Management for Water Users Associations
-==============================================================
+======================================================
+Consumptions of fertilizer in Water Users Associations
+======================================================
 
-This module allows you to manage the pressurized irrigation systems of water users associations.
+This module allows you to manage the consumptions of fertilizer with the pressurized irrigation.
 
 Description
 ===========
 
-Pressurized irrigation management for a water users association.
-
-* Water Meters.
-* Water Connections.
-* Water Consumptions.
-* Etc.
+Fertilizer consumption management for a water users association.
 
 Credits
 =======
