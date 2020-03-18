@@ -54,6 +54,20 @@ msgid "Area, as owner company_03 (hectares)"
 msgstr "Área, como propietario compañía_03 (hectareas)"
 
 #. module: wua_cgrabaran
+#: selection:wua.configuration,polling_system_type_company_01:0
+#: selection:wua.configuration,polling_system_type_company_02:0
+#: selection:wua.configuration,polling_system_type_company_03:0
+msgid "By different area intervals"
+msgstr "Por intervalos de área diferentes"
+
+#. module: wua_cgrabaran
+#: selection:wua.configuration,polling_system_type_company_01:0
+#: selection:wua.configuration,polling_system_type_company_02:0
+#: selection:wua.configuration,polling_system_type_company_03:0
+msgid "By identical area intervals"
+msgstr "Por intervalos de área iguales"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Cadastral reference"
 msgstr "Referencia catastral"
@@ -127,6 +141,27 @@ msgid "Costs (%)"
 msgstr "Costes (%)"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_01
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_02
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_03
+msgid "Criteria"
+msgstr "Criterios"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_01
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_02
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_03
+msgid "Example 1: from 0 to 9999, 1 vote; from 10000 to 49999, 2 votes; from 50000, 3 votes; then this parameter would be 1:0-9999,2:10000:49999,3:50000\n"
+"Example 2: from 1000 to 4999, 1 vote; from 5000, each 5000 is a new vote; then this parameter would be 1:1000-4999,2:5000-9999,*"
+msgstr "Ejemplo 1: de 0 a 9999, 1 voto; de 10000 a 49999, 2 votos; de 50000, 3 votos; en este caso el parámetro debería ser 1:0-9999,2:10000:49999,3:50000\n"
+"Ejemplo 2: de 1000 a 4999, 1 voto; a partir de  5000, cada 5000 m2 es un nuevo voto; en este caso el parámetro debería ser 1:1000-4999,2:5000-9999,*"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_01
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_02
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_03
+msgid "Example: 1.4 is 2 with rounding up, and is 1 with rounding down"
+msgstr "Ejemplo: 1.4 is 2 con redondeo por exceso, y es 1 con redondeo por defecto"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_create_uid
 msgid "Created by"
 msgstr "Creado por"
@@ -189,7 +224,28 @@ msgstr "Caudalímetro"
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_parcel_partnerlink_area_gis
 msgid "GIS Area"
-msgstr "Área GIS"
+msgstr "GIS Area"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_interval_company_01
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_interval_company_02
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_interval_company_03
+msgid "Interval (m2)"
+msgstr "Intervalo (m2)"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_interval_company_01
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_interval_company_02
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_interval_company_03
+msgid "Interval, in m2, for each vote"
+msgstr "Intervalo, en m2, para cada voto"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_01
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_02
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_03
+msgid "Intervals (m2)"
+msgstr "Intervalos (m2)"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
@@ -212,6 +268,11 @@ msgid "Irrigation partner"
 msgstr "Regante"
 
 #. module: wua_cgrabaran
+#: selection:wua.configuration,polling_system_type_company_01:0
+#: selection:wua.configuration,polling_system_type_company_02:0
+#: selection:wua.configuration,polling_system_type_company_03:0
+msgid "None"
+msgstr "Ninguno"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
@@ -263,6 +324,13 @@ msgid "Number of votes"
 msgstr "Nº de votos"
 
 #. module: wua_cgrabaran
+#: selection:wua.configuration,polling_system_type_company_01:0
+#: selection:wua.configuration,polling_system_type_company_02:0
+#: selection:wua.configuration,polling_system_type_company_03:0
+msgid "One land parcel is one vote"
+msgstr "1 Parcela, 1 voto"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Ownership (%)"
 msgstr "Propiedad (%)"
@@ -311,6 +379,19 @@ msgid "Partner of a WUA"
 msgstr "Socio de una WUA"
 
 #. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
+msgid "Polling System Company 1"
+msgstr "Sistema de votación Compañía 1"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
+msgid "Polling System Company 2"
+msgstr "Sistema de votación Compañía 2"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
+msgid "Polling System Company 3"
+msgstr "Sistema de votación Compañía 3"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_password
 msgid "Password"
 msgstr "Contraseña"
@@ -326,6 +407,32 @@ msgid "Profile"
 msgstr "Perfil"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_01
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_02
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_03
+msgid "Rounding Type"
+msgstr "Tipo de redondeo"
+
+#. module: wua_cgrabaran
+#: selection:wua.configuration,polling_system_rounding_type_company_01:0
+#: selection:wua.configuration,polling_system_rounding_type_company_02:0
+#: selection:wua.configuration,polling_system_rounding_type_company_03:0
+msgid "Rounding down"
+msgstr "Redondeo por defecto"
+
+#. module: wua_cgrabaran
+#: selection:wua.configuration,polling_system_rounding_type_company_01:0
+#: selection:wua.configuration,polling_system_rounding_type_company_02:0
+#: selection:wua.configuration,polling_system_rounding_type_company_03:0
+msgid "Rounding up"
+msgstr "Redondeo por exceso"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_01
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_02
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_03
+msgid "Type of polling system in conventions"
+msgstr "Tipo de sistema de votación en juntas"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_name
 msgid "Reading"
 msgstr "Lectura"
@@ -411,6 +518,10 @@ msgid "Water (%)"
 msgstr "Agua (%)"
 
 #. module: wua_cgrabaran
+#: code:addons/wua_cgrabaran/models/res_partner.py:195
+#, python-format
+msgid "Votes of"
+msgstr "Votos de"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_intake_id
 msgid "Water Connection"
 msgstr "Toma"
