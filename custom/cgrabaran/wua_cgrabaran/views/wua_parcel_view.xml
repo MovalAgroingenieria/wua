@@ -4,7 +4,7 @@
     <record id="wua_parcel_view_form" model="ir.ui.view">
         <field name="name">Parcels (form view)</field>
         <field name="model">wua.parcel</field>
-        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>        
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//group[@name='first_group']/field[1]" position="before">
               <field colspan="4" name="company_id"/>
@@ -13,10 +13,23 @@
         </field>
     </record>
 
+    <record id="wua_parcel_view_tree" model="ir.ui.view">
+        <field name="name">Parcels (tree view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='rural_location_county']" position="after">
+              <field name="company_id"/>
+            </xpath>
+        </field>
+    </record>
+
+
+
     <record id="wua_parcel_view_search" model="ir.ui.view">
         <field name="name">Parcels (search view)</field>
         <field name="model">wua.parcel</field>
-        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>        
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="company_id"/>
@@ -27,19 +40,19 @@
             </xpath>
         </field>
     </record>
-    
-    
+
+
     <record id="wua_parcel_partnerlink_view_tree" model="ir.ui.view" >
         <field name="name">Partner Links (tree view)</field>
         <field name="model">wua.parcel.partnerlink</field>
-        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_tree"/>   
+        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_tree"/>
         <field name="arch" type="xml">
           <xpath expr="//field[@name='area_official_net']" position="after">
               <field name="area_gis"/>
           </xpath>
         </field>
     </record>
-    
+
     <record id="wua_parcel_partnerlink_view_search" model="ir.ui.view">
         <field name="name">Partner Links (search view)</field>
         <field name="model">wua.parcel.partnerlink</field>
@@ -52,7 +65,7 @@
           </xpath>
         </field>
     </record>
-    
+
     <record id="base_wua.wua_technical_partnerlinks_action" model="ir.actions.act_window">
       <field name="view_id" ref="base_wua.wua_technical_parcel_partnerlink_view_tree"/>
       <field name="context">{"search_default_company":1,}</field>
@@ -68,7 +81,7 @@
           </xpath>
         </field>
     </record>-->
-    
+
     <!-- <field name="context">{"search_default_customer":1,"search_default_type_person":1}</field>-->
-    
+
 </odoo>
