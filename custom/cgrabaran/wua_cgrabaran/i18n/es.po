@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-16 07:47+0000\n"
-"PO-Revision-Date: 2020-03-16 07:47+0000\n"
+"POT-Creation-Date: 2020-03-18 15:24+0000\n"
+"PO-Revision-Date: 2020-03-18 15:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -59,6 +59,11 @@ msgid "Cadastral reference"
 msgstr "Referencia catastral"
 
 #. module: wua_cgrabaran
+#: model:ir.actions.server,name:wua_cgrabaran.wua_cancel_flowreadings
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
 msgid "Companies"
 msgstr "Compañías"
@@ -107,9 +112,79 @@ msgid "Configuration of base_wua module"
 msgstr "Configuración del  módulo base_wua"
 
 #. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_irrigation_configuration
+msgid "Configuration of irrigation with type of water"
+msgstr "Configuración de riego con tipo de agua"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_tree
+msgid "Cons. Value (m3)"
+msgstr "Consumo bruto (m3)"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Costs (%)"
 msgstr "Costes (%)"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_database
+msgid "Database"
+msgstr "Base de datos"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_database
+msgid "Database to get data in remote server"
+msgstr "Base de datos de la que se obtendrá información en el server remoto"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_display_name
+msgid "Display Name"
+msgstr "Nombre a mostrar"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_enable_remotecontrol
+msgid "Enabled"
+msgstr "Activado"
+
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_flowreading
+msgid "Entity (flow reading)"
+msgstr "Elemento (lectura caudalímetro)"
+
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_flowmeter
+msgid "Entity (flowmeter)"
+msgstr "Elemento (caudalímetro)"
+
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_intakeconsumption
+msgid "Entity (intake consumption)"
+msgstr "Elemento (consumo de captación)"
+
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_negative_flowreading
+msgid "Entity (negative reading)"
+msgstr "Elemento (lectura negativa)"
+
+#. module: wua_cgrabaran
+#: sql_constraint:wua.negative.flowreading:0
+msgid "Existing Negative-Flowreading."
+msgstr "Lectura negativa ya existente."
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
+msgid "Flow Meter"
+msgstr "Caudalímetro"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_parcel_partnerlink_area_gis
@@ -117,9 +192,65 @@ msgid "GIS Area"
 msgstr "Área GIS"
 
 #. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_id
+msgid "ID"
+msgstr "ID"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
+msgid "Intake"
+msgstr "Toma"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Irrigation partner"
 msgstr "Regante"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_tree
+msgid "Man."
+msgstr "Man."
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowreading_from_import
+msgid "Manual Introduction"
+msgstr "Introducción manual"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
+msgid "Manual Introduction: No (from remote control)"
+msgstr "Introducción manual: No (desde remoto)"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
+msgid "Manual Introduction: Yes"
+msgstr "Introducción Manual: Sí"
+
+#. module: wua_cgrabaran
+#: model:ir.actions.act_window,name:wua_cgrabaran.wua_negative_flowreading_action
+#: model:ir.ui.menu,name:wua_cgrabaran.wua_negative_flowreading_menu
+msgid "Negative Flowreadings"
+msgstr "Lecturas de caudalímetro negativas"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_res_partner_number_of_votes_company_01
@@ -130,12 +261,6 @@ msgstr "Regante"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_res_users_number_of_votes_company_03
 msgid "Number of votes"
 msgstr "Nº de votos"
-
-#. module: wua_cgrabaran
-#: code:addons/wua_cgrabaran/models/res_partner.py:192
-#, python-format
-msgid "Votes of"
-msgstr "Votos de"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
@@ -186,11 +311,116 @@ msgid "Partner of a WUA"
 msgstr "Socio de una WUA"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_password
+msgid "Password"
+msgstr "Contraseña"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_password
+msgid "Password for authentication in remote server"
+msgstr "Contraseña para autenticarse en el server remoto"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Profile"
 msgstr "Perfil"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_name
+msgid "Reading"
+msgstr "Lectura"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowmeter_scada_identifier
+msgid "Scada ID"
+msgstr "Scada ID"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowmeter_scada_info_type
+msgid "Scada Info Type"
+msgstr "Scada Info Tipo"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowmeter_scada_remote_code
+msgid "Scada Remote Code"
+msgstr "Scada Código Remota"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_irrigation_config_settings_view_form
+msgid "Server Remote"
+msgstr "Servidor remoto"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_url_scada_server
+msgid "Server URL"
+msgstr "URL del servidor"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_reading_time
+msgid "Time"
+msgstr "Tiempo"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_username
+msgid "User Name"
+msgstr "Usuario"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_username
+msgid "User name for authentication in remote server"
+msgstr "Usuario para autenticarse en el server remoto"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_tree
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intakeconsumption_view_tree
+msgid "Valid"
+msgstr "Válido"
+
+#. module: wua_cgrabaran
+#: model:ir.actions.server,name:wua_cgrabaran.wua_validate_flowreadings
+msgid "Validate"
+msgstr "Validar"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowreading_validated
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_intakeconsumption_validated
+msgid "Validated"
+msgstr "Validada"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intakeconsumption_view_search
+msgid "Validated: No"
+msgstr "Validada: No"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intakeconsumption_view_search
+msgid "Validated: Yes"
+msgstr "Validada: Sí"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_intakeconsumption_volume
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_volume
+msgid "Value (m3)"
+msgstr "Valor (m3)"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Water (%)"
 msgstr "Agua (%)"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_intake_id
+msgid "Water Connection"
+msgstr "Toma"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_flowmeter_id
+msgid "Water Meter"
+msgstr "Contador"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_irrigation_configuration_enable_remotecontrol
+msgid "if it is marked, it is required set the next url (SERVER URL)"
+msgstr "Si está marcado, hay que poblar la siguiente URL (SERVIDOR URL)"
