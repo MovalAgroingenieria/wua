@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-18 15:23+0000\n"
-"PO-Revision-Date: 2020-03-18 15:23+0000\n"
+"POT-Creation-Date: 2020-03-18 17:51+0000\n"
+"PO-Revision-Date: 2020-03-18 17:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -58,7 +58,7 @@ msgstr "Àrea, com a propietari de l'empresa 3 (hectàrees)"
 #: selection:wua.configuration,polling_system_type_company_02:0
 #: selection:wua.configuration,polling_system_type_company_03:0
 msgid "By different area intervals"
-msgstr "Per intervals d'àrea diferents"
+msgstr "Per intervals d'àrea different"
 
 #. module: wua_cgrabaran
 #: selection:wua.configuration,polling_system_type_company_01:0
@@ -141,27 +141,6 @@ msgid "Costs (%)"
 msgstr "Costos (%)"
 
 #. module: wua_cgrabaran
-#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_01
-#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_02
-#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_03
-msgid "Criteria"
-msgstr "Criteri"
-
-#. module: wua_cgrabaran
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_01
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_02
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_03
-msgid "Example 1: from 0 to 9999, 1 vote; from 10000 to 49999, 2 votes; from 50000, 3 votes; then this parameter would be 1:0-9999,2:10000:49999,3:50000\n"
-"Example 2: from 1000 to 4999, 1 vote; from 5000, each 5000 is a new vote; then this parameter would be 1:1000-4999,2:5000-9999,*"
-msgstr "Exemple 1: de 0 a 9999, 1 vot; de 10000 a 49999, 2 vots; de 50000, 3 vots; en aquest cas el paràmetre hauria de ser 1:0-9999,2:10000:49999,3:50000\n"
-"Exemple 2: de 1000 a 4999, 1 vot; de 5000, cada 5000 és un nou vot; en aquest cas el paràmetre hauria de ser 1:1000-4999,2:5000-9999,*"
-
-#. module: wua_cgrabaran
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_01
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_02
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_03
-msgid "Example: 1.4 is 2 with rounding up, and is 1 with rounding down"
-msgstr "Exemple: 1.4 es 2 amb arrodoniment per excés, i es 1 amb arrodoniment per defecte"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_create_uid
 msgid "Created by"
 msgstr "Creat per"
@@ -172,6 +151,13 @@ msgid "Created on"
 msgstr "Creat el"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_01
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_02
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_type_company_03
+msgid "Criteria"
+msgstr "Criteri"
+
+#. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_database
 msgid "Database"
 msgstr "Base de dades"
@@ -179,7 +165,7 @@ msgstr "Base de dades"
 #. module: wua_cgrabaran
 #: model:ir.model.fields,help:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_database
 msgid "Database to get data in remote server"
-msgstr "Base de dades de la qual obtenir informació en el server remot"
+msgstr "Base de dades de la qual obtenir informació el el server remot"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_display_name
@@ -189,7 +175,7 @@ msgstr "Mostrar Nom"
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_enable_remotecontrol
 msgid "Enabled"
-msgstr "Activa"
+msgstr "Actiu"
 
 #. module: wua_cgrabaran
 #: model:ir.model,name:wua_cgrabaran.model_wua_flowreading
@@ -212,9 +198,25 @@ msgid "Entity (negative reading)"
 msgstr "Element (lectura negativa)"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_01
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_02
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_intervals_company_03
+msgid "Example 1: from 0 to 9999, 1 vote; from 10000 to 49999, 2 votes; from 50000, 3 votes; then this parameter would be 1:0-9999,2:10000:49999,3:50000\n"
+"Example 2: from 1000 to 4999, 1 vote; from 5000, each 5000 is a new vote; then this parameter would be 1:1000-4999,2:5000-9999,*"
+msgstr "Exemple 1: de 0 a 9999, 1 vot; de 10000 a 49999, 2 vots; de 50000, 3 vots; en aquest cas el paràmetre hauria de ser 1:0-9999,2:10000:49999,3:50000\n"
+"Exemple 2: de 1000 a 4999, 1 vot; de 5000, cada 5000 és un nou vot; en aquest cas el paràmetre hauria de ser 1:1000-4999,2:5000-9999,*"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_01
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_02
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_03
+msgid "Example: 1.4 is 2 with rounding up, and is 1 with rounding down"
+msgstr "Exemple: 1.4 es 2 amb arrodoniment per excés, i es 1 amb arrodoniment per defecte"
+
+#. module: wua_cgrabaran
 #: sql_constraint:wua.negative.flowreading:0
 msgid "Existing Negative-Flowreading."
-msgstr "Lectura negativa ja existent."
+msgstr "Lectura negativa de cabalímetre existent."
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
@@ -224,7 +226,22 @@ msgstr "Cabalímetre"
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_parcel_partnerlink_area_gis
 msgid "GIS Area"
-msgstr "GIS Area"
+msgstr "Àrea GIS"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
+msgid "Group By"
+msgstr "Agrupar per"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_id
+msgid "ID"
+msgstr "ID"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
+msgid "Intake"
+msgstr "Presa"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_interval_company_01
@@ -248,31 +265,11 @@ msgid "Intervals (m2)"
 msgstr "Intervals (m²)"
 
 #. module: wua_cgrabaran
-#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
-msgid "Group By"
-msgstr "Agrupar per"
-
-#. module: wua_cgrabaran
-#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_id
-msgid "ID"
-msgstr "ID"
-
-#. module: wua_cgrabaran
-#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_negative_flowreading_view_search
-msgid "Intake"
-msgstr "Presa"
-
-#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Irrigation partner"
 msgstr "Regant"
 
 #. module: wua_cgrabaran
-#: selection:wua.configuration,polling_system_type_company_01:0
-#: selection:wua.configuration,polling_system_type_company_02:0
-#: selection:wua.configuration,polling_system_type_company_03:0
-msgid "None"
-msgstr "Cap"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading___last_update
 msgid "Last Modified on"
 msgstr "Última modificació el "
@@ -300,7 +297,7 @@ msgstr "Introducció manual"
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
 msgid "Manual Introduction: No (from remote control)"
-msgstr "Introducció manual: No (Des control remot)"
+msgstr "Introducció manual: No (des control remot)"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
@@ -311,7 +308,14 @@ msgstr "Introducció manual: Sí"
 #: model:ir.actions.act_window,name:wua_cgrabaran.wua_negative_flowreading_action
 #: model:ir.ui.menu,name:wua_cgrabaran.wua_negative_flowreading_menu
 msgid "Negative Flowreadings"
-msgstr "Lectura negativa de cabalímetre"
+msgstr "Lectures negatives de cabalímetres"
+
+#. module: wua_cgrabaran
+#: selection:wua.configuration,polling_system_type_company_01:0
+#: selection:wua.configuration,polling_system_type_company_02:0
+#: selection:wua.configuration,polling_system_type_company_03:0
+msgid "None"
+msgstr "Cap"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_res_partner_number_of_votes_company_01
@@ -322,6 +326,13 @@ msgstr "Lectura negativa de cabalímetre"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_res_users_number_of_votes_company_03
 msgid "Number of votes"
 msgstr "Nº vots"
+
+#. module: wua_cgrabaran
+#: selection:wua.configuration,polling_system_type_company_01:0
+#: selection:wua.configuration,polling_system_type_company_02:0
+#: selection:wua.configuration,polling_system_type_company_03:0
+msgid "One land parcel is one vote"
+msgstr "1 parcel·la, 1 vot"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
@@ -372,21 +383,6 @@ msgid "Partner of a WUA"
 msgstr "Soci WUA"
 
 #. module: wua_cgrabaran
-#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
-msgid "Polling System Company 1"
-msgstr "Sistema de votació Companyia 1"
-
-#. module: wua_cgrabaran
-#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
-msgid "Polling System Company 2"
-msgstr "Sistema de votació Companyia 2"
-
-#. module: wua_cgrabaran
-#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
-msgid "Polling System Company 3"
-msgstr "Sistema de votació Companyia 3"
-
-#. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_password
 msgid "Password"
 msgstr "Contrasenya"
@@ -397,9 +393,29 @@ msgid "Password for authentication in remote server"
 msgstr "Contrasenya per autenticar-se en el server remot"
 
 #. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
+msgid "Polling System Company 1"
+msgstr "Sistema de votació: Companyia 1"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
+msgid "Polling System Company 2"
+msgstr "Sistema de votació: Companyia 2"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_config_settings_view_form
+msgid "Polling System Company 3"
+msgstr "Sistema de votació: Companyia 3"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Profile"
 msgstr "Perfil"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_name
+msgid "Reading"
+msgstr "Lectura"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_polling_system_rounding_type_company_01
@@ -423,29 +439,19 @@ msgid "Rounding up"
 msgstr "Arrodoniment per excés"
 
 #. module: wua_cgrabaran
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_01
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_02
-#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_03
-msgid "Type of polling system in conventions"
-msgstr "Tipus de sistema de votació en juntes"
-#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_name
-msgid "Reading"
-msgstr "Lectura"
-
-#. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowmeter_scada_identifier
 msgid "Scada ID"
-msgstr "Scada ID"
+msgstr "Scada: ID"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowmeter_scada_info_type
 msgid "Scada Info Type"
-msgstr "Scada Info Tipus"
+msgstr "Scada: tipus d'info"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowmeter_scada_remote_code
 msgid "Scada Remote Code"
-msgstr "Scada Codi de remota"
+msgstr "Scada: Codi de remota"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_irrigation_config_settings_view_form
@@ -463,6 +469,13 @@ msgid "Time"
 msgstr "Data"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_01
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_02
+#: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_03
+msgid "Type of polling system in conventions"
+msgstr "Tipus de sistema de votació en juntes"
+
+#. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_username
 msgid "User Name"
 msgstr "Nom usuari"
@@ -470,7 +483,7 @@ msgstr "Nom usuari"
 #. module: wua_cgrabaran
 #: model:ir.model.fields,help:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_username
 msgid "User name for authentication in remote server"
-msgstr "Nom d'usuari per autenticar al servidor"
+msgstr "Nom d'usuari per autenticar-se en el server remot"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_tree
@@ -487,19 +500,19 @@ msgstr "Validar"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowreading_validated
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_intakeconsumption_validated
 msgid "Validated"
-msgstr "Validada"
+msgstr "Validat"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intakeconsumption_view_search
 msgid "Validated: No"
-msgstr "Validada: No"
+msgstr "Validat: No"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intakeconsumption_view_search
 msgid "Validated: Yes"
-msgstr "Validada: Yes"
+msgstr "Validat: Sí"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_intakeconsumption_volume
@@ -513,10 +526,6 @@ msgid "Water (%)"
 msgstr "Aigua (%)"
 
 #. module: wua_cgrabaran
-#: code:addons/wua_cgrabaran/models/res_partner.py:195
-#, python-format
-msgid "Votes of"
-msgstr "Vots of"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_intake_id
 msgid "Water Connection"
 msgstr "Toma"
@@ -529,4 +538,10 @@ msgstr "Comptador"
 #. module: wua_cgrabaran
 #: model:ir.model.fields,help:wua_cgrabaran.field_wua_irrigation_configuration_enable_remotecontrol
 msgid "if it is marked, it is required set the next url (SERVER URL)"
-msgstr "si està marcat, cal que configureu l’URL següent (URL del SERVER)"
+msgstr "Si està marcat cal poblar la següent url (SERVER URL)"
+
+#. module: wua_cgrabaran
+#: code:addons/wua_cgrabaran/models/res_partner.py:195
+#, python-format
+msgid "Votes of"
+msgstr "Vots of"
