@@ -189,23 +189,24 @@ class ResPartner(models.Model):
                 'wua.configuration', 'company_02_abv')
             company_03_abv = self.env['ir.values'].get_default(
                 'wua.configuration', 'company_03_abv')
+            votes_of_string = _('Votes of')
             if company_01_abv:
                 for node in doc.xpath(
                         "//field[@name='number_of_votes_company_01']"):
                     node.set('string',
-                             _('Votes of') + ' ' +
+                             votes_of_string + ' ' +
                              company_01_abv.decode('utf-8'))
             if company_02_abv:
                 for node in doc.xpath(
                         "//field[@name='number_of_votes_company_02']"):
                     node.set('string',
-                             _('Votes of') + ' ' +
+                             votes_of_string + ' ' +
                              company_02_abv.decode('utf-8'))
             if company_03_abv:
                 for node in doc.xpath(
                         "//field[@name='number_of_votes_company_03']"):
                     node.set('string',
-                             _('Votes of') + ' ' +
+                             votes_of_string + ' ' +
                              company_03_abv.decode('utf-8'))
             res['arch'] = etree.tostring(doc)
         return res
