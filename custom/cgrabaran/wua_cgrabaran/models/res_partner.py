@@ -57,7 +57,7 @@ class ResPartner(models.Model):
         if self.parcel_owner_number_company_01 > 0 or \
                 self.parcel_owner_area_hec_company_01 > 0:
             polling_system_type = self.env['ir.values'].get_default(
-                'wua.configuration', 'polling_system_type')
+                'wua.configuration', 'polling_system_type_company_01')
             company_01 = self.env['ir.values'].get_default(
                 'wua.configuration', 'company_01')
             if polling_system_type > 0 and company_01:
@@ -69,12 +69,13 @@ class ResPartner(models.Model):
                     if polling_system_type == 2:
                         polling_system_interval = self.env['ir.values'].\
                             get_default('wua.configuration',
-                                        'polling_system_interval')
+                                        'polling_system_interval_company_01')
                         if polling_system_interval > 0:
                             polling_system_rounding_type = \
                                 self.env['ir.values'].\
-                                get_default('wua.configuration',
-                                            'polling_system_rounding_type')
+                                get_default(
+                                    'wua.configuration',
+                                    'polling_system_rounding_type_company_01')
                             calc_votes =\
                                 area_for_votes / polling_system_interval
                             if polling_system_rounding_type == 0:
@@ -84,7 +85,7 @@ class ResPartner(models.Model):
                     if polling_system_type == 3:
                         polling_system_intervals = self.env['ir.values'].\
                             get_default('wua.configuration',
-                                        'polling_system_intervals')
+                                        'polling_system_intervals_company_01')
                         if polling_system_intervals:
                             votes = self.assign_votes_by_range(
                                 area_for_votes, polling_system_intervals)
@@ -99,7 +100,7 @@ class ResPartner(models.Model):
         if self.parcel_owner_number_company_02 > 0 or \
                 self.parcel_owner_area_hec_company_02 > 0:
             polling_system_type = self.env['ir.values'].get_default(
-                'wua.configuration', 'polling_system_type')
+                'wua.configuration', 'polling_system_type_company_02')
             company_02 = self.env['ir.values'].get_default(
                 'wua.configuration', 'company_02')
             if polling_system_type > 0 and company_02:
@@ -111,12 +112,13 @@ class ResPartner(models.Model):
                     if polling_system_type == 2:
                         polling_system_interval = self.env['ir.values'].\
                             get_default('wua.configuration',
-                                        'polling_system_interval')
+                                        'polling_system_interval_company_02')
                         if polling_system_interval > 0:
                             polling_system_rounding_type = \
                                 self.env['ir.values'].\
-                                get_default('wua.configuration',
-                                            'polling_system_rounding_type')
+                                get_default(
+                                    'wua.configuration',
+                                    'polling_system_rounding_type_company_02')
                             calc_votes =\
                                 area_for_votes / polling_system_interval
                             if polling_system_rounding_type == 0:
@@ -126,7 +128,7 @@ class ResPartner(models.Model):
                     if polling_system_type == 3:
                         polling_system_intervals = self.env['ir.values'].\
                             get_default('wua.configuration',
-                                        'polling_system_intervals')
+                                        'polling_system_intervals_company_02')
                         if polling_system_intervals:
                             votes = self.assign_votes_by_range(
                                 area_for_votes, polling_system_intervals)
@@ -141,7 +143,7 @@ class ResPartner(models.Model):
         if self.parcel_owner_number_company_03 > 0 or \
                 self.parcel_owner_area_hec_company_03 > 0:
             polling_system_type = self.env['ir.values'].get_default(
-                'wua.configuration', 'polling_system_type')
+                'wua.configuration', 'polling_system_type_company_03')
             company_03 = self.env['ir.values'].get_default(
                 'wua.configuration', 'company_03')
             if polling_system_type > 0 and company_03:
@@ -153,12 +155,13 @@ class ResPartner(models.Model):
                     if polling_system_type == 2:
                         polling_system_interval = self.env['ir.values'].\
                             get_default('wua.configuration',
-                                        'polling_system_interval')
+                                        'polling_system_interval_company_03')
                         if polling_system_interval > 0:
                             polling_system_rounding_type = \
                                 self.env['ir.values'].\
-                                get_default('wua.configuration',
-                                            'polling_system_rounding_type')
+                                get_default(
+                                    'wua.configuration',
+                                    'polling_system_rounding_type_company_03')
                             calc_votes =\
                                 area_for_votes / polling_system_interval
                             if polling_system_rounding_type == 0:
@@ -168,7 +171,7 @@ class ResPartner(models.Model):
                     if polling_system_type == 3:
                         polling_system_intervals = self.env['ir.values'].\
                             get_default('wua.configuration',
-                                        'polling_system_intervals')
+                                        'polling_system_intervals_company_03')
                         if polling_system_intervals:
                             votes = self.assign_votes_by_range(
                                 area_for_votes, polling_system_intervals)

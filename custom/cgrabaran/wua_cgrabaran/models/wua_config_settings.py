@@ -37,6 +37,99 @@ class WuaConfiguration(models.TransientModel):
         size=20,
         index=True)
 
+    polling_system_type_company_01 = fields.Selection([
+        (0, 'None'),
+        (1, 'One land parcel is one vote'),
+        (2, 'By identical area intervals'),
+        (3, 'By different area intervals')],
+        'Criteria',
+        help='Type of polling system in conventions')
+
+    polling_system_interval_company_01 = fields.Integer(
+        string='Interval (m2)',
+        default=0,
+        required=True,
+        help='Interval, in m2, for each vote')
+
+    polling_system_rounding_type_company_01 = fields.Selection([
+        (0, 'Rounding up'),
+        (1, 'Rounding down')],
+        'Rounding Type',
+        help='Example: 1.4 is 2 with rounding up, and is 1 with rounding down')
+
+    polling_system_intervals_company_01 = fields.Char(
+        string='Intervals (m2)',
+        size=510,
+        help='Example 1: from 0 to 9999, 1 vote; ' +
+             'from 10000 to 49999, 2 votes; ' +
+             'from 50000, 3 votes; then this parameter would be ' +
+             '1:0-9999,2:10000:49999,3:50000\n' +
+             'Example 2: from 1000 to 4999, 1 vote; ' +
+             'from 5000, each 5000 is a new vote; then this parameter ' +
+             'would be 1:1000-4999,2:5000-9999,*')
+
+    polling_system_type_company_02 = fields.Selection([
+        (0, 'None'),
+        (1, 'One land parcel is one vote'),
+        (2, 'By identical area intervals'),
+        (3, 'By different area intervals')],
+        'Criteria',
+        help='Type of polling system in conventions')
+
+    polling_system_interval_company_02 = fields.Integer(
+        string='Interval (m2)',
+        default=0,
+        required=True,
+        help='Interval, in m2, for each vote')
+
+    polling_system_rounding_type_company_02 = fields.Selection([
+        (0, 'Rounding up'),
+        (1, 'Rounding down')],
+        'Rounding Type',
+        help='Example: 1.4 is 2 with rounding up, and is 1 with rounding down')
+
+    polling_system_intervals_company_02 = fields.Char(
+        string='Intervals (m2)',
+        size=510,
+        help='Example 1: from 0 to 9999, 1 vote; ' +
+             'from 10000 to 49999, 2 votes; ' +
+             'from 50000, 3 votes; then this parameter would be ' +
+             '1:0-9999,2:10000:49999,3:50000\n' +
+             'Example 2: from 1000 to 4999, 1 vote; ' +
+             'from 5000, each 5000 is a new vote; then this parameter ' +
+             'would be 1:1000-4999,2:5000-9999,*')
+
+    polling_system_type_company_03 = fields.Selection([
+        (0, 'None'),
+        (1, 'One land parcel is one vote'),
+        (2, 'By identical area intervals'),
+        (3, 'By different area intervals')],
+        'Criteria',
+        help='Type of polling system in conventions')
+
+    polling_system_interval_company_03 = fields.Integer(
+        string='Interval (m2)',
+        default=0,
+        required=True,
+        help='Interval, in m2, for each vote')
+
+    polling_system_rounding_type_company_03 = fields.Selection([
+        (0, 'Rounding up'),
+        (1, 'Rounding down')],
+        'Rounding Type',
+        help='Example: 1.4 is 2 with rounding up, and is 1 with rounding down')
+
+    polling_system_intervals_company_03 = fields.Char(
+        string='Intervals (m2)',
+        size=510,
+        help='Example 1: from 0 to 9999, 1 vote; ' +
+             'from 10000 to 49999, 2 votes; ' +
+             'from 50000, 3 votes; then this parameter would be ' +
+             '1:0-9999,2:10000:49999,3:50000\n' +
+             'Example 2: from 1000 to 4999, 1 vote; ' +
+             'from 5000, each 5000 is a new vote; then this parameter ' +
+             'would be 1:1000-4999,2:5000-9999,*')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -93,3 +186,39 @@ class WuaConfiguration(models.TransientModel):
                            self.company_02_abv)
         values.set_default('wua.configuration', 'company_03_abv',
                            self.company_03_abv)
+        values.set_default('wua.configuration',
+                           'polling_system_type_company_01',
+                           self.polling_system_type_company_01)
+        values.set_default('wua.configuration',
+                           'polling_system_interval_company_01',
+                           self.polling_system_interval_company_01)
+        values.set_default('wua.configuration',
+                           'polling_system_intervals_company_01',
+                           self.polling_system_intervals_company_01)
+        values.set_default('wua.configuration',
+                           'polling_system_rounding_type_company_01',
+                           self.polling_system_rounding_type_company_01)
+        values.set_default('wua.configuration',
+                           'polling_system_type_company_02',
+                           self.polling_system_type_company_02)
+        values.set_default('wua.configuration',
+                           'polling_system_interval_company_02',
+                           self.polling_system_interval_company_02)
+        values.set_default('wua.configuration',
+                           'polling_system_intervals_company_02',
+                           self.polling_system_intervals_company_02)
+        values.set_default('wua.configuration',
+                           'polling_system_rounding_type_company_02',
+                           self.polling_system_rounding_type_company_02)
+        values.set_default('wua.configuration',
+                           'polling_system_type_company_03',
+                           self.polling_system_type_company_03)
+        values.set_default('wua.configuration',
+                           'polling_system_interval_company_03',
+                           self.polling_system_interval_company_03)
+        values.set_default('wua.configuration',
+                           'polling_system_intervals_company_03',
+                           self.polling_system_intervals_company_03)
+        values.set_default('wua.configuration',
+                           'polling_system_rounding_type_company_03',
+                           self.polling_system_rounding_type_company_03)
