@@ -17,8 +17,8 @@
     "data": [
         "security/ir.model.access.csv",
         'views/resources.xml',
-        'views/base_wua_pressurized_irrigation_with_fertilizer_menus.xml',
         'views/wua_fertconsumption_view.xml',
+        'views/base_wua_pressurized_irrigation_with_fertilizer_menus.xml',
         'views/wua_waterconnection_view.xml',
         'views/wua_agriculturalseason_view.xml',
         'views/wua_presconsumption_view.xml'

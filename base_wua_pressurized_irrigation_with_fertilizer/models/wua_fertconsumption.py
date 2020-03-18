@@ -156,11 +156,6 @@ class WuaFertconsumption(models.Model):
             vals['reading_initial_time'] = presconsumption.reading_initial_time
             vals['reading_end_time'] = presconsumption.reading_end_time
             vals['waterconnection_id'] = presconsumption.waterconnection_id.id
-        elif (('reading_initial_time' in vals or 'reading_end_time' in vals or
-               'waterconnection_id' in vals) and self.presconsumption_id):
-            vals.pop('reading_initial_time', None)
-            vals.pop('reading_end_time', None)
-            vals.pop('waterconnection_id', None)
         resp = super(WuaFertconsumption, self).write(vals)
         return resp
 
