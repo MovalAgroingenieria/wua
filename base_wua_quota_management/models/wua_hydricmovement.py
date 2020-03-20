@@ -314,16 +314,14 @@ class WuaHydricmovement(models.Model):
         exists_hydricmovement = self.search([('quota_id', '=', quota_id),
                                              ('event_time', '=', event_time)])
         if exists_hydricmovement:
-            i = 1
             while exists_hydricmovement:
                 event_time = datetime.datetime.strptime(
                     event_time, '%Y-%m-%d %H:%M:%S') + \
-                    datetime.timedelta(seconds=i)
+                    datetime.timedelta(seconds=1)
                 event_time = event_time.strftime('%Y-%m-%d %H:%M:%S')
                 exists_hydricmovement = self.search(
                     [('quota_id', '=', quota_id),
                      ('event_time', '=', event_time)])
-                i = i + 1
             vals['event_time'] = event_time
         new_hydricmovement = super(WuaHydricmovement, self).create(vals)
         return new_hydricmovement
