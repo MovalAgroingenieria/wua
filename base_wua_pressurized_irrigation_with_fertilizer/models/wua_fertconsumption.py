@@ -2,7 +2,8 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+import datetime
+from odoo import models, fields, api, _
 
 
 class WuaFertconsumption(models.Model):
@@ -146,6 +147,23 @@ class WuaFertconsumption(models.Model):
             vals['reading_initial_time'] = presconsumption.reading_initial_time
             vals['reading_end_time'] = presconsumption.reading_end_time
             vals['waterconnection_id'] = presconsumption.waterconnection_id.id
+        waterconnection_id = vals['waterconnection_id']
+        reading_end_time = vals['reading_end_time']
+        exists_fertconsumption = self.search([
+            ('waterconnection_id', '=', waterconnection_id),
+            ('reading_end_time', '=', reading_end_time)])
+        if exists_fertconsumption:
+            while exists_fertconsumption and \
+                    not (exists_fertconsumption.id == self.id):
+                reading_end_time = datetime.datetime.strptime(
+                    reading_end_time, '%Y-%m-%d %H:%M:%S') + \
+                    datetime.timedelta(seconds=1)
+                reading_end_time = \
+                    reading_end_time.strftime('%Y-%m-%d %H:%M:%S')
+                exists_fertconsumption = self.search(
+                    [('waterconnection_id', '=', waterconnection_id),
+                     ('reading_end_time', '=', reading_end_time)])
+            vals['reading_end_time'] = reading_end_time
         return super(WuaFertconsumption, self).create(vals)
 
     @api.multi
@@ -156,6 +174,31 @@ class WuaFertconsumption(models.Model):
             vals['reading_initial_time'] = presconsumption.reading_initial_time
             vals['reading_end_time'] = presconsumption.reading_end_time
             vals['waterconnection_id'] = presconsumption.waterconnection_id.id
+        if (
+            ('waterconnection_id' in vals and vals['waterconnection_id']) or
+                ('reading_end_time' in vals and vals['reading_end_time'])):
+            if ('waterconnection_id' in vals and vals['waterconnection_id']):
+                waterconnection_id = vals['waterconnection_id']
+            else:
+                waterconnection_id = self.waterconnection_id.id
+            if ('reading_end_time' in vals and vals['reading_end_time']):
+                reading_end_time = vals['reading_end_time']
+            else:
+                reading_end_time = self.reading_end_time
+            exists_fertconsumption = self.search([
+                ('waterconnection_id', '=', waterconnection_id),
+                ('reading_end_time', '=', reading_end_time)])
+            if exists_fertconsumption:
+                while exists_fertconsumption and exists_fertconsumption:
+                    reading_end_time = datetime.datetime.strptime(
+                        reading_end_time, '%Y-%m-%d %H:%M:%S') + \
+                        datetime.timedelta(seconds=1)
+                    reading_end_time = \
+                        reading_end_time.strftime('%Y-%m-%d %H:%M:%S')
+                    exists_fertconsumption = self.search(
+                        [('waterconnection_id', '=', waterconnection_id),
+                         ('reading_end_time', '=', reading_end_time)])
+                vals['reading_end_time'] = reading_end_time
         resp = super(WuaFertconsumption, self).write(vals)
         return resp
 
@@ -169,3 +212,28 @@ class WuaFertconsumption(models.Model):
                     record.presconsumption_id.reading_end_time
                 record.waterconnection_id = \
                     record.presconsumption_id.waterconnection_id
+
+    def action_assign_agriculturalseason_to_fertconsumptions(self):
+        fertconsumptions = self.env['wua.fertconsumption']
+        all_fertconsumptions = fertconsumptions.search([])
+        all_fertconsumptions.write({
+            'agriculturalseason_id': None,
+            })
+        agriculturalseasons = self.env['wua.agriculturalseason'].search([])
+        for agriculturalseason in agriculturalseasons:
+            fertconsumptions_of_current_season = fertconsumptions.search(
+                [('reading_end_time', '>=', agriculturalseason.initial_date),
+                 ('reading_end_time', '<=', agriculturalseason.end_date)])
+            if len(fertconsumptions_of_current_season) > 0:
+                fertconsumptions_of_current_season.write({
+                    'agriculturalseason_id': agriculturalseason.id,
+                    })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Fertconsumptions'),
+            'res_model': 'wua.fertconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'target': 'current',
+            'context': self.env.context,
+            }

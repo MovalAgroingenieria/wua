@@ -5,7 +5,7 @@
         <field name="name">Consumptions (form view)</field>
         <field name="model">wua.fertconsumption</field>
         <field name="arch" type="xml">
-            <form create="0" delete="0" duplicate="0">
+            <form duplicate="false">
                 <sheet>
                     <group name="master_data">
                         <group name="master_data_left">
@@ -108,6 +108,13 @@
         <field name="view_id" ref="wua_fertconsumption_view_tree"/>
         <field name="search_view_id" ref="wua_fertconsumption_view_search"/>
         <field name="context">{'search_default_hydraulicsector': 0, 'search_default_readingendtime': 0}</field>
+    </record>
+
+    <record id="wua_technical_assign_agriculturalseason_to_fertconsumptions_action"
+            model="ir.actions.server">
+        <field name="name">Assign agricultural seasons to fertilizer consumptions</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation_with_fertilizer.model_wua_fertconsumption"/>
+        <field name="code">action = env["wua.fertconsumption"].action_assign_agriculturalseason_to_fertconsumptions()</field>
     </record>
 
 </odoo>
