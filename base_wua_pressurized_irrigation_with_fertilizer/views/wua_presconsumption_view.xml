@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_presconsumption_view_form" model="ir.ui.view">
+        <field name="name">Consumptions (form view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_presconsumption_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='master_data']"
+                   position="before">
+                   <div name="buttons" class="oe_button_box">
+                       <button name="action_see_fertconsumptions"
+                               type="object"
+                               class="oe_stat_button"
+                               icon="fa-long-arrow-up"
+                               groups="base_wua.group_wua_user">
+                               <div class="o_form_field o_stat_info">
+                                 <span class="o_stat_text">
+                                     <field name="number_of_fertconsumptions"/> uses of <br/>fertilizer
+                                 </span>
+                               </div>
+                       </button>
+                   </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Consumptions (tree view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_presconsumption_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='reading_id']" position="after">
+              <field name="number_of_fertconsumptions"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_view_search" model="ir.ui.view">
+        <field name="name">Consumptions (search view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_presconsumption_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='withadjustement']" position="after">
+              <separator/>
+              <filter string="With fertilizer: Yes" name="withfertilizeryes"
+               domain="[('with_fertconsumptions','=',True)]"/>
+              <filter string="With fertilizer: No" name="withfertilizerno"
+               domain="[('with_fertconsumptions','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
