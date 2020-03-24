@@ -123,7 +123,7 @@ class WuaIrrigationReport(models.Model):
         string='Signature')
 
     delivery_note = fields.Integer(
-        string="Delivery Note")
+        string='Delivery Note')
 
     _sql_constraints = [
         ('valid_irrigationreport_time_range',
