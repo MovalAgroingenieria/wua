@@ -319,17 +319,18 @@ class WuaParcel(models.Model):
                 for gis_irrigationshed in gis_irrigationsheds:
                     name = gis_irrigationshed[0]
                     geom = gis_irrigationshed[1]
-                    decoded_geom = wkb.loads(geom, True)
-                    point_gis = decoded_geom
-                    filtered_irrigationsheds = \
-                        irrigationsheds.filtered(lambda x: x.name == name)
-                    if len(filtered_irrigationsheds) == 1:
-                        irrigationshed = filtered_irrigationsheds[0]
-                        irrigationshed.write({
-                            'with_gis_irrigationshed': True,
-                            'gis_viewer_x': point_gis.x,
-                            'gis_viewer_y': point_gis.y
-                        })
+                    if (geom):
+                        decoded_geom = wkb.loads(geom, True)
+                        point_gis = decoded_geom
+                        filtered_irrigationsheds = \
+                            irrigationsheds.filtered(lambda x: x.name == name)
+                        if len(filtered_irrigationsheds) == 1:
+                            irrigationshed = filtered_irrigationsheds[0]
+                            irrigationshed.write({
+                                'with_gis_irrigationshed': True,
+                                'gis_viewer_x': point_gis.x,
+                                'gis_viewer_y': point_gis.y
+                            })
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info('Matching GIS info...')
                 _logger.info('Number of Odoo-Irrigationsheds: ' +
