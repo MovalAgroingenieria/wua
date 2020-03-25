@@ -1015,15 +1015,16 @@ class WuaParcel(models.Model):
                 for gis_parcel in gis_parcels:
                     name = gis_parcel[0]
                     geom = gis_parcel[1]
-                    decoded_geom = wkb.loads(geom, True)
-                    area_gis_m2 = decoded_geom.area
-                    area_gis = (area_gis_m2 * 0.0001 /
-                                area_measurement_equivalence)
-                    filtered_parcels = \
-                        parcels.filtered(lambda x: x.name == name)
-                    if len(filtered_parcels) == 1:
-                        parcel = filtered_parcels[0]
-                        parcel.area_gis = area_gis
+                    if (geom):
+                        decoded_geom = wkb.loads(geom, True)
+                        area_gis_m2 = decoded_geom.area
+                        area_gis = (area_gis_m2 * 0.0001 /
+                                    area_measurement_equivalence)
+                        filtered_parcels = \
+                            parcels.filtered(lambda x: x.name == name)
+                        if len(filtered_parcels) == 1:
+                            parcel = filtered_parcels[0]
+                            parcel.area_gis = area_gis
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info('Matching GIS info...')
                 _logger.info('Number of Odoo-Parcels: ' +
