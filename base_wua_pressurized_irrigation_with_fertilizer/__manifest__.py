@@ -13,6 +13,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_pressurized_irrigation",
+        "fontawesome_ext"
     ],
     "data": [
         "security/ir.model.access.csv",
