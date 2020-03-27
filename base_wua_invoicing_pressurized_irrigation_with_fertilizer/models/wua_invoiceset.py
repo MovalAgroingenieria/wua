@@ -2,7 +2,6 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 from operator import itemgetter
 from odoo import models, fields, api, exceptions, _
 
@@ -314,43 +313,14 @@ class WuaInvoiceset(models.Model):
         resp = ''
         lang = self.env['res.partner'].browse(partner_id).lang
         default_waterconnection_label = _('Water Connection')
-        default_initial_reading_label = _('Initial Reading')
-        default_final_reading_label = _('Final Reading')
-        default_consumption_label = _('Consumption')
         waterconnection_label = self.get_value_from_translation(
             'base_wua_invoicing_pressurized_irrigation',
             'Water Connection', lang)
-        initial_reading_label = self.get_value_from_translation(
-            'base_wua_invoicing_pressurized_irrigation',
-            'Initial Reading', lang)
-        final_reading_label = self.get_value_from_translation(
-            'base_wua_invoicing_pressurized_irrigation',
-            'Final Reading', lang)
-        consumption_label = self.get_value_from_translation(
-            'base_wua_invoicing_pressurized_irrigation',
-            'Consumption', lang)
         if not waterconnection_label:
             waterconnection_label = default_waterconnection_label
-        if not initial_reading_label:
-            initial_reading_label = default_initial_reading_label
-        if not final_reading_label:
-            final_reading_label = default_final_reading_label
-        if not consumption_label:
-            consumption_label = default_consumption_label
-        reading_initial_time = datetime.datetime.strptime(
-            fertconsumption.reading_initial_time, '%Y-%m-%d %H:%M:%S')
-        reading_initial_time = reading_initial_time.strftime('%x')
-        reading_end_time = datetime.datetime.strptime(
-            fertconsumption.reading_end_time, '%Y-%m-%d %H:%M:%S')
-        reading_end_time = reading_end_time.strftime('%x')
-        amount = round(fertconsumption.amount)
-        uom_label = fertconsumption.uom_id.name
         resp = waterconnection_label + ' ' + \
-            fertconsumption.waterconnection_id.name + '. ' + \
-            initial_reading_label + ': ' + reading_initial_time + ' ' + \
-            final_reading_label + ': ' + reading_end_time + ' ' + \
-            consumption_label + ': ' + '{0:.0f}'.format(amount) + ' ' + \
-            uom_label + '.'
+            fertconsumption.waterconnection_id.name + ' ' + '[' + \
+            fertconsumption.product_id.name + ']'
         return resp
 
     def add_to_invoice_data_line_ref_to_other_types(
