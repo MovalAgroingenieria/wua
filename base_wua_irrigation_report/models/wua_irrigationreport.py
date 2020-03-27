@@ -122,6 +122,9 @@ class WuaIrrigationReport(models.Model):
     partner_signature = fields.Binary(
         string='Signature')
 
+    delivery_note = fields.Integer(
+        string='Delivery Note')
+
     _sql_constraints = [
         ('valid_irrigationreport_time_range',
          'CHECK (report_initial_time <= report_end_time)',
@@ -138,6 +141,9 @@ class WuaIrrigationReport(models.Model):
         ('valid_hours',
          'CHECK (hours >= 0)',
          'The number of hours can not be a negative value.'),
+        ('valid_delivery_note',
+         'CHECK (delivery_note > 0)',
+         'The delivery note must be strictly greater than 0')
         ]
 
     @api.depends('intake_id', 'agriculturalseason_id')

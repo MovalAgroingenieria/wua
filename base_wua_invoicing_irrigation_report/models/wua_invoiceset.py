@@ -2,6 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
@@ -54,8 +55,40 @@ class WuaInvoiceset(models.Model):
             water_type = irrigationreport.with_context(
                 {'lang': language}).product_id.product_tmpl_id.name
             irrigationreport_num = irrigationreport.irrigationreport_number
+            reading_times_info = ''
+            default_consumption_label = _('Consumption')
+            data_in_hours = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'data_in_hours')
+            if (not data_in_hours):
+                initial_reading_label = self.get_value_from_translation(
+                    'base_wua_invoicing_irrigation_report',
+                    'Start Time', language)
+                final_reading_label = self.get_value_from_translation(
+                    'base_wua_invoicing_irrigation_report',
+                    'End Time', language)
+                consumption_label = self.get_value_from_translation(
+                    'base_wua_invoicing_irrigation_report',
+                    'Consumption', language)
+                if not consumption_label:
+                    consumption_label = default_consumption_label
+                report_initial_time = datetime.datetime.strptime(
+                    irrigationreport.report_initial_time, '%Y-%m-%d %H:%M:%S')
+                report_initial_time = report_initial_time.strftime('%x')
+                report_end_time = datetime.datetime.strptime(
+                    irrigationreport.report_end_time, '%Y-%m-%d %H:%M:%S')
+                report_end_time = report_end_time.strftime('%x')
+                initial_volume = round(irrigationreport.initial_volume)
+                end_volume = round(irrigationreport.end_volume)
+                volume = end_volume - initial_volume
+                reading_times_info = ', ' + initial_reading_label + ': ' + \
+                    report_initial_time + ' ' + '(' + \
+                    '{0:.0f}'.format(initial_volume) + ' m3). ' + \
+                    final_reading_label + ': ' + report_end_time + ' ' + \
+                    '(' + '{0:.0f}'.format(end_volume) + ' m3). ' + \
+                    consumption_label + ': ' + '{0:.0f}'.format(volume) + ' m3'
             description = intake_name + ', ' + water_type + ', ' + \
-                _('Report num. ') + str(irrigationreport_num)
+                _('Report num. ') + str(irrigationreport_num) + \
+                reading_times_info
         return description
 
     def calculate_invoice_details_others_categ(self, product_id, categ_code,

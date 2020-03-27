@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-23 15:47+0000\n"
-"PO-Revision-Date: 2019-12-23 15:47+0000\n"
+"POT-Creation-Date: 2020-03-24 17:11+0000\n"
+"PO-Revision-Date: 2020-03-24 17:11+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -182,6 +182,11 @@ msgid "Created on"
 msgstr ""
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_delivery_note
+msgid "Delivery Note"
+msgstr ""
+
+#. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_search
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_tree
 msgid "Description"
@@ -210,7 +215,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigation_configuration_data_in_hours
-msgid "Enter the water amount of a irrigation report as a hour-value (ir not, as a m3-value)"
+msgid "Enter the water amount of a irrigation report as a hour-value (if not, as a m3-value)"
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -399,9 +404,14 @@ msgid "State"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:269
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:274
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: sql_constraint:wua.irrigationreport:0
+msgid "The delivery note must be strictly greater than 0"
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -485,8 +495,8 @@ msgid "Water Amount in hours"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:297
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:307
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:302
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:312
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr ""
