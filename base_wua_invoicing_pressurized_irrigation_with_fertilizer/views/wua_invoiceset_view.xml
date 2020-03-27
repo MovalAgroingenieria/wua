@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_fertconsumption_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for fertconsumptions (tree view)</field>
+        <field name="model">wua.invoiceset.line.fertconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false"
+               class="o_base_wua_invoicing_pressurized_irrigation_with_fertilizer_invoiceset_line_fertconsumption_view_tree">
+                <field name="selected" invisible="1"/>
+                <field name="fertconsumption_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="reading_initial_time"/>
+                <field name="reading_end_time"/>
+                <field name="amount"/>
+                <field name="uom_id"/>
+                <field name="with_presconsumption"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_fertconsumption_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for fertconsumptions (search view)</field>
+        <field name="model">wua.invoiceset.line.fertconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulic_sector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_fertconsumption_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_fertconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.fertconsumption'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_fertconsumption_to_invoiceset" model="ir.values">
+        <field name="name">Add fertconsumption to invoice set</field>
+        <field name="model">wua.invoiceset.line.fertconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_fertconsumption_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_fertconsumption_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_fertconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.fertconsumption'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_fertconsumption_to_invoiceset" model="ir.values">
+        <field name="name">Remove fertconsumption from invoice set</field>
+        <field name="model">wua.invoiceset.line.fertconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_fertconsumption_to_invoiceset'))"/>
+    </record>
+
+</odoo>

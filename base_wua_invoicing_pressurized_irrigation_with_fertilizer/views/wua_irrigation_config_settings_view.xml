@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing_pressurized_irrigation.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_pressure_product_id']"
+                   position="after">
+                <field name="default_fertilizer_product_id" style="width:200px"
+                       domain="[('categ_id.productcategory_code','=',12)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
