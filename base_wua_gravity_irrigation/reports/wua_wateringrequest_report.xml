@@ -88,7 +88,17 @@
                 </div>
                 <div class="row">
                     <div class="col-xs-6" style="border: 1px solid black;">
-                        <t t-if="o.partner_id.street_name"><span t-field="o.partner_id.street_name"/> <span t-field="o.partner_id.street_number"/> <span t-field="o.partner_id.zip"/></t>
+                        <t t-if="o.partner_id.street">
+                            <span t-field="o.partner_id.street"/>
+                        </t>
+                        <t t-if="o.partner_id.street_num">
+                            <span> </span>
+                            <span t-field="o.partner_id.street_num"/>
+                        </t>
+                        <t t-if="o.partner_id.zip">
+                            <span> </span>
+                            <span t-field="o.partner_id.zip"/>
+                        </t>
                         <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
                     </div>
                     <div class="col-xs-6" style="border: 1px solid black;">

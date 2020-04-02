@@ -18,7 +18,7 @@
         "mail",
         "document",
         "mass_editing",
-        "partner_street_number",
+        "partner_address_street_number",
         "web_tree_many2one_clickable",
         "partner_second_lastname",
         "web_searchbar_full_width",
