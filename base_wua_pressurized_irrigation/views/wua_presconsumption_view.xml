@@ -29,7 +29,7 @@
                         <notebook name="slave_data_notebook">
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
-                            </page>                        
+                            </page>
                         </notebook>
                     </group>
                 </sheet>
@@ -51,6 +51,7 @@
                 <field name="adjustement_volume"/>
                 <field name="volume_real"/>
                 <field name="reading_id"/>
+                <field name="validated" string="Valid"/>
             </tree>
         </field>
     </record>
@@ -84,6 +85,11 @@
                 <field name="agriculturalseason_id"/>
                 <filter string="With adjustement" name="withadjustement"
                  domain="[('adjustement_volume','!=',0)]"/>
+                <separator/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+                <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season"
                      name="agriculturalseason"
@@ -93,7 +99,7 @@
                      context="{'group_by':'hydraulicsector_id'}"/>
                     <filter string="Irrigation Shed"
                      name="irrigationshed"
-                     context="{'group_by':'irrigationshed_id'}"/>                
+                     context="{'group_by':'irrigationshed_id'}"/>
                     <filter string="Water Connection"
                      name="waterconnection"
                      context="{'group_by':'waterconnection_id'}"/>
@@ -117,6 +123,7 @@
                 <field name="adjustement_volume"/>
                 <field name="volume_real"/>
                 <field name="reading_id"/>
+                <field name="validated" string="Valid"/>
             </tree>
         </field>
     </record>
@@ -129,11 +136,16 @@
                 <field name="agriculturalseason_id"/>
                 <filter string="With adjustement" name="withadjustement"
                  domain="[('adjustement_volume','!=',0)]"/>
-                 <group expand="0" string="Group By">
-                    <filter string="Agricultural Season"
-                     name="agriculturalseason"
-                     context="{'group_by':'agriculturalseason_id'}"/>
-                 </group>                 
+                <separator/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+                <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
+                <group expand="0" string="Group By">
+                  <filter string="Agricultural Season"
+                    name="agriculturalseason"
+                    context="{'group_by':'agriculturalseason_id'}"/>
+                </group>
             </search>
         </field>
     </record>

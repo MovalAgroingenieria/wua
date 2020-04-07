@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
+# 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
@@ -95,6 +95,11 @@ class WuaReading(models.Model):
         compute='_compute_presconsumption_volume_real')
 
     notes = fields.Html(string='Notes')
+
+    validated = fields.Boolean(
+        string='Validated',
+        default=True,
+        required=True)
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -225,6 +230,21 @@ class WuaReading(models.Model):
         return resp
 
     @api.multi
+    def validate_reading(self):
+        self.ensure_one()
+        self.validated = True
+
+    @api.multi
+    def cancel_reading(self):
+        self.ensure_one()
+        if not self.presconsumption_id.invoiced_consumption:
+            self.validated = False
+        else:
+            raise exceptions.UserError(_('The reading is mapped to a '
+                                         'invoiced consumption: it is not '
+                                         'possible to cancel the reading.'))
+
+    @api.multi
     def name_get(self):
         result = []
         for record in self:
@@ -313,3 +333,21 @@ class WuaReading(models.Model):
             'last_reading_value': new_last_reading_value, }
         watermeter.write(vals_watermeter)
         return resp
+
+    def validate_readings(self, active_readings):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        readings = self.env['wua.reading'].browse(active_readings)
+        for reading in readings:
+            if not reading.validated:
+                reading.validate_reading()
+
+    def cancel_readings(self, active_readings):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        readings = self.env['wua.reading'].browse(active_readings)
+        for reading in readings:
+            if reading.validated:
+                reading.cancel_reading()

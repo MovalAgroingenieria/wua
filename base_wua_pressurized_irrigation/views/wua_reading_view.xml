@@ -67,6 +67,7 @@
                 <field name="presconsumption_volume_real" string="Cons. Real Value (m3)"/>
                 <field name="is_last_reading"/>
                 <field name="presconsumption_id"/>
+                <field name="validated" string="Valid"/>
             </tree>
         </field>
     </record>
@@ -84,6 +85,11 @@
                  domain="[('initialization_reading','=',True)]"/>
                 <filter string="Normal Reading" name="initreadingno"
                  domain="[('initialization_reading','=',False)]"/>
+                <separator id="validate_separator"/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+               <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"
                      name="hydraulicsector"
@@ -116,6 +122,7 @@
                 <field name="presconsumption_volume_real" string="Cons. Real Value (m3)"/>
                 <field name="is_last_reading"/>
                 <field name="presconsumption_id"/>
+                <field name="validated" string="Valid"/>
             </tree>
         </field>
     </record>
@@ -132,6 +139,11 @@
                  domain="[('initialization_reading','=',True)]"/>
                 <filter string="Normal Reading" name="initreadingno"
                  domain="[('initialization_reading','=',False)]"/>
+                <separator id="validate_separator"/>
+                <filter string="Validated: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+                <filter string="Validated: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"
                      name="hydraulicsector"
@@ -163,5 +175,41 @@
               action="wua_reading_action"
               sequence="2"
               groups="base_wua.group_wua_user"/>
+
+    <record id="wua_validate_readings" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.reading'].validate_readings(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_validate_readings" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.reading</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_readings'))"/>
+    </record>
+
+    <record id="wua_cancel_readings" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.reading'].cancel_readings(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_cancel_readings" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.reading</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_readings'))"/>
+    </record>
 
 </odoo>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2019 Moval Agroingeniería
+# 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
@@ -13,11 +13,6 @@ class WuaReading(models.Model):
 
     from_import = fields.Boolean(
         string='Manual Introduction',
-        default=True,
-        required=True)
-
-    validated = fields.Boolean(
-        string='Validated',
         default=True,
         required=True)
 
@@ -192,36 +187,3 @@ class WuaReading(models.Model):
             is_negative = True
             negative_volume = current_volume - previous_volume
         return is_negative, negative_volume
-
-    @api.multi
-    def validate_reading(self):
-        self.ensure_one()
-        self.validated = True
-
-    @api.multi
-    def cancel_reading(self):
-        self.ensure_one()
-        if not self.presconsumption_id.invoiced_consumption:
-            self.validated = False
-        else:
-            raise exceptions.UserError(_('The reading is mapped to a '
-                                         'invoiced consumption: it is not '
-                                         'possible to cancel the reading.'))
-
-    def validate_readings(self, active_readings):
-        if (not self.env.user.has_group('base_wua.group_wua_manager')):
-            raise exceptions.UserError(_(
-                'You do not have permission to execute this action.'))
-        readings = self.env['wua.reading'].browse(active_readings)
-        for reading in readings:
-            if not reading.validated:
-                reading.validate_reading()
-
-    def cancel_readings(self, active_readings):
-        if (not self.env.user.has_group('base_wua.group_wua_manager')):
-            raise exceptions.UserError(_(
-                'You do not have permission to execute this action.'))
-        readings = self.env['wua.reading'].browse(active_readings)
-        for reading in readings:
-            if reading.validated:
-                reading.cancel_reading()

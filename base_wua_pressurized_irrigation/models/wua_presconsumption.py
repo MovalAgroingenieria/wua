@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2019 - Moval Agroingeniería
+# 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
@@ -108,6 +108,11 @@ class WuaPresconsumption(models.Model):
         index=True,
         ondelete='set null')
 
+    validated = fields.Boolean(
+        string='Validated',
+        store=True,
+        compute='_compute_validated')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Consumption.'),
         ('valid_reading_limits',
@@ -179,6 +184,14 @@ class WuaPresconsumption(models.Model):
                 value = record.waterconnection_id.name + ' - ' + \
                     record.reading_end_time
             record.name = value
+
+    @api.depends('reading_id', 'reading_id.validated')
+    def _compute_validated(self):
+        for record in self:
+            validated = False
+            if record.reading_id.validated:
+                validated = True
+            record.validated = validated
 
     @api.model
     def create(self, vals):
