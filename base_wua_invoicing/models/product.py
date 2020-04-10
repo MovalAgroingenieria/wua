@@ -183,6 +183,27 @@ class ProductTemplate(models.Model):
                                                  'be service.'))
         return res
 
+    @api.multi
+    def action_see_invoice_lines(self):
+        self.ensure_one()
+        condition = [('product_id', 'in', self.product_variant_ids.ids)]
+        id_tree_view = self.env.ref(
+            'base_wua_invoicing.wua_invoice_line_product_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_invoicing.wua_invoice_line_product_view_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Invoice Lines'),
+            'res_model': 'account.invoice.line',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            }
+        return act_window
+
     def fields_of_wua_product_ok(self, vals):
         resp = True
         if 'type' in vals:
@@ -192,3 +213,29 @@ class ProductTemplate(models.Model):
         if 'purchase_ok' in vals and resp:
             resp = not vals['purchase_ok']
         return resp
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+    _description = 'Entity (WUA Product)'
+
+    @api.multi
+    def action_see_invoice_lines(self):
+        self.ensure_one()
+        condition = [('product_id', '=', self.id)]
+        id_tree_view = self.env.ref(
+            'base_wua_invoicing.wua_invoice_line_product_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_invoicing.wua_invoice_line_product_view_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Invoice Lines'),
+            'res_model': 'account.invoice.line',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            }
+        return act_window
