@@ -13,7 +13,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_pressurized_irrigation_with_fertilizer",
-        "base_wua_invoicing"
+        "base_wua_invoicing_separate_waterconnection_billing",
     ],
     "data": [
         "security/ir.model.access.csv",

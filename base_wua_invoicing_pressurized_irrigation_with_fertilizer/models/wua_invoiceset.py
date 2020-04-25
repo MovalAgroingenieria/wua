@@ -399,6 +399,40 @@ class WuaInvoiceset(models.Model):
                     fertconsumptions.write(vals)
                 line.line_fertconsumption_ids.unlink()
 
+    def group_invoice_details_by_wc(self, invoice_details):
+        invoices_data = []
+        wc_ids = []
+        for item in invoice_details:
+            wc_ids.append(item['key1'])
+        wc_ids = sorted(list(set(wc_ids)))
+        waterconnections = \
+            self.env['wua.waterconnection'].browse(wc_ids).sorted(
+                key=lambda x: x.name)
+        for waterconnection in waterconnections:
+            invoice_details_of_wc = filter(
+                lambda x: x['key1'] == waterconnection.id, invoice_details)
+            if waterconnection.watercosts_separate_billing:
+                for invoice_detail in invoice_details_of_wc:
+                    invoice_detail['payment_mode_id'] = \
+                        waterconnection.watercosts_payment_mode_id.id
+                    if waterconnection.watercosts_mandate_required:
+                        invoice_detail['mandate_id'] = \
+                            waterconnection.watercosts_mandate_id.id
+            partner = self.env['res.partner'].browse(
+                invoice_details_of_wc[0]['partner_id'])
+            result = {
+                'partner_id': partner.id,
+                'partner_code': partner.partner_code,
+                'account_id': partner.property_account_receivable_id.id,
+                'payment_term_id': partner.property_payment_term_id.id,
+                'payment_mode_id': partner.customer_payment_mode_id.id,
+                'customer_invoice_transmit_method_id':
+                    partner.customer_invoice_transmit_method_id.id,
+                'detail': invoice_details_of_wc,
+                }
+            invoices_data.append(result)
+        return invoices_data
+
 
 class WuaInvoicesetLine(models.Model):
     _inherit = 'wua.invoiceset.line'
