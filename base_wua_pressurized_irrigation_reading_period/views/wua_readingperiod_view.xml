@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_readingperiod_view_form" model="ir.ui.view">
+        <field name="name">Reading Period (form view)</field>
+        <field name="model">wua.readingperiod</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <header>
+                    <button name="action_configure_readingperiod"
+                            type="object" string="Configure"
+                            icon="fa-gear"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            attrs="{'invisible':
+                                    ['|',('state','=','open'),
+                                     ('state','=','closed')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="action_open_readingperiod"
+                            type="object" string="Open"
+                            icon="fa-gear"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            attrs="{'invisible':
+                                    ['|',('state','=','draft'),
+                                     ('state','=','open')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="action_close_readingperiod"
+                            type="object" string="Close"
+                            icon="fa-gear"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            attrs="{'invisible':
+                                    [('state','!=','open')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="action_cancel_readingperiod"
+                            type="object" string="Cancel"
+                            icon="fa-times"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            attrs="{'invisible':
+                                    [('state','!=','open')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,configured,open,closed"/>
+                </header>
+                <sheet>
+                    <div name="open_readingperiod"
+                         style="display: inline-block;"
+                         attrs="{'invisible':['|',('state','!=','open'),('id','&lt;=',0)]}">
+                        <img src="/base_wua_pressurized_irrigation_reading_period/static/image/img_unlock.png"/>
+                    </div>
+                    <div name="closed_readingperiod"
+                         style="display: inline-block;"
+                         attrs="{'invisible':['|',('state','=','open'),('id','&lt;=',0)]}">
+                        <img src="/base_wua_pressurized_irrigation_reading_period/static/image/img_lock.png"/>
+                    </div>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_get_reading_ids"
+                                type="object" class="oe_stat_button"
+                                icon="fa-list-ol"
+                                attrs="{'invisible':[('id','&lt;=',0)]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Readings</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="initial_date"
+                                   attrs="{'readonly': [('id','>',0)]}"/>
+                            <field name="end_date"
+                                   attrs="{'readonly': [('id','>',0)]}"/>
+                            <field name="agriculturalseason_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly': True}"/>
+                        </group>
+                        <group name="master_data_left">
+                            <field name="number_of_irrigationsheds"
+                                   string="N. irrigationsheds"/>
+                            <field name="number_of_waterconnections"
+                                   string="N. waterconnections"/>
+                            <field name="number_of_readings"
+                                   string="N. readings"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="lines_page" string="Lines">
+                                <field name="readingperiodline_ids"
+                                       attrs="{'readonly': ['|', ('state','=','open'),
+                                                            ('state','=','closed')]}"
+                                        context="{'tree_view_ref':
+                                                  'base_wua_pressurized_irrigation_reading_period.wua_readingperiod_line_view_tree'}"/>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base_wua.group_wua_manager"/>
+                    <field name="message_ids"
+                           widget="mail_thread" groups="base_wua.group_wua_manager"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_readingperiod_view_tree" model="ir.ui.view">
+        <field name="name">Reading Periods (tree view)</field>
+        <field name="model">wua.readingperiod</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_pressurized_irrigation_readingperiod_view_tree">
+              <field name='agriculturalseason_id'/>
+              <field name='initial_date'/>
+              <field name='end_date'/>
+              <field name='sectors'/>
+              <field name='number_of_irrigationsheds'/>
+              <field name='number_of_waterconnections'/>
+              <field name='state'/>
+              <button type="object" class="oe_stat_button"
+                      icon="fa-unlock"
+                      attrs="{'invisible':
+                              [('state','!=','open')],
+                              'readonly':'1'}"/>
+              <button type="object" class="oe_stat_button"
+                      icon="fa-lock"
+                      attrs="{'invisible':
+                              [('state','=','open')],
+                              'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_readingperiod_view_search" model="ir.ui.view">
+        <field name="name">Reading Periods (search view)</field>
+        <field name="model">wua.readingperiod</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="initial_date"/>
+              <field name="sectors"/>
+              <filter string="State: Draft"
+                      name="state_draft"
+                      domain="[('state','=','draft')]"/>
+              <filter string="State: Configured"
+                      name="state_configured"
+                      domain="[('state','=','configured')]"/>
+              <filter string="State: Open"
+                      name="state_open"
+                      domain="[('state','=','open')]"/>
+              <filter string="State: Closed"
+                      name="state_closed"
+                      domain="[('state','=','closed')]"/>
+              <group expand="0" string="Group By">
+                  <filter string="Agricultural Season"
+                          name="grouped_agriculturalseason"
+                   context="{'group_by':'agriculturalseason_id'}"/>
+                  <filter string="Initial Date"
+                          name="grouped_initial_date"
+                    context="{'group_by':'initial_date:month'}"/>
+                  <filter string="End Date"
+                          name="grouped_end_date"
+                   context="{'group_by':'end_date:month'}"/>
+              </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_reading_period_action" model="ir.actions.act_window">
+        <field name="name">Reading Periods</field>
+        <field name="res_model">wua.readingperiod</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_readingperiod_view_tree"/>
+        <field name="search_view_id" ref="wua_readingperiod_view_search"/>
+        <field name="context">{}</field>
+    </record>
+
+    <record id="wua_readingperiod_line_view_form" model="ir.ui.view">
+        <field name="name">Reading-Period Lines (form view)</field>
+        <field name="model">wua.readingperiod.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="configured_line" invisible="1"/>
+                <group name="master_data">
+                    <group name="master_data_left">
+                        <field name="readingperiod_id"/>
+                        <field name="hydraulicsector_id"/>
+                    </group>
+                    <group name="master_data_right">
+                        <field name="number_of_irrigationsheds"/>
+                        <field name="number_of_waterconnections"/>
+                    </group>
+                </group>
+                <div attrs="{'invisible': [('configured_line','=',False)]}">
+                    <div style="text-align:center">
+                        <h3><u>VISITABLE IRRIGATIONSHEDS</u></h3><br/>
+                    </div>
+                    <field name="selected_readingperiodlineirrigationshed_ids"
+                           context="{'tree_view_ref':
+                                     'base_wua_pressurized_irrigation_reading_period.wua_readingperiod_line_irrigationshed_readonly_view_tree'}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_readingperiod_line_view_tree" model="ir.ui.view">
+        <field name="name">Reading Periods-Line (tree view)</field>
+        <field name="model">wua.readingperiod.line</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_pressurized_irrigation_readingperiod_line_view_tree"
+                  editable="bottom">
+              <field name='hydraulicsector_id' widget="many2one_unclickable"
+                     options="{'no_quick_create':True,
+                               'no_create_edit':True}"
+                     attrs="{'readonly':[('configured_line','=',True)]}"/>
+              <field name="configured_line" invisible="1"/>
+              <button type="object" class="oe_read_only"
+                      icon="fa-check-circle"
+                      attrs="{'invisible':
+                              [('configured_line','=',False)],
+                              'readonly':
+                              [('configured_line','=',True)]}"/>
+              <field name='number_of_irrigationsheds'/>
+              <field name='number_of_waterconnections'/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="wua_config_readingperiod_view_form" model="ir.ui.view">
+        <field name="name">Reading Periods (configuration-form view)</field>
+        <field name="model">wua.readingperiod</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <form>
+                <field name="readingperiodline_ids" readonly="1"
+                 context="{'tree_view_ref':
+                 'base_wua_pressurized_irrigation_reading_period.wua_config_readingperiod_line_view_tree'}"/>
+                <footer>
+                   <button name="auxbutton" type="object" string="aux"
+                           invisible="1"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_config_readingperiod_line_view_tree" model="ir.ui.view">
+        <field name="name">Reading-Period Lines (configuration-tree view)</field>
+        <field name="model">wua.readingperiod.line</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_config_readingperiod_line_view_tree">
+                <field name="hydraulicsector_id" widget="many2one_unclickable"/>
+                <field name="number_of_irrigationsheds"
+                       string="Currently selected irrigationsheds"/>
+                <button name="action_select_readingperiod_line_irrigationsheds"
+                        type="object"
+                        string="Select"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_readingperiod_line_irrigationshed_view_tree" model="ir.ui.view">
+        <field name="name">Reading Periods-Line Irrigationshed(tree view)</field>
+        <field name="model">wua.readingperiod.line.irrigationshed</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_pressurized_irrigation_readingperiod_line_irrigationshed_view_tree"
+                  create="false" edit="false" delete="false">
+                  <field name="selected" invisible="1"/>
+                  <field name="irrigationshed_id"/>
+                  <button type="object" class="oe_read_only"
+                          icon="fa-check-circle"
+                          attrs="{'invisible':
+                                  [('selected','=',False)]}"/>
+                  <field name="hydraulicsector_id"/>
+                  <field name="elevation"/>
+                  <field name="number_of_waterconnections"/>
+                  <field name="number_of_parcels"/>
+                  <field name="total_affected_area_official_hec"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_readingperiod_line_irrigationshed_readonly_view_tree" model="ir.ui.view">
+        <field name="name">Reading Periods-Line Irrigationshed(tree view)</field>
+        <field name="model">wua.readingperiod.line.irrigationshed</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_pressurized_irrigation_readingperiod_line_irrigationshed_readonly_view_tree"
+                  create="false" edit="false" delete="false"
+                  colors="orangered:is_visited==False;green:is_visited==True">
+                  <field name="irrigationshed_id"/>
+                  <field name="elevation"/>
+                  <field name="number_of_waterconnections"/>
+                  <field name="total_affected_area_official_hec"/>
+                  <field name="number_of_parcels"/>
+                  <field name="is_visited"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_readingperiod_line_irrigationshed_view_search" model="ir.ui.view">
+        <field name="name">Reading Periods-Line Irrigationshed (search view)</field>
+        <field name="model">wua.readingperiod.line.irrigationshed</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="hydraulicsector_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_irrigationshed_to_readingperiod" model="ir.actions.server">
+        <field name="name">Add to reading period</field>
+        <field name="model_id" ref="model_wua_readingperiod_line_irrigationshed"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.readingperiod.line.irrigationshed'].browse(context['active_ids']).add_to_readingperiod()
+        </field>
+    </record>
+
+    <record id="wua_action_add_irrigationshed_to_readingperiod" model="ir.values">
+        <field name="name">Add irrigationshed to reading period</field>
+        <field name="model">wua.readingperiod.line.irrigationshed</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_irrigationshed_to_readingperiod'))"/>
+    </record>
+
+    <record id="wua_remove_irrigationshed_to_readingperiod" model="ir.actions.server">
+        <field name="name">Remove from reading period</field>
+        <field name="model_id" ref="model_wua_readingperiod_line_irrigationshed"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.readingperiod.line.irrigationshed'].browse(context['active_ids']).remove_from_readingperiod()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_irrigationshed_to_readingperiod" model="ir.values">
+        <field name="name">Remove irrigationshed from reading period</field>
+        <field name="model">wua.readingperiod.line.irrigationshed</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_irrigationshed_to_readingperiod'))"/>
+    </record>
+
+
+
+</odoo>

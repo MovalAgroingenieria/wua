@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_reading_view_form" model="ir.ui.view">
+        <field name="name">Readings (form view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='presconsumption_id']" position="after">
+                <field name="is_field_reading" invisible="1"/>
+                <field name="readingperiod_id" attrs="{'invisible':[('is_field_reading','=',False)]}"/>
+                <field name="watermeter_reader_id" attrs="{'invisible':[('is_field_reading','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_reading_view_search" model="ir.ui.view">
+        <field name="name">Readings (search view)</field>
+        <field name="model">wua.reading</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_reading_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <field name="readingperiod_id"/>
+                <field name="watermeter_reader_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='waterconnection']" position="after">
+                <filter string="Reading Period"
+                 name="readingperiod"
+                 context="{'group_by':'readingperiod_id'}"/>
+                <filter string="Watermeter Reader"
+                 name="watermeterreaderid"
+                 context="{'group_by':'watermeter_reader_id'}"/>
+            </xpath>
+            <xpath expr="//filter[@name='isvalidatedno']" position="after">
+                <separator/>
+                  <filter string="Is Field Reading: Yes" name="isfieldreadingyes"
+                   domain="[('is_field_reading','=',True)]"/>
+                  <filter string="Is Field Reading: No" name="isfieldreadingno"
+                   domain="[('is_field_reading','=',False)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
