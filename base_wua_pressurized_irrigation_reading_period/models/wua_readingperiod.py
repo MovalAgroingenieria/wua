@@ -35,7 +35,7 @@ class WuaReadingperiod(models.Model):
         selection=[
             ('draft', 'Draft'),
             ('configured', 'Configured'),
-            ('open', 'Open'),
+            ('open', 'Opened'),
             ('closed', 'Closed'),
         ],
         string='State',
