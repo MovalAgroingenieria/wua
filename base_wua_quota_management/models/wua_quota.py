@@ -447,25 +447,14 @@ class WuaQuota(models.Model):
     def create_hydricmovements_gravconsumption(self, gravconsumption):
         parcel = gravconsumption.subparcel_id.parcel_id
         product = gravconsumption.product_id
+        volume = gravconsumption.watering_volume_real
         superproduct = None
         if product.product_tmpl_id.superproduct_id:
             superproduct = product.product_tmpl_id.superproduct_id
         if superproduct and gravconsumption.watering_end_time:
             quotaperiod = self._get_quotaperiod(
                 gravconsumption.watering_end_time)
-            volume_perunittime = 0
-            if parcel.irrigationditch_id:
-                volume_perunittime = parcel.irrigationditch_id.water_flow
-            if volume_perunittime == 0:
-                default_volume_perunitime = \
-                    self.env['ir.values'].get_default(
-                        'wua.irrigation.configuration',
-                        'default_volume_perunitime')
-                if default_volume_perunitime:
-                    volume_perunittime = default_volume_perunitime
-            if volume_perunittime > 0 and parcel.area_official > 0:
-                watering_duration = gravconsumption.watering_duration * 60
-                volume = watering_duration * volume_perunittime / 1000
+            if parcel.area_official > 0:
                 for partnerlink in (parcel.partnerlink_ids or []):
                     partner = partnerlink.partner_id
                     volume_of_hydric_consumption = \

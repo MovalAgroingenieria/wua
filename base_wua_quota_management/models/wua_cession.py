@@ -189,7 +189,7 @@ class WuaCession(models.Model):
         string='Quota (receiver)',
         comodel_name='wua.quota',
         store=True,
-        ondelete='restrict',
+        ondelete='cascade',
         compute='_compute_receiver_quota_id')
 
     notes = fields.Html(string='Notes')
