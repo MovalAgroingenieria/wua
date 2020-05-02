@@ -19,21 +19,9 @@ class WuaGravconsumption(models.Model):
         if 'wateringrequest_id' in vals:
             wateringrequest = self.env['wua.wateringrequest'].browse(
                 vals['wateringrequest_id'])
-            wateringperiod = wateringrequest.wateringperiod_id
-            product = wateringrequest.product_id
-            superproduct = None
-            if product.product_tmpl_id.superproduct_id:
-                superproduct = product.product_tmpl_id.superproduct_id
-            quotaperiod = self.env['wua.quota']._get_quotaperiod_for_timeframe(
-                wateringperiod.initial_date, wateringperiod.end_date)
-            if superproduct and quotaperiod:
-                subparcel = self.env['wua.parcel.subparcel'].browse(
-                    vals['subparcel_id'])
-                parcel = subparcel.parcel_id
-                model_quota = self.env['wua.quota']
-                model_quota.create_hydricmovements_gravconsumption_of_request(
-                    quotaperiod, wateringperiod, superproduct, parcel,
-                    vals['watering_duration'], new_gravconsumption)
+            self._generate_hm_from_gravconsumption_of_request(
+                wateringrequest, vals['subparcel_id'],
+                vals['watering_duration'], new_gravconsumption)
         return new_gravconsumption
 
     @api.multi
@@ -48,21 +36,17 @@ class WuaGravconsumption(models.Model):
             # eliminate previous movements.
             if (create_hydricmovements and (not delete_hydricmovements)):
                 create_hydricmovements = False
+            is_modified_consumption_of_request = False
             if (self.is_valid_gravconsumption(updated_gravconsumption) and
                (not delete_hydricmovements) and (not create_hydricmovements)):
-                # Gravity consumptions based on requests.
-                if (updated_gravconsumption.gravconsumption_type ==
-                   'request'):
-                    watering_duration_modified = \
-                        ('watering_duration' in vals and
-                         updated_gravconsumption.state != 'proposed')
-                    to_executed_state = \
-                        ('state in vals' and
-                         updated_gravconsumption.state == 'executed')
-                    if watering_duration_modified or to_executed_state:
-                        delete_hydricmovements = True
-                        create_hydricmovements = True
-                # Gravity consumptions based on distribution.
+                is_gravconsumption_of_type_request = \
+                    updated_gravconsumption.gravconsumption_type == 'request'
+                if (is_gravconsumption_of_type_request and
+                   updated_gravconsumption.state == 'proposed' and
+                   ('watering_duration' in vals or 'subparcel_id' in vals)):
+                    is_modified_consumption_of_request = True
+                    delete_hydricmovements = True
+                    create_hydricmovements = True
                 else:
                     if 'state' in vals:
                         if updated_gravconsumption.state == 'executed':
@@ -80,8 +64,22 @@ class WuaGravconsumption(models.Model):
                     quota_model.delete_hydricmovements_gravconsumption(
                         updated_gravconsumption)
                 if create_hydricmovements:
-                    quota_model.create_hydricmovements_gravconsumption(
-                        updated_gravconsumption)
+                    if (is_modified_consumption_of_request):
+                        subparcel_id = \
+                            updated_gravconsumption.subparcel_id.id
+                        watering_duration = \
+                            updated_gravconsumption.watering_duration
+                        if 'subparcel_id' in vals:
+                            subparcel_id = vals['subparcel_id']
+                        if 'watering_duration' in vals:
+                            watering_duration = vals['watering_duration']
+                        self._generate_hm_from_gravconsumption_of_request(
+                            updated_gravconsumption.wateringrequest_id,
+                            subparcel_id, watering_duration,
+                            updated_gravconsumption)
+                    else:
+                        quota_model.create_hydricmovements_gravconsumption(
+                            updated_gravconsumption)
         return True
 
     @api.multi
@@ -109,3 +107,21 @@ class WuaGravconsumption(models.Model):
     # Hook
     def _force_refresh_hydricmovements(self, updated_gravconsumption, vals):
         return False, False
+
+    def _generate_hm_from_gravconsumption_of_request(
+            self, wateringrequest, subparcel_id, watering_duration,
+            gravconsumption):
+        wateringperiod = wateringrequest.wateringperiod_id
+        product = wateringrequest.product_id
+        superproduct = None
+        if product.product_tmpl_id.superproduct_id:
+            superproduct = product.product_tmpl_id.superproduct_id
+        quotaperiod = self.env['wua.quota']._get_quotaperiod_for_timeframe(
+            wateringperiod.initial_date, wateringperiod.end_date)
+        if superproduct and quotaperiod:
+            subparcel = self.env['wua.parcel.subparcel'].browse(subparcel_id)
+            parcel = subparcel.parcel_id
+            model_quota = self.env['wua.quota']
+            model_quota.create_hydricmovements_gravconsumption_of_request(
+                quotaperiod, wateringperiod, superproduct, parcel,
+                watering_duration, gravconsumption)

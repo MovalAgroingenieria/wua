@@ -287,7 +287,8 @@ class WuaQuota(models.Model):
             [('agriculturalseason_id', '=', agriculturalseason.id),
              ('state', '=', 'generated')])
         for quotaperiod in (generated_quotaperiods or []):
-            quotaperiod.action_apply_multiple_assignment()
+            quotaperiod.with_context(
+                ignore_limits=True).action_apply_multiple_assignment()
 
     # For client classes (individual inputs, cessions, etc), when
     # it is necesary to test the preexisting consumptions, after
@@ -390,8 +391,14 @@ class WuaQuota(models.Model):
     # For client classes (pressurized consumptions...)
     def delete_hydricmovements_presconsumption(self, presconsumption):
         if presconsumption.hydricmovement_ids:
+            quotas_to_refresh = self._get_quotas_of_hydricmovements(
+                presconsumption.hydricmovement_ids)
             presconsumption.hydricmovement_ids.with_context(
                 force_unlink=True).sudo().unlink()
+            if quotas_to_refresh:
+                model_quota = self.env['wua.quota']
+                for quota in quotas_to_refresh:
+                    model_quota.refresh_quota(quota)
 
     # For client classes (gravity consumptions...)
     def create_hydricmovements_gravconsumption_of_request(
@@ -432,7 +439,9 @@ class WuaQuota(models.Model):
                         'volume': volume_of_hydric_consumption,
                         'gravconsumption_id': gravconsumption.id,
                         })
-                    if volume_of_hydric_consumption > available_quota:
+                    ignore_limits = self._context.get('ignore_limits')
+                    if (volume_of_hydric_consumption > available_quota and
+                       (not ignore_limits)):
                         prefix_message = \
                             _('Exceeded quota. It is not possible '
                               'to create this watering request. '
@@ -477,8 +486,14 @@ class WuaQuota(models.Model):
     # For client classes (gravity consumptions...)
     def delete_hydricmovements_gravconsumption(self, gravconsumption):
         if gravconsumption.hydricmovement_ids:
+            quotas_to_refresh = self._get_quotas_of_hydricmovements(
+                gravconsumption.hydricmovement_ids)
             gravconsumption.hydricmovement_ids.with_context(
                 force_unlink=True).sudo().unlink()
+            if quotas_to_refresh:
+                model_quota = self.env['wua.quota']
+                for quota in quotas_to_refresh:
+                    model_quota.refresh_quota(quota)
 
     # For client classes (irrigation reports...)
     def create_hydricmovements_irrigationreport(self, irrigationreport):
@@ -535,8 +550,14 @@ class WuaQuota(models.Model):
     # For client classes (irrigation reports...)
     def delete_hydricmovements_irrigationreport(self, irrigationreport):
         if irrigationreport.hydricmovement_ids:
+            quotas_to_refresh = self._get_quotas_of_hydricmovements(
+                irrigationreport.hydricmovement_ids)
             irrigationreport.hydricmovement_ids.with_context(
                 force_unlink=True).sudo().unlink()
+            if quotas_to_refresh:
+                model_quota = self.env['wua.quota']
+                for quota in quotas_to_refresh:
+                    model_quota.refresh_quota(quota)
 
     def _get_quotaperiod(self, event_time):
         resp = None
@@ -785,4 +806,14 @@ class WuaQuota(models.Model):
                         possible_irrigationreport)
                 if is_valid_irrigationreport:
                     resp.append(possible_irrigationreport)
+        return resp
+
+    def _get_quotas_of_hydricmovements(self, hydricmovements):
+        resp = []
+        if hydricmovements:
+            quota_ids = []
+            for hydricmovement in hydricmovements:
+                quota_ids.append(hydricmovement.quota_id.id)
+            quota_ids = list(set(quota_ids))
+            resp = self.env['wua.quota'].browse(quota_ids)
         return resp
