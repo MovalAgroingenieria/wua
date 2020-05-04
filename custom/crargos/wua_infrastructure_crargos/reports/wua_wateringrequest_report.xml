@@ -160,7 +160,21 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-6" style="border: 1px solid black;">
-                            <t t-if="o.sudo().agent_id.street_name"><span t-field="o.sudo().agent_id.street_name"/> <span t-field="o.sudo().agent_id.street_num"/> <span t-field="o.sudo().agent_id.zip"/></t>
+                            <t t-if="o.sudo().agent_id.street">
+                                <t t-if="o.sudo().agent_id.street_type_show">
+                                    <span t-field="o.sudo().agent_id.street_type_show"></span>
+                                </t>
+                                <span t-field="o.sudo().agent_id.street"/>
+                                <t t-if="o.sudo().agent_id.street_num">
+                                    <span t-field="o.sudo().agent_id.street_num"/>
+                                </t>
+                                <t t-if="o.sudo().agent_id.street2">
+                                    <span t-field="o.sudo().agent_id.street2"/>
+                                </t>
+                                <t t-if="o.sudo().agent_id.zip">
+                                    <span t-field="o.sudo().agent_id.zip"/>
+                                </t>
+                            </t>
                             <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
                         </div>
                         <div class="col-xs-6" style="border: 1px solid black;">
