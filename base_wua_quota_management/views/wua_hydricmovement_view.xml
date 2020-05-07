@@ -192,6 +192,9 @@
                     <filter string="Superproduct"
                             name="grouped_superproduct"
                      context="{'group_by':'superproduct_id'}"/>
+                    <filter string="Type"
+                            name="grouped_type"
+                     context="{'group_by':'type'}"/>                     
                     <filter string="Partner"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>
@@ -200,18 +203,31 @@
         </field>
     </record>
 
+    <record id="wua_hydricmovement_view_pivot" model="ir.ui.view">
+        <field name="name">Hydric Movements (pivot view)</field>
+        <field name="model">wua.hydricmovement</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+                <field name="type"/>
+                <field name="accounting_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_hydricmovement_action"
             model="ir.actions.act_window">
         <field name="name">Hydric Movements</field>
         <field name="res_model">wua.hydricmovement</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
                         'view_id': ref('wua_hydricmovement_view_tree')}),
                 (0, 0, {'view_mode': 'form',
-                        'view_id': ref('wua_hydricmovement_view_form')})]"/>
+                        'view_id': ref('wua_hydricmovement_view_form')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_hydricmovement_view_pivot')})]"/>        
         <field name="search_view_id" ref="wua_hydricmovement_view_search"/>
         <field name="context">
           {'compressed_agriculturalseason': True,
@@ -219,7 +235,7 @@
            'search_default_active_agriculturalseason': True,
            'search_default_grouped_quotaperiod': True,
            'search_default_grouped_superproduct': True,
-           'search_default_grouped_partner': True,}
+           'search_default_grouped_type': True,}
         </field>
     </record>
 

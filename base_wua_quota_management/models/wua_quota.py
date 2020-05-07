@@ -774,6 +774,7 @@ class WuaQuota(models.Model):
             possible_gravconsumptions_of_wateringperiod = \
                 self.env['wua.gravconsumption'].search(
                     [('gravconsumption_type', '=', 'request'),
+                     ('cancelled', '=', False),
                      ('state', '!=', 'executed'),
                      ('wateringperiod_id', '=', wateringperiod.id)])
             if possible_gravconsumptions_of_wateringperiod:

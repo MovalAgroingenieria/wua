@@ -48,16 +48,24 @@ class WuaGravconsumption(models.Model):
                     delete_hydricmovements = True
                     create_hydricmovements = True
                 else:
-                    if 'state' in vals:
-                        if updated_gravconsumption.state == 'executed':
-                            create_hydricmovements = True
+                    if ('state' in vals or 'cancelled' in vals or
+                       'watering_duration' in vals):
+                        if 'cancelled' in vals:
+                            if updated_gravconsumption.cancelled:
+                                delete_hydricmovements = True
+                            else:
+                                if (is_gravconsumption_of_type_request or
+                                   updated_gravconsumption == 'executed'):
+                                    create_hydricmovements = True
                         else:
                             delete_hydricmovements = True
-                    else:
-                        if ('watering_duration' in vals and
-                           updated_gravconsumption.state == 'executed'):
-                            delete_hydricmovements = True
-                            create_hydricmovements = True
+                            if (is_gravconsumption_of_type_request or
+                               updated_gravconsumption.state == 'executed'):
+                                create_hydricmovements = True
+                        if (create_hydricmovements and
+                           is_gravconsumption_of_type_request and
+                           updated_gravconsumption.state != 'executed'):
+                            is_modified_consumption_of_request = True
             if delete_hydricmovements or create_hydricmovements:
                 quota_model = self.env['wua.quota']
                 if delete_hydricmovements:
