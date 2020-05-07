@@ -6,7 +6,11 @@
 Water Users Association: Invoice management
 ===========================================
 
-This module add format to invoicing.
+This module customizes several function accordingly to Torre Abraham WUA instructions.
+ - Custom format to invoicing.
+ - New Irrigation Contract report
+ - New field to fill the Irrigation Contract Terms by agricultural season
+
 
 Description
 ===========
