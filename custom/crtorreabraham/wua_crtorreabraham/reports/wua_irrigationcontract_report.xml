@@ -129,7 +129,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr t-foreach="o.enrolledsubparcel_ids" t-as="l">
+                        <tr t-foreach="o.enrolledsubparcel_ids" t-as="l" style="page-break-inside: avoid;">
                             <td align="left"><span t-field="l.parcel_id"/></td>
                             <td align="left"><span t-field="l.profile"/></td>
                             <td align="left"><span t-field="l.subparceltype_id"/></td>
@@ -165,7 +165,7 @@
                     <tbody>
                         <t t-set="hydric_movements" t-value="o._get_hydricmovements(o.partner_id)"/>
                         <t t-if="hydric_movements">
-                            <tr t-foreach="hydric_movements" t-as="h">
+                            <tr t-foreach="hydric_movements" t-as="h" style="page-break-inside: avoid;">
                                 <td><span t-field="h.superproduct_id.name"/></td>
                                 <td><span t-field="h.description"/></td>
                                 <td align="right"><span t-field="h.accounting_volume"/></td>
@@ -179,27 +179,6 @@
                             </tr>
                         </t>
                     </tbody>
-                </table>
-            </div>
-            <br/><br/>
-
-            <div name="signatures">
-                <table class="table table-condensed" style="margin-left: 30px;">
-                    <col width="20%"/>
-                    <col width="20%"/>
-                    <col width="30%"/>
-                    <col width="30%"/>
-                    <tr>
-                        <td style="border: 0"></td>
-                        <td style="border: 0"></td>
-                        <td style="border: 0" colspan="2" align="center">FROM WATER USERS ASSOCIATION</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 0" align="center">USER</td>
-                        <td style="border: 0" align="center">OWNER</td>
-                        <td style="border: 0" align="center">CHAIRWOMAN</td>
-                        <td style="border: 0" align="center">SECRETARY</td>
-                    </tr>
                 </table>
             </div>
             <p style="page-break-before:always;"/>
