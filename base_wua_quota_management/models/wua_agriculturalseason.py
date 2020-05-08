@@ -233,7 +233,7 @@ class WuaAgriculturalseason(models.Model):
             'src_model': 'wua.agriculturalseason',
             'view_mode': 'form',
             'target': 'new'
-           }
+            }
         return act_window
 
     def get_active_agriculturalseason(self):
@@ -289,7 +289,15 @@ class WuaAgriculturalseason(models.Model):
                         UPDATE wua_individualinput
                         SET of_active_agriculturalseason=TRUE WHERE
                         agriculturalseason_id=""" + str(agriculturalseason_id))
-                # Provisional (pending: cessions...)
+                self.env.cr.execute("""
+                    UPDATE wua_cession
+                    SET of_active_agriculturalseason=FALSE WHERE
+                    of_active_agriculturalseason=TRUE""")
+                if active_agriculturalseason:
+                    self.env.cr.execute("""
+                        UPDATE wua_cession
+                        SET of_active_agriculturalseason=TRUE WHERE
+                        agriculturalseason_id=""" + str(agriculturalseason_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
             except Exception:
