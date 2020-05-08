@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cropplan_view_form" model="ir.ui.view">
+        <field name="name">Crop Plans (form view)</field>
+        <field name="model">wua.cropplan</field>
+        <field name="inherit_id"
+               ref="base_wua_crop_planning.wua_cropplan_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']"
+                   position="replace"/>
+            <xpath expr="//field[@name='number_of_enrolledsubparcels']"
+                   position="replace"/>
+            <xpath expr="//field[@name='is_portal_user']"
+                   position="replace"/>
+            <xpath expr="//field[@name='request_date']"
+                   position="replace"/>
+            <xpath expr="//field[@name='partner_id']"
+                   position="after">
+                <field name="request_date"/>
+                <div attrs="{'invisible': [('html_quota_balance','=',False)]}"
+                     colspan="2">
+                    <br/>
+                    <field name="html_quota_balance" nolabel="1"/>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='agriculturalseason_id']"
+                   position="after">
+                <field name="number_of_enrolledsubparcels"/>
+            </xpath>
+            <xpath expr="//field[@name='order_number']"
+                   position="after">
+                <field name="user_id"
+                       groups="base_wua.group_wua_user"/>
+                <field name="is_portal_user"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
