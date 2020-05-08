@@ -11,7 +11,7 @@
     "license": "AGPL-3",
     "depends": [
         "account_wua",
-        "base_wua_crop_planning",
+        "base_wua_invoicing_crop_planning",
         "base_wua_quota_management",
         "base_wua_pressurized_irrigation",
     ],
