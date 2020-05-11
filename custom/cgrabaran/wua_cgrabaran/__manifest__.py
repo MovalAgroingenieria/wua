@@ -15,6 +15,7 @@
         "base_wua_irrigation_measurement",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "views/wua_parcel_view.xml",
         "views/res_partner_view.xml",
         "views/wua_config_settings_view.xml",
