@@ -136,7 +136,9 @@
                             <td align="left"><span t-field="l.subparceltype_id"/></td>
                             <td align="left"><span t-field="l.cultivation_id"/></td>
                             <td align="center"><span t-field="l.parcel_id.irrigationpointwc_ids[0].waterconnection_id.name"/></td>
-                            <td align="right"><span t-field="l.parcel_id.irrigationpointwc_ids[0].waterconnection_id.last_reading_value"/></td>
+                            <td align="right"><span t-field="l.parcel_id.irrigationpointwc_ids[0].waterconnection_id.last_reading_value"
+                                                    t-options='{"widget": "float", "precision": 2}'/>
+                            </td>
                             <td align="right"><span t-field="l.area_official"/></td>
                         </tr>
                          <tr>
