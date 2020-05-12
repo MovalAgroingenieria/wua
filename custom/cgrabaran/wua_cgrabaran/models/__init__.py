@@ -9,3 +9,5 @@ from . import wua_flowmeter
 from . import wua_irrigation_config_settings
 from . import wua_negative_flowreading
 from . import wua_intakeconsumption
+from . import wua_intake
+from . import wua_presconsumption

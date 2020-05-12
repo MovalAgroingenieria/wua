@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_intake_view_form" model="ir.ui.view">
+        <field name="name">Intake (form view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_primary.wua_intake_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="company_id"
+                       options="{'no_quick_create':True,
+                                 'no_create_edit':True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_intake_view_search" model="ir.ui.view">
+        <field name="name">Intake (search view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_primary.wua_intake_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_freesheet']" position="after">
+                <separator/>            
+                <filter string="Mapped to a company: Yes"
+                 name="mapped_to_company_yes"
+                 domain="[('is_mapped_to_company','=', True)]"/>
+                <filter string="Mapped to a company: No"
+                 name="mapped_to_company_no"
+                 domain="[('is_mapped_to_company','=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="base_wua_infrastructure_primary.wua_intake_action"
+            model="ir.actions.act_window">
+        <field name="context">
+          {'search_default_mapped_to_company_yes': True}
+        </field>            
+    </record>
+
+</odoo>
