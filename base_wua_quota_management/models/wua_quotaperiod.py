@@ -817,7 +817,7 @@ class WuaQuotaperiodLine(models.Model):
          'Existing Quota-Period Line.'),
         ('valid_pos', 'CHECK (pos >= 0)',
          'Incorrect Position Value.'),
-        ('valid_provision', 'CHECK (provision > 0)',
+        ('valid_provision', 'CHECK (provision >= 0)',
          'Incorrect Provision Value.'),
         ]
 
