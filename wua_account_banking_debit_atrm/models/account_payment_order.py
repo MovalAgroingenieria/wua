@@ -8,7 +8,6 @@ from odoo import models, api
 class AccountPaymentOrder(models.Model):
     _inherit = 'account.payment.order'
 
-
     @api.multi
     def generated2uploaded(self):
         res = super(AccountPaymentOrder, self).generated2uploaded()
@@ -18,6 +17,11 @@ class AccountPaymentOrder(models.Model):
                     if bline.atrm_sent:
                         invoice = self.env['account.invoice'].search([
                             ('number', '=', bline.communication)])
+                        move_lines = self.env['account.move.line'].search([
+                            ('invoice_id', '=', invoice.id)])
+                        if move_lines:
+                            for move_line in move_lines:
+                                move_line.atrm_ref = bline.atrm_ref
                         invoice.write({
                             'in_atrm': True,
                             'atrm_ref': bline.atrm_ref,
