@@ -123,7 +123,14 @@ class WuaIrrigationReport(models.Model):
         string='Signature')
 
     delivery_note = fields.Integer(
-        string='Delivery Note')
+        string='Delivery Note',
+        store=True,
+        index=True,
+        compute='_compute_delivery_note')
+
+    delivery_note_str = fields.Char(
+        string='Delivery Note',
+        size=25)
 
     _sql_constraints = [
         ('valid_irrigationreport_time_range',
@@ -142,9 +149,23 @@ class WuaIrrigationReport(models.Model):
          'CHECK (hours >= 0)',
          'The number of hours can not be a negative value.'),
         ('valid_delivery_note',
-         'CHECK (delivery_note > 0)',
-         'The delivery note must be strictly greater than 0')
+         'CHECK (delivery_note >= 0)',
+         'The delivery note must be 0 or a greater number')
         ]
+
+    @api.constrains('delivery_note_str')
+    def _check_delivery_note_str(self):
+        if (self.delivery_note_str):
+            no_positive_number = False
+            try:
+                delivery_note = int(self.delivery_note_str)
+                if (delivery_note < 0):
+                    no_positive_number = True
+            except Exception:
+                no_positive_number = True
+            if (no_positive_number):
+                raise exceptions.ValidationError(_('The delivery note must be'
+                                                   ' 0 or a greater number'))
 
     @api.depends('intake_id', 'agriculturalseason_id')
     def _compute_irrigationreport_number_name(self):
@@ -206,6 +227,14 @@ class WuaIrrigationReport(models.Model):
         for record in self:
             record.of_active_agriculturalseason = \
                 record.agriculturalseason_id.active_agriculturalseason
+
+    @api.depends('delivery_note_str')
+    def _compute_delivery_note(self):
+        for record in self:
+            delivery_note = 0
+            if (record.delivery_note_str):
+                delivery_note = int(record.delivery_note_str)
+            record.delivery_note = delivery_note
 
     @api.onchange('partner_id')
     def _change_partner_id(self):
