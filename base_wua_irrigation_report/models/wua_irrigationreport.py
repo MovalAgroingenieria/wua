@@ -223,6 +223,20 @@ class WuaIrrigationReport(models.Model):
                         last_report[0].end_volume
                     self.initial_volume = end_volume_of_last_record
 
+    @api.onchange('report_initial_time', 'report_end_time')
+    def _change_hours(self):
+        data_in_hours = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'data_in_hours')
+        hours = self.hours
+        if (data_in_hours and self.report_initial_time and self.report_end_time
+                and not self.hours):
+            initial_time = fields.Datetime.from_string(
+                self.report_initial_time)
+            end_time = fields.Datetime.from_string(self.report_end_time)
+            hours = (end_time - initial_time).\
+                total_seconds() / 3600
+        self.hours = hours
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
                         submenu=False):
