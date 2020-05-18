@@ -41,11 +41,10 @@
                                              'no_create_edit':True}"
                                    domain="[('is_wua_partner', '=', True)]"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
-                            <field name="initial_volume" style="width:100px"/>
-                            <field name="end_volume" style="width:100px"/>
-                            <field name="hours" style="width:100px"
-                                   digits="[32, 2]"
-                                   widget="float_time"/>
+                            <field name="parcel_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   domain="[('partner_id', '=', partner_id)]"/>
                         </group>
                         <group name="master_data_right">
                             <field name="irrigationreport_number"
@@ -53,9 +52,15 @@
                             <field name="delivery_note_str"/>
                             <field name="agriculturalseason_id"/>
                             <field name="user_id"/>
+                            <field name="initial_volume" style="width:100px"/>
+                            <field name="end_volume" style="width:100px"/>
+                            <field name="hours" style="width:100px"
+                                   digits="[32, 2]"
+                                   widget="float_time"/>
                             <field name="volume"/>
                             <field name="adjustement_volume" style="width:100px"/>
                             <field name="volume_real"/>
+
                         </group>
                     </group>
                     <group name="slave_data">
@@ -105,6 +110,7 @@
                 <field name="partner_id" string="Partner"/>
                 <field name="irrigationreport_number" string="Number"/>
                 <field name="delivery_note"/>
+                <field name="parcel_id"/>
                 <filter name="active_agriculturalseason"
                         string="Active Agricultural Season"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
@@ -123,6 +129,9 @@
                     <filter name="partner"
                             string="Partner"
                             context="{'group_by':'partner_id'}"/>
+                    <filter name="parcel"
+                            string="Parcel"
+                            context="{'group_by':'parcel_id'}"/>
                 </group>
             </search>
         </field>

@@ -132,6 +132,12 @@ class WuaIrrigationReport(models.Model):
         string='Delivery Note',
         size=25)
 
+    parcel_id = fields.Many2one(
+        string='Parcel',
+        comodel_name='wua.parcel',
+        index=True,
+        ondelete='restrict')
+
     _sql_constraints = [
         ('valid_irrigationreport_time_range',
          'CHECK (report_initial_time <= report_end_time)',
