@@ -7,7 +7,7 @@
     "summary": "In a water users association, management of "
                "irrigation reports",
     "description": "",
-    "version": "10.0.1.1.0",
+    "version": "10.0.1.1.1",
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -21,7 +21,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/wua_irrigation_reports_config_settings_data.xml",
-        "views/resources.xml",        
+        "views/resources.xml",
         "views/wua_irrigationreport_view.xml",
         "views/wua_agriculturalseason_view.xml",
         "views/wua_intake_view.xml",
