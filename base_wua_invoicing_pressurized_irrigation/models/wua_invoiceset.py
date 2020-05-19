@@ -336,11 +336,13 @@ class WuaInvoiceset(models.Model):
             final_reading_label = default_final_reading_label
         if not consumption_label:
             consumption_label = default_consumption_label
-        reading_initial_time = datetime.datetime.strptime(
-            presconsumption.reading_initial_time, '%Y-%m-%d %H:%M:%S')
+        reading_initial_time = fields.Datetime.context_timestamp(
+            self, datetime.datetime.strptime(
+                presconsumption.reading_initial_time, '%Y-%m-%d %H:%M:%S'))
         reading_initial_time = reading_initial_time.strftime('%x')
-        reading_end_time = datetime.datetime.strptime(
-            presconsumption.reading_end_time, '%Y-%m-%d %H:%M:%S')
+        reading_end_time = fields.Datetime.context_timestamp(
+            self, datetime.datetime.strptime(
+                presconsumption.reading_end_time, '%Y-%m-%d %H:%M:%S'))
         reading_end_time = reading_end_time.strftime('%x')
         initial_volume = round(presconsumption.initial_volume)
         end_volume = round(presconsumption.end_volume)
