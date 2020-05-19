@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-24 17:12+0000\n"
-"PO-Revision-Date: 2020-03-24 17:12+0000\n"
+"POT-Creation-Date: 2020-05-19 07:39+0000\n"
+"PO-Revision-Date: 2020-05-19 07:39+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -174,8 +174,8 @@ msgstr "Cancel·la"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigation_configuration
-msgid "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
-msgstr "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
+msgid "Configuration of irrigation with type of water"
+msgstr "Configuració del reg amb tipus d’aigua"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_create_uid
@@ -189,6 +189,7 @@ msgstr "Creat el"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_delivery_note
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_delivery_note_str
 msgid "Delivery Note"
 msgstr "Nombre d'albarà"
 
@@ -353,6 +354,12 @@ msgid "Of active ag.season"
 msgstr "De campanya activa"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_parcel_id
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
+msgid "Parcel"
+msgstr "Parcel·la"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_partner_id
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
 msgid "Partner"
@@ -410,15 +417,17 @@ msgid "State"
 msgstr "Estat"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:274
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:323
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr "Les dates de el part estan fora de la campanya activa."
 
 #. module: base_wua_irrigation_report
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:173
 #: sql_constraint:wua.irrigationreport:0
-msgid "The delivery note must be strictly greater than 0"
-msgstr "El nombre d'albarà ha de ser estrictament superior a zero"
+#, python-format
+msgid "The delivery note must be 0 or a greater number"
+msgstr "El nº d'albarà ha de ser major o igual a 0"
 
 #. module: base_wua_irrigation_report
 #: sql_constraint:wua.irrigationreport:0
@@ -503,8 +512,8 @@ msgid "Water Amount in hours"
 msgstr "Volums d'aigua en hores"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:302
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:312
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:351
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:361
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tens prou permisos per realitzar aquesta acció."
