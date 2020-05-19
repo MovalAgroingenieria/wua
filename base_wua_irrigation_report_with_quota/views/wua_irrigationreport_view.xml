@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationreport_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Report (form view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id"
+               ref="base_wua_irrigation_report.wua_irrigationreport_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']"
+                   position="after">
+                <div attrs="{'invisible': [('html_quota_balance','=',False)]}"
+                     colspan="2">
+                    <br/>
+                    <field name="html_quota_balance" nolabel="1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
