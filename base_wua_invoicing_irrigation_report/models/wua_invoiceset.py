@@ -71,11 +71,15 @@ class WuaInvoiceset(models.Model):
                     'Consumption', language)
                 if not consumption_label:
                     consumption_label = default_consumption_label
-                report_initial_time = datetime.datetime.strptime(
-                    irrigationreport.report_initial_time, '%Y-%m-%d %H:%M:%S')
+                report_initial_time = fields.Datetime.context_timestamp(
+                    self, datetime.datetime.strptime(
+                        irrigationreport.report_initial_time,
+                        '%Y-%m-%d %H:%M:%S'))
                 report_initial_time = report_initial_time.strftime('%x')
-                report_end_time = datetime.datetime.strptime(
-                    irrigationreport.report_end_time, '%Y-%m-%d %H:%M:%S')
+                report_end_time = fields.Datetime.context_timestamp(
+                    self, datetime.datetime.strptime(
+                        irrigationreport.report_end_time,
+                        '%Y-%m-%d %H:%M:%S'))
                 report_end_time = report_end_time.strftime('%x')
                 initial_volume = round(irrigationreport.initial_volume)
                 end_volume = round(irrigationreport.end_volume)
