@@ -794,6 +794,7 @@ class WuaWatering(models.Model):
                 'accum_delay_time_fd_close': 0,
                 'gravconsumption_type': gravconsumption_type,
                 'watering_duration': watering_duration,
+                'empty_bif': False,
                 })
         subparcels_to_irrigate = sorted(
             subparcels_data, key=lambda k: k['hydraulic_order'])
@@ -802,29 +803,43 @@ class WuaWatering(models.Model):
             order='hydraulic_order asc')
         accumulated_delay_time = 0
         current_fd_id = 0
+        ig_blacklist, subparcels_empty_bif, ig_empty_bif = \
+            self.get_ig_blacklist_mapped_to_bif(subparcels_to_irrigate,
+                                                irrigationgates)
+        if subparcels_empty_bif:
+            subparcels_to_irrigate = subparcels_to_irrigate + \
+                subparcels_empty_bif
+            subparcels_to_irrigate = sorted(
+                subparcels_to_irrigate, key=lambda k: k['hydraulic_order'])
         for irrigationgate in irrigationgates:
-            accumulated_delay_time = accumulated_delay_time + \
-                irrigationgate.delay_time
+            if irrigationgate.name in ig_blacklist:
+                continue
+            if irrigationgate.name not in ig_empty_bif:
+                accumulated_delay_time = accumulated_delay_time + \
+                    irrigationgate.delay_time
             item_subparcels_to_irrigate = filter(
                 lambda x: x['hydraulic_order'] ==
                 irrigationgate.hydraulic_order, subparcels_to_irrigate)
             if item_subparcels_to_irrigate:
                 subparcel_to_irrigate = item_subparcels_to_irrigate[0]
-                watering_duration = \
-                    subparcel_to_irrigate['watering_duration']
-                if (subparcel_to_irrigate['gravconsumption_type'] ==
-                   'distribution'):
-                    duration = self.wateringtime_perunitarea * \
-                        subparcel_to_irrigate['area_official'] * \
-                        subparcel_to_irrigate['irrig_duration_coef']
-                    watering_duration = int(round(duration))
-                subparcel_to_irrigate['watering_duration'] = \
-                    watering_duration
+                untrue_subparcel = subparcel_to_irrigate['empty_bif']
+                watering_duration = 0
+                if not untrue_subparcel:
+                    watering_duration = \
+                        subparcel_to_irrigate['watering_duration']
+                    if (subparcel_to_irrigate['gravconsumption_type'] ==
+                       'distribution'):
+                        duration = self.wateringtime_perunitarea * \
+                            subparcel_to_irrigate['area_official'] * \
+                            subparcel_to_irrigate['irrig_duration_coef']
+                        watering_duration = int(round(duration))
+                    subparcel_to_irrigate['watering_duration'] = \
+                        watering_duration
                 # Flow Divider
                 if (subparcel_to_irrigate['flowdivider_id'] !=
                    current_fd_id):
                     # Previous flow divider, if there.
-                    if current_fd_id > 0:
+                    if (current_fd_id > 0 and (not untrue_subparcel)):
                         previous_subparcel_to_irrigate = \
                             self.get_previous_subparcel_to_irrigate(
                                 subparcels_to_irrigate,
@@ -839,30 +854,47 @@ class WuaWatering(models.Model):
                                 previous_subparcel_to_irrigate[
                                     'accum_delay_time_fd_close'] = \
                                     data_fd_close['accum_delay_time_fd_close']
+                                delay_time_end = \
+                                    self.get_delay_time_of_bif_in_extreme(
+                                        previous_subparcel_to_irrigate, True)
                                 accumulated_delay_time = \
                                     (accumulated_delay_time -
+                                     delay_time_end -
                                      data_fd_close['dif_drainage_coefficient'])
                     current_fd_id = subparcel_to_irrigate['flowdivider_id']
                     # Next flow divider, if there.
                     if current_fd_id > 0:
                         accumulated_delay_time = accumulated_delay_time + \
                             subparcel_to_irrigate['fd_delay_time']
-                        subparcel_to_irrigate['accum_delay_time_fd_open'] = \
-                            (accumulated_delay_time - self.
-                             get_delay_time_to_substract_for_fd(
-                                 subparcel_to_irrigate))
+                        if not untrue_subparcel:
+                            subparcel_to_irrigate[
+                                'accum_delay_time_fd_open'] = \
+                                (accumulated_delay_time - self.
+                                 get_delay_time_of_bif_in_extreme(
+                                     subparcel_to_irrigate))
                 subparcel_to_irrigate['accumulated_delay_time'] = \
                     accumulated_delay_time
                 accumulated_delay_time = accumulated_delay_time + \
                     watering_duration
-        # Flow Divider
-        if current_fd_id > 0:
+        # Flow Divider (last, if there)
+        if (current_fd_id > 0 and (not untrue_subparcel)):
             data_fd_close = self.get_accum_delay_time_fd_close(
                 subparcels_to_irrigate, subparcel_to_irrigate)
             if data_fd_close is not None:
                 subparcel_to_irrigate[
                     'accum_delay_time_fd_close'] = \
                     data_fd_close['accum_delay_time_fd_close']
+        # Remove untrue subparcels.
+        if subparcels_empty_bif:
+            subparcels_to_irrigate_depured = []
+            for subparcel in subparcels_to_irrigate:
+                subparcel_id = subparcel['subparcel_id']
+                subparcel_to_remove = \
+                    next((x for x in subparcels_empty_bif
+                          if x['subparcel_id'] == subparcel_id), None)
+                if not subparcel_to_remove:
+                    subparcels_to_irrigate_depured.append(subparcel)
+            subparcels_to_irrigate = subparcels_to_irrigate_depured
         return subparcels_to_irrigate
 
     # Get the last subparcel to irrigate with hydraulic order smaller than
@@ -876,7 +908,8 @@ class WuaWatering(models.Model):
         len_previous_subparcels = len(previous_subparcels)
         if len_previous_subparcels > 0:
             last_subparcel = previous_subparcels[len_previous_subparcels - 1]
-            if last_subparcel['flowdivider_id'] == flowdivider_id:
+            if (last_subparcel['flowdivider_id'] == flowdivider_id and
+               (not last_subparcel['empty_bif'])):
                 resp = last_subparcel
         return resp
 
@@ -900,37 +933,55 @@ class WuaWatering(models.Model):
                      [len_subparcels_of_fd - 1]['accumulated_delay_time'] +
                      subparcels_of_fd
                      [len_subparcels_of_fd - 1]['watering_duration'])
-                interval = ((accumulated_delay_time_last_subparcel -
-                             accumulated_delay_time_first_subparcel) *
-                            drainage_coefficient)
-                interval = int(round(interval))
-                if interval < 0:
-                    interval = 0
-                accum_delay_time_fd_close = \
-                    accumulated_delay_time_first_subparcel + interval
+                interval = (accumulated_delay_time_last_subparcel -
+                            accumulated_delay_time_first_subparcel)
+                total_delay_time_first_subparcel = \
+                    self.get_delay_time_of_bif_in_extreme(
+                        subparcels_of_fd[0])
+                total_watering_duration = \
+                    sum(x['watering_duration'] for x in subparcels_of_fd)
+                total_delay_time_of_bifurcation = \
+                    (interval + total_delay_time_first_subparcel -
+                     total_watering_duration)
                 dif_drainage_coefficient = 0
-                if drainage_coefficient != 1:
+                effective_total_delay_time_of_bifurcation = \
+                    total_delay_time_of_bifurcation
+                if drainage_coefficient < 1:
+                    effective_total_delay_time_of_bifurcation = \
+                        drainage_coefficient * total_delay_time_of_bifurcation
+                    effective_total_delay_time_of_bifurcation = \
+                        int(round(effective_total_delay_time_of_bifurcation))
                     dif_drainage_coefficient = \
-                        (accumulated_delay_time_last_subparcel -
-                         accumulated_delay_time_first_subparcel) - interval
-                # import wdb; wdb.set_trace()
+                        (total_delay_time_of_bifurcation -
+                         effective_total_delay_time_of_bifurcation)
+                accum_delay_time_fd_open = \
+                    subparcels_of_fd[0]['accum_delay_time_fd_open']
+                accum_delay_time_fd_close = \
+                    (accum_delay_time_fd_open +
+                     effective_total_delay_time_of_bifurcation +
+                     total_watering_duration)
                 resp = {
                     'accum_delay_time_fd_close': accum_delay_time_fd_close,
                     'dif_drainage_coefficient': dif_drainage_coefficient
                     }
         return resp
 
-    # Get the time to substract to accumulated delay time of the first
-    # subparcel to irrigate, to obtain the delay time for a opening
-    # flowdivider.
-    def get_delay_time_to_substract_for_fd(self, first_subparcel_of_fd):
+    # Get the sum of delay time before opening the first irrigation-gate
+    # of a bifurcation (end=False), or after closing the last irrigation-gate
+    # of a bifurcation (end=True)
+    def get_delay_time_of_bif_in_extreme(self, subparcel_of_fd, end=False):
         resp = 0
-        flowdivider_id = first_subparcel_of_fd['flowdivider_id']
-        max_hydraulic_order = first_subparcel_of_fd['hydraulic_order']
+        flowdivider_id = subparcel_of_fd['flowdivider_id']
+        hydraulic_order_of_extreme = subparcel_of_fd['hydraulic_order']
         if flowdivider_id > 0:
+            condition_extreme = \
+                ('hydraulic_order', '<=', hydraulic_order_of_extreme)
+            if end:
+                condition_extreme = \
+                    ('hydraulic_order', '>', hydraulic_order_of_extreme)
             irrigationgates = self.env['wua.irrigationgate'].search(
                 [('flowdivider_id', '=', flowdivider_id),
-                 ('hydraulic_order', '<=', max_hydraulic_order)])
+                 condition_extreme])
             for irrigationgate in irrigationgates:
                 resp = resp + irrigationgate.delay_time
         return resp
@@ -1045,7 +1096,7 @@ class WuaWatering(models.Model):
     # Calculation of total accumulated delay time of irrigation gates,
     # from the beginning of the irrigation ditch until a irrigation gate
     # with an exact order hydraulic (the flow dividers will be considered,
-    # but not the "irrigation gates - sons".
+    # but not the "irrigation gates - sons").
     def calculate_total_accumulated_delay_time(self, watering,
                                                last_hydraulic_order):
         total_accumulated_delay_time = 0
@@ -1066,3 +1117,76 @@ class WuaWatering(models.Model):
                 total_accumulated_delay_time = total_accumulated_delay_time + \
                     irrigationgate.delay_time
         watering.total_accumulated_delay_time = total_accumulated_delay_time
+
+    # Function to get the list of irrigation gates of a bifurcation
+    # out of watering.
+    #
+    # A second output parameter is a item to add to "subparcels_to_irrigate".
+    # This item contains a new untrue subparcel, the first subparcel of the
+    # bifurcation (remember: out of watering). The objective is to simulate
+    # the irrigation, thus we can add the delay of the flow-divider.
+    # There will be one item for each bifurcation out of watering.
+    def get_ig_blacklist_mapped_to_bif(self, subparcels, irrigationgates):
+        ig_blacklist = []
+        subparcels_empty_bif = []
+        ig_empty_bif = []
+        if subparcels and irrigationgates:
+            bifurcations_ids = []
+            for irrigationgate in (irrigationgates):
+                if irrigationgate.flowdivider_id:
+                    bifurcations_ids.append(irrigationgate.flowdivider_id.id)
+            if bifurcations_ids:
+                bifurcations_ids = list(set(bifurcations_ids))
+                bifurcations = self.env['wua.flowdivider'].browse(
+                    bifurcations_ids)
+                model_parcel_subparcel = self.env['wua.parcel.subparcel']
+                for bifurcation in bifurcations:
+                    irrigationgates_of_bif = \
+                        self.env['wua.irrigationgate'].search(
+                            [('flowdivider_id', '=', bifurcation.id)],
+                            order='hydraulic_order asc')
+                    empty_bif = True
+                    is_first_subparcel = True
+                    first_subparcel = None
+                    first_ig = None
+                    for irrigationgate in (irrigationgates_of_bif or []):
+                        subparcel = model_parcel_subparcel.search(
+                            [('irrigationgate_id', '=', irrigationgate.id)])
+                        if subparcel:
+                            subparcel = subparcel[0]
+                            if is_first_subparcel:
+                                first_subparcel = subparcel
+                                first_ig = irrigationgate
+                                is_first_subparcel = False
+                            subparcel_to_irrigate = \
+                                next((x for x in subparcels
+                                      if x['subparcel_id'] == subparcel.id),
+                                     None)
+                            if subparcel_to_irrigate:
+                                empty_bif = False
+                                break
+                    if empty_bif and first_subparcel and first_ig:
+                        subparcel_empty_bif = {
+                            'gravconsumption_id': 0,
+                            'irrigationgate_id': first_ig.id,
+                            'hydraulic_order': first_ig.hydraulic_order,
+                            'flowdivider_id': bifurcation.id,
+                            'fd_drainage_coefficient': 1,
+                            'fd_delay_time': bifurcation.delay_time,
+                            'subparcel_id': first_subparcel.id,
+                            'area_official': first_subparcel.area_official,
+                            'irrig_duration_coef': 1,
+                            'accumulated_delay_time': 0,
+                            'accum_delay_time_fd_open': 0,
+                            'accum_delay_time_fd_close': 0,
+                            'gravconsumption_type': 'distribution',
+                            'watering_duration': 0,
+                            'empty_bif': True,
+                            }
+                        subparcels_empty_bif.append(subparcel_empty_bif)
+                        for irrigationgate in irrigationgates_of_bif:
+                            if irrigationgate != first_ig:
+                                ig_blacklist.append(irrigationgate.name)
+                            else:
+                                ig_empty_bif.append(irrigationgate.name)
+        return ig_blacklist, subparcels_empty_bif, ig_empty_bif
