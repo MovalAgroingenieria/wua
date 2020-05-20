@@ -264,7 +264,7 @@ class WuaIrrigationReport(models.Model):
             'wua.irrigation.configuration', 'data_in_hours')
         hours = self.hours
         if (data_in_hours and self.report_initial_time and self.report_end_time
-                and not self.hours):
+           and not self.hours):
             initial_time = fields.Datetime.from_string(
                 self.report_initial_time)
             end_time = fields.Datetime.from_string(self.report_end_time)
