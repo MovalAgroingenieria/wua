@@ -83,6 +83,7 @@ class WuaInvoiceset(models.Model):
                 report_end_time = report_end_time.strftime('%x')
                 date_str = '. '
                 if (report_initial_time == report_end_time):
+                    date_reading_label = _('Date')
                     date_reading_label = self.get_value_from_translation(
                         'base_wua_invoicing_irrigation_report',
                         'Date', language)
