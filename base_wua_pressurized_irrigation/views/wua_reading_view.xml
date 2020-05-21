@@ -37,6 +37,7 @@
                             <field name="irrigationshed_id"/>
                             <field name="hydraulicsector_id"/>
                             <field name="presconsumption_id"/>
+                            <field name="validated"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -67,7 +68,7 @@
                 <field name="presconsumption_volume_real" string="Cons. Real Value (m3)"/>
                 <field name="is_last_reading"/>
                 <field name="presconsumption_id"/>
-                <field name="validated" string="Valid"/>
+                <field name="validated" string="Valid Reading"/>
             </tree>
         </field>
     </record>
@@ -86,9 +87,9 @@
                 <filter string="Normal Reading" name="initreadingno"
                  domain="[('initialization_reading','=',False)]"/>
                 <separator id="validate_separator"/>
-                <filter string="Validated: Yes" name="isvalidatedyes"
+                <filter string="Validated Reading: Yes" name="isvalidatedyes"
                  domain="[('validated','=',True)]"/>
-               <filter string="Validated: No" name="isvalidatedno"
+               <filter string="Validated Reading: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"
@@ -140,9 +141,9 @@
                 <filter string="Normal Reading" name="initreadingno"
                  domain="[('initialization_reading','=',False)]"/>
                 <separator id="validate_separator"/>
-                <filter string="Validated: Yes" name="isvalidatedyes"
+                <filter string="Validated Reading: Yes" name="isvalidatedyes"
                  domain="[('validated','=',True)]"/>
-                <filter string="Validated: No" name="isvalidatedno"
+                <filter string="Validated Reading: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"

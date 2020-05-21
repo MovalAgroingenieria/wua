@@ -97,7 +97,7 @@ class WuaReading(models.Model):
     notes = fields.Html(string='Notes')
 
     validated = fields.Boolean(
-        string='Validated',
+        string='Validated Reading',
         default=True,
         required=True)
 

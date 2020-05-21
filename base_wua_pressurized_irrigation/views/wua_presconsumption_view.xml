@@ -23,6 +23,7 @@
                             <field name="irrigationshed_id"/>
                             <field name="hydraulicsector_id"/>
                             <field name="reading_id"/>
+                            <field name="validated"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -51,7 +52,7 @@
                 <field name="adjustement_volume"/>
                 <field name="volume_real"/>
                 <field name="reading_id"/>
-                <field name="validated" string="Valid"/>
+                <field name="validated" string="Valid consumption"/>
             </tree>
         </field>
     </record>
@@ -69,6 +70,7 @@
                 <field name="adjustement_volume"/>
                 <field name="volume_real"/>
                 <field name="reading_id"/>
+                <field name="validated" string="Valid consumption"/>
             </tree>
         </field>
     </record>
@@ -86,9 +88,9 @@
                 <filter string="With adjustement" name="withadjustement"
                  domain="[('adjustement_volume','!=',0)]"/>
                 <separator/>
-                <filter string="Validated: Yes" name="isvalidatedyes"
+                <filter string="Validated Consumption: Yes" name="isvalidatedyes"
                  domain="[('validated','=',True)]"/>
-                <filter string="Validated: No" name="isvalidatedno"
+                <filter string="Validated Consumption: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season"
@@ -123,7 +125,7 @@
                 <field name="adjustement_volume"/>
                 <field name="volume_real"/>
                 <field name="reading_id"/>
-                <field name="validated" string="Valid"/>
+                <field name="validated" string="Valid Consumption"/>
             </tree>
         </field>
     </record>
@@ -137,9 +139,9 @@
                 <filter string="With adjustement" name="withadjustement"
                  domain="[('adjustement_volume','!=',0)]"/>
                 <separator/>
-                <filter string="Validated: Yes" name="isvalidatedyes"
+                <filter string="Validated Consumption: Yes" name="isvalidatedyes"
                  domain="[('validated','=',True)]"/>
-                <filter string="Validated: No" name="isvalidatedno"
+                <filter string="Validated Consumption: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
                 <group expand="0" string="Group By">
                   <filter string="Agricultural Season"

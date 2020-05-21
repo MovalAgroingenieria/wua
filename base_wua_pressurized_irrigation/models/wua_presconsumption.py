@@ -109,7 +109,7 @@ class WuaPresconsumption(models.Model):
         ondelete='set null')
 
     validated = fields.Boolean(
-        string='Validated',
+        string='Validated Consumption',
         store=True,
         compute='_compute_validated')
 
