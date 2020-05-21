@@ -92,7 +92,7 @@ class WuaReadingperiod(models.Model):
         ('valid_dates',
          'CHECK (initial_date <= end_date )',
          'Incorrect dates.'),
-        ]
+    ]
 
     @api.depends('initial_date', 'end_date')
     def _compute_name(self):
@@ -110,8 +110,8 @@ class WuaReadingperiod(models.Model):
                 while (i < len(agriculturalseasons) and not
                         agriculturalseason):
                     if(((record.initial_date >=
-                        agriculturalseasons[i].initial_date)
-                        and (record.end_date <=
+                        agriculturalseasons[i].initial_date) and
+                            (record.end_date <=
                              agriculturalseasons[i].end_date))):
                         agriculturalseason = agriculturalseasons[i]
                     i = i + 1
@@ -158,8 +158,8 @@ class WuaReadingperiod(models.Model):
                 for rpl in record.readingperiodline_ids:
                     if (rpl.number_of_waterconnections):
                         number_of_waterconnections = \
-                                number_of_waterconnections + \
-                                rpl.number_of_waterconnections
+                            number_of_waterconnections + \
+                            rpl.number_of_waterconnections
             record.number_of_waterconnections = number_of_waterconnections
 
     @api.constrains('initial_date', 'end_date')
@@ -172,8 +172,9 @@ class WuaReadingperiod(models.Model):
             while (i < len(agriculturalseasons) and self.initial_date >=
                     agriculturalseasons[i].initial_date):
                 some_agriculturalseason = ((
-                    (self.initial_date >= agriculturalseasons[i].initial_date)
-                    and (self.end_date <= agriculturalseasons[i].end_date)))
+                    (self.initial_date >=
+                     agriculturalseasons[i].initial_date) and
+                    (self.end_date <= agriculturalseasons[i].end_date)))
                 i = i + 1
             if (not some_agriculturalseason):
                 raise exceptions.ValidationError(_(
@@ -221,7 +222,7 @@ class WuaReadingperiod(models.Model):
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
-            }
+        }
         return act_window
 
     @api.depends('readingperiodline_ids',
@@ -254,7 +255,7 @@ class WuaReadingperiod(models.Model):
             'target': 'new',
             'view_id': view_id.id,
             'res_id': self.id,
-            }
+        }
         return act_window
 
     @api.multi
@@ -391,7 +392,7 @@ class WuaReadingperiodLine(models.Model):
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Reading-Period Line.')
-        ]
+    ]
 
     @api.depends('readingperiod_id', 'hydraulicsector_id')
     def _compute_name(self):
@@ -514,7 +515,7 @@ class WuaReadingperiodLine(models.Model):
             'target': 'current',
             'domain': [["readingperiodline_id", "=", self.id]],
             'limit': 10000000,
-            }
+        }
         return act_window
 
 
@@ -601,12 +602,12 @@ class WuaReadingperiodLineIrrigationshed(models.Model):
     def add_to_readingperiod(self):
         vals = {
             'selected': True,
-            }
+        }
         self.write(vals)
 
     @api.multi
     def remove_from_readingperiod(self):
         vals = {
             'selected': False,
-            }
+        }
         self.write(vals)
