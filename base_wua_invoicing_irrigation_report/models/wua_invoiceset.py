@@ -57,45 +57,41 @@ class WuaInvoiceset(models.Model):
             delivery_note = irrigationreport.delivery_note
             reading_times_info = ''
             default_consumption_label = _('Consumption')
-            data_in_hours = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'data_in_hours')
-            if (not data_in_hours):
-                initial_reading_label = self.get_value_from_translation(
+            # data_in_hours = self.env['ir.values'].get_default(
+            #    'wua.irrigation.configuration', 'data_in_hours')
+            # if (not data_in_hours):
+            initial_reading_label = self.get_value_from_translation(
+                'base_wua_invoicing_irrigation_report',
+                'Start Time', language)
+            final_reading_label = self.get_value_from_translation(
+                'base_wua_invoicing_irrigation_report',
+                'End Time', language)
+            consumption_label = self.get_value_from_translation(
+                'base_wua_invoicing_irrigation_report',
+                'Consumption', language)
+            if not consumption_label:
+                consumption_label = default_consumption_label
+            report_initial_time = datetime.datetime.strptime(
+                irrigationreport.report_initial_time, '%Y-%m-%d %H:%M:%S')
+            report_initial_time = report_initial_time.strftime('%x')
+            report_end_time = datetime.datetime.strptime(
+                irrigationreport.report_end_time, '%Y-%m-%d %H:%M:%S')
+            report_end_time = report_end_time.strftime('%x')
+            date_str = '. '
+            if (report_initial_time == report_end_time):
+                date_reading_label = _('Date')
+                date_reading_label = self.get_value_from_translation(
                     'base_wua_invoicing_irrigation_report',
-                    'Start Time', language)
-                final_reading_label = self.get_value_from_translation(
-                    'base_wua_invoicing_irrigation_report',
-                    'End Time', language)
-                consumption_label = self.get_value_from_translation(
-                    'base_wua_invoicing_irrigation_report',
-                    'Consumption', language)
-                if not consumption_label:
-                    consumption_label = default_consumption_label
-                report_initial_time = fields.Datetime.context_timestamp(
-                    self, datetime.datetime.strptime(
-                        irrigationreport.report_initial_time,
-                        '%Y-%m-%d %H:%M:%S'))
-                report_initial_time = report_initial_time.strftime('%x')
-                report_end_time = fields.Datetime.context_timestamp(
-                    self, datetime.datetime.strptime(
-                        irrigationreport.report_end_time,
-                        '%Y-%m-%d %H:%M:%S'))
-                report_end_time = report_end_time.strftime('%x')
-                date_str = '. '
-                if (report_initial_time == report_end_time):
-                    date_reading_label = _('Date')
-                    date_reading_label = self.get_value_from_translation(
-                        'base_wua_invoicing_irrigation_report',
-                        'Date', language)
-                    date_str = date_reading_label + ': ' + report_end_time + \
-                        '. '
-                else:
-                    date_str = initial_reading_label + ': ' + \
-                        report_initial_time + '. ' + \
-                        final_reading_label + ': ' + report_end_time + '. '
-                volume = irrigationreport.volume_real
-                reading_times_info = date_str + consumption_label + ': ' + \
-                    '{0:.0f}'.format(volume) + ' m3'
+                    'Date', language)
+                date_str = date_reading_label + ': ' + report_end_time + \
+                    '. '
+            else:
+                date_str = initial_reading_label + ': ' + \
+                    report_initial_time + '. ' + \
+                    final_reading_label + ': ' + report_end_time + '. '
+            volume = irrigationreport.volume_real
+            reading_times_info = date_str + consumption_label + ': ' + \
+                '{0:.0f}'.format(volume) + ' m3'
             description = intake_name + ', ' + water_type + ', ' + \
                 _('delivery note num. ') + str(delivery_note) + '. ' + \
                 reading_times_info
