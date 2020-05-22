@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_users_search" model="ir.ui.view">
+        <field name="name">res.users.search</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id"
+               ref="base_wua.view_users_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='iswuauser']" position="attributes">
+                <attribute name="domain">['|', ('is_wua_user','=',True),
+                               ('is_wua_watermeter_reader_user','=',True)]</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

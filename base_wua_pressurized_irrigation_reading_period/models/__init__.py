@@ -4,3 +4,4 @@
 
 from . import wua_readingperiod
 from . import wua_reading
+from . import res_users

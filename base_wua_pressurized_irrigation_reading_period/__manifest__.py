@@ -20,7 +20,8 @@
         "views/resources.xml",
         "views/wua_readingperiod_view.xml",
         "views/wua_reading_view.xml",
-        "views/base_wua_pressurized_irrigation_reading_period_menus.xml"
+        "views/base_wua_pressurized_irrigation_reading_period_menus.xml",
+        "views/res_users_view.xml",
     ],
     "installable": True,
     "application": True,
