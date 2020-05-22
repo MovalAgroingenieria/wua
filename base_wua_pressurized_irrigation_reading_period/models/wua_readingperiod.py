@@ -170,7 +170,8 @@ class WuaReadingperiod(models.Model):
             i = 0
             some_agriculturalseason = False
             while (i < len(agriculturalseasons) and self.initial_date >=
-                    agriculturalseasons[i].initial_date):
+                    agriculturalseasons[i].initial_date and not
+                    some_agriculturalseason):
                 some_agriculturalseason = ((
                     (self.initial_date >=
                      agriculturalseasons[i].initial_date) and
