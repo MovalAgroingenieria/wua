@@ -9,7 +9,8 @@ Reading periods of a Water Users Association
 Description
 ===========
 
-
+This module adds functionality for collecting and managing watermeter
+readings in the field
 
 Credits
 =======
