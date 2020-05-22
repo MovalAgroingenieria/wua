@@ -37,6 +37,7 @@
         "dev_export_excel",
         "web_favicon",
         "base_wua_report",
+        "l10n_es_partner_address_street_type",
     ],
     "data": [
         "security/security.xml",
