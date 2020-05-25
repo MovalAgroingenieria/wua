@@ -2,7 +2,7 @@
 <odoo>
 
     <data noupdate="0">
-        
+
         <record id="group_wua_portal_user" model="res.groups">
             <field name="name">WUA Portal User</field>
             <field name="category_id"
@@ -11,7 +11,7 @@
                 eval="[(4, ref('base.group_portal'))]"/>
             <field name="is_portal">True</field>
         </record>
-        
+
         <record id="group_wua_user" model="res.groups">
             <field name="name">User</field>
             <field name="category_id"
@@ -19,7 +19,7 @@
             <field name="implied_ids"
                 eval="[(4, ref('base.group_user'))]"/>
         </record>
-        
+
         <record id="group_wua_manager" model="res.groups">
             <field name="name">Manager</field>
             <field name="category_id"
@@ -33,13 +33,13 @@
     </data>
 
     <data noupdate="0">
-    
+
         <record id="portal.access_ir_attachment_portal" model="ir.model.access">
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
             <field name="perm_create" eval="False"/>
             <field name="perm_unlink" eval="False"/>
-        </record>    
+        </record>
 
     </data>
 
@@ -47,7 +47,7 @@
 
         <!-- disabled record rules: if the partner is not the main, he must
              also to get his parcels. -->
-             
+
         <!-- <record id="rule_wua_parcel_group_wua_portal_user" model="ir.rule">
             <field name="name">Rule for Wua Portal User on parcels</field>
             <field name="model_id" ref="model_wua_parcel"/>

@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button" position="after">
-                <field name="remotecontrol_enabled" invisible="1"/>            
+                <field name="remotecontrol_enabled" invisible="1"/>
                 <button name="do_synchronization_parcel"
                         type="object" string="Synchronize"
                         icon="fa-rss"
@@ -43,7 +43,7 @@
                 <filter string="In Remote control: No" name="updated_rc_no"
                  domain="[('updated_in_remotecontrol','=',False)]"/>
                 <separator/>
-            </xpath> 
+            </xpath>
         </field>
     </record>
 
@@ -56,7 +56,7 @@
                 action = env['wua.parcel'].do_synchronization_parcels(context['active_ids'], True)
         </field>
     </record>
-    
+
     <record id="wua_action_synchronize_parcel" model="ir.values">
         <field name="name">Synchronize parcels with remote control</field>
         <field name="model">wua.parcel</field>
@@ -75,6 +75,7 @@
               name="Remote C.: Synch. Parcels"
               parent="base_wua.base_wua_technical_menu"
               action="wua_technical_synchronize_parcels_action"
-              sequence="1001"/>
+              sequence="1001"
+              groups="base.group_system"/>
 
 </odoo>

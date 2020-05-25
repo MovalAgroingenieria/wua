@@ -122,7 +122,7 @@
                 <separator/>
                 <filter string="Out of time" name="outoftime"
                  domain="[('out_of_time','=',True)]"/>
-                <separator/> 
+                <separator/>
                 <filter string="State: Draft" name="state_draft"
                         domain="[('state', '=', 'draft')]"/>
                 <filter string="State: Validated" name="state_validated"
@@ -342,7 +342,7 @@
                 action = env['wua.cropplan'].validate_cropplans(context['active_ids'])
         </field>
     </record>
-    
+
     <record id="wua_action_validate_cropplans" model="ir.values">
         <field name="name">Validate</field>
         <field name="model">wua.cropplan</field>
@@ -405,7 +405,8 @@
               name="Calculation: regenerate census"
               parent="base_wua.base_wua_technical_menu"
               action="wua_technical_regenerate_census_action"
-              sequence="7"/>
+              sequence="7"
+              groups="base.group_system"/>
 
     <menuitem id="wua_technical_wua_enrolledsubparcel_menu"
               name="Enrolled subparcels"

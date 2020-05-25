@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base_wua.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
-                <field name="remotecontrol_enabled" invisible="1"/>            
+                <field name="remotecontrol_enabled" invisible="1"/>
                 <header>
                     <button name="do_synchronization_partner"
                             type="object" string="Synchronize"
@@ -48,7 +48,7 @@
                 <filter string="In Remote control: No" name="updated_rc_no"
                  domain="[('updated_in_remotecontrol','=',False)]"/>
                 <separator/>
-            </xpath> 
+            </xpath>
         </field>
     </record>
 
@@ -61,7 +61,7 @@
                 action = env['res.partner'].do_synchronization_partners(context['active_ids'], True)
         </field>
     </record>
-    
+
     <record id="wua_action_synchronize_partners" model="ir.values">
         <field name="name">Synchronize partner with remote control</field>
         <field name="model">res.partner</field>
@@ -80,6 +80,7 @@
               name="Remote C.: Synch. Partners"
               parent="base_wua.base_wua_technical_menu"
               action="wua_technical_synchronize_partners_action"
-              sequence="1001"/>
+              sequence="1001"
+              groups="base.group_system"/>
 
 </odoo>
