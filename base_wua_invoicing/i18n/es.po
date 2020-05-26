@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-27 08:12+0000\n"
-"PO-Revision-Date: 2020-03-27 08:12+0000\n"
+"POT-Creation-Date: 2020-05-26 14:00+0000\n"
+"PO-Revision-Date: 2020-05-26 14:00+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -72,6 +72,11 @@ msgid "<span class=\"o_stat_text\">\n"
 msgstr "<span class=\"o_stat_text\">\n"
 "                                Deuda vencida\n"
 "                            </span>"
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_report_invoice_document
+msgid "<span> in </span>"
+msgstr "<span> en </span>"
 
 #. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.report_credit_control_summary_document
@@ -363,12 +368,12 @@ msgstr "Creado el"
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_currency_id
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_currency_id
 msgid "Currency"
-msgstr "Moneda"
+msgstr "Divisa"
 
 #. module: base_wua_invoicing
 #: selection:account.invoice.line,invoice_type:0
 msgid "Customer Invoice"
-msgstr "Factura de Cliente"
+msgstr "Factura de cliente"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_property_payment_term_invoiceset_id
@@ -378,7 +383,7 @@ msgstr "Plazo de pago de cliente"
 #. module: base_wua_invoicing
 #: selection:account.invoice.line,invoice_type:0
 msgid "Customer Refund"
-msgstr "Devolución de cliente"
+msgstr "Reembolso al cliente"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoicing_configuration_default_annual_seq_prefix
@@ -448,6 +453,11 @@ msgid "Entity (WUA Product Template)"
 msgstr "Elemento (producto C.R.)"
 
 #. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_product_product
+msgid "Entity (WUA Product)"
+msgstr "Elemento (Producto WUA)"
+
+#. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_hydraulicsector
 msgid "Entity (hydraulic sector)"
 msgstr "Elemento (sector hidráulico)"
@@ -455,7 +465,7 @@ msgstr "Elemento (sector hidráulico)"
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Elemento (lote facturas)"
+msgstr "Elemento (lote)"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_irrigationditch
@@ -480,7 +490,7 @@ msgstr "Elemento (línea de lote de facturas)"
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_parcel
 msgid "Entity (parcel of Almassora)"
-msgstr "Elemento (parcela de Almassora)"
+msgstr "ELemento (parcela de Almassora)"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_waterconnection
@@ -574,6 +584,11 @@ msgid "Identifier"
 msgstr "Identificador"
 
 #. module: base_wua_invoicing
+#: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoicing_configuration_show_tax_base
+msgid "If it is marked, the invoices reports will show the tax basein the same table of the tax summary"
+msgstr "Si está marcado, los informes de facturas mostrarán la base imponible en la misma tabla del resumen de impuestos"
+
+#. module: base_wua_invoicing
 #: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoiceset_active
 msgid "If the active field is set to False, it will allow you to hide the register without removing it. For see archived register, go to \"Search-Filters\" in tree view"
 msgstr "Si el campo activo está como falso, ello le permitirá ocultar el registro sin borrarlo. Para ver los registros archivados, ir a \"Buscar-Filtros\" en la vista árbol"
@@ -645,6 +660,8 @@ msgstr "Línea de Factura"
 
 #. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/product.py:108
+#: code:addons/base_wua_invoicing/models/product.py:196
+#: code:addons/base_wua_invoicing/models/product.py:232
 #: code:addons/base_wua_invoicing/models/res_partner.py:54
 #: code:addons/base_wua_invoicing/models/wua_hydraulicsector.py:21
 #: code:addons/base_wua_invoicing/models/wua_irrigationditch.py:21
@@ -1269,6 +1286,11 @@ msgid "Services"
 msgstr "Servicios"
 
 #. module: base_wua_invoicing
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoicing_configuration_show_tax_base
+msgid "Show Tax base in tax summary"
+msgstr "Mostrar Base imponible en resumen impuestos"
+
+#. module: base_wua_invoicing
 #: model:product.template,name:base_wua_invoicing.product_06
 msgid "Standard Irrigation Gate Maintenance"
 msgstr "Mantenimiento de tablacho estándar"
@@ -1361,7 +1383,7 @@ msgstr "Factura de vendedor"
 #. module: base_wua_invoicing
 #: selection:account.invoice.line,invoice_type:0
 msgid "Vendor Refund"
-msgstr "Devolución vendedor"
+msgstr "Reembolso al vendedor"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_product_category_is_wua_master_product_category
@@ -1478,7 +1500,7 @@ msgstr "Año"
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1223
 #, python-format
 msgid "You cannot cancel an invoice-set if there is a invoice which is not draft or cancelled."
-msgstr "No se puede cancelar un lote de facturas si existe alguna factura que no esté canncelada o en borrador"
+msgstr "No puede cancelar lote de facturas si hay una factura que no está en borrador o cancelada."
 
 #. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:291
