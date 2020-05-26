@@ -24,7 +24,6 @@
         "reports/wua_irrigationlabelmultiple_report.xml",
         "reports/wua_watering_report.xml",
         "reports/wua_partner_report.xml",
-        "reports/report_invoice.xml",
     ],
     "installable": True,
     "application": True,
