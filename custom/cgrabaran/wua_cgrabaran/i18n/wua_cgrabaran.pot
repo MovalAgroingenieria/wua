@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-18 17:51+0000\n"
-"PO-Revision-Date: 2020-03-18 17:51+0000\n"
+"POT-Creation-Date: 2020-05-26 16:30+0000\n"
+"PO-Revision-Date: 2020-05-26 16:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -33,6 +33,27 @@ msgstr ""
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Area ("
+msgstr ""
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_res_partner_area_total_company_g
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_res_users_area_total_company_g
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigationreport_area_total_company_g
+msgid "Area of Grupo (ha)"
+msgstr ""
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_res_partner_area_total_company_r
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_res_users_area_total_company_r
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigationreport_area_total_company_r
+msgid "Area of Resurrección (ha)"
+msgstr ""
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_res_partner_area_total_company_t
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_res_users_area_total_company_t
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigationreport_area_total_company_t
+msgid "Area of Trasvase (ha)"
 msgstr ""
 
 #. module: wua_cgrabaran
@@ -83,10 +104,13 @@ msgid "Companies"
 msgstr ""
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_intake_company_id
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_parcel_company_id
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_parcel_partnerlink_company_id
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_presconsumption_company_id
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_parcel_partnerlink_view_search
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_parcel_view_search
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_presconsumption_view_search
 msgid "Company"
 msgstr ""
 
@@ -118,6 +142,11 @@ msgstr ""
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_configuration_company_03
 msgid "Company 3"
+msgstr ""
+
+#. module: wua_cgrabaran
+#: sql_constraint:wua.intake:0
+msgid "Company assigned to another intake."
 msgstr ""
 
 #. module: wua_cgrabaran
@@ -193,8 +222,23 @@ msgid "Entity (intake consumption)"
 msgstr ""
 
 #. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_intake
+msgid "Entity (intake)"
+msgstr ""
+
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_invoiceset_line
+msgid "Entity (line of a WUA invoice set)"
+msgstr ""
+
+#. module: wua_cgrabaran
 #: model:ir.model,name:wua_cgrabaran.model_wua_negative_flowreading
 msgid "Entity (negative reading)"
+msgstr ""
+
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_presconsumption
+msgid "Entity (pressure consumption)"
 msgstr ""
 
 #. module: wua_cgrabaran
@@ -301,6 +345,24 @@ msgstr ""
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
 msgid "Manual Introduction: Yes"
+msgstr ""
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_intake_is_mapped_to_company
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_presconsumption_is_mapped_to_company
+msgid "Mapped to a company"
+msgstr ""
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intake_view_search
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_presconsumption_view_search
+msgid "Mapped to a company: No"
+msgstr ""
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intake_view_search
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_presconsumption_view_search
+msgid "Mapped to a company: Yes"
 msgstr ""
 
 #. module: wua_cgrabaran
@@ -520,6 +582,11 @@ msgid "Value (m3)"
 msgstr ""
 
 #. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_irrigationreport
+msgid "WUA Irrigation Report"
+msgstr ""
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Water (%)"
 msgstr ""
@@ -539,8 +606,3 @@ msgstr ""
 msgid "if it is marked, it is required set the next url (SERVER URL)"
 msgstr ""
 
-#. module: wua_cgrabaran
-#: code:addons/wua_cgrabaran/models/res_partner.py:195
-#, python-format
-msgid "Votes of"
-msgstr ""
