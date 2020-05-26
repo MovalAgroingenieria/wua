@@ -48,6 +48,13 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If the area unit type is not the official area unit,\
             indicate here equivalence factor')
 
+    show_tax_base = fields.Boolean(
+        string='Show Tax base in tax summary',
+        default=False,
+        required=True,
+        help='If it is marked, the invoices reports will show the tax base'
+             'in the same table of the tax summary')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -69,3 +76,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'invoicing_area_measurement_equivalence',
                            self.invoicing_area_measurement_equivalence)
+        values.set_default('wua.invoicing.configuration',
+                           'show_tax_base',
+                           self.show_tax_base)

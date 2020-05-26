@@ -29,6 +29,7 @@
         "data/product_category_data.xml",
         "data/wua_invoicing_config_settings_data.xml",
         "reports/report_credit_control_summary.xml",
+        "reports/report_invoice.xml",
         "views/resources.xml",
         "views/product_views.xml",
         "views/wua_invoiceset_view.xml",
