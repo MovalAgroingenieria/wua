@@ -11,7 +11,7 @@ class WuaInvoicesetLine(models.Model):
 
     def populate_items_select_irrigationreport(self, product_id):
         company = self.env.user.company_id
-        current_intake_id = ""
+        current_intake_id = 0
         if not company.parent_id:
             super(WuaInvoicesetLine,
                   self).populate_items_select_irrigationreport(product_id)
@@ -37,14 +37,16 @@ class WuaInvoicesetLine(models.Model):
                     irrigationreport_number,report_initial_time,
                     report_end_time,intake_id,product_id,partner_id,
                     volume_real)
-                    SELECT nextval('wua_invoiceset_line_irrigationreport_id_seq'),
+                    SELECT
+                    nextval('wua_invoiceset_line_irrigationreport_id_seq'),
                     %s,%s,now(),now(),%s,i.id,TRUE,i.irrigationreport_number,
                     i.report_initial_time,i.report_end_time,i.intake_id,
                     i.product_id,i.partner_id,i.volume_real
                     FROM wua_irrigationreport i INNER JOIN
                     wua_agriculturalseason a ON i.agriculturalseason_id = a.id
                     WHERE i.is_validated AND a.active_agriculturalseason AND
-                    i.invoiced=FALSE AND i.product_id=%s AND i.intake_id=%s""", (
+                    i.invoiced=FALSE AND i.product_id=%s AND
+                    i.intake_id=%s""", (
                         user_id, user_id, invoicesetline_id, product_id,
                         current_intake_id))
                     self.env.cr.commit()

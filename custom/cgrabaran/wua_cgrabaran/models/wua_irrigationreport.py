@@ -21,7 +21,7 @@ class WuaIrrigationreport(models.Model):
         related='partner_id.area_total_company_t')
 
     @api.onchange('partner_id')
-    def _compute_intake_id(self):
+    def _onchange_intake_id(self):
         for record in self:
             intakes = []
             if record.area_total_company_g != 0.0:
