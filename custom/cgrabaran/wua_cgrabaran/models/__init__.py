@@ -13,3 +13,4 @@ from . import wua_intake
 from . import wua_presconsumption
 from . import wua_irrigationreport
 from . import wua_invoiceset
+from . import wua_waterconnection

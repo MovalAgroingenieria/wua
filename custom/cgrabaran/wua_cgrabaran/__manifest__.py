@@ -32,6 +32,8 @@
         "views/wua_intake_view.xml",
         "views/wua_presconsumption_view.xml",
         "views/wua_irrigationreport_view.xml",
+        "views/wua_waterconnection_view.xml",
+        "views/wua_invoiceset_view.xml",
         "reports/wua_partner_report.xml",
     ],
     'qweb': ['static/src/xml/button_import_flowreadings.xml'],

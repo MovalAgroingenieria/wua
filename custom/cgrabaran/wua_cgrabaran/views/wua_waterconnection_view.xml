@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='total_affected_area_official']" position="after">
+                <field name="area_total_company_g"/>
+                <field name="area_total_company_r"/>
+                <field name="area_total_company_t"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
