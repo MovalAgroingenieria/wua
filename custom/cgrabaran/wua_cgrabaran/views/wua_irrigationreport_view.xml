@@ -6,23 +6,18 @@
         <field name="model">wua.irrigationreport</field>
         <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='master_data_left']" position="replace">
-                <group name="master_data_left">
-                    <field name="id" invisible="1"/>
-                    <field name="partner_id" options="{'no_quick_create':True, 'no_create_edit':True}"
-                           domain="[('is_wua_partner', '=', True)]" attrs="{'readonly': [('id', '>', 0)]}"/>
-                    <field name="area_total_company_g"/>
-                    <field name="area_total_company_r"/>
-                    <field name="area_total_company_t"/>
-                    <field name="intake_id" options="{'no_quick_create':True, 'no_create_edit':True}"
-                           attrs="{'readonly': [('id', '>', 0)]}"/>
-                    <field name="report_initial_time" attrs="{'readonly': [('id', '>', 0)]}"/>
-                    <field name="report_end_time" attrs="{'readonly': [('id', '>', 0)]}"/>
-                    <field name="hours" digits="[32, 2]" widget="float_time"/>
-                </group>
+            <xpath expr="//field[@name='hours']" position="replace"/>
+            <xpath expr="//field[@name='partner_id']" position="replace"/>
+            <xpath expr="//field[@name='parcel_id']" position="replace"/>
+            <xpath expr="//field[@name='intake_id']" position="before">
+                <field name="partner_id" options="{'no_quick_create':True, 'no_create_edit':True}"
+                       domain="[('is_wua_partner', '=', True)]" attrs="{'readonly': [('id', '>', 0)]}"/>
+                <field name="area_total_company_g"/>
+                <field name="area_total_company_r"/>
+                <field name="area_total_company_t"/>
             </xpath>
-            <xpath expr="//group[@name='master_data_right']//field[@name='hours']" position="attributes">
-                <attribute name="invisible">1</attribute>
+            <xpath expr="//field[@name='report_end_time']" position="after">
+                    <field name="hours" digits="[32, 2]" widget="float_time"/>
             </xpath>
         </field>
     </record>
