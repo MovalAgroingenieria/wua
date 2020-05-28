@@ -48,6 +48,21 @@ class ResPartner(models.Model):
         string="Area, as owner company_03 (hectares)",
         digits=(32, 4))
 
+    area_total_company_g = fields.Float(
+        string='Area of Grupo (ha)',
+        digits=(32, 4),
+        compute="_compute_area_total_company_g")
+
+    area_total_company_r = fields.Float(
+        string='Area of Resurrección (ha)',
+        digits=(32, 4),
+        compute="_compute_area_total_company_r")
+
+    area_total_company_t = fields.Float(
+        string='Area of Trasvase (ha)',
+        digits=(32, 4),
+        compute="_compute_area_total_company_t")
+
     @api.depends('parcel_owner_number_company_01',
                  'parcel_owner_area_hec_company_01')
     def _compute_number_of_votes_company_01(self):
@@ -176,6 +191,48 @@ class ResPartner(models.Model):
                             votes = self.assign_votes_by_range(
                                 area_for_votes, polling_system_intervals)
         self.number_of_votes_company_03 = votes
+
+    @api.multi
+    def _compute_area_total_company_g(self):
+        company_01_id = self.env['ir.values'].get_default(
+            'wua.configuration', 'company_01')
+        for record in self:
+            links_company_01 = record.env['wua.parcel.partnerlink'].search([
+                ('partner_id', '=', record.id),
+                ('company_id', '=', company_01_id)])
+            area_total_company_g = 0.0
+            if links_company_01:
+                for link in links_company_01:
+                    area_total_company_g += link.area_official_water_costs_net
+            record.area_total_company_g = area_total_company_g
+
+    @api.multi
+    def _compute_area_total_company_r(self):
+        company_02_id = self.env['ir.values'].get_default(
+            'wua.configuration', 'company_02')
+        for record in self:
+            links_company_02 = record.env['wua.parcel.partnerlink'].search([
+                ('partner_id', '=', record.id),
+                ('company_id', '=', company_02_id)])
+            area_total_company_r = 0.0
+            if links_company_02:
+                for link in links_company_02:
+                    area_total_company_r += link.area_official_water_costs_net
+            record.area_total_company_r = area_total_company_r
+
+    @api.multi
+    def _compute_area_total_company_t(self):
+        company_03_id = self.env['ir.values'].get_default(
+            'wua.configuration', 'company_03')
+        for record in self:
+            links_company_03 = record.env['wua.parcel.partnerlink'].search([
+                ('partner_id', '=', record.id),
+                ('company_id', '=', company_03_id)])
+            area_total_company_t = 0.0
+            if links_company_03:
+                for link in links_company_03:
+                    area_total_company_t += link.area_official_water_costs_net
+            record.area_total_company_t = area_total_company_t
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,

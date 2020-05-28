@@ -11,3 +11,5 @@ from . import wua_negative_flowreading
 from . import wua_intakeconsumption
 from . import wua_intake
 from . import wua_presconsumption
+from . import wua_irrigationreport
+from . import wua_invoiceset
