@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+  <record id="wua_intakeconsumption_view_form" model="ir.ui.view">
+      <field name="name">Intakeconsumptions (form view)</field>
+      <field name="model">wua.intakeconsumption</field>
+      <field name="inherit_id"
+       ref="base_wua_irrigation_measurement.wua_intakeconsumption_view_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//field[@name='flowreading_id']" position="after">
+              <field name="is_toll"/>
+          </xpath>
+      </field>
+  </record>
+
     <record id="wua_intakeconsumption_view_tree" model="ir.ui.view">
         <field name="name">Intakeconsumptions (tree view)</field>
         <field name="model">wua.intakeconsumption</field>
@@ -9,6 +21,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='flowreading_id']" position="after">
                 <field name="validated" string="Valid"/>
+                <field name="is_toll" string="Toll"/>
             </xpath>
         </field>
     </record>
@@ -25,6 +38,12 @@
                  domain="[('validated','=',True)]"/>
                 <filter string="Validated: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
+                <separator/>
+                <filter string="Toll: Yes" name="istollyes"
+                 domain="[('is_toll','=',True)]"/>
+                <filter string="Toll: No" name="istollno"
+                 domain="[('is_toll','=',False)]"/>
+                <separator/>
             </xpath>
         </field>
     </record>
