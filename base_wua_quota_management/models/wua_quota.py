@@ -499,10 +499,10 @@ class WuaQuota(models.Model):
     def create_hydricmovements_irrigationreport(self, irrigationreport):
         quotaperiod = self._get_quotaperiod(irrigationreport.report_end_time)
         if quotaperiod:
-            intake = irrigationreport.intake_id
             superproduct_id = 0
-            if (intake.product_id and intake.product_id.superproduct_id):
-                superproduct_id = intake.product_id.superproduct_id.id
+            if irrigationreport.product_id.superproduct_id:
+                superproduct_id = \
+                    irrigationreport.product_id.superproduct_id.id
             if superproduct_id:
                 hydric_consumptions = []
                 hydric_consumptions.append({
