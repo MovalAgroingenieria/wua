@@ -325,6 +325,9 @@ class WuaQuota(models.Model):
                waterconnection.product_id.superproduct_id):
                 superproduct_id = \
                     waterconnection.product_id.superproduct_id.id
+                reduction_factor = waterconnection.product_id.reduction_factor
+                if reduction_factor < 1:
+                    volume = reduction_factor * volume
             if (total_area_official > 0 and superproduct_id > 0):
                 data_parcels = []
                 hydric_consumptions = []
@@ -403,7 +406,7 @@ class WuaQuota(models.Model):
     # For client classes (gravity consumptions...)
     def create_hydricmovements_gravconsumption_of_request(
             self, quotaperiod, wateringperiod, superproduct, parcel,
-            watering_duration, gravconsumption):
+            watering_duration, gravconsumption, reduction_factor=1):
         volume_perunittime = 0
         if parcel.irrigationditch_id:
             volume_perunittime = parcel.irrigationditch_id.water_flow
@@ -417,6 +420,8 @@ class WuaQuota(models.Model):
         if volume_perunittime > 0 and parcel.area_official > 0:
             watering_duration = watering_duration * 60
             volume = watering_duration * volume_perunittime / 1000
+            if reduction_factor < 1:
+                volume = reduction_factor * volume
             for partnerlink in (parcel.partnerlink_ids or []):
                 partner = partnerlink.partner_id
                 volume_of_hydric_consumption = \
@@ -458,12 +463,15 @@ class WuaQuota(models.Model):
         product = gravconsumption.product_id
         volume = gravconsumption.watering_volume_real
         superproduct = None
-        if product.product_tmpl_id.superproduct_id:
-            superproduct = product.product_tmpl_id.superproduct_id
+        if product.superproduct_id:
+            superproduct = product.superproduct_id
         if superproduct and gravconsumption.watering_end_time:
             quotaperiod = self._get_quotaperiod(
                 gravconsumption.watering_end_time)
             if parcel.area_official > 0:
+                reduction_factor = product.reduction_factor
+                if reduction_factor < 1:
+                    volume = reduction_factor * volume
                 for partnerlink in (parcel.partnerlink_ids or []):
                     partner = partnerlink.partner_id
                     volume_of_hydric_consumption = \
@@ -504,12 +512,16 @@ class WuaQuota(models.Model):
                 superproduct_id = \
                     irrigationreport.product_id.superproduct_id.id
             if superproduct_id:
+                volume = irrigationreport.volume_real
+                reduction_factor = irrigationreport.product_id.reduction_factor
+                if reduction_factor < 1:
+                    volume = reduction_factor * volume
                 hydric_consumptions = []
                 hydric_consumptions.append({
                     'quotaperiod_id': quotaperiod.id,
                     'superproduct_id': superproduct_id,
                     'partner_id': irrigationreport.partner_id.id,
-                    'volume': irrigationreport.volume_real,
+                    'volume': volume,
                     'pos': 0,
                     })
                 if hydric_consumptions:
@@ -686,8 +698,8 @@ class WuaQuota(models.Model):
             wateringperiod = wateringrequest.wateringperiod_id
             product = wateringrequest.product_id
             superproduct = None
-            if product.product_tmpl_id.superproduct_id:
-                superproduct = product.product_tmpl_id.superproduct_id
+            if product.superproduct_id:
+                superproduct = product.superproduct_id
             if superproduct:
                 subparcel = self.env['wua.parcel.subparcel'].browse(
                     gravconsumption.subparcel_id.id)
@@ -695,7 +707,8 @@ class WuaQuota(models.Model):
                 model_quota = self.env['wua.quota']
                 model_quota.create_hydricmovements_gravconsumption_of_request(
                     quotaperiod, wateringperiod, superproduct, parcel,
-                    gravconsumption.watering_duration, gravconsumption)
+                    gravconsumption.watering_duration, gravconsumption,
+                    product.reduction_factor)
 
     def _create_hydricmovements_of_preexisting_irrigationreports(self,
                                                                  quotaperiod):

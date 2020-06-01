@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_individualinput_category_view_form" model="ir.ui.view">
+        <field name="name">Categories of individual inputs (form view)</field>
+        <field name="model">wua.individualinput.category</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_get_individualinputs"
+                                type="object" class="oe_stat_button"
+                                icon="fa-th">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Individual</span>
+                                <span class="o_stat_text">Inputs</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label class="oe_edit_only" for="name"
+                               string="Category Name"/>
+                        <h1><field name="name"
+                             placeholder="Category Name"
+                             attrs="{'readonly': [('category_code','=',1)]}"/></h1>
+                        <div name="other_master_data">
+                            <div>
+                                <label for="category_code"/>
+                                <field name="category_code"
+                                       style="width:100px"
+                                       attrs="{'readonly': [('id','>',0)]}"/>
+                            </div>
+                            <div>
+                                <label for="effective_factor"/>
+                                <field name="effective_factor"
+                                       style="width:100px"
+                                       attrs="{'readonly': [('category_code','=',1)]}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <notebook name="slave_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_individualinput_category_view_tree" model="ir.ui.view">
+        <field name="name">Categories of individual inputs (tree view)</field>
+        <field name="model">wua.individualinput.category</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_quota_management_individualinput_category_view_tree">
+                <field name="category_code"/>
+                <field name="name"/>
+                <field name="effective_factor"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_individualinput_category_view_search" model="ir.ui.view">
+        <field name="name">Categories of individual inputs (search view)</field>
+        <field name="model">wua.individualinput.category</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="category_code"/>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_individualinput_category_action"
+            model="ir.actions.act_window">
+        <field name="name">Categories of individual inputs</field>
+        <field name="res_model">wua.individualinput.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_individualinput_category_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_individualinput_category_view_form')})]"/>
+        <field name="search_view_id" ref="wua_individualinput_category_view_search"/>
+    </record>
+
+    <menuitem id="individualinput_category_menu"
+              name="Cat. (indiv. inputs)"
+              parent="configuration_menu"
+              sequence="2"
+              action="wua_individualinput_category_action"/>
+
+</odoo>

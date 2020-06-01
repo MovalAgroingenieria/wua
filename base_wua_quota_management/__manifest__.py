@@ -21,6 +21,7 @@
         "security/ir.model.access.csv",
         "data/wua_quotas_config_settings_data.xml",
         "data/wua_superproduct_data.xml",
+        "data/wua_individualinput_category_data.xml",
         "wizard/wizard_generate_quotaperiods_view.xml",
         "wizard/wizard_set_activeagriculturalseason_view.xml",
         "wizard/wizard_recalculate_quotas_view.xml",
@@ -39,7 +40,8 @@
         "views/wua_hydricmovement_view.xml",
         "views/wua_superproduct_dashboard_view.xml",
         "views/wua_individualinput_view.xml",
-        "views/wua_cession_view.xml",],
+        "views/wua_cession_view.xml",
+        "views/wua_individualinput_category_view.xml",],
     "external_dependencies": {
         "python": ["numpy", "bokeh"]},        
     "post_init_hook": "post_init_hook",

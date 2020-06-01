@@ -20,3 +20,4 @@ from . import wua_reading
 from . import wua_gravconsumption
 from . import wua_wateringrequest
 from . import wua_irrigationreport
+from . import wua_individualinput_category

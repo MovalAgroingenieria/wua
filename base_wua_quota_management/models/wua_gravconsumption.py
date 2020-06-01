@@ -122,8 +122,8 @@ class WuaGravconsumption(models.Model):
         wateringperiod = wateringrequest.wateringperiod_id
         product = wateringrequest.product_id
         superproduct = None
-        if product.product_tmpl_id.superproduct_id:
-            superproduct = product.product_tmpl_id.superproduct_id
+        if product.superproduct_id:
+            superproduct = product.superproduct_id
         quotaperiod = self.env['wua.quota']._get_quotaperiod_for_timeframe(
             wateringperiod.initial_date, wateringperiod.end_date)
         if superproduct and quotaperiod:
@@ -132,4 +132,4 @@ class WuaGravconsumption(models.Model):
             model_quota = self.env['wua.quota']
             model_quota.create_hydricmovements_gravconsumption_of_request(
                 quotaperiod, wateringperiod, superproduct, parcel,
-                watering_duration, gravconsumption)
+                watering_duration, gravconsumption, product.reduction_factor)
