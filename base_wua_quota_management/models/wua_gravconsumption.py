@@ -43,7 +43,8 @@ class WuaGravconsumption(models.Model):
                     updated_gravconsumption.gravconsumption_type == 'request'
                 if (is_gravconsumption_of_type_request and
                    updated_gravconsumption.state == 'proposed' and
-                   ('watering_duration' in vals or 'subparcel_id' in vals)):
+                   ('watering_duration' in vals or 'subparcel_id' in vals) and
+                   ('watering_initial_time' not in vals)):
                     is_modified_consumption_of_request = True
                     delete_hydricmovements = True
                     create_hydricmovements = True
@@ -64,7 +65,8 @@ class WuaGravconsumption(models.Model):
                                 create_hydricmovements = True
                         if (create_hydricmovements and
                            is_gravconsumption_of_type_request and
-                           updated_gravconsumption.state != 'executed'):
+                           updated_gravconsumption.state != 'executed' and
+                           ('watering_initial_time' not in vals)):
                             is_modified_consumption_of_request = True
             if delete_hydricmovements or create_hydricmovements:
                 quota_model = self.env['wua.quota']

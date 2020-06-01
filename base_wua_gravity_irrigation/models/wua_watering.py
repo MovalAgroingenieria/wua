@@ -839,7 +839,7 @@ class WuaWatering(models.Model):
                 if (subparcel_to_irrigate['flowdivider_id'] !=
                    current_fd_id):
                     # Previous flow divider, if there.
-                    if (current_fd_id > 0 and (not untrue_subparcel)):
+                    if current_fd_id > 0:
                         previous_subparcel_to_irrigate = \
                             self.get_previous_subparcel_to_irrigate(
                                 subparcels_to_irrigate,
