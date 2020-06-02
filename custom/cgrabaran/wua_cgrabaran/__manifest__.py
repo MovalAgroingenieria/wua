@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association Infrastructure (C.G.R. Abarán)",
     "summary": "Moval-Regadío customization for C.G.R. Abarán",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -20,6 +20,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "views/wua_agriculturalseason_view.xml",
         "views/wua_parcel_view.xml",
         "views/res_partner_view.xml",
         "views/wua_config_settings_view.xml",
@@ -35,6 +36,7 @@
         "views/wua_waterconnection_view.xml",
         "views/wua_invoiceset_view.xml",
         "reports/wua_partner_report.xml",
+        "reports/wua_sum_intakeconsumption_invoicing_report.xml",
     ],
     'qweb': ['static/src/xml/button_import_flowreadings.xml'],
     "installable": True,

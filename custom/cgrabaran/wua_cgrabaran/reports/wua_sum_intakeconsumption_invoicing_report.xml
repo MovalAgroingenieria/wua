@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner report (droplist menu) -->
+    <report
+        id="wua_sum_intakeconsumption_invoicing_report"
+        string="Consumptions balance report"
+        model="wua.agriculturalseason"
+        report_type="qweb-pdf"
+        file="wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document"
+        name="wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document"
+        paperformat="base_wua_report.paperformat_wua_reports"
+    />
+
+    <!-- Wua partner report -->
+    <template id="wua_sum_intakeconsumption_invoicing_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+                      <t t-set="months_data" t-value="o.env['wua.sum.intakeconsumption.invoicing'].search([('agriculturalseason_id','=', o.id)])"/>
+                      <t t-set="company_01_name" t-value="o.env['ir.values'].get_default(
+                                'wua.configuration', 'company_01_abv')"/>
+                      <t t-set="company_02_name" t-value="o.env['ir.values'].get_default(
+                                'wua.configuration', 'company_02_abv')"/>
+                      <t t-set="company_03_name" t-value="o.env['ir.values'].get_default(
+                                'wua.configuration', 'company_03_abv')"/>
+                      <t t-set="company_01_intakeconsumption_total" t-value="0.0000"/>
+                      <t t-set="company_02_intakeconsumption_total" t-value="0.0000"/>
+                      <t t-set="company_03_intakeconsumption_total" t-value="0.0000"/>
+                      <t t-set="company_01_invoicing_total" t-value="0.0000"/>
+                      <t t-set="company_02_invoicing_total" t-value="0.0000"/>
+                      <t t-set="company_03_invoicing_total" t-value="0.0000"/>
+                      <div name="consumption_balance">
+                          <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                              <div class="col-xs-12 text-center" style="background: lightgray; padding: 1px 16px;">
+                                <div name="title">
+                                  <span>BALANCE INTAKE/INVOICING AGRICULTURALSEASON </span><span t-esc="o.description"/>
+                                </div>
+                              </div>
+                          </div>
+                          <div class="row" style="margin-top: 4px;">
+                            <table name="consumption_balance_table" class="table table-condensed" style="border: 1px solid black; border-collapse: collapse;">
+                              <thead name="months_header" style="background-color: #e6e6e6; border: 1px solid black;">
+                                <tr>
+                                  <th class="text-center"></th>
+                                  <th class="text-center" colspan="3"><span t-esc="company_01_name"/></th>
+                                  <th class="text-center" colspan="3"><span t-esc="company_02_name"/></th>
+                                  <th class="text-center" colspan="3"><span t-esc="company_03_name"/></th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">Month</th>
+                                    <th class="text-center">Intake Consumption</th>
+                                    <th class="text-center">Invoiced Consumption</th>
+                                    <th class="text-center">Difference</th>
+                                    <th class="text-center">Intake Consumption</th>
+                                    <th class="text-center">Invoiced Consumption</th>
+                                    <th class="text-center">Difference</th>
+                                    <th class="text-center">Intake Consumption</th>
+                                    <th class="text-center">Invoiced Consumption</th>
+                                    <th class="text-center">Difference</th>
+                                </tr>
+                              </thead>
+                              <tbody name="months_body">
+                                  <tr t-foreach="months_data" t-as="m">
+                                      <td>
+                                        <span t-esc="m.month_name.capitalize()"/>
+                                      </td>
+                                      <td>
+                                        <span t-field="m.sum_intakeconsumption_company_01"/>
+                                      </td>
+                                      <t t-set="company_01_intakeconsumption_total" t-value="company_01_intakeconsumption_total + m.sum_intakeconsumption_company_01"/>
+                                      <td>
+                                        <span t-field="m.sum_invoicing_company_01"/>
+                                      </td>
+                                      <t t-set="company_01_invoicing_total" t-value="company_01_invoicing_total + m.sum_invoicing_company_01"/>
+                                      <td>
+                                        <span t-esc="m.sum_intakeconsumption_company_01 - m.sum_invoicing_company_01"
+                                              t-options='{"widget": "float", "precision": 4}'/>
+                                      </td>
+                                      <td>
+                                        <span t-field="m.sum_intakeconsumption_company_02"
+                                              t-options='{"widget": "float", "precision": 4}'/>
+                                      </td>
+                                      <t t-set="company_02_intakeconsumption_total" t-value="company_02_intakeconsumption_total + m.sum_intakeconsumption_company_02"/>
+                                      <td>
+                                        <span t-field="m.sum_invoicing_company_02"/>
+                                      </td>
+                                      <t t-set="company_02_invoicing_total" t-value="company_02_invoicing_total + m.sum_invoicing_company_02"/>
+                                      <td>
+                                        <span t-esc="m.sum_intakeconsumption_company_02 - m.sum_invoicing_company_02"
+                                              t-options='{"widget": "float", "precision": 4}'/>
+                                      </td>
+                                      <td>
+                                        <span t-field="m.sum_intakeconsumption_company_03"/>
+                                      </td>
+                                      <t t-set="company_03_intakeconsumption_total" t-value="company_03_intakeconsumption_total + m.sum_intakeconsumption_company_03"/>
+                                      <td>
+                                        <span t-field="m.sum_invoicing_company_03"/>
+                                      </td>
+                                      <t t-set="company_03_invoicing_total" t-value="company_03_invoicing_total + m.sum_invoicing_company_03"/>
+                                      <td>
+                                        <span t-esc="m.sum_intakeconsumption_company_03 - m.sum_invoicing_company_03"
+                                              t-options='{"widget": "float", "precision": 4}'/>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                              <tfoot name="months_footer">
+                                 <tr>
+                                   <td><strong>Total</strong></td>
+                                   <td><span t-esc="company_01_intakeconsumption_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td><span t-esc="company_01_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td><span t-esc="company_01_intakeconsumption_total - company_01_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td><span t-esc="company_02_intakeconsumption_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td><span t-esc="company_02_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td><span t-esc="company_02_intakeconsumption_total - company_02_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td><span t-esc="company_03_intakeconsumption_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td><span t-esc="company_03_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td><span t-esc="company_03_intakeconsumption_total - company_03_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                 </tr>
+                               </tfoot>
+                            </table>
+                          </div>
+                          <t t-set="total_invoiced" t-value="company_01_invoicing_total + company_02_invoicing_total + company_03_invoicing_total"/>
+                          <t t-set="total_intakeconsumption" t-value="company_01_intakeconsumption_total + company_02_intakeconsumption_total + company_03_intakeconsumption_total"/>
+                          <div class="row">
+                              <div class="col-xs-5 pull-right" name="summary">
+                                  <table class="table table-condensed">
+                                      <tr class="border-black">
+                                          <td><strong>Total Intake Consumption (m3)</strong></td>
+                                          <td class="text-right">
+                                              <span t-esc="total_intakeconsumption"
+                                                    t-options='{"widget": "float", "precision": 4}'/>
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td><strong>Total Consumption Invoiced (m3)</strong></td>
+                                          <td class="text-right">
+                                              <span t-esc="total_invoiced"
+                                                    t-options='{"widget": "float", "precision": 4}'/>
+                                          </td>
+                                      </tr>
+                                      <tr>
+                                          <td><strong>Not Invoiced Water (m3)</strong></td>
+                                          <td class="text-right">
+                                              <span t-esc="total_intakeconsumption - total_invoiced"
+                                                    t-options='{"widget": "float", "precision": 4}'/>
+                                          </td>
+                                      </tr>
+                                      <tr class="border-black">
+                                          <td><strong>Water Use</strong></td>
+                                          <td class="text-right">
+                                               <span t-esc="(total_invoiced * 100) / total_intakeconsumption"
+                                                     t-options='{"widget": "float", "precision": 2}'/>
+                                               <span> %</span>
+                                          </td>
+                                      </tr>
+                                  </table>
+                              </div>
+                          </div>
+                        </div>
+                  </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
