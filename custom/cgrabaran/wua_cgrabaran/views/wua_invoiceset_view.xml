@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_presconsumption_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for pressure consumptions (tree view)</field>
+        <field name="model">wua.invoiceset.line.presconsumption</field>
+        <field name="inherit_id" ref="base_wua_invoicing_pressurized_irrigation.wua_invoiceset_line_presconsumption_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class">o_wua_invoiceset_line_presconsumption_view_tree</attribute>
+            </xpath>
+            <xpath expr="//field[@name='volume_real']" position="after">
+                <field name="area_total_company_g"/>
+                <field name="area_total_company_r"/>
+                <field name="area_total_company_t"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
