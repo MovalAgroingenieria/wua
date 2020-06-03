@@ -138,6 +138,27 @@ class WuaIrrigationReport(models.Model):
         index=True,
         ondelete='restrict')
 
+    with_irrigation_worker = fields.Boolean(
+        string="With Irrig. Worker",
+        default=False)
+
+    employee_id = fields.Many2one(
+        string='Irrigation Worker',
+        comodel_name='hr.employee',
+        index=True,
+        ondelete='restrict',
+        domain=[('is_irrigation_worker', '=', True)])
+    # NEEDED FOR fields.Monetary
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Currency',
+        compute='_compute_currency_id')
+
+    credit_overdue = fields.Monetary(
+        compute='_compute_credit_overdue',
+        string='Overdue Receivable',
+        help="Overdue amount this customer owes you.")
+
     _sql_constraints = [
         ('valid_irrigationreport_time_range',
          'CHECK (report_initial_time <= report_end_time)',
@@ -263,8 +284,8 @@ class WuaIrrigationReport(models.Model):
         data_in_hours = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'data_in_hours')
         hours = self.hours
-        if (data_in_hours and self.report_initial_time and self.report_end_time
-           and not self.hours):
+        if (data_in_hours and self.report_initial_time and
+           self.report_end_time and not self.hours):
             initial_time = fields.Datetime.from_string(
                 self.report_initial_time)
             end_time = fields.Datetime.from_string(self.report_end_time)
@@ -345,6 +366,22 @@ class WuaIrrigationReport(models.Model):
     def cancel_irrigationreport(self):
         self.ensure_one()
         self.state = 'draft'
+
+    @api.depends('partner_id', 'currency_id')
+    def _compute_credit_overdue(self):
+        for record in self:
+            credit_overdue = 0
+            if (record.partner_id and record.currency_id):
+                credit_overdue = record.partner_id.credit_overdue
+            record.credit_overdue = credit_overdue
+
+    @api.depends('partner_id')
+    def _compute_currency_id(self):
+        for record in self:
+            currency_id = None
+            if (record.partner_id):
+                currency_id = record.partner_id.currency_id
+            record.currency_id = currency_id
 
     def validate_irrigationreports(self, active_irrigationreports):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):

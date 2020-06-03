@@ -47,6 +47,53 @@ class WuaInvoiceset(models.Model):
                 irrigationreport.irrigationreport_id.id)
         return irrigationreport_ids
 
+    def group_invoice_details(self, invoice_details):
+        individual_invoice = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'irrigationreport_individual_invoice')
+        invoices_data = []
+        if (individual_invoice):
+            invoice_details_with_irrigation_report =  \
+                self.get_invoice_details_with_irrigation_report(
+                    invoice_details)
+            invoice_details_without_irrigation_report = \
+                [x for x in invoice_details
+                    if x not in invoice_details_with_irrigation_report]
+            invoices_data = self.group_invoice_details_with_irrigation_report(
+                invoice_details_with_irrigation_report) + \
+                super(WuaInvoiceset, self).group_invoice_details(
+                    invoice_details_without_irrigation_report)
+        else:
+            invoices_data = super(WuaInvoiceset, self).group_invoice_details(
+                invoice_details)
+        return invoices_data
+
+    def get_invoice_details_with_irrigation_report(self, invoice_details):
+        invoice_details_with_irrigation_report = []
+        for invoice_detail in invoice_details:
+            if (invoice_detail['categ_code'] == 11):
+                invoice_details_with_irrigation_report.append(invoice_detail)
+        return invoice_details_with_irrigation_report
+
+    def group_invoice_details_with_irrigation_report(self, invoice_details):
+        invoices_data = []
+        for invoice_detail in invoice_details:
+            partner = self.env['res.partner'].browse(
+                invoice_detail['partner_id'])
+            if partner:
+                result = {
+                    'partner_id': invoice_detail['partner_id'],
+                    'partner_code': partner.partner_code,
+                    'account_id': partner.property_account_receivable_id.id,
+                    'payment_term_id': partner.property_payment_term_id.id,
+                    'payment_mode_id': partner.customer_payment_mode_id.id,
+                    'customer_invoice_transmit_method_id':
+                        partner.customer_invoice_transmit_method_id.id,
+                    'detail': [invoice_detail],
+                    }
+                invoices_data.append(result)
+        return invoices_data
+
     def get_description(self, irrigationreport):
         description = ""
         if irrigationreport:

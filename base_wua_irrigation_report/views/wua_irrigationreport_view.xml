@@ -8,6 +8,7 @@
             <form duplicate="0">
                 <field name="id" invisible="1"/>
                 <header>
+
                     <button name="validate_irrigationreport"
                             string="Validate"
                             type="object"
@@ -22,7 +23,13 @@
                             attrs="{'invisible': ['|',('id','=',False),
                                                   ('state','=','draft')]}"
                             groups="base_wua.group_wua_manager"/>
-                     <field name="state" widget="statusbar"/>
+                    <field name="credit_overdue" invisible="1"/>
+                    <div name="hascreditoverdue"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
+                        ( CREDIT OVERDUE )
+                    </div>
+                    <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
                      <group name="master_data">
@@ -45,6 +52,11 @@
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    domain="[('partner_id', '=', partner_id)]"/>
+                            <field name="with_irrigation_worker"/>
+                            <field name="employee_id"
+                                   attrs="{'invisible': [('with_irrigation_worker', '=', False)]}"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}" />
                         </group>
                         <group name="master_data_right">
                             <field name="irrigationreport_number"
@@ -111,6 +123,7 @@
                 <field name="irrigationreport_number" string="Number"/>
                 <field name="delivery_note"/>
                 <field name="parcel_id"/>
+                <field name="employee_id"/>
                 <filter name="active_agriculturalseason"
                         string="Active Agricultural Season"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
@@ -119,6 +132,11 @@
                         domain="[('state','=','draft')]"/>
                 <filter name="state" string="Validated"
                         domain="[('state','=','validated')]"/>
+                <separator/>
+                <filter name="with_irrigation_worker" string="With Irrigation Worker"
+                        domain="[('with_irrigation_worker','=',True)]"/>
+                <filter name="without_irrigation_worker" string="Without Irrigation Worker"
+                        domain="[('with_irrigation_worker','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter name="agriculturalseason"
                             string="Active Agricultural Season"
@@ -132,6 +150,9 @@
                     <filter name="parcel"
                             string="Parcel"
                             context="{'group_by':'parcel_id'}"/>
+                    <filter name="employee_id"
+                            string="Irrigation Worker"
+                            context="{'group_by':'employee_id'}"/>
                 </group>
             </search>
         </field>
