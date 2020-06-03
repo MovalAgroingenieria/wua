@@ -192,8 +192,9 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
         for record in self:
             if (record.month):
                 record.month_name = \
-                    fields.Datetime.from_string('1996-' + str(record.month) +
-                                                '-1 0:0:0').strftime('%B')
+                    fields.Datetime.from_string(
+                        '1996-' + str(record.month) + '-1 0:0:0').strftime(
+                        '%B').capitalize()
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,

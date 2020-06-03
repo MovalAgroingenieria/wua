@@ -31,6 +31,15 @@ class WuaFlowreading(models.Model):
         store=True,
         compute='_compute_is_toll')
 
+    @api.depends('intake_id', 'flowmeter_id')
+    def _compute_is_toll(self):
+        for record in self:
+            is_toll = False
+            if (record.intake_id and record.flowmeter_id):
+                is_toll = not (record.intake_id == record.flowmeter_id.
+                               intake_id)
+            record.is_toll = is_toll
+
     @api.model
     def do_import_flowreadings(self, save_data=True, show_message=True):
         # for resp: item 1: list of readings, item 2: number of readings,
@@ -261,15 +270,6 @@ class WuaFlowreading(models.Model):
             raise exceptions.UserError(_('The reading is mapped to a '
                                          'invoiced consumption: it is not '
                                          'possible to cancel the reading.'))
-
-    @api.depends('intake_id', 'flowmeter_id')
-    def _compute_is_toll(self):
-        for record in self:
-            is_toll = False
-            if (record.intake_id and record.flowmeter_id):
-                is_toll = not (record.intake_id == record.flowmeter_id.
-                               intake_id)
-            record.is_toll = is_toll
 
     def validate_flowreadings(self, active_flowreadings):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):

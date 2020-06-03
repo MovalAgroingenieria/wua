@@ -49,83 +49,88 @@
                                   <th class="text-center" colspan="3"><span t-esc="company_03_name"/></th>
                                 </tr>
                                 <tr>
-                                    <th class="text-center">Month</th>
-                                    <th class="text-center">Intake Consumption</th>
-                                    <th class="text-center">Invoiced Consumption</th>
-                                    <th class="text-center">Difference</th>
-                                    <th class="text-center">Intake Consumption</th>
-                                    <th class="text-center">Invoiced Consumption</th>
-                                    <th class="text-center">Difference</th>
-                                    <th class="text-center">Intake Consumption</th>
-                                    <th class="text-center">Invoiced Consumption</th>
-                                    <th class="text-center">Difference</th>
+                                    <th class="text-left">Month</th>
+                                    <th class="text-right">Consumption</th>
+                                    <th class="text-right">Invoicing</th>
+                                    <th class="text-right">Difference</th>
+                                    <th class="text-right">Consumption</th>
+                                    <th class="text-right">Invoicing</th>
+                                    <th class="text-right">Difference</th>
+                                    <th class="text-right">Consumption</th>
+                                    <th class="text-right">Invoicing</th>
+                                    <th class="text-right">Difference</th>
                                 </tr>
                               </thead>
                               <tbody name="months_body">
                                   <tr t-foreach="months_data" t-as="m">
                                       <td>
-                                        <span t-esc="m.month_name.capitalize()"/>
+                                        <span t-esc="m.month_name"/>
                                       </td>
-                                      <td>
-                                        <span t-field="m.sum_intakeconsumption_company_01"/>
+                                      <td class="text-right">
+                                        <span t-field="m.sum_intakeconsumption_company_01"
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
                                       <t t-set="company_01_intakeconsumption_total" t-value="company_01_intakeconsumption_total + m.sum_intakeconsumption_company_01"/>
-                                      <td>
-                                        <span t-field="m.sum_invoicing_company_01"/>
+                                      <td class="text-right">
+                                        <span t-field="m.sum_invoicing_company_01"
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
                                       <t t-set="company_01_invoicing_total" t-value="company_01_invoicing_total + m.sum_invoicing_company_01"/>
-                                      <td>
+                                      <td class="text-right">
                                         <span t-esc="m.sum_intakeconsumption_company_01 - m.sum_invoicing_company_01"
-                                              t-options='{"widget": "float", "precision": 4}'/>
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
-                                      <td>
+                                      <td class="text-right">
                                         <span t-field="m.sum_intakeconsumption_company_02"
-                                              t-options='{"widget": "float", "precision": 4}'/>
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
                                       <t t-set="company_02_intakeconsumption_total" t-value="company_02_intakeconsumption_total + m.sum_intakeconsumption_company_02"/>
-                                      <td>
-                                        <span t-field="m.sum_invoicing_company_02"/>
+                                      <td class="text-right">
+                                        <span t-field="m.sum_invoicing_company_02"
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
                                       <t t-set="company_02_invoicing_total" t-value="company_02_invoicing_total + m.sum_invoicing_company_02"/>
-                                      <td>
+                                      <td class="text-right">
                                         <span t-esc="m.sum_intakeconsumption_company_02 - m.sum_invoicing_company_02"
-                                              t-options='{"widget": "float", "precision": 4}'/>
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
-                                      <td>
-                                        <span t-field="m.sum_intakeconsumption_company_03"/>
+                                      <td class="text-right">
+                                        <span t-field="m.sum_intakeconsumption_company_03"
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
                                       <t t-set="company_03_intakeconsumption_total" t-value="company_03_intakeconsumption_total + m.sum_intakeconsumption_company_03"/>
-                                      <td>
-                                        <span t-field="m.sum_invoicing_company_03"/>
+                                      <td class="text-right">
+                                        <span t-field="m.sum_invoicing_company_03"
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
                                       <t t-set="company_03_invoicing_total" t-value="company_03_invoicing_total + m.sum_invoicing_company_03"/>
-                                      <td>
+                                      <td class="text-right">
                                         <span t-esc="m.sum_intakeconsumption_company_03 - m.sum_invoicing_company_03"
-                                              t-options='{"widget": "float", "precision": 4}'/>
+                                              t-options='{"widget": "float", "precision": 2}'/>
                                       </td>
                                   </tr>
                               </tbody>
                               <tfoot name="months_footer">
                                  <tr>
                                    <td><strong>Total</strong></td>
-                                   <td><span t-esc="company_01_intakeconsumption_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
-                                   <td><span t-esc="company_01_invoicing_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
-                                   <td><span t-esc="company_01_intakeconsumption_total - company_01_invoicing_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
-                                   <td><span t-esc="company_02_intakeconsumption_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
-                                   <td><span t-esc="company_02_invoicing_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
-                                   <td><span t-esc="company_02_intakeconsumption_total - company_02_invoicing_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
-                                   <td><span t-esc="company_03_intakeconsumption_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
-                                   <td><span t-esc="company_03_invoicing_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
-                                   <td><span t-esc="company_03_intakeconsumption_total - company_03_invoicing_total"
-                                             t-options='{"widget": "float", "precision": 4}'/></td>
+                                   <td class="text-right"><span t-esc="company_01_intakeconsumption_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
+                                   <td class="text-right"><span t-esc="company_01_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
+                                   <td class="text-right"><span t-esc="company_01_intakeconsumption_total - company_01_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
+                                   <td class="text-right"><span t-esc="company_02_intakeconsumption_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
+                                   <td class="text-right"><span t-esc="company_02_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
+                                   <td class="text-right"><span t-esc="company_02_intakeconsumption_total - company_02_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
+                                   <td class="text-right"><span t-esc="company_03_intakeconsumption_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
+                                   <td class="text-right"><span t-esc="company_03_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
+                                   <td class="text-right"><span t-esc="company_03_intakeconsumption_total - company_03_invoicing_total"
+                                             t-options='{"widget": "float", "precision": 2}'/></td>
                                  </tr>
                                </tfoot>
                             </table>
@@ -133,27 +138,27 @@
                           <t t-set="total_invoiced" t-value="company_01_invoicing_total + company_02_invoicing_total + company_03_invoicing_total"/>
                           <t t-set="total_intakeconsumption" t-value="company_01_intakeconsumption_total + company_02_intakeconsumption_total + company_03_intakeconsumption_total"/>
                           <div class="row">
-                              <div class="col-xs-5 pull-right" name="summary">
+                              <div class="col-xs-6 pull-right" name="summary">
                                   <table class="table table-condensed">
                                       <tr class="border-black">
                                           <td><strong>Total Intake Consumption (m3)</strong></td>
                                           <td class="text-right">
                                               <span t-esc="total_intakeconsumption"
-                                                    t-options='{"widget": "float", "precision": 4}'/>
+                                                    t-options='{"widget": "float", "precision": 2}'/>
                                           </td>
                                       </tr>
                                       <tr>
                                           <td><strong>Total Consumption Invoiced (m3)</strong></td>
                                           <td class="text-right">
                                               <span t-esc="total_invoiced"
-                                                    t-options='{"widget": "float", "precision": 4}'/>
+                                                    t-options='{"widget": "float", "precision": 2}'/>
                                           </td>
                                       </tr>
                                       <tr>
                                           <td><strong>Not Invoiced Water (m3)</strong></td>
                                           <td class="text-right">
                                               <span t-esc="total_intakeconsumption - total_invoiced"
-                                                    t-options='{"widget": "float", "precision": 4}'/>
+                                                    t-options='{"widget": "float", "precision": 2}'/>
                                           </td>
                                       </tr>
                                       <tr class="border-black">
