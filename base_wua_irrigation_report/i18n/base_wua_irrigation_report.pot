@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-19 07:39+0000\n"
-"PO-Revision-Date: 2020-05-19 07:39+0000\n"
+"POT-Creation-Date: 2020-06-03 12:55+0000\n"
+"PO-Revision-Date: 2020-06-03 12:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
+msgid "( CREDIT OVERDUE )"
+msgstr ""
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
@@ -168,7 +173,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigation_configuration
-msgid "Configuration of irrigation with type of water"
+msgid "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -179,6 +184,11 @@ msgstr ""
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_create_date
 msgid "Created on"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_currency_id
+msgid "Currency"
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -293,6 +303,12 @@ msgid "Irrigation Reports"
 msgstr ""
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_employee_id
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
+msgid "Irrigation Worker"
+msgstr ""
+
+#. module: base_wua_irrigation_report
 #: model:ir.actions.report.xml,name:base_wua_irrigation_report.action_report_wua_irrigationreport
 msgid "Irrigation report"
 msgstr ""
@@ -345,6 +361,16 @@ msgstr ""
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_of_active_agriculturalseason
 msgid "Of active ag.season"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_credit_overdue
+msgid "Overdue Receivable"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigationreport_credit_overdue
+msgid "Overdue amount this customer owes you."
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -411,13 +437,13 @@ msgid "State"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:323
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:344
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:173
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:194
 #: sql_constraint:wua.irrigationreport:0
 #, python-format
 msgid "The delivery note must be 0 or a greater number"
@@ -504,8 +530,23 @@ msgid "Water Amount in hours"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:351
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:361
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_with_irrigation_worker
+msgid "With Irrig. Worker"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
+msgid "With Irrigation Worker"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
+msgid "Without Irrigation Worker"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:388
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:398
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr ""
