@@ -9,7 +9,7 @@
         <field name="page_height">0</field>
         <field name="page_width">0</field>
         <field name="orientation">Portrait</field>
-        <field name="margin_top">4</field>
+        <field name="margin_top">12</field>
         <field name="margin_bottom">2</field>
         <field name="margin_left">10</field>
         <field name="margin_right">10</field>
@@ -29,7 +29,7 @@
     <template id="report_wua_irrigationlabel_multi">
         <t t-call="report.html_container">
             <div class="page" style="font-family: verdana;
-                 font-size: 10; margin-left: 6px; margin-right: 6px">
+                 font-size: 12; margin-left: 6px; margin-right: 6px">
                 <style type="text/css">
                 <![CDATA[
                 @font-face {
@@ -49,7 +49,7 @@
                 <t t-set="wua_name" t-value="res_company.name.upper()"/>
                 <t t-foreach="docs" t-as="o">
                     <t t-foreach="list(range(6))" t-as="l">
-                        <div class="row" style="margin-top: 60px;">
+                        <div class="row" style="margin-top: 20px;">
                             <div class="col-xs-6 text-center"
                                  style="font-weight:bold;">
                                 <span t-esc="wua_name"/>
@@ -185,7 +185,7 @@
                                 <span><![CDATA[&nbsp;]]></span>
                             </div>
                             <t t-if="l &lt; 5">
-                                <div class="col-xs-12"><![CDATA[&nbsp;]]><br/><br/></div>
+                                <div class="col-xs-12"><![CDATA[&nbsp;]]></div>
                             </t>
                         </div>
                     </t>
@@ -194,6 +194,5 @@
             </div>
         </t>
     </template>
-
 
 </odoo>
