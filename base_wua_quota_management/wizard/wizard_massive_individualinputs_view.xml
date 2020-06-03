@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_massive_individualinputs_view_form" model="ir.ui.view">
+        <field name="name">Wizard to assign multiple individual inputs</field>
+        <field name="model">wizard.massive.individualinputs</field>
+        <field name="arch" type="xml">
+            <form string="Massive assignment of individual inputs for the current quota period">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '500px'});
+                    });
+                </script>            
+                <div style="text-align:center">
+                    <h4><field name="quotaperiod_name"
+                         readonly="1"/></h4>
+                </div>
+                <div>Enter the following data to generate a individual input for each partner, depending on their area.
+                </div>
+                <br/>
+                <group name="body">
+                    <field name="superproduct_id"
+                           options="{'no_quick_create': True,
+                                     'no_create_edit': True}"/>
+                    <field name="category_id"
+                           options="{'no_quick_create': True,
+                                     'no_create_edit': True}"/>
+                </group>
+                <br/><br/>
+                <div>WARNING: The m3/ha ratio can be a positive or a negative value.
+                </div>
+                <footer>
+                    <button name="assign_individualinputs"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

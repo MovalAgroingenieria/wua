@@ -31,11 +31,18 @@
                                    attrs="{'readonly':[('id','>',0)]}"/>
                             <field name="quota_id" colspan="4"
                                    attrs="{'invisible':[('id','=',False)]}"/>
+                            <field name="category_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('id','>',0)]}"/>
                             <field name="event_time" colspan="3"
                                    attrs="{'readonly':[('id','>',0)]}"/>
                             <div colspan="1"></div>
                             <field name="volume" colspan="3"
                                    attrs="{'readonly':[('id','>',0)]}"/>
+                            <div colspan="1"></div>
+                            <field name="effective_volume" colspan="3"
+                             string="Effective Value (m3)"/>
                             <div colspan="1"></div>
                             <field name="reason" colspan="4"/>
                         </group>
@@ -84,7 +91,7 @@
                 <field name="event_time"
                        string="Date" widget="date"/>
                 <field name="reason"/>
-                <field name="volume"/>
+                <field name="effective_volume"/>
             </tree>
         </field>
     </record>
@@ -120,6 +127,9 @@
                     <filter string="Superproduct"
                             name="grouped_superproduct"
                      context="{'group_by':'superproduct_id'}"/>
+                    <filter string="Category"
+                            name="grouped_category"
+                     context="{'group_by':'category_id'}"/>
                     <filter string="Partner"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>
@@ -128,18 +138,31 @@
         </field>
     </record>
 
+    <record id="wua_individualinput_view_pivot" model="ir.ui.view">
+        <field name="name">Individual Inputs (pivot view)</field>
+        <field name="model">wua.individualinput</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+                <field name="quotaperiod_id"/>
+                <field name="effective_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_individualinput_action"
             model="ir.actions.act_window">
         <field name="name">Individual Inputs</field>
         <field name="res_model">wua.individualinput</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
                         'view_id': ref('wua_individualinput_view_tree')}),
                 (0, 0, {'view_mode': 'form',
-                        'view_id': ref('wua_individualinput_view_form')})]"/>
+                        'view_id': ref('wua_individualinput_view_form')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_individualinput_view_pivot')})]"/>
         <field name="search_view_id" ref="wua_individualinput_view_search"/>
         <field name="context">
           {'compressed_agriculturalseason': True,

@@ -35,7 +35,8 @@
                                 <label for="effective_factor"/>
                                 <field name="effective_factor"
                                        style="width:100px"
-                                       attrs="{'readonly': [('category_code','=',1)]}"/>
+                                       attrs="{'readonly': ['|', ('category_code','=',1),
+                                                                 ('id','>',0)]}"/>
                             </div>
                         </div>
                     </div>

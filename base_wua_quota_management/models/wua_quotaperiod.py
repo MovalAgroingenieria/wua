@@ -486,6 +486,19 @@ class WuaQuotaperiod(models.Model):
                 'transferred balances or the balances are not correctly '
                 'balanced.'))
 
+    @api.multi
+    def action_apply_massive_individualinputs(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Massive assignment of individual inputs'),
+            'res_model': 'wizard.massive.individualinputs',
+            'src_model': 'wua.quotaperiod',
+            'view_mode': 'form',
+            'target': 'new'
+            }
+        return act_window
+
     def _populate_pos_in_quotaperiodlines(self, vals):
         if vals and 'quotaperiodline_ids' in vals:
             last_pos = 0

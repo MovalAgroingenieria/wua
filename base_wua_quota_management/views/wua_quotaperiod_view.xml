@@ -134,6 +134,19 @@
                                      ('of_active_agriculturalseason','=',False)]}"                            
                             groups="base_wua_quota_management.group_wua_quota_manager"
                             confirm="Are you sure you want to revert the balances given for the next quota period?"/>
+                    <span style="display: inline-block;padding-left: 12px;"
+                            attrs="{'invisible':
+                                    ['|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"/>
+                    <button name="action_apply_massive_individualinputs"
+                            type="object" string="Reassign"
+                            icon="fa-legal"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            attrs="{'invisible':
+                                    ['|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"
+                            groups="base_wua_quota_management.group_wua_quota_manager"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,configured,generated"/>

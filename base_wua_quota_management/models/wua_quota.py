@@ -448,6 +448,7 @@ class WuaQuota(models.Model):
                     if (volume_of_hydric_consumption > available_quota and
                        (not ignore_limits)):
                         prefix_message = \
+                            partner.name + ': ' + \
                             _('Exceeded quota. It is not possible '
                               'to create this watering request. '
                               'AVAILABLE QUOTA:')

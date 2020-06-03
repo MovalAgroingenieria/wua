@@ -25,6 +25,7 @@
         "wizard/wizard_generate_quotaperiods_view.xml",
         "wizard/wizard_set_activeagriculturalseason_view.xml",
         "wizard/wizard_recalculate_quotas_view.xml",
+        "wizard/wizard_massive_individualinputs_view.xml",
         "views/resources.xml",
         "views/base_wua_quota_management_menus.xml",
         "views/wua_quotas_config_settings_view.xml",
