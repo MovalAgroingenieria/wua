@@ -120,7 +120,7 @@ class WuaIndividualinput(models.Model):
         default=_default_partner_id)
 
     category_id = fields.Many2one(
-        string='Category',
+        string='Category of i.i.',
         comodel_name='wua.individualinput.category',
         index=True,
         required=True,
