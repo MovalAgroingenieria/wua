@@ -9,11 +9,11 @@ Backend Theme v10 Modifications for SAT Incholete
 Description
 ===========
 
-This module modificates a few parameters of backend theme v10.
-Some of this parameters can be ajusted through application in
+This module modifies a few parameters of backend theme v10.
+Some of this parameters can be adjusted through application in
 /Settings/Technical/User Interface/Backend Settings).
 
-It also adds some css classes with the selected parameters (as colors) that can be used in reports for armonization.
+It also adds some css classes with the selected parameters (as colors) that can be used in reports for harmonization.
 
 Note that variables_mod.less and backend_mod.css files are not tracked by git.
 
