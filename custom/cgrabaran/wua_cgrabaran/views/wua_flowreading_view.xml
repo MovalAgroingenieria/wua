@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="wua_flowreading_view_form" model="ir.ui.view">
+        <field name="name">Flowreadings (form view)</field>
+        <field name="model">wua.flowreading</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_flowreading_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='intake_id']" position="attributes">
+              <attribute name="attrs">{'readonly': [('initialization_reading', '=', True)],
+                                       'invisible': [('reading_of_intake', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='initialization_reading']" position="after">
+              <field name="is_toll"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="wua_flowreading_view_tree" model="ir.ui.view">
         <field name="name">Flowreadings (tree view)</field>
         <field name="model">wua.flowreading</field>
@@ -9,6 +24,7 @@
             <xpath expr="//field[@name='intakeconsumption_id']" position="after">
                 <field name="from_import" string="Man."/>
                 <field name="validated" string="Valid"/>
+                <field name="is_toll" string="Toll"/>
             </xpath>
         </field>
     </record>
@@ -29,6 +45,11 @@
                  domain="[('validated','=',True)]"/>
                 <filter string="Validated: No" name="isvalidatedno"
                  domain="[('validated','=',False)]"/>
+                 <separator/>
+                <filter string="Toll: Yes" name="istollyes"
+                 domain="[('is_toll','=',True)]"/>
+                <filter string="Toll: No" name="istollno"
+                 domain="[('is_toll','=',False)]"/>
             </xpath>
         </field>
     </record>

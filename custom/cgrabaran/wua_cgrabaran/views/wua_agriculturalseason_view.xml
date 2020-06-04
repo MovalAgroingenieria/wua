@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="wua_sum_intakeconsumption_invoicing_view_tree" model="ir.ui.view">
+      <field name="name">Consumption balance (tree view)</field>
+      <field name="model">wua.sum.intakeconsumption.invoicing</field>
+      <field name="arch" type="xml">
+          <tree create="0" delete="0" duplicate="0"
+           class="o_wua_cgrabaran_wua_sum_intakeconsumption_invoicing_view_tree">
+              <field name="month_name"/>
+              <field name="sum_intakeconsumption_company_01" string="Consumptions" sum="Total"/>
+              <field name="sum_invoicing_company_01" string="Invoicing" sum="Total"/>
+              <field name="sum_intakeconsumption_company_02" string="Consumptions" sum="Total"/>
+              <field name="sum_invoicing_company_02" string="Invoicing" sum="Total"/>
+              <field name="sum_intakeconsumption_company_03" string="Consumptions" sum="Total"/>
+              <field name="sum_invoicing_company_03" string="Invoicing" sum="Total"/>
+          </tree>
+      </field>
+  </record>
+
+  <record id="wua_sum_intakeconsumption_invoicing_view_search" model="ir.ui.view">
+    <field name="name">Consumption balance (search view)</field>
+    <field name="model">wua.sum.intakeconsumption.invoicing</field>
+    <field name="arch" type="xml">
+          <search>
+              <field name="agriculturalseason_id"/>
+              <field name="month"/>
+          </search>
+      </field>
+  </record>
+
+  <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+      <field name="name">Agriculturalseason (form view)</field>
+      <field name="model">wua.agriculturalseason</field>
+      <field name="inherit_id"
+       ref="base_wua_irrigation_measurement.wua_agriculturalseason_view_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//button[@name='action_see_intakeconsumptions']" position="after">
+            <button name="action_see_sum_intakeconsumption_invoicing"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-list-alt "
+                    groups="base_wua.group_wua_user"
+                    attrs="{'invisible':[('id', '=', False)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Consumptions</span>
+                        <span class="o_stat_text">balance</span>
+                    </div>
+            </button>
+          </xpath>
+      </field>
+  </record>
+
+</odoo>

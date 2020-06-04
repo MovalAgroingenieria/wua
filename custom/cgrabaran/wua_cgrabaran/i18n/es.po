@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-01 16:54+0000\n"
-"PO-Revision-Date: 2020-06-01 16:54+0000\n"
+"POT-Creation-Date: 2020-06-03 10:22+0000\n"
+"PO-Revision-Date: 2020-06-03 10:22+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,18 @@ msgid "<b>TOTAL:</b>"
 msgstr "<b>TOTAL:</b>"
 
 #. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_agriculturalseason_view_form
+msgid "<span class=\"o_stat_text\">Consumptions</span>\n"
+"                        <span class=\"o_stat_text\">balance</span>"
+msgstr "<span class=\"o_stat_text\">Balance de</span>\n"
+"                        <span class=\"o_stat_text\">consumos</span>"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "<span>BALANCE INTAKE/INVOICING AGRICULTURALSEASON </span>"
+msgstr "<span>BALANCE CAPTACIÓN/FACTURACIÓN CAMPAÑA </span>"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "<span>No</span>"
 msgstr "<span>No</span>"
@@ -29,6 +41,42 @@ msgstr "<span>No</span>"
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "<span>Yes</span>"
 msgstr "<span>Sí</span>"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "<strong>Not Invoiced Water (m3)</strong>"
+msgstr "<strong>Agua sin facturar (m3)</strong>"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "<strong>Total Consumption Invoiced (m3)</strong>"
+msgstr "<strong>Total Facturación (m3)</strong>"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "<strong>Total Intake Consumption (m3)</strong>"
+msgstr "<strong>Total consumos en Captación (m3)</strong>"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "<strong>Total</strong>"
+msgstr "<strong>Total</strong>"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "<strong>Water Use</strong>"
+msgstr "<strong>Aprovechamiento hídrico</strong>"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_agriculturalseason_id
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_agriculturalseason_id
+msgid "Agricultural Season"
+msgstr "Campaña"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_agriculturalseason_month_ids
+msgid "Agriculturalseason Months"
+msgstr "Meses de Campaña"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
@@ -183,16 +231,33 @@ msgid "Cons. Value (m3)"
 msgstr "Consumo bruto (m3)"
 
 #. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "Consumption"
+msgstr "Consumo"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_view_tree
+msgid "Consumptions"
+msgstr "Consumos"
+
+#. module: wua_cgrabaran
+#: model:ir.actions.report.xml,name:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report
+msgid "Consumptions balance report"
+msgstr "Balance de consumos"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Costs (%)"
 msgstr "Costes (%)"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_create_uid
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_create_date
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_create_date
 msgid "Created on"
 msgstr "Creado el"
@@ -215,7 +280,14 @@ msgid "Database to get data in remote server"
 msgstr "Base de datos de la que obtener información"
 
 #. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "Difference"
+msgstr "Diferencia"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_display_name
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_display_name
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
 
@@ -223,6 +295,16 @@ msgstr "Nombre a mostrar"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_enable_remotecontrol
 msgid "Enabled"
 msgstr "Activado"
+
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_agriculturalseason
+msgid "Entity (agricultural season)"
+msgstr "Elemento (campaña)"
+
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_agriculturalseason_month
+msgid "Entity (agriculturalseason)"
+msgstr "Elemento (campaña)"
 
 #. module: wua_cgrabaran
 #: model:ir.model,name:wua_cgrabaran.model_wua_flowreading
@@ -306,7 +388,9 @@ msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_id
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_id
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_id
 msgid "ID"
 msgstr "ID"
 
@@ -337,21 +421,31 @@ msgid "Intervals (m2)"
 msgstr "Intervalos (m2)"
 
 #. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_view_tree
+msgid "Invoicing"
+msgstr "Facturación"
+
+#. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_partner_report_document
 msgid "Irrigation partner"
 msgstr "Regante"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month___last_update
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading___last_update
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_write_uid
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_write_date
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_negative_flowreading_write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
@@ -380,19 +474,27 @@ msgstr "Introducción manual: Sí"
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_intake_is_mapped_to_company
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_presconsumption_is_mapped_to_company
 msgid "Mapped to a company"
-msgstr "Mapped to a company"
+msgstr "Enlazado con compañía"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intake_view_search
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_presconsumption_view_search
 msgid "Mapped to a company: No"
-msgstr "Mapped to a company: No"
+msgstr "Enlazado con una compañía: No"
 
 #. module: wua_cgrabaran
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intake_view_search
 #: model:ir.ui.view,arch_db:wua_cgrabaran.wua_presconsumption_view_search
 msgid "Mapped to a company: Yes"
-msgstr "Mapped to a company: Yes"
+msgstr "Enlazado con una compañía: Sí"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_month
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_month
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_month_name
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document
+msgid "Month"
+msgstr "Mes"
 
 #. module: wua_cgrabaran
 #: model:ir.actions.act_window,name:wua_cgrabaran.wua_negative_flowreading_action
@@ -470,7 +572,7 @@ msgstr "Enlace a socio de una parcela"
 #. module: wua_cgrabaran
 #: model:ir.model,name:wua_cgrabaran.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Socio"
 
 #. module: wua_cgrabaran
 #: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_irrigation_configuration_scada_server_password
@@ -564,6 +666,66 @@ msgid "Time"
 msgstr "Tiempo"
 
 #. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_tree
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intakeconsumption_view_tree
+msgid "Toll"
+msgstr "Peaje"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_flowreading_is_toll
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_intakeconsumption_is_toll
+msgid "Toll Reading"
+msgstr "Lectura de peaje"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intakeconsumption_view_search
+msgid "Toll: No"
+msgstr "Peaje: No"
+
+#. module: wua_cgrabaran
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_flowreading_view_search
+#: model:ir.ui.view,arch_db:wua_cgrabaran.wua_intakeconsumption_view_search
+msgid "Toll: Yes"
+msgstr "Peaje: Sí"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_sum_invoicing_company_01
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_sum_invoicing_company_01
+msgid "Total Intake Consumptions Invoiced of Company 01"
+msgstr "Consumo total facturado de la compañía 01"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_sum_invoicing_company_02
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_sum_invoicing_company_02
+msgid "Total Intake Consumptions Invoiced of Company 02"
+msgstr "Consumo total facturado de la compañía 02"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_sum_invoicing_company_03
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_sum_invoicing_company_03
+msgid "Total Intake Consumptions Invoiced of Company 03"
+msgstr "Consumo total facturado de la compañía 03"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_sum_intakeconsumption_company_01
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_sum_intakeconsumption_company_01
+msgid "Total Intake Consumptions of Company 01"
+msgstr "Consumo total de captación de la compañía 01"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_sum_intakeconsumption_company_02
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_sum_intakeconsumption_company_02
+msgid "Total Intake Consumptions of Company 02"
+msgstr "Consumo total de captación de la compañía 02"
+
+#. module: wua_cgrabaran
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_agriculturalseason_month_sum_intakeconsumption_company_03
+#: model:ir.model.fields,field_description:wua_cgrabaran.field_wua_sum_intakeconsumption_invoicing_sum_intakeconsumption_company_03
+msgid "Total Intake Consumptions of Company 03"
+msgstr "Consumo total de captación de la compañía 03"
+
+#. module: wua_cgrabaran
 #: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_01
 #: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_02
 #: model:ir.model.fields,help:wua_cgrabaran.field_wua_configuration_polling_system_type_company_03
@@ -640,3 +802,7 @@ msgstr "Contador"
 msgid "if it is marked, it is required set the next url (SERVER URL)"
 msgstr "Si está marcado es necesario poblar la siguiente url (SERVER URL)"
 
+#. module: wua_cgrabaran
+#: model:ir.model,name:wua_cgrabaran.model_wua_sum_intakeconsumption_invoicing
+msgid "wua.sum.intakeconsumption.invoicing"
+msgstr "wua.sum.intakeconsumption.invoicing"
