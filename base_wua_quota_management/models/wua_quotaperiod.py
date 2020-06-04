@@ -929,19 +929,6 @@ class WuaQuotaperiodLine(models.Model):
                 area_measurement_name = area_measurement_name.decode('utf_8')
             suffix_area = ' (' + area_measurement_name.lower() + ')'
             suffix_provision = ' (m3/' + area_measurement_name.lower() + ')'
-            if view_type == 'form':
-                for node in doc.xpath("//field[@name='area_total']"):
-                    original_label = \
-                        self._get_value_from_translation(
-                            'base_wua_quota_management',
-                            self.__class__.area_total.string)
-                    node.set('string', original_label + suffix_area)
-                for node in doc.xpath("//field[@name='provision']"):
-                    original_label = \
-                        self._get_value_from_translation(
-                            'base_wua_quota_management',
-                            self.__class__.provision.string)
-                    node.set('string', original_label + suffix_provision)
             for node in doc.xpath("//field[@name='area_total']"):
                 original_label = \
                     self._get_value_from_translation(

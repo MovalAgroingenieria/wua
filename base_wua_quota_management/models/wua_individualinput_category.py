@@ -48,6 +48,11 @@ class WuaIndividualinputCategory(models.Model):
         default=1,
         required=True)
 
+    individualinput_ids = fields.One2many(
+        string='Individual inputs',
+        comodel_name='wua.individualinput',
+        inverse_name='category_id')
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
@@ -81,5 +86,35 @@ class WuaIndividualinputCategory(models.Model):
     @api.multi
     def action_get_individualinputs(self):
         self.ensure_one()
-        # Provisional
-        print 'action_get_individualinputs'
+        if self.individualinput_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_individualinput_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_individualinput_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_individualinput_view_search')
+            id_pivot_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_individualinput_view_pivot').id
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Individual inputs'),
+                'res_model': 'wua.individualinput',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'),
+                          (id_form_view, 'form'),
+                          (id_pivot_view, 'pivot')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.individualinput_ids.ids)],
+                'context': {'compressed_agriculturalseason': True,
+                            'compressed_quotaperiod': True,
+                            'search_default_active_agriculturalseason': True,
+                            'search_default_grouped_quotaperiod': True,
+                            'search_default_grouped_partner': True}
+                }
+            return act_window

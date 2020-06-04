@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import pytz
 import locale
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
@@ -118,6 +119,14 @@ class WuaIndividualinput(models.Model):
         ondelete='restrict',
         default=_default_partner_id)
 
+    category_id = fields.Many2one(
+        string='Category',
+        comodel_name='wua.individualinput.category',
+        index=True,
+        required=True,
+        ondelete='restrict',
+        default=_default_category_id)
+
     reason = fields.Char(
         string='Reason',
         size=MAX_SIZE_REASON)
@@ -191,14 +200,6 @@ class WuaIndividualinput(models.Model):
         string='Balance',
         digits=(32, 2),
         compute='_compute_quota_negative_balance')
-
-    category_id = fields.Many2one(
-        string='Category',
-        comodel_name='wua.individualinput.category',
-        index=True,
-        required=True,
-        ondelete='restrict',
-        default=_default_category_id)
 
     notes = fields.Html(string='Notes')
 
@@ -336,7 +337,11 @@ class WuaIndividualinput(models.Model):
                     datetime.timedelta(days=1)
                 event_time = datetime.datetime.strptime(
                     self.event_time, '%Y-%m-%d %H:%M:%S')
-                if (event_time < min_date or event_time > max_date):
+                if self.env.user.tz:
+                    local_timezone = pytz.timezone(self.env.user.tz)
+                    offset = local_timezone.utcoffset(event_time)
+                    event_time = event_time + offset
+                if (event_time < min_date or event_time >= max_date):
                     raise exceptions.UserError(
                         _('The instant of this input is not within the '
                           'chosen quota period.'))
