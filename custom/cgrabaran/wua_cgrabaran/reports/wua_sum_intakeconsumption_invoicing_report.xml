@@ -164,9 +164,14 @@
                                       <tr class="border-black">
                                           <td><strong>Water Use</strong></td>
                                           <td class="text-right">
-                                               <span t-esc="(total_invoiced * 100) / total_intakeconsumption"
-                                                     t-options='{"widget": "float", "precision": 2}'/>
-                                               <span> %</span>
+                                              <t t-if="total_intakeconsumption > 0">
+                                                <span t-esc="(total_invoiced * 100) / total_intakeconsumption"
+                                                    t-options='{"widget": "float", "precision": 2}'/>
+                                              </t>
+                                              <t t-else="">
+                                                <span>0.00</span>
+                                              </t>
+                                              <span> %</span>
                                           </td>
                                       </tr>
                                   </table>
