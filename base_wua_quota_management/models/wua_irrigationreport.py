@@ -24,13 +24,12 @@ class WuaIrrigationReport(models.Model):
             self.__class__._in_create = False
             quota_model = self.env['wua.quota']
             for record in self:
-                if record.state == 'validated':
-                    quota_model.create_hydricmovements_irrigationreport(record)
+                quota_model.create_hydricmovements_irrigationreport(record)
 
     @api.model
     def create(self, vals):
-        new_irrigationreport = super(WuaIrrigationReport, self).create(vals)
         self.__class__._in_create = True
+        new_irrigationreport = super(WuaIrrigationReport, self).create(vals)
         return new_irrigationreport
 
     @api.multi
@@ -47,16 +46,10 @@ class WuaIrrigationReport(models.Model):
                 create_hydricmovements = False
             if (self.is_valid_irrigationreport(updated_irrigationreport) and
                (not delete_hydricmovements) and (not create_hydricmovements)):
-                if 'state' in vals:
-                    if updated_irrigationreport.state == 'validated':
-                        create_hydricmovements = True
-                    else:
-                        delete_hydricmovements = True
-                if updated_irrigationreport.state == 'validated':
-                    if ('initial_volume' in vals or 'end_volume' in vals or
-                       'adjustement_volume' in vals):
-                        delete_hydricmovements = True
-                        create_hydricmovements = True
+                if ('initial_volume' in vals or 'end_volume' in vals or
+                   'hours' in vals or 'adjustement_volume' in vals):
+                    delete_hydricmovements = True
+                    create_hydricmovements = True
             if delete_hydricmovements or create_hydricmovements:
                 quota_model = self.env['wua.quota']
                 if delete_hydricmovements:

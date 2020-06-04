@@ -89,7 +89,8 @@ class WuaPresconsumption(models.Model):
 
     # Hook ("False" when the consumption is not validated)
     def is_valid_presconsumption(self, updated_presconsumption):
-        return True
+        resp = updated_presconsumption.validated
+        return resp
 
     # Hook ("True" if changes the validation state). The first output
     # parameter indicates if something needs to be done (at least delete

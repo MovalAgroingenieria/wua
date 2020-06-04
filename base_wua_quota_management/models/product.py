@@ -25,6 +25,22 @@ class ProductTemplate(models.Model):
         string='Is quota manager',
         compute='_compute_is_quota_manager')
 
+    reduction_factor = fields.Float(
+        digits=(32, 2),
+        string='Reduction Factor',
+        help='Value from 0 to 1 (default 1). If it is less than 1, '
+             'then the volume of hydric movements will be multiplied by '
+             'this factor',
+        default=1,
+        required=True)
+
+    _sql_constraints = [
+        ('valid_reduction_factor',
+         'CHECK (reduction_factor > 0 and reduction_factor <= 1)',
+         'The reduction factor must be greater than 0 and less than or '
+         'equal to 1.'),
+        ]
+
     @api.multi
     def _compute_possible_superproduct(self):
         for record in self:

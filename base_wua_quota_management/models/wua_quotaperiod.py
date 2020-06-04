@@ -486,6 +486,19 @@ class WuaQuotaperiod(models.Model):
                 'transferred balances or the balances are not correctly '
                 'balanced.'))
 
+    @api.multi
+    def action_apply_massive_individualinputs(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Massive assignment of individual inputs'),
+            'res_model': 'wizard.massive.individualinputs',
+            'src_model': 'wua.quotaperiod',
+            'view_mode': 'form',
+            'target': 'new'
+            }
+        return act_window
+
     def _populate_pos_in_quotaperiodlines(self, vals):
         if vals and 'quotaperiodline_ids' in vals:
             last_pos = 0
@@ -916,19 +929,6 @@ class WuaQuotaperiodLine(models.Model):
                 area_measurement_name = area_measurement_name.decode('utf_8')
             suffix_area = ' (' + area_measurement_name.lower() + ')'
             suffix_provision = ' (m3/' + area_measurement_name.lower() + ')'
-            if view_type == 'form':
-                for node in doc.xpath("//field[@name='area_total']"):
-                    original_label = \
-                        self._get_value_from_translation(
-                            'base_wua_quota_management',
-                            self.__class__.area_total.string)
-                    node.set('string', original_label + suffix_area)
-                for node in doc.xpath("//field[@name='provision']"):
-                    original_label = \
-                        self._get_value_from_translation(
-                            'base_wua_quota_management',
-                            self.__class__.provision.string)
-                    node.set('string', original_label + suffix_provision)
             for node in doc.xpath("//field[@name='area_total']"):
                 original_label = \
                     self._get_value_from_translation(

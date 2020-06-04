@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import pytz
 import locale
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
@@ -78,6 +79,14 @@ class WuaIndividualinput(models.Model):
             resp = proposed_partner_id
         return resp
 
+    def _default_category_id(self):
+        resp = 0
+        proposed_category = self.env.ref(
+            'base_wua_quota_management.individualinputcategory_no_variation')
+        if proposed_category:
+            resp = proposed_category.id
+        return resp
+
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
         comodel_name='wua.agriculturalseason',
@@ -110,6 +119,14 @@ class WuaIndividualinput(models.Model):
         ondelete='restrict',
         default=_default_partner_id)
 
+    category_id = fields.Many2one(
+        string='Category',
+        comodel_name='wua.individualinput.category',
+        index=True,
+        required=True,
+        ondelete='restrict',
+        default=_default_category_id)
+
     reason = fields.Char(
         string='Reason',
         size=MAX_SIZE_REASON)
@@ -125,6 +142,12 @@ class WuaIndividualinput(models.Model):
         digits=(32, 2),
         default=0,
         required=True)
+
+    effective_volume = fields.Float(
+        string='Effective Volume (m3)',
+        digits=(32, 2),
+        store=True,
+        compute='_compute_effective_volume')
 
     is_negative = fields.Boolean(
         string='Is negative',
@@ -186,6 +209,15 @@ class WuaIndividualinput(models.Model):
         ('no_zero_volume', 'CHECK (volume <> 0)',
          'Zero is not a valid value for the volume field.'),
         ]
+
+    @api.depends('volume', 'category_id', 'category_id.effective_factor')
+    def _compute_effective_volume(self):
+        for record in self:
+            effective_volume = record.volume
+            if record.category_id:
+                effective_volume = \
+                    effective_volume * record.category_id.effective_factor
+            record.effective_volume = effective_volume
 
     @api.depends('volume')
     def _compute_is_negative(self):
@@ -305,7 +337,11 @@ class WuaIndividualinput(models.Model):
                     datetime.timedelta(days=1)
                 event_time = datetime.datetime.strptime(
                     self.event_time, '%Y-%m-%d %H:%M:%S')
-                if (event_time < min_date or event_time > max_date):
+                if self.env.user.tz:
+                    local_timezone = pytz.timezone(self.env.user.tz)
+                    offset = local_timezone.utcoffset(event_time)
+                    event_time = event_time + offset
+                if (event_time < min_date or event_time >= max_date):
                     raise exceptions.UserError(
                         _('The instant of this input is not within the '
                           'chosen quota period.'))
@@ -463,7 +499,7 @@ class WuaIndividualinput(models.Model):
         superproduct = individualinput.superproduct_id
         partner = individualinput.partner_id
         event_time = individualinput.event_time
-        volume = individualinput.volume
+        volume = individualinput.effective_volume
         possible_quota = self.env['wua.quota'].search(
             [('quotaperiod_id', '=', quotaperiod.id),
              ('superproduct_id', '=', superproduct.id),
