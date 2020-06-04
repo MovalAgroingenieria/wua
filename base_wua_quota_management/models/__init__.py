@@ -14,10 +14,10 @@ from . import wua_quotaperiod
 from . import wua_quota
 from . import wua_hydricmovement
 from . import wua_presconsumption
+from . import wua_individualinput_category
 from . import wua_individualinput
 from . import wua_cession
 from . import wua_reading
 from . import wua_gravconsumption
 from . import wua_wateringrequest
 from . import wua_irrigationreport
-from . import wua_individualinput_category
