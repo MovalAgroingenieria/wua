@@ -40,8 +40,10 @@ class CustomColorConfiguration(models.TransientModel):
                      self.DEFAULT_PRIMARY_COLOR))
         if not os.path.exists(backendcss_file):
             with open(backendcss_file, 'w') as fout:
-                fout.write(".report-color { background-color: %s; }\n" %
-                           self.DEFAULT_REPORTS_COLOR)
+                fout.write(".bg-theme-report-color { background-color: %s; }\n"
+                           ".theme-report-color { color: %s; }" %
+                           (self.DEFAULT_REPORTS_COLOR,
+                            self.DEFAULT_REPORTS_COLOR))
 
     backend_primary_color = fields.Char(
         string="Primary color",
@@ -129,14 +131,21 @@ class CustomColorConfiguration(models.TransientModel):
                     open(backendcss_file_new, 'w') as fout:
                 for line in fin:
                     lineout = line
-                    if line.startswith('.report-color'):
-                        lineout = ".report-color { background-color: %s; }\n" \
-                            % self.report_motive_color
+                    if line.startswith('.bg-theme-report-color'):
+                        lineout = \
+                            ".bg-theme-report-color " \
+                            "{ background-color: %s; }\n" % \
+                            self.report_motive_color
+                    if line.startswith('.theme-report-color'):
+                        lineout = ".theme-report-color { color: %s; }" % \
+                            self.report_motive_color
                     fout.write(lineout)
             fout.close()
             os.rename(backendcss_file_new, backendcss_file)
         elif not os.path.exists(backendcss_file):
             with open(backendcss_file, 'w') as fout:
-                fout.write(".report-color { background-color: %s; }\n" %
-                           self.report_motive_color)
+                fout.write(".bg-theme-report-color { background-color: %s; }\n"
+                           ".theme-report-color { color: %s; }" %
+                           (self.report_motive_color,
+                            self.report_motive_color))
         return values
