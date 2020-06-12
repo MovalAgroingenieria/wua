@@ -78,11 +78,22 @@
         </field>
     </record>
 
+    <record id="wua_intakeconsumption_view_pivot" model="ir.ui.view" >
+        <field name="name">Intake Consumption (graph view)</field>
+        <field name="model">wua.intakeconsumption</field>
+        <field name="arch" type="xml">
+            <pivot string="Intake Consumptions" display_quantity="true">
+                <field name="intake_id"/>
+                <field name="volume_real" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_intakeconsumption_action" model="ir.actions.act_window">
         <field name="name">Intake Consumptions</field>
         <field name="res_model">wua.intakeconsumption</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" ref="wua_intakeconsumption_view_tree"/>
         <field name="search_view_id" ref="wua_intakeconsumption_view_search"/>
     </record>
