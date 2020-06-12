@@ -74,20 +74,44 @@ class WuaAgriculturalseason(models.Model):
         tools.drop_view_if_exists(self.env.cr, 'wua_sum_invoicing')
         self.env.cr.execute("""
             CREATE OR REPLACE VIEW wua_sum_invoicing AS (
-            SELECT row_number() OVER() AS id, a.* FROM (SELECT
-            a1.company_id, iv1.name as company, extract (year FROM
-            ((a1.date_invoice AT TIME ZONE 'UTC' ) AT TIME ZONE
-            'Europe/Madrid')) AS year, extract (month FROM ((a1.date_invoice AT
-            TIME ZONE 'UTC' ) AT TIME ZONE 'Europe/Madrid')) AS month,
-            SUM(a1.quantity) AS total_quantity FROM
-            account_invoice_line a1 INNER JOIN
-            product_category p1 ON a1.categ_id = p1.id INNER JOIN ir_values iv1
-            ON a1.company_id = (CAST(substring(iv1.value from
-            \'\\d\') AS INTEGER)) WHERE iv1.model = 'wua.configuration' and
-            (iv1.name = 'company_01' OR iv1.name = 'company_02' OR iv1.name =
-            'company_03') AND (p1.productcategory_code = 7 OR
-            p1.productcategory_code = 11) GROUP BY a1.company_id, year, month,
-            iv1.name ORDER BY iv1.name, year, month) a)
+            SELECT row_number() OVER() AS id, a.* FROM
+            (
+            SELECT b.company_id, b.company as company, extract
+            (year FROM ((b.date_invoice AT TIME ZONE 'UTC' ) AT
+            TIME ZONE 'Europe/Madrid')) AS year,
+            extract (month FROM ((b.date_invoice AT TIME ZONE 'UTC' ) AT
+            TIME ZONE 'Europe/Madrid')) AS month,
+            SUM(b.quantity) AS total_quantity FROM
+                (
+                SELECT a1.company_id as company_id, iv1.name as company,
+                CASE
+                    WHEN p1.productcategory_code = 11 AND pu1.name = 'Hour(s)'
+                    THEN a1.quantity * (SELECT CAST(substring(value
+                                        FROM \'\\d+.?\\d+?\') AS FLOAT) FROM
+                                        ir_values where model =
+                                        'wua.configuration' AND name =
+                                        'volume_time_equivalence')
+                ELSE a1.quantity
+                END as quantity,
+                a1.date_invoice as date_invoice FROM
+                    account_invoice_line a1
+                    INNER JOIN product_category p1
+                    ON a1.categ_id = p1.id
+                    INNER JOIN product_uom pu1
+                    ON a1.uom_id = pu1.id
+                    INNER JOIN ir_values iv1
+                    ON a1.company_id = (CAST(substring(iv1.value from \'\\d\')
+                                       AS INTEGER)) WHERE iv1.model =
+                                       'wua.configuration' and
+                                       (iv1.name = 'company_01' OR
+                                        iv1.name = 'company_02' OR
+                                        iv1.name = 'company_03') AND
+                                       (p1.productcategory_code = 7 OR
+                                        p1.productcategory_code = 11)
+                    ) b
+            GROUP BY b.company_id, year, month, b.company
+            ORDER BY b.company, year, month
+            ) a)
             """)
         super(WuaAgriculturalseason, self).init()
 
