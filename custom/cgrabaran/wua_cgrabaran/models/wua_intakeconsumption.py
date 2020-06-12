@@ -8,6 +8,9 @@ from odoo import models, fields, api
 class WuaIntakeconsumption(models.Model):
     _inherit = 'wua.intakeconsumption'
 
+    name = fields.Char(
+        size=30)
+
     validated = fields.Boolean(
         string='Validated',
         store=True,
@@ -34,3 +37,26 @@ class WuaIntakeconsumption(models.Model):
             if record.flowreading_id:
                 is_toll = record.flowreading_id.is_toll
             record.is_toll = is_toll
+
+    @api.depends('flowmeter_id', 'flowreading_id', 'flowreading_id.intake_id')
+    def _compute_intake_id(self):
+        for record in self:
+            intake_id = None
+            if (record.flowreading_id and record.flowreading_id.intake_id):
+                intake_id = record.flowreading_id.intake_id
+            elif (record.flowmeter_id and record.flowmeter_id.intake_id):
+                intake_id = record.flowmeter_id.intake_id
+            record.intake_id = intake_id
+
+    def _compute_name(self):
+        for record in self:
+            name = ''
+            if (record.intake_id and record.intake_id.intake_code and
+                    record.reading_end_time):
+                name_first_part = '0' * \
+                    (6-len(str(record.intake_id.intake_code))) \
+                    + str(record.intake_id.intake_code)
+                name = name_first_part + ' - ' + record.reading_end_time
+                if record.flowreading_id.is_toll:
+                    name = name + ' -'
+            record.name = name
