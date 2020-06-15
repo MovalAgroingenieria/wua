@@ -357,8 +357,8 @@ class WuaParcel(models.Model):
         compute='_compute_track_subparcel_area_ids',
         track_visibility='onchange')
 
-    aereal_img = fields.Binary(
-        string="Aereal Image",
+    aerial_img = fields.Binary(
+        string="Aerial Image",
         readonly=True)
 
     _sql_constraints = [
@@ -995,12 +995,36 @@ class WuaParcel(models.Model):
                                          'files of SHP.'))
 
     @api.multi
-    def action_regenerate_aereal_img(self):
+    def action_regenerate_aerial_img(self):
         parcels = self.env['wua.parcel'].search(
             [('with_gis_parcel', '=', True)])
-        parcels.regenerate_aereal_img()
+        parcels.regenerate_aerial_img()
 
-    def regenerate_aereal_img(self):
+    def get_sld_body(self):
+        body = ''
+        body = body + '<?xml version="1.0" encoding="UTF-8"?>' +\
+            '<StyledLayerDescriptor version="1.0.0" ' + \
+            'xmlns="http://www.opengis.net/sld" xmlns:ogc="' +\
+            'http://www.opengis.net/ogc" xmlns:xlink="' +\
+            'http://www.w3.org/1999/xlink" xmlns:xsi="' +\
+            'http://www.w3.org/2001/XMLSchema-instance"' +\
+            'xsi:schemaLocation="http://www.opengis.net/sld ' +\
+            'http://schemas.opengis.net/sld/1.0.0/StyledLaye' +\
+            'rDescriptor.xsd"><NamedLayer><Name>parcel</Name>' +\
+            '<UserStyle><Title>xxx</Title><FeatureTypeStyle>' +\
+            '<Rule><Name>Asia</Name><Filter><PropertyIsLike ' +\
+            'wildCard="*" singleChar="." escape="!"><Property' +\
+            'Name>name</PropertyName><Literal>' + self.name +\
+            '</Literal></PropertyIsLike></Filter>' +\
+            '<PolygonSymbolizer>' +\
+            '<Stroke><CssParameter name="stroke">#0000FF' +\
+            '</CssParameter><CssParameter name="stroke-width">' +\
+            '18</CssParameter></Stroke>' +\
+            '</PolygonSymbolizer></Rule></FeatureTypeStyle>' +\
+            '</UserStyle></NamedLayer></StyledLayerDescriptor>'
+        return body
+
+    def regenerate_aerial_img(self):
         url_gis_viewer_wms = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_wms')
         url_gis_viewer_wfs = self.env['ir.values'].get_default(
@@ -1019,26 +1043,7 @@ class WuaParcel(models.Model):
                     filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
                         '>name</ValueReference><Literal>' + record.name +\
                         '</Literal></PropertyIsEqualTo></Filter>'
-                    sld_body = '<?xml version="1.0" encoding="UTF-8"?>' +\
-                        '<StyledLayerDescriptor version="1.0.0" ' + \
-                        'xmlns="http://www.opengis.net/sld" xmlns:ogc="' +\
-                        'http://www.opengis.net/ogc" xmlns:xlink="' +\
-                        'http://www.w3.org/1999/xlink" xmlns:xsi="' +\
-                        'http://www.w3.org/2001/XMLSchema-instance"' +\
-                        'xsi:schemaLocation="http://www.opengis.net/sld ' +\
-                        'http://schemas.opengis.net/sld/1.0.0/StyledLaye' +\
-                        'rDescriptor.xsd"><NamedLayer><Name>parcel</Name>' +\
-                        '<UserStyle><Title>xxx</Title><FeatureTypeStyle>' +\
-                        '<Rule><Name>Asia</Name><Filter><PropertyIsLike ' +\
-                        'wildCard="*" singleChar="." escape="!"><Property' +\
-                        'Name>name</PropertyName><Literal>' + record.name +\
-                        '</Literal></PropertyIsLike></Filter>' +\
-                        '<PolygonSymbolizer>' +\
-                        '<Stroke><CssParameter name="stroke">#0000FF' +\
-                        '</CssParameter><CssParameter name="stroke-width">' +\
-                        '18</CssParameter></Stroke>' +\
-                        '</PolygonSymbolizer></Rule></FeatureTypeStyle>' +\
-                        '</UserStyle></NamedLayer></StyledLayerDescriptor>'
+                    sld_body = record.get_sld_body()
                     try:
                         response = wfs.getfeature(typename='fes:parcel',
                                                   filter=filterxml)
@@ -1065,10 +1070,10 @@ class WuaParcel(models.Model):
                                          SLD_BODY=sld_body)
                         image = io.BytesIO(img.read())
                         base64_img = base64.b64encode(image.getvalue())
-                        record.write({'aereal_img': base64_img})
+                        record.write({'aerial_img': base64_img})
                     except Exception as e:
                         _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.error('Could not generate aereal image for ' +
+                        _logger.error('Could not generate aerial image for ' +
                                       record.name, e)
             return {
                 'type': 'ir.actions.act_window',

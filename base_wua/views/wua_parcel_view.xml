@@ -256,9 +256,9 @@
                                   groups="base_wua.group_wua_user">
                                 <field name="internal_notes"/>
                             </page>
-                            <page name="aereal_img" string="Aereal Image">
-                              <group name="aereal_img_group">
-                                  <field name="aereal_img" widget="image" class="oe_img_259_160"/>
+                            <page name="aerial_img" string="Aerial Image">
+                              <group name="aerial_img_group">
+                                  <field name="aerial_img" widget="image" class="oe_img_259_160"/>
                               </group>
                           </page>
                         </notebook>
@@ -713,26 +713,26 @@
         <field name="code">action = env["wua.parcel"].action_regenerate_shp()</field>
     </record>
 
-    <record id="wua_technical_regenerate_aereal_img_action" model="ir.actions.server">
-        <field name="name">Generate Aereal Images</field>
+    <record id="wua_technical_regenerate_aerial_img_action" model="ir.actions.server">
+        <field name="name">Generate Aerial Images</field>
         <field name="model_id" ref="base_wua.model_wua_parcel"/>
-        <field name="code">action = env["wua.parcel"].action_regenerate_aereal_img()</field>
+        <field name="code">action = env["wua.parcel"].action_regenerate_aerial_img()</field>
     </record>
 
-    <record id="wua_regenerate_aereal_img_individual" model="ir.actions.server">
-        <field name="name">Generate Aereal Image</field>
+    <record id="wua_regenerate_aerial_img_individual" model="ir.actions.server">
+        <field name="name">Generate Aerial Image</field>
         <field name="model_id" ref="base_wua.model_wua_parcel"/>
         <field name="code">
-            action = record.regenerate_aereal_img()
+            action = record.regenerate_aerial_img()
         </field>
     </record>
 
-    <record id="wua_action_regenerate_aereal_img_individual" model="ir.values">
-        <field name="name">Generate Aereal Image</field>
+    <record id="wua_action_regenerate_aerial_img_individual" model="ir.values">
+        <field name="name">Generate Aerial Image</field>
         <field name="model">wua.parcel</field>
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server,' + str(ref('wua_regenerate_aereal_img_individual'))"/>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_regenerate_aerial_img_individual'))"/>
     </record>
 
     <menuitem id="base_wua_technical_menu"
@@ -788,10 +788,10 @@
               action="wua_technical_regenerate_shp_action"
               sequence="7"/>
 
-    <menuitem id="wua_technical_regenerate_aereal_img"
-              name="Aereal Image Regeneration"
+    <menuitem id="wua_technical_regenerate_aerial_img"
+              name="Aerial Image Regeneration"
               parent="base_wua_technical_menu"
-              action="wua_technical_regenerate_aereal_img_action"
+              action="wua_technical_regenerate_aerial_img_action"
               sequence="8"
               groups="base.group_system"/>
 
