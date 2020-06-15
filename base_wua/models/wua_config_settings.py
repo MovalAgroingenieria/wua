@@ -83,6 +83,16 @@ class WuaConfiguration(models.TransientModel):
         size=255,
         help="Note: nameval must be a parameter")
 
+    url_gis_viewer_wms = fields.Char(
+        string='GIS Viewer WMS URL',
+        size=255,
+        help="Note: nameval must be a parameter")
+
+    url_gis_viewer_wfs = fields.Char(
+        string='GIS Viewer WFS URL',
+        size=255,
+        help="Note: nameval must be a parameter")
+
     url_gis_viewer_parcel_param = fields.Char(
         string='Param for parcel',
         size=20,
@@ -171,6 +181,10 @@ class WuaConfiguration(models.TransientModel):
                            self.url_street_view)
         values.set_default('wua.configuration', 'url_gis_viewer',
                            self.url_gis_viewer)
+        values.set_default('wua.configuration', 'url_gis_viewer_wms',
+                           self.url_gis_viewer_wms)
+        values.set_default('wua.configuration', 'url_gis_viewer_wfs',
+                           self.url_gis_viewer_wfs)
         values.set_default('wua.configuration', 'url_gis_viewer_parcel_param',
                            self.url_gis_viewer_parcel_param)
         values.set_default('wua.configuration', 'url_gis_viewer_partner_param',

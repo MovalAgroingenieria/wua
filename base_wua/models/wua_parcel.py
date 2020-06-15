@@ -7,10 +7,15 @@ import datetime
 import pytz
 import logging
 import subprocess
+import io
+import base64
 from pyproj import Proj, transform
 from lxml import etree
 from collections import OrderedDict
 from shapely import wkb
+from xml.etree import ElementTree
+from owslib.wms import WebMapService
+from owslib.wfs import WebFeatureService
 from odoo import models, fields, api, exceptions, _
 
 
@@ -351,6 +356,10 @@ class WuaParcel(models.Model):
         store=True,
         compute='_compute_track_subparcel_area_ids',
         track_visibility='onchange')
+
+    aereal_img = fields.Binary(
+        string="Aereal Image",
+        readonly=True)
 
     _sql_constraints = [
         ('unique_name',
@@ -977,6 +986,100 @@ class WuaParcel(models.Model):
                 'context': self.env.context,
                 }
 
+    def regenerate_shp(self, path_frompgtoshp):
+        args = path_frompgtoshp.split()
+        args.append(self.env.cr.dbname)
+        returncode = subprocess.call(args)
+        if (returncode != 0):
+            raise exceptions.UserError(_('It is not possible to create the '
+                                         'files of SHP.'))
+
+    @api.multi
+    def action_regenerate_aereal_img(self):
+        parcels = self.env['wua.parcel'].search(
+            [('with_gis_parcel', '=', True)])
+        parcels.regenerate_aereal_img()
+
+    def regenerate_aereal_img(self):
+        url_gis_viewer_wms = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wms')
+        url_gis_viewer_wfs = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wfs')
+        if (not url_gis_viewer_wms or not url_gis_viewer_wfs):
+            raise exceptions.UserError(_('The "URL GIS Viewer WMS" parameter '
+                                         'or "URL GIS Viewer WFS" are not '
+                                         'populated.'))
+        else:
+            for record in self:
+                if record.with_gis_parcel:
+                    wms = WebMapService(url=url_gis_viewer_wms,
+                                        version='1.1.1')
+                    wfs = WebFeatureService(url=url_gis_viewer_wfs,
+                                            version='1.1.0')
+                    filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
+                        '>name</ValueReference><Literal>' + record.name +\
+                        '</Literal></PropertyIsEqualTo></Filter>'
+                    sld_body = '<?xml version="1.0" encoding="UTF-8"?>' +\
+                        '<StyledLayerDescriptor version="1.0.0" ' + \
+                        'xmlns="http://www.opengis.net/sld" xmlns:ogc="' +\
+                        'http://www.opengis.net/ogc" xmlns:xlink="' +\
+                        'http://www.w3.org/1999/xlink" xmlns:xsi="' +\
+                        'http://www.w3.org/2001/XMLSchema-instance"' +\
+                        'xsi:schemaLocation="http://www.opengis.net/sld ' +\
+                        'http://schemas.opengis.net/sld/1.0.0/StyledLaye' +\
+                        'rDescriptor.xsd"><NamedLayer><Name>parcel</Name>' +\
+                        '<UserStyle><Title>xxx</Title><FeatureTypeStyle>' +\
+                        '<Rule><Name>Asia</Name><Filter><PropertyIsLike ' +\
+                        'wildCard="*" singleChar="." escape="!"><Property' +\
+                        'Name>name</PropertyName><Literal>' + record.name +\
+                        '</Literal></PropertyIsLike></Filter>' +\
+                        '<PolygonSymbolizer>' +\
+                        '<Stroke><CssParameter name="stroke">#0000FF' +\
+                        '</CssParameter><CssParameter name="stroke-width">' +\
+                        '18</CssParameter></Stroke>' +\
+                        '</PolygonSymbolizer></Rule></FeatureTypeStyle>' +\
+                        '</UserStyle></NamedLayer></StyledLayerDescriptor>'
+                    try:
+                        response = wfs.getfeature(typename='fes:parcel',
+                                                  filter=filterxml)
+                        parsed_response = ElementTree.fromstring(
+                            response.getvalue())
+                        ns = parsed_response[0].tag.split('}')[0] + '}'
+                        parcel_member = parsed_response.find(ns +
+                                                             'featureMember')
+                        parcel_envelop = parcel_member[0][0][0]
+                        crs = parcel_envelop.attrib['srsName']
+                        lowerCorner = (parcel_envelop.find(
+                            ns + 'lowerCorner').text).split(' ')
+                        upperCorner = (parcel_envelop.find(
+                            ns + 'upperCorner').text).split(' ')
+                        bbox = (float(lowerCorner[0]), float(lowerCorner[1]),
+                                float(upperCorner[0]), float(upperCorner[1]))
+
+                        img = wms.getmap(layers=['pnoa', 'parcel',
+                                                 'parcel_perimeter'],
+                                         styles=['default', 'default',
+                                                 'default'],
+                                         srs=crs, bbox=bbox, size=(1080, 1920),
+                                         format='image/png', transparent=True,
+                                         SLD_BODY=sld_body)
+                        image = io.BytesIO(img.read())
+                        base64_img = base64.b64encode(image.getvalue())
+                        record.write({'aereal_img': base64_img})
+                    except Exception as e:
+                        _logger = logging.getLogger(self.__class__.__name__)
+                        _logger.error('Could not generate aereal image for ' +
+                                      record.name, e)
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Parcels',
+                'res_model': 'wua.parcel',
+                'view_type': 'form',
+                'view_mode': 'tree,form',
+                'target': 'current',
+                'context': self.env.context,
+                }
+
     def check_gis(self):
         resp = False
         self.env.cr.execute("""
@@ -1032,14 +1135,6 @@ class WuaParcel(models.Model):
                 _logger.info('Number of GIS-Parcels : ' +
                              str(number_of_gis_parcels))
         return gis_parcels_ok
-
-    def regenerate_shp(self, path_frompgtoshp):
-        args = path_frompgtoshp.split()
-        args.append(self.env.cr.dbname)
-        returncode = subprocess.call(args)
-        if (returncode != 0):
-            raise exceptions.UserError(_('It is not possible to create the '
-                                         'files of SHP.'))
 
     def do_process_slave_data_for_write(self, vals):
         self.populate_subparcelcode_pos(self.name, vals)
