@@ -58,5 +58,5 @@ class WuaIntakeconsumption(models.Model):
                     + str(record.intake_id.intake_code)
                 name = name_first_part + ' - ' + record.reading_end_time
                 if record.flowreading_id.is_toll:
-                    name = name + ' -'
+                    name = name + '-P'
             record.name = name
