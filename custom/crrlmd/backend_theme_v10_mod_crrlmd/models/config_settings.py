@@ -21,7 +21,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crrlmd' in path \
+            if '/custom/crrlmd' in path \
                     and self._module == 'backend_theme_v10_mod_crrlmd':
                 path = os.path.dirname(path)
                 varless_file = path + '/crrlmd/'\
@@ -86,7 +86,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crrlmd' in path \
+            if '/custom/crrlmd' in path \
                     and self._module == 'backend_theme_v10_mod_crrlmd':
                 path = os.path.dirname(path)
                 varless_file = path + '/crrlmd/'\

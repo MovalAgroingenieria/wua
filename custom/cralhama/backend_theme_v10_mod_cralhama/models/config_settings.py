@@ -21,7 +21,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/cralhama' in path \
+            if '/custom/cralhama' in path \
                     and self._module == 'backend_theme_v10_mod_cralhama':
                 path = os.path.dirname(path)
                 varless_file = path + '/cralhama/'\
@@ -86,7 +86,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/cralhama' in path \
+            if '/custom/cralhama' in path \
                     and self._module == 'backend_theme_v10_mod_cralhama':
                 path = os.path.dirname(path)
                 varless_file = path + '/cralhama/'\
