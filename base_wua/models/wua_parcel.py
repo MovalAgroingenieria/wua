@@ -1060,30 +1060,29 @@ class WuaParcel(models.Model):
                             ns + 'upperCorner').text).split(' ')
                         bbox = (float(lowerCorner[0]), float(lowerCorner[1]),
                                 float(upperCorner[0]), float(upperCorner[1]))
-
+                        width = float(upperCorner[0]) - float(lowerCorner[0])
+                        height = float(upperCorner[1]) - float(lowerCorner[1])
+                        # Make image bigger if too small, but keep aspect ratio
+                        # Minimal 512
+                        # Maximun 4096
+                        scale = 1
+                        if (width < 512 or height < 512):
+                            scale = min(512 / min(width, height),
+                                        4096 / max(width, height))
+                        width = width * scale
+                        height = height * scale
                         img = wms.getmap(layers=['pnoa', 'parcel',
                                                  'parcel_perimeter'],
                                          styles=['default', 'default',
                                                  'default'],
-                                         srs=crs, bbox=bbox, size=(1080, 1920),
-                                         format='image/png', transparent=True,
-                                         SLD_BODY=sld_body)
+                                         srs=crs, bbox=bbox, size=(width,
+                                         height), format='image/png',
+                                         transparent=True, SLD_BODY=sld_body)
                         image = io.BytesIO(img.read())
                         base64_img = base64.b64encode(image.getvalue())
                         record.write({'aerial_img': base64_img})
                     except Exception as e:
-                        _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.error('Could not generate aerial image for ' +
-                                      record.name, e)
-            return {
-                'type': 'ir.actions.act_window',
-                'name': 'Parcels',
-                'res_model': 'wua.parcel',
-                'view_type': 'form',
-                'view_mode': 'tree,form',
-                'target': 'current',
-                'context': self.env.context,
-                }
+                        print e
 
     def check_gis(self):
         resp = False
