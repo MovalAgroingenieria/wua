@@ -21,7 +21,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/sdtoalbatera' in path \
+            if '/custom/sdtoalbatera' in path \
                     and self._module == 'backend_theme_v10_mod_sdtoalbatera':
                 path = os.path.dirname(path)
                 varless_file = path + '/sdtoalbatera/'\
@@ -86,7 +86,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/sdtoalbatera' in path \
+            if '/custom/sdtoalbatera' in path \
                     and self._module == 'backend_theme_v10_mod_sdtoalbatera':
                 path = os.path.dirname(path)
                 varless_file = path + '/sdtoalbatera/'\

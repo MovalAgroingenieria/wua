@@ -21,7 +21,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/sdtogranja' in path \
+            if '/custom/sdtogranja' in path \
                     and self._module == 'backend_theme_v10_mod_sdtogranja':
                 path = os.path.dirname(path)
                 varless_file = path + '/sdtogranja/'\
@@ -86,7 +86,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/sdtogranja' in path \
+            if '/custom/sdtogranja' in path \
                     and self._module == 'backend_theme_v10_mod_sdtogranja':
                 path = os.path.dirname(path)
                 varless_file = path + '/sdtogranja/'\

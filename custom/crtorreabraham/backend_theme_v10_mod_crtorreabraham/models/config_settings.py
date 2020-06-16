@@ -21,7 +21,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crtorreabraham' in path \
+            if '/custom/crtorreabraham' in path \
                     and self._module == 'backend_theme_v10_mod_crtorreabraham':
                 path = os.path.dirname(path)
                 varless_file = path + '/crtorreabraham/'\
@@ -86,7 +86,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crtorreabraham' in path \
+            if '/custom/crtorreabraham' in path \
                     and self._module == 'backend_theme_v10_mod_crtorreabraham':
                 path = os.path.dirname(path)
                 varless_file = path + '/crtorreabraham/'\

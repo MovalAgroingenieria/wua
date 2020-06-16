@@ -21,7 +21,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crmestalla' in path \
+            if '/custom/crmestalla' in path \
                     and self._module == 'backend_theme_v10_mod_crmestalla':
                 path = os.path.dirname(path)
                 varless_file = path + '/crmestalla/'\
@@ -86,7 +86,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crmestalla' in path \
+            if '/custom/crmestalla' in path \
                     and self._module == 'backend_theme_v10_mod_crmestalla':
                 path = os.path.dirname(path)
                 varless_file = path + '/crmestalla/'\

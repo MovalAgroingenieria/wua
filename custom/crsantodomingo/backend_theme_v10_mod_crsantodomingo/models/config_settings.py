@@ -21,7 +21,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crsantodomingo' in path \
+            if '/custom/crsantodomingo' in path \
                     and self._module == 'backend_theme_v10_mod_crsantodomingo':
                 path = os.path.dirname(path)
                 varless_file = path + '/crsantodomingo/'\
@@ -86,7 +86,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crsantodomingo' in path \
+            if '/custom/crsantodomingo' in path \
                     and self._module == 'backend_theme_v10_mod_crsantodomingo':
                 path = os.path.dirname(path)
                 varless_file = path + '/crsantodomingo/'\

@@ -21,7 +21,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crpantanomariacristina' in path \
+            if '/custom/crpantanomariacristina' in path \
                     and self._module == 'backend_theme_v10_mod_crpantanomariacristina':
                 path = os.path.dirname(path)
                 varless_file = path + '/crpantanomariacristina/'\
@@ -86,7 +86,7 @@ class CustomColorConfiguration(models.TransientModel):
         backendcss_file = False
         addons_path = tools.config['addons_path'].split(',')
         for path in addons_path:
-            if '/wua/custom/crpantanomariacristina' in path \
+            if '/custom/crpantanomariacristina' in path \
                     and self._module == 'backend_theme_v10_mod_crpantanomariacristina':
                 path = os.path.dirname(path)
                 varless_file = path + '/crpantanomariacristina/'\
