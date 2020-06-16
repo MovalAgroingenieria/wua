@@ -363,6 +363,11 @@
                 <filter string="GIS Parcel: No" name="gisparcelno"
                  domain="[('with_gis_parcel','=',False)]"/>
                 <separator/>
+                <filter string="Aerial Image: Yes" name="aerialimageyes"
+                 domain="[('aerial_img','!=', None)]"/>
+                <filter string="Aerial Image: No" name="aerialimageno"
+                 domain="[('aerial_img','=', None)]"/>
+                <separator/>
                 <filter string="Archived" name="inactive"
                  domain="[('active','=',False)]"/>
                 <group expand="0" string="Group By">
@@ -723,7 +728,7 @@
         <field name="name">Generate Aerial Image</field>
         <field name="model_id" ref="base_wua.model_wua_parcel"/>
         <field name="code">
-            action = record.regenerate_aerial_img()
+            action =  env['wua.parcel'].browse(context['active_ids']).regenerate_aerial_img()
         </field>
     </record>
 
