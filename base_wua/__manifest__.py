@@ -37,6 +37,7 @@
         "web_favicon",
         "base_wua_report",
         "l10n_es_partner_address_street_type",
+        "fontawesome_ext",
     ],
     "data": [
         "security/security.xml",
