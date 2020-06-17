@@ -2,6 +2,7 @@
 # Cpyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
@@ -49,7 +50,13 @@ class WuaInvoiceset(models.Model):
     def get_description(self, quota):
         description = ""
         if quota:
-            quotaperiod = quota.quotaperiod_id.name
+            quota_initial_date = datetime.datetime.strptime(
+                quota.quotaperiod_id.initial_date, '%Y-%m-%d')
+            quota_initial_date = quota_initial_date.strftime('%x')
+            quota_end_date = datetime.datetime.strptime(
+                quota.quotaperiod_id.end_date, '%Y-%m-%d')
+            quota_end_date = quota_end_date.strftime('%x')
+            quotaperiod = quota_initial_date + ' - ' + quota_end_date
             language = quota.partner_id.lang
             superproduct = quota.with_context(
                 {'lang': language}).superproduct_id.name
