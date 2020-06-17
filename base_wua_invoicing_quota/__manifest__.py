@@ -19,6 +19,9 @@
         'data/product_category_data.xml',
         "security/ir.model.access.csv",
         'views/resources.xml',
+        'views/account_invoice_view.xml',
+        'views/wua_invoiceset_view.xml',
+        'views/wua_quota_view.xml',
         'views/wua_invoicing_config_settings_view.xml'
     ],
     "installable": True,

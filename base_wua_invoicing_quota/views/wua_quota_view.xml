@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="wua_quota_view_form" model="ir.ui.view">
+      <field name="name">Quotas (form view)</field>
+      <field name="model">wua.quota</field>
+      <field name="inherit_id" ref="base_wua_quota_management.wua_quota_view_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//field[@name='partner_id']" position="after">
+              <field name="sum_price_subtotal"/>
+          </xpath>
+          <xpath expr="//group[@name='master_data']" position="before">
+              <div name="buttons" class="oe_button_box">
+                <button name="action_see_invoice_lines"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-dollar"
+                        attrs="{'invisible': [('sum_price_subtotal', '&lt;=', 0)]}"
+                        groups="base_wua.group_wua_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Detail lines
+                            </span>
+                        </div>
+                </button>
+              </div>
+          </xpath>
+      </field>
+  </record>
+
+  <record id="wua_quota_view_tree" model="ir.ui.view">
+      <field name="name">Quotas (tree view)</field>
+      <field name="model">wua.quota</field>
+      <field name="inherit_id" ref="base_wua_quota_management.wua_quota_view_tree"/>
+      <field name="arch" type="xml">
+          <xpath expr="//field[@name='balance']" position="after">
+              <field name="number_of_invoicing_processes"/>
+              <field name="sum_price_subtotal"/>
+          </xpath>
+      </field>
+  </record>
+
+  <record id="wua_quota_view_search" model="ir.ui.view">
+      <field name="name">Quotas (search view)</field>
+      <field name="model">wua.quota</field>
+      <field name="inherit_id" ref="base_wua_quota_management.wua_quota_view_search"/>
+      <field name="arch" type="xml">
+          <xpath expr="//filter[@name='negative_quotas']" position="after">
+              <separator/>
+              <filter string="Invoiced: Yes" name="invoicedyes"
+               domain="[('invoiced','=',True)]"/>
+              <filter string="Invoiced: No" name="invoicedno"
+               domain="[('invoiced','=',False)]"/>
+          </xpath>
+      </field>
+  </record>
+
+</odoo>
