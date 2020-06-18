@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-17 11:19+0000\n"
-"PO-Revision-Date: 2020-06-17 11:19+0000\n"
+"POT-Creation-Date: 2020-06-18 06:54+0000\n"
+"PO-Revision-Date: 2020-06-18 06:54+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -35,6 +35,12 @@ msgstr ""
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_account_invoice_amount_untaxed_categ13
 msgid "C13: Quotas"
+msgstr ""
+
+#. module: base_wua_invoicing_quota
+#: code:addons/base_wua_invoicing_quota/models/wua_invoicing_config_settings.py:28
+#, python-format
+msgid "Cannot change value of \"invoicing of negative balance\", because exists some invoiced quota."
 msgstr ""
 
 #. module: base_wua_invoicing_quota
@@ -83,7 +89,7 @@ msgid "Entity (line of a WUA invoice set)"
 msgstr ""
 
 #. module: base_wua_invoicing_quota
-#: code:addons/base_wua_invoicing_quota/models/wua_invoiceset.py:173
+#: code:addons/base_wua_invoicing_quota/models/wua_invoiceset.py:180
 #, python-format
 msgid "Error when updating records."
 msgstr ""
@@ -189,7 +195,7 @@ msgid "Partner"
 msgstr ""
 
 #. module: base_wua_invoicing_quota
-#: code:addons/base_wua_invoicing_quota/models/wua_invoiceset.py:208
+#: code:addons/base_wua_invoicing_quota/models/wua_invoiceset.py:215
 #: model:ir.model,name:base_wua_invoicing_quota.model_wua_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_account_invoice_line_quota_id
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_quota_id
@@ -213,11 +219,6 @@ msgid "Quotas of an invoice-set line"
 msgstr ""
 
 #. module: base_wua_invoicing_quota
-#: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_volume_real
-msgid "Real Volume (m3)"
-msgstr ""
-
-#. module: base_wua_invoicing_quota
 #: model:ir.actions.server,name:base_wua_invoicing_quota.wua_remove_quota_to_invoiceset
 msgid "Remove from invoice set"
 msgstr ""
@@ -234,6 +235,7 @@ msgstr ""
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_superproduct_id
+#: model:ir.ui.view,arch_db:base_wua_invoicing_quota.wua_invoiceset_line_quota_view_search
 msgid "Superproduct"
 msgstr ""
 

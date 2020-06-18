@@ -263,10 +263,6 @@ class WuaInvoicesetLineQuota(models.Model):
         comodel_name="res.partner",
         ondelete="restrict")
 
-    volume_real = fields.Float(
-        string='Real Volume (m3)',
-        digits=(32, 4))
-
     accumulated_input = fields.Float(
         string='Inputs',
         digits=(32, 2))

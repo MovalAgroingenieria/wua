@@ -13,7 +13,6 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_quota_management",
-        "base_wua_invoicing",
     ],
     "data": [
         'data/product_category_data.xml',

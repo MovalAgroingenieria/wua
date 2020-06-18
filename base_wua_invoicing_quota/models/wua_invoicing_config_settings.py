@@ -2,7 +2,7 @@
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaInvoicingConfiguration(models.TransientModel):
@@ -25,9 +25,10 @@ class WuaInvoicingConfiguration(models.TransientModel):
                 ['&', ('of_active_agriculturalseason', '=', True), (
                     'invoiced', '=', True)])
             if (quotas_already_invoiced):
-                raise exceptions.UserError('Cannot change value of "invoicing '
-                                           'of negative balance", because '
-                                           'exists some invoiced quota')
+                raise exceptions.UserError(_('Cannot change value of '
+                                             '"invoicing of negative balance",'
+                                             ' because exists some invoiced '
+                                             'quota.'))
         values.set_default('wua.invoicing.configuration',
                            'invoicing_of_negative_balance',
                            self.invoicing_of_negative_balance)
