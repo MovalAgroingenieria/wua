@@ -1010,18 +1010,38 @@ class WuaParcel(models.Model):
             'http://www.w3.org/2001/XMLSchema-instance"' +\
             'xsi:schemaLocation="http://www.opengis.net/sld ' +\
             'http://schemas.opengis.net/sld/1.0.0/StyledLaye' +\
-            'rDescriptor.xsd"><NamedLayer><Name>parcel</Name>' +\
+            'rDescriptor.xsd">' +\
+            '<NamedLayer><Name>parcel</Name>' +\
             '<UserStyle><Title>xxx</Title><FeatureTypeStyle>' +\
-            '<Rule><Name>Asia</Name><Filter><PropertyIsLike ' +\
+            '<Rule><Filter><PropertyIsLike ' +\
             'wildCard="*" singleChar="." escape="!"><Property' +\
             'Name>name</PropertyName><Literal>' + self.name +\
             '</Literal></PropertyIsLike></Filter>' +\
             '<PolygonSymbolizer>' +\
-            '<Stroke><CssParameter name="stroke">#0000FF' +\
-            '</CssParameter><CssParameter name="stroke-width">' +\
-            '18</CssParameter></Stroke>' +\
-            '</PolygonSymbolizer></Rule></FeatureTypeStyle>' +\
-            '</UserStyle></NamedLayer></StyledLayerDescriptor>'
+            '<Stroke>' +\
+            '<CssParameter name="stroke">#000000</CssParameter>' +\
+            '<CssParameter name="stroke-width">14</CssParameter>' +\
+            '<CssParameter name="stroke-linecap">round</CssParameter>' +\
+            '</Stroke>' +\
+            '</PolygonSymbolizer>' +\
+            '</Rule></FeatureTypeStyle>' +\
+            '</UserStyle></NamedLayer>' +\
+            '<NamedLayer><Name>parcel_perimeter</Name>' +\
+            '<UserStyle><Title>xxx2</Title><FeatureTypeStyle>' +\
+            '<Rule><Filter><PropertyIsLike ' +\
+            'wildCard="*" singleChar="." escape="!"><Property' +\
+            'Name>name</PropertyName><Literal>' + self.name +\
+            '</Literal></PropertyIsLike></Filter>' +\
+            '<PolygonSymbolizer>' +\
+            '<Stroke>' +\
+            '<CssParameter name="stroke">#ffffff</CssParameter>' +\
+            '<CssParameter name="stroke-width">5</CssParameter>' +\
+            '<CssParameter name="stroke-linecap">round</CssParameter>' +\
+            '</Stroke>' +\
+            '</PolygonSymbolizer>' +\
+            '</Rule></FeatureTypeStyle>' +\
+            '</UserStyle></NamedLayer>' +\
+            '</StyledLayerDescriptor>'
         return body
 
     def regenerate_aerial_img(self):
