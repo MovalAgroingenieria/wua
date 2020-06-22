@@ -1044,6 +1044,23 @@ class WuaParcel(models.Model):
             '</StyledLayerDescriptor>'
         return body
 
+    # Get a fraction of base closest to the target number
+    def getClosestDiv(self, base, target):
+        div = base
+        result = div
+        while div > target:
+            result = div
+            div = div / 2.0
+        return result
+
+    def getClosestMul(self, base, target):
+        mul = base
+        result = mul
+        while mul < target:
+            mul = mul * 2.0
+            result = mul
+        return result
+
     def regenerate_aerial_img(self):
         url_gis_viewer_wms = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_wms')
@@ -1074,29 +1091,42 @@ class WuaParcel(models.Model):
                                                              'featureMember')
                         parcel_envelop = parcel_member[0][0][0]
                         crs = parcel_envelop.attrib['srsName']
-                        lowerCorner = (parcel_envelop.find(
-                            ns + 'lowerCorner').text).split(' ')
-                        upperCorner = (parcel_envelop.find(
-                            ns + 'upperCorner').text).split(' ')
-                        bbox = (float(lowerCorner[0]), float(lowerCorner[1]),
-                                float(upperCorner[0]), float(upperCorner[1]))
-                        width = float(upperCorner[0]) - float(lowerCorner[0])
-                        height = float(upperCorner[1]) - float(lowerCorner[1])
-                        # Make image bigger if too small, but keep aspect ratio
-                        # Minimal 512
-                        # Maximun 4096
-                        scale = 1
-                        if (width < 512 or height < 512):
-                            scale = min(512 / min(width, height),
-                                        4096 / max(width, height))
-                        width = width * scale
-                        height = height * scale
+                        lowerCorner = [float(n) for n in (parcel_envelop.find(
+                            ns + 'lowerCorner').text).split(' ')]
+                        upperCorner = [float(n) for n in (parcel_envelop.find(
+                            ns + 'upperCorner').text).split(' ')]
+                        width = int(upperCorner[0] - lowerCorner[0])
+                        height = int(upperCorner[1] - lowerCorner[1])
+                        max_width = 824
+                        max_height = 824
+                        if (width > max_width or height > max_height):
+                            increment = (int(self.getClosestMul(
+                                max_width, max(height, width))))
+                            incrementX = (increment - width)/2
+                            incrementY = (increment - height)/2
+                            lowerCorner[0] = lowerCorner[0] - incrementX
+                            upperCorner[0] = upperCorner[0] + incrementX
+                            lowerCorner[1] = lowerCorner[1] - incrementY
+                            upperCorner[1] = upperCorner[1] + incrementY
+                        elif (width < max_width or height < max_height):
+                            increment = int(self.getClosestDiv(
+                                max_width, max(height, width)))
+                            incrementX = (increment - width)/2
+                            incrementY = (increment - height)/2
+                            lowerCorner[0] = lowerCorner[0] - incrementX
+                            upperCorner[0] = upperCorner[0] + incrementX
+                            lowerCorner[1] = lowerCorner[1] - incrementY
+                            upperCorner[1] = upperCorner[1] + incrementY
+                        width = max_width
+                        height = max_height
+                        bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
+                                (int(upperCorner[0])), (int(upperCorner[1])))
                         img = wms.getmap(layers=['pnoa', 'parcel',
                                                  'parcel_perimeter'],
                                          styles=['default', 'default',
                                                  'default'],
                                          srs=crs, bbox=bbox, size=(width,
-                                         height), format='image/png',
+                                         height), format='image/jpeg',
                                          transparent=True, SLD_BODY=sld_body)
                         image = io.BytesIO(img.read())
                         base64_img = base64.b64encode(image.getvalue())
