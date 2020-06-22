@@ -136,6 +136,11 @@
             </h3>
         </xpath>
 
+        <!-- Do not show Costumer Code infocell -->
+        <xpath expr="//div[@t-if='o.partner_id.ref']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+
         <!-- Overwrite table -->
         <xpath expr="//table[@class='table table-condensed'][1]" position="replace">
             <table class="table">
@@ -197,48 +202,51 @@
             <attribute name="t-att-style">"display: none"</attribute>
         </xpath>
 
-        <!-- Add payment mode and bank account (conditional) -->
-        <!--
-        <xpath expr="//p[@t-if='o.fiscal_position_id.note']" position="after">
-            <t t-if="o.payment_mode_id">
-                <p>
-                    <span><strong>Payment mode:&amp;nbsp;</strong></span>
-                    <span t-field="o.payment_mode_id"/>
-                </p>
-                <p>
-                    <t t-if="'bancari' not in o.payment_mode_id.name">
-                        <span><strong>Bank account:&amp;nbsp;</strong></span>
-                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.name">
-                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.name"/>
-                        </t>
-                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_id.bic">
-                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_id.bic"/>
-                        </t>
-                        <t t-if="o.payment_mode_id.fixed_journal_id.bank_acc_number">
-                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                            <span t-field="o.payment_mode_id.fixed_journal_id.bank_acc_number"/>
-                        </t>
-                    </t>
-                    <t t-else="">
-                        <span><strong>Bank account:&amp;nbsp;</strong></span>
-                        <t t-if="o.mandate_id.partner_bank_id.bank_name">
-                            <span t-field="o.mandate_id.partner_bank_id.bank_name"/>
-                        </t>
-                        <t t-if="o.mandate_id.partner_bank_id.bank_bic">
-                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                            <span t-field="o.mandate_id.partner_bank_id.bank_bic"/>
-                        </t>
-                        <t t-if="o.mandate_id.partner_bank_id.acc_number">
-                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                            <t t-set="anonymous_acc_number" t-value="o.mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
-                            <span t-esc="anonymous_acc_number"/>
-                        </t>
-                    </t>
-                </p>
+        <!-- Add invoiced product resume table -->
+        <xpath expr="//div[@t-if='len(o.tax_line_ids) > 0']" position="before">
+            <t t-set="products" t-value="[]"/>
+            <t t-foreach="o.invoice_line_ids" t-as="l">
+                <t t-if="l.product_id not in products">
+                    <t t-set="products" t-value="products + [l.product_id,]"/>
+                </t>
             </t>
+            <div class="row">
+                <div class="col-xs-6">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-right">Total quantity</th>
+                                <th class="text-right">Total amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="products" t-as="p">
+                                <t t-set="product_total_qty" t-value="0.0"/>
+                                <t t-set="product_total_amount" t-value="0.0"/>
+                                <t t-set="uom_id" t-value="empty"/>
+                                <t t-foreach="o.invoice_line_ids" t-as="l">
+                                    <t t-if="l.product_id.id == p.id">
+                                        <t t-set="product_total_qty" t-value="product_total_qty + l.quantity"/>
+                                        <t t-set="product_total_amount" t-value="product_total_amount + l.price_subtotal"/>
+                                        <t t-set="uom_id" t-value="l.uom_id.name"/>
+                                    </t>
+                                </t>
+                                <td><span t-field="p.name"/></td>
+                                <td class="text-right">
+                                    <span t-esc="product_total_qty"/>
+                                    <span t-esc="uom_id" groups="product.group_uom"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="product_total_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </xpath>
-        -->
+
     </template>
 
 </odoo>
