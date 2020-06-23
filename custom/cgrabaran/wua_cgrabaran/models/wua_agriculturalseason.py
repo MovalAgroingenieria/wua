@@ -191,6 +191,12 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
         default=0.0,
         digits=(32, 4))
 
+    difference_intakeconsumption_invoicing_company_01 = fields.Float(
+        string='Difference Between the real Intake Consumption and the Intake'
+        'Consumption Invoiced of Company 01',
+        default=0.0,
+        digits=(32, 4))
+
     sum_intakeconsumption_company_02 = fields.Float(
         string='Total Intake Consumptions of Company 02',
         default=0.0,
@@ -201,6 +207,12 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
         default=0.0,
         digits=(32, 4))
 
+    difference_intakeconsumption_invoicing_company_02 = fields.Float(
+        string='Difference Between the real Intake Consumption and the Intake'
+        'Consumption Invoiced of Company 02',
+        default=0.0,
+        digits=(32, 4))
+
     sum_intakeconsumption_company_03 = fields.Float(
         string='Total Intake Consumptions of Company 03',
         default=0.0,
@@ -208,6 +220,12 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
 
     sum_invoicing_company_03 = fields.Float(
         string='Total Intake Consumptions Invoiced of Company 03',
+        default=0.0,
+        digits=(32, 4))
+
+    difference_intakeconsumption_invoicing_company_03 = fields.Float(
+        string='Difference Between the real Intake Consumption and the Intake'
+        'Consumption Invoiced of Company 03',
         default=0.0,
         digits=(32, 4))
 
@@ -247,6 +265,12 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
                     node.set('string',
                              node.get('string') + ' ' +
                              company_01_abv.decode('utf-8'))
+                for node in doc.xpath(
+                        "//field[@name='difference_intakeconsumption_invoicing"
+                        "_company_01']"):
+                    node.set('string',
+                             node.get('string') + ' ' +
+                             company_01_abv.decode('utf-8'))
             if company_02_abv:
                 for node in doc.xpath(
                         "//field[@name='sum_intakeconsumption_company_02']"):
@@ -258,6 +282,12 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
                     node.set('string',
                              node.get('string') + ' ' +
                              company_02_abv.decode('utf-8'))
+                for node in doc.xpath(
+                        "//field[@name='difference_intakeconsumption_invoicing"
+                        "_company_02']"):
+                    node.set('string',
+                             node.get('string') + ' ' +
+                             company_02_abv.decode('utf-8'))
             if company_03_abv:
                 for node in doc.xpath(
                         "//field[@name='sum_intakeconsumption_company_03']"):
@@ -266,6 +296,12 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
                              company_03_abv.decode('utf-8'))
                 for node in doc.xpath(
                         "//field[@name='sum_invoicing_company_03']"):
+                    node.set('string',
+                             node.get('string') + ' ' +
+                             company_03_abv.decode('utf-8'))
+                for node in doc.xpath(
+                        "//field[@name='difference_intakeconsumption_invoicing"
+                        "_company_03']"):
                     node.set('string',
                              node.get('string') + ' ' +
                              company_03_abv.decode('utf-8'))
@@ -290,7 +326,16 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
             COALESCE(invoicing.sum_invoicing_company_02, 0.0000) AS
                 sum_invoicing_company_02,
             COALESCE(invoicing.sum_invoicing_company_03, 0.0000) AS
-                sum_invoicing_company_03
+                sum_invoicing_company_03,
+            COALESCE(consumption.sum_intakeconsumption_company_01, 0.0000) -
+            COALESCE(invoicing.sum_invoicing_company_01, 0.0000) AS
+                difference_intakeconsumption_invoicing_company_01,
+            COALESCE(consumption.sum_intakeconsumption_company_02, 0.0000) -
+            COALESCE(invoicing.sum_invoicing_company_02, 0.0000) AS
+                difference_intakeconsumption_invoicing_company_02,
+            COALESCE(consumption.sum_intakeconsumption_company_03, 0.0000) -
+            COALESCE(invoicing.sum_invoicing_company_03, 0.0000) AS
+                difference_intakeconsumption_invoicing_company_03
             FROM wua_agriculturalseason_month wam1
             INNER JOIN wua_agriculturalseason wa1 ON
                 wam1.agriculturalseason_id = wa1.id
