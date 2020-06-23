@@ -361,6 +361,10 @@ class WuaParcel(models.Model):
         string="Aerial Image",
         readonly=True)
 
+    aerial_img_scale = fields.Integer(
+        string='Scale',
+        readonly=True)
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
@@ -1071,6 +1075,7 @@ class WuaParcel(models.Model):
                                          'or "URL GIS Viewer WFS" are not '
                                          'populated.'))
         else:
+            mapserver_dpi = 90
             for record in self:
                 if record.with_gis_parcel:
                     wms = WebMapService(url=url_gis_viewer_wms,
@@ -1122,15 +1127,25 @@ class WuaParcel(models.Model):
                         bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
                                 (int(upperCorner[0])), (int(upperCorner[1])))
                         img = wms.getmap(layers=['pnoa', 'parcel',
-                                                 'parcel_perimeter'],
+                                                 'parcel_perimeter',
+                                                 'n_arrow'],
                                          styles=['default', 'default',
-                                                 'default'],
+                                                 'default', 'default'],
                                          srs=crs, bbox=bbox, size=(width,
                                          height), format='image/jpeg',
                                          transparent=True, SLD_BODY=sld_body)
                         image = io.BytesIO(img.read())
                         base64_img = base64.b64encode(image.getvalue())
-                        record.write({'aerial_img': base64_img})
+                        # GET SCALE:
+                        # With BBOX get meters in the real world
+                        width_in_real_meters = bbox[2] - bbox[0]
+                        # With pixels Width and dpi get the size of the image
+                        width_in_image_meters = (width / mapserver_dpi) * \
+                            0.0254
+                        aerial_img_scale = width_in_real_meters /\
+                            width_in_image_meters
+                        record.write({'aerial_img': base64_img,
+                                      'aerial_img_scale': aerial_img_scale})
                     except Exception as e:
                         print e
 
