@@ -57,22 +57,22 @@ class WuaInvoicesetLine(models.Model):
                     raise ValidationError(_('Error when updating records.'))
 
     def populate_items_select_presconsumption(self, product_id):
-        current_company_id = self.env.user.company_id.id
-        company_g_id = self.env['ir.values'].get_default(
-            'wua.configuration', 'company_01')
-        company_r_id = self.env['ir.values'].get_default(
-            'wua.configuration', 'company_02')
-        company_t_id = self.env['ir.values'].get_default(
-            'wua.configuration', 'company_03')
-        if current_company_id == company_g_id:
-            company = 'company_01'
-        elif current_company_id == company_r_id:
-            company = 'company_02'
-        elif current_company_id == company_t_id:
-            company = 'company_03'
-        else:
-            raise ValidationError(
-                _('Company not found or is a parent company.'))
+        # current_company_id = self.env.user.company_id.id
+        # company_g_id = self.env['ir.values'].get_default(
+        #     'wua.configuration', 'company_01')
+        # company_r_id = self.env['ir.values'].get_default(
+        #     'wua.configuration', 'company_02')
+        # company_t_id = self.env['ir.values'].get_default(
+        #     'wua.configuration', 'company_03')
+        # if current_company_id == company_g_id:
+        #     company = 'company_01'
+        # elif current_company_id == company_r_id:
+        #     company = 'company_02'
+        # elif current_company_id == company_t_id:
+        #     company = 'company_03'
+        # else:
+        #     raise ValidationError(
+        #         _('Company not found or is a parent company.'))
 
         presconsumptions = self.env['wua.presconsumption'].search([
             ('product_id', '=', product_id),
@@ -82,8 +82,95 @@ class WuaInvoicesetLine(models.Model):
             invoicesetline_id = self.id
             try:
                 self.env.cr.savepoint()
-                if company == 'company_01':
-                    self.env.cr.execute("""
+                # if company == 'company_01':
+                #    self.env.cr.execute("""
+                #        INSERT INTO wua_invoiceset_line_presconsumption (id,
+                #        create_uid, write_uid, create_date, write_date,
+                #        invoicesetline_id, selected, presconsumption_id,
+                #        reading_id, reading_initial_time, initial_volume,
+                #        reading_end_time, end_volume, volume, watermeter_id,
+                #        waterconnection_id, irrigationshed_id,
+                #        hydraulicsector_id, adjustement_volume, volume_real,
+                #        area_total_company_g, area_total_company_r,
+                #        area_total_company_t)
+                #        SELECT
+                #        nextval('wua_invoiceset_line_presconsumption_id_seq'),
+                #        %s, %s, now(), now(), %s, TRUE, pc.id, reading_id,
+                #       reading_initial_time, initial_volume, reading_end_time,
+                #        end_volume, volume, pc.watermeter_id,
+                #        pc.waterconnection_id,
+                #        pc.irrigationshed_id, pc.hydraulicsector_id,
+                #        adjustement_volume, volume_real,
+                #        wc.area_total_company_g, wc.area_total_company_r,
+                #        area_total_company_t
+                #        FROM wua_presconsumption as pc
+                #        INNER JOIN wua_waterconnection as wc
+                #        ON pc.waterconnection_id = wc.id
+                #        WHERE pc.product_id=%s AND
+                #        invoiceset_id is null AND validated AND
+                #        wc.area_total_company_g > 0""", (user_id, user_id,
+                #                                         invoicesetline_id,
+                #                                         product_id))
+                # elif company == 'company_02':
+                #    self.env.cr.execute("""
+                #        INSERT INTO wua_invoiceset_line_presconsumption (id,
+                #        create_uid, write_uid, create_date, write_date,
+                #        invoicesetline_id, selected, presconsumption_id,
+                #        reading_id, reading_initial_time, initial_volume,
+                #        reading_end_time, end_volume, volume, watermeter_id,
+                #        waterconnection_id, irrigationshed_id,
+                #        hydraulicsector_id, adjustement_volume, volume_real,
+                #        area_total_company_g, area_total_company_r,
+                #        area_total_company_t)
+                #        SELECT
+                #        nextval('wua_invoiceset_line_presconsumption_id_seq'),
+                #        %s, %s, now(), now(), %s, TRUE, pc.id, reading_id,
+                #       reading_initial_time, initial_volume, reading_end_time,
+                #        end_volume, volume, pc.watermeter_id,
+                #        pc.waterconnection_id,
+                #        pc.irrigationshed_id, pc.hydraulicsector_id,
+                #        adjustement_volume, volume_real,
+                #        wc.area_total_company_g, wc.area_total_company_r,
+                #        area_total_company_t
+                #        FROM wua_presconsumption as pc
+                #        INNER JOIN wua_waterconnection as wc
+                #        ON pc.waterconnection_id = wc.id
+                #        WHERE pc.product_id=%s AND
+                #        invoiceset_id is null AND validated AND
+                #        wc.area_total_company_r > 0""", (user_id, user_id,
+                #                                         invoicesetline_id,
+                #                                         product_id))
+                # elif company == 'company_03':
+                #    self.env.cr.execute("""
+                #        INSERT INTO wua_invoiceset_line_presconsumption (id,
+                #        create_uid, write_uid, create_date, write_date,
+                #        invoicesetline_id, selected, presconsumption_id,
+                #        reading_id, reading_initial_time, initial_volume,
+                #        reading_end_time, end_volume, volume, watermeter_id,
+                #        waterconnection_id, irrigationshed_id,
+                #        hydraulicsector_id, adjustement_volume, volume_real,
+                #        area_total_company_g, area_total_company_r,
+                #        area_total_company_t)
+                #        SELECT
+                #        nextval('wua_invoiceset_line_presconsumption_id_seq'),
+                #        %s, %s, now(), now(), %s, TRUE, pc.id, reading_id,
+                #       reading_initial_time, initial_volume, reading_end_time,
+                #        end_volume, volume, pc.watermeter_id,
+                #        pc.waterconnection_id,
+                #        pc.irrigationshed_id, pc.hydraulicsector_id,
+                #        adjustement_volume, volume_real,
+                #        wc.area_total_company_g, wc.area_total_company_r,
+                #        area_total_company_t
+                #        FROM wua_presconsumption as pc
+                #        INNER JOIN wua_waterconnection as wc
+                #        ON pc.waterconnection_id = wc.id
+                #        WHERE pc.product_id=%s AND
+                #        invoiceset_id is null AND validated AND
+                #        wc.area_total_company_t > 0""", (user_id, user_id,
+                #                                         invoicesetline_id,
+                #
+                #                                         product_id))
+                self.env.cr.execute("""
                         INSERT INTO wua_invoiceset_line_presconsumption (id,
                         create_uid, write_uid, create_date, write_date,
                         invoicesetline_id, selected, presconsumption_id,
@@ -96,7 +183,7 @@ class WuaInvoicesetLine(models.Model):
                         SELECT
                         nextval('wua_invoiceset_line_presconsumption_id_seq'),
                         %s, %s, now(), now(), %s, TRUE, pc.id, reading_id,
-                        reading_initial_time, initial_volume, reading_end_time,
+                       reading_initial_time, initial_volume, reading_end_time,
                         end_volume, volume, pc.watermeter_id,
                         pc.waterconnection_id,
                         pc.irrigationshed_id, pc.hydraulicsector_id,
@@ -108,67 +195,11 @@ class WuaInvoicesetLine(models.Model):
                         ON pc.waterconnection_id = wc.id
                         WHERE pc.product_id=%s AND
                         invoiceset_id is null AND validated AND
-                        wc.area_total_company_g > 0""", (user_id, user_id,
-                                                         invoicesetline_id,
-                                                         product_id))
-                elif company == 'company_02':
-                    self.env.cr.execute("""
-                        INSERT INTO wua_invoiceset_line_presconsumption (id,
-                        create_uid, write_uid, create_date, write_date,
-                        invoicesetline_id, selected, presconsumption_id,
-                        reading_id, reading_initial_time, initial_volume,
-                        reading_end_time, end_volume, volume, watermeter_id,
-                        waterconnection_id, irrigationshed_id,
-                        hydraulicsector_id, adjustement_volume, volume_real,
-                        area_total_company_g, area_total_company_r,
-                        area_total_company_t)
-                        SELECT
-                        nextval('wua_invoiceset_line_presconsumption_id_seq'),
-                        %s, %s, now(), now(), %s, TRUE, pc.id, reading_id,
-                        reading_initial_time, initial_volume, reading_end_time,
-                        end_volume, volume, pc.watermeter_id,
-                        pc.waterconnection_id,
-                        pc.irrigationshed_id, pc.hydraulicsector_id,
-                        adjustement_volume, volume_real,
-                        wc.area_total_company_g, wc.area_total_company_r,
-                        area_total_company_t
-                        FROM wua_presconsumption as pc
-                        INNER JOIN wua_waterconnection as wc
-                        ON pc.waterconnection_id = wc.id
-                        WHERE pc.product_id=%s AND
-                        invoiceset_id is null AND validated AND
-                        wc.area_total_company_r > 0""", (user_id, user_id,
-                                                         invoicesetline_id,
-                                                         product_id))
-                elif company == 'company_03':
-                    self.env.cr.execute("""
-                        INSERT INTO wua_invoiceset_line_presconsumption (id,
-                        create_uid, write_uid, create_date, write_date,
-                        invoicesetline_id, selected, presconsumption_id,
-                        reading_id, reading_initial_time, initial_volume,
-                        reading_end_time, end_volume, volume, watermeter_id,
-                        waterconnection_id, irrigationshed_id,
-                        hydraulicsector_id, adjustement_volume, volume_real,
-                        area_total_company_g, area_total_company_r,
-                        area_total_company_t)
-                        SELECT
-                        nextval('wua_invoiceset_line_presconsumption_id_seq'),
-                        %s, %s, now(), now(), %s, TRUE, pc.id, reading_id,
-                        reading_initial_time, initial_volume, reading_end_time,
-                        end_volume, volume, pc.watermeter_id,
-                        pc.waterconnection_id,
-                        pc.irrigationshed_id, pc.hydraulicsector_id,
-                        adjustement_volume, volume_real,
-                        wc.area_total_company_g, wc.area_total_company_r,
-                        area_total_company_t
-                        FROM wua_presconsumption as pc
-                        INNER JOIN wua_waterconnection as wc
-                        ON pc.waterconnection_id = wc.id
-                        WHERE pc.product_id=%s AND
-                        invoiceset_id is null AND validated AND
-                        wc.area_total_company_t > 0""", (user_id, user_id,
-                                                         invoicesetline_id,
-                                                         product_id))
+                        (wc.area_total_company_g > 0 OR
+                         wc.area_total_company_r > 0 OR
+                         wc.area_total_company_t > 0)""", (user_id, user_id,
+                                                           invoicesetline_id,
+                                                           product_id))
                 self.env.cr.execute("""
                     UPDATE wua_presconsumption
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
@@ -196,8 +227,9 @@ class WuaInvoiceset(models.Model):
                 for presconsumption in selected_presconsumptions:
                     pc = self.env['wua.presconsumption'].browse(
                         presconsumption.presconsumption_id.id)
-                    vals = {'company_id': self.env.user.company_id.id,
-                            'invoiceset_id': invoiceset.id, }
+                    vals = {'invoiceset_id': invoiceset.id,
+                            'company_id': self.env.user.company_id.id,
+                            }
                     pc.write(vals)
 
     @api.multi
@@ -213,7 +245,8 @@ class WuaInvoiceset(models.Model):
             presconsumptions = self.env['wua.presconsumption'].browse(
                 presconsumptions_ids)
             vals = {'invoiceset_id': None,
-                    'company_id': None, }
+                    'company_id': None,
+                    }
             presconsumptions.write(vals)
         return res
 
@@ -229,7 +262,8 @@ class WuaInvoiceset(models.Model):
                     presconsumptions = self.env['wua.presconsumption'].browse(
                         presconsumptions_ids)
                     vals = {'invoiceset_id': None,
-                            'company_id': None, }
+                            'company_id': None,
+                            }
                     presconsumptions.write(vals)
                 line.line_presconsumption_ids.unlink()
 
