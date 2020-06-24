@@ -228,7 +228,7 @@ class WuaInvoiceset(models.Model):
                     pc = self.env['wua.presconsumption'].browse(
                         presconsumption.presconsumption_id.id)
                     vals = {'invoiceset_id': invoiceset.id,
-                            # 'company_id': self.env.user.company_id.id,
+                            'company_id': self.env.user.company_id.id,
                             }
                     pc.write(vals)
 
@@ -245,7 +245,7 @@ class WuaInvoiceset(models.Model):
             presconsumptions = self.env['wua.presconsumption'].browse(
                 presconsumptions_ids)
             vals = {'invoiceset_id': None,
-                    # 'company_id': None,
+                    'company_id': None,
                     }
             presconsumptions.write(vals)
         return res
@@ -262,7 +262,7 @@ class WuaInvoiceset(models.Model):
                     presconsumptions = self.env['wua.presconsumption'].browse(
                         presconsumptions_ids)
                     vals = {'invoiceset_id': None,
-                            #  'company_id': None,
+                            'company_id': None,
                             }
                     presconsumptions.write(vals)
                 line.line_presconsumption_ids.unlink()
