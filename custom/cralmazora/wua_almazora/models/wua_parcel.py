@@ -32,6 +32,9 @@ class WuaParcel(models.Model):
         digits=(32, 2),
         compute='_compute_net_worker_amount')
 
+    watering_notes = fields.Html(
+        string='Watering notes')
+
     @api.depends('irrigationpoint_ids')
     def _compute_waterconnection_id(self):
         for record in self:
