@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-17 11:52+0000\n"
-"PO-Revision-Date: 2020-06-17 11:52+0000\n"
+"POT-Creation-Date: 2020-06-25 10:07+0000\n"
+"PO-Revision-Date: 2020-06-25 10:07+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -401,6 +401,16 @@ msgid "Default type for invoice set code"
 msgstr "Tipus de codificació per defecte per als lots de factures"
 
 #. module: base_wua_invoicing
+#: model:product.template,name:base_wua_invoicing.product_03
+msgid "Derrama 2019"
+msgstr "Derrama 2019"
+
+#. module: base_wua_invoicing
+#: model:product.template,name:base_wua_invoicing.product_05
+msgid "Derrama Contador"
+msgstr "Derrama Contador"
+
+#. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_description
 msgid "Description"
 msgstr "Descripció"
@@ -498,10 +508,10 @@ msgid "Entity (water connection)"
 msgstr "Element (toma)"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1633
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1664
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1691
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1718
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1684
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1715
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1742
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1769
 #, python-format
 msgid "Error when updating records."
 msgstr "Error en afegir registres a la base de dades."
@@ -549,7 +559,12 @@ msgstr "Reg per gravetat"
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_waterconnection_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_view_search
 msgid "Group By"
-msgstr "Agrupa Per"
+msgstr "Agrupar per"
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoicing_configuration_group_detail_lines_of_wc_if_same_payer
+msgid "Group the detail lines of waterconnections if same payer"
+msgstr "Agrupar línies de detall de tomes si tenen mateix pagador"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_irrigationgate_hydraulic_order
@@ -587,6 +602,11 @@ msgstr "Identificador"
 #: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoicing_configuration_show_tax_base
 msgid "If it is marked, the invoices reports will show the tax base in the same table of the tax summary"
 msgstr "Si està marcat les facutras mostraran la base imposable en la mateixa taula que el resum d'impostos"
+
+#. module: base_wua_invoicing
+#: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoicing_configuration_group_detail_lines_of_wc_if_same_payer
+msgid "If marked, detail lines of waterconnections with the same payer will be grouped into just one"
+msgstr "Si està marcat, les línies de detall de preses amb el mateix pagador s'agruparan en una sola"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,help:base_wua_invoicing.field_wua_invoiceset_active
@@ -721,7 +741,7 @@ msgstr "Invoice-Set Line Code"
 
 #. module: base_wua_invoicing
 #: code:addons/base_wua_invoicing/models/res_partner.py:77
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1273
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1324
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_invoice_ids
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_number_of_invoices
 #, python-format
@@ -745,6 +765,11 @@ msgstr "Data de facturació"
 
 #. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicing_config_settings_view_form
+msgid "Invoicing Intakes"
+msgstr "Facturació Tomes"
+
+#. module: base_wua_invoicing
+#: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoicing_config_settings_view_form
 msgid "Invoicing Settings (sets)"
 msgstr "Configuració de facturació (lots)"
 
@@ -758,7 +783,7 @@ msgid "Irrigation Ditch"
 msgstr "Sèquia"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:932
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:983
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_irrigationgate_id
 #: model:product.category,name:base_wua_invoicing.categ_06
 #, python-format
@@ -766,7 +791,7 @@ msgid "Irrigation Gate"
 msgstr "Tablacho"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1753
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1804
 #: selection:product.category,linkable_unit_type:0
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
@@ -1115,12 +1140,17 @@ msgid "Parcel Tags"
 msgstr "Etiquetes parcel·les"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1723
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1774
 #: selection:product.category,linkable_unit_type:0
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
 #, python-format
 msgid "Parcels"
+msgstr "Parcel·les"
+
+#. module: base_wua_invoicing
+#: model:ir.model,name:base_wua_invoicing.model_wua_parcel
+msgid "Parcels (integrated GIS)"
 msgstr "Parcel·les"
 
 #. module: base_wua_invoicing
@@ -1159,7 +1189,7 @@ msgid "Partner of a WUA"
 msgstr "Soci"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1733
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1784
 #: selection:product.category,linkable_unit_type:0
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
@@ -1428,7 +1458,8 @@ msgid "WUA Service"
 msgstr "Servei WUA"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:851
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:853
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:902
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_waterconnection_id
 #: model:product.category,name:base_wua_invoicing.categ_05
 #, python-format
@@ -1436,13 +1467,20 @@ msgid "Water Connection"
 msgstr "Toma"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1743
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1794
 #: selection:product.category,linkable_unit_type:0
 #: selection:product.template,linkable_unit_type:0
 #: selection:wua.invoiceset.line,linkable_unit_type:0
 #, python-format
 msgid "Water Connections"
 msgstr "Tomas"
+
+#. module: base_wua_invoicing
+#: selection:product.category,linkable_unit_type:0
+#: selection:product.template,linkable_unit_type:0
+#: selection:wua.invoiceset.line,linkable_unit_type:0
+msgid "Water Connections (by water costs)"
+msgstr "Tomas (sobre% despeses aigua)"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_parcel_gravityfed_irrigation_right
@@ -1511,7 +1549,7 @@ msgid "Year"
 msgstr "Any"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1223
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:1274
 #, python-format
 msgid "You cannot cancel an invoice-set if there is a invoice which is not draft or cancelled."
 msgstr "No podeu cancel·lar un conjunt de factures si hi ha una factura que no es redacta ni es cancel·la."
@@ -1531,8 +1569,8 @@ msgstr "aux"
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:526
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:681
 #: code:addons/base_wua_invoicing/models/wua_invoiceset.py:762
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:867
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:948
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:918
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:999
 #, python-format
 msgid "cost:"
 msgstr "cost:"
@@ -1561,8 +1599,8 @@ msgid "owner"
 msgstr "propietari"
 
 #. module: base_wua_invoicing
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:859
-#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:940
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:910
+#: code:addons/base_wua_invoicing/models/wua_invoiceset.py:991
 #, python-format
 msgid "parcel"
 msgstr "parcel·la"
@@ -1572,4 +1610,3 @@ msgstr "parcel·la"
 #, python-format
 msgid "payer"
 msgstr "pagador"
-

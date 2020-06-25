@@ -55,6 +55,13 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If it is marked, the invoices reports will show the tax base'
              'in the same table of the tax summary')
 
+    group_detail_lines_of_wc_if_same_payer = fields.Boolean(
+        string='Group the detail lines of waterconnections if same payer',
+        default=False,
+        required=True,
+        help='If marked, detail lines of waterconnections with the same payer '
+             'will be grouped into just one')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -79,3 +86,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'show_tax_base',
                            self.show_tax_base)
+        values.set_default('wua.invoicing.configuration',
+                           'group_detail_lines_of_wc_if_same_payer',
+                           self.group_detail_lines_of_wc_if_same_payer)

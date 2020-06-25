@@ -63,7 +63,7 @@ class WuaInvoiceset(models.Model):
             if len(invoicesets) == 1:
                 try:
                     proposed_code = int(invoicesets[0].name)
-                except:
+                except Exception:
                     proposed_code = 0
                 if proposed_code > 0:
                     resp = str(proposed_code + 1).zfill(self.SIZE_NUMERIC_CODE)
@@ -89,7 +89,7 @@ class WuaInvoiceset(models.Model):
                         last_code[-(len(last_code) - len(full_prefix)):]
                     try:
                         proposed_code = int(numeric_suffix)
-                    except:
+                    except Exception:
                         proposed_code = 0
                     if proposed_code > 0:
                         resp = full_prefix + \
@@ -792,6 +792,21 @@ class WuaInvoiceset(models.Model):
                     invoice_details_categ04.append(result)
         return invoice_details_categ04
 
+    # Return ID of the only payer (if there's only one)
+    def have_same_payer_other_costs(self, parcels, partnerlinks):
+        payers = []
+        for parcel in parcels:
+            partnerlinks_of_parcel = partnerlinks.filtered(
+                lambda x: x.parcel_id.id == parcel.id and
+                x.other_costs_percentage > 0)
+            for partnerlink in partnerlinks_of_parcel:
+                if (len(payers) == 1 and partnerlink.partner_id.id not in
+                        payers):
+                    return None
+                else:
+                    payers.append(partnerlink.partner_id.id)
+        return payers[0]
+
     def calculate_invoice_details_categ05(self, product_id, categ_code,
                                           item_ids, partnerlinks):
         invoice_details_categ05 = []
@@ -803,6 +818,11 @@ class WuaInvoiceset(models.Model):
         #     'Product Unit of Measure')
         # The invoice line quantity always has an accuracy equal to 2
         precision = 2
+        # Checked if want to group the waterconnection details if same payer
+        # of other costs
+        grouped_same_payer = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'group_detail_lines_of_wc_if_same_payer')
         for waterconnection in waterconnections:
             waterconnection_code = waterconnection.name
             irrigationpoints_of_waterconnection = irrigationpoints.filtered(
@@ -818,77 +838,108 @@ class WuaInvoiceset(models.Model):
                     parcels_of_waterconnection, True)
                 cumulative_quantity = 0
                 processed_parcels = 0
-                for parcel in parcels_of_waterconnection:
-                    if total_area_official == 0:
-                        continue
-                    waterconnection_quantity = \
-                        round(parcel.area_official / total_area_official,
-                              precision)
-                    processed_parcels = processed_parcels + 1
-                    if single_payer and processed_parcels == number_of_parcels:
-                        waterconnection_quantity = 1 - cumulative_quantity
-                    else:
-                        cumulative_quantity = cumulative_quantity + \
-                            waterconnection_quantity
-                    waterconnection_quantity_str = \
-                        '%.2f' % (waterconnection_quantity * 100)
-                    partnerlinks_of_parcel = partnerlinks.filtered(
-                        lambda x: x.parcel_id.id == parcel.id and
-                        x.other_costs_percentage > 0)
-                    if len(partnerlinks_of_parcel) > 0:
-                        for partnerlink in partnerlinks_of_parcel:
-                            partner_id = partnerlink.partner_id.id
-                            profile = partnerlink.profile
-                            parcel_code = parcel.name
-                            area_official = parcel.area_official
-                            area_official_str = ('%.4f' % area_official).\
-                                replace('.', ',')
-                            percentage = partnerlink.other_costs_percentage
-                            percentage_str = '%.2f' % percentage
-                            quantity = waterconnection_quantity * \
-                                (percentage / 100)
-                            default_waterconnection_label = \
-                                _('Water Connection')
-                            waterconnection_label = \
-                                self.get_value_from_translation(
-                                    'base_wua_invoicing', 'Water Connection',
-                                    partnerlink.partner_id.lang)
-                            if not waterconnection_label:
+                # Checks if all parcels same water_costs
+                group_parcels = False
+                if (grouped_same_payer):
+                    payer_id = self.have_same_payer_other_costs(
+                        parcels_of_waterconnection,
+                        partnerlinks)
+                    if (payer_id):
+                        group_parcels = True
+                if (group_parcels and not total_area_official == 0):
+                    partner_payer = self.env['res.partner'].browse(payer_id)
+                    biggest_parcel = max(parcels_of_waterconnection,
+                                         key=lambda x: x.area_official)
+                    default_waterconnection_label = _('Water Connection')
+                    waterconnection_label = \
+                        self.get_value_from_translation(
+                            'base_wua_invoicing', 'Water Connection',
+                            partner_payer.lang)
+                    description = waterconnection_label + ' ' + \
+                        waterconnection_code
+                    result = {
+                        'partner_id': partner_payer.id,
+                        'product_id': product_id,
+                        'categ_code': categ_code,
+                        'key1': waterconnection.id,
+                        'key2': biggest_parcel.id,
+                        'quantity': 1,
+                        'description': description,
+                        }
+                    invoice_details_categ05.append(result)
+                else:
+                    for parcel in parcels_of_waterconnection:
+                        if total_area_official == 0:
+                            continue
+                        waterconnection_quantity = \
+                            round(parcel.area_official / total_area_official,
+                                  precision)
+                        processed_parcels = processed_parcels + 1
+                        if single_payer and processed_parcels == \
+                                number_of_parcels:
+                            waterconnection_quantity = 1 - cumulative_quantity
+                        else:
+                            cumulative_quantity = cumulative_quantity + \
+                                waterconnection_quantity
+                        waterconnection_quantity_str = \
+                            '%.2f' % (waterconnection_quantity * 100)
+                        partnerlinks_of_parcel = partnerlinks.filtered(
+                            lambda x: x.parcel_id.id == parcel.id and
+                            x.other_costs_percentage > 0)
+                        if len(partnerlinks_of_parcel) > 0:
+                            for partnerlink in partnerlinks_of_parcel:
+                                partner_id = partnerlink.partner_id.id
+                                profile = partnerlink.profile
+                                parcel_code = parcel.name
+                                area_official = parcel.area_official
+                                area_official_str = ('%.4f' % area_official).\
+                                    replace('.', ',')
+                                percentage = partnerlink.other_costs_percentage
+                                percentage_str = '%.2f' % percentage
+                                quantity = waterconnection_quantity * \
+                                    (percentage / 100)
+                                default_waterconnection_label = \
+                                    _('Water Connection')
                                 waterconnection_label = \
-                                    default_waterconnection_label
-                            default_parcel_label = _('parcel')
-                            parcel_label = self.get_value_from_translation(
-                                'base_wua_invoicing', 'parcel',
-                                partnerlink.partner_id.lang)
-                            if not parcel_label:
-                                parcel_label = default_parcel_label
-                            profile_name_label = self.get_profile_name(
-                                profile, partnerlink.partner_id.lang)
-                            default_cost_label = _('cost:')
-                            cost_label = self.get_value_from_translation(
-                                'base_wua_invoicing', 'cost:',
-                                partnerlink.partner_id.lang)
-                            if not cost_label:
-                                cost_label = default_cost_label
-                            description = waterconnection_label + ' ' + \
-                                waterconnection_code + ' (' + \
-                                waterconnection_quantity_str + ' %), ' + \
-                                parcel_label + ' ' + parcel_code + ' ' + \
-                                '(' + area_official_str + ' ' +  \
-                                area_measurement_name + '), ' + \
-                                profile_name_label + \
-                                ' (' + cost_label + ' ' + \
-                                percentage_str + ' %)'
-                            result = {
-                                'partner_id': partner_id,
-                                'product_id': product_id,
-                                'categ_code': categ_code,
-                                'key1': waterconnection.id,
-                                'key2': parcel.id,
-                                'quantity': quantity,
-                                'description': description,
-                                }
-                            invoice_details_categ05.append(result)
+                                    self.get_value_from_translation(
+                                        'base_wua_invoicing', 'Water Connectio'
+                                        'n', partnerlink.partner_id.lang)
+                                if not waterconnection_label:
+                                    waterconnection_label = \
+                                        default_waterconnection_label
+                                default_parcel_label = _('parcel')
+                                parcel_label = self.get_value_from_translation(
+                                    'base_wua_invoicing', 'parcel',
+                                    partnerlink.partner_id.lang)
+                                if not parcel_label:
+                                    parcel_label = default_parcel_label
+                                profile_name_label = self.get_profile_name(
+                                    profile, partnerlink.partner_id.lang)
+                                default_cost_label = _('cost:')
+                                cost_label = self.get_value_from_translation(
+                                    'base_wua_invoicing', 'cost:',
+                                    partnerlink.partner_id.lang)
+                                if not cost_label:
+                                    cost_label = default_cost_label
+                                description = waterconnection_label + ' ' + \
+                                    waterconnection_code + ' (' + \
+                                    waterconnection_quantity_str + ' %), ' + \
+                                    parcel_label + ' ' + parcel_code + ' ' + \
+                                    '(' + area_official_str + ' ' +  \
+                                    area_measurement_name + '), ' + \
+                                    profile_name_label + \
+                                    ' (' + cost_label + ' ' + \
+                                    percentage_str + ' %)'
+                                result = {
+                                    'partner_id': partner_id,
+                                    'product_id': product_id,
+                                    'categ_code': categ_code,
+                                    'key1': waterconnection.id,
+                                    'key2': parcel.id,
+                                    'quantity': quantity,
+                                    'description': description,
+                                    }
+                                invoice_details_categ05.append(result)
         return invoice_details_categ05
 
     def calculate_invoice_details_categ06(self, product_id, categ_code,
@@ -1628,7 +1679,7 @@ class WuaInvoicesetLine(models.Model):
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
@@ -1659,7 +1710,7 @@ class WuaInvoicesetLine(models.Model):
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
@@ -1686,7 +1737,7 @@ class WuaInvoicesetLine(models.Model):
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
@@ -1713,7 +1764,7 @@ class WuaInvoicesetLine(models.Model):
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
