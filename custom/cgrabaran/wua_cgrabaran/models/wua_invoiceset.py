@@ -200,12 +200,12 @@ class WuaInvoicesetLine(models.Model):
                          wc.area_total_company_t > 0)""", (user_id, user_id,
                                                            invoicesetline_id,
                                                            product_id))
-                self.env.cr.execute("""
-                    UPDATE wua_presconsumption
-                    SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
-                    invoiced_consumption=TRUE
-                    WHERE product_id=""" + str(product_id) + """ and
-                    invoiceset_id is null""")
+#                self.env.cr.execute("""
+#                    UPDATE wua_presconsumption
+#                    SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
+#                    invoiced_consumption=TRUE
+#                    WHERE product_id=""" + str(product_id) + """ and
+#                    invoiceset_id is null""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
@@ -229,6 +229,7 @@ class WuaInvoiceset(models.Model):
                         presconsumption.presconsumption_id.id)
                     vals = {'invoiceset_id': invoiceset.id,
                             'company_id': self.env.user.company_id.id,
+                            'invoiced_consumption': True
                             }
                     pc.write(vals)
 
@@ -246,6 +247,7 @@ class WuaInvoiceset(models.Model):
                 presconsumptions_ids)
             vals = {'invoiceset_id': None,
                     'company_id': None,
+                    'invoiced_consumption': False
                     }
             presconsumptions.write(vals)
         return res
@@ -263,6 +265,7 @@ class WuaInvoiceset(models.Model):
                         presconsumptions_ids)
                     vals = {'invoiceset_id': None,
                             'company_id': None,
+                            'invoiced_consumption': False
                             }
                     presconsumptions.write(vals)
                 line.line_presconsumption_ids.unlink()
