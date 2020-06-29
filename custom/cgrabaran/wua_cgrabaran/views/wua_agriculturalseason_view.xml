@@ -6,7 +6,9 @@
       <field name="model">wua.sum.intakeconsumption.invoicing</field>
       <field name="arch" type="xml">
           <tree create="0" delete="0" duplicate="0"
-           class="o_wua_cgrabaran_wua_sum_intakeconsumption_invoicing_view_tree">
+           class="o_wua_cgrabaran_wua_sum_intakeconsumption_invoicing_view_tree"
+           default_order='month'>
+              <field name="month" invisible="1"/>
               <field name="month_name"/>
               <field name="sum_intakeconsumption_company_01" string="Consumptions" sum="Total"/>
               <field name="sum_invoicing_company_01" string="Invoicing" sum="Total"/>
