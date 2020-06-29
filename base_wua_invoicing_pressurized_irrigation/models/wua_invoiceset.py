@@ -369,10 +369,16 @@ class WuaInvoiceset(models.Model):
 
     def group_invoice_details(self, invoice_details):
         group_details_categ07_by_wc = False
+        categ_to_group = [7]
+        group_categ_10 = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'invoicing_based_on_wc')
+        if (group_categ_10):
+            categ_to_group.append(10)
         invoice_details_categ07 = filter(
-            lambda x: x['categ_code'] == 7, invoice_details)
+            lambda x: x['categ_code'] in categ_to_group, invoice_details)
         if (invoice_details_categ07 and self.env['ir.values'].get_default(
-           'wua.invoicing.configuration', 'invoicing_based_on_wc')):
+           'wua.invoicing.configuration',
+           'group_detail_lines_of_wc_if_same_payer')):
             group_details_categ07_by_wc = True
         if group_details_categ07_by_wc:
             invoice_details_not_categ07 = \
