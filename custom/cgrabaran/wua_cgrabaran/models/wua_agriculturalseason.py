@@ -93,7 +93,15 @@ class WuaAgriculturalseason(models.Model):
                                         'volume_time_equivalence')
                 ELSE a1.quantity
                 END as quantity,
-                a1.date_invoice as date_invoice FROM
+                CASE
+                    WHEN p1.productcategory_code = 11
+                    THEN (SELECT wi1.report_end_time FROM wua_irrigationreport
+                          wi1 WHERE wi1.id = a1.irrigationreport_id)
+                    ELSE (SELECT wilp1.reading_end_time FROM
+                          wua_invoiceset_line_presconsumption wilp1 WHERE
+                          wilp1.invoicesetline_id = a1.id)
+                END
+                AS date_invoice FROM
                     account_invoice_line a1
                     INNER JOIN product_category p1
                     ON a1.categ_id = p1.id
@@ -361,7 +369,9 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
                 (select year, month, agriculturalseason_id, volume_total as
                 sum_intakeconsumption_company_03
                 FROM wua_sum_intakeconsumption where company = 'company_03') c3
-                ON c1.year = c3.year AND c1.month = c3.month
+                ON c3.year = (CASE WHEN (c1.year IS NOT NULL) THEN c1.year ELSE
+                c2.year END) AND c3.month = (CASE WHEN (c1.month IS NOT NULL)
+                THEN c1.month ELSE c2.month END)
             ) consumption
             ON
             wam1.agriculturalseason_id = consumption.agriculturalseason_id
@@ -385,9 +395,11 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
                 FULL OUTER JOIN
                 (select year, month, total_quantity as
                 sum_invoicing_company_03
-                from
+                FROM
                 wua_sum_invoicing where company = 'company_03') c3
-                ON c1.year = c3.year AND c1.month = c3.month
+                ON c3.year = (CASE WHEN (c1.year IS NOT NULL) THEN c1.year ELSE
+                c2.year END) AND c3.month = (CASE WHEN (c1.month IS NOT NULL)
+                THEN c1.month ELSE c2.month END)
             ) invoicing
             ON
             wam1.month = invoicing.month AND
