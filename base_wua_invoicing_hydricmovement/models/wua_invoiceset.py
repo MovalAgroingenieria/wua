@@ -17,20 +17,19 @@ class WuaInvoiceset(models.Model):
     def unlink(self):
         hydricmovement_ids = []
         for record in self:
-            for line in record.line_ids:
-                if line.categ_id.productcategory_code == 14:
-                    for l_hydricmovement in line.line_hydricmovement_ids:
-                        hydricmovement_ids.append(
-                            l_hydricmovement.hydricmovement_id.id)
+            hydricmovements = self.env['wua.hydricmovement'].search(
+                [('invoiceset_id', '=', record.id)])
+            for hydricmovement in hydricmovements:
+                hydricmovement_ids.append(hydricmovement.id)
         res = super(WuaInvoiceset, self).unlink()
         if hydricmovement_ids:
-            hydricmovement_ids = list(set(hydricmovement_ids))
-            hydricmovements = \
-                self.env['wua.hydricmovement'].browse(hydricmovement_ids)
-            hydricmovements.write({
+            hydricmovements = self.env['wua.hydricmovement'].browse(
+                hydricmovement_ids)
+            vals = {
+                'invoiceset_id': None,
                 'invoiced_hydricmovement': False,
-                'invoiceset_id': None
-            })
+                }
+            hydricmovements.write(vals)
         return res
 
     def select_invoice_items_other_types(self, productcategory_code,
@@ -121,8 +120,8 @@ class WuaInvoiceset(models.Model):
                             self.env['wua.hydricmovement'].browse(
                                 hydricmovement_ids)
                         hydricmovements.write({
-                            'invoiceset_id': None,
                             'invoiced_hydricmovement': False,
+                            'invoiceset_id': None
                             })
                     unselected_hydricmovements.unlink()
 
@@ -177,8 +176,8 @@ class WuaInvoicesetLine(models.Model):
                     FROM wua_hydricmovement wh1 INNER JOIN
                     wua_agriculturalseason wa1 ON
                     wh1.agriculturalseason_id = wa1.id WHERE
-                    wa1.active_agriculturalseason AND
-                    wh1.invoiceset_id is null""")
+                    wa1.active_agriculturalseason AND wh1.invoiceset_id IS
+                    NULL AND NOT wh1.invoiced_hydricmovement""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
@@ -206,7 +205,7 @@ class WuaInvoicesetLine(models.Model):
                         hydricmovement_ids)
                     hydricmovements.write({
                         'invoiceset_id': None,
-                        'invoiced_hydricmovement': False,
+                        'invoiced_hydricmovement': False
                     })
                     return super(WuaInvoicesetLine, self).unlink()
 
