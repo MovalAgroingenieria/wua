@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_hydricmovement_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for hydricmovements (tree view)</field>
+        <field name="model">wua.invoiceset.line.hydricmovement</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false"
+                class="o_base_wua_invoicing_hydricmovement_wua_invoiceset_line_hydricmovement_view_tree">
+                <field name="hydricmovement_id"/>
+                <field name="selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="quotaperiod_id"/>
+                <field name="superproduct_id"/>
+                <field name="partner_id"/>
+                <field name="event_time"/>
+                <field name="volume"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_hydricmovement_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for hydricmovements (search view)</field>
+        <field name="model">wua.invoiceset.line.hydricmovement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="quotaperiod_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Quota period"
+                            name="grouped_quotaperiod_id"
+                            context="{'group_by':'quotaperiod_id'}"/>
+                    <filter string="Superproduct"
+                            name="grouped_superproduct_id"
+                            context="{'group_by':'superproduct_id'}"/>
+                    <filter string="Partner"
+                            name="grouped_partner_id"
+                            context="{'group_by':'partner_id'}"/>
+                    <filter string="Date"
+                            name="grouped_event_time"
+                            context="{'group_by':'event_time'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_hydricmovement_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_hydricmovement"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.hydricmovement'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_hydricmovement_to_invoiceset" model="ir.values">
+        <field name="name">Add hydricmovement to invoice set</field>
+        <field name="model">wua.invoiceset.line.hydricmovement</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_hydricmovement_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_hydricmovement_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_hydricmovement"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.hydricmovement'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_hydricmovement_to_invoiceset" model="ir.values">
+        <field name="name">Remove hydricmovement from invoice set</field>
+        <field name="model">wua.invoiceset.line.hydricmovement</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_hydricmovement_to_invoiceset'))"/>
+    </record>
+
+</odoo>
