@@ -167,6 +167,8 @@ class WuaInvoicesetLine(models.Model):
                 wh1.invoiced_hydricmovement
                 """,
                                     (user_id, user_id, invoicesetline_id))
+                self.env.cr.commit()
+                self.env.invalidate_all()
                 self.env.cr.execute("""
                     UPDATE wua_hydricmovement
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) +
