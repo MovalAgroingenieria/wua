@@ -157,13 +157,11 @@ class WuaInvoicesetLine(models.Model):
                 hydricmovement_id, selected, quotaperiod_id,superproduct_id,
                 partner_id,event_time, volume, description, type)
                 SELECT nextval('wua_invoiceset_line_hydricmovement_id_seq'),
-                %s,%s,now(),now(),%s,wh1.id, TRUE,
-                wh1.quotaperiod_id, wh1.superproduct_id, wh1.partner_id,
-                wh1.event_time, wh1.volume, wh1.description, wh1.type
-                FROM wua_hydricmovement wh1 INNER JOIN wua_agriculturalseason
-                wa1 ON wh1.agriculturalseason_id = wa1.id WHERE
-                wa1.active_agriculturalseason AND NOT
-                wh1.invoiced_hydricmovement
+                %s,%s,now(),now(),%s, id, TRUE,
+                quotaperiod_id, superproduct_id, partner_id,
+                event_time, volume, description, type
+                FROM wua_hydricmovement WHERE of_active_agriculturalseason
+                AND NOT invoiced_hydricmovement
                 """,
                                     (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
@@ -173,11 +171,9 @@ class WuaInvoicesetLine(models.Model):
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) +
                                     """,
                     invoiced_hydricmovement=TRUE
-                    FROM wua_hydricmovement wh1 INNER JOIN
-                    wua_agriculturalseason wa1 ON
-                    wh1.agriculturalseason_id = wa1.id WHERE
-                    wa1.active_agriculturalseason AND wh1.invoiceset_id IS
-                    NULL AND NOT wh1.invoiced_hydricmovement""")
+                    WHERE
+                    of_active_agriculturalseason AND NOT
+                    invoiced_hydricmovement""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
