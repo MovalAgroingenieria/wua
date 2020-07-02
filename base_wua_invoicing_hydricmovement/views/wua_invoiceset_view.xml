@@ -35,6 +35,37 @@
                 <field name="event_time"/>
                 <field name="type"/>
                 <field name="description"/>
+                <filter string="Type: (+) Multiple Assignment"
+                        name="type_multiple_assignment"
+                        domain="[('type','=','multiple_assign')]"/>
+                <filter string="Type: (+) Individual Assignment"
+                        name="type_pos_indiv_assign"
+                        domain="[('type','=','pos_indiv_assign')]"/>
+                <filter string="Type: (+) Received Cession"
+                        name="type_received_cession"
+                        domain="[('type','=','received_cession')]"/>
+                <filter string="Type: (+) Input from previous quota"
+                        name="type_input_prev_quota"
+                        domain="[('type','=','input_prev_quota')]"/>
+                <filter string="Type: (-) Pressurized Consumption"
+                        name="type_pres_consumption"
+                        domain="[('type','=','pres_consumption')]"/>
+                <filter string="Type: (-) Gravity Consumption"
+                        name="type_grav_consumption"
+                        domain="[('type','=','grav_consumption')]"/>
+                <filter string="Type: (-) Irrigation Report"
+                        name="type_irrig_report"
+                        domain="[('type','=','irrig_report')]"/>
+                <filter string="Type: (-) Negative Individual Assignment"
+                        name="type_neg_indiv_assign"
+                        domain="[('type','=','neg_indiv_assign')]"/>
+                <filter string="Type: (-) Granted Cession"
+                        name="type_granted_cession"
+                        domain="[('type','=','granted_cession')]"/>
+                <filter string="Type: (-) Output to next quota"
+                        name="type_output_next_quota"
+                        domain="[('type','=','output_next_quota')]"/>
+                <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Quota period"
                             name="grouped_quotaperiod_id"
