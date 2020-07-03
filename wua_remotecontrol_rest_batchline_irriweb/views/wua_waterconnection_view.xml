@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_remotecontrol_rest.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='do_import_readings_from_waterconnection']"
+                   position="after">
+                <field name="html_scheduling_frame" invisible="1"/>
+                <button name="action_scheduling_waterconnection"
+                        type="object" string="Schedule"
+                        icon="fa-calendar"
+                        attrs="{'invisible':
+                                [('html_scheduling_frame','=',False)]}"
+                        groups="base_wua.group_wua_manager,base_wua.group_wua_portal_user"/>                   
+            </xpath>        
+            <xpath expr="//group[@name='master_data']" position="after">
+                <field name="html_readings_frame" widget="html"
+                       attrs="{'invisible':
+                               [('html_readings_frame','=',False)]}"/>
+            </xpath>        
+            <xpath expr="//page[@name='notes_page']" position="before">
+                <page name="irriweb_consumptions_page"
+                      string="IrriWEB Consumptions"
+                      attrs="{'invisible':
+                               [('html_consumptions_frame','=',False)]}">
+                    <field name="html_consumptions_frame" widget="html"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
