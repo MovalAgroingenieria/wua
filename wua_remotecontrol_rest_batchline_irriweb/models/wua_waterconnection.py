@@ -1,0 +1,195 @@
+# -*- coding: utf-8 -*-
+# 2020 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+from odoo import models, fields, api, _
+
+
+class WuaWaterconnection(models.Model):
+    _inherit = 'wua.waterconnection'
+
+    _in_create = False
+
+    html_readings_frame = fields.Text(
+        string='IrriWEB Readings',
+        compute='_compute_html_readings_frame'
+        )
+
+    html_consumptions_frame = fields.Text(
+        string='IrriWEB Consumptions',
+        compute='_compute_html_consumptions_frame'
+        )
+
+    html_scheduling_frame = fields.Text(
+        string='IrriWEB Scheduling',
+        compute='_compute_html_scheduling_frame'
+        )
+
+    @api.multi
+    def _compute_html_readings_frame(self):
+        if self.__class__._in_create:
+            self.__class__._in_create = False
+            return
+        url_ok, url, width, height = self.sudo()._get_url_frame('historico')
+        for record in self:
+            if url_ok:
+                hidrante_param = record.sudo().irrigationshed_id.name
+                toma_param = str(record.sudo().position)
+                clientidentify_param = self.sudo().env.user.name
+                url = url + 'hidrante=' + hidrante_param + '&' + \
+                    'toma=' + toma_param + '&' + \
+                    'clientidentify=' + clientidentify_param
+                body = '<iframe sandbox="allow-scripts allow-forms ' + \
+                    'allow-pointer-lock allow-same-origin" ' + \
+                    'id="iframe_readings" scrolling="no" ' + \
+                    'marginheight="0" marginwidth="0" ' + \
+                    'src="' + url + '" ' + \
+                    'frameborder="0" height="' + str(height) + '" ' + \
+                    'width="' + str(width) + '"' + \
+                    '></iframe>'
+                record.html_readings_frame = \
+                    '<div class="panel-body text-center" ' + \
+                    'style="background:#f4f6f6;border-radius:4px;' + \
+                    'border-color:#696969;border-width:1px;' + \
+                    'border-style:solid;padding-top:15px;' + \
+                    'padding-bottom:10px;' + \
+                    'margin-left:40px;margin-right:40px">' + \
+                    body + '</div>'
+            else:
+                record.html_readings_frame = ''
+
+    @api.multi
+    def _compute_html_consumptions_frame(self):
+        url_ok, url, width, height = self.sudo()._get_url_frame('consumo')
+        for record in self:
+            if url_ok:
+                hidrante_param = record.sudo().irrigationshed_id.name
+                toma_param = str(record.sudo().position)
+                clientidentify_param = self.sudo().env.user.name
+                url = url + 'hidrante=' + hidrante_param + '&' + \
+                    'toma=' + toma_param + '&' + \
+                    'clientidentify=' + clientidentify_param
+                record.html_consumptions_frame = \
+                    '<p style="text-align:center;margin-top:2px;' + \
+                    'margin-left:1px;margin-right:1px;">' + \
+                    '<iframe sandbox="allow-scripts allow-forms ' + \
+                    'allow-pointer-lock allow-same-origin" ' + \
+                    'id="iframe_consumptions" scrolling="no" ' + \
+                    'marginheight="0" marginwidth="0" ' + \
+                    'src="' + url + '" ' + \
+                    'frameborder="0" height="' + str(height) + '" ' + \
+                    'width="' + str(width) + '"' + \
+                    '></iframe></p>'
+            else:
+                record.html_consumptions_frame = ''
+
+    @api.multi
+    def _compute_html_scheduling_frame(self):
+        url_ok, url, width, height = self.sudo()._get_url_frame('programacion')
+        for record in self:
+            if url_ok:
+                hidrante_param = record.sudo().irrigationshed_id.name
+                toma_param = str(record.sudo().position)
+                clientidentify_param = self.sudo().env.user.name
+                url = url + 'hidrante=' + hidrante_param + '&' + \
+                    'toma=' + toma_param + '&' + \
+                    'clientidentify=' + clientidentify_param
+                record.html_scheduling_frame = \
+                    '<p style="text-align:center;margin-top:2px;' + \
+                    'margin-left:1px;margin-right:1px;">' + \
+                    '<iframe sandbox="allow-scripts allow-forms ' + \
+                    'allow-pointer-lock allow-same-origin" ' + \
+                    'id="iframe_scheduling" scrolling="no" ' + \
+                    'marginheight="0" marginwidth="0" ' + \
+                    'src="' + url + '" ' + \
+                    'frameborder="0" height="' + str(height) + '" ' + \
+                    'width="' + str(width) + '"' + \
+                    '></iframe></p>'
+            else:
+                record.html_scheduling_frame = ''
+
+    @api.model
+    def create(self, vals):
+        waterconnection = super(WuaWaterconnection, self).create(vals)
+        self.__class__._in_create = True
+        return waterconnection
+
+    @api.multi
+    def action_scheduling_waterconnection(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Schedule water connection'),
+            'res_model': 'wizard.scheduling.waterconnection',
+            'src_model': 'wua.waterconnection',
+            'view_mode': 'form',
+            'target': 'new'
+            }
+        return act_window
+
+    def _get_url_frame(self, type):
+        url_ok = False
+        url = ''
+        width = 0
+        height = 0
+        php_frame_enabled = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'php_frame_enabled')
+        php_frame_url = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'php_frame_url')
+        url_irriweb = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'url_remotecontrol_application')
+        url_ok = php_frame_enabled and php_frame_url and url_irriweb
+        if url_ok:
+            if type == 'historico':
+                php_frame_type = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_historico')
+                width = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_historico_width')
+                height = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_historico_height')
+            if type == 'consumo':
+                php_frame_type = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_consumo')
+                width = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_consumo_width')
+                height = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_consumo_height')
+            if type == 'programacion':
+                php_frame_type = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_programacion')
+                width = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_programacion_width')
+                height = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_programacion_height')
+            php_frame_client = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'php_frame_client')
+            php_frame_accesskey = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'php_frame_accesskey')
+            php_frame_secretkey = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'php_frame_secretkey')
+            url = php_frame_url + '?type=' + php_frame_type + \
+                '&url_irriweb=' + url_irriweb + \
+                '&client=' + php_frame_client + \
+                '&accesskey=' + php_frame_accesskey + \
+                '&secretkey=' + php_frame_secretkey + \
+                '&height=' + str(height) + \
+                '&width=' + str(width)
+        return url_ok, url, width, height

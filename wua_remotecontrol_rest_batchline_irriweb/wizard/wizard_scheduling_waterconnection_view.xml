@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_scheduling_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Wizard to do the scheduling of a water connection</field>
+        <field name="model">wizard.scheduling.waterconnection</field>
+        <field name="arch" type="xml">
+            <form string="Schedule water connection">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '1015px'});
+                        $(".modal-footer").hide();                        
+                    });
+                </script>
+                <field name="html_scheduling_frame" widget="html"/>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

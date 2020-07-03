@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_remotecontrol_rest.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='url_remotecontrol_application']"
+                   position="after">
+                <field name="php_frame_enabled"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                <field name="php_frame_url"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_type_historico"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_type_historico_width"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_type_historico_height"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_type_consumo"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_type_consumo_width"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_type_consumo_height"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>                         
+                <field name="php_frame_type_programacion"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_type_programacion_width"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_type_programacion_height"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_client"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_accesskey"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <field name="php_frame_secretkey"
+                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                         'readonly':[('php_frame_enabled','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
