@@ -368,28 +368,41 @@ class WuaInvoiceset(models.Model):
         return data
 
     def group_invoice_details(self, invoice_details):
-        group_details_categ07_by_wc = False
-        categ_to_group = [7]
-        group_categ_10 = self.env['ir.values'].get_default(
-            'wua.invoicing.configuration', 'invoicing_based_on_wc')
-        if (group_categ_10):
-            categ_to_group.append(10)
+        invoicing_based_on_wc = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration',
+                'invoicing_based_on_wc')
+        group_detail_lines_of_wc_if_same_payer = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration',
+                'group_detail_lines_of_wc_if_same_payer')
         invoice_details_categ07 = filter(
-            lambda x: x['categ_code'] in categ_to_group, invoice_details)
-        if (invoice_details_categ07 and self.env['ir.values'].get_default(
-           'wua.invoicing.configuration',
-           'group_detail_lines_of_wc_if_same_payer')):
-            group_details_categ07_by_wc = True
+            lambda x: x['categ_code'] == 7, invoice_details)
+        invoice_details_categ10 = filter(
+            lambda x: x['categ_code'] == 10, invoice_details)
+        group_details_categ07_by_wc = \
+            (invoicing_based_on_wc and
+             invoice_details_categ07)
+        group_details_categ10_by_wc = \
+            (invoice_details_categ10 and
+             group_detail_lines_of_wc_if_same_payer)
+        invoice_details_to_group = []
         if group_details_categ07_by_wc:
-            invoice_details_not_categ07 = \
+            invoice_details_to_group = invoice_details_to_group + \
+                invoice_details_categ07
+        if group_details_categ10_by_wc:
+            invoice_details_to_group = invoice_details_to_group + \
+                invoice_details_categ10
+        if invoice_details_to_group:
+            invoice_details_not_grouped = \
                 [x for x in invoice_details
-                 if x not in invoice_details_categ07]
+                 if x not in invoice_details_to_group]
             invoices_data_grouped_by_wc = self.group_invoice_details_by_wc(
-                invoice_details_categ07)
-            if invoice_details_not_categ07:
+                invoice_details_to_group)
+            if invoice_details_not_grouped:
                 return invoices_data_grouped_by_wc + \
                     super(WuaInvoiceset, self).group_invoice_details(
-                        invoice_details_not_categ07)
+                        invoice_details_not_grouped)
             else:
                 return invoices_data_grouped_by_wc
         else:
