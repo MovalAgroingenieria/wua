@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_wateringrequest_view_form" model="ir.ui.view">
+        <field name="name">Watering Requests (form view)</field>
+        <field name="model">wua.wateringrequest</field>
+        <field name="inherit_id"
+               ref="base_wua_gravity_irrigation.wua_wateringrequest_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']"
+                   position="replace"/>
+            <xpath expr="//field[@name='irrigationditch_id']"
+                   position="after">
+                <div attrs="{'invisible': [('html_quota_balance','=',False)]}"
+                     colspan="2">
+                    <br/>
+                    <field name="html_quota_balance" nolabel="1"/>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='is_portal_user']"
+                   position="after">
+                <field name="user_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -469,7 +469,7 @@ class WuaQuota(models.Model):
         if superproduct and gravconsumption.watering_end_time:
             quotaperiod = self._get_quotaperiod(
                 gravconsumption.watering_end_time)
-            if parcel.area_official > 0:
+            if quotaperiod and parcel.area_official > 0:
                 reduction_factor = product.reduction_factor
                 if reduction_factor < 1:
                     volume = reduction_factor * volume
