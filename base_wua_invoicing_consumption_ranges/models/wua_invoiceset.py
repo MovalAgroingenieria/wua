@@ -65,10 +65,12 @@ class WuaInvoiceset(models.Model):
                     waterconnection_id = invoice_detail['key1']
                     waterconnections_of_current_partner.append(
                         str(waterconnection_id))
-                parcels_of_current_partner = self.env['wua.parcel'].search(
-                    [('partner_id', '=', partner_id)])
+                partnerlinks_of_current_partner = \
+                    self.env['wua.parcel.partnerlink'].search(
+                        [('partner_id', '=', partner_id)])
                 total_area = sum(
-                    x.area_official for x in parcels_of_current_partner)
+                    x.area_official_water_costs_net
+                    for x in partnerlinks_of_current_partner)
                 waterconnection_ids_str = ''
                 if len(waterconnections_of_current_partner) > 0:
                     waterconnections_of_current_partner = list(
