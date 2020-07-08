@@ -19,14 +19,12 @@ class WuaIrrigationReport(models.Model):
     report_initial_time = fields.Datetime(
         string='Start Time',
         required=True,
-        index=True,
-        default=lambda self: fields.datetime.now())
+        index=True)
 
     report_end_time = fields.Datetime(
         string='End Time',
         required=True,
-        index=True,
-        default=lambda self: fields.datetime.now())
+        index=True)
 
     intake_id = fields.Many2one(
         string="Intake",
