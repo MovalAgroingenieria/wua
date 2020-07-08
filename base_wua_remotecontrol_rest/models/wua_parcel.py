@@ -259,7 +259,8 @@ class WuaParcel(models.Model):
                     self.__class__._in_create_or_synchro = False
 
     def do_synchronization_parcels(self, active_parcels,
-                                   show_message=False):
+                                   show_message=False,
+                                   unconditional_syncrho=False):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):
             raise exceptions.UserError(_(
                 'You do not have permission to execute this action.'))
@@ -302,12 +303,24 @@ class WuaParcel(models.Model):
                             if parcels_ok:
                                 parcels_ok_str = ''
                                 for name in parcels_ok:
-                                    self.env['wua.parcel'].with_context(
-                                        active_test=False).search(
-                                            [('name', '=', name)]).\
-                                        updated_in_remotecontrol = True
-                                    parcels_ok_str = parcels_ok_str + ', ' + \
-                                        str(name)
+                                    if unconditional_syncrho:
+                                        try:
+                                            self.env['wua.parcel'].\
+                                                with_context(
+                                                active_test=False).search(
+                                                    [('name', '=', name)]).\
+                                                updated_in_remotecontrol = True
+                                            parcels_ok_str = parcels_ok_str + \
+                                                ', ' + str(name)
+                                        except Exception:
+                                            pass
+                                    else:
+                                        self.env['wua.parcel'].with_context(
+                                            active_test=False).search(
+                                                [('name', '=', name)]).\
+                                            updated_in_remotecontrol = True
+                                        parcels_ok_str = parcels_ok_str + \
+                                            ', ' + str(name)
                                 parcels_ok_str = parcels_ok_str[2:]
                                 _logger.info(prefix_message + ': ' +
                                              parcels_ok_str + '... ' +
@@ -317,10 +330,21 @@ class WuaParcel(models.Model):
                                                    'control')
                                 parcels_not_ok_str = ''
                                 for name in parcels_not_ok:
-                                    self.env['wua.parcel'].with_context(
-                                        active_test=False).search(
-                                            [('name', '=', name)]).\
-                                        updated_in_remotecontrol = False
+                                    if unconditional_syncrho:
+                                        try:
+                                            self.env['wua.parcel'].\
+                                                with_context(
+                                                active_test=False).search(
+                                                    [('name', '=', name)]).\
+                                                updated_in_remotecontrol = \
+                                                False
+                                        except Exception:
+                                            pass
+                                    else:
+                                        self.env['wua.parcel'].\
+                                            with_context(active_test=False).\
+                                            search([('name', '=', name)]).\
+                                            updated_in_remotecontrol = False
                                     parcels_not_ok_str = \
                                         parcels_not_ok_str + ', ' + \
                                         str(name)
@@ -339,7 +363,7 @@ class WuaParcel(models.Model):
         parcel_ids = self.env['wua.parcel'].with_context(
             active_test=False).search([]).ids
         if parcel_ids:
-            self.do_synchronization_parcels(parcel_ids, show_message)
+            self.do_synchronization_parcels(parcel_ids, show_message, True)
         if not show_message:
             return True
 
