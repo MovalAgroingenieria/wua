@@ -18,7 +18,7 @@
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
                     <div class="page">
-                      <t t-set="months_data" t-value="o.env['wua.sum.intakeconsumption.invoicing'].search([('agriculturalseason_id','=', o.id)])"/>
+                      <t t-set="months_data" t-value="o.env['wua.sum.intakeconsumption.invoicing'].search([('agriculturalseason_id','=', o.id)], order='month')"/>
                       <t t-set="company_01_name" t-value="o.env['ir.values'].get_default(
                                 'wua.configuration', 'company_01_abv')"/>
                       <t t-set="company_02_name" t-value="o.env['ir.values'].get_default(
