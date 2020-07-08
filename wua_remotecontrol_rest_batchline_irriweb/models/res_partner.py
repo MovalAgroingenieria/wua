@@ -41,7 +41,9 @@ class ResPartner(models.Model):
             lastname = self.get_val(vals, 'lastname')
             lastname2 = self.get_val(vals, 'lastname2')
             vat = self.get_val(vals, 'vat')
-            if len(vat) > 2:
+            if not vat:
+                vat = '-'
+            elif len(vat) > 2:
                 vat = vat[2:]
             email = self.get_val(vals, 'email')
             resp = {
@@ -71,6 +73,8 @@ class ResPartner(models.Model):
                 'authorization': 'bearer ' + token,
                 'content-type': 'application/json',
             }
+            if (not data['vat']):
+                data['vat'] = '-'
             payload_data = {
                 'Identificador': data['partner_code'],
                 'NIF': data['vat'],
@@ -104,6 +108,8 @@ class ResPartner(models.Model):
             vat = self.refine_value(partner.vat)
             if vat and len(vat) > 2:
                 vat = vat[2:]
+            else:
+                vat = '-'
             email = self.refine_value(partner.email)
             with_credit_overdue = partner.credit_overdue > 0
             resp = {
@@ -135,6 +141,8 @@ class ResPartner(models.Model):
                 'authorization': 'bearer ' + token,
                 'content-type': 'application/json',
             }
+            if (not data['vat']):
+                data['vat'] = '-'
             payload_data = {
                 'Identificador': data['partner_code'],
                 'NIF': data['vat'],
@@ -206,6 +214,8 @@ class ResPartner(models.Model):
                 'authorization': 'bearer ' + token,
                 'content-type': 'application/json',
             }
+            if (not data['vat']):
+                data['vat'] = '-'
             payload_data = {
                 'Identificador': data['partner_code'],
                 'NIF': data['vat'],
@@ -244,6 +254,8 @@ class ResPartner(models.Model):
                 'content-type': 'application/json',
             }
             for data in list_of_data:
+                if (not data['vat']):
+                    data['vat'] = '-'
                 payload_data = {
                     'Identificador': data['partner_code'],
                     'NIF': data['vat'],
