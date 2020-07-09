@@ -12,6 +12,7 @@
     "depends": [
         "account_banking_debit_suma",
         "base_wua",
+        "base_wua_invoicing",
     ],
     "data": [
         "views/account_payment_order_views.xml",
