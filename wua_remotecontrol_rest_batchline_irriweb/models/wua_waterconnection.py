@@ -36,7 +36,7 @@ class WuaWaterconnection(models.Model):
                 hidrante_param = record.sudo().irrigationshed_id.name
                 toma_param = str(record.sudo().position)
                 clientidentify_param = self.sudo().env.user.name
-                url = url + 'hidrante=' + hidrante_param + '&' + \
+                url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
                 body = '<iframe sandbox="allow-scripts allow-forms ' + \
@@ -66,7 +66,7 @@ class WuaWaterconnection(models.Model):
                 hidrante_param = record.sudo().irrigationshed_id.name
                 toma_param = str(record.sudo().position)
                 clientidentify_param = self.sudo().env.user.name
-                url = url + 'hidrante=' + hidrante_param + '&' + \
+                url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
                 record.html_consumptions_frame = \
@@ -91,7 +91,7 @@ class WuaWaterconnection(models.Model):
                 hidrante_param = record.sudo().irrigationshed_id.name
                 toma_param = str(record.sudo().position)
                 clientidentify_param = self.sudo().env.user.name
-                url = url + 'hidrante=' + hidrante_param + '&' + \
+                url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
                 record.html_scheduling_frame = \
