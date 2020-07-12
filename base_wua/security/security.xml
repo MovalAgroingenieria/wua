@@ -12,6 +12,15 @@
             <field name="is_portal">True</field>
         </record>
 
+        <record id="group_wua_portal_user_edit" model="res.groups">
+            <field name="name">WUA Portal User (edition mode)</field>
+            <field name="category_id"
+                ref="base.module_category_water_users_associations"/>
+            <field name="implied_ids"
+                eval="[(4, ref('group_wua_portal_user'))]"/>
+            <field name="is_portal">True</field>
+        </record>
+
         <record id="group_wua_user" model="res.groups">
             <field name="name">User</field>
             <field name="category_id"

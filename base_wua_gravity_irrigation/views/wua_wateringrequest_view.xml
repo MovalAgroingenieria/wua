@@ -179,12 +179,27 @@
         </field>
     </record>
 
-    <record id="wua_wateringrequest_parner_view_tree" model="ir.ui.view">
+    <record id="wua_wateringrequest_partner_view_tree" model="ir.ui.view">
         <field name="name">Watering Requests of Partner (tree view)</field>
         <field name="model">wua.wateringrequest</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false" delete="false"
                   class="o_base_wua_gravity_irrigation_wateringrequest_partner_view_tree">
+                <field name="name"/>
+                <field name="wateringperiod_id"/>
+                <field name="request_date"/>
+                <field name="number_of_subparcels" sum="Total"/>
+                <field name="is_open"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_wateringrequest_partner_edit_view_tree" model="ir.ui.view">
+        <field name="name">Watering Requests of Partner (tree view)</field>
+        <field name="model">wua.wateringrequest</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_gravity_irrigation_wateringrequest_partner_view_tree">
                 <field name="name"/>
                 <field name="wateringperiod_id"/>
                 <field name="request_date"/>

@@ -1146,8 +1146,8 @@ class WuaParcel(models.Model):
                             width_in_image_meters
                         record.write({'aerial_img': base64_img,
                                       'aerial_img_scale': aerial_img_scale})
-                    except Exception as e:
-                        print e
+                    except:
+                        pass
 
     def check_gis(self):
         resp = False

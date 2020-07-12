@@ -50,7 +50,8 @@ class WuaWateringrequest(models.Model):
                     superproduct = '<b>' + quota.superproduct_id.name + '</b>'
                     balance = '%.2f' % quota.balance
                     if quota.balance < 0:
-                        balance = '<p style="color:red">' + balance + '</p>'
+                        balance = '<span style="color:red">' + balance + \
+                            '</span>'
                     body = body + '<br/>' + superproduct + ' : ' + balance
                 resp = '<div class="panel-body text-left" ' + \
                        'style="background:#f4f6f6;border-radius:4px;' + \

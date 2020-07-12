@@ -286,7 +286,9 @@ class WuaAgriculturalseason(models.Model):
             previous_agricultural_season = previous_agricultural_season[0]
             previous_enrolledsubparcels = \
                 self.env['wua.enrolledsubparcel'].search(
-                    [('cultivation_id.permanent', '=', True),
+                    [('agriculturalseason_id', '=',
+                      previous_agricultural_season.id),
+                     ('cultivation_id.permanent', '=', True),
                      ('parcel_id.permanent', '=', True)])
             if not previous_enrolledsubparcels:
                 return False

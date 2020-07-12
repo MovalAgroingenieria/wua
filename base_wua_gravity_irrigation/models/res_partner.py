@@ -48,8 +48,14 @@ class ResPartner(models.Model):
         condition = [('partner_id', '=', self.id)]
         id_form_view = self.env.ref('base_wua_gravity_irrigation.'
                                     'wua_wateringrequest_view_form').id
-        id_tree_view = self.env.ref('base_wua_gravity_irrigation.'
-                                    'wua_wateringrequest_parner_view_tree').id
+        if self.env.user.has_group('base_wua.group_wua_portal_user_edit'):
+            id_tree_view = \
+                self.env.ref('base_wua_gravity_irrigation.'
+                             'wua_wateringrequest_partner_edit_view_tree').id
+        else:
+            id_tree_view = \
+                self.env.ref('base_wua_gravity_irrigation.'
+                             'wua_wateringrequest_partner_view_tree').id
         search_view = self.env.ref('base_wua_gravity_irrigation.'
                                    'wua_wateringrequest_partner_view_search')
         act_window = {
