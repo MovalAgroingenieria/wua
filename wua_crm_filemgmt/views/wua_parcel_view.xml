@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <button name="action_get_files"
+                        type="object" class="oe_stat_button"
+                        icon="fa-filemgmt-files"
+                        attrs="{'invisible': [('number_of_files','=', 0)]}">
+                    <div class="o_form_field o_stat_info">
+                          <field name="number_of_files"/>
+                          <span attrs="{'invisible': [('number_of_files','>', 1)]}"> File</span>
+                          <span attrs="{'invisible': [('number_of_files','=', 1)]}"> Files</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

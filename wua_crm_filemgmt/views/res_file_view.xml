@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_file_view_form" model="ir.ui.view">
+        <field name="name">Files (form view)</field>
+        <field name="model">res.file</field>
+        <field name="inherit_id" ref="crm_filemgmt.res_file_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='notes_page']" position="before">
+                <page name="parcellink_page" string="Parcel Links">
+                    <field name="parcellink_ids"
+                           attrs="{'readonly':['|',('state','=','closed'),('is_blocked','=',True)]}"
+                           context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_file_parcellink_view_form" model="ir.ui.view">
+        <field name="name">File Parcellink (form view)</field>
+        <field name="model">res.file.parcellink</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <group name="master_data">
+                        <group>
+                            <field name="parcel_id"/>
+                            <field name="parcel_area_official"/>
+                            <field name="parcel_rural_location_county"/>
+                            <field name="parcel_cadastral_reference"/>
+                        </group>
+                        <group>
+                            <field name="parcel_partner_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="res_file_parcellink_view_tree" model="ir.ui.view">
+        <field name="name">File Parcellink (tree view)</field>
+        <field name="model">res.file.parcellink</field>
+        <field name="arch" type="xml">
+            <tree class="o_res_file_parcellink_view_tree" editable="bottom">
+                <field name="parcel_gis_viewer_link" invisible="1"/>
+                <field name="parcel_cadastral_reference_link" invisible="1"/>
+                <field name="parcel_id"/>
+                <field name="parcel_area_official"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to parcel)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': [('parcel_gis_viewer_link','=','')]}"/>
+                <button name="action_see_cadastral_report"
+                        type="object" class="oe_stat_button"
+                        string="Cadastral Report"
+                        icon="fa-cubes"
+                        attrs="{'invisible': [('parcel_cadastral_reference_link','=','')]}"/>
+                <field name="parcel_rural_location_county"/>
+                <field name="parcel_cadastral_reference"/>
+                <field name="parcel_partner_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_file_parcellink_of_parcel_view_tree" model="ir.ui.view">
+        <field name="name">File Parcellink (tree view)</field>
+        <field name="model">res.file.parcellink</field>
+        <field name="arch" type="xml">
+            <tree class="o_res_file_parcellink_of_parcel_view_tree" create="false" edit="false">
+                <field name="file_id"/>
+                <field name="subject"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_file_parcellink_view_search" model="ir.ui.view">
+        <field name="name">File Parcellink (search view)</field>
+        <field name="model">res.file.parcellink</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="file_id"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>
