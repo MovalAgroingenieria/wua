@@ -15,15 +15,17 @@ class AccountPaymentOrder(models.Model):
             if order.payment_mode_id.name == 'ATRM':
                 for bline in order.bank_line_ids:
                     if bline.atrm_sent:
-                        invoice = self.env['account.invoice'].search([
-                            ('number', '=', bline.communication)])
-                        move_lines = self.env['account.move.line'].search([
-                            ('invoice_id', '=', invoice.id)])
-                        if move_lines:
-                            for move_line in move_lines:
-                                move_line.atrm_ref = bline.atrm_ref
-                        invoice.write({
-                            'in_atrm': True,
-                            'atrm_ref': bline.atrm_ref,
-                        })
+                        for l in bline.payment_line_ids:
+                            if bline.name == l.bank_line_id.name:
+                                invoice = l.invoice_id
+                                invoice.write({
+                                    'in_atrm': True,
+                                    'atrm_ref': bline.atrm_ref,
+                                    })
+                                move_lines = \
+                                    self.env['account.move.line'].search([
+                                        ('invoice_id', '=', invoice.id)])
+                            if move_lines:
+                                for move_line in move_lines:
+                                    move_line.atrm_ref = bline.atrm_ref
         return res
