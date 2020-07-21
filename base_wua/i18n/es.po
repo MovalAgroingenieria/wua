@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 16:59+0000\n"
-"PO-Revision-Date: 2020-07-12 16:59+0000\n"
+"POT-Creation-Date: 2020-07-21 07:59+0000\n"
+"PO-Revision-Date: 2020-07-21 07:59+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -85,6 +85,21 @@ msgid "<span>Yes</span>"
 msgstr "<span>Sí</span>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<strong>Area</strong>"
+msgstr "<strong>Área</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<strong>Cadastral reference</strong>"
+msgstr "<strong>Referencia catastral</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<strong>Parcel</strong>"
+msgstr "<strong>Parcela</strong>"
+
+#. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_parcel_street_view_orient
 msgid "A value between 0 and 360 degrees. 0: North, 90: East, 180: Suth, 270: West"
 msgstr "Un valor entre 0 y 360 grados. 0: Norte, 90: Este, 180: Sur, 270: Oeste"
@@ -92,7 +107,7 @@ msgstr "Un valor entre 0 y 360 grados. 0: Norte, 90: Este, 180: Sur, 270: Oeste"
 #. module: base_wua
 #: sql_constraint:res.partner.bank:0
 msgid "Account Number must be unique (NOT)"
-msgstr "Account Number must be unique (NOT)"
+msgstr "El número de cuenta debe ser único (NO)"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_active
@@ -121,6 +136,11 @@ msgstr "Imagen aérea: No"
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_search
 msgid "Aerial Image: Yes"
 msgstr "Imagen aérea: Sí"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "Aerial image not found"
+msgstr "No se ha encontrado la imagen aérea"
 
 #. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_wua_portal_user_can_edit
@@ -153,7 +173,7 @@ msgstr "Albaricoquero"
 #: code:addons/base_wua/static/src/js/list_view.js:18
 #, python-format
 msgid "Archive"
-msgstr "Archive"
+msgstr "Archivo"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
@@ -239,7 +259,7 @@ msgstr "Cuentas bancarias"
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_res_partner_bank
 msgid "Bank Accounts (for WUA)"
-msgstr "Bank Accounts (for WUA)"
+msgstr "Cuentas bancarias (para C.R.)"
 
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.wua_technical_partnerbank_action
@@ -553,7 +573,7 @@ msgstr "Configuración"
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wua_configuration
 msgid "Configuration of base_wua module"
-msgstr "Configuración del módulo base_wua"
+msgstr "Configuración del  módulo base_wua"
 
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.wua_configuration_action
@@ -660,7 +680,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_create_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_create_date
 msgid "Created on"
-msgstr "Creado el"
+msgstr "Creado en"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_polling_system_type
@@ -731,7 +751,7 @@ msgstr "Palmera datilera"
 #: code:addons/base_wua/static/src/js/list_view.js:20
 #, python-format
 msgid "Delete"
-msgstr "Delete"
+msgstr "Borrar"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_description
@@ -739,6 +759,7 @@ msgstr "Delete"
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivationplan_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_farmproperty_description
+#: model:ir.model.fields,field_description:base_wua.field_wua_hydraulicsector_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_irrigationsystem_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_mastertable_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_parceltag_description
@@ -751,8 +772,8 @@ msgstr "Descripción"
 
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wizard_change_parcel_name
-msgid "Dialog box to change the parcel name (code)"
-msgstr "Dialog box to change the parcel name (code)"
+msgid "Dialog box to change the parcel name (code), with irrigation infrastructure"
+msgstr "Cuadro de diálogo para cambiar el nombre de la parcela (código), con infraestructura de riego"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_display_name
@@ -776,7 +797,7 @@ msgstr "Dialog box to change the parcel name (code)"
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_display_name
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre mostrado"
 
 #. module: base_wua
 #: model:wua.irrigationsystem,name:base_wua.irrigationsystem_01
@@ -890,11 +911,6 @@ msgid "Endive"
 msgstr "Endivia"
 
 #. module: base_wua
-#: model:ir.model,name:base_wua.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
-
-#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_051
 msgid "Erial"
 msgstr "Erial"
@@ -963,7 +979,7 @@ msgstr "Código de parcela existente."
 #: code:addons/base_wua/static/src/js/list_view.js:17
 #, python-format
 msgid "Export"
-msgstr "Export"
+msgstr "Exportar"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_019
@@ -1022,7 +1038,7 @@ msgstr "De"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_area_gis
 msgid "GIS Area"
-msgstr "GIS Area"
+msgstr "Área GIS"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_with_gis_parcel
@@ -1399,7 +1415,7 @@ msgstr "Parcelario"
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype___last_update
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última modificación el"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_write_uid
@@ -1447,7 +1463,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_write_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_write_date
 msgid "Last Updated on"
-msgstr "Última actualización el"
+msgstr "Última actualización en"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_search
@@ -1626,6 +1642,11 @@ msgstr "Hectáreas declaradas netas"
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_parcel_name
 msgid "New parcel code"
 msgstr "Nuevo código de parcela"
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_100
+msgid "Nogales"
+msgstr "Nogales"
 
 #. module: base_wua
 #: selection:wua.configuration,polling_system_type:0
@@ -1850,7 +1871,7 @@ msgstr "Otros tubérculos para consumo"
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_103
 msgid "Other vegetables"
-msgstr "Other hortalizas"
+msgstr "Otras hortalizas"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_110
@@ -1951,6 +1972,11 @@ msgid "Parcels"
 msgstr "Parcelas"
 
 #. module: base_wua
+#: model:ir.model,name:base_wua.model_wua_parcel
+msgid "Parcels (integrated GIS)"
+msgstr "Parcelas (integratdas GIS)"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_parcel_lessee_number
 #: model:ir.model.fields,field_description:base_wua.field_res_users_parcel_lessee_number
 msgid "Parcels, as lessee"
@@ -2006,7 +2032,7 @@ msgstr "Enlaces a socios (a bajo nivel)"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partnerlink_partner_id
 msgid "Partner Name"
-msgstr "Nombre del socio"
+msgstr "Nombre de la empresa"
 
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.res_partnertag_action
@@ -2022,7 +2048,7 @@ msgstr "Enlace a socio de una parcela"
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Socio"
 
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.res_partner_action
@@ -2228,7 +2254,7 @@ msgstr "Recreativo"
 #. module: base_wua
 #: model:ir.actions.server,name:base_wua.wua_technical_update_gis_link_action
 msgid "Refresh GIS Links"
-msgstr "Refresh GIS Links"
+msgstr "Refrescar enlaces GIS"
 
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wua_region
@@ -2932,11 +2958,6 @@ msgstr "Usuario C.R."
 #: model:ir.ui.view,arch_db:base_wua.view_users_search
 msgid "WUA Users"
 msgstr "Usuarios C.R."
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_100
-msgid "Walnut"
-msgstr "Walnut"
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:691

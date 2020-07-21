@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-12 17:00+0000\n"
-"PO-Revision-Date: 2020-07-12 17:00+0000\n"
+"POT-Creation-Date: 2020-07-21 08:24+0000\n"
+"PO-Revision-Date: 2020-07-21 08:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -85,6 +85,21 @@ msgid "<span>Yes</span>"
 msgstr "<span>Sí</span>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<strong>Area</strong>"
+msgstr "<strong>Àrea</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<strong>Cadastral reference</strong>"
+msgstr "<strong>Referència cadastral</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<strong>Parcel</strong>"
+msgstr "<strong>Parce·la</strong>"
+
+#. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_parcel_street_view_orient
 msgid "A value between 0 and 360 degrees. 0: North, 90: East, 180: Suth, 270: West"
 msgstr "Un valor entre 0 i 360 graus. 0: Nord, 90: Est, 180: Sud, 270: Oest"
@@ -92,7 +107,7 @@ msgstr "Un valor entre 0 i 360 graus. 0: Nord, 90: Est, 180: Sud, 270: Oest"
 #. module: base_wua
 #: sql_constraint:res.partner.bank:0
 msgid "Account Number must be unique (NOT)"
-msgstr "Account Number must be unique (NOT)"
+msgstr "El número de compte ha de ser únic (NO)"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_active
@@ -121,6 +136,11 @@ msgstr "Imatge aèria: No"
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_search
 msgid "Aerial Image: Yes"
 msgstr "Imatge aèria: Sí"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "Aerial image not found"
+msgstr "No s'ha trobat la imatge aèria"
 
 #. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_wua_portal_user_can_edit
@@ -239,7 +259,7 @@ msgstr "Comptes bancaris"
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_res_partner_bank
 msgid "Bank Accounts (for WUA)"
-msgstr "Bank Accounts (for WUA)"
+msgstr "Comptes bancaris (per C.R.)"
 
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.wua_technical_partnerbank_action
@@ -348,7 +368,7 @@ msgstr "Cadastre"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_area_cadaster
 msgid "Cadastral Area (m2)"
-msgstr "Cadastral Area (m2)"
+msgstr "Àrea cadastral (m2)"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_region_state_cadastral_code
@@ -731,7 +751,7 @@ msgstr "Palmera datilera"
 #: code:addons/base_wua/static/src/js/list_view.js:20
 #, python-format
 msgid "Delete"
-msgstr "Delete"
+msgstr "Esborrar"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_description
@@ -739,6 +759,7 @@ msgstr "Delete"
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivationplan_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_farmproperty_description
+#: model:ir.model.fields,field_description:base_wua.field_wua_hydraulicsector_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_irrigationsystem_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_mastertable_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_parceltag_description
@@ -751,8 +772,8 @@ msgstr "Descripció"
 
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wizard_change_parcel_name
-msgid "Dialog box to change the parcel name (code)"
-msgstr "Dialog box to change the parcel name (code)"
+msgid "Dialog box to change the parcel name (code), with irrigation infrastructure"
+msgstr "Quadre de diàleg per canviar el nom de la parcel·la (codi), amb infraestructura de reg"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_display_name
@@ -776,7 +797,7 @@ msgstr "Dialog box to change the parcel name (code)"
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_display_name
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_display_name
 msgid "Display Name"
-msgstr "Mostrar Nom"
+msgstr "Veure el nom"
 
 #. module: base_wua
 #: model:wua.irrigationsystem,name:base_wua.irrigationsystem_01
@@ -890,11 +911,6 @@ msgid "Endive"
 msgstr "Endivia"
 
 #. module: base_wua
-#: model:ir.model,name:base_wua.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
-
-#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_051
 msgid "Erial"
 msgstr "Erial"
@@ -963,7 +979,7 @@ msgstr "Codi parcel·la existent"
 #: code:addons/base_wua/static/src/js/list_view.js:17
 #, python-format
 msgid "Export"
-msgstr "Export"
+msgstr "Exportar"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_019
@@ -1152,7 +1168,7 @@ msgstr "Invernadero"
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_subparcel_view_search
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_search
 msgid "Group By"
-msgstr "Agrupar per"
+msgstr "Agrupa per"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_143
@@ -1399,7 +1415,7 @@ msgstr "Parcelario"
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype___last_update
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_write_uid
@@ -1423,7 +1439,7 @@ msgstr "Última modificació el "
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_write_uid
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Darrera Actualització per"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_write_date
@@ -1447,7 +1463,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_write_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera Actualització el"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_search
@@ -1626,6 +1642,11 @@ msgstr "Hectàrees declarades netes"
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_parcel_name
 msgid "New parcel code"
 msgstr "Nou codi de parcel·la"
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_100
+msgid "Nogales"
+msgstr "Nogales"
 
 #. module: base_wua
 #: selection:wua.configuration,polling_system_type:0
@@ -1951,6 +1972,11 @@ msgid "Parcels"
 msgstr "Parcel·les"
 
 #. module: base_wua
+#: model:ir.model,name:base_wua.model_wua_parcel
+msgid "Parcels (integrated GIS)"
+msgstr "Parce·les (integrades GIS)"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_parcel_lessee_number
 #: model:ir.model.fields,field_description:base_wua.field_res_users_parcel_lessee_number
 msgid "Parcels, as lessee"
@@ -2006,7 +2032,7 @@ msgstr "Enllaços a socis (a baix nivell)"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partnerlink_partner_id
 msgid "Partner Name"
-msgstr "Nom de l'soci"
+msgstr "Soci"
 
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.res_partnertag_action
@@ -2022,7 +2048,7 @@ msgstr "Enllaç a soci d'una parcel·la"
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Soci"
 
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.res_partner_action
@@ -2732,7 +2758,7 @@ msgstr "Nº títol de propietat"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_leased_to
 msgid "To"
-msgstr "Per"
+msgstr "a"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_138
@@ -2932,11 +2958,6 @@ msgstr "Usuari C.R."
 #: model:ir.ui.view,arch_db:base_wua.view_users_search
 msgid "WUA Users"
 msgstr "Usuaris C.R."
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_100
-msgid "Walnut"
-msgstr "Walnut"
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:691

@@ -94,7 +94,7 @@
                                                         <span t-field="o.parcel_total_area"/>
                                                         <t t-if="o.partnerlink_ids">
                                                             <t t-set="measurement_unit" t-value="o.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
-                                                            <span>(<t t-esc="measurement_unit"/>)</span>
+                                                            <span><t t-esc="measurement_unit"/></span>
                                                         </t>
                                                     </td>
                                                 </tr>
@@ -114,26 +114,26 @@
                                 <table class="table table-striped" style="margin-top: 2px;">
                                     <thead>
                                         <tr>
-                                            <th>Parcel</th>
-                                            <th name="th_cadastral_reference_name">Cadastral reference</th>
-                                            <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
-                                            <th name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
-                                            <th name="th_profile_name">Profile</th>
-                                            <th name="th_ownership_name" class="text-right">Ownership (%)</th>
-                                            <th name="th_water_name" class="text-right">Water (%)</th>
-                                            <th name="th_costs_name" class="text-right">Costs (%)</th>
+                                            <th width="20%" class="text-center">Parcel</th>
+                                            <th width="18%" class="text-center" name="th_cadastral_reference_name">Cadastral reference</th>
+                                            <th width="12%" class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
+                                            <th width="10%" name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
+                                            <th width="12%" class="text-center" name="th_profile_name">Profile</th>
+                                            <th width="10%" name="th_ownership_name" class="text-right">Ownership (%)</th>
+                                            <th width="9%" name="th_water_name" class="text-right">Water (%)</th>
+                                            <th width="9%" name="th_costs_name" class="text-right">Costs (%)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr t-foreach="o.partnerlink_ids" t-as="p" style="page-break-inside: avoid;">
-                                            <td><span t-field="p.parcel_id"/></td>
-                                            <td name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
+                                            <td class="text-center"><span t-field="p.parcel_id"/></td>
+                                            <td class="text-center" name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
                                             <td class="text-right"><span t-field="p.area_official"/></td>
                                             <td name="td_irrigation_partner_name" class="text-center">
                                                 <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
                                                 <t t-else=""><span>No</span></t>
                                             </td>
-                                            <td name="td_profile_name" ><span t-field="p.profile"/></td>
+                                            <td class="text-center" name="td_profile_name" ><span t-field="p.profile"/></td>
                                             <td name="td_ownership_name" class="text-right"><span t-field="p.ownership_percentage"/></td>
                                             <td name="td_water_name" class="text-right"><span t-field="p.water_costs_percentage"/></td>
                                             <td name="td_costs_name" class="text-right"><span t-field="p.other_costs_percentage"/></td>
@@ -142,11 +142,57 @@
                                 </table>
                             </t>
                         </div>
+
                         <!--
                          If base_wua_infrastructure module is installed this report continues
                          with wua_partner_infrastructure_report_document
                         -->
-                    </div>
+
+                        <!-- Force new page -->
+                        <p style="page-break-after:always;"/>
+
+                        <!-- Parcels aerial images  -->
+                        <div name="wua_parcel_aerial_images">
+                            <t t-if="o.partnerlink_ids">
+                                <t t-foreach="o.partnerlink_ids" t-as="p">
+                                    <div style="width: 48%; float: left; display: table; border: 1px solid black; margin: 1.5% 0.5%; page-break-inside: avoid;">
+                                        <div name="parcel_data" style="border-bottom: 1px solid black; padding: 2%;">
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong>Parcel</strong></td>
+                                                        <td class="text-right"><span t-field="p.parcel_id"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Cadastral reference</strong></td>
+                                                        <td class="text-right"><span t-field="p.cadastral_reference"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><strong>Area</strong></td>
+                                                        <td class="text-right">
+                                                            <span t-field="p.area_official"/>
+                                                            <span><t t-esc="measurement_unit"/></span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div name="parcel_aerial_image" class="text-center">
+                                            <t t-if="p.parcel_id.aerial_img">
+                                                <img t-attf-src="data:image/png;base64, #{p.parcel_id.aerial_img}" style="max-width: 408px; max-height: 408px;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="text-center text-muted" style="width: 408px; height: 408px; padding-top: 40%;">
+                                                    Aerial image not found
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+
+                    </div><!-- end page -->
                 </t>
             </t>
         </t>
