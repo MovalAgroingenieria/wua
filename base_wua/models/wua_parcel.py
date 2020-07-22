@@ -359,7 +359,8 @@ class WuaParcel(models.Model):
 
     aerial_img = fields.Binary(
         string="Aerial Image",
-        readonly=True)
+        readonly=True,
+        attachment=True)
 
     aerial_img_scale = fields.Integer(
         string='Scale',
