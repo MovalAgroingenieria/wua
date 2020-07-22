@@ -14,6 +14,13 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If enabled, an invoiceset will generate one invoice for every'
              ' irrigation report instead of group them by partner')
 
+    irrigationreport_readings_data_in_detail = fields.Boolean(
+        string='Reading info in detail line',
+        default=False,
+        help='If enabled, the detail lines generated for irrigation reports '
+        'with the time not in hours will show the initial and the final '
+        'reading value')
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -21,3 +28,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'irrigationreport_individual_invoice',
                            self.irrigationreport_individual_invoice)
+        values.set_default('wua.invoicing.configuration',
+                           'irrigationreport_readings_data_in_detail',
+                           self.irrigationreport_readings_data_in_detail)
