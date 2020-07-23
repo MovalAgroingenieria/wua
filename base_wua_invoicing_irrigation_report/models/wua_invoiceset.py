@@ -106,6 +106,8 @@ class WuaInvoiceset(models.Model):
             default_consumption_label = _('Consumption')
             data_in_hours = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'data_in_hours')
+            hours_in_sexagesimal = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'hours_sexagesimal')
             initial_reading_label = self.get_value_from_translation(
                 'base_wua_invoicing_irrigation_report',
                 'Start Time', language)
@@ -125,6 +127,7 @@ class WuaInvoiceset(models.Model):
             report_end_time = report_end_time.strftime('%x')
             date_str = '. '
             reading_details = ''
+            time_duration = ''
             if (not data_in_hours):
                 reading_in_detail = self.env['ir.values'].get_default(
                     'wua.invoicing.configuration',
@@ -146,6 +149,21 @@ class WuaInvoiceset(models.Model):
                         str(irrigationreport.initial_volume) + ' - ' + \
                         end_value_label + ': ' + \
                         str(irrigationreport.end_volume)
+            else:
+                duration_label = self.get_value_from_translation(
+                    'base_wua_invoicing_irrigation_report',
+                    'Duration', language)
+                if (not duration_label):
+                    duration_label = _('Duration')
+                hours = ''
+                if (hours_in_sexagesimal):
+                    hours_value = int(irrigationreport.hours)
+                    minutes_value = (irrigationreport.hours*60) % 60
+                    hours = "%02d:%02d" % (hours_value, minutes_value)
+                else:
+                    hours = str(irrigationreport.hours)
+                time_duration = time_duration + duration_label + ': ' + \
+                    hours + '. '
             if (report_initial_time == report_end_time):
                 date_reading_label = _('Date')
                 date_reading_label = self.get_value_from_translation(
@@ -158,7 +176,8 @@ class WuaInvoiceset(models.Model):
                     report_initial_time + '. ' + \
                     final_reading_label + ': ' + report_end_time + '. '
             volume = irrigationreport.volume_real
-            reading_times_info = date_str + consumption_label + ': ' + \
+            reading_times_info = date_str + time_duration + \
+                consumption_label + ': ' + \
                 '{0:.0f}'.format(volume) + ' m3'
             description = intake_name + ', ' + water_type + ', ' + \
                 _('delivery note num. ') + str(delivery_note) + '. ' + \
