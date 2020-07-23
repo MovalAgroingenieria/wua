@@ -251,8 +251,8 @@
                 <div class="col-xs-12" style="display: table;">
                     <div style="width: 50%; display: table-cell;">
                         User signature
-                        <t t-if="o.user_id.signature_image">
-                            <img t-att-src="'data:image/png;base64,%s' % o.user_id.signature_image" style="max-height: 100px;"/>
+                        <t t-if="o.sudo().user_id.signature_image">
+                            <img t-att-src="'data:image/png;base64,%s' % o.sudo().user_id.signature_image" style="max-height: 100px;"/>
                         </t>
                         
                     </div>
