@@ -22,7 +22,7 @@ class WuaParcel(models.Model):
     def _compute_number_of_files(self):
         for record in self:
             number_of_files = 0
-            parcellinks_of_parcel = self.env['res.file.parcellink'].search(
+            parcellinks_of_parcel = self.sudo().env['res.file.parcellink'].search(
                 [('parcel_id', '=', record.id)])
             if parcellinks_of_parcel:
                 number_of_files = len(parcellinks_of_parcel)
@@ -35,9 +35,6 @@ class WuaParcel(models.Model):
             id_tree_view = \
                 self.env.ref('wua_crm_filemgmt.'
                              'res_file_parcellink_of_parcel_view_tree').id
-            id_form_view = \
-                self.env.ref('wua_crm_filemgmt.'
-                             'res_file_parcellink_view_form').id
             search_view = \
                 self.env.ref('wua_crm_filemgmt.'
                              'res_file_parcellink_view_search')
@@ -47,8 +44,7 @@ class WuaParcel(models.Model):
                 'res_model': 'res.file.parcellink',
                 'view_type': 'form',
                 'view_mode': 'tree',
-                'views': [(id_tree_view, 'tree'),
-                          (id_form_view, 'form')],
+                'views': [(id_tree_view, 'tree')],
                 'search_view_id': (search_view.id, search_view.name),
                 'target': 'current',
                 'domain': [('id', 'in', self.file_ids.ids)],
