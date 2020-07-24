@@ -121,10 +121,18 @@ class WuaInvoiceset(models.Model):
                 consumption_label = default_consumption_label
             report_initial_time = datetime.datetime.strptime(
                 irrigationreport.report_initial_time, '%Y-%m-%d %H:%M:%S')
-            report_initial_time = report_initial_time.strftime('%x')
+            if (data_in_hours):
+                report_initial_time = report_initial_time.strftime('%x') + \
+                    ' ' + report_initial_time.strftime('%H:%M')
+            else:
+                report_initial_time = report_initial_time.strftime('%x')
             report_end_time = datetime.datetime.strptime(
                 irrigationreport.report_end_time, '%Y-%m-%d %H:%M:%S')
-            report_end_time = report_end_time.strftime('%x')
+            if (data_in_hours):
+                report_end_time = report_end_time.strftime('%x') + ' ' + \
+                    report_end_time.strftime('%H:%M')
+            else:
+                report_end_time = report_end_time.strftime('%x')
             date_str = '. '
             reading_details = ''
             time_duration = ''
