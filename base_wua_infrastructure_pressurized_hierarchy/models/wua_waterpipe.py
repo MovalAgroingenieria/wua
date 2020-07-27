@@ -125,107 +125,6 @@ class WuaWaterpipe(models.Model):
         ('code_positive', 'CHECK (waterpipe_code > 0)',
          'The water pipe code must be positive.')]
 
-    @api.multi
-    def name_get(self):
-        result = []
-        for record in self:
-            if record.waterpipe_code > 0:
-                name = \
-                    record.name + ' ' + '[' + str(record.waterpipe_code) + ']'
-            else:
-                name = record.name
-            result.append((record.id, name))
-        return result
-
-    @api.multi
-    def write(self, vals):
-        if len(self) == 1:
-            # Call to inherited method.
-            old_name = self.name
-            resp = super(WuaWaterpipe, self).write(vals)
-            if 'name' in vals:
-                new_name = vals['name']
-                waterpipes = self.env['wua.waterpipe'].search(
-                    [('id', '!=', self.id)])
-                for waterpipe in waterpipes:
-                    path_parts = waterpipe.path.split('/')
-                    new_path = ""
-                    if old_name in path_parts:
-                        for item in path_parts:
-                            if item == old_name:
-                                item = new_name
-                            if len(path_parts) == 1:
-                                new_path += item
-                            elif item == path_parts[-1]:
-                                new_path += item
-                            else:
-                                new_path += item + '/'
-                        waterpipe.write({'path': new_path})
-            return resp
-        else:
-            return super(WuaWaterpipe, self).write(vals)
-
-    @api.multi
-    def action_get_irrigationsheds(self):
-        self.ensure_one()
-        if self.irrigationshed_ids:
-            id_tree_view = self.env.ref(
-                'base_wua_infrastructure_pressurized_hierarchy.'
-                'wua_irrigationshed_of_waterpipe_view_tree').id
-            id_form_view = self.env.ref(
-                'base_wua_infrastructure_pressurized_hierarchy.'
-                'wua_irrigationshed_view_form').id
-            search_view = self.env.ref(
-                'base_wua_infrastructure_pressurized_hierarchy.'
-                'wua_irrigationshed_view_search')
-            act_window = {
-                'type': 'ir.actions.act_window',
-                'name': _('Irrigation Sheds'),
-                'res_model': 'wua.irrigationshed',
-                'view_type': 'form',
-                'view_mode': 'tree',
-                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
-                'search_view_id': (search_view.id, search_view.name),
-                'target': 'current',
-                'domain': [('id', 'in', self.irrigationshed_ids.ids)]
-                }
-            return act_window
-
-    @api.multi
-    def action_get_parcels(self):
-        self.ensure_one()
-        current_waterpipe = self
-        condition = ['|', '|', '|', '|',
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_01_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_02_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_03_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_04_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_05_ids.ids)]
-        id_tree_view = self.env.ref(
-            'base_wua_infrastructure_pressurized_hierarchy.'
-            'wua_parcel_of_waterpipe_view_tree').id
-        id_form_view = self.env.ref(
-            'base_wua.wua_parcel_view_form').id
-        search_view = self.env.ref(
-            'base_wua.wua_parcel_view_search')
-        act_window = {
-            'type': 'ir.actions.act_window',
-            'name': _('Parcels'),
-            'res_model': 'wua.parcel',
-            'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
-            'search_view_id': (search_view.id, search_view.name),
-            'target': 'current',
-            'domain': condition
-            }
-        return act_window
-
     @api.depends('waterpipe_id', 'name')
     def _compute_level_n_path(self):
         for record in self:
@@ -291,47 +190,10 @@ class WuaWaterpipe(models.Model):
                     total_affected_area_official += parcel.area_official
             record.total_affected_area_official = total_affected_area_official
 
-    @api.model
-    def read_group(self, domain, fields, groupby,
-                   offset=0, limit=None, orderby=False, lazy=True):
-        fields_to_remove = ['waterpipe_code', 'level']
-        for field_to_remove in fields_to_remove:
-            if field_to_remove in fields:
-                fields.remove(field_to_remove)
-        return super(WuaWaterpipe, self).read_group(
-            domain, fields, groupby, offset, limit, orderby, lazy)
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
-                        submenu=False):
-        res = super(WuaWaterpipe, self).fields_view_get(
-            view_id=view_id,
-            view_type=view_type,
-            toolbar=toolbar,
-            submenu=submenu)
-        doc = etree.XML(res['arch'])
-        area_measurement_type = self.env['ir.values'].get_default(
-            'wua.configuration', 'area_measurement_type')
-        area_measurement_name = ''
-        if area_measurement_type == 1:
-            area_measurement_name = self.env['ir.values'].get_default(
-                'wua.configuration', 'area_measurement_name')
-            area_measurement_name = area_measurement_name.decode('utf_8')
-        if area_measurement_name != '':
-            area_measurement_name = ' (' + \
-                area_measurement_name.lower() + ')'
-            for node in doc.xpath(
-                    "//field" + "[@name='total_affected_area_official']"):
-                original_label = \
-                    self.sudo().get_value_from_translation(
-                        'base_wua_infrastructure',
-                        self.__class__.total_affected_area_official.string)
-                posBracket = original_label.find(' (')
-                if posBracket != -1:
-                    original_label = original_label[:posBracket]
-                node.set('string', original_label + area_measurement_name)
-        res['arch'] = etree.tostring(doc)
-        return res
+    @api.onchange('waterpipe_id')
+    def _onchange_waterpipe_id(self):
+        if self.waterpipe_id:
+            self.hydraulicsector_id = self.waterpipe_id.hydraulicsector_id
 
     @api.constrains('is_main', 'waterpipe_id')
     def _check_waterpipe_id(self):
@@ -368,7 +230,167 @@ class WuaWaterpipe(models.Model):
                 raise exceptions.ValidationError(
                     _('The name of waterpipe can not be empty.'))
 
-    def get_value_from_translation(self, module, src):
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            if record.waterpipe_code > 0:
+                name = \
+                    record.name + ' ' + '[' + str(record.waterpipe_code) + ']'
+            else:
+                name = record.name
+            result.append((record.id, name))
+        return result
+
+    @api.model
+    def create(self, vals):
+        self._populate_hydraulicsector_id(vals)
+        return super(WuaWaterpipe, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if len(self) == 1:
+            # Control on hydraulicsector_id field.
+            self._populate_hydraulicsector_id(vals)
+            # Call to inherited method.
+            old_name = self.name
+            resp = super(WuaWaterpipe, self).write(vals)
+            if 'name' in vals:
+                new_name = vals['name']
+                waterpipes = self.env['wua.waterpipe'].search(
+                    [('id', '!=', self.id)])
+                for waterpipe in waterpipes:
+                    path_parts = waterpipe.path.split('/')
+                    new_path = ""
+                    if old_name in path_parts:
+                        for item in path_parts:
+                            if item == old_name:
+                                item = new_name
+                            if len(path_parts) == 1:
+                                new_path += item
+                            elif item == path_parts[-1]:
+                                new_path += item
+                            else:
+                                new_path += item + '/'
+                        waterpipe.write({'path': new_path})
+            return resp
+        else:
+            return super(WuaWaterpipe, self).write(vals)
+
+    @api.model
+    def read_group(self, domain, fields, groupby,
+                   offset=0, limit=None, orderby=False, lazy=True):
+        fields_to_remove = ['waterpipe_code', 'level']
+        for field_to_remove in fields_to_remove:
+            if field_to_remove in fields:
+                fields.remove(field_to_remove)
+        return super(WuaWaterpipe, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaWaterpipe, self).fields_view_get(
+            view_id=view_id,
+            view_type=view_type,
+            toolbar=toolbar,
+            submenu=submenu)
+        doc = etree.XML(res['arch'])
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        area_measurement_name = ''
+        if area_measurement_type == 1:
+            area_measurement_name = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_name')
+            area_measurement_name = area_measurement_name.decode('utf_8')
+        if area_measurement_name != '':
+            area_measurement_name = ' (' + \
+                area_measurement_name.lower() + ')'
+            for node in doc.xpath(
+                    "//field" + "[@name='total_affected_area_official']"):
+                original_label = \
+                    self.sudo()._get_value_from_translation(
+                        'base_wua_infrastructure',
+                        self.__class__.total_affected_area_official.string)
+                posBracket = original_label.find(' (')
+                if posBracket != -1:
+                    original_label = original_label[:posBracket]
+                node.set('string', original_label + area_measurement_name)
+        res['arch'] = etree.tostring(doc)
+        return res
+
+    @api.multi
+    def action_get_irrigationsheds(self):
+        self.ensure_one()
+        if self.irrigationshed_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_infrastructure_pressurized_hierarchy.'
+                'wua_irrigationshed_of_waterpipe_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_infrastructure_pressurized_hierarchy.'
+                'wua_irrigationshed_view_form').id
+            search_view = self.env.ref(
+                'base_wua_infrastructure_pressurized_hierarchy.'
+                'wua_irrigationshed_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Irrigation Sheds'),
+                'res_model': 'wua.irrigationshed',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.irrigationshed_ids.ids)]
+                }
+            return act_window
+
+    @api.multi
+    def action_get_parcels(self):
+        self.ensure_one()
+        current_waterpipe = self
+        condition = ['|', '|', '|', '|',
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_01_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_02_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_03_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_04_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_05_ids.ids)]
+        id_tree_view = self.env.ref(
+            'base_wua_infrastructure_pressurized_hierarchy.'
+            'wua_parcel_of_waterpipe_view_tree').id
+        id_form_view = self.env.ref(
+            'base_wua.wua_parcel_view_form').id
+        search_view = self.env.ref(
+            'base_wua.wua_parcel_view_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Parcels'),
+            'res_model': 'wua.parcel',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'target': 'current',
+            'domain': condition
+            }
+        return act_window
+
+    def _populate_hydraulicsector_id(self, vals):
+        if 'waterpipe_id' in vals and vals['waterpipe_id']:
+            parent_waterpipe = \
+                self.env['wua.waterpipe'].browse(vals['waterpipe_id'])
+            if parent_waterpipe:
+                vals['hydraulicsector_id'] = \
+                    parent_waterpipe.hydraulicsector_id.id
+        if 'is_main' in vals and vals['is_main']:
+            vals['waterpipe_id'] = None
+
+    def _get_value_from_translation(self, module, src):
         resp = src
         lang = self.env.context.get('lang')
         translations = self.env['ir.translation']

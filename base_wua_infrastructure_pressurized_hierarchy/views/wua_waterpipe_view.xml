@@ -23,7 +23,7 @@
                             <field name="name"/>
                             <field name="waterpipe_code"/>
                             <field name="description"/>
-                            <field name="hydraulicsector_id"/>
+                            <field name="hydraulicsector_id" attrs="{'readonly':[('is_main', '=', False)]}"/>
                             <field name="is_main"/>
                             <field name="waterpipe_id" attrs="{'invisible':[('is_main', '=', True)], 'required':[('is_main', '=', False)]}"/>
                         </group>
@@ -72,7 +72,8 @@
         <field name="name">Water pipe (tree o2m view)</field>
         <field name="model">wua.waterpipe</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_infrastructure_pressurized_hierarchy_waterpipe_ids_view_tree">
+            <tree class="o_base_wua_infrastructure_pressurized_hierarchy_waterpipe_ids_view_tree"
+                  create="false" edit="false" delete="false">
                 <field name="waterpipe_code"/>
                 <field name="name"/>
             </tree>

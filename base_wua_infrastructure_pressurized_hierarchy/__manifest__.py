@@ -23,6 +23,7 @@
         "views/wua_parcel_view.xml",
     ],
     "post_init_hook": "post_init_hook",
+    "uninstall_hook": "uninstall_hook",
     "installable": True,
     "application": False,
 }

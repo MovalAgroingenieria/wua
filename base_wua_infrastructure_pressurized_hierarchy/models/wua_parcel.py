@@ -19,7 +19,7 @@ class WuaParcel(models.Model):
         size=255,
         index=True,
         store=True,
-        compute="_compute_path")
+        compute="_compute_path_wp")
 
     waterpipe_01_id = fields.Many2one(
         string="Level 1 Water Pipe",
@@ -66,51 +66,51 @@ class WuaParcel(models.Model):
                     break
             record.waterpipe_id = waterpipe_id
 
-    @api.depends('waterpipe_id')
-    def _compute_path(self):
+    @api.depends('waterpipe_id', 'waterpipe_id.path')
+    def _compute_path_wp(self):
         for record in self:
-            path = ''
+            path_wp = ''
             if record.waterpipe_id:
-                path = record.waterpipe_id.path
-            record.path = path
+                path_wp = record.waterpipe_id.path
+            record.path_wp = path_wp
 
     @api.depends('waterpipe_id', 'waterpipe_id.level')
     def _compute_waterpipe_01_id(self):
         for record in self:
             record.waterpipe_01_id = \
-                self.get_waterpipe(record, 1)
+                self._get_waterpipe(record, 1)
 
     @api.depends('waterpipe_id', 'waterpipe_id.level')
     def _compute_waterpipe_02_id(self):
         for record in self:
             record.waterpipe_02_id = \
-                self.get_waterpipe(record, 2)
+                self._get_waterpipe(record, 2)
 
     @api.depends('waterpipe_id', 'waterpipe_id.level')
     def _compute_waterpipe_03_id(self):
         for record in self:
             record.waterpipe_03_id = \
-                self.get_waterpipe(record, 3)
+                self._get_waterpipe(record, 3)
 
     @api.depends('waterpipe_id', 'waterpipe_id.level')
     def _compute_waterpipe_04_id(self):
         for record in self:
             record.waterpipe_04_id = \
-                self.get_waterpipe(record, 4)
+                self._get_waterpipe(record, 4)
 
     @api.depends('waterpipe_id', 'waterpipe_id.level')
     def _compute_waterpipe_05_id(self):
         for record in self:
             record.waterpipe_05_id = \
-                self.get_waterpipe(record, 5)
+                self._get_waterpipe(record, 5)
 
-    def get_waterpipe(self, parcel, level):
+    def _get_waterpipe(self, parcel, level):
         resp = None
         if (parcel.waterpipe_id and parcel.waterpipe_id.level >= level):
             waterpipe = parcel.waterpipe_id
             current_level = waterpipe.level
             while current_level > level:
-                waterpipe = waterpipe.irrigationditch_id
+                waterpipe = waterpipe.waterpipe_id
                 current_level = waterpipe.level
             resp = waterpipe
         return resp
