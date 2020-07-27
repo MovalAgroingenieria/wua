@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationshed_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (form view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='total_affected_area_official']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (tree view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_parcels']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_of_waterpipe_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (tree view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_irrigationshed_view_tree"
+                create="false" delete="false" edit="false">
+                <field name="gis_googlemaps_link" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_irrigationshed" invisible="1"/>
+                <field name="name"/>
+                <field name="hydraulicsector_id"/>
+                <field name="elevation"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_irrigationshed','=',False)]}"/>
+                <button name="action_see_gis_googlemaps"
+                        type="object" class="oe_stat_button"
+                        string="Google Maps (zoom to point)"
+                        icon="fa-moval-gmaps"
+                        attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>
+                <field name="description"/>
+                <field name="number_of_waterconnections"/>
+                <field name="total_affected_area_official"/>
+                <field name="number_of_parcels"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (search view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='hydraulic_sector']" position="after">
+                <filter string="Waterpipe" name="waterpipe" context="{'group_by':'waterpipe_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

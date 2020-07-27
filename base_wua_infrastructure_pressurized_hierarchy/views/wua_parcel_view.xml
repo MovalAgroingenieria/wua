@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form view -->
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels Pressurized hierarchy (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <div colspan="4"></div>
+                <field name="waterpipe_id" colspan="4"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="wua_parcel_view_search" model="ir.ui.view">
+        <field name="name">Parcels Pressurized hierarchy (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='irrigationworker']" position="after">
+                <filter string="Full name" name="path_wp" context="{'group_by':'path_wp'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Tree view -->
+    <record id="wua_parcel_of_waterpipe_view_tree" model="ir.ui.view" >
+        <field name="name">Parcels (tree view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_parcel_view_tree"
+                create="false" delete="false" edit="false">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="cadastral_reference_link" invisible="1"/>
+                <field name="street_view_link" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_parcel" invisible="1"/>
+                <field name="is_billable" invisible="1"/>
+                <field name="area_official"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to parcel)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible':
+                                ['|',('gis_viewer_link','=',False),
+                                     ('with_gis_parcel','=',False)]}"/>
+                <button name="action_see_cadastral_report"
+                        type="object" class="oe_stat_button"
+                        string="Cadastral Report"
+                        icon="fa-cubes"
+                        attrs="{'invisible': [('cadastral_reference_link','=','')]}"/>
+                <field name="rural_location_county"/>
+                <field name="cadastral_polygon"/>
+                <field name="cadastral_parcel"/>
+                <field name="cadastral_reference"/>
+                <field name="leased_parcel"/>
+                <field name="number_of_subparcels"/>
+                <button name="action_see_street_view"
+                        type="object" class="oe_stat_button"
+                        string="Street View"
+                        icon="fa-street-view"
+                        attrs="{'invisible': [('street_view_link','=','')]}"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Form view -->
+    <record id="wua_waterpipe_view_form" model="ir.ui.view">
+        <field name="name">Water pipe (form view)</field>
+        <field name="model">wua.waterpipe</field>
+        <field name="arch" type="xml">
+            <form string="Water pipes" duplicate="false">
+                <header>
+                </header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="action_get_irrigationsheds" type="object"
+                                string="Irrigationsheds" class="oe_stat_button"
+                                icon="fa-moval-valve-shed"/>
+                        <button name="action_get_parcels" type="object"
+                                string="Parcels" class="oe_stat_button"
+                                icon="fa-moval-parcel"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name"/>
+                            <field name="waterpipe_code"/>
+                            <field name="description"/>
+                            <field name="hydraulicsector_id"/>
+                            <field name="is_main"/>
+                            <field name="waterpipe_id" attrs="{'invisible':[('is_main', '=', True)], 'required':[('is_main', '=', False)]}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="number_of_parcels"/>
+                            <field name="total_affected_area_official"/>
+                            <field name="level"/>
+                            <field name="path" attrs="{'invisible':[('level','=', 1)]}"/>
+                        </group>
+                    </group>
+                     <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="waterpipe_ids_page" string="Supplied water pipes">
+                                <field name="waterpipe_ids" context="{'tree_view_ref': 'base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_ids_view_tree'}"/>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Tree views -->
+    <record id="wua_waterpipe_view_tree" model="ir.ui.view">
+        <field name="name">Water pipe (tree view)</field>
+        <field name="model">wua.waterpipe</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_pressurized_hierarchy_waterpipe_view_tree">
+                <field name="waterpipe_code"/>
+                <field name="name"/>
+                <field name="level"/>
+                <field name="path"/>
+                <field name="hydraulicsector_id"/>
+                <field name="is_main"/>
+                <field name="waterpipe_id"/>
+                <field name="number_of_parcels"/>
+                <field name="total_affected_area_official"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_waterpipe_ids_view_tree" model="ir.ui.view">
+        <field name="name">Water pipe (tree o2m view)</field>
+        <field name="model">wua.waterpipe</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_pressurized_hierarchy_waterpipe_ids_view_tree">
+                <field name="waterpipe_code"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="wua_waterpipe_view_search" model="ir.ui.view">
+        <field name="name">Water pipe (search view)</field>
+        <field name="model">wua.waterpipe</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterpipe_code"/>
+                <field name="name"/>
+                <field name="path"/>
+                <field name="hydraulicsector_id"/>
+                <field name="waterpipe_id"/>
+                <filter string="Main: Yes" name="ismainyes" domain="[('is_main','=',True)]"/>
+                <filter string="Main: No" name="ismainno" domain="[('is_main','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector" name="hydraulic_sector" context="{'group_by':'hydraulicsector_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="wua_waterpipe_action" model="ir.actions.act_window">
+        <field name="name">Water pipes</field>
+        <field name="res_model">wua.waterpipe</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_waterpipe_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_waterpipe_view_form')})]"/>
+        <field name="search_view_id" ref="wua_waterpipe_view_search"/>
+        <field name="context">{'search_default_hydraulic_sector': True}</field>
+    </record>
+
+    <!-- Menuitems -->
+    <menuitem id="base_wua_infrastructure.wua_hydraulicsector_menu"
+              parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
+              sequence="0"/>
+
+    <menuitem id="wua_waterpipe_menu"
+              name="Water Pipes"
+              parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
+              action="wua_waterpipe_action"
+              sequence="1"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>
