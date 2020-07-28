@@ -13,6 +13,11 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         default=5,
         required=True)
 
+    url_gis_viewer_waterpipe_param = fields.Char(
+        string='Param for waterpipe',
+        size=20,
+        help='Name of waterpipe param in the GIS viewer url')
+
     _sql_constraints = [
         ('valid_max_levels_pressurized_irrigation',
          'CHECK (max_levels_pressurized_irrigation >= 1 '
@@ -26,3 +31,6 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'max_levels_pressurized_irrigation',
                            self.max_levels_pressurized_irrigation)
+        values.set_default('wua.infrastructure.configuration',
+                           'url_gis_viewer_waterpipe_param',
+                           self.url_gis_viewer_waterpipe_param)

@@ -4,6 +4,9 @@
 
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
+from Crypto.Cipher import AES
+import datetime
+import pytz
 
 
 class WuaWaterpipe(models.Model):
@@ -119,11 +122,65 @@ class WuaWaterpipe(models.Model):
         compute='_compute_total_affected_area_official',
         help="Cumulative area of parcels")
 
+    gis_viewer_link = fields.Char(
+        string='GIS Viewer',
+        compute='_compute_gis_viewer_link')
+
+    with_gis_waterpipe = fields.Boolean(
+        string='GIS Waterpipe',
+        store=True)
+
     _sql_constraints = [
         ('unique_code', 'UNIQUE (waterpipe_code)', 'Existing Code.'),
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('code_positive', 'CHECK (waterpipe_code > 0)',
          'The water pipe code must be positive.')]
+
+    @api.multi
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        waterpipe_param = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'url_gis_viewer_waterpipe_param')
+        for record in self:
+            url_for_record = url
+            if url_for_record:
+                if waterpipe_param:
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        waterpipe_param + '=' + \
+                        str(record.waterpipe_code)
+            if url_for_record and username and password:
+                credentials = username + "-" + password
+                credentials = credentials.ljust(32)
+                current_datetime = pytz.utc.localize(datetime.datetime.now())
+                current_datetime = current_datetime.astimezone(
+                    pytz.timezone('Europe/Madrid'))
+                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+                minimum = int(current_datetime[14:])
+                if minimum < 30:
+                    minimum = '00'
+                else:
+                    minimum = '30'
+                iv = current_datetime[:14] + minimum
+                aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+                cipher_text = aes_encryptor.encrypt(credentials)
+                cipher_text = cipher_text.encode('base64')
+                sep_char = '?'
+                if url_for_record.find('?') != -1:
+                    sep_char = '&'
+                url_for_record = url_for_record + sep_char + \
+                    "arg=" + cipher_text
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
 
     @api.depends('waterpipe_id', 'name')
     def _compute_level_n_path(self):
@@ -379,6 +436,16 @@ class WuaWaterpipe(models.Model):
             'domain': condition
             }
         return act_window
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
 
     def _populate_hydraulicsector_id(self, vals):
         if 'waterpipe_id' in vals and vals['waterpipe_id']:

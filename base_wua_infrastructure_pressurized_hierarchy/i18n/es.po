@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-24 10:19+0000\n"
-"PO-Revision-Date: 2020-07-24 10:19+0000\n"
+"POT-Creation-Date: 2020-07-28 08:32+0000\n"
+"PO-Revision-Date: 2020-07-28 08:32+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,19 +16,19 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:344
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:263
 #, python-format
 msgid "A non-main water-pipe must be supplied by another."
 msgstr "Un ramal no principal debe ser abastecido por un otro."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:347
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:266
 #, python-format
 msgid "A water-pipe cannot be supplied by itself."
 msgstr "Un ramal no puede abastecerse a sí mismo."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_parcel.py:158
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_parcel.py:207
 #, python-format
 msgid "All irrigation points must have the same water-pipe."
 msgstr "Todas las tomas deben pertenecer al mismo ramal."
@@ -111,14 +111,36 @@ msgid "Full name"
 msgstr "Nombre completo"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_gis_viewer_link
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_form
+msgid "GIS Viewer"
+msgstr "Visor GIS"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_parcel_of_waterpipe_view_tree
 msgid "GIS Viewer (zoom to parcel)"
 msgstr "Visor GIS (zoom a parcela)"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_irrigationshed_of_waterpipe_view_tree
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_tree
 msgid "GIS Viewer (zoom to point)"
 msgstr "Visor GIS (zoom al punto)"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_with_gis_waterpipe
+msgid "GIS Waterpipe"
+msgstr "Ramal GIS"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_search
+msgid "GIS Waterpipe: No"
+msgstr "Ramal GIS: No"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_search
+msgid "GIS Waterpipe: Yes"
+msgstr "Ramal GIS: Sí"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_irrigationshed_of_waterpipe_view_tree
@@ -147,7 +169,7 @@ msgid "ID"
 msgstr "ID"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:183
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:394
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_irrigationshed_ids
 #, python-format
 msgid "Irrigation Sheds"
@@ -239,6 +261,11 @@ msgid "Name"
 msgstr "Nombre"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
+#: model:ir.model.fields,help:base_wua_infrastructure_pressurized_hierarchy.field_wua_infrastructure_configuration_url_gis_viewer_waterpipe_param
+msgid "Name of waterpipe param in the GIS viewer url"
+msgstr "Nombre del parámetro del ramal en la URL del visor GIS"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_notes
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_form
 msgid "Notes"
@@ -250,7 +277,12 @@ msgid "Number of irrigationsheds"
 msgstr "Número de casetas"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:218
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_infrastructure_configuration_url_gis_viewer_waterpipe_param
+msgid "Param for waterpipe"
+msgstr "Parámetro Ramal"
+
+#. module: base_wua_infrastructure_pressurized_hierarchy
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:429
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pressurized_hierarchy.field_wua_waterpipe_number_of_parcels
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_form
 #, python-format
@@ -315,7 +347,7 @@ msgid "The associated hydraulic sector already has a main water-pipe."
 msgstr "El sector hidráulico asociado ya tiene un ramal principal."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:365
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:284
 #, python-format
 msgid "The character \"/\" cannot be used in the name of the water-pipe."
 msgstr "El caracter \"/\" no puede ser utilizado en el nombre de un ramal."
@@ -327,13 +359,13 @@ msgid "The hydraulic sector of the water-pipe is not the same as the hydraulic s
 msgstr "El sector hidráulico del ramal no es el mismo que el sector hidráulico de la caseta."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:341
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:260
 #, python-format
 msgid "The main water-pipe cannot be supplied by any other."
 msgstr "El ramal principal no puede ser abastecido por ningún otro."
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:369
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:288
 #, python-format
 msgid "The name of waterpipe can not be empty."
 msgstr "El nombre del ramal no puede estar vacío."
@@ -373,8 +405,7 @@ msgid "Waterpipe"
 msgstr "Ramal"
 
 #. module: base_wua_infrastructure_pressurized_hierarchy
-#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:357
+#: code:addons/base_wua_infrastructure_pressurized_hierarchy/models/wua_waterpipe.py:276
 #, python-format
 msgid "You cannot create a waterpipe that depends on a water-pipe of the highest level (%s)."
 msgstr "No se puede crear un ramal dependiente del nivel máximo de ramales (%s)."
-

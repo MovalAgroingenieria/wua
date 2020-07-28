@@ -2,11 +2,11 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-=================================================
-Water Users Association Infrastructure (GIS test)
-=================================================
+=====================================================================================
+GIS for Water Users Association Management (with irrigation infrastructure hierarchy)
+=====================================================================================
 
-base_wua_infrastructure module plus GIS functions.
+base_wua_infrastructure_pressurized_hierarchy module plus GIS functions.
 
 Description
 ===========
@@ -14,7 +14,7 @@ Description
 Management of a water user association infrastructure
 (GIS functions)
 
-* Integrated GIS Management for irrigation sheds.
+* Integrated GIS Management for Waterpipes.
 
 Credits
 =======
@@ -27,6 +27,8 @@ Contributors
 * Alberto Hernández <ahernandez@moval.es>
 * Eduardo Iniesta <einiesta@moval.es>
 * Miguel Mora <mmora@moval.es>
+* Juanu Sandoval <jsandoval@moval.es>
+* Salvador Sánchez <ssanchez@moval.es>
 * Jorge Vera <jvera@moval.es>
 
 Maintainer
