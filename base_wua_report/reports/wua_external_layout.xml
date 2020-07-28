@@ -57,6 +57,10 @@
         <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
     </record>
 
+    <!-- Pending payments (overdue) -->
+    <record id="account.action_report_print_overdue" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
 
     <!-- Define external layout -->
     <template id="wua_external_layout">
@@ -219,6 +223,13 @@
 
     <!-- Payment Order (account_payment_order module dependence) -->
     <template id="base_wua_report_account_payment_order_document" inherit_id="account_payment_order.print_account_payment_order_document">
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        </xpath>
+    </template>
+
+    <!-- Pending payments (overdue) -->
+    <template id="base_wua_report_account_report_overdue_document" inherit_id="account.report_overdue_document">
         <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
             <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
         </xpath>
