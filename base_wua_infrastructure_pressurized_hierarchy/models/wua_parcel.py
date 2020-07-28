@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api,  exceptions, _
+import logging
 
 
 class WuaParcel(models.Model):
@@ -114,6 +115,54 @@ class WuaParcel(models.Model):
                 current_level = waterpipe.level
             resp = waterpipe
         return resp
+
+    # Expand original method
+    def set_gis_fields(self):
+        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
+        # @INFO: The original method return False if gis_parcels_ok
+        #        or gis_irrigationsheds_ok or gis_irrigationditch_ok
+        #        fail. Only gis_parcels_ok is needed, but if any fail
+        #        the return is False.
+        # Temporally do not check the return
+        # if (not gis_parcels_ok):
+        #    return False
+        gis_waterpipe_ok = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_waterpipe')
+            """)
+        if self.env.cr.fetchone()[0]:
+            gis_waterpipe_ok = True
+        if gis_waterpipe_ok:
+            self.env.cr.execute("""
+                SELECT code, geom FROM public.wua_gis_waterpipe
+                """)
+            gis_waterpipes = self.env.cr.fetchall()
+            if gis_waterpipes:
+                waterpipes = self.env['wua.waterpipe'].search([])
+                number_of_gis_waterpipes = len(gis_waterpipes)
+                number_of_waterpipes = len(waterpipes)
+                self.env.cr.execute("""
+                    UPDATE public.wua_waterpipe
+                    SET with_gis_waterpipe = FALSE
+                    """)
+                for gis_waterpipe in gis_waterpipes:
+                    code = gis_waterpipe[0]
+                    filtered_waterpipes = \
+                        waterpipes.filtered(
+                            lambda x: x.waterpipe_code == code)
+                    if len(filtered_waterpipes) == 1:
+                        waterpipe = filtered_waterpipes[0]
+                        waterpipe.write({
+                            'with_gis_waterpipe': True
+                        })
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info('Matching GIS info...')
+                _logger.info('Number of Odoo-Waterpipes: ' +
+                             str(number_of_waterpipes))
+                _logger.info('Number of GIS-Waterpipes : ' +
+                             str(number_of_gis_waterpipes))
+        return gis_parcels_ok and gis_waterpipe_ok
 
 
 class WuaParcelIrrigationpoint(models.Model):

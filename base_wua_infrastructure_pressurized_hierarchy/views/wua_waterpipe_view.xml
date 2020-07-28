@@ -11,12 +11,22 @@
                 </header>
                 <sheet>
                     <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_waterpipe" invisible="1"/>
                         <button name="action_get_irrigationsheds" type="object"
                                 string="Irrigationsheds" class="oe_stat_button"
                                 icon="fa-moval-valve-shed"/>
                         <button name="action_get_parcels" type="object"
                                 string="Parcels" class="oe_stat_button"
                                 icon="fa-moval-parcel"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                      ['|',('gis_viewer_link','=',False),
+                                      ('with_gis_waterpipe','=',False)]}"/>
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
@@ -62,6 +72,14 @@
                 <field name="hydraulicsector_id"/>
                 <field name="is_main"/>
                 <field name="waterpipe_id"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_waterpipe" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),
+                               ('with_gis_waterpipe','=',False)]}"/>
                 <field name="number_of_parcels"/>
                 <field name="total_affected_area_official"/>
             </tree>
@@ -93,6 +111,10 @@
                 <field name="waterpipe_id"/>
                 <filter string="Main: Yes" name="ismainyes" domain="[('is_main','=',True)]"/>
                 <filter string="Main: No" name="ismainno" domain="[('is_main','=',False)]"/>
+                <filter string="GIS Waterpipe: Yes" name="giswaterpipeyes"
+                        domain="[('with_gis_waterpipe','=',True)]"/>
+                <filter string="GIS Waterpipe: No" name="giswaterpipeno"
+                        domain="[('with_gis_waterpipe','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector" name="hydraulic_sector" context="{'group_by':'hydraulicsector_id'}"/>
                 </group>
