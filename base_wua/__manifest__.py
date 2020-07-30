@@ -67,6 +67,7 @@
         "views/wua_parceltag_view.xml",
         "views/wua_parceltag_view.xml",
         "views/res_partner_view.xml",
+        "views/res_partner_bank_view.xml",
         "views/res_users_view.xml",
         "reports/account_report.xml",
         "reports/wua_partner_report.xml",
