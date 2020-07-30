@@ -366,6 +366,14 @@ class WuaParcel(models.Model):
         string='Scale',
         readonly=True)
 
+    aerial_img_date = fields.Date(
+        string='Date of aerial image')
+
+    aerial_img_accuracy = fields.Float(
+        string='Accuracy (m/px)',
+        digits=(32, 2),
+        default=0)
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
@@ -1077,12 +1085,12 @@ class WuaParcel(models.Model):
                                          'populated.'))
         else:
             mapserver_dpi = 90
+            wms = WebMapService(url=url_gis_viewer_wms, version='1.1.1')
+            wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
+            wms_pnoa = WebMapService(url='http://www.ign.es/wms-inspire/'
+                                         'pnoa-ma', version='1.3.0')
             for record in self:
                 if record.with_gis_parcel:
-                    wms = WebMapService(url=url_gis_viewer_wms,
-                                        version='1.1.1')
-                    wfs = WebFeatureService(url=url_gis_viewer_wfs,
-                                            version='1.1.0')
                     filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
                         '>name</ValueReference><Literal>' + record.name +\
                         '</Literal></PropertyIsEqualTo></Filter>'
@@ -1127,6 +1135,19 @@ class WuaParcel(models.Model):
                         height = max_height
                         bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
                                 (int(upperCorner[0])), (int(upperCorner[1])))
+                        data_pnoa = wms_pnoa.getfeatureinfo(
+                            layers=['OI.MosaicElement'],
+                            srs=crs, bbox=bbox, size=(width, height),
+                            format='image/jpeg', info_format='text/xml',
+                            xy=(width/2, height/2))
+                        data_pnoa_parsed = ElementTree.fromstring(
+                            data_pnoa.read())
+                        data_pnoa_info_rows = data_pnoa_parsed.find('body').\
+                            find('table').findall('tr')
+                        date = data_pnoa_info_rows[0].findall('td')[1].text
+                        date = datetime.datetime.strptime(date, '%Y-%m')
+                        resolution = data_pnoa_info_rows[1].findall('td')[1].\
+                            text
                         img = wms.getmap(layers=['pnoa', 'parcel',
                                                  'parcel_perimeter',
                                                  'n_arrow'],
@@ -1146,8 +1167,10 @@ class WuaParcel(models.Model):
                         aerial_img_scale = width_in_real_meters /\
                             width_in_image_meters
                         record.write({'aerial_img': base64_img,
-                                      'aerial_img_scale': aerial_img_scale})
-                    except:
+                                      'aerial_img_scale': aerial_img_scale,
+                                      'aerial_img_accuracy': resolution,
+                                      'aerial_img_date': date})
+                    except Exception:
                         pass
 
     def check_gis(self):
