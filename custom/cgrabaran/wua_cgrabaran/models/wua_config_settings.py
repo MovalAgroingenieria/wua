@@ -158,6 +158,10 @@ class WuaConfiguration(models.TransientModel):
                            self.url_street_view)
         values.set_default('wua.configuration', 'url_gis_viewer',
                            self.url_gis_viewer)
+        values.set_default('wua.configuration', 'url_gis_viewer_wms',
+                           self.url_gis_viewer_wms)
+        values.set_default('wua.configuration', 'url_gis_viewer_wfs',
+                           self.url_gis_viewer_wfs)
         values.set_default('wua.configuration', 'url_gis_viewer_parcel_param',
                            self.url_gis_viewer_parcel_param)
         values.set_default('wua.configuration', 'url_gis_viewer_partner_param',
