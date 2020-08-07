@@ -97,9 +97,9 @@ class WuaAgriculturalseason(models.Model):
                     WHEN p1.productcategory_code = 11
                     THEN (SELECT wi1.report_end_time FROM wua_irrigationreport
                           wi1 WHERE wi1.id = a1.irrigationreport_id)
-                    ELSE (SELECT wilp1.reading_end_time FROM
-                          wua_invoiceset_line_presconsumption wilp1 WHERE
-                          wilp1.invoicesetline_id = a1.id)
+                    ELSE TO_TIMESTAMP(substring(a1.name,
+                    \'Lectura final: (\\d+/\\d+/\\d\\d)\'), 'DD/MM/YY') AT
+                    TIME ZONE \'UTC\'
                 END
                 AS date_invoice FROM
                     account_invoice_line a1
