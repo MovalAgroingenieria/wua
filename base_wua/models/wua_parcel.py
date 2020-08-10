@@ -374,6 +374,9 @@ class WuaParcel(models.Model):
         digits=(32, 2),
         default=0)
 
+    date_now = fields.Datetime(
+        default=datetime.datetime.now())
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',

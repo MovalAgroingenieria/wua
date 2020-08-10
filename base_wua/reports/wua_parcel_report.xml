@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="wua_parcel_report"
+        string="Wua parcel report"
+        model="wua.parcel"
+        report_type="qweb-pdf"
+        file="base_wua.wua_parcel_report_document"
+        name="base_wua.wua_parcel_report_document"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <template id="wua_parcel_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+
+                        <!-- Title -->
+                        <div name="title" class="text-center">
+                            <h4><strong>
+                                    <span>Parcel report [</span>
+                                    <t t-if="o.name"><span t-field="o.name"></span></t>
+                                    <span>]</span>
+                                </strong>
+                            </h4>
+                        </div>
+
+                        <!-- Partner data -->
+                        <div name="partner_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <t t-if="o.partnerlink_ids and len(o.partnerlink_ids) > 1">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-users"/></div>
+                                        <div style="float: left;"><strong>Partners</strong></div>
+                                    </t>
+                                    <t t-else="">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                        <div style="float: left;"><strong>Partner</strong></div>
+                                    </t>
+                                </div>
+                            </div>
+                            <div style="margin-top: 4px;">
+                                <t t-if="len(o.partnerlink_ids) > 0">
+                                    <table style="width:100%;">
+                                        <thead>
+                                            <th width="32%" name="th_name_code">Name [ code ]</th>
+                                            <th width="14%" name="th_irrigation" class="text-center">Irrigation partner</th>
+                                            <th width="18%" name="th_profile" class="text-center">Profile</th>
+                                            <th width="12%" name="th_ownership" class="text-right">Ownership (%)</th>
+                                            <th width="12%" name="th_water" class="text-right">Water (%)</th>
+                                            <th width="12%" name="th_costs" class="text-right">Costs (%)</th>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="o.partnerlink_ids">
+                                                <t t-foreach="o.partnerlink_ids" t-as="p" style="page-break-inside: avoid;">
+                                                    <tr>
+                                                       <td name="td_name_code">
+                                                           <span t-field="p.partner_id.display_name"/>
+                                                           <span>[</span>
+                                                           <span t-field="p.partner_id.partner_code"/>
+                                                           <span>]</span>
+                                                       </td>
+                                                       <td name="td_irrigation_partner_name" class="text-center">
+                                                           <t t-if="p.irrigation_partner"><span class="fa fa-check"/></t>
+                                                       </td>
+                                                       <td name="td_profile_name" class="text-center"><span t-field="p.profile"/></td>
+                                                       <td name="td_ownership" class="text-right"><span t-field="p.ownership_percentage"></span></td>
+                                                       <td name="td_water" class="text-right"><span t-field="p.water_costs_percentage"/></td>
+                                                       <td name="td_costs" class="text-right"><span t-field="p.other_costs_percentage"/></td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </t>
+                                <t t-else="">
+                                    <div class="text-center">
+                                        (There is no partner associated with this parcel)
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Votes and economic data -->
+                        <div name="economic_data" style="margin-top:20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-eur"/></div>
+                                    <div style="float: left;"><strong>Votes and economic data</strong></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="display: table-cell;">
+                                        <table name="votes" class="table-condensed" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_votes">
+                                                    <td><span>With votes:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.with_votes"><span class="fa fa-check"/></t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_leased">
+                                                    <td><span>Leased parcel:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.leased_parcel"><span class="fa fa-check"/></t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 40px;">
+                                        <table name="invoicing" class="table-condensed" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_water">
+                                                    <td><span>Billable water:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.is_billable_water"><span class="fa fa-check"/></t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_expenses">
+                                                    <td><span>Billable expenses:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.is_billable_expenses"><span class="fa fa-check"/></t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Identity and casdastral data -->
+                        <div name="economic_data" style="margin-top:20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-cubes"/></div>
+                                    <div style="float: left;"><strong>Identity and casdastral data</strong></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="display: table-cell;">
+                                        <table name="identity" class="table-condensed" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_code">
+                                                    <td><span>Code:</span></td>
+                                                    <td class="text-right"><span t-field="o.name"/></td>
+                                                </tr>
+                                                <tr name="tr_type">
+                                                    <td><span>Type:</span></td>
+                                                    <td class="text-right"><span t-field="o.parcel_type"/></td>
+                                                </tr>
+                                                <tr name="tr_county">
+                                                    <td><span>County:</span></td>
+                                                    <td class="text-right"><span t-field="o.county_id"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 40px;">
+                                        <table name="castratre_data" class="table-condensed" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_polygone">
+                                                    <td><span>Cadastral polygon:</span></td>
+                                                    <td class="text-right"><span t-field="o.cadastral_polygon"/></td>
+                                                </tr>
+                                                <tr name="tr_parcel">
+                                                    <td><span>Cadastral parcel:</span></td>
+                                                    <td class="text-right"><span t-field="o.cadastral_parcel"/></td>
+                                                </tr>
+                                                <tr name="tr_reference">
+                                                    <td><span>Cadastral reference:</span></td>
+                                                    <td class="text-right"><span t-field="o.cadastral_reference"/></td>
+                                                </tr>
+                                                <tr name="tr_area">
+                                                    <td><span>Cadastral area:</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.area_cadaster"/>
+                                                        <span>m<sup>2</sup></span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Areas and physical attributes data -->
+                        <div name="physical_att_data" style="margin-top:20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                    <div style="float: left;"><strong>Areas and physical attributes</strong></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="display: table-cell;">
+                                        <table name="areas" class="table-condensed" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_area_official">
+                                                    <td><span>Area official:</span></td>
+                                                     <td class="text-right">
+                                                        <span t-field="o.area_official"/>
+                                                        <t t-set="measurement_unit" t-value="o._compute_area_measurement_name()"/>
+                                                        <span><t t-esc="measurement_unit"/></span>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_elev_min">
+                                                    <td><span>Min. Elevation:</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.elev_min"/>
+                                                        <span>m</span>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_elev_ave">
+                                                    <td><span>Ave. Elevation:</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.elev_ave"/>
+                                                        <span>m</span>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_elev_max">
+                                                    <td><span>Max. Elevation:</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.elev_max"/>
+                                                        <span>m</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 40px;">
+                                        <table name="other_data" class="table-condensed" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_area_gis">
+                                                    <td><span>GIS Area:</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.area_gis"/>
+                                                        <span><t t-esc="measurement_unit"/></span>
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr name="tr_rurallocation">
+                                                    <td><span>Rural Location:</span></td>
+                                                    <td class="text-right"><span t-field="o.rurallocation_id"/></td>
+                                                </tr>
+                                                <tr name="tr_farmproperty">
+                                                    <td><span>Farm Property:</span></td>
+                                                    <td class="text-right"><span t-field="o.farmproperty_id"/></td>
+                                                </tr>
+                                                <tr name="tr_waterreservoir">
+                                                    <td><span>Water reservoir:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.with_waterreservoir"><span class="fa fa-check"/></t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Subparcels -->
+                        <div name="subparcels_data" style="margin-top:20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                    <t t-if="o.subparcel_ids and len(o.subparcel_ids) > 1">
+                                        <div style="float: left;"><strong>Subparcels</strong></div>
+                                    </t>
+                                    <t t-else="">
+                                        <div style="float: left;"><strong>Subparcel</strong></div>
+                                    </t>
+                                </div>
+                            </div>
+                            <div style="margin-top: 4px;">
+                                <t t-if="o.subparcel_ids and len(o.subparcel_ids) > 0">
+                                    <table class="table table-striped" style="width:100%;">
+                                        <thead>
+                                            <th name="th_type">Type</th>
+                                            <th name="th_area" class="text-right">Official area</th>
+                                            <th name="th_cultivation">Cultivation</th>
+                                            <th name="th_variety">Variety</th>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="o.subparcel_ids">
+                                                <t t-foreach="o.subparcel_ids" t-as="s" style="page-break-inside: avoid;">
+                                                    <tr>
+                                                       <td name="td_type">
+                                                           <span t-field="s.subparceltype_id"/>
+                                                       </td>
+                                                       <td name="td_area" class="text-right">
+                                                           <span t-field="s.area_official"/>
+                                                           <span><t t-esc="measurement_unit"/></span>
+                                                       </td>
+                                                       <td name="td_cultivation"><span t-field="s.cultivation_id"/></td>
+                                                       <td name="td_variety"><span t-field="s.cultivationvariety_id"></span></td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </t>
+                                <t t-else="">
+                                    <div class="text-center">
+                                        (There is no subparcel associated with this parcel)
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <p name="page_break" style="page-break-after:always;"/>
+
+                       <!-- Aerial image -->
+                        <t t-if="o.aerial_img">
+                            <div name="aerial_image" class="text-center" style="border: 1px solid black; padding: 1% 0%;">
+                                <img t-attf-src="data:image/png;base64, #{o.aerial_img}" style="max-width: 824px; max-height: 824px;"/>
+                            </div>
+                            <div style="display: table; border: 1px solid black; border-top:0px; width:100%;">
+                                <div class="text-center" style="padding: 1%; border-right: 1px solid black; width: 20%; display: table-cell;">
+                                    <img src="/web/binary/company_logo" style="max-height: 100px; max-width: 100px;"/>
+                                </div>
+                                <div style="border-right: 1px solid black; width: 40%; display: table-cell; vertical-align: top;">
+                                    <div style="padding: 2%;">
+                                        Parcel: <strong><span t-field="o.name"/></strong>
+                                    </div>
+                                    <hr style="margin:0px; padding:0px;border-top: 1px solid white"/>
+                                    <div style="padding: 2%;">
+                                        County: <strong><span t-field="o.county_id"/></strong><br/>
+                                        Cadastral polygon: <strong><span t-field="o.cadastral_polygon"/></strong><br/>
+                                        Cadastral parcel: <strong><span t-field="o.cadastral_parcel"/></strong><br/>
+                                    </div>
+                                </div>
+                                <div style="width: 40%; display: table-cell; vertical-align: top;">
+                                    <div style="padding: 2%;">
+                                        <t t-set="scale_aprox" t-value="int(round(o.aerial_img_scale / 0.801, 0))"/>
+                                        <t t-if="scale_aprox">
+                                            Scale ~ <strong>1:<span t-esc="scale_aprox"/></strong><br/>
+                                        </t>
+                                        <t t-if="o.aerial_img_date">
+                                            <span>Image date:</span>
+                                            <strong><span t-field="o.aerial_img_date"/></strong><br/>
+                                        </t>
+                                        <t t-if="o.aerial_img_accuracy">
+                                            <span>Accuracy (m/px):</span>
+                                            <strong><span t-field="o.aerial_img_accuracy"/></strong>
+                                        </t>
+                                    </div>
+                                    <hr style="margin:0px; padding:0px;border-top: 1px solid black"/>
+                                    <div class="text-right" style="padding: 2%;">
+                                        Printed <span t-field="o.date_now" t-options="{'format': 'dd MMMM YYYY'}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div><!--end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

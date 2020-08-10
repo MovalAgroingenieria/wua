@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_parcel_report_document" inherit_id="base_wua_infrastructure.wua_parcel_report_document">
+
+        <xpath expr="//th[@name='th_waterconnection']" position="after">
+            <th name="th_watermeter">Watermeter</th>
+            <th name="th_last_reading_time" class="text-center">Last reading date</th>
+            <th name="th_last_reading" class="text-right">Last reading</th>
+        </xpath>
+        <xpath expr="//td[@name='td_waterconnection']" position="after">
+            <td name="td_waterconnection">
+                <span t-field="i.watermeter_id"/>
+            </td>
+            <td name="td_last_reading_time" class="text-center">
+                <span t-field="i.watermeter_id.last_reading_time"/>
+            </td>
+            <td name="td_last_reading_value" class="text-right">
+                <span t-field="i.watermeter_id.last_reading_value"/>
+                <span>m<sup>3</sup></span>
+            </td>
+        </xpath>
+
+    </template>
+
+</odoo>

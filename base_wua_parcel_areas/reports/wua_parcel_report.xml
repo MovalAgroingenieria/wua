@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_parcel_report_document" inherit_id="base_wua.wua_parcel_report_document">
+        <xpath expr="//tr[@name='tr_area_official']" position="after">
+            <tr name="tr_area_irrigation">
+                <td><span>Irrigation Area (<span t-field="o.area_irrigation_percentage"/> %):</span></td>
+                <td class="text-right">
+                    <span t-field="o.area_irrigation"/>
+                    <span><t t-esc="measurement_unit"/></span>
+                </td>
+            </tr>
+            <tr name="tr_area_drainage">
+                <td><span>Drainage Area (<span t-field="o.area_drainage_percentage"/> %):</span></td>
+                <td class="text-right">
+                    <span t-field="o.area_drainage"/>
+                    <span><t t-esc="measurement_unit"/></span>
+                </td>
+            </tr>
+        </xpath>
+
+        <xpath expr="//tr[@name='tr_area_gis']" position="after">
+            <tr name="tr_area_unproductive">
+                <td><span>Unproductive Area (<span t-field="o.area_unproductive_percentage"/> %):</span></td>
+                <td class="text-right">
+                    <span t-field="o.area_unproductive"/>
+                    <span><t t-esc="measurement_unit"/></span>
+                </td>
+            </tr>
+        </xpath>
+    </template>
+
+</odoo>

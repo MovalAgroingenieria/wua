@@ -16,6 +16,7 @@
     "data": [
         "views/resources.xml",
         "views/wua_parcel_view.xml",
+        "reports/wua_parcel_report.xml",
     ],
     "installable": True,
     "application": False,

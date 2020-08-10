@@ -24,6 +24,7 @@
         "views/wua_presconsumption_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_agriculturalseason_view.xml",
+        "reports/wua_parcel_report.xml",
     ],
     "installable": True,
     "application": True,

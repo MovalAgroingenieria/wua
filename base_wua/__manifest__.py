@@ -71,6 +71,7 @@
         "views/res_users_view.xml",
         "reports/account_report.xml",
         "reports/wua_partner_report.xml",
+        "reports/wua_parcel_report.xml",
     ],
     "installable": True,
     "application": True,

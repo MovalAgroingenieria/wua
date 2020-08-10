@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_parcel_report_document" inherit_id="base_wua.wua_parcel_report_document">
+        <xpath expr="//div[@name='subparcels_data']" position="after">
+            <div name="infrastructure_data" style="margin-top:20px;">
+
+                <t t-if="not o.hydraulic_infrastructure_type">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                            <div style="float: left;"><strong>Infrastructure</strong></div>
+                        </div>
+                    </div>
+                    <div class="text-center" style="margin-top: 4px;">
+                        (This parcel is not related to any type of infrastructure)
+                    </div>
+                </t>
+
+                <t t-if="o.hydraulic_infrastructure_type == 1 or o.hydraulic_infrastructure_type == 3">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                            <div style="float: left;"><strong>Pressure Irrigation Infrastructure</strong></div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 4px;">
+                        <div class="col-xs-12" style="display: table;">
+                            <div style="display: table-cell;">
+                                <table name="pres_infrastructure" class="table-condensed" style="width:90%;">
+                                    <tbody>
+                                        <tr name="tr_pressurized_irrigation_right">
+                                            <td><span>Water Right (pres):</span></td>
+                                            <td class="text-right">
+                                                <t t-if="o.pressurized_irrigation_right"><span class="fa fa-check"/></t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="display: table-cell; padding-left: 40px;">
+                                <table name="other_data_pres" class="table-condensed" style="width:90%;">
+                                    <tbody>
+                                        <tr name="tr_number_of_irrigationpointswc">
+                                            <td><span>Irrigation Points (WC):</span></td>
+                                            <t t-if="o.irrigationpointwc_ids">
+                                                <t t-set="number_of_irrigationpointswc"
+                                                   t-value="len(o.irrigationpointwc_ids)"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-set="number_of_irrigationpointswc"
+                                                   t-value="0"/>
+                                            </t>
+                                            <td class="text-right">
+                                                <span t-esc="number_of_irrigationpointswc"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 4px;">
+                        <t t-if="number_of_irrigationpointswc > 0">
+                            <table name="irr_point_data" class="table table-striped" style="width:100%;">
+                                <thead>
+                                    <th name="th_sector">Sector</th>
+                                    <th name="th_irr_shed">Irrigationshed</th>
+                                    <th name="th_waterconnection">Water connection</th>
+                                </thead>
+                                <tbody>
+                                    <t t-if="o.irrigationpointwc_ids">
+                                        <t t-foreach="o.irrigationpointwc_ids" t-as="i" style="page-break-inside: avoid;">
+                                            <tr>
+                                               <td name="td_sector">
+                                                   <span t-field="i.hydraulicsector_id"/>
+                                               </td>
+                                               <td name="td_irr_shed">
+                                                   <span t-field="i.irrigationshed_id"/>
+                                               </td>
+                                               <td name="td_waterconnection">
+                                                   <span t-field="i.waterconnection_id"/>
+                                               </td>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <div class="text-center">
+                                (There is no irrigation points (WC) associated with this parcel)
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <t t-if="o.hydraulic_infrastructure_type == 2 or o.hydraulic_infrastructure_type == 3">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                            <div style="float: left;"><strong>Gravity Irrigation Infrastructure</strong></div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 4px;">
+                        <div class="col-xs-12" style="display: table;">
+                            <div style="display: table-cell;">
+                                <table name="grav_data" class="table-condensed" style="width:90%;">
+                                    <tbody>
+                                        <tr name="tr_gravityfed_irrigation_right">
+                                            <td><span>Water Right (grav):</span></td>
+                                            <td class="text-right">
+                                                <t t-if="o.gravityfed_irrigation_right"><span class="fa fa-check"/></t>
+                                            </td>
+                                        </tr>
+                                        <tr name="tr_irrigationditch">
+                                            <td><span>Irrigationditch:</span></td>
+                                            <td class="text-right">
+                                                <span t-field="o.irrigationditch_id"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="display: table-cell; padding-left: 40px;">
+                                <table name="other_data_grav" class="table-condensed" style="width:90%;">
+                                    <tbody>
+                                        <tr name="tr_irr_worker">
+                                            <td><span>Irrigation worker:</span></td>
+                                            <td class="text-right">
+                                                <t t-if="o.with_irrigation_worker"><span class="fa fa-check"/></t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+            </div>
+        </xpath>
+
+    </template>
+
+</odoo>

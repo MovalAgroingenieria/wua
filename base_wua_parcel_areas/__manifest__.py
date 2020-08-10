@@ -17,6 +17,7 @@
     ],
     "data": [
         "views/wua_parcel_areas_view.xml",
+        "reports/wua_parcel_report.xml",
     ],
     "installable": True,
     "application": False,
