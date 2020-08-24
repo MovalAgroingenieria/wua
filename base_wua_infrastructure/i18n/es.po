@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-24 08:30+0000\n"
-"PO-Revision-Date: 2020-08-24 08:30+0000\n"
+"POT-Creation-Date: 2020-08-24 16:28+0000\n"
+"PO-Revision-Date: 2020-08-24 16:28+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,7 @@ msgstr "(Esta parcela no está relacionada con ningún tipo de infraestructura)"
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.hr_kanban_view_employees
 msgid "<i class=\"fa fa-bicycle\"/> <strong>Irrigation worker</strong> (parcels:"
-msgstr "<i class=\"fa fa-bicycle\"/> <strong>Regante</strong> (parcelas:"
+msgstr "<i class=\"fa fa-bicycle\"/> <strong>Regador</strong> (parcelas:"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.view_partner_form
@@ -84,9 +84,19 @@ msgid "<strong>Infrastructure</strong>"
 msgstr "<strong>Infraestructura</strong>"
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
+msgid "<strong>Irrigation gates</strong>"
+msgstr "<strong>Tablachos</strong>"
+
+#. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_report_document
 msgid "<strong>Pressure Irrigation Infrastructure</strong>"
 msgstr "<strong>Infraestructura de riego a presión</strong>"
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
+msgid "<strong>Water connection points</strong>"
+msgstr "<strong>Tomas</strong>"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_active
@@ -160,8 +170,8 @@ msgstr "Configuración"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_infrastructure_configuration
-msgid "Configuration of base_wua_infrastructure module"
-msgstr "Configuración del módulo base_wua_infrastructure"
+msgid "Configuration of base_wua_infrastructure_primary module"
+msgstr "Configuración del módulo base_wua_infrastructure_primary"
 
 #. module: base_wua_infrastructure
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_infrastructure_configuration_action
@@ -197,7 +207,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_total_affected_area_official
@@ -237,8 +247,9 @@ msgstr "Descripción"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wizard_change_parcel_name
+#: model:ir.model,name:base_wua_infrastructure.model_wua_parcel_name_change
 msgid "Dialog box to change the parcel name (code), with irrigation infrastructure"
-msgstr "Cuadro de diálogo para cambiar el nombre de la parcela (código), con infraestructura de riego"
+msgstr "Dialog box to change the parcel name (code), with irrigation infrastructure"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_display_name
@@ -251,7 +262,7 @@ msgstr "Cuadro de diálogo para cambiar el nombre de la parcela (código), con i
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_display_name
 msgid "Display Name"
-msgstr "Nombre mostrado"
+msgstr "Nombre a mostrar"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_drainage_coefficient
@@ -728,11 +739,6 @@ msgid "Irrigation gate"
 msgstr "Tablacho"
 
 #. module: base_wua_infrastructure
-#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
-msgid "Irrigation gates"
-msgstr "Tablachos"
-
-#. module: base_wua_infrastructure
 #: code:addons/base_wua_infrastructure/models/wua_flowdivider.py:179
 #, python-format
 msgid "Irrigation gates of a different irrigation ditch."
@@ -769,7 +775,7 @@ msgstr "Caseta"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection___last_update
 msgid "Last Modified on"
-msgstr "Última modificación el"
+msgstr "Última modificación en"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_write_uid
@@ -795,7 +801,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_date
 msgid "Last Updated on"
-msgstr "Última actualización en"
+msgstr "Última actualización el"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_parcel_rural_location_county
@@ -829,7 +835,6 @@ msgstr "Nota: ycval y xcval son parámetros"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_notes
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_notes
@@ -952,7 +957,7 @@ msgstr "Parcelas:"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Socio"
+msgstr "Partner of a WUA"
 
 #. module: base_wua_infrastructure
 #: model:ir.actions.server,name:base_wua_infrastructure.res_partner_irrigationpoints_action
@@ -1030,8 +1035,8 @@ msgstr "Tablachos"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel_subparcel
-msgid "Subparcel of a parcel"
-msgstr "Subparcela de una parcela"
+msgid "Subparcel of a parcel with irrigation infrastructure (C.R.Argos)"
+msgstr "Subparcel of a parcel with irrigation infrastructure (C.R.Argos)"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.menu,name:base_wua_infrastructure.base_wua_infrastructure_technical_menu
@@ -1214,11 +1219,6 @@ msgstr "Derecho de riego: Riego a presión"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_report_document
 msgid "Water connection"
 msgstr "Toma"
-
-#. module: base_wua_infrastructure
-#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
-msgid "Water connection points"
-msgstr "Tomas"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_wateringduration_area_ratio

@@ -12,64 +12,66 @@
                 list(pwi.parcel_id.irrigationpoint_ids.filtered(lambda y: (y.type == 'WC') and (y.waterconnection_id.watercosts_separate_billing or y.waterconnection_id.othercosts_separate_billing)))"/>
           </t>
           <t t-if="len(irrigationpoints_with_separated_billing) > 0 ">
-            <div name="wua_irrigationpoint_ids_with_separated_billing" style="margin-top: 20px;">
-              <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                  <div class="col-xs-12" style="background: lightgray; padding: 1px 16px;">Irrigation points with separated billing</div>
+              <div name="wua_irrigationpoint_ids_with_separated_billing" style="margin-top: 20px;">
+                  <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                      <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                          <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                          <div style="float: left;"><strong>Irrigation points with separated billing</strong></div>
+                      </div>
+                  </div>
+                  <table class="table table-condensed" style="margin-top: 2px;">
+                      <thead>
+                          <tr>
+                              <th class="text-center">Irrigation Point</th>
+                              <th class="text-center">Individual water payment mode</th>
+                              <th class="text-center">Individual water payment account</th>
+                              <th class="text-center">Individual others payment mode</th>
+                              <th class="text-center">Individual others payment account</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr t-foreach="irrigationpoints_with_separated_billing" t-as="ip">
+                              <td class="text-center">
+                                <t t-esc="ip.waterconnection_id.name"/>
+                              </td>
+                              <td class="text-center">
+                                  <t t-if="ip.waterconnection_id.watercosts_payment_mode_id">
+                                    <span><t t-esc="ip.waterconnection_id.watercosts_payment_mode_id.name"/></span>
+                                  </t>
+                                  <t t-else=""><span>DEF</span></t>
+                              </td>
+                              <td class="text-center">
+                                  <t t-if="ip.waterconnection_id.watercosts_mandate_id">
+                                    <t t-if="ip.waterconnection_id.watercosts_mandate_id.partner_bank_id">
+                                        <t t-set="hidden_acc_number" t-value="ip.waterconnection_id.watercosts_mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                                        <span t-esc="hidden_acc_number"/>
+                                    </t>
+                                  </t>
+                                  <t t-else="">
+                                    <span>-</span>
+                                  </t>
+                              </td>
+                              <td class="text-center">
+                                  <t t-if="ip.waterconnection_id.othercosts_payment_mode_id">
+                                    <span><t t-esc="ip.waterconnection_id.othercosts_payment_mode_id.name"/></span>
+                                  </t>
+                                  <t t-else=""><span>DEF</span></t>
+                              </td>
+                              <td class="text-center">
+                                  <t t-if="ip.waterconnection_id.othercosts_mandate_id">
+                                    <t t-if="ip.waterconnection_id.othercosts_mandate_id.partner_bank_id">
+                                        <t t-set="hidden_acc_number" t-value="ip.waterconnection_id.othercosts_mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
+                                        <span t-esc="hidden_acc_number"/>
+                                    </t>
+                                  </t>
+                                  <t t-else="">
+                                    <span>-</span>
+                                  </t>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
               </div>
-              <table class="table table-condensed" style="margin-top: 2px;">
-                  <thead>
-                      <tr>
-                          <th class="text-center">Irrigation Point</th>
-                          <th class="text-center">Individual water payment mode</th>
-                          <th class="text-center">Individual water payment account</th>
-                          <th class="text-center">Individual others payment mode</th>
-                          <th class="text-center">Individual others payment account</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <tr t-foreach="irrigationpoints_with_separated_billing" t-as="ip">
-
-                          <td class="text-center">
-                            <t t-esc="ip.waterconnection_id.name"/>
-                          </td>
-                          <td class="text-center">
-                              <t t-if="ip.waterconnection_id.watercosts_payment_mode_id">
-                                <span><t t-esc="ip.waterconnection_id.watercosts_payment_mode_id.name"/></span>
-                              </t>
-                              <t t-else=""><span>DEF</span></t>
-                          </td>
-                          <td class="text-center">
-                              <t t-if="ip.waterconnection_id.watercosts_mandate_id">
-                                <t t-if="ip.waterconnection_id.watercosts_mandate_id.partner_bank_id">
-                                    <t t-set="hidden_acc_number" t-value="ip.waterconnection_id.watercosts_mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
-                                    <span t-esc="hidden_acc_number"/>
-                                </t>
-                              </t>
-                              <t t-else="">
-                                <span>-</span>
-                              </t>
-                          </td>
-                          <td class="text-center">
-                              <t t-if="ip.waterconnection_id.othercosts_payment_mode_id">
-                                <span><t t-esc="ip.waterconnection_id.othercosts_payment_mode_id.name"/></span>
-                              </t>
-                              <t t-else=""><span>DEF</span></t>
-                          </td>
-                          <td class="text-center">
-                              <t t-if="ip.waterconnection_id.othercosts_mandate_id">
-                                <t t-if="ip.waterconnection_id.othercosts_mandate_id.partner_bank_id">
-                                    <t t-set="hidden_acc_number" t-value="ip.waterconnection_id.othercosts_mandate_id.partner_bank_id.acc_number[:24] + ' XXXX'"/>
-                                    <span t-esc="hidden_acc_number"/>
-                                </t>
-                              </t>
-                              <t t-else="">
-                                <span>-</span>
-                              </t>
-                          </td>
-                      </tr>
-                  </tbody>
-              </table>
-            </div>
           </t>
         </xpath>
     </template>
