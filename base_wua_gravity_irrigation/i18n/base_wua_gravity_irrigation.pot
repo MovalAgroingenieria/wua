@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-07 11:18+0000\n"
-"PO-Revision-Date: 2020-01-07 11:18+0000\n"
+"POT-Creation-Date: 2020-08-25 17:57+0000\n"
+"PO-Revision-Date: 2020-08-25 17:57+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -221,7 +221,6 @@ msgstr ""
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_agriculturalseason_name
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_name
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_agriculturalseason_id
@@ -351,7 +350,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_create_uid
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_create_uid
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_create_uid
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_create_uid
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_create_uid
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_create_uid
@@ -383,7 +381,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_create_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_create_date
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_create_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_create_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_create_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_create_date
@@ -392,7 +389,7 @@ msgid "Created on"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_description
+#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_description
 msgid "Description"
 msgstr ""
 
@@ -427,7 +424,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_display_name
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_display_name
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_display_name
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_display_name
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_display_name
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_display_name
@@ -478,7 +474,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_end_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_end_date
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_end_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_end_date
 msgid "End Date"
 msgstr ""
@@ -494,6 +489,11 @@ msgid "Entity (agricultural season)"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
+#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_gravconsumption
+msgid "Entity (gravity consumption)"
+msgstr ""
+
+#. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_irrigationditch
 msgid "Entity (irrigation ditch)"
 msgstr ""
@@ -504,11 +504,6 @@ msgid "Entity (irrigation gate)"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr ""
-
-#. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_wateringperiod
 msgid "Entity (watering period)"
 msgstr ""
@@ -516,6 +511,11 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_wateringrequest
 msgid "Entity (watering request)"
+msgstr ""
+
+#. module: base_wua_gravity_irrigation
+#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_watering
+msgid "Entity (watering)"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
@@ -639,12 +639,7 @@ msgid "Gravity Consumption"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_gravconsumption
-msgid "Gravity Consumption"
-msgstr ""
-
-#. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/res_partner.py:89
+#: code:addons/base_wua_gravity_irrigation/models/res_partner.py:95
 #: code:addons/base_wua_gravity_irrigation/models/wua_irrigationgate.py:35
 #: code:addons/base_wua_gravity_irrigation/models/wua_parcel.py:39
 #: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:590
@@ -689,7 +684,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_id
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_id
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_id
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_id
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_id
@@ -718,7 +712,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_initial_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_initial_date
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_initial_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_initial_date
 msgid "Initial Date"
 msgstr ""
@@ -777,20 +770,20 @@ msgid "Irrigation Worker"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:251
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:256
 #, python-format
 msgid "It is not possible to reopen a period, because there is no a predicted watering."
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:211
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:263
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:216
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:268
 #, python-format
 msgid "It is not possible to reopen the period, because all the waterings are validated."
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:199
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:204
 #, python-format
 msgid "It is not possible to reopen the period, because there is no a predicted watering."
 msgstr ""
@@ -798,7 +791,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests___last_update
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods___last_update
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason___last_update
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption___last_update
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering___last_update
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod___last_update
@@ -809,7 +801,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_write_uid
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_write_uid
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_write_uid
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_write_uid
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_write_uid
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_write_uid
@@ -820,7 +811,6 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_write_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_generate_periods_write_date
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_write_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_write_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_write_date
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_write_date
@@ -864,7 +854,6 @@ msgid "Multiple waterings (same period)"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_notes
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_notes
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_notes
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_notes
@@ -963,6 +952,11 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.report_wua_wateringrequest_document
 msgid "Parcela"
+msgstr ""
+
+#. module: base_wua_gravity_irrigation
+#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_parcel
+msgid "Parcels (integrated GIS)"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
@@ -1221,15 +1215,15 @@ msgid "The watering number must be a positive value."
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:140
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:173
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:145
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:178
 #, python-format
 msgid "The watering period is outside his agricultural season."
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:146
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:179
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:151
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:184
 #, python-format
 msgid "The watering period is overlapped on another period."
 msgstr ""
@@ -1253,7 +1247,8 @@ msgstr ""
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_agriculturalseason_view_form
-#: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_wateringrequest_parner_view_tree
+#: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_wateringrequest_partner_edit_view_tree
+#: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_wateringrequest_partner_view_tree
 msgid "Total"
 msgstr ""
 
@@ -1359,7 +1354,7 @@ msgid "Watering Request"
 msgstr ""
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/res_partner.py:57
+#: code:addons/base_wua_gravity_irrigation/models/res_partner.py:63
 #: model:ir.actions.act_window,name:base_wua_gravity_irrigation.wua_wateringrequest_action
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_res_partner_wateringrequest_ids
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_res_users_wateringrequest_ids
@@ -1394,9 +1389,8 @@ msgstr ""
 #. module: base_wua_gravity_irrigation
 #: code:addons/base_wua_gravity_irrigation/models/wua_agriculturalseason.py:55
 #: code:addons/base_wua_gravity_irrigation/models/wua_irrigationditch.py:39
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:234
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringperiod.py:239
 #: model:ir.actions.act_window,name:base_wua_gravity_irrigation.wua_watering_action
-#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_watering
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_agriculturalseason_watering_ids
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_irrigationditch_watering_ids
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_watering_ids

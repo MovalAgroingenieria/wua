@@ -14,7 +14,7 @@
                     <button name="close_period"
                             type="object" string="Close the period"
                             states="open"
-                            groups="base_wua.group_wua_manager"/>                
+                            groups="base_wua.group_wua_manager"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="open,closed"/>
@@ -41,6 +41,7 @@
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="initial_date"/>
+                            <field name="description"/>
                             <field name="agriculturalseason_id"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"/>
@@ -66,10 +67,10 @@
                                         <field name="state"/>
                                     </tree>
                                 </field>
-                            </page>                        
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
-                            </page>                        
+                            </page>
                         </notebook>
                     </group>
                 </sheet>
@@ -84,6 +85,7 @@
             <tree class="o_base_wua_gravity_irrigation_wateringperiod_view_tree">
                 <field name="initial_date"/>
                 <field name="end_date"/>
+                <field name="description"/>
                 <field name="agriculturalseason_id"/>
                 <field name="number_of_requests"/>
                 <field name="number_of_waterings"/>
@@ -100,6 +102,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
+                <field name="description"/>
                 <field name="agriculturalseason_id"/>
                 <filter string="Open" name="stateopen"
                  domain="[('state','=','open')]"/>

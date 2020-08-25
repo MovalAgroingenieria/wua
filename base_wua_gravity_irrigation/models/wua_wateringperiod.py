@@ -11,8 +11,9 @@ class WuaWateringperiod(models.Model):
     _description = 'Entity (watering period)'
     _order = 'name'
 
-    # Size of field "name".
+    # Size of fields
     MAX_SIZE_NAME = 10
+    MAX_SIZE_DESCRIPTION = 40
 
     initial_date = fields.Date(
         string='Initial Date',
@@ -86,6 +87,10 @@ class WuaWateringperiod(models.Model):
         string='Predicted Watering',
         default=True,
         required=True)
+
+    description = fields.Char(
+        string='Description',
+        size=MAX_SIZE_DESCRIPTION)
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
