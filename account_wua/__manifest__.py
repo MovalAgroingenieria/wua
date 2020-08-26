@@ -20,6 +20,7 @@
         "views/partner_view.xml",
         "reports/report_invoice.xml",
         "reports/payment_order.xml",
+        "reports/report_overdue.xml",
     ],
     "installable": True,
     "application": False,

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_overdue_document" inherit_id="account.report_overdue_document">
+
+        <!-- Customize address -->
+        <xpath expr="//div[@class='col-xs-5 col-xs-offset-7']" position="replace">
+            <div name="overdue_address" class="col-xs-5 col-xs-offset-7">
+                <t t-if="o.name"><strong><span t-field="o.name"/></strong></t><br/>
+                <t t-if="o.vat">
+                    <t t-set="mod_vat" t-value="o.vat[2:]"/>
+                    <span>TIN:&amp;nbsp;</span>
+                    <span t-esc="mod_vat"/>
+                </t><br/>
+                <t t-if="o.street_type_show"><span t-field="o.street_type_show"/></t>
+                <t t-if="o.street"><span t-field="o.street"/></t>
+                <t t-if="o.street_num"><span t-field="o.street_num"/></t>
+                <t t-if="o.street2"><span t-field="o.street2"/></t>
+                <br/>
+                <t t-if="o.city"><span t-field="o.city"/></t>
+                <t t-if="o.zip">
+                    <span>&amp;nbsp;-&amp;nbsp;</span>
+                    <span t-field="o.zip"/>
+                </t>
+                <t id="state_address" t-if="o.state_id">
+                    <span t-tag="span">(</span><span t-field="o.state_id"/>
+                    <t t-if="not o.country_id"><span>)</span></t>
+                    <t t-else=""><span>-</span></t>
+                </t>
+                <t id="country_address" t-if="o.country_id">
+                    <t t-if="not o.state_id"><span>(</span></t>
+                    <span t-field="o.country_id"></span><span>)</span>
+                </t>
+            </div>
+        </xpath>
+
+        <!-- Change document description, do not show client ref, change date format -->
+        <xpath expr="//div[@class='row']/p" position="replace">
+            <p>
+                 Document: Account statement<br/>
+                 Date: <span t-esc="Date.strftime('%d-%m-%Y')"/><br/>
+            </p>
+        </xpath>
+
+        <!-- Change dates format (positional xpaths) --> 
+        <xpath expr="//tr[@t-as='line']/td[2]" position="replace">
+            <td>
+                <span t-esc="datetime.datetime.strptime(line['date'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
+            </td>
+        </xpath>
+        <xpath expr="//tr[@t-as='line']/td[3]" position="replace">
+            <td class="text-center">
+                <span t-esc="datetime.datetime.strptime(line['date_maturity'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
+            </td>
+        </xpath>
+
+        <!-- Do not show litigation column (positional xpaths) -->
+        <xpath expr="//thead/tr/th[7]" position="replace"/>
+        <xpath expr="//tr[@t-as='line']/td[7]" position="replace"/>
+        <xpath expr="//tr[2]/td[5]" position="replace"/>
+
+    </template>
+
+</odoo>
