@@ -49,3 +49,9 @@ class AccountPaymentOrder(models.Model):
             move_lines_to_compute.with_context(
                 from_account_payment_order=True)._amount_residual()
         return True
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', 'New') == 'New':
+            vals['generated_user_id'] = self._uid
+        return super(AccountPaymentOrder, self).create(vals)
