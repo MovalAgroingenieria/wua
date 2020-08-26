@@ -3,6 +3,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
+from Crypto.Cipher import AES
+import datetime
+import pytz
 from odoo import models, fields, api, exceptions, _
 
 
@@ -38,6 +41,37 @@ class WuaIrrigationshed(models.Model):
             readings = [x for x in readings if x['irrigationshed_id']
                         in [self.id]]
             self.env['wua.reading'].save_readings(readings)
+
+    @api.model
+    def run_gisviewer_remotecontrol(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        if url and username and password:
+            credentials = username + "-" + password
+            credentials = credentials.ljust(32)
+            current_datetime = pytz.utc.localize(datetime.datetime.now())
+            current_datetime = current_datetime.astimezone(
+                pytz.timezone('Europe/Madrid'))
+            current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+            minimum = int(current_datetime[14:])
+            if minimum < 30:
+                minimum = '00'
+            else:
+                minimum = '30'
+            iv = current_datetime[:14] + minimum
+            aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+            cipher_text = aes_encryptor.encrypt(credentials)
+            cipher_text = cipher_text.encode('base64')
+            url = url + '?' + 'arg=' + cipher_text + '&mode=min&modo_opera' +\
+                'tivo=8&infoCr=1'
+            return {
+                'type': 'ir.actions.act_url',
+                'url': url,
+                'target': 'new', }
 
     def do_import_readings_from_irrigationsheds(self,
                                                 active_irrigationsheds):

@@ -9,7 +9,7 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
                 <field name="remotecontrol_enabled" invisible="1"/>
-                <field name="id" invisible="1"/>            
+                <field name="id" invisible="1"/>
                 <header>
                     <button name="do_import_readings_from_irrigationshed"
                             type="object" string="Get readings"
@@ -20,10 +20,10 @@
                             groups="base_wua.group_wua_manager"
                             confirm="Import readings?"/>
                 </header>
-            </xpath>        
+            </xpath>
         </field>
     </record>
-    
+
     <record id="wua_import_readings_from_irrigationsheds" model="ir.actions.server">
         <field name="name">Get readings</field>
         <field name="model_id" ref="model_res_partner"/>
@@ -41,5 +41,20 @@
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_import_readings_from_irrigationsheds'))"/>
     </record>
+
+    <record id="wua_technical_wua_gis_viewer_action" model="ir.actions.server">
+        <field name="name">GIS Viewer (remote-control mode)</field>
+        <field name="model_id" ref="model_wua_irrigationshed"/>
+        <field name="state">code</field>
+        <field name="code">
+                action = env['wua.irrigationshed'].run_gisviewer_remotecontrol()
+        </field>
+    </record>
+
+    <menuitem id="wua_technical_gis_remotecontrolmode_menu"
+              name="Remote C.: GIS Viewer"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_wua_gis_viewer_action"
+              sequence="1003"/>
 
 </odoo>
