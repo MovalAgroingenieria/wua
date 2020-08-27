@@ -42,22 +42,60 @@
             </p>
         </xpath>
 
-        <!-- Change dates format (positional xpaths) --> 
-        <xpath expr="//tr[@t-as='line']/td[2]" position="replace">
-            <td>
-                <span t-esc="datetime.datetime.strptime(line['date'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
-            </td>
+        <!-- Change dates format and do not show litigation column -->
+        <!-- Is not possible to use a positional xpath -->
+        <xpath expr="//t[@t-if='Lines[o.id]']" position="replace">
+            <t t-if="Lines[o.id]">
+                <span t-field="res_company.with_context(lang=o.lang).overdue_msg"/>
+                <table class="table table-condensed" t-foreach="Lines[o.id]" t-as="currency">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th class="text-center">Date</th>
+                            <th class="text-center">Due Date</th>
+                            <th>Communication</th>
+                            <th class="text-right">Due</th>
+                            <th class="text-right">Paid</th>
+                        </tr>
+                    </thead>
+                    <tr t-foreach="Lines[o.id][currency]" t-as="line">
+                        <td>
+                            <span t-esc="line['move_id']"/>
+                        </td>
+                        <td>
+                            <span t-esc="datetime.datetime.strptime(line['date'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
+                        </td>
+                        <td class="text-center">
+                            <span t-esc="datetime.datetime.strptime(line['date_maturity'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
+                        </td>
+                        <td>
+                            <t t-if="line['name'] != '/'"><span t-esc="line['name']"/></t>
+                            <span t-esc="line['ref']"/>
+                        </td>
+                        <td class="text-right">
+                            <span t-esc="line['debit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                        </td>
+                        <td class="text-right">
+                            <span t-esc="line['credit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td><strong>Subtotal :</strong></td>
+                        <td class="text-right"><span t-esc="Totals[o.id][currency]['due']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+                        <td class="text-right"><span t-esc="Totals[o.id][currency]['paid']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td><strong>Balance :</strong></td>
+                        <td class="text-right">
+                            <span t-esc="Totals[o.id][currency]['due'] - Totals[o.id][currency]['paid']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                        </td>
+                    </tr>
+                </table>
+            </t>
         </xpath>
-        <xpath expr="//tr[@t-as='line']/td[3]" position="replace">
-            <td class="text-center">
-                <span t-esc="datetime.datetime.strptime(line['date_maturity'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
-            </td>
-        </xpath>
-
-        <!-- Do not show litigation column (positional xpaths) -->
-        <xpath expr="//thead/tr/th[7]" position="replace"/>
-        <xpath expr="//tr[@t-as='line']/td[7]" position="replace"/>
-        <xpath expr="//tr[3]/td[5]" position="replace"/>
 
     </template>
 
