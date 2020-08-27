@@ -93,6 +93,11 @@ class WuaParcel(models.Model):
         compute='_compute_track_subparcel_irrigationgate_ids',
         track_visibility='onchange')
 
+    with_pumping = fields.Boolean(
+        string='With pumping',
+        store=True,
+        compute='_compute_with_pumping')
+
     @api.depends('irrigationpoint_ids')
     def _compute_number_of_irrigationpoints(self):
         if len(self) == 1:
@@ -857,6 +862,16 @@ class WuaParcel(models.Model):
             }
         return act_window
 
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.with_pumping')
+    def _compute_with_pumping(self):
+        for record in self:
+            with_pumping = False
+            for irrigationpoint in record.irrigationpoint_ids:
+                if irrigationpoint.with_pumping:
+                    with_pumping = True
+                    break
+            record.with_pumping = with_pumping
+
 
 class WuaParcelIrrigationpoint(models.Model):
     _name = 'wua.parcel.irrigationpoint'
@@ -973,6 +988,11 @@ class WuaParcelIrrigationpoint(models.Model):
     parcel_gis_viewer_link = fields.Char(
         string='GIS Viewer',
         compute='_compute_calculated_data_from_parcel_id')
+
+    with_pumping = fields.Boolean(
+        string='With pumping',
+        store=True,
+        compute='_compute_with_pumping')
 
     @api.depends('waterconnection_id')
     def _compute_irrigationshed_id(self):
@@ -1250,6 +1270,14 @@ class WuaParcelIrrigationpoint(models.Model):
                 'target': 'new',
             }
 
+    @api.depends('waterconnection_id', 'waterconnection_id.with_pumping')
+    def _compute_with_pumping(self):
+        for record in self:
+            with_pumping = False
+            if (record.waterconnection_id and
+               record.waterconnection_id.with_pumping):
+                with_pumping = True
+            record.with_pumping = with_pumping
 
 class WuaParcelSubparcel(models.Model):
     _inherit = 'wua.parcel.subparcel'

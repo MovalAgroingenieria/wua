@@ -121,6 +121,11 @@ class WuaIrrigationshed(models.Model):
         string='GIS Irrigationshed',
         store=True)
 
+    with_pumping = fields.Boolean(
+        string='With pumping',
+        required=True,
+        default=True)
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Identifier.'),
         ]

@@ -4,7 +4,7 @@
     <record id="wua_parcel_view_form" model="ir.ui.view">
         <field name="name">Parcels (form view)</field>
         <field name="model">wua.parcel</field>
-        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>        
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='subparcels']" position="after">
                 <page name="irrigation_supplies" string="Water Connections">
@@ -24,13 +24,16 @@
                  attrs="{'invisible':[('with_irrigation_worker','=', False)]}"
                  domain="[('is_irrigation_worker','=',True)]"/>
             </xpath>
+            <xpath expr="//field[@name='elev_ave']" position="after">
+                <field name="with_pumping" attrs="{'invisible':[('hydraulic_infrastructure_type','=', 2)]}"/>
+            </xpath>
         </field>
     </record>
 
     <record id="wua_parcel_view_search" model="ir.ui.view">
         <field name="name">Parcels (search view)</field>
         <field name="model">wua.parcel</field>
-        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>        
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="hydraulicsector_id"/>
@@ -45,6 +48,9 @@
                  domain="[('hydraulic_infrastructure_type','=',2)]"/>
                 <filter string="Infrastructure: Pressurized and Gravity Irrigation" name="hydraulic_infrastructure_type_3"
                  domain="[('hydraulic_infrastructure_type','=',3)]"/>
+                <separator/>
+                <filter string="Pumping: Yes" name="pumping_yes" domain="[('with_pumping','=',True)]"/>
+                <filter string="Pumping: No" name="pumping_no" domain="[('with_pumping','=',False)]"/>
                 <separator/>
                 <filter string="Water Right: Pressurized Irrigation" name="pressurizedirrigation"
                  domain="[('pressurized_irrigation_right','=',True)]"/>

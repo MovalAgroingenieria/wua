@@ -86,6 +86,11 @@ class WuaWaterconnection(models.Model):
         store=True,
         compute='_compute_total_affected_area_official_hec')
 
+    with_pumping = fields.Boolean(
+        string='With pumping',
+        store=True,
+        compute='_compute_with_pumping')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_position',
@@ -212,3 +217,8 @@ class WuaWaterconnection(models.Model):
             irrigationshed = irrigationsheds.browse(irrigationshed_id)
             resp = irrigationshed.hydraulicsector_id.id
         return resp
+
+    @api.depends('irrigationshed_id', 'irrigationshed_id.with_pumping')
+    def _compute_with_pumping(self):
+        for record in self:
+            record.with_pumping = record.irrigationshed_id.with_pumping

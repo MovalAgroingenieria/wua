@@ -25,8 +25,8 @@
                                 icon="fa-map-marker"
                                 attrs="{'invisible': 
                                         ['|',('gis_viewer_link','=',False), 
-                                        ('with_gis_irrigationshed','=',False)]}"/>                                       
-                    </div>                
+                                        ('with_gis_irrigationshed','=',False)]}"/>
+                    </div>
                     <group name="master_data" col="9">
                         <group name="master_data_image" colspan="3">
                             <field name="image" widget="image" class="oe_img_259_160"/>
@@ -34,6 +34,7 @@
                         <group name="master_data_fields" colspan="6" col="4">
                             <field name="hydraulicsector_id" colspan="4"/>
                             <field name="name"/>
+                            <field name="with_pumping"/>
                             <field name="elevation"/>
                             <newline/>
                             <field name="gis_viewer_x" readonly="1"/>
@@ -43,7 +44,7 @@
                             <field name="total_affected_area_official"/>
                             <field name="number_of_waterconnections"/>
                         </group> 
-                    </group>                    
+                    </group>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
                             <page name="parcels_page" string="Parcels">
@@ -82,7 +83,7 @@
                                 </field>
                             </page>
                             <page name="waterconnections_page" string="Water Connections">
-                                <field name="waterconnection_ids">                                
+                                <field name="waterconnection_ids">
                                     <tree create="false" edit="false" delete="false"
                                           class="o_base_wua_infrastructure_waterconnection_view_tree_notebook">
                                         <field name="name"/>
@@ -114,11 +115,12 @@
                 <field name="name"/>
                 <field name="hydraulicsector_id"/>
                 <field name="elevation"/>
+                <field name="with_pumping"/>
                 <button name="action_see_gis_viewer"
                         type="object" class="oe_stat_button"
                         string="GIS Viewer (zoom to point)"
                         icon="fa-map-marker"
-                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_irrigationshed','=',False)]}"/>                       
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_irrigationshed','=',False)]}"/>
                 <button name="action_see_gis_googlemaps"
                         type="object" class="oe_stat_button"
                         string="Google Maps (zoom to point)"
@@ -140,11 +142,13 @@
                 <field name="name"/>
                 <field name="description"/>
                 <field name="hydraulicsector_id"/>
+                <filter string="Pumping: Yes" name="pumping_yes" domain="[('with_pumping','=',True)]"/>
+                <filter string="Pumping: No" name="pumping_no" domain="[('with_pumping','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"
                      name="hydraulic_sector"
                      context="{'group_by':'hydraulicsector_id'}"/>
-                </group>                
+                </group>
             </search>
         </field>
     </record>
@@ -161,6 +165,7 @@
                 <field name="image"/>
                 <field name="gis_googlemaps_link"/>
                 <field name="gis_viewer_link"/>
+                <field name="with_pumping"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
@@ -171,7 +176,7 @@
                                 <div style="margin-top:10px">
                                   <t t-if="record.gis_viewer_link.raw_value"><a type="button"><button name="action_see_gis_viewer" type="object" class="oe_stat_button"><span><i class="fa fa-map-marker"></i></span></button></a></t>
                                 </div>
-                            </div>                            
+                            </div>
                             <div class="oe_kanban_details">
                                 <strong><field name="hydraulicsector_id"/></strong>
                                 <br/>
@@ -182,8 +187,13 @@
                                     <li t-if="record.description.raw_value" class="o_text_overflow"><field name="description"/></li>
                                     <li t-if="record.total_affected_area_official" class="o_text_overflow">Area: <field name="total_affected_area_official"/></li>
                                     <br/>
-                                    <li t-if="record.number_of_parcels.raw_value" class="o_text_overflow">Parcels: <field name="number_of_parcels"/></li>                                    
+                                    <li t-if="record.number_of_parcels.raw_value" class="o_text_overflow">Parcels: <field name="number_of_parcels"/></li>
                                     <br/>
+                                    <li>With pumping:
+                                        <t t-if="record.with_pumping.raw_value">
+                                            <span class="fa fa-check"/>
+                                        </t>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
