@@ -79,7 +79,6 @@
         <t t-call="base_wua_report.external_layout_footer"/>
     </template>
 
-
     <!-- Header -->
     <template id="external_layout_header">
         <div class="header">
@@ -89,7 +88,6 @@
                          style="max-height: 130px; max-width: 130px; margin-top: 4px; margin-bottom: 4px; margin-left: 4px;"/>
                 </div>
                 <div class="col-xs-9" style="margin-bottom: 6px;">
-                    <!-- This subdivision is the anchor for picking operations barcode insert -->
                     <div name="company_address">
                         <t t-set="company" t-value="company.sudo()"/>
                         <t t-if="company.name">
@@ -123,18 +121,38 @@
                             </li>
                         </t>
                         <t t-if="company.partner_id">
-                            <li style="list-style:none; margin-left: 2px">
-                                <span t-field="company.partner_id"
-                                    t-field-options='{"widget": "contact", "fields": ["email"], "no_marker": false}'/>
-                                <span t-field="company.partner_id"
-                                    t-field-options='{"widget": "contact", "fields": ["website"], "no_marker": false}'/>
-                                <span t-field="company.partner_id"
-                                    t-field-options='{"widget": "contact", "fields": ["phone"], "no_marker": false}'/>
+                            <li style="list-style:none; margin-left: 2px; width: 100%;">
+                                <t t-if="company.partner_id.email">
+                                    <span class="fa fa-envelope theme-report-color" style="display: inline;">
+                                        <t t-set="email" t-value="company.partner_id.email"/>
+                                        <a style="color: black;" href="mailto:email">
+                                            <span style="font-size: 13px;" t-esc="email"/>
+                                         </a>
+                                    </span><br/>
+                                </t>
+                                <t t-if="company.partner_id.website">
+                                    <span class="fa fa-globe theme-report-color" style="display: inline;">
+                                        <t t-set="website" t-value="company.partner_id.website"/>
+                                        <a class="theme-report-color" href="website">
+                                            <span style="font-size: 13px;" t-esc="website"/>
+                                        </a>
+                                    </span><br/>
+                                </t>
+                                <t t-if="company.partner_id.phone">
+                                     <span class="fa fa-phone theme-report-color" style="display: inline;">
+                                        <t t-set="phone" t-value="company.partner_id.phone"/>
+                                        <a style="color: black;" href="callto:phone">
+                                            <span style="font-size: 13px;" t-esc="phone"/>
+                                        </a>
+                                    </span><br/>
+                                </t>
                             </li>
                         </t>
                     </div>
                 </div>
-                <div class="col-xs-1" name="part3"></div>
+                <div class="col-xs-1" name="part3">
+                    <!-- This subdivision is the anchor for picking operations barcode insert -->
+                </div>
             </div>
             <!-- separator line -->
             <div class="row zero_min_height">
