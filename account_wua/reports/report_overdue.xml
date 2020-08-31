@@ -5,37 +5,103 @@
 
         <!-- Customize address -->
         <xpath expr="//div[@class='col-xs-5 col-xs-offset-7']" position="replace">
-            <div name="overdue_address" class="col-xs-5 col-xs-offset-7">
-                <t t-if="o.name"><strong><span t-field="o.name"/></strong></t><br/>
-                <t t-if="o.vat">
-                    <t t-set="mod_vat" t-value="o.vat[2:]"/>
-                    <span>TIN:&amp;nbsp;</span>
-                    <span t-esc="mod_vat"/>
-                </t><br/>
-                <t t-if="o.street_type_show"><span t-field="o.street_type_show"/></t>
-                <t t-if="o.street"><span t-field="o.street"/></t>
-                <t t-if="o.street_num"><span t-field="o.street_num"/></t>
-                <t t-if="o.street2"><span t-field="o.street2"/></t>
-                <br/>
-                <t t-if="o.city"><span t-field="o.city"/></t>
-                <t t-if="o.zip">
-                    <span>&amp;nbsp;-&amp;nbsp;</span>
-                    <span t-field="o.zip"/>
-                </t>
-                <t id="state_address" t-if="o.state_id">
-                    <span t-tag="span">(</span><span t-field="o.state_id"/>
-                    <t t-if="not o.country_id"><span>)</span></t>
-                    <t t-else=""><span>-</span></t>
-                </t>
-                <t id="country_address" t-if="o.country_id">
-                    <t t-if="not o.state_id"><span>(</span></t>
-                    <span t-field="o.country_id"></span><span>)</span>
-                </t>
+            <div name="overdue_address">
+                <div class="row" style="border: 1px solid white; margin: 0px 20px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="border-right: 1px solid white; width: 60%; display: table-cell;">
+                            <p style="margin-bottom: 0px"><i>Invoicing address</i></p>
+                            <div>
+                                <t t-if="o.name"><strong><span t-field="o.name"/></strong></t><br/>
+                                <t t-if="o.vat">
+                                    <t t-set="mod_vat" t-value="o.vat[2:]"/>
+                                    <span>TIN:&amp;nbsp;</span>
+                                    <span t-esc="mod_vat"/>
+                                </t><br/>
+                                <t t-if="o.street_type_show"><span t-field="o.street_type_show"/></t>
+                                <t t-if="o.street"><span t-field="o.street"/></t>
+                                <t t-if="o.street_num"><span t-field="o.street_num"/></t>
+                                <t t-if="o.street2"><span t-field="o.street2"/></t>
+                                <br/>
+                                <t t-if="o.city"><span t-field="o.city"/></t>
+                                <t t-if="o.zip">
+                                    <span>&amp;nbsp;-&amp;nbsp;</span>
+                                    <span t-field="o.zip"/>
+                                </t>
+                                <t id="state_address" t-if="o.state_id">
+                                    <span t-tag="span">(</span><span t-field="o.state_id"/>
+                                    <t t-if="not o.country_id"><span>)</span></t>
+                                    <t t-else=""><span>-</span></t>
+                                </t>
+                                <t id="country_address" t-if="o.country_id">
+                                    <t t-if="not o.state_id"><span>(</span></t>
+                                    <span t-field="o.country_id"></span><span>)</span>
+                                </t>
+                            </div>
+                        </div>
+                        <div style="width: 40%; display: table-cell; padding: 0px 8px;">
+                            <p style="margin-bottom: 0px"><i>Shipping Address</i></p>
+                            <t t-if="o.child_ids">
+                                <t t-foreach="o.child_ids" t-as="address">
+                                    <t t-if="address.type == 'delivery'">
+                                        <t t-set="shipping_address" t-value="address"/>
+                                        <div>
+                                            <t t-if="shipping_address.name"><strong><span t-field="shipping_address.name"/></strong></t><br/>
+                                            <t t-if="shipping_address.street_type_show"><span t-field="shipping_address.street_type_show"/></t>
+                                            <t t-if="shipping_address.street"><span t-field="shipping_address.street"/></t>
+                                            <t t-if="shipping_address.street_num"><span t-field="shipping_address.street_num"/></t>
+                                            <t t-if="shipping_address.street2"><span t-field="shipping_address.street2"/></t>
+                                            <br/>
+                                            <t t-if="shipping_address.city"><span t-field="shipping_address.city"/></t>
+                                            <t t-if="shipping_address.zip">
+                                                <span>&amp;nbsp;-&amp;nbsp;</span>
+                                                <span t-field="shipping_address.zip"/>
+                                            </t>
+                                            <t id="state_address" t-if="shipping_address.state_id">
+                                                <span t-tag="span">(</span><span t-field="shipping_address.state_id"/>
+                                                <t t-if="not shipping_address.country_id"><span>)</span></t>
+                                                <t t-else=""><span>-</span></t>
+                                            </t>
+                                            <t id="country_address" t-if="shipping_address.country_id">
+                                                <t t-if="not shipping_address.state_id"><span>(</span></t>
+                                                <span t-field="shipping_address.country_id"></span><span>)</span>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <div>
+                                    <t t-if="o.name"><strong><span t-field="o.name"/></strong></t><br/>
+                                    <t t-if="o.street_type_show"><span t-field="o.street_type_show"/></t>
+                                    <t t-if="o.street"><span t-field="o.street"/></t>
+                                    <t t-if="o.street_num"><span t-field="o.street_num"/></t>
+                                    <t t-if="o.street2"><span t-field="o.street2"/></t>
+                                    <br/>
+                                    <t t-if="o.city"><span t-field="o.city"/></t>
+                                    <t t-if="o.zip">
+                                        <span>&amp;nbsp;-&amp;nbsp;</span>
+                                        <span t-field="o.zip"/>
+                                    </t>
+                                    <t id="state_address" t-if="o.state_id">
+                                        <span t-tag="span">(</span><span t-field="o.state_id"/>
+                                        <t t-if="not o.country_id"><span>)</span></t>
+                                        <t t-else=""><span>-</span></t>
+                                    </t>
+                                    <t id="country_address" t-if="o.country_id">
+                                        <t t-if="not o.state_id"><span>(</span></t>
+                                        <span t-field="o.country_id"></span><span>)</span>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
             </div>
         </xpath>
 
         <!-- Change document description, do not show client ref, change date format -->
         <xpath expr="//div[@class='row']/p" position="replace">
+            <br/>
             <p>
                  Document: Account statement<br/>
                  Date: <span t-esc="Date.strftime('%d-%m-%Y')"/><br/>
@@ -62,7 +128,7 @@
                         <td>
                             <span t-esc="line['move_id']"/>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <span t-esc="datetime.datetime.strptime(line['date'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
                         </td>
                         <td class="text-center">
