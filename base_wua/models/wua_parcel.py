@@ -552,7 +552,7 @@ class WuaParcel(models.Model):
                     factor = area_measurement_equivalence
             record.area_official_hec = factor * record.area_official
 
-    @api.depends('partnerlink_ids')
+    @api.depends('partnerlink_ids', 'partnerlink_ids.irrigation_partner')
     def _compute_partner_id(self):
         for record in self:
             partner_id = None
