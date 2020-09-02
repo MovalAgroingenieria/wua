@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-26 11:46+0000\n"
-"PO-Revision-Date: 2020-08-26 11:46+0000\n"
+"POT-Creation-Date: 2020-09-02 07:23+0000\n"
+"PO-Revision-Date: 2020-09-02 07:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,6 @@ msgid "Can be sent partner census"
 msgstr "Censo de socios en telecontrol"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.actions.server,name:base_wua_remotecontrol_rest.wua_cancel_readings
-msgid "Cancel"
-msgstr "Quitar validación"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
 msgstr "Configuración del riego con tipo de agua"
@@ -61,6 +56,16 @@ msgstr "Configuración del riego con tipo de agua"
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_negative_reading_view_tree
 msgid "Cons. Value (m3)"
 msgstr "Consumo bruto (m3)"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_conversion_factor
+msgid "Conversion Factor"
+msgstr "Factor de conversión"
+
+#. module: base_wua_remotecontrol_rest
+#: sql_constraint:wua.waterconnection:0
+msgid "Conversion factor must be greater than 0."
+msgstr "El factor de conversión debe ser mayor a 0."
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_create_uid
@@ -112,11 +117,6 @@ msgid "Entity (negative reading)"
 msgstr "Elemento (lectura negativa)"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr "Elemento (parcela)"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_presconsumption
 msgid "Entity (pressure consumption)"
 msgstr "Elemento (consumo de presión)"
@@ -130,12 +130,6 @@ msgstr "Elemento (lectura)"
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_waterconnection
 msgid "Entity (water connection)"
 msgstr "Elemento (toma)"
-
-#. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_invoiceset.py:49
-#, python-format
-msgid "Error when updating records."
-msgstr "Error al actualizar registros."
 
 #. module: base_wua_remotecontrol_rest
 #: sql_constraint:wua.negative.reading:0
@@ -326,11 +320,6 @@ msgid "Password for authentication in remote control"
 msgstr "Contraseña para la autenticación en el telecontrol"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_invoiceset_line_presconsumption
-msgid "Pressure consumptions of a invoice-set line"
-msgstr "Consumos de presión de una línea de lote de facturas"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_name
 msgid "Reading"
 msgstr "Lectura"
@@ -415,8 +404,8 @@ msgid "Remote Control: Starting reading in irrigationsheds"
 msgstr "Remote Control: Starting reading in irrigationsheds"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:29
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:50
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:39
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:60
 #, python-format
 msgid "Remote Control: Starting reading in water connections"
 msgstr "Remote Control: Starting reading in water connections"
@@ -618,7 +607,7 @@ msgstr "Contador"
 #: code:addons/base_wua_remotecontrol_rest/models/wua_hydraulicsector.py:45
 #: code:addons/base_wua_remotecontrol_rest/models/wua_irrigationshed.py:79
 #: code:addons/base_wua_remotecontrol_rest/models/wua_parcel.py:265
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:45
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:55
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene permiso para ejecutar esta acción."

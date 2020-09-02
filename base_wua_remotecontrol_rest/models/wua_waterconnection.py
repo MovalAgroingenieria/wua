@@ -13,6 +13,16 @@ class WuaWaterconnection(models.Model):
         string='Remote Control enabled',
         compute='_compute_remotecontrol_enabled')
 
+    conversion_factor = fields.Integer(
+        string="Conversion Factor",
+        required=True,
+        default=1)
+
+    _sql_constraints = [
+        ('conversion_factor_positive', 'CHECK (conversion_factor > 0)',
+         'Conversion factor must be greater than 0.'),
+        ]
+
     @api.multi
     def _compute_remotecontrol_enabled(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
