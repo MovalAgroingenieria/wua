@@ -250,12 +250,7 @@ class WuaControlreading(models.Model):
     @api.multi
     def cancel_controlreading(self):
         self.ensure_one()
-        if not self.controlpresconsumption_id.invoiced_consumption:
-            self.validated = False
-        else:
-            raise exceptions.UserError(_('The reading is mapped to a '
-                                         'invoiced consumption: it is not '
-                                         'possible to cancel the reading.'))
+        self.validated = False
 
     @api.multi
     def name_get(self):

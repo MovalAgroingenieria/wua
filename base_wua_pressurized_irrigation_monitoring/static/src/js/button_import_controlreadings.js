@@ -13,7 +13,7 @@ ListView.include({
             btn.on('click', this.proxy('do_button_import_controlreadings'));
         }
     },
-    do_button_import_readings: function() {
+    do_button_import_controlreadings: function() {
         var _t = core._t;
         var message = _t('Import readings?')
         var confirmed = confirm(message);
