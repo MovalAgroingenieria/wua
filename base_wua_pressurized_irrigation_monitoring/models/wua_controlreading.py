@@ -243,12 +243,12 @@ class WuaControlreading(models.Model):
         return resp
 
     @api.multi
-    def validate_reading(self):
+    def validate_controlreading(self):
         self.ensure_one()
         self.validated = True
 
     @api.multi
-    def cancel_reading(self):
+    def cancel_controlreading(self):
         self.ensure_one()
         if not self.controlpresconsumption_id.invoiced_consumption:
             self.validated = False
@@ -364,7 +364,7 @@ class WuaControlreading(models.Model):
             'target': 'new', }
 
     @api.model
-    def do_import_readings(self, save_data=True, show_message=True):
+    def do_import_controlreadings(self, save_data=True, show_message=True):
         # for resp: item 1: list of readings, item 2: number of readings,
         # item 3: possible error message, item 4: list of problematic
         # water meters, item 5: number of negative readings.
@@ -390,17 +390,17 @@ class WuaControlreading(models.Model):
                             'url_remotecontrol_rest_password')
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
-                data = self.populate_data_for_import_readings(
+                data = self.populate_data_for_import_controlreadings(
                     url_remotecontrol_rest,
                     url_remotecontrol_rest_username,
                     url_remotecontrol_rest_password)
                 if data:
                     readings, error_message, error_watermeters = \
-                        self.import_readings(
+                        self.import_controlreadings(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password, data)
-                    readings = self.refine_readings(readings)
+                    readings = self.refine_controlreadings(readings)
                     if readings:
                         resp[0] = readings
                         resp[1] = len(readings)
@@ -408,7 +408,7 @@ class WuaControlreading(models.Model):
                         resp[3] = error_watermeters
                         if save_data:
                             number_of_negative_readings = \
-                                self.save_readings(readings)
+                                self.save_controlreadings(readings)
                             resp[4] = number_of_negative_readings
                         prefix_message_01 = _('Remote Control: '
                                               'Getting readings')
@@ -437,18 +437,18 @@ class WuaControlreading(models.Model):
         return resp
 
     # Hook
-    def populate_data_for_import_readings(self, url_remotecontrol_rest,
-                                          url_remotecontrol_rest_username,
-                                          url_remotecontrol_rest_password):
+    def populate_data_for_import_controlreadings(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         return None
 
     # Hook
-    def import_readings(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, list_of_data):
+    def import_controlreadings(self, url_remotecontrol_rest,
+                               url_remotecontrol_rest_username,
+                               url_remotecontrol_rest_password, list_of_data):
         return None, '', None
 
-    def refine_readings(self, readings):
+    def refine_controlreadings(self, readings):
         resp = []
         watermeters = self.env['wua.watermeter']
         for reading in readings:
@@ -469,7 +469,7 @@ class WuaControlreading(models.Model):
                     resp.append(refined_reading)
         return resp
 
-    def save_readings(self, readings, update_log=True):
+    def save_controlreadings(self, readings, update_log=True):
         number_of_readings = len(readings)
         number_of_negative_readings = 0
         if number_of_readings > 0:
@@ -477,7 +477,7 @@ class WuaControlreading(models.Model):
                 '%Y-%m-%d %H:%M:%S'),
             for reading in readings:
                 is_negative, negative_volume = \
-                    self.is_negative_reading(reading)
+                    self.is_negative_controlreading(reading)
                 if is_negative:
                     self.env['wua.negative.controlreading'].create({
                         'watermeter_id': reading['watermeter_id'],
@@ -502,7 +502,7 @@ class WuaControlreading(models.Model):
                              str(number_of_readings))
         return number_of_negative_readings
 
-    def is_negative_reading(self, reading):
+    def is_negative_controlreading(self, reading):
         is_negative = False
         negative_volume = 0
         current_volume = reading['volume']
@@ -519,20 +519,20 @@ class WuaControlreading(models.Model):
             negative_volume = current_volume - previous_volume
         return is_negative, negative_volume
 
-    def validate_readings(self, active_readings):
+    def validate_controlreadings(self, active_readings):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):
             raise exceptions.UserError(_(
                 'You do not have permission to execute this action.'))
         readings = self.env['wua.controlreading'].browse(active_readings)
         for reading in readings:
             if not reading.validated:
-                reading.validate_reading()
+                reading.validate_controlreading()
 
-    def cancel_readings(self, active_readings):
+    def cancel_controlreadings(self, active_readings):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):
             raise exceptions.UserError(_(
                 'You do not have permission to execute this action.'))
         readings = self.env['wua.controlreading'].browse(active_readings)
         for reading in readings:
             if reading.validated:
-                reading.cancel_reading()
+                reading.cancel_controlreading()

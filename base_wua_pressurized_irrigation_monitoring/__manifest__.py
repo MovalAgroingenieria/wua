@@ -32,6 +32,7 @@
         # "views/wua_cultivation_view.xml",
         # "views/wua_negative_controlreading_view.xml", ],
         ],
+    'qweb': ['static/src/xml/button_import_controlreadings.xml'],
     "installable": True,
     "application": False,
 }

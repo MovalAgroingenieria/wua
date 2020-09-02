@@ -1,4 +1,4 @@
-odoo.define('base_wua_remotecontrol_rest.button_import_readings', function (require) {
+odoo.define('base_wua_pressurized_irrigation_monitoring.button_import_controlreadings', function (require) {
 "use strict";
 
 var ListView = require('web.ListView');
@@ -9,8 +9,8 @@ ListView.include({
     render_buttons: function() {
         this._super.apply(this, arguments);
         if (this.$buttons) {
-            var btn = this.$buttons.find('.button_import_readings');
-            btn.on('click', this.proxy('do_button_import_readings'));
+            var btn = this.$buttons.find('.button_import_controlreadings');
+            btn.on('click', this.proxy('do_button_import_controlreadings'));
         }
     },
     do_button_import_readings: function() {
@@ -18,8 +18,8 @@ ListView.include({
         var message = _t('Import readings?')
         var confirmed = confirm(message);
         if (confirmed) {
-            var python_function = new Model('wua.reading').
-                                  call("do_import_readings",[]);
+            var python_function = new Model('wua.controlreading').
+                                  call("do_import_controlreadings",[]);
             python_function.done(function(result) {
                 var title_number_of_readings = _t('Number of readings');
                 var title_error_message = _t('WARNING');
@@ -36,7 +36,7 @@ ListView.include({
                                      ' ' + suffix_negative_readings;
                 }
                 if (error_message != '') {
-                    result_message = result_message + '\n\n' + 
+                    result_message = result_message + '\n\n' +
                                      title_error_message + ': ' +
                                      error_message;
                 }

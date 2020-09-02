@@ -129,11 +129,11 @@
         <field name="state">code</field>
         <field name="code">
             if context.get('active_ids'):
-                action = env['wua.controlreading'].validate_readings(context['active_ids'])
+                action = env['wua.controlreading'].validate_controlreadings(context['active_ids'])
         </field>
     </record>
 
-    <record id="wua_action_validate_readings" model="ir.values">
+    <record id="wua_action_validate_controlreadings" model="ir.values">
         <field name="name">Validate</field>
         <field name="model">wua.controlreading</field>
         <field name="key">action</field>
@@ -147,11 +147,11 @@
         <field name="state">code</field>
         <field name="code">
             if context.get('active_ids'):
-                action = env['wua.controlreading'].cancel_readings(context['active_ids'])
+                action = env['wua.controlreading'].cancel_controlreadings(context['active_ids'])
         </field>
     </record>
 
-    <record id="wua_action_cancel_readings" model="ir.values">
+    <record id="wua_action_cancel_controlreadings" model="ir.values">
         <field name="name">Cancel</field>
         <field name="model">wua.controlreading</field>
         <field name="key">action</field>
