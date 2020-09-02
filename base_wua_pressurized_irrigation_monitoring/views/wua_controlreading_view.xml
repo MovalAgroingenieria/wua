@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_controlreading_view_form" model="ir.ui.view">
+        <field name="name">Control Readings (form view)</field>
+        <field name="model">wua.controlreading</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                </header>
+                <field name="id" invisible="1"/>
+                <field name="is_last_reading" invisible="1"/>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <img src="/base_wua_pressurized_irrigation/static/image/img_last.png"
+                             hspace="2"
+                             attrs="{'invisible':[('is_last_reading', '=', False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="volume"
+                                   attrs="{'readonly':
+                                           [('id', '>', 0),
+                                            ('is_last_reading', '!=', True)]}"/>
+                            <field name="reading_time"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="watermeter_id"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="initialization_reading"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="waterconnection_id"/>
+                            <field name="irrigationshed_id"/>
+                            <field name="hydraulicsector_id"/>
+                            <field name="controlpresconsumption_id"/>
+                            <field name="validated"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_controlreading_view_tree" model="ir.ui.view">
+        <field name="name">Control Readings (tree view)</field>
+        <field name="model">wua.controlreading</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_monitoring_controlreadings_view_tree">
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="reading_time"/>
+                <field name="volume"/>
+                <field name="initialization_reading" string="Init. Reading"/>
+                <field name="controlpresconsumption_volume" string="Cons. Value (m3)"/>
+                <field name="controlpresconsumption_adjustement_volume" string="Cons. Adj. Value (m3)"/>
+                <field name="controlpresconsumption_volume_real" string="Cons. Real Value (m3)"/>
+                <field name="is_last_reading"/>
+                <field name="controlpresconsumption_id"/>
+                <field name="validated" string="Valid Reading"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_controlreading_view_search" model="ir.ui.view">
+        <field name="name">Control Readings (search view)</field>
+        <field name="model">wua.controlreading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Initialization Reading" name="initreadingyes"
+                 domain="[('initialization_reading','=',True)]"/>
+                <filter string="Normal Reading" name="initreadingno"
+                 domain="[('initialization_reading','=',False)]"/>
+                <separator id="validate_separator"/>
+                <filter string="Validated Reading: Yes" name="isvalidatedyes"
+                 domain="[('validated','=',True)]"/>
+               <filter string="Validated Reading: No" name="isvalidatedno"
+                 domain="[('validated','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                    <filter string="Water Meter"
+                     name="watermeter"
+                     context="{'group_by':'watermeter_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_controlreading_action" model="ir.actions.act_window">
+        <field name="name">Control Readings</field>
+        <field name="res_model">wua.controlreading</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_controlreading_view_tree"/>
+        <field name="search_view_id" ref="wua_controlreading_view_search"/>
+        <field name="context">{'search_default_watermeter': 0}</field>
+    </record>
+
+    <menuitem id="wua_controlreading_menu"
+              name="Control Readings"
+              parent="base_wua_pressurized_irrigation_monitoring.monitoring_pressure_irrigation"
+              action="wua_controlreading_action"
+              sequence="4"
+              groups="base_wua.group_wua_user"/>
+
+    <record id="wua_validate_controlreadings" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_controlreading"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.controlreading'].validate_readings(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_validate_readings" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.controlreading</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_controlreadings'))"/>
+    </record>
+
+    <record id="wua_cancel_controlreadings" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_controlreading"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.controlreading'].cancel_readings(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_cancel_readings" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.controlreading</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_controlreadings'))"/>
+    </record>
+
+</odoo>
