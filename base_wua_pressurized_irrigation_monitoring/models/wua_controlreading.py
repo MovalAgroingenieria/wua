@@ -363,6 +363,7 @@ class WuaControlreading(models.Model):
         # for resp: item 1: list of readings, item 2: number of readings,
         # item 3: possible error message, item 4: list of problematic
         # water meters, item 5: number of negative readings.
+        wua_reading_model = self.env['wua.reading']
         resp = [None, 0, '', None, 0]
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
@@ -385,13 +386,14 @@ class WuaControlreading(models.Model):
                             'url_remotecontrol_rest_password')
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
-                data = self.populate_data_for_import_controlreadings(
-                    url_remotecontrol_rest,
-                    url_remotecontrol_rest_username,
-                    url_remotecontrol_rest_password)
+                data = wua_reading_model.\
+                    populate_data_for_import_readings(
+                        url_remotecontrol_rest,
+                        url_remotecontrol_rest_username,
+                        url_remotecontrol_rest_password)
                 if data:
                     readings, error_message, error_watermeters = \
-                        self.import_controlreadings(
+                        wua_reading_model.import_readings(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password, data)
@@ -430,18 +432,6 @@ class WuaControlreading(models.Model):
                                                  'the remote control is not '
                                                  'enabled.'))
         return resp
-
-    # Hook
-    def populate_data_for_import_controlreadings(
-        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password):
-        return None
-
-    # Hook
-    def import_controlreadings(self, url_remotecontrol_rest,
-                               url_remotecontrol_rest_username,
-                               url_remotecontrol_rest_password, list_of_data):
-        return None, '', None
 
     def refine_controlreadings(self, readings):
         resp = []
@@ -507,6 +497,7 @@ class WuaControlreading(models.Model):
             [('watermeter_id', '=', reading['watermeter_id']),
              ('reading_time', '<', current_reading_time)],
             limit=1, order='reading_time desc')
+        previous_volume = 0
         if previous_reading:
             previous_volume = previous_reading[0].volume
         if previous_volume > current_volume:
