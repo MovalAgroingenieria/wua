@@ -14,6 +14,7 @@
         "base_wua_infrastructure",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "data/base_infrastructe_pressurized_hierarchy_config_settings_data.xml",
         "views/resources.xml",
         "views/wua_infrastructure_config_settings_view.xml",
