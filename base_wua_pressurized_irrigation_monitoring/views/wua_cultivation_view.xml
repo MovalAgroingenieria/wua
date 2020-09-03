@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cultivation_view_form" model="ir.ui.view">
+        <field name="name">Cultivations (form view)</field>
+        <field name="model">wua.cultivation</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_cultivation_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="monitoring"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_cultivation_view_tree" model="ir.ui.view">
+        <field name="name">Cultivations (tree view)</field>
+        <field name="model">wua.cultivation</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_cultivation_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class">o_base_wua_pressurized_irrigation_cultivation_view_tree</attribute>
+            </xpath>
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="monitoring"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_cultivation_view_search" model="ir.ui.view">
+        <field name="name">Cultivations (search view)</field>
+        <field name="model">wua.cultivation</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_cultivation_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <filter string="Monitoring: Yes" name="monitoring_yes"
+                 domain="[('monitoring','=',True)]"/>
+                <filter string="Monitoring: No" name="monitoring_no"
+                 domain="[('monitoring','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
