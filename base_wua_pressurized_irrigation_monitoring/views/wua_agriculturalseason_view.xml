@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="wua_agriculturalseason_comparative_presconsumption_action" model="ir.actions.server">
+      <field name="name">Agriculturalseason</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_agriculturalseason"/>
+      <field name="code">action = env["wua.agriculturalseason"].get_wua_agriculturalseason_comparative_presconsumption_action()</field>
+  </record>
+
+  <record id="wua_agriculturalseason_control_presconsumption_action" model="ir.actions.server">
+      <field name="name">Control Presconsumptions</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_agriculturalseason"/>
+      <field name="code">action = env["wua.agriculturalseason"].get_wua_agriculturalseason_control_presconsumption_action()</field>
+  </record>
+
+    <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+              <header>
+                  <button name="%(action_generate_controlperiods)d"
+                          type="action" string="Generate control"
+                          groups="base_wua.group_wua_manager"/>
+              </header>
+                <sheet>
+                  <div name="buttons" class="oe_button_box">
+                    <button name="%(wua_agriculturalseason_comparative_presconsumption_action)d"
+                            type="action"
+                            class="oe_stat_button"
+                            icon="fa-list"
+                            groups="base_wua.group_wua_user">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Comp. Consumptions
+                                </span>
+                            </div>
+                    </button>
+                    <button name="%(wua_agriculturalseason_control_presconsumption_action)d"
+                            type="action"
+                            class="oe_stat_button"
+                            icon="fa-list"
+                            groups="base_wua.group_wua_user">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Ctrl. Consumptions
+                                </span>
+                            </div>
+                    </button>
+                  </div>
+                  <group name="master_data">
+                      <group name="master_data_left">
+                          <field name="initial_date"/>
+                          <field name="end_date"/>
+                          <field name="description"/>
+                          <field name="number_of_controlperiods"/>
+                      </group>
+                      <group name="master_data_right">
+                          <field name="active_agriculturalseason"/>
+                          <field name="estimated_consumption"/>
+                          <field name="real_consumption"/>
+                          <field name="deviation"/>
+                      </group>
+                  </group>
+                  <group name="slave_data">
+                      <notebook name="slave_data_notebook">
+                          <page name="notes_page" string="Notes">
+                              <field name="notes"/>
+                          </page>
+                      </notebook>
+                  </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_tree" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (tree view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_monitoring_agriculturalseason_view_tree">
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="description"/>
+                <field name="number_of_controlperiods"/>
+                <field name="estimated_consumption"/>
+                <field name="real_consumption"/>
+                <field name="deviation"/>
+                <field name="active_agriculturalseason"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_search" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (search view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="initial_date"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_action" model="ir.actions.act_window">
+        <field name="name">Agricultural Seasons</field>
+        <field name="res_model">wua.agriculturalseason</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree', 'view_id': ref('base_wua_pressurized_irrigation_monitoring.wua_agriculturalseason_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('base_wua_pressurized_irrigation_monitoring.wua_agriculturalseason_view_form')})]"/>
+        <field name="search_view_id"
+         ref="base_wua_pressurized_irrigation_monitoring.wua_agriculturalseason_view_search"/>
+    </record>
+
+    <menuitem id="wua_agriculturalseason_menu"
+              name="Agricultural Seasons"
+              parent="base_wua_pressurized_irrigation_monitoring.monitoring_pressure_irrigation"
+              action="base_wua_pressurized_irrigation_monitoring.wua_agriculturalseason_action"
+              sequence="2"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

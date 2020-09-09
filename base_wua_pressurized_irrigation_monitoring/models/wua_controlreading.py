@@ -230,6 +230,8 @@ class WuaControlreading(models.Model):
             watermeter.write(vals_watermeter)
         # Creation of reading.
         new_reading = super(WuaControlreading, self).create(vals)
+        if (new_controlpresconsumption and new_reading.validated):
+            new_controlpresconsumption.add_prorrated_value_to_subparcels()
         return new_reading
 
     @api.multi
@@ -238,19 +240,33 @@ class WuaControlreading(models.Model):
         if len(self) == 1:
             if 'volume' in vals:
                 if self.controlpresconsumption_id:
+                    if self.controlpresconsumption_id.validated:
+                        self.controlpresconsumption_id.\
+                            sub_prorrated_value_to_subparcels()
                     self.controlpresconsumption_id.end_volume = vals['volume']
+                    if self.controlpresconsumption_id.validated:
+                        self.controlpresconsumption_id.\
+                            add_prorrated_value_to_subparcels()
                 self.watermeter_id.last_reading_value = vals['volume']
         return resp
 
     @api.multi
     def validate_controlreading(self):
         self.ensure_one()
-        self.validated = True
+        if (not self.validated):
+            if (self.controlpresconsumption_id):
+                self.controlpresconsumption_id.\
+                    add_prorrated_value_to_subparcels()
+            self.validated = True
 
     @api.multi
     def cancel_controlreading(self):
         self.ensure_one()
-        self.validated = False
+        if (self.validated):
+            if (self.controlpresconsumption_id):
+                self.controlpresconsumption_id.\
+                    sub_prorrated_value_to_subparcels()
+            self.validated = False
 
     @api.multi
     def name_get(self):
@@ -278,9 +294,12 @@ class WuaControlreading(models.Model):
         # reading only has that reading.
         if len(self) == 1:
             watermeter = self.watermeter_id
-            readings_of_watermeter = self.env['wua.controlreading'].search(
-                [('watermeter_id', '=', watermeter.id)])
-            if len(readings_of_watermeter) == 1:
+            controlreadings_of_watermeter = self.env['wua.controlreading'].\
+                search([('watermeter_id', '=', watermeter.id)])
+            readings_of_watermeter = self.env['wua.reading'].\
+                search([('watermeter_id', '=', watermeter.id)])
+            if (len(controlreadings_of_watermeter) == 1 and
+                    len(readings_of_watermeter) == 0):
                 resp = super(WuaControlreading, self).unlink()
                 watermeter.unlink()
                 return resp
@@ -327,6 +346,10 @@ class WuaControlreading(models.Model):
         if len(readings_after_new_last_reading) != readings_to_delete:
             raise exceptions.UserError(_('There can be no intermediate '
                                          'readings without eliminating.'))
+        for record in self:
+            if (record.validated and record.controlpresconsumption_id):
+                record.controlpresconsumption_id.\
+                    sub_prorrated_value_to_subparcels()
         # Delete the readings.
         resp = super(WuaControlreading, self).unlink()
         # Update the "last-reading" and "last-volume" of the water meter from

@@ -1,0 +1,32 @@
+<odoo>
+
+  <record id="res_partner_comparative_presconsumption_action" model="ir.actions.server">
+      <field name="name">Partners (form view)</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_res_partner"/>
+      <field name="code">action = env["res.partner"].get_res_partner_comparative_presconsumption_action()</field>
+  </record>
+
+  <record id="view_partner_form" model="ir.ui.view">
+      <field name="name">Partners (form view)</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base_wua_remotecontrol_rest.view_partner_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+            <button name="%(res_partner_comparative_presconsumption_action)d"
+                    attrs="{'invisible':[('is_wua_partner','=',False)]}"
+                    type="action"
+                    class="oe_stat_button"
+                    icon="fa-list"
+                    groups="base_wua.group_wua_user,
+                            base_wua.group_wua_portal_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">
+                            Comp. Consumptions
+                        </span>
+                    </div>
+            </button>
+        </xpath>
+      </field>
+  </record>
+
+</odoo>

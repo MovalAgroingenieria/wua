@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="wua_parcel_comparative_presconsumption_action" model="ir.actions.server">
+      <field name="name">Parcels</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_parcel"/>
+      <field name="code">action = env["wua.parcel"].get_wua_parcel_comparative_presconsumption_action()</field>
+  </record>
+
+  <record id="wua_parcel_view_form" model="ir.ui.view">
+      <field name="name">Parcels (form view)</field>
+      <field name="model">wua.parcel</field>
+      <field name="inherit_id" ref="base_wua_remotecontrol_rest.wua_parcel_view_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//div[@name='buttons']" position="inside">
+            <button name="%(wua_parcel_comparative_presconsumption_action)d"
+                    type="action"
+                    class="oe_stat_button"
+                    icon="fa-list"
+                    groups="base_wua.group_wua_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">
+                            Comp. Consumptions
+                        </span>
+                    </div>
+            </button>
+          </xpath>
+      </field>
+  </record>
+
+  <record id="wua_subparcel_comparative_presconsumption_action" model="ir.actions.server">
+      <field name="name">Subparcels</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_parcel_subparcel"/>
+      <field name="code">action = env["wua.parcel.subparcel"].get_wua_subparcel_comparative_presconsumption_action()</field>
+  </record>
+
+  <record id="wua_monitoring_parcel_subparcel_view_form" model="ir.ui.view" >
+    <field name="name">Subparcels (form view)</field>
+    <field name="model">wua.parcel.subparcel</field>
+    <field name="arch" type="xml">
+      <form create="false" delete="false">
+        <div name="buttons" class="oe_button_box">
+          <field name="gis_viewer_link" invisible="1"/>
+          <field name="cadastral_reference_link" invisible="1"/>
+          <button name="action_see_gis_viewer"
+                  type="object"
+                  class="oe_stat_button"
+                  string="GIS Viewer"
+                  icon="fa-map-marker"
+                  attrs="{'invisible':
+                          [('gis_viewer_link','=',False)]}"
+                  groups="base_wua.group_wua_user,
+                          base_wua.group_wua_portal_user"/>
+          <button name="action_see_cadastral_report"
+                  type="object"
+                  class="oe_stat_button"
+                  string="Cadaster"
+                  icon="fa-cubes"/>
+          <br/>
+          <button name="%(wua_subparcel_comparative_presconsumption_action)d"
+                  type="action"
+                  class="oe_stat_button"
+                  icon="fa-list"
+                  groups="base_wua.group_wua_user">
+                  <div class="o_form_field o_stat_info">
+                      <span class="o_stat_text">
+                          Comp. Consumptions
+                      </span>
+                  </div>
+          </button>
+
+        </div>
+        <group name="fields" colspan="4" col="3">
+          <group name="fields_left" colspan="1" col="2">
+            <field readonly="1" name="parcel_id"/>
+            <field readonly="1" name="subparcel_code"/>
+            <field readonly="1" name="cultivation_id"/>
+            <field readonly="1" name="cultivationvariety_id"/>
+            <field name="tree_development"/>
+            <field name="shaded_percentage"/>
+            <field name="soil_type"/>
+            <field name="organic_material_percentage"/>
+            <field name="orientation"/>
+            <field name="drippers_number"/>
+            <field name="drippers_nomial_flow"/>
+            <field readonly="1" name="tree_lateral_number"/>
+            <field name="plantation_year"/>
+            <field readonly="1" name="tree_distance"/>
+            <field readonly="1" name="row_distance"/>
+            <field readonly="1" name="tree_drippers_number"/>
+          </group>
+          <group name="fields_center" colspan="1" col="2">
+            <field readonly="1" name="partner_id"/>
+            <field readonly="1" name="hydraulicsector_id"/>
+            <field readonly="1" name="area_official"/>
+            <field readonly="1" name="cadastral_reference"/>
+            <field readonly="1" name="area_perc"/>
+            <field readonly="1" name="productionmethod_id"/>
+            <field readonly="1" name="irrigationsystem_id"/>
+            <field readonly="1" name="updated_in_remotecontrol"/>
+            <field readonly="1" name="cultivation_age"/>
+            <field readonly="1" name="estimated_consumption"/>
+            <field readonly="1" name="real_consumption"/>
+            <field readonly="1" name="deviation"/>
+          </group>
+          <group name="fields_right" colspan="1" col="2">
+            <field readonly="1" name="aerial_img" widget="image" class="oe_img_259_160"/>
+          </group>
+        </group>
+      </form>
+    </field>
+  </record>
+
+  <record id="wua_monitoring_parcel_subparcel_view_tree" model="ir.ui.view" >
+      <field name="name">Subparcels (tree view)</field>
+      <field name="model">wua.parcel.subparcel</field>
+      <field name="arch" type="xml">
+          <tree class="o_base_wua_pressurized_irrigation_monitoring_parcel_subparcel_view_tree"
+                create="false" delete="false">
+              <field name="cadastral_reference_link" invisible="1"/>
+              <field name="gis_viewer_link" invisible="1"/>
+              <field name="parcel_id"/>
+              <field name="hydraulicsector_id"/>
+              <field name="partner_id"/>
+              <field name="subparcel_code"/>
+              <field name="area_official" sum="Total area"/>
+              <button name="action_see_gis_viewer"
+                      type="object" class="oe_stat_button"
+                      string="GIS Viewer (zoom to parcel)"
+                      icon="fa-map-marker"
+                      attrs="{'invisible':
+                              [('gis_viewer_link','=',False)]}"/>
+              <button name="action_see_cadastral_report"
+                      type="object" class="oe_stat_button"
+                      string="Cadastral Report"
+                      icon="fa-cubes"
+                      attrs="{'invisible': [('cadastral_reference_link','=','')]}"/>
+              <field name="cultivation_id"/>
+              <field name="tree_development"/>
+              <field name="shaded_percentage"/>
+              <field name="soil_type"/>
+              <field name="organic_material_percentage"/>
+              <field name="estimated_consumption" sum="Total Estimated Consumption"/>
+              <field name="real_consumption" sum="Total Real Consumption"/>
+              <field name="deviation" sum="Total deviation"/>
+          </tree>
+      </field>
+  </record>
+
+  <record id="wua_monitoring_parcel_subparcel_view_search" model="ir.ui.view">
+      <field name="name">Subparcels (search view)</field>
+      <field name="model">wua.parcel.subparcel</field>
+      <field name="arch" type="xml">
+          <search>
+              <field name="parcel_id"/>
+              <field name="partner_id"/>
+              <field name="subparceltype_id"/>
+              <field name="cultivation_id"/>
+              <field name="hydraulicsector_id"/>
+              <group expand="0" string="Group By">
+                  <filter string="Cultivation" name="cultivationid"
+                   context="{'group_by':'cultivation_id'}"/>
+                  <filter string="Tree Development" name="treedevelopment"
+                   context="{'group_by':'tree_development'}"/>
+                  <filter string="Soil Type" name="soiltype"
+                   context="{'group_by':'soil_type'}"/>
+                  <filter string="Hydraulicsector" name="hydraulicsectorid"
+                   context="{'group_by':'hydraulicsector_id'}"/>
+                  <filter string="Parcel" name="parcelid"
+                   context="{'group_by':'parcel_id'}"/>
+                  <filter string="Partner" name="partnerid"
+                   context="{'group_by':'partner_id'}"/>
+              </group>
+          </search>
+      </field>
+  </record>
+
+  <record id="wua_monitoring_parcel_subparcel_action" model="ir.actions.act_window">
+      <field name="name">Subparcels</field>
+      <field name="res_model">wua.parcel.subparcel</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="wua_monitoring_parcel_subparcel_view_tree"/>
+      <field name="view_id" ref="wua_monitoring_parcel_subparcel_view_form"/>
+      <field name="search_view_id" ref="wua_monitoring_parcel_subparcel_view_search"/>
+      <field name="views">[[ref("base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_form"), "form"]]</field>
+  </record>
+
+  <menuitem id="wua_monitoring_parcel_subparcel_menu"
+            name="Subparcels"
+            parent="base_wua_pressurized_irrigation_monitoring.monitoring_census"
+            action="wua_monitoring_parcel_subparcel_action"
+            sequence="2"
+            groups="base_wua.group_wua_user"/>
+
+
+  <record id="wua_monitoring_gisviewer_action" model="ir.actions.server">
+      <field name="name">GIS Viewer</field>
+      <field name="model_id" ref="base_wua_remotecontrol_rest.model_wua_irrigationshed"/>
+      <field name="state">code</field>
+      <field name="code">
+          action = env['wua.irrigationshed'].run_gisviewer_remotecontrol()
+      </field>
+  </record>
+
+
+  <menuitem id="wua_monitoring_gisviewer_menu"
+            name="Remote C.: GIS Viewer"
+            parent="base_wua_pressurized_irrigation_monitoring.monitoring_census"
+            action="wua_monitoring_gisviewer_action"
+            sequence="3"
+            groups="base_wua.group_wua_user"/>
+
+</odoo>

@@ -27,6 +27,11 @@ class WuaControlpresconsumption(models.Model):
         compute='_compute_controlreading_id',
         ondelete='cascade')
 
+    controlperiod_id = fields.Many2one(
+        string='Control Period',
+        comodel_name='wua.controlperiod',
+        ondelete='set null')
+
     reading_initial_time = fields.Datetime(
         string='Reading Start Time',
         readonly=True,
@@ -190,9 +195,7 @@ class WuaControlpresconsumption(models.Model):
     @api.depends('controlreading_id', 'controlreading_id.validated')
     def _compute_validated(self):
         for record in self:
-            validated = False
-            if record.controlreading_id.validated:
-                validated = True
+            validated = record.controlreading_id.validated
             record.validated = validated
 
     @api.model
@@ -202,7 +205,26 @@ class WuaControlpresconsumption(models.Model):
              ('end_date', '>=', vals['reading_end_time'])])
         if len(agriculturalseasons) == 1:
             vals['agriculturalseason_id'] = agriculturalseasons[0].id
-        return super(WuaControlpresconsumption, self).create(vals)
+        controlperiods = self.env['wua.controlperiod'].search(
+            ['&', ('initial_date', '<=', vals['reading_end_time']),
+                  ('end_date', '>=', vals['reading_end_time'])])
+        if len(controlperiods) == 1:
+            vals['controlperiod_id'] = controlperiods[0].id
+        ctrl_pres = super(WuaControlpresconsumption, self).create(vals)
+        return ctrl_pres
+
+    @api.multi
+    def write(self, vals):
+        if 'adjustement_volume' in vals:
+            for record in self:
+                if (record.validated):
+                    record.sub_prorrated_value_to_subparcels()
+        resp = super(WuaControlpresconsumption, self).write(vals)
+        if 'adjustement_volume' in vals:
+            for record in self:
+                if (record.validated):
+                    record.add_prorrated_value_to_subparcels()
+        return resp
 
     @api.multi
     def name_get(self):
@@ -224,6 +246,42 @@ class WuaControlpresconsumption(models.Model):
             result.append((record.id, name))
         return result
 
+    def add_prorrated_value_to_subparcels(self):
+        if (self.controlperiod_id):
+            total_area = self.waterconnection_id.\
+                total_affected_area_official
+            for ip in self.waterconnection_id.irrigationpoint_ids:
+                for subparcel in ip.parcel_id.subparcel_ids:
+                    if (subparcel.cultivation_id.monitoring):
+                        prorrated = self.volume_real * \
+                            ((subparcel.area_official)/total_area)
+                        comp_pres = self.env[
+                            'wua.comparative.subparcel.presconsumption'].\
+                            search(['&',
+                                   ('controlperiod_id', '=',
+                                    self.controlperiod_id.id),
+                                   ('subparcel_id', '=', subparcel.id)])
+                        if (len(comp_pres) == 1):
+                            comp_pres.real_consumption += prorrated
+
+    def sub_prorrated_value_to_subparcels(self):
+        if (self.controlperiod_id):
+            total_area = self.waterconnection_id.\
+                total_affected_area_official
+            for ip in self.waterconnection_id.irrigationpoint_ids:
+                for subparcel in ip.parcel_id.subparcel_ids:
+                    if (subparcel.cultivation_id.monitoring):
+                        prorrated = self.volume_real * \
+                            ((subparcel.area_official)/total_area)
+                        comp_pres = self.env[
+                            'wua.comparative.subparcel.presconsumption'].\
+                            search(['&',
+                                   ('controlperiod_id', '=',
+                                    self.controlperiod_id.id),
+                                   ('subparcel_id', '=', subparcel.id)])
+                        if (len(comp_pres) == 1):
+                            comp_pres.real_consumption -= prorrated
+
     def action_assign_agriculturalseason_to_consumptions(self):
         controlpresconsumptions = self.env['wua.controlpresconsumption']
         all_controlpresconsumptions = controlpresconsumptions.search([])
@@ -241,6 +299,41 @@ class WuaControlpresconsumption(models.Model):
                 controlpresconsumptions_of_current_season.write({
                     'agriculturalseason_id': agriculturalseason.id,
                     })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Consumptions'),
+            'res_model': 'wua.controlpresconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'target': 'current',
+            'context': self.env.context,
+            }
+
+    def action_assign_controlperiod_to_consumptions(self):
+        controlpresconsumptions = self.env['wua.controlpresconsumption']
+        all_controlpresconsumptions = controlpresconsumptions.search([])
+        all_controlpresconsumptions.write({
+            'controlperiod_id': None,
+            })
+        all_comp_pres = self.env['wua.comparative.subparcel.presconsumption'].\
+            search([])
+        all_comp_pres.write({
+            'real_consumption': 0,
+            })
+        controlperiods = self.env['wua.controlperiod'].search([])
+        for controlperiod in controlperiods:
+            controlpresconsumptions_of_current_season = \
+                controlpresconsumptions.search(
+                    [('reading_end_time', '>=',
+                        controlperiod.initial_date),
+                     ('reading_end_time', '<=', controlperiod.end_date)])
+            if len(controlpresconsumptions_of_current_season) > 0:
+                controlpresconsumptions_of_current_season.write({
+                    'controlperiod_id': controlperiod.id,
+                    })
+                for ctrl_pres in controlpresconsumptions_of_current_season:
+                    if (ctrl_pres.validated):
+                        ctrl_pres.add_prorrated_value_to_subparcels()
         return {
             'type': 'ir.actions.act_window',
             'name': _('Consumptions'),

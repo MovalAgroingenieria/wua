@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_generate_controlperiods_view_form" model="ir.ui.view">
+        <field name="name">Wizard to generate controlperiods</field>
+        <field name="model">wizard.generate.controlperiods</field>
+        <field name="arch" type="xml">
+            <form string="Generate controlperiods of current agricultural season">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '360px'});
+                        $('.modal-dialog').css({'height': '420px'});
+                    });
+                </script>
+                <group name="body">
+                    <field name="agriculturalseason_name" readonly="1"/>
+                    <field name="initial_date"/>
+                    <field name="end_date"/>
+                    <field name="interval" style="width:150px"/>
+                </group>
+                <footer>
+                    <button name="generate_controlperiods"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_generate_controlperiods"
+        name="Generate Controlperiods"
+        res_model="wizard.generate.controlperiods"
+        src_model="wua.agriculturalseason"
+        view_mode="form"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+
+</odoo>
