@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="wua_comparative_subparcel_presconsumption_control_presconsumption_action" model="ir.actions.server">
+        <field name="name">Control Presconsumptions</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_comparative_subparcel_presconsumption"/>
+        <field name="code">action = env["wua.comparative.subparcel.presconsumption"].get_wua_cmp_subp_presconsumption_control_presconsumptionaction()</field>
+    </record>
+
     <record id="wua_comparative_subparcel_presconsumption_view_form" model="ir.ui.view">
         <field name="name">Subparcels (form view)</field>
         <field name="model">wua.comparative.subparcel.presconsumption</field>
         <field name="arch" type="xml">
             <form duplicate="0" create="false" delete="false">
               <sheet>
+                <div name="buttons" class="oe_button_box">
+                  <button name="%(wua_comparative_subparcel_presconsumption_control_presconsumption_action)d"
+                          type="action"
+                          class="oe_stat_button"
+                          icon="fa-list"
+                          groups="base_wua.group_wua_user">
+                          <div class="o_form_field o_stat_info">
+                              <span class="o_stat_text">
+                                  Ctrl. Consumptions
+                              </span>
+                          </div>
+                  </button>
+                </div>
                   <group name="master_data">
                       <group name="master_data_left">
                           <field name="parcel_id" readonly="1"/>

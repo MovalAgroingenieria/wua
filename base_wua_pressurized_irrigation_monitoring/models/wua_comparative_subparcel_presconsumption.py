@@ -2,7 +2,7 @@
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 import datetime
 from Crypto.Cipher import AES
 import pytz
@@ -361,3 +361,33 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                             ((cmp_pres.subparcel_id.area_official)/total_area)
                         cmp_pres.real_consumption += prorrated
         return cmp_pres
+
+    def get_wua_cmp_subp_presconsumption_control_presconsumptionaction(self):
+        current_cmp_pres_id = self.env.context.get('active_id')
+        current_cmp_pres = \
+            self.env['wua.comparative.subparcel.presconsumption'].search(
+                [('id', '=', current_cmp_pres_id)])
+        waterconnections_ids = map(
+            lambda x: x.waterconnection_id.id,
+            current_cmp_pres.parcel_id.irrigationpoint_ids)
+        condition = [('waterconnection_id', 'in', waterconnections_ids)]
+        id_tree_view = \
+            self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'wua_controlpresconsumption_view_tree').id
+        id_search_view = \
+            self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'wua_controlpresconsumption_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Control Presconsumptions'),
+            'res_model': 'wua.controlpresconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
+            'domain': condition,
+            'target': 'current',
+            'context': self.env.context,
+            }
+        return act_window
