@@ -6,6 +6,7 @@ import datetime
 import locale
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
+from odoo.tools.profiler import profile
 
 
 class WuaQuotaperiod(models.Model):
@@ -558,6 +559,7 @@ class WuaQuotaperiod(models.Model):
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
+    @profile
     def _apply_multiple_assignment_for_superproduct(self, quotaperiodline):
         resp = True
         if (not quotaperiodline or
@@ -591,8 +593,32 @@ class WuaQuotaperiod(models.Model):
                     selected_partnerlinks = \
                         self.env['wua.parcel.partnerlink'].browse(
                             partnerlinks_with_quota)
-                    quota_model = self.env['wua.quota']
-                    hydricmovement_model = self.env['wua.hydricmovement']
+                    # Performance Improvements: old
+                    # quota_model = self.env['wua.quota']
+                    # hydricmovement_model = self.env['wua.hydricmovement']
+                    # for partner_id in partners_with_quota:
+                    #     selected_partnerlinks_of_partner = \
+                    #         selected_partnerlinks.search(
+                    #             [('partner_id', '=', partner_id),
+                    #              ('parcel_id', 'in', selected_parcels_ids)])
+                    #     area = sum(x.area_official_water_costs_net
+                    #                for x in selected_partnerlinks_of_partner)
+                    #     initial_value = area * provision
+                    #     new_quota = quota_model.create({
+                    #         'quotaperiod_id': quotaperiod.id,
+                    #         'partner_id': partner_id,
+                    #         'superproduct_id': superproduct.id,
+                    #         'initial_value': initial_value,
+                    #         })
+                    #     hydricmovement_model.create({
+                    #         'quota_id': new_quota.id,
+                    #         'event_time': quotaperiod.initial_date,
+                    #         'type': 'multiple_assign',
+                    #         'volume': initial_value,
+                    #         })
+                    # Performance Improvements: new (1/4 of the previous time)
+                    new_quotas = []
+                    agriculturalseason = quotaperiod.agriculturalseason_id
                     for partner_id in partners_with_quota:
                         selected_partnerlinks_of_partner = \
                             selected_partnerlinks.search(
@@ -601,18 +627,92 @@ class WuaQuotaperiod(models.Model):
                         area = sum(x.area_official_water_costs_net
                                    for x in selected_partnerlinks_of_partner)
                         initial_value = area * provision
-                        new_quota = quota_model.create({
+                        new_quotas.append({
                             'quotaperiod_id': quotaperiod.id,
                             'partner_id': partner_id,
                             'superproduct_id': superproduct.id,
                             'initial_value': initial_value,
+                            'agriculturalseason_id': agriculturalseason.id,
+                            'of_active_agriculturalseason':
+                                agriculturalseason.active_agriculturalseason,
                             })
-                        hydricmovement_model.create({
-                            'quota_id': new_quota.id,
-                            'event_time': quotaperiod.initial_date,
-                            'type': 'multiple_assign',
-                            'volume': initial_value,
-                            })
+                    try:
+                        commit_ok = True
+                        self.env.cr.savepoint()
+                        user_id = self.env.user.id
+                        quota_ids = self.env['wua.quota'].search(
+                            [], order='id desc')
+                        for quota in new_quotas:
+                            self.env.cr.execute("""
+                                INSERT INTO wua_quota (id, create_uid,
+                                write_uid, create_date, write_date,
+                                quotaperiod_id, partner_id,
+                                superproduct_id, initial_value,
+                                agriculturalseason_id,
+                                of_active_agriculturalseason,
+                                accumulated_input, accumulated_consumption,
+                                balance)
+                                VALUES (nextval('wua_quota_id_seq'), %s,
+                                %s, now(), now(), %s, %s, %s, %s, %s, %s,
+                                %s, 0.00, %s)
+                                """, (user_id, user_id,
+                                      quota['quotaperiod_id'],
+                                      quota['partner_id'],
+                                      quota['superproduct_id'],
+                                      quota['initial_value'],
+                                      quota['agriculturalseason_id'],
+                                      quota['of_active_agriculturalseason'],
+                                      quota['initial_value'],
+                                      quota['initial_value']))
+                        if quota_ids:
+                            last_id = quota_ids[0].id
+                        else:
+                            last_id = 0
+                        added_quotas = self.env['wua.quota'].search(
+                            [('id', '>', last_id)])
+                        hydricmovement_ids = \
+                            self.env['wua.hydricmovement'].search(
+                                [], order='id desc')
+                        for quota in added_quotas:
+                            self.env.cr.execute("""
+                                INSERT INTO wua_hydricmovement (id, create_uid,
+                                write_uid, create_date, write_date,
+                                quota_id, event_time, type, volume,
+                                agriculturalseason_id, partner_id,
+                                quotaperiod_id, superproduct_id,
+                                accounting_volume, is_consumption,
+                                of_active_agriculturalseason)
+                                VALUES (nextval('wua_hydricmovement_id_seq'),
+                                %s, %s, now(), now(), %s, %s,
+                                'multiple_assign', %s, %s, %s, %s, %s, %s,
+                                FALSE, %s)
+                                """, (user_id, user_id,
+                                      quota.id,
+                                      quota.quotaperiod_id.initial_date,
+                                      quota.initial_value,
+                                      quota.agriculturalseason_id.id,
+                                      quota.partner_id.id,
+                                      quota.quotaperiod_id.id,
+                                      quota.superproduct_id.id,
+                                      quota.initial_value,
+                                      quota.of_active_agriculturalseason))
+                        if hydricmovement_ids:
+                            last_id = hydricmovement_ids[0].id
+                        else:
+                            last_id = 0
+                        added_hydricmovements = \
+                            self.env['wua.hydricmovement'].search(
+                                [('id', '>', last_id)])
+                        self.env.cr.commit()
+                    except:
+                        commit_ok = False
+                        self.env.cr.rollback()
+                        raise exceptions.UserError(_('Error when '
+                                                     'updating records.'))
+                    if commit_ok:
+                        added_quotas._compute_name()
+                        added_hydricmovements._compute_description()
+                        quotaperiod._compute_state()
             else:
                 resp = False
         return resp
