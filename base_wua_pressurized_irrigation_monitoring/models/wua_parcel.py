@@ -219,6 +219,12 @@ class WuaParcelSubparcel(models.Model):
             record.deviation = deviation
 
     @api.multi
+    def action_regenerate_comparative_consumptions(self):
+        subparcels = self.env['wua.parcel.subparcel'].search(
+            [('cultivation_id.monitoring', '=', True)])
+        subparcels.regenerate_comparative_consumptions()
+
+    @api.multi
     def _compute_gis_viewer_link(self):
         url = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer')
@@ -407,6 +413,56 @@ class WuaParcelSubparcel(models.Model):
                     for presconsumption in presconsumptions:
                         presconsumption.write(update_vals)
         return resp
+
+    def regenerate_comparative_consumptions(self):
+        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        if (len(active_agriculturalseason) == 1):
+            for record in self:
+                cmp_subp_presc = \
+                    self.env['wua.comparative.subparcel.presconsumption']
+                cmp_pres_of_subparcel = cmp_subp_presc.search(
+                    ['&', ('agriculturalseason_id', '=',
+                           active_agriculturalseason.id),
+                     ('subparcel_id', '=', record.id)])
+                if (len(cmp_pres_of_subparcel) != 1):
+                    cmp_pres_of_subparcel.unlink()
+                for controlperiod in active_agriculturalseason.\
+                        controlperiod_ids:
+                    cmp_subp_presc.create({
+                        'subparcel_id': record.id,
+                        'parcel_id': record.parcel_id.id,
+                        'cadastral_reference':
+                            record.parcel_id.cadastral_reference,
+                        'area_perc': record.area_perc,
+                        'irrigationsystem_id':
+                            record.irrigationsystem_id.id,
+                        'tree_distance': record.tree_distance,
+                        'tree_drippers_number': record.tree_drippers_number,
+                        'tree_development': record.tree_development,
+                        'tree_lateral_number': record.tree_lateral_number,
+                        'row_distance': record.row_distance,
+                        'controlperiod_id': controlperiod.id,
+                        'partner_id': record.partner_id.id,
+                        'hydraulicsector_id': record.hydraulicsector_id.id,
+                        'cultivation_id': record.cultivation_id.id,
+                        'cultivationvariety_id':
+                            record.cultivationvariety_id.id,
+                        'area_official': record.area_official,
+                        'productionmethod_id':
+                            record.productionmethod_id.id,
+                        'shaded_percentage': record.shaded_percentage,
+                        'soil_type': record.soil_type,
+                        'organic_material_percentage':
+                            record.organic_material_percentage,
+                        'orientation': record.orientation,
+                        'drippers_number': record.drippers_number,
+                        'drippers_nomial_flow': record.drippers_nomial_flow
+                        })
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
+        }
 
     def _search_cultivation_age(self, operator, value):
         current_year = int(datetime.date.today().strftime("%Y"))
