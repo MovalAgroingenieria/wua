@@ -43,6 +43,14 @@ class WuaComparativeCultivationPresconsumption(models.Model):
         digits=(32, 4)
     )
 
+    consumption_category = fields.Selection([
+        ('a', 'Correct irrigation'),
+        ('b', 'Acceptable irrigation'),
+        ('c', 'Unacceptable irrigation'),
+        ],
+        string='Consumption Category'
+    )
+
     def init(self):
         tools.drop_view_if_exists(
             self.env.cr, 'wua_comparative_cultivation_presconsumption')
@@ -52,6 +60,31 @@ class WuaComparativeCultivationPresconsumption(models.Model):
             wcsp1.cultivation_id, SUM(wcsp1.estimated_consumption) AS
             estimated_consumption, SUM(wcsp1.real_consumption) AS
             real_consumption, SUM(wcsp1.deviation) AS deviation,
+            CASE
+             WHEN (
+                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (ABS(SUM(wcsp1.deviation)) * 100 /
+                     SUM(wcsp1.real_consumption) >
+                     (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
+                      FLOAT) FROM ir_values WHERE model =
+                      'wua.monitoring.configuration' AND name LIKE
+                      'max_deviation_categ_02'
+                     )
+                    )
+                ) THEN 'c'
+             WHEN (
+                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (ABS(SUM(wcsp1.deviation)) * 100 /
+                     SUM(wcsp1.real_consumption) >
+                     (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
+                      FLOAT) FROM ir_values WHERE model =
+                      'wua.monitoring.configuration' AND name LIKE
+                      'max_deviation_categ_01'
+                     )
+                    )
+                ) THEN 'b'
+             ELSE  'a'
+            END AS consumption_category,
             wcsp1.agriculturalseason_id FROM
             wua_comparative_subparcel_presconsumption wcsp1 GROUP BY
             wcsp1.cultivation_id, wcsp1.controlperiod_id,

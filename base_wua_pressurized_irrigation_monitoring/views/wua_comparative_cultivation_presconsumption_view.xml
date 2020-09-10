@@ -13,6 +13,10 @@
               <field name="estimated_consumption"/>
               <field name="real_consumption"/>
               <field name="deviation"/>
+              <field name="consumption_category" invisible="1" />
+              <button icon='fa-circle semaphore-red' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'c')]}"/>
+              <button icon='fa-circle semaphore-yellow' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'b')]}"/>
+              <button icon='fa-circle semaphore-green' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'a')]}"/>
             </tree>
         </field>
     </record>
@@ -27,6 +31,13 @@
               <field name="controlperiod_id"/>
               <filter string="Active Agriculturalseason" name="agriculturalseasonactive"
                domain="[('agriculturalseason_id.active_agriculturalseason','=',True)]"/>
+              <separator/>
+              <filter string="Correct Irrigation" name="category_a"
+               domain="[('consumption_category','=','a')]"/>
+              <filter string="Acceptable Irrigation" name="category_b"
+               domain="[('consumption_category','=','b')]"/>
+              <filter string="Unacceptable Irrigation" name="category_c"
+               domain="[('consumption_category','=','c')]"/>
               <group expand="0" string="Group By">
                   <filter string="Agriculturalseason"
                    name="agriculturalseason"
@@ -34,6 +45,9 @@
                   <filter string="Controlperiod"
                    name="controlperiod"
                    context="{'group_by':'controlperiod_id'}"/>
+                  <filter string="Consumption Category"
+                   name="consumption_category"
+                   context="{'group_by':'consumption_category'}"/>
               </group>
             </search>
         </field>

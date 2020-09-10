@@ -214,6 +214,16 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         digits=(5, 2),
     )
 
+    consumption_category = fields.Selection([
+        ('a', 'Correct irrigation'),
+        ('b', 'Acceptable irrigation'),
+        ('c', 'Unacceptable irrigation'),
+        ],
+        string='Consumption Category',
+        compute='_compute_consumption_category',
+        store=True
+    )
+
     @api.depends('estimated_consumption', 'real_consumption')
     def _compute_deviation(self):
         for record in self:
@@ -252,6 +262,24 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                 updated_in_remotecontrol = \
                     record.parcel_id.updated_in_remotecontrol
             record.updated_in_remotecontrol = updated_in_remotecontrol
+
+    @api.depends('deviation', 'real_consumption')
+    def _compute_consumption_category(self):
+        percentage_categ_01 = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'max_deviation_categ_01')
+        percentage_categ_02 = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'max_deviation_categ_02')
+        for record in self:
+            deviation = abs(record.deviation)
+            consumption_category = 'a'
+            if (deviation != 0 and record.real_consumption > 0):
+                deviation_percentage = (deviation * 100) / record.\
+                    real_consumption
+                if (deviation_percentage > percentage_categ_02):
+                    consumption_category = 'c'
+                elif (deviation_percentage > percentage_categ_01):
+                    consumption_category = 'b'
+            record.consumption_category = consumption_category
 
     @api.multi
     def _compute_gis_viewer_link(self):
