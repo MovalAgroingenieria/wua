@@ -3,6 +3,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api
+import datetime
+from Crypto.Cipher import AES
+import pytz
 
 
 class WuaComparativeSubparcelPresconsumption(models.Model):
@@ -162,14 +165,18 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
 
     cadastral_reference_link = fields.Char(
         string='Cadastral Report',
+        compute='_compute_cadastral_reference_link',
+        store=True
     )
 
     gis_viewer_link = fields.Char(
         string='GIS Viewer',
+        compute='_compute_gis_viewer_link'
     )
 
     updated_in_remotecontrol = fields.Boolean(
         string='Updated in Remote Control',
+        compute='_compute_updated_in_telecontrol'
     )
 
     irrigationsystem_id = fields.Many2one(
@@ -227,6 +234,89 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                 agriculturalseason_id = \
                     record.controlperiod_id.agriculturalseason_id
             record.agriculturalseason_id = agriculturalseason_id
+
+    @api.depends('parcel_id', 'parcel_id.cadastral_reference_link')
+    def _compute_cadastral_reference_link(self):
+        for record in self:
+            cadastral_reference_link = None
+            if record.parcel_id.cadastral_reference_link:
+                cadastral_reference_link = \
+                    record.parcel_id.cadastral_reference_link
+            record.cadastral_reference_link = cadastral_reference_link
+
+    @api.depends('parcel_id', 'parcel_id.updated_in_remotecontrol')
+    def _compute_updated_in_telecontrol(self):
+        for record in self:
+            updated_in_remotecontrol = None
+            if record.parcel_id.updated_in_remotecontrol:
+                updated_in_remotecontrol = \
+                    record.parcel_id.updated_in_remotecontrol
+            record.updated_in_remotecontrol = updated_in_remotecontrol
+
+    @api.multi
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        parcel_param = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_parcel_param')
+        for record in self:
+            url_for_record = url
+            if url_for_record:
+                if parcel_param:
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        parcel_param + '=' + str(record.parcel_id.name)
+            if (url_for_record and username and password and (not
+               self.env.user.has_group('base_wua.group_wua_portal_user'))):
+                credentials = username + "-" + password
+                credentials = credentials.ljust(32)
+                current_datetime = pytz.utc.localize(datetime.datetime.now())
+                current_datetime = current_datetime.astimezone(
+                    pytz.timezone('Europe/Madrid'))
+                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+                minimum = int(current_datetime[14:])
+                if minimum < 30:
+                    minimum = '00'
+                else:
+                    minimum = '30'
+                iv = current_datetime[:14] + minimum
+                aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+                cipher_text = aes_encryptor.encrypt(credentials)
+                cipher_text = cipher_text.encode('base64')
+                sep_char = '?'
+                if url_for_record.find('?') != -1:
+                    sep_char = '&'
+                url_for_record = url_for_record + sep_char + \
+                    "arg=" + cipher_text
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
+
+    @api.multi
+    def action_see_cadastral_report(self):
+        self.ensure_one()
+        if self.cadastral_reference_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.cadastral_reference_link,
+                'target': 'new',
+            }
 
     @api.model
     def create(self, vals):
