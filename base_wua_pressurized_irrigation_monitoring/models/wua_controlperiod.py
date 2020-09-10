@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from datetime import timedelta
-from odoo import models, fields, api
+from odoo import models, fields, api, _, exceptions
 
 
 class WuaControlperiod(models.Model):
@@ -49,7 +49,8 @@ class WuaControlperiod(models.Model):
         string='Agricultural Season',
         comodel_name='wua.agriculturalseason',
         index=True,
-        ondelete='cascade'
+        ondelete='cascade',
+        required=True
     )
 
     estimated_consumption = fields.Float(
@@ -89,6 +90,32 @@ class WuaControlperiod(models.Model):
         inverse_name="controlperiod_id"
     )
 
+    _sql_constraints = [
+        ('unique_name', 'UNIQUE (name)',
+         'Existing Quota Period.'),
+        ('valid_dates',
+         'CHECK (initial_date <= end_date )',
+         'Incorrect dates.'),
+        ]
+
+    @api.constrains('initial_date', 'end_date')
+    def _check_initial_end_dates(self):
+        if (len(self) == 1 and
+           ((self.initial_date < self.agriculturalseason_id.initial_date) or
+           (self.end_date > self.agriculturalseason_id.end_date))):
+            raise exceptions.ValidationError(_(
+                'The control period limits are outside the agricultural '
+                'season.'))
+
+    @api.constrains('initial_date', 'end_date')
+    def _check_others_controlperiods(self):
+        controlperiods = self.env['wua.controlperiod'].search(
+            ['&', ('initial_date', '<=', self.end_date),
+             ('end_date', '>=', self.initial_date)])
+        if (len(self) == 1 and len(controlperiods) > 1):
+            raise exceptions.ValidationError(_(
+                'The control period overlaps with another.'))
+
     @api.depends('initial_date')
     def _compute_name(self):
         for record in self:
@@ -109,7 +136,8 @@ class WuaControlperiod(models.Model):
         for record in self:
             real_consumption = 0
             for subp_pres in record.subparcel_presconsumption_ids:
-                real_consumption += subp_pres.real_consumption
+                if (subp_pres.agriculturalseason_id.active_agriculturalseason):
+                    real_consumption += subp_pres.real_consumption
             record.real_consumption = real_consumption
 
     @api.depends('estimated_consumption', 'real_consumption')
@@ -180,3 +208,51 @@ class WuaControlperiod(models.Model):
                 for subparcel in record.subparcel_presconsumption_ids:
                     subparcel.estimated_consumption = 0
             record.state = 'draft'
+
+    def get_wua_controlperiod_comparative_presconsumption_action(self):
+        current_controlperiod_id = self.env.context.get('active_id')
+        condition = [('controlperiod_id', '=', current_controlperiod_id)]
+        id_tree_view = \
+            self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'wua_comparative_subparcel_presconsumption_view_tree').id
+        id_search_view = \
+            self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'wua_comparative_subparcel_presconsumption_view_search').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Subparcels'),
+            'res_model': 'wua.comparative.subparcel.presconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
+            'domain': condition,
+            'target': 'current',
+            'context': {'search_default_controlperiod': True},
+            }
+        return act_window
+
+    def get_wua_controlperiod_control_presconsumption_action(self):
+        current_controlperiod_id = self.env.context.get('active_id')
+        condition = [('controlperiod_id', '=', current_controlperiod_id)]
+        id_tree_view = \
+            self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'wua_controlpresconsumption_view_tree').id
+        id_search_view = \
+            self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'wua_controlpresconsumption_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Control Presconsumptions'),
+            'res_model': 'wua.controlpresconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
+            'domain': condition,
+            'target': 'current',
+            'context': self.env.context,
+            }
+        return act_window

@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+  <record id="wua_controlperiod_comparative_presconsumption_action" model="ir.actions.server">
+      <field name="name">COmparative Presconsumption</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_controlperiod"/>
+      <field name="code">action = env["wua.controlperiod"].get_wua_controlperiod_comparative_presconsumption_action()</field>
+  </record>
+
+  <record id="wua_controlperiod_control_presconsumption_action" model="ir.actions.server">
+      <field name="name">Control Presconsumptions</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_controlperiod"/>
+      <field name="code">action = env["wua.controlperiod"].get_wua_controlperiod_control_presconsumption_action()</field>
+  </record>
+
     <record id="wua_controlperiod_view_form" model="ir.ui.view">
         <field name="name">Control Periods (form view)</field>
         <field name="model">wua.controlperiod</field>
@@ -23,11 +35,39 @@
                          statusbar_visible="draft,calculated"/>
               </header>
               <sheet>
+                  <div name="buttons" class="oe_button_box">
+                    <button name="%(wua_controlperiod_comparative_presconsumption_action)d"
+                            type="action"
+                            class="oe_stat_button"
+                            icon="fa-list"
+                            groups="base_wua.group_wua_user">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Comp. Consumptions
+                                </span>
+                            </div>
+                    </button>
+                    <button name="%(wua_controlperiod_control_presconsumption_action)d"
+                            type="action"
+                            class="oe_stat_button"
+                            icon="fa-list"
+                            groups="base_wua.group_wua_user">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Ctrl. Consumptions
+                                </span>
+                            </div>
+                    </button>
+                  </div>
                   <group name="master_data">
                       <group name="master_data_left">
-                          <field readonly="1" name="initial_date"/>
-                          <field readonly="1" name="end_date"/>
-                          <field name="agriculturalseason_id"/>
+                          <field invisible="1" name="id"/>
+                          <field attrs="{'readonly':
+                                  [('id','>',0)]}" name="initial_date"/>
+                          <field attrs="{'readonly':
+                                  [('id','>',0)]}" name="end_date"/>
+                          <field attrs="{'readonly':
+                                  [('id','>',0)]}" name="agriculturalseason_id"/>
                       </group>
                       <group name="master_data_right">
                           <field name="estimated_consumption"/>
