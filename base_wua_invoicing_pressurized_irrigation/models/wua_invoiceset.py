@@ -548,14 +548,14 @@ class WuaInvoicesetLine(models.Model):
                     waterconnection_id, irrigationshed_id, hydraulicsector_id,
                     adjustement_volume, volume_real
                     FROM wua_presconsumption
-                    WHERE product_id=%s and invoiceset_id is null and validated
+                    WHERE product_id=%s and invoiceset_id IS NULL AND validated
                     """, (user_id, user_id, invoicesetline_id, product_id))
                 self.env.cr.execute("""
                     UPDATE wua_presconsumption
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
                     invoiced_consumption=TRUE
                     WHERE product_id=""" + str(product_id) + """ and
-                    invoiceset_id is null""")
+                    invoiceset_id is null AND validated""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
