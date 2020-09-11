@@ -6,7 +6,7 @@ import datetime
 import locale
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
-from odoo.tools.profiler import profile
+# from odoo.tools.profiler import profile
 
 
 class WuaQuotaperiod(models.Model):
@@ -559,7 +559,7 @@ class WuaQuotaperiod(models.Model):
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
-    @profile
+    # @profile
     def _apply_multiple_assignment_for_superproduct(self, quotaperiodline):
         resp = True
         if (not quotaperiodline or
@@ -586,7 +586,7 @@ class WuaQuotaperiod(models.Model):
                     #     lambda x: x.parcel_id.id ==
                     #     selected_parcel.parcel_id.id and
                     #     x.water_costs_percentage > 0)
-                    # Performance Improvements: new (1/2)
+                    # Performance Improvements: new (1/2) (1/100 of prev. time)
                     partnerlinks_of_parcel = \
                         self.env['wua.parcel.partnerlink'].search(
                             [('parcel_id', '=', selected_parcel.parcel_id.id),
