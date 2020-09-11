@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-13 09:41+0000\n"
-"PO-Revision-Date: 2020-07-13 09:41+0000\n"
+"POT-Creation-Date: 2020-09-11 09:36+0000\n"
+"PO-Revision-Date: 2020-09-11 09:36+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,10 +17,25 @@ msgstr ""
 
 #. module: wua_crm_filemgmt
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.wua_parcel_view_form
-msgid "<span attrs=\"{'invisible': [('number_of_files','&gt;', 1)]}\"> File</span>\n"
-"                          <span attrs=\"{'invisible': [('number_of_files','=', 1)]}\"> Files</span>"
-msgstr "<span attrs=\"{'invisible': [('number_of_files','&gt;', 1)]}\"> expedient</span>\n"
-"                          <span attrs=\"{'invisible': [('number_of_files','=', 1)]}\"> expedients</span>"
+msgid "<span class=\"o_stat_text\">\n"
+"                            <span attrs=\"{'invisible': [('number_of_file_registers','&gt;', 1)]}\"> file register</span>\n"
+"                            <span attrs=\"{'invisible': [('number_of_file_registers','=', 1)]}\"> file registers</span>\n"
+"                        </span>"
+msgstr "<span class=\"o_stat_text\">\n"
+"                            <span attrs=\"{'invisible': [('number_of_file_registers','&gt;', 1)]}\"> registre expedient</span>\n"
+"                            <span attrs=\"{'invisible': [('number_of_file_registers','=', 1)]}\"> registres expedient</span>\n"
+"                        </span>"
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.wua_parcel_view_form
+msgid "<span class=\"o_stat_text\">\n"
+"                            <span attrs=\"{'invisible': [('number_of_files','&gt;', 1)]}\"> file</span>\n"
+"                            <span attrs=\"{'invisible': [('number_of_files','=', 1)]}\"> files</span>\n"
+"                        </span>"
+msgstr "<span class=\"o_stat_text\">\n"
+"                            <span attrs=\"{'invisible': [('number_of_files','&gt;', 1)]}\"> expedient</span>\n"
+"                            <span attrs=\"{'invisible': [('number_of_files','=', 1)]}\"> expedients</span>\n"
+"                        </span>"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wua_parcel_file_ids
@@ -56,18 +71,24 @@ msgstr "Mostrar Nom"
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_file_id
 msgid "File"
-msgstr "Expedient"
+msgstr "Archivo"
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/wua_parcel.py:46
+#: code:addons/wua_crm_filemgmt/models/wua_parcel.py:53
 #, python-format
 msgid "File Parcellinks"
 msgstr "Parcel·les"
 
 #. module: wua_crm_filemgmt
-#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wua_parcel_number_of_files
-msgid "Files"
-msgstr "Expedients"
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wua_parcel_file_res_letter_ids
+msgid "File Registry"
+msgstr "Registre expedient"
+
+#. module: wua_crm_filemgmt
+#: code:addons/wua_crm_filemgmt/models/wua_parcel.py:80
+#, python-format
+msgid "File registers"
+msgstr "Registres expedient"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_gis_viewer_link
@@ -87,7 +108,7 @@ msgstr "ID"
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_partner_id
 msgid "Irrigation Partner"
-msgstr "Soci de reg"
+msgstr "Regant"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink___last_update
@@ -113,6 +134,16 @@ msgstr "Ubicació"
 #: model:ir.model,name:wua_crm_filemgmt.model_res_file
 msgid "Log of Files Movements"
 msgstr "Bloc de moviments d'expedients"
+
+#. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wua_parcel_number_of_file_registers
+msgid "Num. file registers"
+msgstr "Nº registres expedient"
+
+#. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wua_parcel_number_of_files
+msgid "Num. of files"
+msgstr "Nº d'expedients"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_area_official

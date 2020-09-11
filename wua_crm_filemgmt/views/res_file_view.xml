@@ -6,11 +6,11 @@
         <field name="model">res.file</field>
         <field name="inherit_id" ref="crm_filemgmt.res_file_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//page[@name='notes_page']" position="before">
+            <xpath expr="//page[@name='attachments']" position="before">
                 <page name="parcellink_page" string="Parcel Links">
                     <field name="parcellink_ids"
-                           attrs="{'readonly':['|',('state','=','closed'),('is_blocked','=',True)]}"
-                           context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"/>
+                        attrs="{'readonly':['|',('state','=','closed'),('is_blocked','=',True)]}"
+                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"/>
                 </page>
             </xpath>
         </field>

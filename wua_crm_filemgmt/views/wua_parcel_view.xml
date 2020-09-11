@@ -13,11 +13,29 @@
                         attrs="{'invisible': [('number_of_files','=', 0)]}"
                         groups="base_wua.group_wua_user">
                     <div class="o_form_field o_stat_info">
-                          <field name="number_of_files"/>
-                          <span attrs="{'invisible': [('number_of_files','>', 1)]}"> File</span>
-                          <span attrs="{'invisible': [('number_of_files','=', 1)]}"> Files</span>
+                        <span class="o_stat_value">
+                            <field name="number_of_files"/>
+                        </span>
+                        <span class="o_stat_text">
+                            <span attrs="{'invisible': [('number_of_files','>', 1)]}"> file</span>
+                            <span attrs="{'invisible': [('number_of_files','=', 1)]}"> files</span>
+                        </span>
                     </div>
                 </button>
+                <button name="action_get_registers"
+                       type="object" class="oe_stat_button"
+                       icon="fa-filemgmt-file-register"
+                       attrs="{'invisible': [('number_of_file_registers','=', 0)]}">
+                   <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_file_registers"/>
+                        </span>
+                        <span class="o_stat_text">
+                            <span attrs="{'invisible': [('number_of_file_registers','>', 1)]}"> file register</span>
+                            <span attrs="{'invisible': [('number_of_file_registers','=', 1)]}"> file registers</span>
+                        </span>
+                   </div>
+               </button>
             </xpath>
         </field>
     </record>
