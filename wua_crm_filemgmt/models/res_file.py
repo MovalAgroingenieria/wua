@@ -78,33 +78,6 @@ class ResFileParcellink(models.Model):
         string='Subject',
         related='file_id.subject')
 
-    @api.depends('parcel_id')
-    def _compute_parcel_area_official(self):
-        for record in self:
-            if record.parcel_id:
-                record.parcel_area_official = \
-                    record.parcel_id.area_official
-
-    @api.depends('parcel_id')
-    def _compute_parcel_rural_location_county(self):
-        for record in self:
-            if record.parcel_id:
-                record.parcel_rural_location_county = \
-                    record.parcel_id.rural_location_county
-
-    @api.depends('parcel_id')
-    def _compute_parcel_cadastral_reference(self):
-        for record in self:
-            if record.parcel_id:
-                record.parcel_cadastral_reference = \
-                    record.parcel_id.cadastral_reference
-
-    @api.depends('parcel_id')
-    def _compute_parcel_partner_id(self):
-        for record in self:
-            if record.parcel_id:
-                record.parcel_partner_id = record.parcel_id.partner_id
-
     @api.multi
     def _compute_parcel_gis_viewer_link(self):
         for record in self:
@@ -138,3 +111,30 @@ class ResFileParcellink(models.Model):
                 'url': self.parcel_cadastral_reference_link,
                 'target': 'new',
             }
+
+    @api.depends('parcel_id')
+    def _compute_parcel_area_official(self):
+        for record in self:
+            if record.parcel_id:
+                record.parcel_area_official = \
+                    record.parcel_id.area_official
+
+    @api.depends('parcel_id')
+    def _compute_parcel_rural_location_county(self):
+        for record in self:
+            if record.parcel_id:
+                record.parcel_rural_location_county = \
+                    record.parcel_id.rural_location_county
+
+    @api.depends('parcel_id')
+    def _compute_parcel_cadastral_reference(self):
+        for record in self:
+            if record.parcel_id:
+                record.parcel_cadastral_reference = \
+                    record.parcel_id.cadastral_reference
+
+    @api.depends('parcel_id')
+    def _compute_parcel_partner_id(self):
+        for record in self:
+            if record.parcel_id:
+                record.parcel_partner_id = record.parcel_id.partner_id
