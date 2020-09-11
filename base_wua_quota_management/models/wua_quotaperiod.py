@@ -569,8 +569,9 @@ class WuaQuotaperiod(models.Model):
             selected_parcels = filter(
                 lambda x: x['selected'] is True,
                 quotaperiodline.quotaperiodlineparcel_ids)
-            partnerlinks = self.env['wua.parcel.partnerlink'].search([])
-            if selected_parcels and partnerlinks:
+            # Performance Improvements: old (1/2)
+            # partnerlinks = self.env['wua.parcel.partnerlink'].search([])
+            if selected_parcels:
                 quotaperiod = quotaperiodline.quotaperiod_id
                 superproduct = quotaperiodline.superproduct_id
                 provision = quotaperiodline.provision
@@ -578,12 +579,20 @@ class WuaQuotaperiod(models.Model):
                 partnerlinks_with_quota = []
                 # First: get water payers.
                 selected_parcels_ids = []
+                prefetch = self.env['base']._prefetch
                 for selected_parcel in selected_parcels:
-                    partnerlinks_of_parcel = partnerlinks.filtered(
-                        lambda x: x.parcel_id.id ==
-                        selected_parcel.parcel_id.id and
-                        x.water_costs_percentage > 0)
-                    for partnerlink in partnerlinks_of_parcel:
+                    # Performance Improvements: old (1/2)
+                    # partnerlinks_of_parcel = partnerlinks.filtered(
+                    #     lambda x: x.parcel_id.id ==
+                    #     selected_parcel.parcel_id.id and
+                    #     x.water_costs_percentage > 0)
+                    # Performance Improvements: new (1/2)
+                    partnerlinks_of_parcel = \
+                        self.env['wua.parcel.partnerlink'].search(
+                            [('parcel_id', '=', selected_parcel.parcel_id.id),
+                             ('water_costs_percentage',
+                              '>', 0)]).with_prefetch(prefetch)
+                    for partnerlink in (partnerlinks_of_parcel or []):
                         partners_with_quota.append(partnerlink.partner_id.id)
                         partnerlinks_with_quota.append(partnerlink.id)
                     selected_parcels_ids.append(selected_parcel.parcel_id.id)
@@ -593,7 +602,7 @@ class WuaQuotaperiod(models.Model):
                     selected_partnerlinks = \
                         self.env['wua.parcel.partnerlink'].browse(
                             partnerlinks_with_quota)
-                    # Performance Improvements: old
+                    # Performance Improvements: old (2/2)
                     # quota_model = self.env['wua.quota']
                     # hydricmovement_model = self.env['wua.hydricmovement']
                     # for partner_id in partners_with_quota:
@@ -616,7 +625,7 @@ class WuaQuotaperiod(models.Model):
                     #         'type': 'multiple_assign',
                     #         'volume': initial_value,
                     #         })
-                    # Performance Improvements: new (1/4 of the previous time)
+                    # Performance Improvements: new (2/2) (1/4 of prev. time)
                     new_quotas = []
                     agriculturalseason = quotaperiod.agriculturalseason_id
                     for partner_id in partners_with_quota:
