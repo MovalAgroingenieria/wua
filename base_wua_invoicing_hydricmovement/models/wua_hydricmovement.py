@@ -16,5 +16,4 @@ class WuaHydricmovement(models.Model):
 
     invoiced_hydricmovement = fields.Boolean(
         string='Hydricmovement Invoiced',
-        default=False,
-        required=True)
+        default=False)
