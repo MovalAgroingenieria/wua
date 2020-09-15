@@ -14,7 +14,6 @@ class WuaComparativeCultivationPresconsumption(models.Model):
     controlperiod_id = fields.Many2one(
         string='Control Period',
         comodel_name='wua.controlperiod',
-        index=True,
     )
 
     cultivation_id = fields.Many2one(
@@ -25,7 +24,6 @@ class WuaComparativeCultivationPresconsumption(models.Model):
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
         comodel_name='wua.agriculturalseason',
-        index=True,
     )
 
     estimated_consumption = fields.Float(
@@ -44,9 +42,9 @@ class WuaComparativeCultivationPresconsumption(models.Model):
     )
 
     consumption_category = fields.Selection([
-        ('a', 'Correct irrigation'),
-        ('b', 'Acceptable irrigation'),
-        ('c', 'Unacceptable irrigation'),
+        ('A', 'A (correct irrigation)'),
+        ('B', 'B (acceptable irrigation)'),
+        ('C', 'C (unsatisfactory irrigation)'),
         ],
         string='Consumption Category'
     )
@@ -71,7 +69,7 @@ class WuaComparativeCultivationPresconsumption(models.Model):
                       'max_deviation_categ_02'
                      )
                     )
-                ) THEN 'c'
+                ) THEN 'C'
              WHEN (
                     (SUM(wcsp1.real_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
@@ -82,11 +80,11 @@ class WuaComparativeCultivationPresconsumption(models.Model):
                       'max_deviation_categ_01'
                      )
                     )
-                ) THEN 'b'
-             ELSE  'a'
+                ) THEN 'B'
+             ELSE  'A'
             END AS consumption_category,
             wcsp1.agriculturalseason_id FROM
             wua_comparative_subparcel_presconsumption wcsp1 GROUP BY
-            wcsp1.cultivation_id, wcsp1.controlperiod_id,
-            wcsp1.agriculturalseason_id)
+            wcsp1.agriculturalseason_id, wcsp1.controlperiod_id,
+            wcsp1.cultivation_id)
             """)

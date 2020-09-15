@@ -32,7 +32,6 @@ class WuaCultivation(models.Model):
             'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
             'domain': condition,
             'target': 'current',
-            'context': {'search_default_controlperiod': True,
-                        'search_default_agriculturalseasonactive': True},
+            'context': {'search_default_agriculturalseasonactive': True},
             }
         return act_window

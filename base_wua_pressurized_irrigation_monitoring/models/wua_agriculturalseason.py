@@ -15,7 +15,7 @@ class WuaAgriculturalseason(models.Model):
     )
 
     number_of_controlperiods = fields.Integer(
-        string='Number of controlperiods',
+        string='Number of control periods',
         store=True,
         compute='_compute_number_of_controlperiods'
     )
@@ -72,6 +72,17 @@ class WuaAgriculturalseason(models.Model):
         for record in self:
             deviation = record.estimated_consumption - record.real_consumption
             record.deviation = deviation
+
+    @api.multi
+    def write(self, vals):
+        resp = super(WuaAgriculturalseason, self).write(vals)
+        if len(self) == 1:
+            if 'active_agriculturalseason' in vals:
+                subparcels = self.env['wua.parcel.subparcel'].search([])
+                if subparcels:
+                    subparcels._compute_estimated_consumption()
+                    subparcels._compute_real_consumption()
+        return resp
 
     def get_wua_agriculturalseason_comparative_presconsumption_action(self):
         current_agriculturalseason_id = self.env.context.get('active_id')

@@ -12,18 +12,16 @@ class WuaComparativePartnerPresconsumption(models.Model):
     _name = 'wua.comparative.partner.presconsumption'
     _description = 'Comparative Partner Presconsumption'
     _auto = False
-    _order = 'controlperiod_id'
+    _order = 'agriculturalseason_id,controlperiod_id,partner_id'
 
     controlperiod_id = fields.Many2one(
         string='Control Period',
         comodel_name='wua.controlperiod',
-        index=True,
     )
 
     partner_id = fields.Many2one(
         string='Irrigation Partner',
         comodel_name='res.partner',
-        index=True
     )
 
     area_official = fields.Float(
@@ -34,7 +32,6 @@ class WuaComparativePartnerPresconsumption(models.Model):
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
         comodel_name='wua.agriculturalseason',
-        index=True,
     )
 
     estimated_consumption = fields.Float(
@@ -58,9 +55,9 @@ class WuaComparativePartnerPresconsumption(models.Model):
     )
 
     consumption_category = fields.Selection([
-        ('a', 'Correct irrigation'),
-        ('b', 'Acceptable irrigation'),
-        ('c', 'Unacceptable irrigation'),
+        ('A', 'A (correct irrigation)'),
+        ('B', 'B (acceptable irrigation)'),
+        ('C', 'C (unsatisfactory irrigation)'),
         ],
         string='Consumption Category'
     )
@@ -87,7 +84,7 @@ class WuaComparativePartnerPresconsumption(models.Model):
                       'max_deviation_categ_02'
                      )
                     )
-                ) THEN 'c'
+                ) THEN 'C'
              WHEN (
                     (SUM(wcsp1.real_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
@@ -98,13 +95,13 @@ class WuaComparativePartnerPresconsumption(models.Model):
                       'max_deviation_categ_01'
                      )
                     )
-                ) THEN 'b'
-             ELSE  'a'
+                ) THEN 'B'
+             ELSE  'A'
             END AS consumption_category FROM
             wua_comparative_subparcel_presconsumption wcsp1 INNER JOIN
             res_partner rp1 ON rp1.id = wcsp1.partner_id GROUP BY
-            wcsp1.partner_id, wcsp1.controlperiod_id,
-            wcsp1.agriculturalseason_id)
+            wcsp1.agriculturalseason_id, wcsp1.controlperiod_id,
+            wcsp1.partner_id)
             """)
 
     @api.multi

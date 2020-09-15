@@ -124,7 +124,12 @@
         <field name="res_model">wua.controlperiod</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="wua_controlperiod_view_tree"/>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_controlperiod_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_controlperiod_view_form')})]"/>
         <field name="search_view_id" ref="wua_controlperiod_view_search"/>
     </record>
 

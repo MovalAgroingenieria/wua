@@ -21,9 +21,9 @@
               <field name="real_consumption"/>
               <field name="deviation"/>
               <field name="consumption_category" invisible="1" />
-              <button icon='fa-circle semaphore-red' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'c')]}"/>
-              <button icon='fa-circle semaphore-yellow' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'b')]}"/>
-              <button icon='fa-circle semaphore-green' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'a')]}"/>
+              <button icon='fa-circle semaphore-green' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'A')]}"/>
+              <button icon='fa-circle semaphore-yellow' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'B')]}"/>
+              <button icon='fa-circle semaphore-red' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'C')]}"/>
             </tree>
         </field>
     </record>
@@ -34,7 +34,7 @@
         <field name="arch" type="xml">
             <search>
               <field name="partner_id"/>
-              <filter string="Active Agriculturalseason" name="agriculturalseasonactive"
+              <filter string="Active Agricultural Season" name="agriculturalseasonactive"
                domain="[('agriculturalseason_id.active_agriculturalseason','=',True)]"/>
               <separator/>
               <filter string="Correct Irrigation" name="category_a"
@@ -44,10 +44,10 @@
               <filter string="Unacceptable Irrigation" name="category_c"
                domain="[('consumption_category','=','c')]"/>
               <group expand="0" string="Group By">
-                  <filter string="Agriculturalseason"
+                  <filter string="Agricultural Season"
                    name="agriculturalseason"
                    context="{'group_by':'agriculturalseason_id'}"/>
-                  <filter string="Controlperiod"
+                  <filter string="Control Period"
                    name="controlperiod"
                    context="{'group_by':'controlperiod_id'}"/>
                   <filter string="Consumption Category"
@@ -65,7 +65,8 @@
         <field name="view_mode">tree</field>
         <field name="view_id" ref="wua_comparative_partner_presconsumption_view_tree"/>
         <field name="search_view_id" ref="wua_comparative_partner_presconsumption_view_search"/>
-        <field name="context">{'search_default_agriculturalseasonactive': True}</field>
+        <field name="context">{'search_default_agriculturalseasonactive': True,
+                               'search_default_controlperiod': True}</field>
     </record>
 
     <menuitem id="wua_comparative_partner_presconsumption_menu"

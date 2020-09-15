@@ -12,41 +12,37 @@ class WuaComparativeParcelPresconsumption(models.Model):
     _name = 'wua.comparative.parcel.presconsumption'
     _description = 'Comparative Parcel Presconsumption'
     _auto = False
-    _order = 'controlperiod_id'
+    _order = 'agriculturalseason_id,controlperiod_id,parcel_id'
 
     controlperiod_id = fields.Many2one(
         string='Control Period',
         comodel_name='wua.controlperiod',
-        index=True,
     )
 
     parcel_id = fields.Many2one(
         string='Parcel',
         comodel_name='wua.parcel',
-        index=True,
     )
 
     partner_id = fields.Many2one(
         string='Irrigation Partner',
         comodel_name='res.partner',
-        index=True
     )
 
     area_official = fields.Float(
         string='Official Area',
-        digits=(32, 4)
+        digits=(32, 4),
+        compute='_compute_area_official',
     )
 
     hydraulicsector_id = fields.Many2one(
         string='Hydraulic Sector',
         comodel_name='wua.hydraulicsector',
-        index=True
     )
 
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
         comodel_name='wua.agriculturalseason',
-        index=True,
     )
 
     estimated_consumption = fields.Float(
@@ -65,7 +61,8 @@ class WuaComparativeParcelPresconsumption(models.Model):
     )
 
     cadastral_reference_link = fields.Char(
-        string='Cadastral Report'
+        string='Cadastral Report',
+        compute='_compute_cadastral_reference_link',
     )
 
     gis_viewer_link = fields.Char(
@@ -74,9 +71,9 @@ class WuaComparativeParcelPresconsumption(models.Model):
     )
 
     consumption_category = fields.Selection([
-        ('a', 'Correct irrigation'),
-        ('b', 'Acceptable irrigation'),
-        ('c', 'Unacceptable irrigation'),
+        ('A', 'A (correct irrigation)'),
+        ('B', 'B (acceptable irrigation)'),
+        ('C', 'C (unsatisfactory irrigation)'),
         ],
         string='Consumption Category'
     )
@@ -90,9 +87,8 @@ class WuaComparativeParcelPresconsumption(models.Model):
             wcsp1.parcel_id, SUM(wcsp1.estimated_consumption) AS
             estimated_consumption, SUM(wcsp1.real_consumption) AS
             real_consumption, SUM(wcsp1.deviation) AS deviation,
-            wcsp1.agriculturalseason_id, wcsp1.hydraulicsector_id,
-            wcsp1.partner_id, wp1.area_official, wcsp1.gis_viewer_link,
-            wcsp1.cadastral_reference_link,
+            wcsp1.agriculturalseason_id, wcsp1.partner_id,
+            wp1.hydraulicsector_id,
             CASE
              WHEN (
                     (SUM(wcsp1.real_consumption) > 0) AND
@@ -104,7 +100,7 @@ class WuaComparativeParcelPresconsumption(models.Model):
                       'max_deviation_categ_02'
                      )
                     )
-                ) THEN 'c'
+                ) THEN 'C'
              WHEN (
                     (SUM(wcsp1.real_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
@@ -115,16 +111,25 @@ class WuaComparativeParcelPresconsumption(models.Model):
                       'max_deviation_categ_01'
                      )
                     )
-                ) THEN 'b'
-             ELSE  'a'
+                ) THEN 'B'
+             ELSE  'A'
             END AS consumption_category FROM
             wua_comparative_subparcel_presconsumption wcsp1 INNER JOIN
             wua_parcel wp1 ON wp1.id = wcsp1.parcel_id GROUP BY
-            wcsp1.parcel_id, wcsp1.controlperiod_id,
-            wcsp1.agriculturalseason_id, wcsp1.hydraulicsector_id,
-            wcsp1.partner_id, wp1.area_official, wcsp1.gis_viewer_link,
-            wcsp1.cadastral_reference_link)
+            wcsp1.agriculturalseason_id, wcsp1.controlperiod_id,
+            wcsp1.parcel_id, wcsp1.partner_id, wp1.hydraulicsector_id)
             """)
+
+    @api.multi
+    def _compute_area_official(self):
+        for record in self:
+            record.area_official = record.parcel_id.area_official
+
+    @api.multi
+    def _compute_cadastral_reference_link(self):
+        for record in self:
+            record.cadastral_reference_link = \
+                record.parcel_id.cadastral_reference_link
 
     @api.multi
     def _compute_gis_viewer_link(self):

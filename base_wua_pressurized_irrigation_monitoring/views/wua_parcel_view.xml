@@ -61,6 +61,7 @@
     <field name="model">wua.parcel.subparcel</field>
     <field name="arch" type="xml">
       <form create="false" delete="false">
+        <sheet>
         <div name="buttons" class="oe_button_box">
           <field name="gis_viewer_link" invisible="1"/>
           <field name="cadastral_reference_link" invisible="1"/>
@@ -78,7 +79,6 @@
                   class="oe_stat_button"
                   string="Cadaster"
                   icon="fa-cubes"/>
-          <br/>
           <button name="%(wua_subparcel_comparative_presconsumption_action)d"
                   type="action"
                   class="oe_stat_button"
@@ -90,9 +90,8 @@
                       </span>
                   </div>
           </button>
-
         </div>
-        <group name="fields" colspan="4" col="3">
+        <group name="master_data" colspan="4" col="3">
           <group name="fields_left" colspan="1" col="2">
             <field readonly="1" name="parcel_id"/>
             <field readonly="1" name="subparcel_code"/>
@@ -104,31 +103,49 @@
             <field name="organic_material_percentage"/>
             <field name="orientation"/>
             <field name="drippers_number"/>
-            <field name="drippers_nomial_flow"/>
-            <field readonly="1" name="tree_lateral_number"/>
+            <field name="drippers_nominal_flow"/>
+            <field name="tree_lateral_number"/>
             <field name="plantation_year"/>
-            <field readonly="1" name="tree_distance"/>
-            <field readonly="1" name="row_distance"/>
-            <field readonly="1" name="tree_drippers_number"/>
+            <field name="tree_distance"/>
+            <field name="row_distance"/>
+            <field name="tree_drippers_number"/>
           </group>
           <group name="fields_center" colspan="1" col="2">
             <field readonly="1" name="partner_id"/>
             <field readonly="1" name="hydraulicsector_id"/>
             <field readonly="1" name="area_official"/>
             <field readonly="1" name="cadastral_reference"/>
-            <field readonly="1" name="area_perc"/>
-            <field readonly="1" name="productionmethod_id"/>
-            <field readonly="1" name="irrigationsystem_id"/>
-            <field readonly="1" name="updated_in_remotecontrol"/>
+            <field readonly="1" name="area_perc"
+                   string="Parcel %"/>
+            <field readonly="1" name="updated_in_remotecontrol"
+                   string="In Remote Control"/>
             <field readonly="1" name="cultivation_age"/>
-            <field readonly="1" name="estimated_consumption"/>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <field readonly="1" name="estimated_consumption"
+                   string="Est. Consumption"/>
             <field readonly="1" name="real_consumption"/>
             <field readonly="1" name="deviation"/>
           </group>
           <group name="fields_right" colspan="1" col="2">
-            <field readonly="1" name="aerial_img" widget="image" class="oe_img_259_160"/>
+            <field readonly="1" name="aerial_img" widget="image"
+                   nolabel="1" class="oe_img_259_160"/>
           </group>
         </group>
+        <group name="slave_data">
+          <notebook name="slave_data_notebook">
+            <page name="notes_page" string="Notes">
+             <field name="notes"/>
+            </page>
+          </notebook>
+        </group>
+        </sheet>      
       </form>
     </field>
   </record>
@@ -186,7 +203,7 @@
                    context="{'group_by':'tree_development'}"/>
                   <filter string="Soil Type" name="soiltype"
                    context="{'group_by':'soil_type'}"/>
-                  <filter string="Hydraulicsector" name="hydraulicsectorid"
+                  <filter string="Hydraulic Sector" name="hydraulicsectorid"
                    context="{'group_by':'hydraulicsector_id'}"/>
                   <filter string="Parcel" name="parcelid"
                    context="{'group_by':'parcel_id'}"/>
@@ -197,15 +214,44 @@
       </field>
   </record>
 
+  <record id="wua_monitoring_parcel_subparcel_view_graphic" model="ir.ui.view">
+      <field name="name">Subparcels (graph view)</field>
+      <field name="model">wua.parcel.subparcel</field>
+      <field name="arch" type="xml">
+          <graph string="Subparcel Consumptions" type="pie">
+              <field name="cultivation_id"/>
+              <field name="real_consumption" type='measure'/>
+          </graph>
+      </field>
+  </record>
+
+  <record id="wua_monitoring_parcel_subparcel_view_pivot" model="ir.ui.view">
+      <field name="name">Subparcels (pivot view)</field>
+      <field name="model">wua.parcel.subparcel</field>
+      <field name="arch" type="xml">
+          <pivot string="Agregated Values" display_quantity="true">
+            <field name="cultivation_id"/>
+            <field name="real_consumption" type='measure'/>
+          </pivot>
+      </field>
+  </record>
+
   <record id="wua_monitoring_parcel_subparcel_action" model="ir.actions.act_window">
       <field name="name">Subparcels</field>
       <field name="res_model">wua.parcel.subparcel</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
-      <field name="view_id" ref="wua_monitoring_parcel_subparcel_view_tree"/>
-      <field name="view_id" ref="wua_monitoring_parcel_subparcel_view_form"/>
+      <field name="view_mode">tree,form,graph,pivot</field>
+      <field name="view_ids"
+       eval="[(5, 0),
+              (0, 0, {'view_mode': 'tree',
+                      'view_id': ref('wua_monitoring_parcel_subparcel_view_tree')}),
+              (0, 0, {'view_mode': 'form',
+                      'view_id': ref('wua_monitoring_parcel_subparcel_view_form')}),
+              (0, 0, {'view_mode': 'pivot',
+                      'view_id': ref('wua_monitoring_parcel_subparcel_view_pivot')})]"/>
       <field name="search_view_id" ref="wua_monitoring_parcel_subparcel_view_search"/>
       <field name="views">[[ref("base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_form"), "form"]]</field>
+      <field name="context">{'graph_mode':'pie'}</field>      
   </record>
 
   <menuitem id="wua_monitoring_parcel_subparcel_menu"

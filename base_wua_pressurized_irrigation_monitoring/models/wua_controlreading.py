@@ -143,7 +143,8 @@ class WuaControlreading(models.Model):
     @api.multi
     def _compute_is_last_reading(self):
         for record in self:
-            if record.reading_time == record.watermeter_id.last_reading_time:
+            if (record.reading_time ==
+               record.watermeter_id.last_controlreading_time):
                 record.is_last_reading = True
             else:
                 record.is_last_reading = False
@@ -220,13 +221,13 @@ class WuaControlreading(models.Model):
                     controlpresconsumption_vals)
         if new_controlpresconsumption is not None:
             vals['controlpresconsumption_id'] = new_controlpresconsumption.id
-        # Updating the "last_reading_time" and "last_reading_value" fields
-        # of the watermeter.
+        # Updating the "last_controlreading_time" and
+        # "last_controlreading_value" fields of the watermeter.
         watermeter = self.env['wua.watermeter'].browse(vals['watermeter_id'])
         if watermeter:
             vals_watermeter = {
-                'last_reading_time': reading_end_time,
-                'last_reading_value': end_volume, }
+                'last_controlreading_time': reading_end_time,
+                'last_controlreading_value': end_volume, }
             watermeter.write(vals_watermeter)
         # Creation of reading.
         new_reading = super(WuaControlreading, self).create(vals)
@@ -247,7 +248,7 @@ class WuaControlreading(models.Model):
                     if self.controlpresconsumption_id.validated:
                         self.controlpresconsumption_id.\
                             add_prorrated_value_to_subparcels()
-                self.watermeter_id.last_reading_value = vals['volume']
+                self.watermeter_id.last_controlreading_value = vals['volume']
         return resp
 
     @api.multi
@@ -360,8 +361,8 @@ class WuaControlreading(models.Model):
             new_last_reading_time = new_last_reading.reading_time
             new_last_reading_value = new_last_reading.volume
         vals_watermeter = {
-            'last_reading_time': new_last_reading_time,
-            'last_reading_value': new_last_reading_value, }
+            'last_controlreading_time': new_last_reading_time,
+            'last_controlreading_value': new_last_reading_value, }
         watermeter.write(vals_watermeter)
         return resp
 
@@ -484,26 +485,36 @@ class WuaControlreading(models.Model):
             reading_time = datetime.datetime.now().strftime(
                 '%Y-%m-%d %H:%M:%S'),
             for reading in readings:
-                is_negative, negative_volume = \
-                    self.is_negative_controlreading(reading)
-                if is_negative:
-                    self.env['wua.negative.controlreading'].create({
-                        'watermeter_id': reading['watermeter_id'],
-                        'reading_time': reading_time,
-                        'volume': reading['volume'],
-                        'controlpresconsumption_volume': negative_volume,
-                        })
-                    number_of_negative_readings = \
-                        number_of_negative_readings + 1
-                else:
+                previous_reading = self.env['wua.controlreading'].search(
+                    [('watermeter_id', '=', reading['watermeter_id'])])
+                if not previous_reading:
                     self.create({
                         'watermeter_id': reading['watermeter_id'],
                         'reading_time': reading_time,
                         'volume': reading['volume'],
-                        'initialization_reading': False,
-                        'from_import': False,
-                        'validated': False,
+                        'initialization_reading': True,
                         })
+                else:
+                    is_negative, negative_volume = \
+                        self.is_negative_controlreading(reading)
+                    if is_negative:
+                        self.env['wua.negative.controlreading'].create({
+                            'watermeter_id': reading['watermeter_id'],
+                            'reading_time': reading_time,
+                            'volume': reading['volume'],
+                            'controlpresconsumption_volume': negative_volume,
+                            })
+                        number_of_negative_readings = \
+                            number_of_negative_readings + 1
+                    else:
+                        self.create({
+                            'watermeter_id': reading['watermeter_id'],
+                            'reading_time': reading_time,
+                            'volume': reading['volume'],
+                            'initialization_reading': False,
+                            'from_import': False,
+                            'validated': False,
+                            })
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info(_('Remote Control: Saved readings') + '... ' +

@@ -2,6 +2,8 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
+import locale
 from datetime import timedelta
 from odoo import models, fields, api, _, exceptions
 
@@ -98,24 +100,6 @@ class WuaControlperiod(models.Model):
          'Incorrect dates.'),
         ]
 
-    @api.constrains('initial_date', 'end_date')
-    def _check_initial_end_dates(self):
-        if (len(self) == 1 and
-           ((self.initial_date < self.agriculturalseason_id.initial_date) or
-           (self.end_date > self.agriculturalseason_id.end_date))):
-            raise exceptions.ValidationError(_(
-                'The control period limits are outside the agricultural '
-                'season.'))
-
-    @api.constrains('initial_date', 'end_date')
-    def _check_others_controlperiods(self):
-        controlperiods = self.env['wua.controlperiod'].search(
-            ['&', ('initial_date', '<=', self.end_date),
-             ('end_date', '>=', self.initial_date)])
-        if (len(self) == 1 and len(controlperiods) > 1):
-            raise exceptions.ValidationError(_(
-                'The control period overlaps with another.'))
-
     @api.depends('initial_date')
     def _compute_name(self):
         for record in self:
@@ -136,8 +120,7 @@ class WuaControlperiod(models.Model):
         for record in self:
             real_consumption = 0
             for subp_pres in record.subparcel_presconsumption_ids:
-                if (subp_pres.agriculturalseason_id.active_agriculturalseason):
-                    real_consumption += subp_pres.real_consumption
+                real_consumption += subp_pres.real_consumption
             record.real_consumption = real_consumption
 
     @api.depends('estimated_consumption', 'real_consumption')
@@ -145,6 +128,24 @@ class WuaControlperiod(models.Model):
         for record in self:
             deviation = record.estimated_consumption - record.real_consumption
             record.deviation = deviation
+
+    @api.constrains('initial_date', 'end_date')
+    def _check_initial_end_dates(self):
+        if (len(self) == 1 and
+           ((self.initial_date < self.agriculturalseason_id.initial_date) or
+           (self.end_date > self.agriculturalseason_id.end_date))):
+            raise exceptions.ValidationError(_(
+                'The control period limits are outside the agricultural '
+                'season.'))
+
+    @api.constrains('initial_date', 'end_date')
+    def _check_others_controlperiods(self):
+        controlperiods = self.env['wua.controlperiod'].search(
+            ['&', ('initial_date', '<=', self.end_date),
+             ('end_date', '>=', self.initial_date)])
+        if (len(self) == 1 and len(controlperiods) > 1):
+            raise exceptions.ValidationError(_(
+                'The control period overlaps with another.'))
 
     @api.model
     def create(self, vals):
@@ -193,6 +194,27 @@ class WuaControlperiod(models.Model):
         return new_controlperiod
 
     @api.multi
+    def name_get(self):
+        result = []
+        default_locale = locale.setlocale(locale.LC_TIME)
+        is_english = self.env.context['lang'] == 'en_US'
+        for record in self:
+            try:
+                if is_english:
+                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                initial_date_str = datetime.datetime.strptime(
+                    record.initial_date,
+                    '%Y-%m-%d').strftime('%x')
+                end_date_str = datetime.datetime.strptime(
+                    record.end_date,
+                    '%Y-%m-%d').strftime('%x')
+            finally:
+                locale.setlocale(locale.LC_TIME, default_locale)
+            name = initial_date_str + ' - ' + end_date_str
+            result.append((record.id, name))
+        return result
+
+    @api.multi
     def calculate_controlperiod(self):
         for record in self:
             if (record.subparcel_presconsumption_ids):
@@ -229,7 +251,6 @@ class WuaControlperiod(models.Model):
             'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
             'domain': condition,
             'target': 'current',
-            'context': {'search_default_controlperiod': True},
             }
         return act_window
 

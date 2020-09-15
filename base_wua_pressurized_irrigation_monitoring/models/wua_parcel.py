@@ -31,8 +31,7 @@ class WuaParcel(models.Model):
             'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
             'domain': condition,
             'target': 'current',
-            'context': {'search_default_controlperiod': True,
-                        'search_default_agriculturalseasonactive': True},
+            'context': {'search_default_agriculturalseasonactive': True},
             }
         return act_window
 
@@ -48,7 +47,7 @@ class WuaParcelSubparcel(models.Model):
     )
 
     shaded_percentage = fields.Float(
-        string='Shaded Percentage',
+        string='Shaded %',
         digits=(32, 2)
     )
 
@@ -65,7 +64,7 @@ class WuaParcelSubparcel(models.Model):
     )
 
     organic_material_percentage = fields.Float(
-        string='Organica Material Percentage',
+        string='Organic Material %',
         digits=(32, 2)
     )
 
@@ -75,12 +74,16 @@ class WuaParcelSubparcel(models.Model):
     )
 
     drippers_number = fields.Integer(
-        string='Number of Drippers',
+        string='Number of drippers',
     )
 
-    drippers_nomial_flow = fields.Float(
-        string='Drippers Nomial Flow (l/h)',
+    drippers_nominal_flow = fields.Float(
+        string='Drip. Nom. Flow (l/h)',
         digits=(32, 2)
+    )
+
+    tree_lateral_number = fields.Integer(
+        string='N. of lateral/tree'
     )
 
     plantation_year = fields.Integer(
@@ -94,21 +97,17 @@ class WuaParcelSubparcel(models.Model):
     )
 
     tree_distance = fields.Float(
-        string='Distance between trees (m)',
+        string='M. between trees',
         digits=(32, 2)
     )
 
     row_distance = fields.Float(
-        string='Distance between rows (m)',
+        string='M. between rows',
         digits=(32, 2)
     )
 
     tree_drippers_number = fields.Integer(
-        string='Number of drippers by tree',
-    )
-
-    tree_lateral_number = fields.Integer(
-        string='Number of tree laterals '
+        string='N. of drippers/tree',
     )
 
     notes = fields.Html(
@@ -159,7 +158,9 @@ class WuaParcelSubparcel(models.Model):
 
     estimated_consumption = fields.Float(
         string='Estimated Consumption',
-        digits=(32, 4)
+        digits=(32, 4),
+        compute='_compute_estimated_consumption',
+        store=True
     )
 
     real_consumption = fields.Float(
@@ -175,6 +176,40 @@ class WuaParcelSubparcel(models.Model):
         compute='_compute_deviation',
         store=True
     )
+
+    _sql_constraints = [
+        ('valid_shaded_percentage',
+         'CHECK (shaded_percentage >= 0 and shaded_percentage <= 100)',
+         'The shaded percentage must be a value from 0 to 100.'),
+        ('valid_organic_material_percentage',
+         'CHECK (organic_material_percentage >= 0 and '
+         'organic_material_percentage <= 100)',
+         'The organic material percentage must be a value from 0 to 100.'),
+        ('valid_orientation',
+         'CHECK (orientation >= 0 and orientation <= 360)',
+         'The orientation must be a value between 0 and 360 degrees.'),
+        ('valid_drippers_number',
+         'CHECK (drippers_number >= 0)',
+         'The number of drippers cannot be a negative value.'),
+        ('valid_drippers_nominal_flow',
+         'CHECK (drippers_nominal_flow >= 0)',
+         'The drippers nominal-flow cannot be a negative value.'),
+        ('valid_plantation_year',
+         'CHECK (plantation_year >= 0)',
+         'The plantation year cannot be a negative value.'),
+        ('valid_tree_lateral_number',
+         'CHECK (tree_lateral_number >= 0 and tree_lateral_number <= 2)',
+         'The \"N. of lateral/tree\" value must be 1 or 2.'),
+        ('valid_tree_distance',
+         'CHECK (tree_distance >= 0)',
+         'The distance between trees cannot be a negative value.'),
+        ('valid_row_distance',
+         'CHECK (row_distance >= 0)',
+         'The distance between rows cannot be a negative value.'),
+        ('valid_tree_drippers_number',
+         'CHECK (tree_drippers_number >= 0 and tree_drippers_number <= 2)',
+         'The \"N. of drippers/tree\" value must be 1 or 2.'),
+        ]
 
     @api.multi
     def _compute_cultivation_age(self):
@@ -203,13 +238,43 @@ class WuaParcelSubparcel(models.Model):
             record.cadastral_reference_link = cadastral_reference_link
 
     @api.depends('subparcel_presconsumption_ids',
+                 'subparcel_presconsumption_ids.estimated_consumption')
+    def _compute_estimated_consumption(self):
+        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        if active_agriculturalseason:
+            active_agriculturalseason = active_agriculturalseason[0]
+        for record in self:
+            estimated_consum = 0
+            if (record.subparcel_presconsumption_ids and
+               active_agriculturalseason):
+                filtered_subparcel_presconsumption_ids = filter(
+                    lambda x: x['agriculturalseason_id'] ==
+                    active_agriculturalseason,
+                    record.subparcel_presconsumption_ids)
+                if filtered_subparcel_presconsumption_ids:
+                    for sub_presc in filtered_subparcel_presconsumption_ids:
+                        estimated_consum += sub_presc.estimated_consumption
+            record.estimated_consumption = estimated_consum
+
+    @api.depends('subparcel_presconsumption_ids',
                  'subparcel_presconsumption_ids.real_consumption')
     def _compute_real_consumption(self):
+        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        if active_agriculturalseason:
+            active_agriculturalseason = active_agriculturalseason[0]
         for record in self:
             real_consumption = 0
-            if record.subparcel_presconsumption_ids:
-                for sub_presc in record.subparcel_presconsumption_ids:
-                    real_consumption += sub_presc.real_consumption
+            if (record.subparcel_presconsumption_ids and
+               active_agriculturalseason):
+                filtered_subparcel_presconsumption_ids = filter(
+                    lambda x: x['agriculturalseason_id'] ==
+                    active_agriculturalseason,
+                    record.subparcel_presconsumption_ids)
+                if filtered_subparcel_presconsumption_ids:
+                    for sub_presc in filtered_subparcel_presconsumption_ids:
+                        real_consumption += sub_presc.real_consumption
             record.real_consumption = real_consumption
 
     @api.depends('estimated_consumption', 'real_consumption')
@@ -487,6 +552,10 @@ class WuaParcelSubparcel(models.Model):
             self.env.ref(
                 'base_wua_pressurized_irrigation_monitoring.'
                 'wua_comparative_subparcel_presconsumption_view_tree').id
+        id_form_view = \
+            self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'wua_comparative_subparcel_presconsumption_view_form').id
         id_search_view = \
             self.env.ref(
                 'base_wua_pressurized_irrigation_monitoring.'
@@ -497,10 +566,10 @@ class WuaParcelSubparcel(models.Model):
             'res_model': 'wua.comparative.subparcel.presconsumption',
             'view_type': 'form',
             'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form'),
+                      (id_search_view, 'search')],
             'domain': condition,
             'target': 'current',
-            'context': {'search_default_controlperiod': True,
-                        'search_default_agriculturalseasonactive': True},
+            'context': {'search_default_agriculturalseasonactive': True},
             }
         return act_window

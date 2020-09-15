@@ -2,15 +2,20 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-=========================================================
-Water Users Association Pressurized Irrigation Monitoring
-=========================================================
+===============================================
+Pressurized Irrigation Monitoring (GOInnowater)
+===============================================
 
-Base module for other modules that implement communication dialogues with
-remote control systems for irrigation (with RESP API).
+Functionality to manage and compare estimated irrigation
+needs with real ones.
 
 Description
 ===========
+
+Module for WUA with pressurized irrigation. The porpuse
+is to compare the estimated irrigation needs with the
+real ones, based on cultivation and agroclimatic data,
+amont ohters. Context: Project GOInnowater.
 
 Credits
 =======

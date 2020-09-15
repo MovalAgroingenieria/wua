@@ -30,6 +30,7 @@
                       <group name="master_data_left">
                           <field name="parcel_id" readonly="1"/>
                           <field name="subparcel_id" readonly="1"/>
+                          <field name="controlperiod_id" readonly="1"/>
                           <field name="cultivation_id" readonly="1"/>
                           <field name="cultivationvariety_id" readonly="1"/>
                           <field name="tree_development" readonly="1"/>
@@ -38,7 +39,7 @@
                           <field name="organic_material_percentage" readonly="1"/>
                           <field name="orientation" readonly="1"/>
                           <field name="drippers_number" readonly="1"/>
-                          <field name="drippers_nomial_flow" readonly="1"/>
+                          <field name="drippers_nominal_flow" readonly="1"/>
                           <field name="tree_lateral_number" readonly="1"/>
                           <field name="plantation_year" readonly="1"/>
                           <field name="tree_distance" readonly="1"/>
@@ -51,13 +52,20 @@
                           <field name="area_official" readonly="1"/>
                           <field name="cadastral_reference" readonly="1"/>
                           <field name="area_perc" readonly="1"/>
-                          <field name="productionmethod_id" readonly="1"/>
-                          <field name="irrigationsystem_id" readonly="1"/>
-                          <field name="updated_in_remotecontrol" readonly="1"/>
+                          <field name="updated_in_remotecontrol" readonly="1"
+                                 string="In Remote Control"/>
                           <field name="cultivation_age" readonly="1"/>
-                          <field name="theoretical_consumption" readonly="1"/>
+                          <div colspan="2">&#x2063;</div>
+                          <div colspan="2">&#x2063;</div>
+                          <field name="consumption_category" readonly="1"
+                                 string="CATEGORY"/>
+                          <div colspan="2">&#x2063;</div>
+                          <div colspan="2">&#x2063;</div>
+                          <field name="theoretical_consumption" readonly="1"
+                                 string="Theor. Consumption"/>
                           <field name="regularization"/>
-                          <field name="estimated_consumption" readonly="1"/>
+                          <field name="estimated_consumption" readonly="1"
+                                 string="Est. Consumption"/>
                           <field name="real_consumption" readonly="1"/>
                           <field name="deviation" readonly="1"/>
 
@@ -106,9 +114,9 @@
               <field name="real_consumption"/>
               <field name="deviation"/>
               <field name="consumption_category" invisible="1" />
-              <button icon='fa-circle semaphore-red' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'c')]}"/>
-              <button icon='fa-circle semaphore-yellow' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'b')]}"/>
-              <button icon='fa-circle semaphore-green' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'a')]}"/>
+              <button icon='fa-circle semaphore-green' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'A')]}"/>
+              <button icon='fa-circle semaphore-yellow' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'B')]}"/>
+              <button icon='fa-circle semaphore-red' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'C')]}"/>
             </tree>
         </field>
     </record>
@@ -122,7 +130,7 @@
               <field name="partner_id"/>
               <field name="cultivation_id"/>
               <field name="hydraulicsector_id"/>
-              <filter string="Active Agriculturalseason" name="agriculturalseasonactive"
+              <filter string="Active Agricultural Season" name="agriculturalseasonactive"
                domain="[('agriculturalseason_id.active_agriculturalseason','=',True)]"/>
               <separator/>
               <filter string="Correct Irrigation" name="category_a"
@@ -132,10 +140,10 @@
               <filter string="Unacceptable Irrigation" name="category_c"
                domain="[('consumption_category','=','c')]"/>
               <group expand="0" string="Group By">
-                  <filter string="Agriculturalseason"
+                  <filter string="Agricultural Season"
                    name="agriculturalseason"
                    context="{'group_by':'agriculturalseason_id'}"/>
-                  <filter string="Controlperiod"
+                  <filter string="Control Period"
                    name="controlperiod"
                    context="{'group_by':'controlperiod_id'}"/>
                   <filter string="Cultivation"
@@ -147,7 +155,7 @@
                   <filter string="Soil Type"
                    name="soiltype"
                    context="{'group_by':'soil_type'}"/>
-                  <filter string="Hydraulicsector"
+                  <filter string="Hydraulic Sector"
                    name="hydraulicsector"
                    context="{'group_by':'hydraulicsector_id'}"/>
                   <filter string="Irrigation Partner"
@@ -191,9 +199,15 @@
         <field name="res_model">wua.comparative.subparcel.presconsumption</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form,graph,pivot</field>
-        <field name="view_id" ref="wua_comparative_subparcel_presconsumption_view_tree"/>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_comparative_subparcel_presconsumption_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_comparative_subparcel_presconsumption_view_form')})]"/>
         <field name="search_view_id" ref="wua_comparative_subparcel_presconsumption_view_search"/>
         <field name="context">{'search_default_agriculturalseasonactive': True,
+                               'search_default_controlperiod': True,
                                'graph_mode':'pie'}</field>
     </record>
 
