@@ -34,7 +34,7 @@ class WizardRecalculateQuoas(models.TransientModel):
             end_date_str = datetime.datetime.strptime(
                 default_agriculturalseason.end_date, '%Y-%m-%d').strftime(
                     '%x')
-            if default_agriculturalseason.description != '':
+            if default_agriculturalseason.description:
                 default_agriculturalseason_name = initial_date_str + ' - ' + \
                     end_date_str + ' ' + \
                     '[' + default_agriculturalseason.description + ']'

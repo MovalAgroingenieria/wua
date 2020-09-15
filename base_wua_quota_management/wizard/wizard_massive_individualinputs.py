@@ -148,18 +148,18 @@ class WizardMassiveIndividualinputs(models.TransientModel):
             quotaperiod.initial_date, '%Y-%m-%d').strftime('%x')
         end_date_str = datetime.datetime.strptime(
             quotaperiod.end_date, '%Y-%m-%d').strftime('%x')
-        if quotaperiod.description != '':
+        if quotaperiod.description:
             quotaperiod_name = initial_date_str + ' - ' + \
                 end_date_str + ' ' + \
                 '[' + quotaperiod.description + ']'
+        else:
+            quotaperiod_name = initial_date_str + ' - ' + \
+                end_date_str
         category_id = 0
         proposed_category = self.env.ref(
             'base_wua_quota_management.individualinputcategory_no_variation')
         if proposed_category:
             category_id = proposed_category.id
-        else:
-            quotaperiod_name = initial_date_str + ' - ' + \
-                end_date_str
         resp = {
             'quotaperiod_name': quotaperiod_name,
             'category_id': category_id,

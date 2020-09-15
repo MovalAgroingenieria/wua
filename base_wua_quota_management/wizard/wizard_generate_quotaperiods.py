@@ -115,7 +115,7 @@ class WizardGenerateQuotaperiods(models.TransientModel):
             agriculturalseason.initial_date, '%Y-%m-%d').strftime('%x')
         end_date_str = datetime.datetime.strptime(
             agriculturalseason.end_date, '%Y-%m-%d').strftime('%x')
-        if agriculturalseason.description != '':
+        if agriculturalseason.description:
             agriculturalseason_name = initial_date_str + ' - ' + \
                 end_date_str + ' ' + \
                 '[' + agriculturalseason.description + ']'

@@ -11,7 +11,6 @@ class WizardSetActiveagriculturalseason(models.TransientModel):
 
     agriculturalseason_id = fields.Many2one(
         string='Active Agricultural Season',
-        required=True,
         comodel_name='wua.agriculturalseason')
 
     @api.model
@@ -27,6 +26,8 @@ class WizardSetActiveagriculturalseason(models.TransientModel):
     @api.multi
     def set_active_agriculturalseason(self):
         self.ensure_one()
+        if not self.agriculturalseason_id:
+            return False
         current_active_agriculturalseason_id = 0
         dict_current_active_agriculturalseason = self.default_get(None)
         if dict_current_active_agriculturalseason['agriculturalseason_id']:
