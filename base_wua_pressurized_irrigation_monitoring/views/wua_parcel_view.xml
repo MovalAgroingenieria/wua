@@ -61,7 +61,18 @@
     <field name="model">wua.parcel.subparcel</field>
     <field name="arch" type="xml">
       <form create="false" delete="false">
+        <field name="subparcel_modified" invisible="1"/>
+        <header>
+          <button name="regenerate_comparative_consumptions"
+              type="object" string="Regenerate Comparative Consumptions"
+              groups="base_wua.group_wua_manager"/>
+        </header>
         <sheet>
+        <div name="subparcel_modified_warning"
+             style="display: inline-block;color:red;padding-top:10px;"
+             attrs="{'invisible':[('subparcel_modified','=',False)]}">
+             WARNING: Modified subparcel
+        </div>
         <div name="buttons" class="oe_button_box">
           <field name="gis_viewer_link" invisible="1"/>
           <field name="cadastral_reference_link" invisible="1"/>
@@ -182,6 +193,7 @@
               <field name="estimated_consumption" sum="Total Estimated Consumption"/>
               <field name="real_consumption" sum="Total Real Consumption"/>
               <field name="deviation" sum="Total deviation"/>
+              <field name="subparcel_modified" string="Mod"/>
           </tree>
       </field>
   </record>
@@ -196,6 +208,13 @@
               <field name="subparceltype_id"/>
               <field name="cultivation_id"/>
               <field name="hydraulicsector_id"/>
+              <filter string="Modified: Yes"
+                      name="modified_yes"
+                      domain="[('subparcel_modified','=',True)]"/>
+              <filter string="Modified: No"
+                      name="modified_no"
+                      domain="[('subparcel_modified','=',False)]"/>
+              <separator/>
               <group expand="0" string="Group By">
                   <filter string="Cultivation" name="cultivationid"
                    context="{'group_by':'cultivation_id'}"/>

@@ -30,7 +30,7 @@ class WuaControlperiod(models.Model):
         ('calculated', 'Calculated')
         ],
         default='draft',
-        string='Controlperiod Status',
+        string='State',
     )
 
     initial_date = fields.Date(
@@ -81,7 +81,7 @@ class WuaControlperiod(models.Model):
     )
 
     controlpresconsumption_ids = fields.One2many(
-        string="Control Presconsumption",
+        string="Control Consumptions",
         comodel_name="wua.controlpresconsumption",
         inverse_name="controlperiod_id"
     )
@@ -189,7 +189,7 @@ class WuaControlperiod(models.Model):
                         subparcel.organic_material_percentage,
                     'orientation': subparcel.orientation,
                     'drippers_number': subparcel.drippers_number,
-                    'drippers_nomial_flow': subparcel.drippers_nomial_flow
+                    'drippers_nominal_flow': subparcel.drippers_nominal_flow
                     })
         return new_controlperiod
 
@@ -216,20 +216,36 @@ class WuaControlperiod(models.Model):
 
     @api.multi
     def calculate_controlperiod(self):
-        for record in self:
-            if (record.subparcel_presconsumption_ids):
-                # TODO: Future implementation
-                for subparcel in record.subparcel_presconsumption_ids:
-                    subparcel.estimated_consumption = 0
-            record.state = 'calculated'
+        self.ensure_one()
+        controlperiod = self
+        self.regenerate_comparative_consumptions_of_controlperiod(
+            controlperiod)
+        controlperiod.state = 'calculated'
 
     @api.multi
     def cancel_controlperiod(self):
-        for record in self:
-            if (record.subparcel_presconsumption_ids):
-                for subparcel in record.subparcel_presconsumption_ids:
-                    subparcel.estimated_consumption = 0
-            record.state = 'draft'
+        self.ensure_one()
+        controlperiod = self
+        # TODO: Reset the agroclimatic data.
+        controlperiod.state = 'draft'
+
+    def calculate_controlperiods(self, active_controlperiods):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        controlperiods = self.env['wua.controlperiod'].browse(
+            active_controlperiods)
+        for controlperiod in controlperiods:
+            controlperiod.calculate_controlperiod()
+
+    def cancel_controlperiods(self, active_controlperiods):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        controlperiods = self.env['wua.controlperiod'].browse(
+            active_controlperiods)
+        for controlperiod in controlperiods:
+            controlperiod.cancel_controlperiod()
 
     def get_wua_controlperiod_comparative_presconsumption_action(self):
         current_controlperiod_id = self.env.context.get('active_id')
@@ -267,7 +283,7 @@ class WuaControlperiod(models.Model):
                 'wua_controlpresconsumption_view_form').id
         act_window = {
             'type': 'ir.actions.act_window',
-            'name': _('Control Presconsumptions'),
+            'name': _('Control Consumptions'),
             'res_model': 'wua.controlpresconsumption',
             'view_type': 'form',
             'view_mode': 'tree',
@@ -277,3 +293,47 @@ class WuaControlperiod(models.Model):
             'context': self.env.context,
             }
         return act_window
+
+    def regenerate_comparative_consumptions_of_controlperiod(self,
+                                                             controlperiod):
+        if not controlperiod.agriculturalseason_id.active_agriculturalseason:
+            raise exceptions.UserError(_(
+                'The agricultural season is not active.'))
+        subparcels = self.env['wua.parcel.subparcel'].search(
+            [('cultivation_id.monitoring', '=', True)])
+        if not subparcels:
+            raise exceptions.UserError(_(
+                'There are no subparcels with monitored cultivations.'))
+        comp_subp_pcons = controlperiod.subparcel_presconsumption_ids
+        if comp_subp_pcons:
+            comp_subp_pcons.unlink()
+        comp_subp_pcons_model = \
+            self.env['wua.comparative.subparcel.presconsumption']
+        for subparcel in subparcels:
+            comp_subp_pcons_model.create({
+                'subparcel_id': subparcel.id,
+                'parcel_id': subparcel.parcel_id.id,
+                'cadastral_reference': subparcel.parcel_id.cadastral_reference,
+                'area_perc': subparcel.area_perc,
+                'irrigationsystem_id': subparcel.irrigationsystem_id.id,
+                'tree_distance': subparcel.tree_distance,
+                'tree_drippers_number': subparcel.tree_drippers_number,
+                'tree_development': subparcel.tree_development,
+                'tree_lateral_number': subparcel.tree_lateral_number,
+                'row_distance': subparcel.row_distance,
+                'controlperiod_id': controlperiod.id,
+                'partner_id': subparcel.partner_id.id,
+                'hydraulicsector_id': subparcel.hydraulicsector_id.id,
+                'cultivation_id': subparcel.cultivation_id.id,
+                'cultivationvariety_id': subparcel.cultivationvariety_id.id,
+                'area_official': subparcel.area_official,
+                'productionmethod_id': subparcel.productionmethod_id.id,
+                'shaded_percentage': subparcel.shaded_percentage,
+                'soil_type': subparcel.soil_type,
+                'organic_material_percentage':
+                    subparcel.organic_material_percentage,
+                'orientation': subparcel.orientation,
+                'drippers_number': subparcel.drippers_number,
+                'drippers_nominal_flow': subparcel.drippers_nominal_flow,
+                })
+            subparcel.subparcel_modified = False

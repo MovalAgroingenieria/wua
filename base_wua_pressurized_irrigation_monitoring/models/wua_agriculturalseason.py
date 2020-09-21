@@ -123,7 +123,7 @@ class WuaAgriculturalseason(models.Model):
                 'wua_controlpresconsumption_view_form').id
         act_window = {
             'type': 'ir.actions.act_window',
-            'name': _('Control Presconsumptions'),
+            'name': _('Control Consumptions'),
             'res_model': 'wua.controlpresconsumption',
             'view_type': 'form',
             'view_mode': 'tree',

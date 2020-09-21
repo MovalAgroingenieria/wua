@@ -2,7 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, exceptions, _
 import datetime
 from Crypto.Cipher import AES
 import pytz
@@ -145,9 +145,7 @@ class WuaParcelSubparcel(models.Model):
 
     subparcel_modified = fields.Boolean(
         string='Modified',
-        compute='_compute_subparcel_modified',
         default=False,
-        store=True
     )
 
     subparcel_presconsumption_ids = fields.One2many(
@@ -285,9 +283,16 @@ class WuaParcelSubparcel(models.Model):
 
     @api.multi
     def action_regenerate_comparative_consumptions(self):
-        subparcels = self.env['wua.parcel.subparcel'].search(
-            [('cultivation_id.monitoring', '=', True)])
-        subparcels.regenerate_comparative_consumptions()
+        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        if active_agriculturalseason:
+            active_agriculturalseason = active_agriculturalseason[0]
+            cp_model = self.env['wua.controlperiod']
+            controlperiods = cp_model.search(
+                [('agriculturalseason_id', '=', active_agriculturalseason.id)])
+            for controlperiod in (controlperiods or []):
+                cp_model.regenerate_comparative_consumptions_of_controlperiod(
+                    controlperiod)
 
     @api.multi
     def _compute_gis_viewer_link(self):
@@ -351,14 +356,6 @@ class WuaParcelSubparcel(models.Model):
                     record.parcel_id.updated_in_remotecontrol
             record.updated_in_remotecontrol = updated_in_remotecontrol
 
-    # TODO: Check which fields can change estimated_consumption
-    @api.depends('area_official', 'tree_development', 'shaded_percentage',
-                 'soil_type', 'organic_material_percentage', 'orientation')
-    def _compute_subparcel_modified(self):
-        for record in self:
-            subparcel_modified = True
-            record.subparcel_modified = subparcel_modified
-
     @api.multi
     def action_see_gis_viewer(self):
         self.ensure_one()
@@ -416,12 +413,29 @@ class WuaParcelSubparcel(models.Model):
                         new_subparcel.organic_material_percentage,
                     'orientation': new_subparcel.orientation,
                     'drippers_number': new_subparcel.drippers_number,
-                    'drippers_nomial_flow': new_subparcel.drippers_nomial_flow
+                    'drippers_nominal_flow':
+                        new_subparcel.drippers_nominal_flow
                     })
         return new_subparcel
 
     @api.multi
     def write(self, vals):
+        # TODO: Add/remove fields for set "subparcel_modified" field.
+        subparcel_modified = ('area_official' in vals or
+                              'tree_development' in vals or
+                              'shaded_percentage' in vals or
+                              'soil_type' in vals or
+                              'organic_material_percentage' in vals or
+                              'orientation' in vals or
+                              'drippers_number' in vals or
+                              'drippers_nominal_flow' in vals or
+                              'tree_lateral_number' in vals or
+                              'plantation_year' in vals or
+                              'tree_distance' in vals or
+                              'row_distance' in vals or
+                              'tree_drippers_number' in vals)
+        if subparcel_modified:
+            vals['subparcel_modified'] = True
         resp = super(WuaParcelSubparcel, self).write(vals)
         update_vals = {}
         if 'partner_id' in vals:
@@ -452,8 +466,9 @@ class WuaParcelSubparcel(models.Model):
             update_vals['orientation'] = vals['orientation']
         if 'drippers_number' in vals:
             update_vals['drippers_number'] = vals['drippers_number']
-        if 'drippers_nomial_flow' in vals:
-            update_vals['drippers_nomial_flow'] = vals['drippers_nomial_flow']
+        if 'drippers_nominal_flow' in vals:
+            update_vals['drippers_nominal_flow'] = \
+                vals['drippers_nominal_flow']
         if 'irrigationsystem_id' in vals:
             update_vals['irrigationsystem_id'] = vals['irrigationsystem_id']
         if 'tree_distance' in vals:
@@ -480,6 +495,9 @@ class WuaParcelSubparcel(models.Model):
         return resp
 
     def regenerate_comparative_consumptions(self):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
         active_agriculturalseason = self.env['wua.agriculturalseason'].search(
             [('active_agriculturalseason', '=', True)])
         if (len(active_agriculturalseason) == 1):
@@ -490,7 +508,7 @@ class WuaParcelSubparcel(models.Model):
                     ['&', ('agriculturalseason_id', '=',
                            active_agriculturalseason.id),
                      ('subparcel_id', '=', record.id)])
-                if (len(cmp_pres_of_subparcel) != 1):
+                if cmp_pres_of_subparcel:
                     cmp_pres_of_subparcel.unlink()
                 for controlperiod in active_agriculturalseason.\
                         controlperiod_ids:
@@ -522,8 +540,9 @@ class WuaParcelSubparcel(models.Model):
                             record.organic_material_percentage,
                         'orientation': record.orientation,
                         'drippers_number': record.drippers_number,
-                        'drippers_nomial_flow': record.drippers_nomial_flow
+                        'drippers_nominal_flow': record.drippers_nominal_flow,
                         })
+                record.subparcel_modified = False
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',
