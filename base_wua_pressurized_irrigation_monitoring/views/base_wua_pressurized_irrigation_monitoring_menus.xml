@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="monitoring_main_menu"
+              name="Monitoring"
+              sequence="-6"
+              web_icon="base_wua_pressurized_irrigation_monitoring,static/description/icon.png"
+              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
+
+    <menuitem id="monitoring_census"
+              name="Census"
+              parent="monitoring_main_menu"
+              sequence="2"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="monitoring_pressure_irrigation"
+              name="Pressure Irrigation"
+              parent="monitoring_main_menu"
+              sequence="3"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="monitoring_comparative_consumption"
+              name="Irrigations Analysis"
+              parent="monitoring_main_menu"
+              sequence="4"
+              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
+
+    <menuitem id="monitoring_technical_menu"
+              name="Technical"
+              parent="monitoring_main_menu"
+              sequence="5"
+              groups="base.group_system"/>
+
+</odoo>

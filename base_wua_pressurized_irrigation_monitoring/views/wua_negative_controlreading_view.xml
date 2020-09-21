@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_negative_controlreading_view_tree" model="ir.ui.view">
+        <field name="name">Negative Readings (tree view)</field>
+        <field name="model">wua.negative.controlreading</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_monitoring_negative_controlreadings_view_tree">
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="reading_time"/>
+                <field name="volume"/>
+                <field name="controlpresconsumption_volume" string="Cons. Value (m3)"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_negative_controlreading_view_search" model="ir.ui.view">
+        <field name="name">Negative Readings (search view)</field>
+        <field name="model">wua.negative.controlreading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                    <filter string="Water Meter"
+                     name="watermeter"
+                     context="{'group_by':'watermeter_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_negative_controlreading_action" model="ir.actions.act_window">
+        <field name="name">Negative Readings</field>
+        <field name="res_model">wua.negative.controlreading</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_negative_controlreading_view_tree"/>
+        <field name="search_view_id" ref="wua_negative_controlreading_view_search"/>
+    </record>
+
+    <menuitem id="wua_negative_controlreading_menu"
+              name="Negative Readings"
+              parent="base_wua_pressurized_irrigation_monitoring.monitoring_pressure_irrigation"
+              action="wua_negative_controlreading_action"
+              sequence="6"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

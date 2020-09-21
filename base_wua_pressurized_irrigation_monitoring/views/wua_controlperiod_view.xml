@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="wua_controlperiod_comparative_presconsumption_action" model="ir.actions.server">
+      <field name="name">Comparative Consumptions</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_controlperiod"/>
+      <field name="code">action = env["wua.controlperiod"].get_wua_controlperiod_comparative_presconsumption_action()</field>
+  </record>
+
+  <record id="wua_controlperiod_control_presconsumption_action" model="ir.actions.server">
+      <field name="name">Control Consumptions</field>
+      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_controlperiod"/>
+      <field name="code">action = env["wua.controlperiod"].get_wua_controlperiod_control_presconsumption_action()</field>
+  </record>
+
+    <record id="wua_controlperiod_view_form" model="ir.ui.view">
+        <field name="name">Control Periods (form view)</field>
+        <field name="model">wua.controlperiod</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+              <header>
+                  <button name="calculate_controlperiod"
+                          type="object" string="Calculate"
+                          attrs="{'invisible':
+                                  [('state','=','calculated')]}"
+                          groups="base_wua.group_wua_manager"
+                          confirm="Are you sure you want to do this operation?"/>
+                  <button name="cancel_controlperiod"
+                          type="object" string="Cancel"
+                          states="calculated"
+                          groups="base_wua.group_wua_manager"
+                          confirm="Are you sure you want to do this operation?"/>
+                  <field name="state"
+                         widget="statusbar"
+                         statusbar_visible="draft,calculated"/>
+              </header>
+              <sheet>
+                  <div name="buttons" class="oe_button_box">
+                    <button name="%(wua_controlperiod_comparative_presconsumption_action)d"
+                            type="action"
+                            class="oe_stat_button"
+                            icon="fa-list"
+                            groups="base_wua.group_wua_user">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Comp. Consumptions
+                                </span>
+                            </div>
+                    </button>
+                    <button name="%(wua_controlperiod_control_presconsumption_action)d"
+                            type="action"
+                            class="oe_stat_button"
+                            icon="fa-list"
+                            groups="base_wua.group_wua_user">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">
+                                    Ctrl. Consumptions
+                                </span>
+                            </div>
+                    </button>
+                  </div>
+                  <group name="master_data">
+                      <group name="master_data_left">
+                          <field invisible="1" name="id"/>
+                          <field attrs="{'readonly':
+                                  [('id','>',0)]}" name="initial_date"/>
+                          <field attrs="{'readonly':
+                                  [('id','>',0)]}" name="end_date"/>
+                          <field attrs="{'readonly':
+                                  [('id','>',0)]}" name="agriculturalseason_id"/>
+                      </group>
+                      <group name="master_data_right">
+                          <field name="estimated_consumption"/>
+                          <field name="real_consumption"/>
+                          <field name="deviation"/>
+                      </group>
+                  </group>
+                  <group name="slave_data">
+                      <notebook name="slave_data_notebook">
+                          <page name="notes_page" string="Notes">
+                              <field name="notes"/>
+                          </page>
+                      </notebook>
+                  </group>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_controlperiod_view_tree" model="ir.ui.view">
+        <field name="name">Control Periods (tree view)</field>
+        <field name="model">wua.controlperiod</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_monitoring_controlperiod_view_tree">
+              <field name="initial_date"/>
+              <field name="end_date"/>
+              <field name="agriculturalseason_id"/>
+              <field name="estimated_consumption"/>
+              <field name="real_consumption"/>
+              <field name="deviation"/>
+              <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_controlperiod_view_search" model="ir.ui.view">
+        <field name="name">Control Periods (search view)</field>
+        <field name="model">wua.controlperiod</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="initial_date"/>
+              <field name="agriculturalseason_id"/>
+              <filter string="State: Draft"
+                      name="state_draft"
+                      domain="[('state','=','draft')]"/>
+              <filter string="State: Calculated"
+                      name="state_calculated"
+                      domain="[('state','=','calculated')]"/>
+              <separator/>
+              <group expand="0" string="Group By">
+                  <filter string="Agricultural Season"
+                   name="grouped_agriculturalseason_id"
+                   context="{'group_by':'agriculturalseason_id'}"/>
+                  <filter string="State"
+                   name="grouped_state"
+                   context="{'group_by':'state'}"/>
+              </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_calculate_controlperiods" model="ir.actions.server">
+        <field name="name">Calculate</field>
+        <field name="model_id" ref="model_wua_controlperiod"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.controlperiod'].calculate_controlperiods(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_calculate_controlperiods" model="ir.values">
+        <field name="name">Calculate</field>
+        <field name="model">wua.controlperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_calculate_controlperiods'))"/>
+    </record>
+
+    <record id="wua_cancel_controlperiods" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_controlperiod"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.controlperiod'].cancel_controlperiods(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_cancel_controlperiods" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.controlperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_controlperiods'))"/>
+    </record>
+
+    <record id="wua_controlperiod_action" model="ir.actions.act_window">
+        <field name="name">Control Periods</field>
+        <field name="res_model">wua.controlperiod</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_controlperiod_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_controlperiod_view_form')})]"/>
+        <field name="search_view_id" ref="wua_controlperiod_view_search"/>
+    </record>
+
+    <menuitem id="wua_controlperiod_menu"
+              name="Control Periods"
+              parent="base_wua_pressurized_irrigation_monitoring.monitoring_pressure_irrigation"
+              action="wua_controlperiod_action"
+              sequence="3"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>
