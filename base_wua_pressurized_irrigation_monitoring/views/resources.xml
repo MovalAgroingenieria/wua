@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <template id="assets_backend" name="static_resources_base_wua_pressurized_irrigation_monitoring"
-              inherit_id="web.assets_backend">
+
+    <template id="assets_backend" name="static_resources_base_wua_pressurized_irrigation_monitoring" inherit_id="web.assets_backend">
         <xpath expr="." position="inside">
             <link rel="stylesheet" href="/base_wua_pressurized_irrigation_monitoring/static/src/css/base_wua_pressurized_irrigation_monitoring.css"/>
+            <link rel="stylesheet" type="text/css" href="/base_wua_pressurized_irrigation_monitoring/static/src/iconset/css/monitoring_iconset.css"/>
             <script type="text/javascript" src="/base_wua_pressurized_irrigation_monitoring/static/src/js/button_import_controlreadings.js"></script>
         </xpath>
     </template>
+
+    <template id="minimal_layout_monitoring" inherit_id="report.minimal_layout" name="Add monitoring iconset to reports">
+        <xpath expr="//head" position="inside">
+            <link rel="stylesheet" type="text/css" href="/base_wua_pressurized_irrigation_monitoring/static/src/iconset/css/monitoring_iconset.css"/>
+        </xpath>
+    </template>
+
 </odoo>
+
+
+
+
+
+
+

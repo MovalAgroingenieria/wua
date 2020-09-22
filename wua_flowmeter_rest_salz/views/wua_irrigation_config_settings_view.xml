@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id" ref="wua_structure_irrigation.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='pres_irrig']" position="after">
+                <group name="remote_remote_flowmeter" string="Remote flowmeter Salz" style="max-width: 50%;">
+                    <field name="enable_remote_flowmeter"/>
+                    <field name="url_remote_flowmeter_rest" attrs="{'invisible':[('enable_remote_flowmeter','=',False)], 'required': [('enable_remote_flowmeter', '=', True)]}"/>
+                    <field name="url_remote_flowmeter_rest_username" attrs="{'invisible':[('enable_remote_flowmeter','=',False)], 'required': [('enable_remote_flowmeter', '=', True)]}"/>
+                    <field name="url_remote_flowmeter_rest_password" password="True" attrs="{'invisible':[('enable_remote_flowmeter','=',False)], 'required': [('enable_remote_flowmeter', '=', True)]}"/>
+                    <field name="url_remote_flowmeter_app" attrs="{'invisible':[('enable_remote_flowmeter','=',False)], 'required': [('enable_remote_flowmeter', '=', True)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_remoteflowmeter_app_action" model="ir.actions.server">
+        <field name="name">Native remote Flow meter application</field>
+        <field name="model_id" ref="model_wua_flowmeter"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.flowmeter'].run_remoteflowmeter_application_url()
+        </field>
+    </record>
+
+    <menuitem id="wua_remoteflowmeter_application_menu"
+              name="Salz flowmeter app"
+              parent="wua_structure_irrigation.base_wua_irrigation_configuration_menu"
+              action="wua_remoteflowmeter_app_action"
+              sequence="3"/>
+
+</odoo>
