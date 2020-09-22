@@ -187,6 +187,13 @@
                        <span t-field="o.number" style="font-size: 8px;"/>
                        <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
                    </t>
+                   <t t-if="docs and docs[0]._name == 'credit.control.communication' and doc.partner_id.name">
+                       <span t-field="doc.partner_id.name" style="font-size: 8px;"/>
+                       <t t-if="doc.partner_id.partner_code">
+                           <span style="font-size: 8px;">[</span><span t-field="doc.partner_id.partner_code" style="font-size: 8px;"/><span style="font-size: 8px;">]</span>
+                       </t>
+                       <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
+                   </t>
                    <!-- Page numbers -->
                    <span class="page" style="font-size: 8px;"/>
                    <span style="font-size: 8px;">/</span>
