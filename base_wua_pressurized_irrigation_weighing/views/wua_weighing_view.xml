@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_weighing_view_form" model="ir.ui.view">
+        <field name="name">Weighings (form view)</field>
+        <field name="model">wua.weighing</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <header>
+                </header>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name"
+                                   attrs="{'readonly': [('id','>',0)]}"/>
+                            <field name="partner_id"
+                                   attrs="{'readonly': [('id','>',0)]}"
+                                   domain="[('is_wua_partner', '=', True)]"/>
+                            <field name="subparcel_id"
+                                   attrs="{'readonly': [('id','>',0)]}"
+                                   domain="[('partner_id', '=?', partner_id),
+                                            ('cultivation_id', '!=', False)]"/>
+                            <field name="cultivation_id" readonly="1"/>
+                            <field name="cultivationvariety_id" readonly="1"/>
+                            <field attrs="{'readonly': [('id','>',0)]}" name="amount"/>
+                            <field attrs="{'readonly': [('id','>',0)]}" name="price"/>
+                            <field name="production_value" readonly="1"/>
+                            <field name="production_total" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                        <group name="master_data_right">
+                          <field name="agriculturalseason_id"
+                                 attrs="{'readonly': [('id','>',0)]}"
+                                 options="{'no_quick_create':True,
+                                           'no_create_edit':True}"/>
+                          <field name="weighing_date"
+                                 attrs="{'readonly': [('id','>',0)]}"/>
+                          <field name="parcel_id" readonly="1"/>
+                          <div colspan="2">&#x2063;</div>
+                          <div name="fields_right" colspan="1">
+                            <field readonly="1" name="aerial_img" widget="image" nolabel="1" class="image_midsize"/>
+                          </div>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="partnerlinks_page" string="Partnerlinks">
+                                <field name="partnerlink_ids" readonly="1">
+                                  <tree
+                                   class="o_base_wua_pressurized_irrigation_weighing_parcel_partnerlink_weighing_view_tree_notebook">
+                                      <field name="partner_id"/>
+                                      <field name="irrigation_partner"/>
+                                      <field name="profile"/>
+                                      <field name="ownership_percentage"/>
+                                      <field name="water_costs_percentage"/>
+                                      <field name="other_costs_percentage"/>
+                                  </tree>
+                                </field>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_weighing_view_tree" model="ir.ui.view">
+        <field name="name">Weighings (tree view)</field>
+        <field name="model">wua.weighing</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_pressurized_irrigation_weighing_view_tree">
+              <field name='name'/>
+              <field name='weighing_date'/>
+              <field name='agriculturalseason_id'/>
+              <field name='partner_id'/>
+              <field name='parcel_id'/>
+              <field name='subparcel_id'/>
+              <field name='cultivation_id'/>
+              <field name='cultivationvariety_id'/>
+              <field name='amount'/>
+              <field name='price'/>
+              <field name='production_value'/>
+              <field name='production_total'/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_weighing_enrolledsubparcel_view_tree" model="ir.ui.view">
+        <field name="name">Performances (tree view)</field>
+        <field name="model">wua.weighing.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_pressurized_irrigation_weighing_enrolledsubparcel_view_tree">
+              <field name='agriculturalseason_id'/>
+              <field name='subparcel_id'/>
+              <field name='parcel_id'/>
+              <field name='partner_id'/>
+              <field name='area_official'/>
+              <field name='cultivation_id'/>
+              <field name='cultivationvariety_id'/>
+              <field name='number_of_weighings'/>
+              <field name='amount_total'/>
+              <field name='production_value_total'/>
+              <field name='average_price'/>
+              <field name='performance_amount'/>
+              <field name='performance_value'/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_weighing_view_search" model="ir.ui.view">
+        <field name="name">Weighings (search view)</field>
+        <field name="model">wua.weighing</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="partner_id"/>
+              <field name="parcel_id"/>
+              <field name="subparcel_id"/>
+              <field name="weighing_date"/>
+              <field name="cultivation_id"/>
+              <field name="cultivationvariety_id"/>
+              <filter string="Active Agriculturalseason"
+                      name="active_agriculturalseason"
+                      domain="[('agriculturalseason_id.active_agriculturalseason','=',True)]"/>
+              <group expand="0" string="Group By">
+                  <filter string="Agricultural Season"
+                          name="grouped_agriculturalseason"
+                   context="{'group_by':'agriculturalseason_id'}"/>
+                  <filter string="Weighing Date"
+                         name="grouped_weighing_date"
+                   context="{'group_by':'weighing_date:month'}"/>
+                  <filter string="Cultivation"
+                          name="grouped_cultivation_id"
+                    context="{'group_by':'cultivation_id'}"/>
+                  <filter string="Cultivation Variety"
+                          name="grouped_cultivationvariety_id"
+                   context="{'group_by':'cultivationvariety_id'}"/>
+                  <filter string="Partner"
+                          name="grouped_partner_id"
+                   context="{'group_by':'partner_id'}"/>
+                  <filter string="Parcel"
+                          name="grouped_parcel_id"
+                   context="{'group_by':'parcel_id'}"/>
+              </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_weighing_enrolledsubparcel_view_search" model="ir.ui.view">
+        <field name="name">Performances (search view)</field>
+        <field name="model">wua.weighing.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="partner_id"/>
+              <field name="parcel_id"/>
+              <field name="subparcel_id"/>
+              <field name="cultivation_id"/>
+              <field name="cultivationvariety_id"/>
+              <filter string="Active Agriculturalseason"
+                      name="active_agriculturalseason"
+                      domain="[('agriculturalseason_id.active_agriculturalseason','=',True)]"/>
+              <group expand="0" string="Group By">
+                  <filter string="Agricultural Season"
+                          name="grouped_agriculturalseason"
+                   context="{'group_by':'agriculturalseason_id'}"/>
+                  <filter string="Cultivation"
+                          name="grouped_cultivation_id"
+                    context="{'group_by':'cultivation_id'}"/>
+                  <filter string="Cultivation Variety"
+                          name="grouped_cultivationvariety_id"
+                   context="{'group_by':'cultivationvariety_id'}"/>
+                  <filter string="Partner"
+                          name="grouped_partner_id"
+                   context="{'group_by':'partner_id'}"/>
+                  <filter string="Parcel"
+                          name="grouped_parcel_id"
+                   context="{'group_by':'parcel_id'}"/>
+                  <filter string="Subparcel"
+                          name="grouped_subparcel_id"
+                  context="{'group_by':'subparcel_id'}"/>
+              </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_weighing_view_graphic" model="ir.ui.view">
+        <field name="name">Weighings (graph view)</field>
+        <field name="model">wua.weighing</field>
+        <field name="arch" type="xml">
+            <graph string="Weighings" type="pie">
+                <field name="cultivation_id"/>
+                <field name="amount" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_weighing_enrolledsubparcel_view_graphic" model="ir.ui.view">
+        <field name="name">Performances (graph view)</field>
+        <field name="model">wua.weighing.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <graph string="Performances" type="pie">
+                <field name="cultivation_id"/>
+                <field name="amount_total" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_weighing_view_pivot" model="ir.ui.view">
+        <field name="name">Weighings (pivot view)</field>
+        <field name="model">wua.weighing</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+              <field name="cultivation_id"/>
+              <field name="amount" type='measure'/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_weighing_enrolledsubparcel_view_pivot" model="ir.ui.view">
+        <field name="name">Performances (pivot view)</field>
+        <field name="model">wua.weighing.enrolledsubparcel</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+              <field name="cultivation_id"/>
+              <field name="amount_total" type='measure'/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_weighing_action" model="ir.actions.act_window">
+        <field name="name">Weighings</field>
+        <field name="res_model">wua.weighing</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="view_id" ref="wua_weighing_view_tree"/>
+        <field name="search_view_id" ref="wua_weighing_view_search"/>
+        <field name="context">{'search_default_active_agriculturalseason': 1,
+                               'graph_mode':'pie'}</field>
+    </record>
+
+    <record id="wua_weighing_enrolledsubparcel_action" model="ir.actions.act_window">
+        <field name="name">Performances</field>
+        <field name="res_model">wua.weighing.enrolledsubparcel</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph,pivot</field>
+        <field name="view_id" ref="wua_weighing_enrolledsubparcel_view_tree"/>
+        <field name="search_view_id" ref="wua_weighing_enrolledsubparcel_view_search"/>
+        <field name="context">{'search_default_active_agriculturalseason': 1,
+                               'graph_mode':'pie'}</field>
+    </record>
+
+    <menuitem id="wua_weighing_menu"
+              name="Weighings"
+              parent="base_wua_pressurized_irrigation_weighing.quality_production"
+              action="wua_weighing_action"
+              sequence="1"/>
+
+    <menuitem id="wua_weighing_enrolledsubparcel_menu"
+              name="Performances"
+              parent="base_wua_pressurized_irrigation_weighing.quality_production"
+              action="wua_weighing_enrolledsubparcel_action"
+              sequence="2"/>
+
+</odoo>
