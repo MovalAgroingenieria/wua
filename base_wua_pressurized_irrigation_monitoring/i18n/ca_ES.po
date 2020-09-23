@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-20 16:54+0000\n"
-"PO-Revision-Date: 2020-09-20 16:54+0000\n"
+"POT-Creation-Date: 2020-09-23 16:24+0000\n"
+"PO-Revision-Date: 2020-09-23 16:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -262,6 +262,11 @@ msgid "Comparative Subparcel Presconsumption"
 msgstr "Consums comparatius de subparcel·la"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.monitoring_configuration_menu
+msgid "Configuration"
+msgstr "Configuració"
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_monitoring_configuration
 msgid "Configuration of base_wua_pressurized_irrigation_monitoring module"
 msgstr "Configuració de l'mòdul base_wua_pressurized_irrigation_monitoring"
@@ -313,7 +318,7 @@ msgstr "Consums"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_agriculturalseason.py:126
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_comparative_subparcel_presconsumption.py:472
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_comparative_subparcel_presconsumption.py:495
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:286
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_controlpresconsumption_action
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_agriculturalseason_control_presconsumption_action
@@ -425,6 +430,14 @@ msgid "Deviation"
 msgstr "Desviació"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_deviation_percentage
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_deviation_percentage
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_deviation_percentage
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_deviation_percentage
+msgid "Deviation Percentage"
+msgstr "Percentatge de desviació"
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wizard_generate_controlperiods
 msgid "Dialog box to generate control periods"
 msgstr "Quadre de diàleg per generar períodes de control"
@@ -530,13 +543,18 @@ msgstr "Consum comparatiu de subparcel·la existent."
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_end_volume
 msgid "Final Value (m3)"
-msgstr "Lec. final, m3"
+msgstr "Valor final (m3)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: selection:wua.comparative.subparcel.presconsumption,tree_development:0
 #: selection:wua.parcel.subparcel,tree_development:0
 msgid "Full production"
 msgstr "Plena Producció"
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_config_settings_view_form
+msgid "GIS Settings"
+msgstr "Configuració GIS"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_monitoring_gisviewer_action
@@ -670,7 +688,7 @@ msgstr "Data inici"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_initial_volume
 msgid "Initial Value (m3)"
-msgstr "Lec. inicial, m3"
+msgstr "Valor Inicial (m3)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_initialization_reading
@@ -745,7 +763,7 @@ msgstr "Darrera modificació el"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_is_last_reading
 msgid "Last Reading"
-msgstr "Darrera lectura"
+msgstr "Última lectura"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wizard_generate_controlperiods_write_uid
@@ -894,6 +912,11 @@ msgid "N. of lateral/tree"
 msgstr "Nombre lateral/arbre"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,help:base_wua_pressurized_irrigation_monitoring.field_wua_monitoring_configuration_url_gis_viewer_subparcel_param
+msgid "Name of subparcel param in the GIS viewer url"
+msgstr "Nom de l'paràmetre subparcel·la al visor gis"
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_negative_controlreading_action
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_negative_controlreading_menu
 msgid "Negative Readings"
@@ -961,6 +984,11 @@ msgstr "% material orgànic"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_orientation
 msgid "Orientation"
 msgstr "Orientació"
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_monitoring_configuration_url_gis_viewer_subparcel_param
+msgid "Param for subparcel"
+msgstr "Paràmetre Subparcel·la"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_parcel_id
@@ -1192,7 +1220,7 @@ msgstr "Subparcel·la d'una parcel·la"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_agriculturalseason.py:101
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:263
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:584
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:589
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_action
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_action
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_subparcel_comparative_presconsumption_action
@@ -1528,7 +1556,7 @@ msgstr "Amb regularització"
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:243
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:544
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:553
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:499
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:504
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No teniu permís per executar aquesta acció."
@@ -1539,4 +1567,3 @@ msgstr "No teniu permís per executar aquesta acció."
 #, python-format
 msgid "negative readings"
 msgstr "lectures negatives"
-
