@@ -86,6 +86,12 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         store=True,
     )
 
+    deviation_percentage = fields.Float(
+        string='Deviation Percentage',
+        digits=(32, 2),
+        compute='_compute_deviation_percentage',
+    )
+
     notes = fields.Html(
         string='Notes'
     )
@@ -341,6 +347,16 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                 elif (deviation_percentage > percentage_categ_01):
                     consumption_category = 'B'
             record.consumption_category = consumption_category
+
+    @api.multi
+    def _compute_deviation_percentage(self):
+        for record in self:
+            deviation_percentage = 0
+            deviation = abs(record.deviation)
+            if (deviation != 0 and record.real_consumption > 0):
+                deviation_percentage = (deviation * 100) / record.\
+                    real_consumption
+            record.deviation_percentage = deviation_percentage
 
     @api.multi
     def _compute_gis_viewer_link(self):

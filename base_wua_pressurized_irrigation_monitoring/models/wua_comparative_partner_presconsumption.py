@@ -49,6 +49,12 @@ class WuaComparativePartnerPresconsumption(models.Model):
         digits=(32, 4)
     )
 
+    deviation_percentage = fields.Float(
+        string='Deviation Percentage',
+        digits=(32, 2),
+        compute='_compute_deviation_percentage',
+    )
+
     gis_viewer_link = fields.Char(
         string='GIS Viewer',
         compute='_compute_gis_viewer_link'
@@ -103,6 +109,16 @@ class WuaComparativePartnerPresconsumption(models.Model):
             wcsp1.agriculturalseason_id, wcsp1.controlperiod_id,
             wcsp1.partner_id)
             """)
+
+    @api.multi
+    def _compute_deviation_percentage(self):
+        for record in self:
+            deviation_percentage = 0
+            deviation = abs(record.deviation)
+            if (deviation != 0 and record.real_consumption > 0):
+                deviation_percentage = (deviation * 100) / record.\
+                    real_consumption
+            record.deviation_percentage = deviation_percentage
 
     @api.multi
     def _compute_gis_viewer_link(self):
