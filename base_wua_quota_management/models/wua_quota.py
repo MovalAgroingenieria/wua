@@ -166,6 +166,13 @@ class WuaQuota(models.Model):
             balance = record.accumulated_input - record.accumulated_consumption
             record.balance = balance
 
+    @api.model
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        args = args or []
+        quotas = self.search(
+            [('partner_id.name', 'ilike', name)] + args, limit=limit)
+        return quotas.name_get()
+
     @api.multi
     def _compute_negative_balance(self):
         # Auxiliary field for negative balances in red (form view).
@@ -526,10 +533,12 @@ class WuaQuota(models.Model):
                     'pos': 0,
                     })
                 if hydric_consumptions:
-                    if quotaperiod.sorted_quotas:
-                        hydric_consumptions = \
-                            self._adapt_hydricmovements_to_sorted_quotas(
-                                hydric_consumptions)
+                    # Modified: for irrigation reports, does not apply the
+                    # parameter "sorted_quotas".
+                    # if quotaperiod.sorted_quotas:
+                    #     hydric_consumptions = \
+                    #         self._adapt_hydricmovements_to_sorted_quotas(
+                    #             hydric_consumptions)
                     for hydric_consumption in hydric_consumptions:
                         quota = self.env['wua.quota'].search(
                             [('quotaperiod_id', '=',
@@ -713,9 +722,12 @@ class WuaQuota(models.Model):
 
     def _create_hydricmovements_of_preexisting_irrigationreports(self,
                                                                  quotaperiod):
+        # Modified: for all states
+        # irrigationreports = \
+        #     self._get_irrigationreports_without_hydricmovements_valid_state(
+        #         quotaperiod)
         irrigationreports = \
-            self._get_irrigationreports_without_hydricmovements_valid_state(
-                quotaperiod)
+            self._get_irrigationreports_without_hydricmovements(quotaperiod)
         for irrigationreport in (irrigationreports or []):
             self.create_hydricmovements_irrigationreport(irrigationreport)
 
@@ -813,6 +825,29 @@ class WuaQuota(models.Model):
             [('report_end_time', '>=', min_date),
              ('report_end_time', '<', max_date),
              ('state', '=', 'validated')],
+            order='report_end_time')
+        for possible_irrigationreport in (possible_irrigationreports or []):
+            if not possible_irrigationreport.hydricmovement_ids:
+                is_valid_irrigationreport = \
+                    self.env['wua.irrigationreport'].is_valid_irrigationreport(
+                        possible_irrigationreport)
+                if is_valid_irrigationreport:
+                    resp.append(possible_irrigationreport)
+        return resp
+
+    def _get_irrigationreports_without_hydricmovements(
+            self, quotaperiod):
+        resp = []
+        min_date = datetime.datetime.strptime(
+            quotaperiod.initial_date, '%Y-%m-%d')
+        max_date = datetime.datetime.strptime(
+            quotaperiod.end_date, '%Y-%m-%d') + \
+            datetime.timedelta(days=1)
+        min_date = min_date.strftime('%Y-%m-%d %H:%M:%S')
+        max_date = max_date.strftime('%Y-%m-%d %H:%M:%S')
+        possible_irrigationreports = self.env['wua.irrigationreport'].search(
+            [('report_end_time', '>=', min_date),
+             ('report_end_time', '<', max_date)],
             order='report_end_time')
         for possible_irrigationreport in (possible_irrigationreports or []):
             if not possible_irrigationreport.hydricmovement_ids:
