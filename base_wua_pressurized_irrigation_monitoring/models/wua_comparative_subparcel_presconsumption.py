@@ -86,6 +86,11 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         store=True,
     )
 
+    deviation_percentage = fields.Char(
+        string='Deviation Percentage',
+        compute='_compute_deviation_percentage',
+    )
+
     notes = fields.Html(
         string='Notes'
     )
@@ -343,6 +348,17 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
             record.consumption_category = consumption_category
 
     @api.multi
+    def _compute_deviation_percentage(self):
+        for record in self:
+            deviation_percentage = 0
+            deviation = abs(record.deviation)
+            if (deviation != 0 and record.real_consumption > 0):
+                deviation_percentage = (deviation * 100) / record.\
+                    real_consumption
+            record.deviation_percentage = \
+                '{:.2f}'.format(deviation_percentage) + '%'
+
+    @api.multi
     def _compute_gis_viewer_link(self):
         url = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer')
@@ -350,17 +366,24 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
             'wua.configuration', 'url_gis_viewer_username')
         password = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_password')
+        subparcel_param = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'url_gis_viewer_subparcel_param')
         parcel_param = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_parcel_param')
         for record in self:
             url_for_record = url
             if url_for_record:
-                if parcel_param:
-                    sep_char = '?'
-                    if url_for_record.find('?') != -1:
-                        sep_char = '&'
+                sep_char = '?'
+                if url_for_record.find('?') != -1:
+                    sep_char = '&'
+                if subparcel_param:
                     url_for_record = url_for_record + sep_char + \
-                        parcel_param + '=' + str(record.parcel_id.name)
+                        subparcel_param + '=' + \
+                        str(record.subparcel_id.subparcel_code)
+                elif parcel_param:
+                    url_for_record = url_for_record + sep_char + \
+                        parcel_param + '=' + \
+                        str(record.parcel_id.name)
             if (url_for_record and username and password and (not
                self.env.user.has_group('base_wua.group_wua_portal_user'))):
                 credentials = username + "-" + password

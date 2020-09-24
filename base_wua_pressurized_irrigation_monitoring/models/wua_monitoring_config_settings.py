@@ -21,6 +21,11 @@ class WuaMonitoringConfiguration(models.TransientModel):
         default=False,
         help='Maximun percentage of deviation for being in the categorie 02')
 
+    url_gis_viewer_subparcel_param = fields.Char(
+        string='Param for subparcel',
+        size=20,
+        help='Name of subparcel param in the GIS viewer url')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -30,3 +35,6 @@ class WuaMonitoringConfiguration(models.TransientModel):
         values.set_default('wua.monitoring.configuration',
                            'max_deviation_categ_02',
                            self.max_deviation_categ_02)
+        values.set_default('wua.monitoring.configuration',
+                           'url_gis_viewer_subparcel_param',
+                           self.url_gis_viewer_subparcel_param)

@@ -2,7 +2,7 @@
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, tools
+from odoo import models, fields, tools, api
 
 
 class WuaComparativeCultivationPresconsumption(models.Model):
@@ -39,6 +39,11 @@ class WuaComparativeCultivationPresconsumption(models.Model):
     deviation = fields.Float(
         string='Deviation',
         digits=(32, 4)
+    )
+
+    deviation_percentage = fields.Char(
+        string='Deviation Percentage',
+        compute='_compute_deviation_percentage',
     )
 
     consumption_category = fields.Selection([
@@ -88,3 +93,14 @@ class WuaComparativeCultivationPresconsumption(models.Model):
             wcsp1.agriculturalseason_id, wcsp1.controlperiod_id,
             wcsp1.cultivation_id)
             """)
+
+    @api.multi
+    def _compute_deviation_percentage(self):
+        for record in self:
+            deviation_percentage = 0
+            deviation = abs(record.deviation)
+            if (deviation != 0 and record.real_consumption > 0):
+                deviation_percentage = (deviation * 100) / record.\
+                    real_consumption
+            record.deviation_percentage = \
+                '{:.2f}'.format(deviation_percentage) + '%'

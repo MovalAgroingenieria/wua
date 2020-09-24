@@ -60,6 +60,11 @@ class WuaComparativeParcelPresconsumption(models.Model):
         digits=(32, 4)
     )
 
+    deviation_percentage = fields.Char(
+        string='Deviation Percentage',
+        compute='_compute_deviation_percentage',
+    )
+
     cadastral_reference_link = fields.Char(
         string='Cadastral Report',
         compute='_compute_cadastral_reference_link',
@@ -130,6 +135,17 @@ class WuaComparativeParcelPresconsumption(models.Model):
         for record in self:
             record.cadastral_reference_link = \
                 record.parcel_id.cadastral_reference_link
+
+    @api.multi
+    def _compute_deviation_percentage(self):
+        for record in self:
+            deviation_percentage = 0
+            deviation = abs(record.deviation)
+            if (deviation != 0 and record.real_consumption > 0):
+                deviation_percentage = (deviation * 100) / record.\
+                    real_consumption
+            record.deviation_percentage = \
+                '{:.2f}'.format(deviation_percentage) + '%'
 
     @api.multi
     def _compute_gis_viewer_link(self):

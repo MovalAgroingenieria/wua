@@ -513,7 +513,7 @@ class WuaControlreading(models.Model):
                             'volume': reading['volume'],
                             'initialization_reading': False,
                             'from_import': False,
-                            'validated': False,
+                            'validated': True,
                             })
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)
