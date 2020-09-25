@@ -109,6 +109,31 @@ class WuaWaterpipe(models.Model):
         inverse_name='waterpipe_05_id',
         string="Parcels at level 5 of water-pipe")
 
+    parcel_wp_06_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_06_id',
+        string="Parcels at level 6 of water-pipe")
+
+    parcel_wp_07_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_07_id',
+        string="Parcels at level 7 of water-pipe")
+
+    parcel_wp_08_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_08_id',
+        string="Parcels at level 8 of water-pipe")
+
+    parcel_wp_09_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_09_id',
+        string="Parcels at level 9 of water-pipe")
+
+    parcel_wp_10_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_10_id',
+        string="Parcels at level 10 of water-pipe")
+
     number_of_parcels = fields.Integer(
         string='Parcels',
         store=True,
@@ -204,11 +229,23 @@ class WuaWaterpipe(models.Model):
             record.number_of_irrigationsheds = len(record.irrigationshed_ids)
 
     @api.depends('parcel_wp_01_ids', 'parcel_wp_02_ids', 'parcel_wp_03_ids',
-                 'parcel_wp_04_ids', 'parcel_wp_05_ids')
+                 'parcel_wp_04_ids', 'parcel_wp_05_ids', 'parcel_wp_06_ids',
+                 'parcel_wp_07_ids', 'parcel_wp_08_ids', 'parcel_wp_09_ids',
+                 'parcel_wp_10_ids')
     def _compute_number_of_parcels(self):
         for record in self:
             number_of_parcels = 0
-            if record.parcel_wp_05_ids:
+            if record.parcel_wp_10_ids:
+                number_of_parcels = len(record.parcel_wp_10_ids)
+            elif record.parcel_wp_09_ids:
+                number_of_parcels = len(record.parcel_wp_09_ids)
+            elif record.parcel_wp_08_ids:
+                number_of_parcels = len(record.parcel_wp_08_ids)
+            elif record.parcel_wp_07_ids:
+                number_of_parcels = len(record.parcel_wp_07_ids)
+            elif record.parcel_wp_06_ids:
+                number_of_parcels = len(record.parcel_wp_06_ids)
+            elif record.parcel_wp_05_ids:
                 number_of_parcels = len(record.parcel_wp_05_ids)
             elif record.parcel_wp_04_ids:
                 number_of_parcels = len(record.parcel_wp_04_ids)
@@ -221,16 +258,37 @@ class WuaWaterpipe(models.Model):
             record.number_of_parcels = number_of_parcels
 
     @api.depends('parcel_wp_01_ids', 'parcel_wp_02_ids', 'parcel_wp_03_ids',
-                 'parcel_wp_04_ids', 'parcel_wp_05_ids',
-                 'parcel_wp_01_ids.area_official',
+                 'parcel_wp_04_ids', 'parcel_wp_05_ids', 'parcel_wp_06_ids',
+                 'parcel_wp_07_ids', 'parcel_wp_08_ids', 'parcel_wp_09_ids',
+                 'parcel_wp_10_ids', 'parcel_wp_01_ids.area_official',
                  'parcel_wp_02_ids.area_official',
                  'parcel_wp_03_ids.area_official',
                  'parcel_wp_04_ids.area_official',
-                 'parcel_wp_05_ids.area_official')
+                 'parcel_wp_05_ids.area_official',
+                 'parcel_wp_06_ids.area_official',
+                 'parcel_wp_07_ids.area_official',
+                 'parcel_wp_08_ids.area_official',
+                 'parcel_wp_09_ids.area_official',
+                 'parcel_wp_10_ids.area_official',)
     def _compute_total_affected_area_official(self):
         for record in self:
             total_affected_area_official = 0.0
-            if record.parcel_wp_05_ids:
+            if record.parcel_wp_10_ids:
+                for parcel in record.parcel_wp_10_ids:
+                    total_affected_area_official += parcel.area_official
+            elif record.parcel_wp_09_ids:
+                for parcel in record.parcel_wp_09_ids:
+                    total_affected_area_official += parcel.area_official
+            elif record.parcel_wp_08_ids:
+                for parcel in record.parcel_wp_08_ids:
+                    total_affected_area_official += parcel.area_official
+            elif record.parcel_wp_07_ids:
+                for parcel in record.parcel_wp_07_ids:
+                    total_affected_area_official += parcel.area_official
+            elif record.parcel_wp_06_ids:
+                for parcel in record.parcel_wp_06_ids:
+                    total_affected_area_official += parcel.area_official
+            elif record.parcel_wp_05_ids:
                 for parcel in record.parcel_wp_05_ids:
                     total_affected_area_official += parcel.area_official
             elif record.parcel_wp_04_ids:
@@ -416,7 +474,17 @@ class WuaWaterpipe(models.Model):
                      ('id', 'in',
                       current_waterpipe.parcel_wp_04_ids.ids),
                      ('id', 'in',
-                      current_waterpipe.parcel_wp_05_ids.ids)]
+                      current_waterpipe.parcel_wp_05_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_06_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_07_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_08_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_09_ids.ids),
+                     ('id', 'in',
+                      current_waterpipe.parcel_wp_10_ids.ids)]
         id_tree_view = self.env.ref(
             'base_wua_infrastructure_pressurized_hierarchy.'
             'wua_parcel_of_waterpipe_view_tree').id

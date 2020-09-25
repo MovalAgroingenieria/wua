@@ -57,6 +57,41 @@ class WuaParcel(models.Model):
         store=True,
         compute="_compute_waterpipe_05_id")
 
+    waterpipe_06_id = fields.Many2one(
+        string="Level 6 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_06_id")
+
+    waterpipe_07_id = fields.Many2one(
+        string="Level 7 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_07_id")
+
+    waterpipe_08_id = fields.Many2one(
+        string="Level 8 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_08_id")
+
+    waterpipe_09_id = fields.Many2one(
+        string="Level 9 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_09_id")
+
+    waterpipe_10_id = fields.Many2one(
+        string="Level 10 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_10_id")
+
     @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.waterpipe_id')
     def _compute_waterpipe_id(self):
         for record in self:
@@ -104,6 +139,36 @@ class WuaParcel(models.Model):
         for record in self:
             record.waterpipe_05_id = \
                 self._get_waterpipe(record, 5)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_06_id(self):
+        for record in self:
+            record.waterpipe_06_id = \
+                self._get_waterpipe(record, 6)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_07_id(self):
+        for record in self:
+            record.waterpipe_07_id = \
+                self._get_waterpipe(record, 7)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_08_id(self):
+        for record in self:
+            record.waterpipe_08_id = \
+                self._get_waterpipe(record, 8)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_09_id(self):
+        for record in self:
+            record.waterpipe_09_id = \
+                self._get_waterpipe(record, 9)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_10_id(self):
+        for record in self:
+            record.waterpipe_10_id = \
+                self._get_waterpipe(record, 10)
 
     def _get_waterpipe(self, parcel, level):
         resp = None
