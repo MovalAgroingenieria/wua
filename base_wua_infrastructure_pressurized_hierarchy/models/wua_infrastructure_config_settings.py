@@ -10,7 +10,7 @@ class WuaInfrastructureConfiguration(models.TransientModel):
 
     max_levels_pressurized_irrigation = fields.Integer(
         string="Max. Levels",
-        default=5,
+        default=10,
         required=True)
 
     url_gis_viewer_waterpipe_param = fields.Char(
@@ -21,8 +21,8 @@ class WuaInfrastructureConfiguration(models.TransientModel):
     _sql_constraints = [
         ('valid_max_levels_pressurized_irrigation',
          'CHECK (max_levels_pressurized_irrigation >= 1 '
-         'and max_levels_pressurized_irrigation <= 5)',
-         'The "Max. Levels" value has to be between 1 and 5.')]
+         'and max_levels_pressurized_irrigation <= 10)',
+         'The "Max. Levels" value has to be between 1 and 10.')]
 
     @api.multi
     def set_default_values(self):
