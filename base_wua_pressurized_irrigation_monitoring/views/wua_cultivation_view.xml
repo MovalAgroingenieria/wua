@@ -15,6 +15,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='description']" position="after">
                 <field name="monitoring"/>
+                <field name="lower_age_middle"/>
+                <field name="upper_age_middle"/>
             </xpath>
             <xpath expr="//div[@name='buttons']" position="inside">
                 <button name="%(wua_cultivation_comparative_presconsumption_action)d"
@@ -27,6 +29,14 @@
                                 Comp. Consumptions
                             </span>
                         </div>
+                </button>
+                <button name="action_get_cultivation_kc"
+                        type="object" class="oe_stat_button"
+                        icon="fa-times-circle"
+                        attrs="{'invisible': [('monitoring','!=',True)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Kc-Values</span>
+                    </div>
                 </button>
             </xpath>
         </field>

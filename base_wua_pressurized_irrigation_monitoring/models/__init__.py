@@ -16,3 +16,4 @@ from . import wua_comparative_partner_presconsumption
 from . import wua_comparative_cultivation_presconsumption
 from . import res_partner
 from . import wua_cultivation
+from . import wua_cultivation_kc

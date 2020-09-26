@@ -82,26 +82,26 @@ class WuaComparativePartnerPresconsumption(models.Model):
              WHEN (
                     (SUM(wcsp1.real_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
-                     SUM(wcsp1.real_consumption) >
-                     (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
-                      FLOAT) FROM ir_values WHERE model =
-                      'wua.monitoring.configuration' AND name LIKE
-                      'max_deviation_categ_02'
-                     )
-                    )
-                ) THEN 'C'
-             WHEN (
-                    (SUM(wcsp1.real_consumption) > 0) AND
-                    (ABS(SUM(wcsp1.deviation)) * 100 /
-                     SUM(wcsp1.real_consumption) >
+                     SUM(wcsp1.real_consumption) <=
                      (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
                       FLOAT) FROM ir_values WHERE model =
                       'wua.monitoring.configuration' AND name LIKE
                       'max_deviation_categ_01'
                      )
                     )
+                ) THEN 'A'
+             WHEN (
+                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (ABS(SUM(wcsp1.deviation)) * 100 /
+                     SUM(wcsp1.real_consumption) <=
+                     (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
+                      FLOAT) FROM ir_values WHERE model =
+                      'wua.monitoring.configuration' AND name LIKE
+                      'max_deviation_categ_02'
+                     )
+                    )
                 ) THEN 'B'
-             ELSE  'A'
+             ELSE  'C'
             END AS consumption_category FROM
             wua_comparative_subparcel_presconsumption wcsp1 INNER JOIN
             res_partner rp1 ON rp1.id = wcsp1.partner_id GROUP BY
@@ -112,13 +112,17 @@ class WuaComparativePartnerPresconsumption(models.Model):
     @api.multi
     def _compute_deviation_percentage(self):
         for record in self:
-            deviation_percentage = 0
-            deviation = abs(record.deviation)
-            if (deviation != 0 and record.real_consumption > 0):
-                deviation_percentage = (deviation * 100) / record.\
-                    real_consumption
-            record.deviation_percentage = \
-                '{:.2f}'.format(deviation_percentage) + '%'
+            if (record.estimated_consumption == 0 and
+               record.real_consumption == 0):
+                record.deviation_percentage = '0%'
+            else:
+                deviation_percentage = 100
+                deviation = abs(record.deviation)
+                if deviation > 0 and record.real_consumption > 0:
+                    deviation_percentage = \
+                        (deviation * 100) / record.real_consumption
+                record.deviation_percentage = \
+                    '{:.2f}'.format(deviation_percentage) + '%'
 
     @api.multi
     def _compute_gis_viewer_link(self):

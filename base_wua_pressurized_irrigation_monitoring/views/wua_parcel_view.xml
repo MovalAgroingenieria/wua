@@ -59,6 +59,7 @@
   <record id="wua_monitoring_parcel_subparcel_view_form" model="ir.ui.view" >
     <field name="name">Subparcels (form view)</field>
     <field name="model">wua.parcel.subparcel</field>
+    <field name="priority" eval="15"/>
     <field name="arch" type="xml">
       <form create="false" delete="false">
         <field name="subparcel_modified" invisible="1"/>
@@ -131,7 +132,7 @@
             <field readonly="1" name="updated_in_remotecontrol"
                    string="In Remote Control"/>
             <field readonly="1" name="cultivation_age"/>
-            <div colspan="2">&#x2063;</div>
+            <field readonly="1" name="age_category"/>
             <div colspan="2">&#x2063;</div>
             <div colspan="2">&#x2063;</div>
             <div colspan="2">&#x2063;</div>
@@ -185,7 +186,7 @@
                       icon="fa-cubes"
                       attrs="{'invisible': [('cadastral_reference_link','=','')]}"/>
               <field name="cultivation_id"/>
-              <field name="tree_development"/>
+              <field name="age_category"/>
               <field name="shaded_percentage"/>
               <field name="soil_type"/>
               <field name="organic_material_percentage"/>

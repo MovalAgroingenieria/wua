@@ -96,6 +96,13 @@ class WuaParcelSubparcel(models.Model):
         search='_search_cultivation_age'
     )
 
+    age_category = fields.Selection([
+        ('l', 'Little'),
+        ('m', 'Middle'),
+        ('b', 'Big')],
+        'Age Category',
+        compute='_compute_age_category')
+
     tree_distance = fields.Float(
         string='M. between trees',
         digits=(32, 2)
@@ -217,6 +224,24 @@ class WuaParcelSubparcel(models.Model):
                 current_year = int(datetime.date.today().strftime("%Y"))
                 cultivation_age = current_year - record.plantation_year
             record.cultivation_age = cultivation_age
+
+    @api.multi
+    def _compute_age_category(self):
+        for record in self:
+            age_category = 'l'
+            if record.plantation_year and record.cultivation_id:
+                lower_age_middle = record.cultivation_id.lower_age_middle
+                upper_age_middle = record.cultivation_id.upper_age_middle
+                if lower_age_middle or upper_age_middle:
+                    current_year = int(datetime.date.today().strftime("%Y"))
+                    cultivation_age = current_year - record.plantation_year
+                    if (cultivation_age >= lower_age_middle and
+                       cultivation_age <= upper_age_middle):
+                        age_category = 'm'
+                    else:
+                        if cultivation_age > upper_age_middle:
+                            age_category = 'b'
+            record.age_category = age_category
 
     @api.multi
     def _compute_aerial_img(self):
@@ -419,84 +444,85 @@ class WuaParcelSubparcel(models.Model):
                     'orientation': new_subparcel.orientation,
                     'drippers_number': new_subparcel.drippers_number,
                     'drippers_nominal_flow':
-                        new_subparcel.drippers_nominal_flow
+                        new_subparcel.drippers_nominal_flow,
+                    'plantation_year': new_subparcel.plantation_year,
+                    'cultivation_age': new_subparcel.cultivation_age,
+                    'age_category': new_subparcel.age_category,
                     })
         return new_subparcel
 
     @api.multi
     def write(self, vals):
-        # TODO: Add/remove fields for set "subparcel_modified" field.
-        subparcel_modified = ('area_official' in vals or
-                              'tree_development' in vals or
-                              'shaded_percentage' in vals or
-                              'soil_type' in vals or
-                              'organic_material_percentage' in vals or
-                              'orientation' in vals or
-                              'drippers_number' in vals or
-                              'drippers_nominal_flow' in vals or
-                              'tree_lateral_number' in vals or
-                              'plantation_year' in vals or
-                              'tree_distance' in vals or
-                              'row_distance' in vals or
-                              'tree_drippers_number' in vals)
-        if subparcel_modified:
-            vals['subparcel_modified'] = True
-        resp = super(WuaParcelSubparcel, self).write(vals)
-        update_vals = {}
-        if 'partner_id' in vals:
-            update_vals['partner_id'] = vals['partner_id']
-        if 'parcel_id' in vals:
-            update_vals['parcel_id'] = vals['parcel_id']
-            update_vals['cadastral_reference'] = self.env['wua.parcel'].\
-                browse(vals['parcel_id']).cadastral_reference
-        if 'hydraulicsector_id' in vals:
-            update_vals['hydraulicsector_id'] = vals['hydraulicsector_id']
-        if 'area_official' in vals:
-            update_vals['area_official'] = vals['area_official']
-        if 'cultivation_id' in vals:
-            update_vals['cultivation_id'] = vals['cultivation_id']
-        if 'cultivationvariety_id' in vals:
-            update_vals['cultivationvariety_id'] = \
-                vals['cultivationvariety_id']
-        if 'productionmethod_id' in vals:
-            update_vals['productionmethod_id'] = vals['productionmethod_id']
-        if 'shaded_percentage' in vals:
-            update_vals['shaded_percentage'] = vals['shaded_percentage']
-        if 'soil_type' in vals:
-            update_vals['soil_type'] = vals['soil_type']
-        if 'organic_material_percentage' in vals:
-            update_vals['organic_material_percentage'] = \
-                vals['organic_material_percentage']
-        if 'orientation' in vals:
-            update_vals['orientation'] = vals['orientation']
-        if 'drippers_number' in vals:
-            update_vals['drippers_number'] = vals['drippers_number']
-        if 'drippers_nominal_flow' in vals:
-            update_vals['drippers_nominal_flow'] = \
-                vals['drippers_nominal_flow']
-        if 'irrigationsystem_id' in vals:
-            update_vals['irrigationsystem_id'] = vals['irrigationsystem_id']
-        if 'tree_distance' in vals:
-            update_vals['tree_distance'] = vals['tree_distance']
-        if 'tree_drippers_number' in vals:
-            update_vals['tree_drippers_number'] = vals['tree_drippers_number']
-        if 'tree_development' in vals:
-            update_vals['tree_development'] = vals['tree_development']
-        if 'tree_lateral_number' in vals:
-            update_vals['tree_lateral_number'] = vals['tree_lateral_number']
-        if 'row_distance' in vals:
-            update_vals['row_distance'] = vals['row_distance']
-        if 'area_perc' in vals:
-            update_vals['area_perc'] = vals['area_perc']
-        if (update_vals):
-            if (self.subparcel_presconsumption_ids and
-                    len(self.subparcel_presconsumption_ids) > 0):
-                presconsumptions = self.subparcel_presconsumption_ids.filtered(
-                    lambda x: x.controlperiod_id.agriculturalseason_id.
-                    active_agriculturalseason)
-                if (len(presconsumptions) > 0):
-                    for presconsumption in presconsumptions:
-                        presconsumption.write(update_vals)
+        if len(self) == 1:
+            subparcel_modified = (('area_official' in vals or
+                                   'plantation_year' in vals) and
+                                  self.cultivation_id and
+                                  self.cultivation_id.monitoring)
+            if subparcel_modified:
+                vals['subparcel_modified'] = True
+            resp = super(WuaParcelSubparcel, self).write(vals)
+            update_vals = {}
+            if 'partner_id' in vals:
+                update_vals['partner_id'] = vals['partner_id']
+            if 'parcel_id' in vals:
+                update_vals['parcel_id'] = vals['parcel_id']
+                update_vals['cadastral_reference'] = self.env['wua.parcel'].\
+                    browse(vals['parcel_id']).cadastral_reference
+            if 'hydraulicsector_id' in vals:
+                update_vals['hydraulicsector_id'] = vals['hydraulicsector_id']
+            if 'area_official' in vals:
+                update_vals['area_official'] = vals['area_official']
+            if 'cultivation_id' in vals:
+                update_vals['cultivation_id'] = vals['cultivation_id']
+            if 'cultivationvariety_id' in vals:
+                update_vals['cultivationvariety_id'] = \
+                    vals['cultivationvariety_id']
+            if 'productionmethod_id' in vals:
+                update_vals['productionmethod_id'] = \
+                    vals['productionmethod_id']
+            if 'shaded_percentage' in vals:
+                update_vals['shaded_percentage'] = vals['shaded_percentage']
+            if 'soil_type' in vals:
+                update_vals['soil_type'] = vals['soil_type']
+            if 'organic_material_percentage' in vals:
+                update_vals['organic_material_percentage'] = \
+                    vals['organic_material_percentage']
+            if 'orientation' in vals:
+                update_vals['orientation'] = vals['orientation']
+            if 'drippers_number' in vals:
+                update_vals['drippers_number'] = vals['drippers_number']
+            if 'drippers_nominal_flow' in vals:
+                update_vals['drippers_nominal_flow'] = \
+                    vals['drippers_nominal_flow']
+            if 'irrigationsystem_id' in vals:
+                update_vals['irrigationsystem_id'] = \
+                    vals['irrigationsystem_id']
+            if 'tree_distance' in vals:
+                update_vals['tree_distance'] = vals['tree_distance']
+            if 'tree_drippers_number' in vals:
+                update_vals['tree_drippers_number'] = \
+                    vals['tree_drippers_number']
+            if 'tree_development' in vals:
+                update_vals['tree_development'] = vals['tree_development']
+            if 'tree_lateral_number' in vals:
+                update_vals['tree_lateral_number'] = \
+                    vals['tree_lateral_number']
+            if 'row_distance' in vals:
+                update_vals['row_distance'] = vals['row_distance']
+            if 'area_perc' in vals:
+                update_vals['area_perc'] = vals['area_perc']
+            if (update_vals):
+                if (self.subparcel_presconsumption_ids and
+                        len(self.subparcel_presconsumption_ids) > 0):
+                    presconsumptions = \
+                        self.subparcel_presconsumption_ids.filtered(
+                            lambda x: x.controlperiod_id.agriculturalseason_id.
+                            active_agriculturalseason)
+                    if (len(presconsumptions) > 0):
+                        for presconsumption in presconsumptions:
+                            presconsumption.write(update_vals)
+        else:
+            resp = super(WuaParcelSubparcel, self).write(vals)
         return resp
 
     def regenerate_comparative_consumptions(self):
@@ -515,39 +541,45 @@ class WuaParcelSubparcel(models.Model):
                      ('subparcel_id', '=', record.id)])
                 if cmp_pres_of_subparcel:
                     cmp_pres_of_subparcel.unlink()
-                for controlperiod in active_agriculturalseason.\
-                        controlperiod_ids:
-                    cmp_subp_presc.create({
-                        'subparcel_id': record.id,
-                        'parcel_id': record.parcel_id.id,
-                        'cadastral_reference':
-                            record.parcel_id.cadastral_reference,
-                        'area_perc': record.area_perc,
-                        'irrigationsystem_id':
-                            record.irrigationsystem_id.id,
-                        'tree_distance': record.tree_distance,
-                        'tree_drippers_number': record.tree_drippers_number,
-                        'tree_development': record.tree_development,
-                        'tree_lateral_number': record.tree_lateral_number,
-                        'row_distance': record.row_distance,
-                        'controlperiod_id': controlperiod.id,
-                        'partner_id': record.partner_id.id,
-                        'hydraulicsector_id': record.hydraulicsector_id.id,
-                        'cultivation_id': record.cultivation_id.id,
-                        'cultivationvariety_id':
-                            record.cultivationvariety_id.id,
-                        'area_official': record.area_official,
-                        'productionmethod_id':
-                            record.productionmethod_id.id,
-                        'shaded_percentage': record.shaded_percentage,
-                        'soil_type': record.soil_type,
-                        'organic_material_percentage':
-                            record.organic_material_percentage,
-                        'orientation': record.orientation,
-                        'drippers_number': record.drippers_number,
-                        'drippers_nominal_flow': record.drippers_nominal_flow,
-                        })
-                record.subparcel_modified = False
+                if record.cultivation_id and record.cultivation_id.monitoring:
+                    for controlperiod in active_agriculturalseason.\
+                            controlperiod_ids:
+                        cmp_subp_presc.create({
+                            'subparcel_id': record.id,
+                            'parcel_id': record.parcel_id.id,
+                            'cadastral_reference':
+                                record.parcel_id.cadastral_reference,
+                            'area_perc': record.area_perc,
+                            'irrigationsystem_id':
+                                record.irrigationsystem_id.id,
+                            'tree_distance': record.tree_distance,
+                            'tree_drippers_number':
+                                record.tree_drippers_number,
+                            'tree_development': record.tree_development,
+                            'tree_lateral_number': record.tree_lateral_number,
+                            'row_distance': record.row_distance,
+                            'controlperiod_id': controlperiod.id,
+                            'partner_id': record.partner_id.id,
+                            'hydraulicsector_id': record.hydraulicsector_id.id,
+                            'cultivation_id': record.cultivation_id.id,
+                            'cultivationvariety_id':
+                                record.cultivationvariety_id.id,
+                            'area_official': record.area_official,
+                            'productionmethod_id':
+                                record.productionmethod_id.id,
+                            'shaded_percentage': record.shaded_percentage,
+                            'soil_type': record.soil_type,
+                            'organic_material_percentage':
+                                record.organic_material_percentage,
+                            'orientation': record.orientation,
+                            'drippers_number': record.drippers_number,
+                            'drippers_nominal_flow':
+                                record.drippers_nominal_flow,
+                            'plantation_year': record.plantation_year,
+                            'cultivation_age': record.cultivation_age,
+                            'age_category': record.age_category,
+                            })
+                    record.subparcel_modified = False
         return {
             'type': 'ir.actions.client',
             'tag': 'reload',

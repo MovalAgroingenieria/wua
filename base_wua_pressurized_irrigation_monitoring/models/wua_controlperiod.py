@@ -55,22 +55,32 @@ class WuaControlperiod(models.Model):
         required=True
     )
 
+    et0_value = fields.Float(
+        string='ET0 Value (mm)',
+        digits=(32, 2),
+        default=0)
+
+    pe_value = fields.Float(
+        string='Precipitation (mm)',
+        digits=(32, 2),
+        default=0)
+
     estimated_consumption = fields.Float(
-        string='Estimated Consumption',
+        string='Estimated Consumption (m3)',
         digits=(32, 4),
         compute='_compute_estimated_consumption',
         store=True
     )
 
     real_consumption = fields.Float(
-        string='Real Consumption',
+        string='Real Consumption (m3)',
         digits=(32, 4),
         compute='_compute_real_consumption',
         store=True
     )
 
     deviation = fields.Float(
-        string='Deviation',
+        string='Deviation (m3)',
         digits=(32, 4),
         compute='_compute_deviation',
         store=True
@@ -98,6 +108,12 @@ class WuaControlperiod(models.Model):
         ('valid_dates',
          'CHECK (initial_date <= end_date )',
          'Incorrect dates.'),
+        ('valid_et0_value',
+         'CHECK (et0_value >= 0)',
+         'The ET0 must be a value zero or positive.'),
+        ('valid_pe_value',
+         'CHECK (pe_value >= 0)',
+         'The precipitation must be a value zero or positive.'),
         ]
 
     @api.depends('initial_date')
@@ -189,9 +205,23 @@ class WuaControlperiod(models.Model):
                         subparcel.organic_material_percentage,
                     'orientation': subparcel.orientation,
                     'drippers_number': subparcel.drippers_number,
-                    'drippers_nominal_flow': subparcel.drippers_nominal_flow
+                    'drippers_nominal_flow': subparcel.drippers_nominal_flow,
+                    'plantation_year': subparcel.plantation_year,
+                    'cultivation_age': subparcel.cultivation_age,
+                    'age_category': subparcel.age_category,
                     })
         return new_controlperiod
+
+    @api.multi
+    def write(self, vals):
+        periods_to_calculate_ids = []
+        super(WuaControlperiod, self).write(vals)
+        if ('et0_value' in vals or 'pe_value' in vals):
+            for record in self:
+                periods_to_calculate_ids.append(record.id)
+        if periods_to_calculate_ids:
+            self.calculate_controlperiods(periods_to_calculate_ids)
+        return True
 
     @api.multi
     def name_get(self):
@@ -226,7 +256,10 @@ class WuaControlperiod(models.Model):
     def cancel_controlperiod(self):
         self.ensure_one()
         controlperiod = self
-        # TODO: Reset the agroclimatic data.
+        if controlperiod.subparcel_presconsumption_ids:
+            controlperiod.subparcel_presconsumption_ids.write(
+                {'theoretical_consumption': 0,
+                 'real_consumption': 0})
         controlperiod.state = 'draft'
 
     def calculate_controlperiods(self, active_controlperiods):
@@ -335,5 +368,8 @@ class WuaControlperiod(models.Model):
                 'orientation': subparcel.orientation,
                 'drippers_number': subparcel.drippers_number,
                 'drippers_nominal_flow': subparcel.drippers_nominal_flow,
+                'plantation_year': subparcel.plantation_year,
+                'cultivation_age': subparcel.cultivation_age,
+                'age_category': subparcel.age_category,
                 })
             subparcel.subparcel_modified = False

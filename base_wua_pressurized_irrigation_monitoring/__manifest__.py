@@ -34,6 +34,7 @@
         "views/wua_comparative_partner_presconsumption_view.xml",
         "views/res_partner_view.xml",
         "views/wua_cultivation_view.xml",
+        "views/wua_cultivation_kc_view.xml",
         ],
     'qweb': ['static/src/xml/button_import_controlreadings.xml'],
     "installable": True,

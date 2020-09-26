@@ -21,21 +21,21 @@ class WuaAgriculturalseason(models.Model):
     )
 
     estimated_consumption = fields.Float(
-        string='Estimated Consumption',
+        string='Estimated Consumption (m3)',
         digits=(32, 4),
         compute='_compute_estimated_consumption',
         store=True
     )
 
     real_consumption = fields.Float(
-        string='Real Consumption',
+        string='Real Consumption (m3)',
         digits=(32, 4),
         compute='_compute_real_consumption',
         store=True
     )
 
     deviation = fields.Float(
-        string='Deviation',
+        string='Deviation (m3)',
         digits=(32, 4),
         compute='_compute_deviation',
         store=True
