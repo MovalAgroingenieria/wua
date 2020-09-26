@@ -220,6 +220,12 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         string='Cultivation Age'
     )
 
+    age_category = fields.Selection([
+        ('l', 'Little'),
+        ('m', 'Middle'),
+        ('b', 'Big')],
+        'Age Category')
+
     tree_distance = fields.Float(
         string='M. between trees',
         digits=(32, 2),
@@ -329,34 +335,43 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                     record.parcel_id.updated_in_remotecontrol
             record.updated_in_remotecontrol = updated_in_remotecontrol
 
-    @api.depends('deviation', 'real_consumption')
+    @api.depends('deviation')
     def _compute_consumption_category(self):
         percentage_categ_01 = self.env['ir.values'].get_default(
             'wua.monitoring.configuration', 'max_deviation_categ_01')
         percentage_categ_02 = self.env['ir.values'].get_default(
             'wua.monitoring.configuration', 'max_deviation_categ_02')
         for record in self:
-            deviation = abs(record.deviation)
-            consumption_category = 'A'
-            if (deviation != 0 and record.real_consumption > 0):
-                deviation_percentage = (deviation * 100) / record.\
-                    real_consumption
-                if (deviation_percentage > percentage_categ_02):
-                    consumption_category = 'C'
-                elif (deviation_percentage > percentage_categ_01):
-                    consumption_category = 'B'
-            record.consumption_category = consumption_category
+            if (record.theoretical_consumption == 0 and
+               record.real_consumption == 0):
+                record.consumption_category = 'A'
+            else:
+                deviation = abs(record.deviation)
+                consumption_category = 'C'
+                deviation_percentage = 100
+                if deviation > 0 and record.real_consumption > 0:
+                    deviation_percentage = \
+                        (deviation * 100) / record.real_consumption
+                    if (deviation_percentage <= percentage_categ_01):
+                        consumption_category = 'A'
+                    elif (deviation_percentage <= percentage_categ_02):
+                        consumption_category = 'B'
+                record.consumption_category = consumption_category
 
     @api.multi
     def _compute_deviation_percentage(self):
         for record in self:
-            deviation_percentage = 0
-            deviation = abs(record.deviation)
-            if (deviation != 0 and record.real_consumption > 0):
-                deviation_percentage = (deviation * 100) / record.\
-                    real_consumption
-            record.deviation_percentage = \
-                '{:.2f}'.format(deviation_percentage) + '%'
+            if (record.estimated_consumption == 0 and
+               record.real_consumption == 0):
+                record.deviation_percentage = '0%'
+            else:
+                deviation_percentage = 100
+                deviation = abs(record.deviation)
+                if deviation > 0 and record.real_consumption > 0:
+                    deviation_percentage = \
+                        (deviation * 100) / record.real_consumption
+                record.deviation_percentage = \
+                    '{:.2f}'.format(deviation_percentage) + '%'
 
     @api.multi
     def _compute_gis_viewer_link(self):
@@ -455,19 +470,102 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
 
     @api.model
     def create(self, vals):
-        cmp_pres = super(WuaComparativeSubparcelPresconsumption, self).\
-            create(vals)
-        if (cmp_pres.controlperiod_id.controlpresconsumption_ids):
-            for ctrl_pres in \
-                    cmp_pres.controlperiod_id.controlpresconsumption_ids:
-                total_area = ctrl_pres.waterconnection_id.\
-                    total_affected_area_official
-                for ip in ctrl_pres.waterconnection_id.irrigationpoint_ids:
-                    if (cmp_pres.subparcel_id in ip.parcel_id.subparcel_ids):
-                        prorrated = ctrl_pres.volume_real * \
-                            ((cmp_pres.subparcel_id.area_official)/total_area)
-                        cmp_pres.real_consumption += prorrated
-        return cmp_pres
+        # Create comparative consumption.
+        comparative_consumption = \
+            super(WuaComparativeSubparcelPresconsumption, self).create(vals)
+        # Get the real and theoretical consumptions.
+        real_consumption = self.get_real_consumption(
+            comparative_consumption.subparcel_id,
+            comparative_consumption.controlperiod_id)
+        if real_consumption:
+            comparative_consumption.real_consumption = real_consumption
+        theoretical_consumption = self.get_theoretical_consumption(
+            comparative_consumption.subparcel_id,
+            comparative_consumption.controlperiod_id)
+        if theoretical_consumption:
+            comparative_consumption.theoretical_consumption = \
+                theoretical_consumption
+        return comparative_consumption
+
+    # Get the real consumption of a subparcel comparative-consumption.
+    def get_real_consumption(self, subparcel, controlperiod):
+        resp = 0
+        if subparcel and controlperiod:
+            controlpresconsumptions = controlperiod.controlpresconsumption_ids
+            for controlpresconsumption in (controlpresconsumptions or []):
+                waterconnection = controlpresconsumption.waterconnection_id
+                if waterconnection.irrigationpoint_ids:
+                    total_area = waterconnection.total_affected_area_official
+                    for irrigationpoint in waterconnection.irrigationpoint_ids:
+                        subparcels_of_irrigationpoint = \
+                            irrigationpoint.parcel_id.subparcel_ids
+                        if subparcel in subparcels_of_irrigationpoint:
+                            prorrated_consumption = \
+                                (controlpresconsumption.volume_real *
+                                 (subparcel.area_official / total_area))
+                            resp = resp + prorrated_consumption
+        return resp
+
+    # Get the theoretical consumption of a subparcel comparative-consumption.
+    def get_theoretical_consumption(self, subparcel, controlperiod):
+        resp = 0
+        if (subparcel and controlperiod and
+           subparcel.cultivation_id and subparcel.cultivation_id.monitoring):
+            et0 = controlperiod.et0_value
+            pe = controlperiod.pe_value
+            number_of_period = self.get_number_of_period(controlperiod)
+            row_kc = self.env['wua.cultivation.kc'].search(
+                [('period_number', '=', number_of_period),
+                 ('cultivation_id', '=', subparcel.cultivation_id.id)])
+            if row_kc:
+                row_kc = row_kc[0]
+                kc = row_kc.kc_little
+                if subparcel.age_category == 'm':
+                    kc = row_kc.kc_middle
+                else:
+                    if subparcel.age_category == 'b':
+                        kc = row_kc.kc_big
+                uniformity_irrig_applic = \
+                    self.env['ir.values'].get_default(
+                        'wua.monitoring.configuration',
+                        'uniformity_irrigation_application')
+                if not uniformity_irrig_applic:
+                    uniformity_irrig_applic = 0.9
+                resp = (10 * subparcel.area_official_hec *
+                        (((et0 * kc) - pe) / uniformity_irrig_applic))
+        return resp
+
+    # Get the number of period of a control period.
+    def get_number_of_period(self, controlperiod):
+        resp = 1
+        control_periodicity = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'control_periodicity')
+        if not control_periodicity:
+            control_periodicity = 's'
+        if control_periodicity == 's' or control_periodicity == 'b':
+            year = int(controlperiod.initial_date[0:4])
+            month = int(controlperiod.initial_date[5:7])
+            day = int(controlperiod.initial_date[8:10])
+            first_day_of_year = datetime.date(year, 1, 1)
+            first_monday = first_day_of_year
+            weekday_of_first_day_of_year = first_day_of_year.weekday()
+            if weekday_of_first_day_of_year != 0:
+                first_monday = first_day_of_year + \
+                    datetime.timedelta(days=7-weekday_of_first_day_of_year)
+            first_day_of_controlperiod = datetime.date(year, month, day)
+            current_monday = first_monday
+            resp = 1
+            while current_monday < first_day_of_controlperiod:
+                current_monday = current_monday + datetime.timedelta(days=7)
+                resp = resp + 1
+            if control_periodicity == 'b':
+                is_odd = (resp % 2 != 0)
+                resp = int(resp / 2)
+                if is_odd:
+                    resp = resp + 1
+        else:
+            resp = int(controlperiod.initial_date[5:7])
+        return resp
 
     def get_wua_cmp_subp_presconsumption_control_presconsumptionaction(self):
         current_cmp_pres_id = self.env.context.get('active_id')

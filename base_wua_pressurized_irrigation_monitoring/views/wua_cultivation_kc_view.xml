@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cultivation_kc_edit_view_tree" model="ir.ui.view">
+        <field name="name">Kc of cultivations (tree view, for edit)</field>
+        <field name="model">wua.cultivation.kc</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_monitoring_cultivation_kc_view_tree"
+                  editable="bottom" create="false" delete="false">
+                <field name="period_number" readonly="1"/>
+                <field name="cultivation_id" readonly="1"/>
+                <field name="kc_big" string="Big"/>
+                <field name="kc_middle" string="Middle"/>
+                <field name="kc_little" string="Little"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_cultivation_kc_thecnical_view_tree" model="ir.ui.view">
+        <field name="name">Kc of cultivations (tree view)</field>
+        <field name="model">wua.cultivation.kc</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_monitoring_cultivation_kc_view_tree">
+                <field name="period_number"/>
+                <field name="cultivation_id"/>
+                <field name="kc_big"/>
+                <field name="kc_middle"/>
+                <field name="kc_little"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_cultivation_kc_view_search" model="ir.ui.view">
+        <field name="name">Kc of cultivations (search view)</field>
+        <field name="model">wua.cultivation.kc</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="cultivation_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_cultivation_kc_action"
+            model="ir.actions.act_window">
+        <field name="name">Coefficients Kc</field>
+        <field name="res_model">wua.cultivation.kc</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_cultivation_kc_edit_view_tree')})]"/>
+        <field name="search_view_id" ref="wua_cultivation_kc_view_search"/>
+        <field name="limit">10000000</field>
+    </record>
+
+    <record id="wua_cultivation_kc_thecnical_action"
+            model="ir.actions.act_window">
+        <field name="name">Coefficients Kc</field>
+        <field name="res_model">wua.cultivation.kc</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_cultivation_kc_thecnical_view_tree')})]"/>
+        <field name="search_view_id" ref="wua_cultivation_kc_view_search"/>
+        <field name="limit">10000000</field>
+    </record>
+
+    <menuitem id="cultivation_kc_menu"
+              name="Coefficients Kc"
+              parent="base_wua.base_wua_census_configuration_menu"
+              sequence="8"
+              action="wua_cultivation_kc_action"/>    
+    
+    <menuitem id="cultivation_kc_thecnical_menu"
+              name="Coefficients Kc (import/export)"
+              parent="base_wua_pressurized_irrigation_monitoring.monitoring_technical_menu"
+              action="wua_cultivation_kc_thecnical_action"
+              sequence="3"
+              groups="base.group_system"/>    
+    
+</odoo>
