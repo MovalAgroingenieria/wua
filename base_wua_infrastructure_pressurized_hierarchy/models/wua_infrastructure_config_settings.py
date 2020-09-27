@@ -10,7 +10,7 @@ class WuaInfrastructureConfiguration(models.TransientModel):
 
     max_levels_pressurized_irrigation = fields.Integer(
         string="Max. Levels",
-        default=10,
+        default=5,
         required=True)
 
     url_gis_viewer_waterpipe_param = fields.Char(
