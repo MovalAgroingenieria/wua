@@ -62,6 +62,11 @@
         <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
     </record>
 
+    <!-- Mandate SEPA (account_banking_sepa_direct_debit module dependence) -->
+    <record id="account_banking_sepa_direct_debit.report_sepa_direct_debit_mandate" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
     <!-- Define external layout -->
     <template id="wua_external_layout">
         <!-- Multicompany -->
@@ -263,5 +268,8 @@
             <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
         </xpath>
     </template>
+
+    <!-- Mandate SEPA -->
+    <!-- Completely overwritten -->
 
 </odoo>

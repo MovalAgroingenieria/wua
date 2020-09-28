@@ -21,6 +21,7 @@
         "reports/report_invoice.xml",
         "reports/payment_order.xml",
         "reports/report_overdue.xml",
+        "reports/report_sepa_direct_debit_mandate.xml",
     ],
     "installable": True,
     "application": False,
