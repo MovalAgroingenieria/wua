@@ -92,9 +92,17 @@
                                     </t>
                                 </div>
                                 <div class="col-xs-10 col-xs-offset-2 under-line mt4">
-                                    <span t-field="doc.company_id.partner_id.street_type_show"/>
+                                    <t t-if="doc.company_id.partner_id.street_type_show">
+                                        <span t-field="doc.company_id.partner_id.street_type_show"/>
+                                    </t>
                                     <span t-field="doc.company_id.partner_id.street"/>
-                                    <span t-field="doc.company_id.partner_id.street_num"/>
+                                    <t t-if="doc.company_id.partner_id.street_num">
+                                        <span t-field="doc.company_id.partner_id.street_num"/>
+                                    </t>
+                                    <t t-if="doc.company_id.partner_id.street2">
+                                        <span> - </span>
+                                        <span t-field="doc.company_id.partner_id.street2"/>
+                                    </t>
                                 </div>
                                 <div class="col-xs-12">
                                     <em>Postal Code - City - Town:</em>
@@ -179,9 +187,17 @@
                                     </t>
                                 </div>
                                 <div class="col-xs-10 col-xs-offset-2 under-line mt4">
-                                    <span t-field="doc.partner_id.street_type_show"/>
+                                    <t t-if="doc.partner_id.street_type_show">
+                                        <span t-field="doc.partner_id.street_type_show"/>
+                                    </t>
                                     <span t-field="doc.partner_id.street"/>
-                                    <span t-field="doc.partner_id.street_num"/>
+                                    <t t-if="doc.partner_id.street_num">
+                                        <span t-field="doc.partner_id.street_num"/>
+                                    </t>
+                                    <t t-if="doc.partner_id.street2">
+                                        <span> - </span>
+                                        <span t-field="doc.partner_id.street2"/>
+                                    </t>
                                 </div>
                                 <div class="col-xs-12">
                                     <em>Postal Code - City - Town:</em>
