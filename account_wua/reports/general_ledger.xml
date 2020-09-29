@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_general_ledger_base" inherit_id="account_financial_report_qweb.report_general_ledger_base">
+
+        <xpath expr="//t[@t-foreach='o.account_ids']/div/t[@t-call='account_financial_report_qweb.report_general_ledger_ending_cumul']" position="replace">
+            <t t-if="not o.hide_account_summary">
+                <t t-call="account_financial_report_qweb.report_general_ledger_ending_cumul">
+                    <t t-set="account_or_partner_object" t-value="account"/>
+                    <t t-set="type" t-value='"account_type"'/>
+                </t>
+            </t>
+        </xpath>
+
+    </template>
+
+</odoo>

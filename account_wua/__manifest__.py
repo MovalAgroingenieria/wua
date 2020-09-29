@@ -15,6 +15,7 @@
         "base_wua_report",
         "invoice_comment_template",
         "sale",
+        "account_financial_report_qweb",
     ],
     "data": [
         "views/partner_view.xml",
@@ -22,6 +23,8 @@
         "reports/payment_order.xml",
         "reports/report_overdue.xml",
         "reports/report_sepa_direct_debit_mandate.xml",
+        "reports/general_ledger.xml",
+        "views/general_ledger_wizard_view.xml",
     ],
     "installable": True,
     "application": False,
