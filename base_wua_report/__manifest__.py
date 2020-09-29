@@ -15,6 +15,7 @@
         "sale",
         "stock",
         "report",
+        "account_banking_sepa_direct_debit",
     ],
     "data": [
         "reports/wua_external_layout.xml",
