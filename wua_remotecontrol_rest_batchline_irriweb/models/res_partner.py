@@ -37,9 +37,15 @@ class ResPartner(models.Model):
         resp = None
         if vals and 'partner_code' in vals:
             partner_code = vals['partner_code']
-            firstname = self.get_val(vals, 'firstname')
-            lastname = self.get_val(vals, 'lastname')
-            lastname2 = self.get_val(vals, 'lastname2')
+            is_company = self.get_val(vals, 'company_type') == 'company'
+            if (is_company):
+                firstname = self.get_val(vals, 'name')
+                lastname = ''
+                lastname2 = ''
+            else:
+                firstname = self.get_val(vals, 'firstname')
+                lastname = self.get_val(vals, 'lastname')
+                lastname2 = self.get_val(vals, 'lastname2')
             vat = self.get_val(vals, 'vat')
             if not vat:
                 vat = '-'
@@ -102,7 +108,10 @@ class ResPartner(models.Model):
         resp = None
         if partner:
             partner_code = partner.partner_code
-            firstname = self.refine_value(partner.firstname)
+            if (partner.is_company):
+                firstname = self.refine_value(partner.name)
+            else:
+                firstname = self.refine_value(partner.firstname)
             lastname = self.refine_value(partner.lastname)
             lastname2 = self.refine_value(partner.lastname2)
             vat = self.refine_value(partner.vat)
