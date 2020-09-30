@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
+import datetime
+from dateutil.relativedelta import relativedelta
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
@@ -335,10 +336,16 @@ class WuaIrrigationReport(models.Model):
     def create(self, vals):
         new_record = super(WuaIrrigationReport, self).create(vals)
         report_initial_time = new_record.report_initial_time
-        report_end_time = new_record.report_end_time
+        report_end_time = datetime.datetime.strptime(
+            new_record.report_end_time, '%Y-%m-%d %H:%M:%S')
         agriculturalseason = new_record.agriculturalseason_id
-        if (report_initial_time < agriculturalseason.initial_date or
-           report_end_time > agriculturalseason.end_date):
+        agricultural_initial_date = agriculturalseason.initial_date
+        agricultural_end_date = \
+            datetime.datetime.strptime(
+                agriculturalseason.end_date, '%Y-%m-%d') + \
+            datetime.timedelta(hours=23, minutes=59, seconds=59)
+        if (report_initial_time < agricultural_initial_date or
+           report_end_time > agricultural_end_date):
             raise exceptions.ValidationError(_('The dates of the report '
                                                'are out of the '
                                                'agricultural season.'))
