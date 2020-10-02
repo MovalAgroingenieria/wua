@@ -15,7 +15,8 @@
         "base_wua_invoicing_pressurized_irrigation",
         "base_wua_invoicing_gravity_irrigation",
         "base_wua_invoicing_irrigation_report",
-        "web_widget_bokeh_chart",],
+        "web_widget_bokeh_chart",
+    ],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
@@ -42,9 +43,11 @@
         "views/wua_superproduct_dashboard_view.xml",
         "views/wua_individualinput_view.xml",
         "views/wua_cession_view.xml",
-        "views/wua_individualinput_category_view.xml",],
+        "views/wua_individualinput_category_view.xml",
+        "reports/wua_partner_quota_report.xml",
+    ],
     "external_dependencies": {
-        "python": ["numpy", "bokeh"]},        
+        "python": ["numpy", "bokeh"]},
     "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",
     "installable": True,

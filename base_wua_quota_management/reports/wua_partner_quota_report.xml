@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner quota report (droplist menu) -->
+    <report
+        id="wua_partner_quota_report"
+        string="Quota report"
+        model="res.partner"
+        report_type="qweb-pdf"
+        file="base_wua_quota_management.wua_partner_quota_report_document"
+        name="base_wua_quota_management.wua_partner_quota_report_document"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <!-- Wua partner quota report -->
+    <template id="wua_partner_quota_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <!-- Set variables -->
+                    <t t-set="quotas" t-value="o.get_partner_active_agriculturalseason_quotas()"/>
+                    <t t-if="len(quotas) > 0">
+                        <t t-set="agriculturalseason" t-value="quotas[0].agriculturalseason_id.description"/>
+                    </t>
+                    <t t-else="">
+                        <t t-set="agriculturalseason" t-value="str(not found)"/>
+                    </t>
+                    <t t-set="hydricmovements" t-value="o.get_partner_active_agriculturalseason_hydricmovements()"/>
+
+                    <div class="page">
+                        <!-- Report title -->
+                        <div name="title" class="text-center" style="font-size: 16px;">
+                            <strong>Quota report</strong>
+                            <span>&amp;nbsp; [</span>
+                            <t t-esc="agriculturalseason"/>
+                            <span>]</span>
+                        </div>
+
+                        <!-- Partner data -->
+                        <div name="wua_partner_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                    <div style="float: left;"><strong>Partner</strong></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="width: 60%; display: table-cell;">
+                                        <t t-if="o.name">
+                                            <strong><span t-field="o.name"/></strong>
+                                            <t t-if="o.vat"><span>(NIF:&amp;nbsp;<span t-field="o.vat"/>)</span></t>
+                                        <br/>
+                                        </t>
+                                        <t t-if="o.street_type_show or o.street or o.street_num or o.street2">
+                                            <t t-if="o.street_type_show"><span t-field="o.street_type_show"/></t>
+                                            <t t-if="o.street"><span t-field="o.street"/></t>
+                                            <t t-if="o.street_num"><span t-field="o.street_num"/></t>
+                                            <t t-if="o.street2"><span t-field="o.street2"/></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.city or o.zip">
+                                            <t t-if="o.city"><span t-field="o.city"/></t>
+                                            <t t-if="o.zip"><span>-&amp;nbsp;</span><span t-field="o.zip"/></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.state_id or o.country_id">
+                                            <t t-if="o.state_id"><span t-field="o.state_id"/></t>
+                                            <t t-if="o.country_id"><span>-&amp;nbsp;</span><span t-field="o.country_id"></span></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.phones or o.phone or o.mobile">
+                                            <t t-if="o.phones"><span t-field="o.phones"/></t>
+                                            <t t-else="">
+                                                <t t-if="o.phone"><span t-field="o.phone"/></t>
+                                                <t t-if="o.mobile"><span t-field="o.mobile"/></t>
+                                            </t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.email"><span t-field="o.email"/><br/></t>
+                                    </div>
+                                    <div style="width: 40%; display: table-cell; padding: 0px 32px;">
+                                        <div>&amp;nbsp;</div>
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td><span>Wua partner code:</span></td>
+                                                    <td class="text-right"><span t-field="o.partner_code"/></td>
+                                                </tr>
+                                                <tr name="tr_number_of_votes">
+                                                    <td><span>Number of votes:</span></td>
+                                                    <td class="text-right"><span t-field="o.number_of_votes"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Number of parcels:</span></td>
+                                                    <td class="text-right"><span t-field="o.parcel_number"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Total area:</span></td>
+                                                    <td class="text-right" style="padding: 0 0 0 28px;">
+                                                        <span t-field="o.parcel_total_area"/>
+                                                        <t t-if="o.partnerlink_ids">
+                                                            <t t-set="measurement_unit" t-value="o.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
+                                                            <span><t t-esc="measurement_unit"/></span>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quota data -->
+                        <div name="wua_quota_data" style="margin-top: 20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                    <div style="float: left;"><strong>Quotas</strong></div>
+                                </div>
+                            </div>
+                            <!-- Group by quotaperiod_id -->
+                            <t t-set="quota_periodes" t-value="[]"/>
+                            <t t-foreach="quotas" t-as="q">
+                                <t t-set="quota_periodes" t-value="quota_periodes+[q.quotaperiod_id]"/>
+                            </t>
+                           <t t-foreach="set(quota_periodes)" t-as="p">
+                                <div name="period_title" class="text-center" style="margin-top:10px;">
+                                    <strong>Period </strong>
+                                    <strong t-field="p.display_name"/>
+                                    <hr style="margin: 0px 0px;"/>
+                                </div>
+                                <table class="table table-striped" style="width:100%;">
+                                    <thead>
+                                        <th name="th_superproduct">Water type</th>
+                                        <th name="th_input" class="text-right">Input (m<sup>3</sup>)</th>
+                                        <th name="th_consumption" class="text-right">Consumption (m<sup>3</sup>)</th>
+                                        <th name="th_balance" class="text-right">Balance (m<sup>3</sup>)</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="total_input" t-value="0.0"/>
+                                        <t t-set="total_consumption" t-value="0.0"/>
+                                        <t t-set="total_balance" t-value="0.0"/>
+                                        <t t-foreach="quotas" t-as="q" style="page-break-inside: avoid;">
+                                            <tr>
+                                               <td name="td_superproduct">
+                                                   <span t-field="q.superproduct_id"/>
+                                               </td>
+                                               <td name="td_input" class="text-right">
+                                                   <span t-field="q.accumulated_input"/>
+                                                   <t t-set="total_input" t-value="total_input + q.accumulated_input"/>
+                                               </td>
+                                               <td name="td_consumption" class="text-right">
+                                                    <span t-field="q.accumulated_consumption"/>
+                                                    <t t-set="total_consumption" t-value="total_consumption + q.accumulated_consumption"/>
+                                               </td>
+                                               <td name="td_balance" class="text-right">
+                                                   <span t-field="q.balance"></span>
+                                                   <t t-set="total_balance" t-value="total_balance + q.balance"/>
+                                               </td>
+                                            </tr>
+                                        </t>
+                                        <tr>
+                                           <td></td>
+                                           <td name="td_total_input" class="text-right">
+                                              <strong><t t-esc="total_input" t-options='{"widget": "float", "precision": 2}'/></strong>
+                                           </td>
+                                           <td name="td_total_consumption" class="text-right">
+                                              <strong><t t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}'/></strong>
+                                           </td>
+                                           <td name="td_total_balance" class="text-right">
+                                               <strong><t t-esc="total_balance" t-options='{"widget": "float", "precision": 2}'/></strong>
+                                           </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </t>
+                        </div>
+
+                        <!-- Hydric movements data -->
+                        <div name="wua_hydricmovements_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-list-ol"/></div>
+                                    <div style="float: left;"><strong>Hydric movements</strong></div>
+                                </div>
+                            </div>
+                            <table class="table table-striped" style="width:100%;">
+                                <thead>
+                                    <th name="th_superproduct">Water type</th>
+                                    <th name="th_date" class="text-center">Date</th>
+                                    <th name="th_description">Description</th>
+                                    <th name="th_volume" class="text-right">Volume (m<sup>3</sup>)</th>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="hydricmovements" t-as="h" style="page-break-inside: avoid;">
+                                        <tr>
+                                           <td name="td_superproduct">
+                                               <span t-field="h.superproduct_id"/>
+                                           </td>
+                                           <td name="td_date" class="text-center">
+                                               <span t-field="h.event_time" t-field-options="{'format': 'dd/MM/yyyy'}"/>
+                                           </td>
+                                           <td name="td_description">
+                                               <span t-field="h.description"/>
+                                           </td>
+                                           <td name="td_volume" class="text-right">
+                                                <span t-field="h.accounting_volume"/>
+                                           </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div><!-- end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
