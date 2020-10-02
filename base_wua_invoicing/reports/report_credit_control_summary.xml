@@ -25,22 +25,25 @@
                                 <strong><span t-field="doc.partner_id.name"/></strong>
                             </t>
                             <br/>
+                            <t t-if="doc.partner_id.street_type_show">
+                                <span t-field="doc.partner_id.street_type_show"/>
+                            </t>
                             <t t-if="doc.partner_id.street">
                                 <span t-field="doc.partner_id.street"/>
                             </t>
-                            <t t-if="doc.partner_id.street2">
-                                <span t-field="doc.partner_id.street2"/>
-                            </t>
                             <t t-if="doc.partner_id.street_num">
-                                <span>,&amp;nbsp;</span>
                                 <span t-field="doc.partner_id.street_num"/>
+                            </t>
+                            <t t-if="doc.partner_id.street2">
+                                <span>-</span>
+                                <span t-field="doc.partner_id.street2"/>
                             </t>
                             <br/>
                             <t t-if="doc.partner_id.city">
                                 <span t-field="doc.partner_id.city"/>
                             </t>
                             <t t-if="doc.partner_id.zip">
-                                <span>&amp;nbsp;-&amp;nbsp;</span>
+                                <span>-</span>
                                 <span t-field="doc.partner_id.zip"/>
                             </t>
                             <br/>
