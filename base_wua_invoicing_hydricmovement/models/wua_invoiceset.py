@@ -12,15 +12,20 @@ class WuaInvoiceset(models.Model):
 
     # If a invoice set is deleted, it is necessary to make the hydricmovement
     # selectable again by setting it as not invoiced and remove the invoceset
-    # associated
+    # associated. The pres_consumptions marked as invoiced by quota have to
+    # set as not invoiced too
     @api.multi
     def unlink(self):
         hydricmovement_ids = []
+        quota_pres_consumption_ids = []
         for record in self:
             hydricmovements = self.env['wua.hydricmovement'].search(
                 [('invoiceset_id', '=', record.id)])
             for hydricmovement in hydricmovements:
                 hydricmovement_ids.append(hydricmovement.id)
+                if hydricmovement.presconsumption_id.invoiced_consumption_quota:
+                    quota_pres_consumption_ids.append(
+                        hydricmovement.presconsumption_id.id)
         res = super(WuaInvoiceset, self).unlink()
         if hydricmovement_ids:
             hydricmovements = self.env['wua.hydricmovement'].browse(
@@ -30,6 +35,11 @@ class WuaInvoiceset(models.Model):
                 'invoiced_hydricmovement': False,
                 }
             hydricmovements.write(vals)
+        if quota_pres_consumption_ids:
+            quota_pres_consumptions = self.env['wua.presconsumption'].browse(
+                quota_pres_consumption_ids)
+            quota_pres_consumptions.write(
+                {'invoiced_consumption_quota': False})
         return res
 
     def select_invoice_items_other_types(self, productcategory_code,
@@ -89,11 +99,17 @@ class WuaInvoiceset(models.Model):
     def after_cancel_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
         hydricmovement_ids = []
+        quota_pres_consumption_ids = []
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code == 14:
                 for line_hydricmovement in line.line_hydricmovement_ids:
                     hydricmovement_ids.append(
                         line_hydricmovement.hydricmovement_id.id)
+                    if line_hydricmovement.hydricmovement_id.\
+                            presconsumption_id.invoiced_consumption_quota:
+                        quota_pres_consumption_ids.append(
+                            line_hydricmovement.hydricmovement_id.
+                            presconsumption_id.id)
         if hydricmovement_ids:
             hydricmovement_ids = list(set(hydricmovement_ids))
             hydricmovements = \
@@ -102,11 +118,31 @@ class WuaInvoiceset(models.Model):
                 'invoiced_hydricmovement': False,
                 'invoiceset_id': None
             })
+        if quota_pres_consumption_ids:
+            quota_pres_consumption_ids = list(set(quota_pres_consumption_ids))
+            quota_pres_consumption = self.env['wua.presconsumption'].browse(
+                quota_pres_consumption_ids)
+            quota_pres_consumption.write({'invoiced_consumption_quota': False})
 
     def after_calculate_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_calculate_invoiceset(invoiceset)
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code == 14:
+                selected_hydricmovements = \
+                    line.line_hydricmovement_ids.filtered(
+                        lambda x: x.selected is True)
+                quota_pres_consumption_ids = []
+                for hidmov in selected_hydricmovements:
+                    if hidmov.hydricmovement_id.presconsumption_id and \
+                            hidmov.hydricmovement_id.type == \
+                            'pres_consumption':
+                        quota_pres_consumption_ids.append(
+                            hidmov.hydricmovement_id.presconsumption_id.id)
+                quota_pres_consumption = \
+                    self.env['wua.presconsumption'].browse(
+                        quota_pres_consumption_ids)
+                quota_pres_consumption.write(
+                    {'invoiced_consumption_quota': True})
                 unselected_hydricmovements = \
                     line.line_hydricmovement_ids.filtered(
                         lambda x: x.selected is False)

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-02 10:10+0000\n"
-"PO-Revision-Date: 2020-07-02 10:10+0000\n"
+"POT-Creation-Date: 2020-10-05 13:55+0000\n"
+"PO-Revision-Date: 2020-10-05 13:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -33,7 +33,7 @@ msgstr "Creado por"
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.ui.view,arch_db:base_wua_invoicing_hydricmovement.wua_invoiceset_line_hydricmovement_view_search
@@ -53,12 +53,12 @@ msgstr "Nombre a mostrar"
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model,name:base_wua_invoicing_hydricmovement.model_product_category
 msgid "Entity (WUA Product Category)"
-msgstr "Entity (WUA Product Category)"
+msgstr "Elemento (categoría de producto)"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model,name:base_wua_invoicing_hydricmovement.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Entity (WUA Product Template)"
+msgstr "Elemento (plantilla de producto)"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model,name:base_wua_invoicing_hydricmovement.model_wua_invoiceset
@@ -71,7 +71,17 @@ msgid "Entity (line of a WUA invoice set)"
 msgstr "Elemento (línea de lote de facturas)"
 
 #. module: base_wua_invoicing_hydricmovement
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:182
+#: model:ir.model,name:base_wua_invoicing_hydricmovement.model_wua_presconsumption
+msgid "Entity (pressure consumption)"
+msgstr "Elemento (consumo de presión)"
+
+#. module: base_wua_invoicing_hydricmovement
+#: model:ir.model,name:base_wua_invoicing_hydricmovement.model_wua_reading
+msgid "Entity (pressure reading)"
+msgstr "Elemento (lectura de presión)"
+
+#. module: base_wua_invoicing_hydricmovement
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:215
 #, python-format
 msgid "Error when updating records."
 msgstr "Error al actualizar registros."
@@ -97,7 +107,7 @@ msgid "Hydric Movement"
 msgstr "Movimiento hídrico"
 
 #. module: base_wua_invoicing_hydricmovement
-#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:232
+#: code:addons/base_wua_invoicing_hydricmovement/models/wua_invoiceset.py:265
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_hydricmovement_id
 #, python-format
 msgid "Hydricmovement"
@@ -139,6 +149,27 @@ msgid "Invoice Set"
 msgstr "Lote"
 
 #. module: base_wua_invoicing_hydricmovement
+#: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_presconsumption_invoiced_consumption_quota
+#: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_reading_invoiced_reading_quota
+msgid "Invoiced by quota"
+msgstr "Facturado por cupo"
+
+#. module: base_wua_invoicing_hydricmovement
+#: model:ir.ui.view,arch_db:base_wua_invoicing_hydricmovement.wua_presconsumption_view_search
+msgid "Invoiced by quota (Yes/No)"
+msgstr "Facturado por cupo (Sí/No)"
+
+#. module: base_wua_invoicing_hydricmovement
+#: model:ir.ui.view,arch_db:base_wua_invoicing_hydricmovement.wua_presconsumption_view_search
+msgid "Invoiced by quota: No"
+msgstr "Facturado por cupo: No"
+
+#. module: base_wua_invoicing_hydricmovement
+#: model:ir.ui.view,arch_db:base_wua_invoicing_hydricmovement.wua_presconsumption_view_search
+msgid "Invoiced by quota: Yes"
+msgstr "Facturado por cupo: Sí"
+
+#. module: base_wua_invoicing_hydricmovement
 #: model:ir.ui.view,arch_db:base_wua_invoicing_hydricmovement.wua_hydricmovement_view_search
 msgid "Invoiced: No"
 msgstr "Facturado: No"
@@ -176,7 +207,7 @@ msgstr "Última actualización el"
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_invoicesetline_id
 msgid "Line"
-msgstr "Linea"
+msgstr "Línea"
 
 #. module: base_wua_invoicing_hydricmovement
 #: selection:wua.invoiceset.line.hydricmovement,type:0
@@ -243,7 +274,7 @@ msgstr "Supraproducto"
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_event_time
 msgid "Time"
-msgstr "Tiempo"
+msgstr "Fecha"
 
 #. module: base_wua_invoicing_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_invoicing_hydricmovement.field_wua_invoiceset_line_hydricmovement_type

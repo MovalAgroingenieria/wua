@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_presconsumption_view_form" model="ir.ui.view">
+        <field name="name">Consumptions (form view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_presconsumption_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='adjustement_volume']" position="attributes">
+                <attribute name="attrs">
+                    {'readonly':[('invoiced_consumption_quota','=',True)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='reading_id']" position="after">
+                <field name="invoiced_consumption_quota" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_presconsumption_view_search" model="ir.ui.view">
+        <field name="name">Consumptions (search view)</field>
+        <field name="model">wua.presconsumption</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_presconsumption_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='withadjustement']" position="after">
+                <separator/>
+                <filter string="Invoiced by quota: Yes" name="invoicedbyquota" domain="[('invoiced_consumption_quota','=',True)]"/>
+                <filter string="Invoiced by quota: No" name="notinvoicedbyquota" domain="[('invoiced_consumption_quota','!=',True)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='readingendtime']" position="after">
+                <filter string="Invoiced by quota (Yes/No)" name="invoicedbyquotagroup" context="{'group_by':'invoiced_consumption_quota'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

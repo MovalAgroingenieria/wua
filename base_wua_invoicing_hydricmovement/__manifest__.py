@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 Moval Agroingeniería
+# 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
@@ -20,7 +20,9 @@
         'views/resources.xml',
         'views/account_invoice_view.xml',
         'views/wua_invoiceset_view.xml',
-        'views/wua_hydricmovement_view.xml'
+        'views/wua_hydricmovement_view.xml',
+        'views/wua_reading_view.xml',
+        'views/wua_presconsumption_view.xml',
     ],
     "installable": True,
     "application": True,
