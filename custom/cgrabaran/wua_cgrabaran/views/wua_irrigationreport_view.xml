@@ -6,9 +6,6 @@
         <field name="model">wua.irrigationreport</field>
         <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='hours']" position="attributes">
-                <attribute name="attrs">{'invisible': 1}</attribute>
-            </xpath>
             <xpath expr="//field[@name='partner_id']" position="replace">
             </xpath>
             <xpath expr="//field[@name='parcel_id']" position="attributes">
@@ -20,6 +17,8 @@
                 <field name="area_total_company_g"/>
                 <field name="area_total_company_r"/>
                 <field name="area_total_company_t"/>
+            </xpath>
+            <xpath expr="//field[@name='hours']" position="replace">
             </xpath>
             <xpath expr="//field[@name='report_end_time']" position="after">
                     <field name="hours" digits="[32, 2]" widget="float_time"/>
