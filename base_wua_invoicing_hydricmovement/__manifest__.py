@@ -23,6 +23,7 @@
         'views/wua_hydricmovement_view.xml',
         'views/wua_reading_view.xml',
         'views/wua_presconsumption_view.xml',
+        'reports/report_invoice.xml',
     ],
     "installable": True,
     "application": True,

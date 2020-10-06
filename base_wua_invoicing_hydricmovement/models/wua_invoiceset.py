@@ -82,19 +82,34 @@ class WuaInvoiceset(models.Model):
             partner_id = hydricmovement.partner_id.id
             product_id = product_id
             categ_code = categ_code
+            key1 = hydricmovement.id
+            if hydricmovement.type == 'pres_consumption':
+                key2 = hydricmovement.presconsumption_id.id
+            else:
+                key2 = 0
             quantity = hydricmovement.volume
             description = self.get_hydricmovement_description(hydricmovement)
             result = {
                 'partner_id': partner_id,
                 'product_id': product_id,
                 'categ_code': categ_code,
-                'key1': 0,
-                'key2': 0,
+                'key1': key1,
+                'key2': key2,
                 'quantity': quantity,
                 'description': description,
                 }
             invoice_details_categ14.append(result)
         return invoice_details_categ14
+
+    def add_to_invoice_data_line_ref_to_other_types(
+            self, categ_code, invoice_data_line, data):
+        if categ_code != 14:
+            return super(WuaInvoiceset,
+                         self).add_to_invoice_data_line_ref_to_other_types(
+                             categ_code, invoice_data_line, data)
+        data['hydricmovement_id'] = invoice_data_line['key1']
+        data['presconsumption_id'] = invoice_data_line['key2']
+        return data
 
     def after_cancel_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
