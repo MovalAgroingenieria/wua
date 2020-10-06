@@ -2,7 +2,6 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import datetime
-from dateutil.relativedelta import relativedelta
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
@@ -284,7 +283,7 @@ class WuaIrrigationReport(models.Model):
             'wua.irrigation.configuration', 'data_in_hours')
         hours = self.hours
         if (data_in_hours and self.report_initial_time and
-           self.report_end_time and not self.hours):
+           self.report_end_time):
             initial_time = fields.Datetime.from_string(
                 self.report_initial_time)
             end_time = fields.Datetime.from_string(self.report_end_time)
