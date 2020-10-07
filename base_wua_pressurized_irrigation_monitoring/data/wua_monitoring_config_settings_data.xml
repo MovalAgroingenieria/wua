@@ -8,6 +8,13 @@
             <field name="max_deviation_categ_02" type="float">10</field>
             <field name="control_periodicity">s</field>
             <field name="uniformity_irrigation_application" type="float">0.9</field>
+            <field name="incoming_mail_email_from">goinnowater@gmail.com</field>
+            <field name="incoming_mail_subject">recomendaciones de riego</field>
+            <field name="incoming_mail_only_emails_to_admin" type="int">1</field>
+            <field name="incoming_mail_col_finaldate">Hasta</field>
+            <field name="incoming_mail_col_et0">ETo</field>
+            <field name="incoming_mail_col_pe">Pe</field>
+            <field name="incoming_mail_apply_to_next_controlperiod" type="int">1</field>
         </record>
 
         <record id="param_ir_values_max_deviation_categ_01"
@@ -44,6 +51,69 @@
             <field name="key">default</field>
             <field name="model">wua.monitoring.configuration</field>
             <field name="name">uniformity_irrigation_application</field>
+        </record>
+
+        <record id="param_ir_values_incoming_mail_email_from"
+                model="ir.values" forcecreate="False">
+            <field name="value">S&apos;goinnowater@gmail.com&apos;&#10;p1&#10;.</field>
+            <field name="key2"></field>
+            <field name="key">default</field>
+            <field name="model">wua.monitoring.configuration</field>
+            <field name="name">incoming_mail_email_from</field>
+        </record>
+
+        <record id="param_ir_values_incoming_mail_subject"
+                model="ir.values" forcecreate="False">
+            <field name="value">S&apos;recomendaciones de riego&apos;&#10;p1&#10;.</field>
+            <field name="key2"></field>
+            <field name="key">default</field>
+            <field name="model">wua.monitoring.configuration</field>
+            <field name="name">incoming_mail_subject</field>
+        </record>
+
+        <record id="param_ir_values_incoming_mail_only_emails_to_admin"
+                model="ir.values" forcecreate="False">
+            <field name="value">I01&#10;.</field>
+            <field name="key2"></field>
+            <field name="key">default</field>
+            <field name="model">wua.monitoring.configuration</field>
+            <field name="name">incoming_mail_only_emails_to_admin</field>
+        </record>
+
+        <record id="param_ir_values_incoming_mail_col_finaldate"
+                model="ir.values" forcecreate="False">
+            <field name="value">S&apos;Hasta&apos;&#10;p1&#10;.</field>
+            <field name="key2"></field>
+            <field name="key">default</field>
+            <field name="model">wua.monitoring.configuration</field>
+            <field name="name">incoming_mail_col_finaldate</field>
+        </record>
+
+        <record id="param_ir_values_incoming_mail_col_et0"
+                model="ir.values" forcecreate="False">
+            <field name="value">S&apos;ETo&apos;&#10;p1&#10;.</field>
+            <field name="key2"></field>
+            <field name="key">default</field>
+            <field name="model">wua.monitoring.configuration</field>
+            <field name="name">incoming_mail_col_et0</field>
+        </record>
+
+        <record id="param_ir_values_incoming_mail_col_pe"
+                model="ir.values" forcecreate="False">
+            <field name="value">S&apos;Pe&apos;&#10;p1&#10;.</field>
+            <field name="key2"></field>
+            <field name="key">default</field>
+            <field name="model">wua.monitoring.configuration</field>
+            <field name="name">incoming_mail_col_pe</field>
+        </record>
+
+        <record id="param_ir_values_incoming_mail_apply_to_next_controlperiod"
+                model="ir.values" forcecreate="False">
+            <field name="value">I01&#10;.</field>
+            <field name="key2"></field>
+            <field name="key">default</field>
+            <field name="model">wua.monitoring.configuration</field>
+            <field name="name">incoming_mail_apply_to_next_controlperiod</field>
         </record>
 
     </data>

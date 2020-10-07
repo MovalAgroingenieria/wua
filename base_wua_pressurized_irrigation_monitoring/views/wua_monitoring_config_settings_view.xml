@@ -13,14 +13,26 @@
                     <button string="Cancel" type="object" name="cancel"
                             class="oe_link"/>
                 </header>
-                <group string="Monitoring Values">
+                <group name="monitoring_values"
+                       string="Monitoring Values">
                     <field name="control_periodicity" widget="radio"/>
                     <field name="uniformity_irrigation_application"/>
                     <field name="max_deviation_categ_01"/>
                     <field name="max_deviation_categ_02"/>
                 </group>
-                <group string="GIS Settings">
+                <group name="gis_settings"
+                       string="GIS Settings">
                     <field name="url_gis_viewer_subparcel_param"/>
+                </group>
+                <group name="incoming_mails"
+                       string="Incoming Mails (agroclimatic data)">
+                    <field name="incoming_mail_email_from"/>
+                    <field name="incoming_mail_subject"/>
+                    <field name="incoming_mail_only_emails_to_admin"/>
+                    <field name="incoming_mail_col_finaldate"/>
+                    <field name="incoming_mail_col_et0"/>
+                    <field name="incoming_mail_col_pe"/>
+                    <field name="incoming_mail_apply_to_next_controlperiod"/>
                 </group>
             </form>
         </field>

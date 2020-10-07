@@ -4,11 +4,16 @@
 
 import datetime
 import locale
+import os
+import logging
+import xlrd
 from datetime import timedelta
-from odoo import models, fields, api, _, exceptions
+from odoo import models, fields, api, _, exceptions, SUPERUSER_ID
+from odoo.tools import config
 
 
 class WuaControlperiod(models.Model):
+    _inherit = 'mail.thread'
     _name = 'wua.controlperiod'
     _description = 'Entity (control period)'
     _order = 'name'
@@ -373,3 +378,199 @@ class WuaControlperiod(models.Model):
                 'age_category': subparcel.age_category,
                 })
             subparcel.subparcel_modified = False
+
+    @api.model
+    def run_test_server_action(self):
+        # Provisional
+        print 'run_test_server_action'
+
+    @api.model
+    def run_process_incoming_mail(self):
+        # Provisional
+        print 'run_process_incoming_mail'
+        # Get params
+        email_from, subject, only_admin, c_date, c_et0, c_pe, to_next_cp = \
+            self._get_incoming_mail_params()
+        condition = [('message_type', '=', 'email'),
+                     ('email_from', 'ilike', email_from),
+                     ('incoming_mail_processed', '=', False)]
+        if subject and subject != '':
+            condition.append(('subject', 'ilike', subject))
+        if only_admin:
+            condition.append(('create_uid', '=', SUPERUSER_ID))
+        # Get the emails to process
+        incoming_messages = self.env['mail.message'].search(
+            condition, order='create_date asc')
+        for incoming_message in (incoming_messages or []):
+            excel_file = ''
+            excel_name = ''
+            for attachment in (incoming_message.attachment_ids or []):
+                is_xls = (len(attachment.name) >= 4 and
+                          attachment.name[-4:].lower() == '.xls')
+                is_xlsx = not(is_xls)
+                if not is_xlsx:
+                    is_xlsx = (len(attachment.name) >= 5 and
+                               attachment.name[-5:].lower() == '.xlsx')
+                if is_xls or is_xlsx:
+                    base_path = config.filestore(self._cr.dbname)
+                    if base_path and len(base_path) >= 1:
+                        if base_path[-1:] != '/':
+                            base_path = base_path + '/'
+                        excel_file = base_path + attachment.store_fname
+                        excel_name = attachment.name
+                    break
+            if excel_file != '':
+                process_ok = True
+                error_message = ''
+                preffix_message = _('Mail with agroclimatic data') + '. ' + \
+                    _('EMail from') + ': ' + \
+                    incoming_message.email_from + ' .' + \
+                    _('Subject') + ': ' + \
+                    incoming_message.subject + '. ' + \
+                    _('Excel file') + ': ' + \
+                    excel_name
+                suffix_message = _('OK')
+                final_date = ''
+                et0 = 0
+                pe = 0
+                try:
+                    final_date, et0, pe = self._process_excel(
+                        excel_file, c_date, c_et0, c_pe)
+                except Exception as e:
+                    process_ok = False
+                    error_message = str(e)
+                if not process_ok:
+                    suffix_message = _('ERROR') + ' (' + error_message + ')'
+                message = preffix_message + ' ... ' + suffix_message
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info(message)
+                if final_date != '':
+                    # Update control period (calculation trigger)
+                    # Provisional
+                    print final_date
+                    print et0
+                    print pe
+                    controlperiod = self._get_control_period(final_date,
+                                                             to_next_cp)
+                    # Provisional
+                    print controlperiod.name
+                    # if controlperiod:
+                    #     controlperiod.write({
+                    #         'et0_value': et0,
+                    #         'pe_value': pe,
+                    #         })
+            incoming_message.incoming_mail_processed = True
+        # If the recipient of the emails is "admin", delete all emails
+        # with a subject other than "agroclimatic data".
+        if only_admin and subject and subject != '':
+            self.sudo()._delete_unnecessary_emails_addressed_to_admin(
+                email_from, subject)
+
+    def _get_incoming_mail_params(self):
+        email_from = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'incoming_mail_email_from')
+        if not email_from:
+            email_from = 'goinnowater@gmail.com'
+        subject = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'incoming_mail_subject')
+        if subject:
+            subject = subject.strip().lower()
+        only_admin = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration',
+            'incoming_mail_only_emails_to_admin')
+        c_date = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'incoming_mail_col_finaldate')
+        if not c_date:
+            c_date = 'Hasta'
+        c_et0 = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'incoming_mail_col_et0')
+        if not c_et0:
+            c_et0 = 'ETo'
+        c_pe = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'incoming_mail_col_pe')
+        if not c_pe:
+            c_pe = 'Pe'
+        to_next_cp = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration',
+            'incoming_mail_apply_to_next_controlperiod')
+        return email_from, subject, only_admin, c_date, c_et0, c_pe, to_next_cp
+
+    def _process_excel(self, excel_file, c_date, c_et0, c_pe):
+        final_date = ''
+        et0 = 0
+        pe = 0
+        workbook = xlrd.open_workbook(excel_file)
+        worksheet = workbook.sheet_by_index(0)
+        if worksheet.nrows >= 2 and worksheet.nrows >= 3:
+            index_c_date = -1
+            index_c_et0 = -1
+            index_c_pe = -1
+            for col_num in range(worksheet.ncols):
+                if worksheet.cell(0, col_num).value == c_date:
+                    index_c_date = col_num
+                if worksheet.cell(0, col_num).value == c_et0:
+                    index_c_et0 = col_num
+                if worksheet.cell(0, col_num).value == c_pe:
+                    index_c_pe = col_num
+            if index_c_date >= 0 and index_c_et0 >= 0 and index_c_pe >= 0:
+                raw_final_date = str(worksheet.cell(1, index_c_date).value)
+                raw_et0 = str(worksheet.cell(1, index_c_et0).value)
+                raw_pe = str(worksheet.cell(1, index_c_pe).value)
+                final_date = raw_final_date
+                if len(raw_final_date) == 10:
+                    final_date = raw_final_date[6:10] + '-' + \
+                        raw_final_date[3:5] + '-' + raw_final_date[0:2]
+                et0 = float(raw_et0.replace(',', '.'))
+                pe = float(raw_pe.replace(',', '.'))
+        return final_date, et0, pe
+
+    def _delete_unnecessary_emails_addressed_to_admin(
+            self, email_from, subject):
+        # First: are there any possible emails to delete?
+        # Not ORM. Reason: performance
+        self.env.cr.execute("""
+            SELECT COUNT(id) FROM mail_message
+            WHERE create_uid=1 AND message_type='email' AND model IS NULL
+        """)
+        num_rows = self.env.cr.fetchone()[0]
+        if num_rows == 0:
+            return
+        # Second: it is necessary to process the emails
+        messages_to_delete = self.env['mail.message'].search(
+            [('create_uid', '=', SUPERUSER_ID),
+             ('message_type', '=', 'email'),
+             ('model', '=', False)])
+        email_from = email_from.strip().lower()
+        subject = subject.strip().lower()
+        base_path = config.filestore(self._cr.dbname)
+        if base_path and len(base_path) >= 1:
+            if base_path[-1:] != '/':
+                base_path = base_path + '/'
+        for message_to_delete in (messages_to_delete or []):
+            emailfrom_of_message = message_to_delete.email_from.strip().lower()
+            subject_of_message = message_to_delete.subject.strip().lower()
+            if (emailfrom_of_message.find(email_from) == -1 or
+               subject_of_message.find(subject) == -1):
+                if message_to_delete.attachment_ids:
+                    for attachment in message_to_delete.attachment_ids:
+                        attachment_file = base_path + attachment.store_fname
+                        try:
+                            os.remove(attachment_file)
+                        except:
+                            pass
+                message_to_delete.unlink()
+
+    def _get_control_period(self, ref_date, to_next_cp=False):
+        resp = None
+        controlperiod_model = self.env['wua.controlperiod']
+        if to_next_cp:
+            controlperiod = controlperiod_model.search(
+                [('initial_date', '<=', ref_date),
+                 ('end_date', '>=', ref_date)])
+        else:
+            controlperiod = controlperiod_model.search(
+                [('initial_date', '>', ref_date)],
+                limit=1, order='initial_date asc')
+        if controlperiod:
+            controlperiod = controlperiod[0]
+        return resp
