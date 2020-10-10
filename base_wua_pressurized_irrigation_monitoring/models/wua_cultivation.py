@@ -2,6 +2,10 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import numpy
+from bokeh.plotting import figure
+from bokeh.embed import components
+from bokeh.models.formatters import DatetimeTickFormatter
 from odoo import models, fields, api, _
 
 
@@ -29,6 +33,14 @@ class WuaCultivation(models.Model):
         comodel_name='wua.cultivation.kc',
         inverse_name='cultivation_id')
 
+    comparative_consumptions_graph = fields.Text(
+        string='Consumptions Graph (estimated and real)',
+        compute='_compute_comparative_consumptions_graph')
+
+    deviation_percentage_graph = fields.Text(
+        string='Percentage-Deviation Graph',
+        compute='_compute_deviation_percentage_graph')
+
     _sql_constraints = [
         ('valid_lower_age_middle',
          'CHECK (lower_age_middle >= 0)',
@@ -39,6 +51,101 @@ class WuaCultivation(models.Model):
          'The \"upper limit for middle cultivation\" must be '
          'equal to or grater than lower limit.'),
         ]
+
+    @api.multi
+    def _compute_comparative_consumptions_graph(self):
+        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        if not active_agriculturalseason:
+            return
+        active_agriculturalseason = active_agriculturalseason[0]
+        comparative_consumption_model = \
+            self.env['wua.comparative.cultivation.presconsumption']
+        for record in self:
+            comparative_consumptions = \
+                comparative_consumption_model.search(
+                    [('agriculturalseason_id', '=',
+                      active_agriculturalseason.id),
+                     ('cultivation_id', '=', record.id)])
+            if comparative_consumptions:
+                x_values = []
+                y_estimated_values = []
+                y_real_values = []
+                for comparative_consumption in comparative_consumptions:
+                    date_of_controlperiod = \
+                        numpy.datetime64(comparative_consumption.
+                                         controlperiod_id.initial_date)
+                    x_values.append(date_of_controlperiod)
+                    y_estimated_values.append(
+                        comparative_consumption.estimated_consumption)
+                    y_real_values.append(
+                        comparative_consumption.real_consumption)
+                    p = figure(sizing_mode='scale_width', plot_height=125,
+                               x_axis_type='datetime',
+                               toolbar_location=None)
+                    p.line(x_values, y_estimated_values, color='yellowgreen',
+                           line_width=2, legend=_('Estimated'))
+                    p.line(x_values, y_real_values, color='mediumvioletred',
+                           line_width=2, legend=_('Real'))
+                    p.title.text = _('Consumptions')
+                    p.xaxis.axis_label = _('Date')
+                    p.yaxis.axis_label = _('m3')
+                    p.grid.grid_line_alpha = 0
+                    p.ygrid.band_fill_color = "olive"
+                    p.ygrid.band_fill_alpha = 0.2
+                    p.xaxis.formatter = DatetimeTickFormatter(months='%m/%y',
+                                                              days='%d/%m',
+                                                              hours='%H',
+                                                              minutes='%H:%M')
+                    script, div = components(p)
+                    if script and div:
+                        record.comparative_consumptions_graph = \
+                            '%s%s' % (div, script)
+
+    @api.multi
+    def _compute_deviation_percentage_graph(self):
+        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        if not active_agriculturalseason:
+            return
+        active_agriculturalseason = active_agriculturalseason[0]
+        comparative_consumption_model = \
+            self.env['wua.comparative.cultivation.presconsumption']
+        for record in self:
+            comparative_consumptions = \
+                comparative_consumption_model.search(
+                    [('agriculturalseason_id', '=',
+                      active_agriculturalseason.id),
+                     ('cultivation_id', '=', record.id)])
+            if comparative_consumptions:
+                x_values = []
+                y_values = []
+                for comparative_consumption in comparative_consumptions:
+                    date_of_controlperiod = \
+                        numpy.datetime64(comparative_consumption.
+                                         controlperiod_id.initial_date)
+                    x_values.append(date_of_controlperiod)
+                    y_values.append(
+                        comparative_consumption.deviation_percentage_num)
+                    p = figure(sizing_mode='scale_width', plot_height=125,
+                               x_axis_type='datetime',
+                               toolbar_location=None)
+                    p.line(x_values, y_values, color='red',
+                           line_width=2, legend=_('Deviation %'))
+                    p.title.text = _('Deviation')
+                    p.xaxis.axis_label = _('Date')
+                    p.yaxis.axis_label = _('%')
+                    p.grid.grid_line_alpha = 0
+                    p.ygrid.band_fill_color = "olive"
+                    p.ygrid.band_fill_alpha = 0.2
+                    p.xaxis.formatter = DatetimeTickFormatter(months='%m/%y',
+                                                              days='%d/%m',
+                                                              hours='%H',
+                                                              minutes='%H:%M')
+                    script, div = components(p)
+                    if script and div:
+                        record.deviation_percentage_graph = \
+                            '%s%s' % (div, script)
 
     @api.multi
     def write(self, vals):
@@ -91,7 +198,6 @@ class WuaCultivation(models.Model):
             'context': {'search_default_agriculturalseasonactive': True},
             }
         return act_window
-
 
     @api.multi
     def action_get_cultivation_kc(self):

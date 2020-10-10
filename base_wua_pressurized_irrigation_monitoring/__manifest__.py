@@ -13,11 +13,13 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_remotecontrol_rest", ],
+        "base_wua_remotecontrol_rest",
+        "web_widget_bokeh_chart",],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/wua_monitoring_config_settings_data.xml",
+        "data/wua_controlreading_cron.xml",
         "wizard/wizard_generate_controlperiods_view.xml",
         "views/resources.xml",
         "views/base_wua_pressurized_irrigation_monitoring_menus.xml",

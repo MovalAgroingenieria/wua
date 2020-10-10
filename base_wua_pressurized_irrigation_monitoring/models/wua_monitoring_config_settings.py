@@ -74,11 +74,6 @@ class WuaMonitoringConfiguration(models.TransientModel):
         help='For incoming mails related to agroclimatic data: '
              'in the attached excel file, name of the precipitation column')
 
-    incoming_mail_apply_to_next_controlperiod = fields.Boolean(
-        string='Apply to next control-period',
-        help='For incoming mails related to agroclimatic data: '
-             'apply the agroclimatic data to the next control period')
-
     _sql_constraints = [
         ('valid_max_deviation_categ_01',
          'CHECK (max_deviation_categ_01 >= 0)',
@@ -130,6 +125,3 @@ class WuaMonitoringConfiguration(models.TransientModel):
         values.set_default('wua.monitoring.configuration',
                            'incoming_mail_col_pe',
                            self.incoming_mail_col_pe)
-        values.set_default('wua.monitoring.configuration',
-                           'incoming_mail_apply_to_next_controlperiod',
-                           self.incoming_mail_apply_to_next_controlperiod)
