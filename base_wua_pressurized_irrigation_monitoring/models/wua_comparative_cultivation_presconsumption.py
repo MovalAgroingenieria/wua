@@ -46,6 +46,12 @@ class WuaComparativeCultivationPresconsumption(models.Model):
         compute='_compute_deviation_percentage',
     )
 
+    deviation_percentage_num = fields.Float(
+        string='% Deviation',
+        digits=(32, 2),
+        compute='_compute_deviation_percentage_num',
+    )
+
     consumption_category = fields.Selection([
         ('A', 'A (correct irrigation)'),
         ('B', 'B (acceptable irrigation)'),
@@ -106,5 +112,22 @@ class WuaComparativeCultivationPresconsumption(models.Model):
                 if deviation > 0 and record.real_consumption > 0:
                     deviation_percentage = \
                         (deviation * 100) / record.real_consumption
+                    if deviation_percentage > 100:
+                        deviation_percentage = 100
                 record.deviation_percentage = \
                     '{:.2f}'.format(deviation_percentage) + '%'
+
+    @api.multi
+    def _compute_deviation_percentage_num(self):
+        for record in self:
+            deviation_percentage_num = 0
+            if (record.estimated_consumption > 0 or
+               record.real_consumption > 0):
+                deviation_percentage_num = 100
+                deviation = abs(record.deviation)
+                if deviation > 0 and record.real_consumption > 0:
+                    deviation_percentage_num = \
+                        (deviation * 100) / record.real_consumption
+                    if deviation_percentage_num > 100:
+                        deviation_percentage_num = 100
+            record.deviation_percentage_num = deviation_percentage_num

@@ -533,6 +533,8 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                     uniformity_irrig_applic = 0.9
                 resp = (10 * subparcel.area_official_hec *
                         (((et0 * kc) - pe) / uniformity_irrig_applic))
+                if resp < 0:
+                    resp = 0
         return resp
 
     # Get the number of period of a control period.

@@ -428,7 +428,7 @@ class WuaControlreading(models.Model):
                         resp[2] = error_message
                         resp[3] = error_watermeters
                         if save_data:
-                            number_of_negative_readings = \
+                            number_of_negative_readings, controlperiod_ids = \
                                 self.save_controlreadings(readings)
                             resp[4] = number_of_negative_readings
                         prefix_message_01 = _('Remote Control: '
@@ -445,6 +445,13 @@ class WuaControlreading(models.Model):
                                 self.__class__.__name__)
                             _logger.info(prefix_message_02 + '... ' +
                                          suffix_message_02)
+                        if controlperiod_ids:
+                            controlperiods = \
+                                self.env['wua.controlperiod'].browse(
+                                    controlperiod_ids)
+                            for controlperiod in (controlperiods or []):
+                                if controlperiod.state == 'calculated':
+                                    controlperiod.calculate_controlperiod()
         else:
             if show_message:
                 if there_are_readings_not_validated:
@@ -481,9 +488,11 @@ class WuaControlreading(models.Model):
     def save_controlreadings(self, readings, update_log=True):
         number_of_readings = len(readings)
         number_of_negative_readings = 0
+        controlperiod_ids = []
         if number_of_readings > 0:
             reading_time = datetime.datetime.now().strftime(
-                '%Y-%m-%d %H:%M:%S'),
+                '%Y-%m-%d %H:%M:%S')
+            controlperiod_model = self.env['wua.controlperiod']
             for reading in readings:
                 previous_reading = self.env['wua.controlreading'].search(
                     [('watermeter_id', '=', reading['watermeter_id'])])
@@ -515,11 +524,20 @@ class WuaControlreading(models.Model):
                             'from_import': False,
                             'validated': True,
                             })
+                        ref_date = reading_time[0:10]
+                        # Provisional
+                        print ref_date
+                        controlperiod = \
+                            controlperiod_model._get_control_period(ref_date)
+                        if controlperiod:
+                            controlperiod_ids.append(controlperiod.id)
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info(_('Remote Control: Saved readings') + '... ' +
                              str(number_of_readings))
-        return number_of_negative_readings
+        if controlperiod_ids:
+            controlperiod_ids = list(set(controlperiod_ids))
+        return number_of_negative_readings, controlperiod_ids
 
     def is_negative_controlreading(self, reading):
         is_negative = False

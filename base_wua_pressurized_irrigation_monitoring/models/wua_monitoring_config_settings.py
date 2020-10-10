@@ -40,6 +40,40 @@ class WuaMonitoringConfiguration(models.TransientModel):
         digits=(32, 2),
         default=0.9)
 
+    incoming_mail_email_from = fields.Char(
+        string='Email from',
+        size=50,
+        required=True,
+        default='-',
+        help='For incoming mails related to agroclimatic data: '
+             'email-account that sends the mail.')
+
+    incoming_mail_subject = fields.Char(
+        string='Subject',
+        size=50,
+        help='For incoming mails related to agroclimatic data: '
+             'subject of the incoming mail')
+
+    incoming_mail_only_emails_to_admin = fields.Boolean(
+        string='Only to administrator',
+        help='For incoming mails related to agroclimatic data: '
+             'only attend emails addressed to the administrator')
+
+    incoming_mail_col_finaldate = fields.Char(
+        string='Column name for final date',
+        help='For incoming mails related to agroclimatic data: '
+             'in the attached excel file, name of the final-date column')
+
+    incoming_mail_col_et0 = fields.Char(
+        string='Column name for ET0',
+        help='For incoming mails related to agroclimatic data: '
+             'in the attached excel file, name of the ET0 column')
+
+    incoming_mail_col_pe = fields.Char(
+        string='Column name for precipitation',
+        help='For incoming mails related to agroclimatic data: '
+             'in the attached excel file, name of the precipitation column')
+
     _sql_constraints = [
         ('valid_max_deviation_categ_01',
          'CHECK (max_deviation_categ_01 >= 0)',
@@ -73,3 +107,21 @@ class WuaMonitoringConfiguration(models.TransientModel):
         values.set_default('wua.monitoring.configuration',
                            'uniformity_irrigation_application',
                            self.uniformity_irrigation_application)
+        values.set_default('wua.monitoring.configuration',
+                           'incoming_mail_email_from',
+                           self.incoming_mail_email_from)
+        values.set_default('wua.monitoring.configuration',
+                           'incoming_mail_subject',
+                           self.incoming_mail_subject)
+        values.set_default('wua.monitoring.configuration',
+                           'incoming_mail_only_emails_to_admin',
+                           self.incoming_mail_only_emails_to_admin)
+        values.set_default('wua.monitoring.configuration',
+                           'incoming_mail_col_finaldate',
+                           self.incoming_mail_col_finaldate)
+        values.set_default('wua.monitoring.configuration',
+                           'incoming_mail_col_et0',
+                           self.incoming_mail_col_et0)
+        values.set_default('wua.monitoring.configuration',
+                           'incoming_mail_col_pe',
+                           self.incoming_mail_col_pe)

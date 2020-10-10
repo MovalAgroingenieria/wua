@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-  <record id="wua_controlperiod_comparative_presconsumption_action" model="ir.actions.server">
-      <field name="name">Comparative Consumptions</field>
-      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_controlperiod"/>
-      <field name="code">action = env["wua.controlperiod"].get_wua_controlperiod_comparative_presconsumption_action()</field>
-  </record>
+    <record id="wua_controlperiod_comparative_presconsumption_action" model="ir.actions.server">
+        <field name="name">Comparative Consumptions</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_controlperiod"/>
+        <field name="code">action = env["wua.controlperiod"].get_wua_controlperiod_comparative_presconsumption_action()</field>
+    </record>
 
-  <record id="wua_controlperiod_control_presconsumption_action" model="ir.actions.server">
-      <field name="name">Control Consumptions</field>
-      <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_controlperiod"/>
-      <field name="code">action = env["wua.controlperiod"].get_wua_controlperiod_control_presconsumption_action()</field>
-  </record>
+    <record id="wua_controlperiod_control_presconsumption_action" model="ir.actions.server">
+        <field name="name">Control Consumptions</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_controlperiod"/>
+        <field name="code">action = env["wua.controlperiod"].get_wua_controlperiod_control_presconsumption_action()</field>
+    </record>
 
     <record id="wua_controlperiod_view_form" model="ir.ui.view">
         <field name="name">Control Periods (form view)</field>
@@ -85,6 +85,12 @@
                       </notebook>
                   </group>
               </sheet>
+              <div class="oe_chatter">
+                  <field name="message_follower_ids"
+                         widget="mail_followers" groups="base_wua.group_wua_manager"/>
+                  <field name="message_ids"
+                         widget="mail_thread" groups="base_wua.group_wua_manager"/>
+              </div>
             </form>
         </field>
     </record>
@@ -182,6 +188,15 @@
                 (0, 0, {'view_mode': 'form',
                         'view_id': ref('wua_controlperiod_view_form')})]"/>
         <field name="search_view_id" ref="wua_controlperiod_view_search"/>
+    </record>
+
+    <record id="wua_process_incoming_mail" model="ir.actions.server">
+        <field name="name">Process incoming mail of agroclimatic data</field>
+        <field name="model_id" ref="model_wua_controlperiod"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.controlperiod'].run_process_incoming_mail()
+        </field>
     </record>
 
     <menuitem id="wua_controlperiod_menu"
