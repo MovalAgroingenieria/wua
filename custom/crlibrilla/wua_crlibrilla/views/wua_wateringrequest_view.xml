@@ -14,17 +14,4 @@
         </field>
     </record>
 
-    <record id="wua_gravconsumption_view_form" model="ir.ui.view">
-      <field name="name">Gravity Consumption (form view)</field>
-      <field name="model">wua.gravconsumption</field>
-      <field name="inherit_id"
-        ref="base_wua_gravity_irrigation.wua_gravconsumption_view_form"/>
-        <field name="arch" type="xml">
-          <xpath expr="//field[@name='watering_duration']" position="replace">
-            <field name="watering_duration" invisible="1"/>
-            <field name="watering_duration_dechours"/>
-          </xpath>
-        </field>
-      </record>
-
 </odoo>

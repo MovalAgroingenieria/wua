@@ -15,6 +15,7 @@
     "data": [
         "views/resources.xml",
         "views/wua_wateringrequest_view.xml",
+        "views/wua_gravconsumption_view.xml",
     ],
     "installable": True,
     "application": False,
