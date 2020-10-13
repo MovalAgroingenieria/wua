@@ -61,5 +61,5 @@ class WuaInvoiceset(models.Model):
         if notes:
             notes_raw = BeautifulSoup(notes, features="html.parser")
             notes = notes_raw.get_text()
-            description += '. ' + _('NOTE: ') + notes
+            description += '. ' + notes
         return description
