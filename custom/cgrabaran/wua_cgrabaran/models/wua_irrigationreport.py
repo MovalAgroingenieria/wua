@@ -2,7 +2,9 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+import datetime
+from bs4 import BeautifulSoup
+from odoo import models, fields, api, _
 
 
 class WuaIrrigationreport(models.Model):
@@ -46,3 +48,18 @@ class WuaIrrigationreport(models.Model):
                 record.intake_id = intakes[0].id
             else:
                 record.intake_id = False
+
+
+class WuaInvoiceset(models.Model):
+    _inherit = 'wua.invoiceset'
+
+    # Extend original method
+    def get_description(self, irrigationreport):
+        description = \
+            super(WuaInvoiceset, self).get_description(irrigationreport)
+        notes = irrigationreport.notes
+        if notes:
+            notes_raw = BeautifulSoup(notes, features="html.parser")
+            notes = notes_raw.get_text()
+            description += '. ' + _('NOTE: ') + notes
+        return description
