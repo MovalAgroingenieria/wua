@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-25 17:59+0000\n"
-"PO-Revision-Date: 2020-08-25 17:59+0000\n"
+"POT-Creation-Date: 2020-10-14 19:12+0000\n"
+"PO-Revision-Date: 2020-10-14 19:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -267,6 +267,16 @@ msgid "Agricultural Seasons"
 msgstr "Campañas"
 
 #. module: base_wua_gravity_irrigation
+#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_watering_allow_select
+msgid "Allow Selection"
+msgstr "Permitir seleción"
+
+#. module: base_wua_gravity_irrigation
+#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_irrigation_configuration_watering_allow_open_period
+msgid "Allow Watering on Open Periods"
+msgstr "Permitir entandes en períodos abiertos"
+
+#. module: base_wua_gravity_irrigation
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wizard_copy_requests_view_form
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wizard_generate_periods_view_form
 msgid "Apply"
@@ -338,6 +348,11 @@ msgstr "Cerrar el período"
 #: selection:wua.wateringperiod,state:0
 msgid "Closed"
 msgstr "Cerrado"
+
+#. module: base_wua_gravity_irrigation
+#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_irrigation_configuration
+msgid "Configuration of irrigation with type of water"
+msgstr "Configuraciónd e riego con tipo de agua"
 
 #. module: base_wua_gravity_irrigation
 #: selection:wua.watering,calculation_model:0
@@ -669,7 +684,7 @@ msgstr "Consumo por gravedad"
 #: code:addons/base_wua_gravity_irrigation/models/res_partner.py:95
 #: code:addons/base_wua_gravity_irrigation/models/wua_irrigationgate.py:35
 #: code:addons/base_wua_gravity_irrigation/models/wua_parcel.py:39
-#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:590
+#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:602
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_hr_employee_gravconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_irrigationgate_gravconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_parcel_gravconsumption_ids
@@ -1115,7 +1130,7 @@ msgid "Selected"
 msgstr "Seleccionado"
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:616
+#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:628
 #, python-format
 msgid "Selection of subparcels for the calculation process"
 msgstr "Selección de subparcelas para el proceso de cálculo"
@@ -1223,15 +1238,15 @@ msgid "The range of dates must be within the agricultural season."
 msgstr "El rango de fechas debe estar dentro de la campaña."
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:484
-#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:521
+#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:496
+#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:533
 #, python-format
 msgid "The reservoir emptying time must be greater than or equal to the initial time."
 msgstr "El instante de corte del desembalse debe ser posterior al momento de inicio del entande."
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:478
-#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:505
+#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:490
+#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:517
 #, python-format
 msgid "The watering initial time is outside his watering period."
 msgstr "El instante de inicio del entande está fuera del período de riego."
@@ -1256,7 +1271,7 @@ msgid "The watering period is overlapped on another period."
 msgstr "El período de riego se solapa con otro."
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:710
+#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:722
 #, python-format
 msgid "There is a repeated subparcel:"
 msgstr "Hay una subparcela repetida en el entande:"
@@ -1457,7 +1472,7 @@ msgid "You cannot delete a gravity consumption in a planned or executed state. F
 msgstr "No se permite eliminar consumos ya planeados o ejecutados. Antes debe eliminar el entande con el que estén vinculados."
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:548
+#: code:addons/base_wua_gravity_irrigation/models/wua_watering.py:560
 #, python-format
 msgid "You cannot delete a watering if there are executed consumptions."
 msgstr "No es posible eliminar un entande si tiene asociados consumos ejecutados."
@@ -1481,4 +1496,3 @@ msgstr "No tiene permisos suficientes para ejecutar esta acción."
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_gravconsumption_view_search
 msgid "Zero consumption"
 msgstr "Consumo cero"
-
