@@ -9,11 +9,12 @@
                 <field name="is_open" invisible="1"/>
                 <field name="initialized" invisible="1"/>
                 <field name="is_reservoir_volume_minor_watering_volume" invisible="1"/>
+                <field name="allow_select" invisible="1"/>
                 <header>
                     <button name="select_consumptions"
                             type="object" string="Select"
                             attrs="{'invisible':
-                                    ['|',('is_open', '=', True),
+                                    ['|',('allow_select', '=', False),
                                          ('state', '=', 'validated')]}"
                             groups="base_wua.group_wua_manager"/>
                     <button name="calculate_consumptions"
@@ -88,8 +89,8 @@
                             <field name="early_shutdown_time"
                                    attrs="{'readonly':[('state', '=', 'validated')]}"/>
                             <field name="reservoiremptying_end_time_manual"
-                                   attrs="{'readonly':[('state', '=', 'validated')]}"/>                                   
-                        </group>                        
+                                   attrs="{'readonly':[('state', '=', 'validated')]}"/>
+                        </group>
                     </group>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
@@ -120,10 +121,10 @@
                                                readonly="1"/>
                                     </group>
                                 </group>
-                            </page>                        
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
-                            </page>                        
+                            </page>
                         </notebook>
                     </group>
                 </sheet>
@@ -158,7 +159,7 @@
                         icon="fa-unlock"
                         attrs="{'invisible':
                                 [('is_open','=',False)],
-                                'readonly':'1'}"/>                
+                                'readonly':'1'}"/>
             </tree>
         </field>
     </record>
@@ -186,7 +187,7 @@
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season"
                      name="agriculturalseason"
-                     context="{'group_by':'agriculturalseason_id'}"/>                
+                     context="{'group_by':'agriculturalseason_id'}"/>
                     <filter string="Irrigation Ditch"
                      name="irrigationditch"
                      context="{'group_by':'irrigationditch_id'}"/>
@@ -274,7 +275,7 @@
                     <filter string="Partner"
                      name="partner"
                      context="{'group_by':'partner_id'}"/>
-                </group>                 
+                </group>
             </search>
         </field>
     </record>

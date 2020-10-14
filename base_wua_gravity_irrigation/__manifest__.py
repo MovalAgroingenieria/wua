@@ -13,10 +13,11 @@
     "license": "AGPL-3",
     "depends": [
         "wua_structure_irrigation",
-        "web_widget_digitized_signature",],
+        "web_widget_digitized_signature", ],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "data/wua_irrigation_config_settings_data.xml",
         "wizard/wizard_generate_periods_view.xml",
         "wizard/wizard_copy_requests_view.xml",
         "views/resources.xml",
@@ -29,8 +30,9 @@
         "views/wua_gravconsumption_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_irrigationgate_view.xml",
-        "views/hr_views.xml",        
-        "reports/wua_wateringrequest_report.xml",],
+        "views/wua_irrigation_config_settings_view.xml",
+        "views/hr_views.xml",
+        "reports/wua_wateringrequest_report.xml", ],
     "installable": True,
     "application": True,
 }

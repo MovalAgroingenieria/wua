@@ -253,6 +253,10 @@ class WuaWatering(models.Model):
         string='Accum. Delay (min)',
         default=0)
 
+    allow_select = fields.Boolean(
+        string='Allow Selection',
+        compute='_compute_allow_select',)
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Watering.'),
@@ -395,6 +399,14 @@ class WuaWatering(models.Model):
         for record in self:
             record.is_reservoir_volume_minor_watering_volume = \
                 record.reservoir_volume < record.watering_volume
+
+    @api.multi
+    def _compute_allow_select(self):
+        allow_select = False
+        allow_select = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'watering_allow_open_period')
+        for record in self:
+            record.allow_select = allow_select or not record.is_open
 
     @api.depends('reservoir_volume', 'watering_volume')
     def _compute_extra_volume(self):

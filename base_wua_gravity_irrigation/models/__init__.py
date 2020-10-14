@@ -12,3 +12,4 @@ from . import wua_irrigationditch
 from . import wua_parcel
 from . import wua_irrigationgate
 from . import hr
+from . import wua_irrigation_config_settings
