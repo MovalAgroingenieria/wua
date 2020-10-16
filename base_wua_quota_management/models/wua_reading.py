@@ -16,11 +16,10 @@ class WuaReading(models.Model):
                 presconsumption = self.presconsumption_id
                 validated = self.validated
                 quota_model = self.env['wua.quota']
+                quota_model.delete_hydricmovements_presconsumption(
+                    presconsumption)
                 if validated:
                     quota_model.create_hydricmovements_presconsumption(
-                        presconsumption)
-                else:
-                    quota_model.delete_hydricmovements_presconsumption(
                         presconsumption)
         return resp
 
