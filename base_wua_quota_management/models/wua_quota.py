@@ -617,7 +617,6 @@ class WuaQuota(models.Model):
             if quotaperiodlines:
                 max_for = len(quotaperiodlines)
                 for hydric_consumption in hydric_consumptions:
-                    abort_loop_superproducts = False
                     remaining_volume = hydric_consumption['volume']
                     new_hydric_consumptions = []
                     current_pos = 1
@@ -652,17 +651,13 @@ class WuaQuota(models.Model):
                                     remaining_volume - current_quota.balance
                             if remaining_volume == 0:
                                 break
-                            current_pos = current_pos + 1
-                        else:
-                            # This should not happen.
-                            abort_loop_superproducts = True
-                            break
-                    if abort_loop_superproducts:
-                        resp.append(hydric_consumption)
-                        continue
-                    else:
-                        # Add new hydric consumptions.
+                        current_pos = current_pos + 1
+                    if new_hydric_consumptions:
+                        # Add new hydric consumptions (sorted)
                         resp.extend(new_hydric_consumptions)
+                    else:
+                        # Add the original hydric consumption
+                        resp.append(hydric_consumption)
             else:
                 resp = hydric_consumptions
         return resp
