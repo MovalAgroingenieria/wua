@@ -2016,17 +2016,17 @@ class WuaInvoicesetLineWaterconnection(models.Model):
         string='Identifier',
         comodel_name='wua.waterconnection',
         required=True,
-        ondelete='restrict')
+        ondelete='cascade')
 
     irrigationshed_id = fields.Many2one(
         string='Irrigation Shed',
         comodel_name='wua.irrigationshed',
-        ondelete='restrict')
+        ondelete='cascade')
 
     hydraulicsector_id = fields.Many2one(
         string='Hydraulic Sector',
         comodel_name='wua.hydraulicsector',
-        ondelete='restrict')
+        ondelete='cascade')
 
     position = fields.Integer(
         string="Position", default=0)
