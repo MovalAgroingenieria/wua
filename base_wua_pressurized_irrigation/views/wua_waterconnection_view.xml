@@ -17,13 +17,14 @@
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_text">Consumptions</span>
                         </div>
-                </button>                             
-            </xpath>        
+                </button>
+            </xpath>
             <xpath expr="//field[@name='total_affected_area_official']"
              position="after">
                 <field name="watermeter_id"
                  domain="[('waterconnection_id','=',False),
-                          ('state','=','active')]"/>
+                          ('state','=','active')]"
+                 options="{'no_quick_create':True, 'no_create_edit':True}"/>
                 <newline/>
                 <field name="last_reading_time"/>
                 <newline/>
@@ -70,7 +71,7 @@
         <field name="name">Water Connections (search view)</field>
         <field name="model">wua.waterconnection</field>
         <field name="inherit_id"
-               ref="base_wua_infrastructure.wua_waterconnection_view_search"/>        
+               ref="base_wua_infrastructure.wua_waterconnection_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='hydraulicsector_id']" position="after">
                 <field name="watermeter_id"/>
