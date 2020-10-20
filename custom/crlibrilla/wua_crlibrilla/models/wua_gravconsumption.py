@@ -14,6 +14,10 @@ class WuaGravconsumption(models.Model):
         digits=(32, 1),
         default=0)
 
+    watering_duration_dechours_str = fields.Char(
+        string='Duration (provisional)',
+        compute='_compute_watering_duration_dechours_str')
+
     @api.constrains('watering_duration_dechours')
     def check_watering_duration_dechours(self):
         entire_value = str(self.watering_duration_dechours).split('.')
@@ -33,6 +37,16 @@ class WuaGravconsumption(models.Model):
                 if (len(entire_value) > 1 and entire_value[1] == '5'):
                     watering_duration = watering_duration + 30
             record.watering_duration = watering_duration
+
+    @api.depends('watering_duration_dechours')
+    def _compute_watering_duration_dechours_str(self):
+        for record in self:
+            watering_duration_dechours_str = ''
+            if record.watering_duration_dechours > 0:
+                watering_duration_dechours_str = \
+                    str(record.watering_duration_dechours)
+            record.watering_duration_dechours_str = \
+                watering_duration_dechours_str
 
     @api.model_cr
     def init(self):
