@@ -45,6 +45,8 @@
         "views/wua_cession_view.xml",
         "views/wua_individualinput_category_view.xml",
         "reports/wua_partner_quota_report.xml",
+        "reports/wua_partner_quota_cession_report.xml",
+        "reports/wua_partner_quota_individualinput_report.xml",
     ],
     "external_dependencies": {
         "python": ["numpy", "bokeh"]},

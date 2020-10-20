@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner quota cession report (droplist menu) -->
+    <report
+        id="wua_partner_quota_cession_report"
+        string="Cession report"
+        model="wua.cession"
+        report_type="qweb-pdf"
+        file="base_wua_quota_management.wua_partner_quota_cession_report_document"
+        name="base_wua_quota_management.wua_partner_quota_cession_report_document"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <!-- Wua partner quota cession report -->
+    <template id="wua_partner_quota_cession_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+                        <!-- Report title -->
+                        <div name="title" class="text-center" style="font-size: 16px;">
+                            <strong>Cession report</strong><br/>
+                            <span>&amp;nbsp; [</span>
+                            <span t-field="o.agriculturalseason_id"/>
+                            <span>]</span>
+                        </div>
+
+                        <!-- Summary -->
+                        <div name="cession_summary">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-arrow-right"/></div>
+                                    <div style="float: left;"><strong>Summary</strong></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <div>
+                                    <span><strong>Date/hour:</strong>
+                                    <span t-field="o.event_time"/></span>
+                                </div>
+                                <t t-if="o.reason">
+                                    <div>
+                                        <span><strong>Reason:</strong>
+                                        <span t-field="o.reason"/></span>
+                                    </div>
+                                </t>
+                            </div>
+                            <table class="table table-condensed" style="margin-top: 2px;border-style: hidden; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40%" class="text-center">Quota (transferor)</th>
+                                        <th style="width: 20%" class="text-center">Volume</th>
+                                        <th style="width: 40%" class="text-center">Quota (receiver)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr name="data">
+                                        <td class="text-center"><span t-field="o.quota_readonly_id"/></td>
+                                        <td class="text-center">
+                                            <span t-field="o.volume"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                        <td class="text-center"><span t-field="o.receiver_quota_id"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-condensed" style="margin-top: 12px;border-style: hidden; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Inputs</th>
+                                        <th class="text-center">Consumptions</th>
+                                        <th class="text-center">Balance_</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr name="data">
+                                        <td class="text-center">
+                                            <span t-field="o.quota_accumulated_input"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="o.quota_accumulated_consumption"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="o.quota_balance"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Quota data -->
+                        <div name="cession_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                    <div style="float: left;"><strong>Cession data</strong></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="display: table-cell;">
+                                        <table name="cession_data_table" class="table-condensed" style="width:100%;">
+                                            <tbody>
+                                                <tr name="tr_agriculturalseason">
+                                                    <td><span><strong>Agricultural season:</strong></span></td>
+                                                     <td class="text-right">
+                                                        <span t-field="o.agriculturalseason_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_quotaperiod">
+                                                    <td><span><strong>Quota period:</strong></span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.quotaperiod_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_superproduct">
+                                                    <td><span><strong>Superproduct:</strong></span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.superproduct_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_partner_id">
+                                                    <td><span><strong>Transferor Partner:</strong></span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.partner_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_quota_readonly_id">
+                                                    <td><span><strong>Quota (transferor):</strong></span></td>
+                                                    <td class="text-right"><span t-field="o.quota_readonly_id"/></td>
+                                                </tr>
+                                                <tr name="tr_receiver_partner_id">
+                                                    <td><span><strong>Receiver Partner:</strong></span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.receiver_partner_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_receiver_quota_id">
+                                                    <td><span><strong>Quota (receiver):</strong></span></td>
+                                                    <td class="text-right"><span t-field="o.receiver_quota_id"/></td>
+                                                </tr>
+                                                <tr name="tr_volume">
+                                                    <td><span><strong>Volume:</strong></span></td>
+                                                    <td class="text-right">
+                                                       <span t-field="o.volume"/>
+                                                       <span>m<sup>3</sup></span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <t t-if="o.notes">
+                                <div name="notes" style="margin-top: 8px;">
+                                    <span><strong>Notes:</strong></span><br/>
+                                    <span t-field="o.notes"></span>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Conformity -->
+                        <div name="conformity" style="margin-top: 32px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                                    <div style="float: left;"><strong>Conformity</strong></div>
+                                </div>
+                            </div>
+                            <div name="signatures" class="row" style="border: 1px solid lightgrey; margin: 2px 1px; page-break-inside: avoid;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="border-right: 1px solid lightgrey; width: 50%; display: table-cell;">
+                                        <p style="margin-left: -8px; margin-top: 2px; margin-bottom: 0px;">
+                                            <span>Transferor Partner:</span>
+                                            <span t-field="o.partner_id"/>
+                                        </p>
+                                        <p>&amp;nbsp;</p>
+                                        <p>&amp;nbsp;</p>
+                                        <p>&amp;nbsp;</p>
+                                    </div>
+                                    <div style="width: 50%; display: table-cell; padding: 0px 8px;">
+                                        <p style="margin-top: 2px; margin-bottom: 0px">
+                                            <span>Receiver Partner:</span>
+                                            <span t-field="o.receiver_partner_id"/>
+                                        </p>
+                                        <p>&amp;nbsp;</p>
+                                        <p>&amp;nbsp;</p>
+                                        <p>&amp;nbsp;</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner quota individual input report (droplist menu) -->
+    <report
+        id="wua_partner_quota_individualinput_report"
+        string="Individual input report"
+        model="wua.individualinput"
+        report_type="qweb-pdf"
+        file="base_wua_quota_management.wua_partner_quota_individualinput_report_document"
+        name="base_wua_quota_management.wua_partner_quota_individualinput_report_document"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <!-- Wua partner quota individual input report -->
+    <template id="wua_partner_quota_individualinput_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+                        <!-- Report title -->
+                        <div name="title" class="text-center" style="font-size: 16px;">
+                            <strong>Individual input report</strong><br/>
+                            <span>&amp;nbsp; [</span>
+                            <span t-field="o.agriculturalseason_id"/>
+                            <span>]</span>
+                        </div>
+
+                        <!-- Summary -->
+                        <div name="individualinput_summary">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-arrow-right"/></div>
+                                    <div style="float: left;"><strong>Summary</strong></div>
+                                </div>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <div>
+                                    <span><strong>Date/hour:</strong>
+                                    <span t-field="o.event_time"/></span>
+                                </div>
+                                <t t-if="o.reason">
+                                    <div>
+                                        <span><strong>Reason:</strong>
+                                        <span t-field="o.reason"/></span>
+                                    </div>
+                                </t>
+                            </div>
+                            <table class="table table-condensed" style="margin-top: 2px;border-style: hidden; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 15%" class="text-center">ID</th>
+                                        <th style="width: 15%" class="text-center">Volume</th>
+                                        <th style="width: 15%" class="text-center">Effective volume</th>
+                                        <th style="width: 55%" class="text-center">Quota</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr name="data">
+                                        <td class="text-center"><span t-field="o.category_id"/></td>
+                                        <td class="text-center">
+                                            <span t-field="o.volume"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="o.effective_volume"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                        <td class="text-center"><span t-field="o.quota_id"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-condensed" style="margin-top: 12px;border-style: hidden; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Inputs</th>
+                                        <th class="text-center">Consumptions</th>
+                                        <th class="text-center">Balance_</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr name="data">
+                                        <td class="text-center">
+                                            <span t-field="o.quota_accumulated_input"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="o.quota_accumulated_consumption"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="o.quota_balance"/>
+                                            <span>m<sup>3</sup></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Quota data -->
+                        <div name="individualinput_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                    <div style="float: left;"><strong>Individual input data</strong></div>
+                                </div>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="display: table-cell;">
+                                        <table name="individualinput_data_table" class="table-condensed" style="width:100%;">
+                                            <tbody>
+                                                <tr name="tr_agriculturalseason">
+                                                    <td><span><strong>Agricultural season:</strong></span></td>
+                                                     <td class="text-right">
+                                                        <span t-field="o.agriculturalseason_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_quotaperiod">
+                                                    <td><span><strong>Quota period:</strong></span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.quotaperiod_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_superproduct">
+                                                    <td><span><strong>Superproduct:</strong></span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.superproduct_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_partner_id">
+                                                    <td><span><strong>Partner:</strong></span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.partner_id"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_quota_id">
+                                                    <td><span><strong>Quota:</strong></span></td>
+                                                    <td class="text-right"><span t-field="o.quota_id"/></td>
+                                                </tr>
+                                                <tr name="tr_category_id">
+                                                    <td><span><strong>ID:</strong></span></td>
+                                                    <td class="text-right"><span t-field="o.category_id"/></td>
+                                                </tr>
+                                                <tr name="tr_volume">
+                                                    <td><span><strong>Volume:</strong></span></td>
+                                                    <td class="text-right">
+                                                       <span t-field="o.volume"/>
+                                                       <span>m<sup>3</sup></span>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_volume">
+                                                    <td><span><strong>Effective volume:</strong></span></td>
+                                                    <td class="text-right">
+                                                       <span t-field="o.effective_volume"/>
+                                                       <span>m<sup>3</sup></span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <t t-if="o.notes">
+                                <div name="notes" style="margin-top: 8px;">
+                                    <span><strong>Notes:</strong></span><br/>
+                                    <span t-field="o.notes"></span>
+                                </div>
+                            </t>
+                        </div>
+
+                    </div><!-- end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>
