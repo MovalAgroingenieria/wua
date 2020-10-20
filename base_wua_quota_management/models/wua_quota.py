@@ -11,11 +11,12 @@ class WuaQuota(models.Model):
     _name = 'wua.quota'
     _description = 'Quota'
     _inherit = 'mail.thread'
-    _order = 'name'
+    _order = 'name_quotaperiod, partner_code, pos_superproduct'
 
     MAX_SIZE_PARTNER_CODE = 6
     MAX_SIZE_SUPERPRODUCT_CODE = 6
     MAX_SIZE_NAME = 12 + MAX_SIZE_PARTNER_CODE + MAX_SIZE_SUPERPRODUCT_CODE
+    MAX_SIZE_NAME_QUOTAPERIOD = 10
 
     quotaperiod_id = fields.Many2one(
         string='Quota Period',
@@ -47,6 +48,25 @@ class WuaQuota(models.Model):
         store=True,
         index=True,
         compute='_compute_name')
+
+    name_quotaperiod = fields.Char(
+        string='Quota Period',
+        size=MAX_SIZE_NAME_QUOTAPERIOD,
+        store=True,
+        index=True,
+        compute='_compute_name_quotaperiod')
+
+    pos_superproduct = fields.Integer(
+        string='Position',
+        store=True,
+        index=True,
+        compute='_compute_pos_superproduct')
+
+    partner_code = fields.Integer(
+        string="Partner Code",
+        store=True,
+        index=True,
+        compute='_compute_partner_code')
 
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
@@ -117,6 +137,34 @@ class WuaQuota(models.Model):
                     str(record.partner_id.partner_code).zfill(
                         self.MAX_SIZE_PARTNER_CODE)
             record.name = name
+
+    @api.depends('quotaperiod_id')
+    def _compute_name_quotaperiod(self):
+        for record in self:
+            name_quotaperiod = ''
+            if record.quotaperiod_id:
+                name_quotaperiod = record.quotaperiod_id.name
+            record.name_quotaperiod = name_quotaperiod
+
+    @api.depends('superproduct_id')
+    def _compute_pos_superproduct(self):
+        for record in self:
+            pos_superproduct = 0
+            if record.superproduct_id and record.quotaperiod_id:
+                quotaperiodline = self.env['wua.quotaperiod.line'].search(
+                    ([('quotaperiod_id', '=', record.quotaperiod_id.id),
+                      ('superproduct_id', '=', record.superproduct_id.id)]))
+                if quotaperiodline:
+                    pos_superproduct = quotaperiodline[0].pos
+            record.pos_superproduct = pos_superproduct
+
+    @api.depends('partner_id')
+    def _compute_partner_code(self):
+        for record in self:
+            partner_code = 0
+            if record.partner_id:
+                partner_code = record.partner_id.partner_code
+            record.partner_code = partner_code
 
     @api.depends('quotaperiod_id')
     def _compute_agriculturalseason_id(self):
@@ -640,15 +688,16 @@ class WuaQuota(models.Model):
                                     })
                                 remaining_volume = 0
                             else:
-                                new_hydric_consumptions.append({
-                                    'quotaperiod_id': quotaperiod_id,
-                                    'superproduct_id': superproduct_id,
-                                    'partner_id': partner_id,
-                                    'volume': current_quota.balance,
-                                    'pos': current_pos - 1,
-                                    })
-                                remaining_volume = \
-                                    remaining_volume - current_quota.balance
+                                if current_quota.balance > 0:
+                                    new_hydric_consumptions.append({
+                                        'quotaperiod_id': quotaperiod_id,
+                                        'superproduct_id': superproduct_id,
+                                        'partner_id': partner_id,
+                                        'volume': current_quota.balance,
+                                        'pos': current_pos - 1,
+                                        })
+                                    remaining_volume = remaining_volume - \
+                                        current_quota.balance
                             if remaining_volume == 0:
                                 break
                         current_pos = current_pos + 1
