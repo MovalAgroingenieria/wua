@@ -43,6 +43,15 @@ class WuaInvoiceset(models.Model):
             gravconsumption_ids.append(gravconsumption.gravconsumption_id.id)
         return gravconsumption_ids
 
+    def calculate_quantity_gravconsumption(self, quantity):
+        # HOOK for later use if quantity in Time
+        return quantity
+
+    def get_watering_volume_real_of_irrigationgate_str(
+            self, watering_volume_real_of_irrigationgate):
+        return ('%.4f' % watering_volume_real_of_irrigationgate).\
+            replace('.', ',')
+
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
                                                item_ids, partnerlinks):
         if categ_code != 8:
@@ -90,9 +99,9 @@ class WuaInvoiceset(models.Model):
                     filter(lambda x: x['ig_id'] ==
                            irrigationgate.id,
                            ig_gravconsumptions)[0]['watering_volume_real']
-                watering_volume_real_of_irrigationgate_str = \
-                    ('%.4f' % watering_volume_real_of_irrigationgate).\
-                    replace('.', ',')
+                watering_volume_real_of_irrigationgate_str = self.\
+                    get_watering_volume_real_of_irrigationgate_str(
+                        watering_volume_real_of_irrigationgate)
                 total_area_official = \
                     sum(x.area_official for x in parcels_of_irrigationgate)
                 for parcel in parcels_of_irrigationgate:
@@ -117,6 +126,8 @@ class WuaInvoiceset(models.Model):
                             percentage_str = '%.2f' % percentage
                             quantity = gravconsumption_quantity * \
                                 (percentage / 100)
+                            quantity = self.\
+                                calculate_quantity_gravconsumption(quantity)
                             default_irrigationgate_label = \
                                 _('Irrigation Gate')
                             default_parcel_label = _('Parcel')
