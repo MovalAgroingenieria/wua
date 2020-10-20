@@ -2,7 +2,7 @@
 # 2020 - Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class WuaGravconsumption(models.Model):
@@ -12,6 +12,18 @@ class WuaGravconsumption(models.Model):
         string='Hydric Consumptions',
         comodel_name='wua.hydricmovement',
         inverse_name='gravconsumption_id')
+
+    number_of_hydricmovements = fields.Integer(
+        string='Number of hydric mov.',
+        compute='_compute_number_of_hydricmovements')
+
+    @api.multi
+    def _compute_number_of_hydricmovements(self):
+        for record in self:
+            number_of_hydricmovements = 0
+            if record.hydricmovement_ids:
+                number_of_hydricmovements = len(record.hydricmovement_ids)
+            record.number_of_hydricmovements = number_of_hydricmovements
 
     @api.model
     def create(self, vals):
@@ -135,3 +147,32 @@ class WuaGravconsumption(models.Model):
             model_quota.create_hydricmovements_gravconsumption_of_request(
                 quotaperiod, wateringperiod, superproduct, parcel,
                 watering_duration, gravconsumption, product.reduction_factor)
+
+    @api.multi
+    def action_get_hydric_movements(self):
+        self.ensure_one()
+        if self.hydricmovement_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Hydric Movements'),
+                'res_model': 'wua.hydricmovement',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.hydricmovement_ids.ids)],
+                'context': {'compressed_agriculturalseason': True,
+                            'compressed_quotaperiod': True,
+                            'search_default_active_agriculturalseason': True}
+                }
+            return act_window

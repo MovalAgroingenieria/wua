@@ -10,7 +10,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaHydricmovement(models.Model):
     _name = 'wua.hydricmovement'
     _description = 'Hydric Movement'
-    _order = 'event_time, quota_name'
+    _order = 'partner_code, event_date, pos_superproduct'
 
     MAX_SIZE_PARTNER_CODE = 6
     MAX_SIZE_SUPERPRODUCT_CODE = 6
@@ -75,6 +75,24 @@ class WuaHydricmovement(models.Model):
         store=True,
         index=True,
         compute='_compute_name')
+
+    partner_code = fields.Integer(
+        string="Partner Code",
+        store=True,
+        index=True,
+        compute='_compute_partner_code')
+
+    event_date = fields.Date(
+        string='Date',
+        store=True,
+        index=True,
+        compute='_compute_event_date')
+
+    pos_superproduct = fields.Integer(
+        string='Position',
+        store=True,
+        index=True,
+        compute='_compute_pos_superproduct')
 
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
@@ -233,6 +251,30 @@ class WuaHydricmovement(models.Model):
             if record.quota_name and record.event_time:
                 name = record.quota_name + ' - ' + record.event_time
             record.name = name
+
+    @api.depends('quota_id', 'quota_id.partner_code')
+    def _compute_partner_code(self):
+        for record in self:
+            partner_code = 0
+            if record.quota_id and record.quota_id.partner_code:
+                partner_code = record.quota_id.partner_code
+            record.partner_code = partner_code
+
+    @api.depends('event_time')
+    def _compute_event_date(self):
+        for record in self:
+            event_date = ''
+            if record.event_time:
+                event_date = record.event_time
+            record.event_date = event_date
+
+    @api.depends('quota_id', 'quota_id.pos_superproduct')
+    def _compute_pos_superproduct(self):
+        for record in self:
+            pos_superproduct = 0
+            if record.quota_id and record.quota_id.pos_superproduct:
+                pos_superproduct = record.quota_id.pos_superproduct
+            record.pos_superproduct = pos_superproduct
 
     @api.depends('quotaperiod_id')
     def _compute_agriculturalseason_id(self):

@@ -2,7 +2,7 @@
 # 2020 - Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class WuaPresconsumption(models.Model):
@@ -14,6 +14,10 @@ class WuaPresconsumption(models.Model):
         string='Hydric Consumptions',
         comodel_name='wua.hydricmovement',
         inverse_name='presconsumption_id')
+
+    number_of_hydricmovements = fields.Integer(
+        string='Number of hydric mov.',
+        compute='_compute_number_of_hydricmovements')
 
     # This method is reimplemented because in the create method is not
     # available the waterconnection_id field. This computed method is called
@@ -27,6 +31,14 @@ class WuaPresconsumption(models.Model):
             for record in self:
                 if self.is_valid_presconsumption(record):
                     quota_model.create_hydricmovements_presconsumption(record)
+
+    @api.multi
+    def _compute_number_of_hydricmovements(self):
+        for record in self:
+            number_of_hydricmovements = 0
+            if record.hydricmovement_ids:
+                number_of_hydricmovements = len(record.hydricmovement_ids)
+            record.number_of_hydricmovements = number_of_hydricmovements
 
     @api.model
     def create(self, vals):
@@ -98,3 +110,32 @@ class WuaPresconsumption(models.Model):
     # if it is necessary to create the hydric consumptions again.
     def _force_refresh_hydricmovements(self, updated_presconsumption, vals):
         return False, False
+
+    @api.multi
+    def action_get_hydric_movements(self):
+        self.ensure_one()
+        if self.hydricmovement_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Hydric Movements'),
+                'res_model': 'wua.hydricmovement',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.hydricmovement_ids.ids)],
+                'context': {'compressed_agriculturalseason': True,
+                            'compressed_quotaperiod': True,
+                            'search_default_active_agriculturalseason': True}
+                }
+            return act_window
