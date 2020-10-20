@@ -2,11 +2,36 @@
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _, exceptions
+from odoo import models, fields, _, exceptions
 
 
 class WuaInvoiceset(models.Model):
     _inherit = 'wua.invoiceset'
+
+    def calculate_quantity_gravconsumption(self, quantity):
+        volume_time_equivalence = self.env['ir.values'].\
+            get_default('wua.configuration', 'volume_time_equivalence')
+        quantity_float = str(round(quantity / volume_time_equivalence, 1))
+        quantity_float = quantity_float.split('.')
+        real_quantity = float(quantity_float[0])
+        if (len(quantity_float) > 1):
+            decimal_part = int(quantity_float[1])
+            if (decimal_part > 2 and decimal_part < 8):
+                decimal_part = 0.5
+            else:
+                decimal_part = 0
+                if (decimal_part > 7):
+                    real_quantity = real_quantity + 1
+            real_quantity = real_quantity + decimal_part
+        return real_quantity
+
+    def get_watering_volume_real_of_irrigationgate_str(
+            self, watering_volume_real_of_irrigationgate):
+        watering_volume_real_of_irrigationgate = self.\
+            calculate_quantity_gravconsumption(
+                watering_volume_real_of_irrigationgate)
+        return ('%.1f' % watering_volume_real_of_irrigationgate).\
+            replace('.', ',')
 
     def populate_items_select_gravconsumption(self, product_id):
         gravconsumptions = self.env['wua.gravconsumption'].search([
