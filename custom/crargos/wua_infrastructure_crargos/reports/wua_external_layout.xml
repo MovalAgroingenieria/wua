@@ -5,6 +5,7 @@
     <template id="external_layout_header_argos" inherit_id="base_wua_report.external_layout_header">
 
         <xpath expr="//div[@class='row']" position="replace">
+            <t t-set="company" t-value="company.sudo()"/>
             <div class="row">
                 <div class="col-xs-6">
                     <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
@@ -41,7 +42,7 @@
                             <li class="text-right" style="list-style:none; margin-left: 2px; width: 100%;">
                                 <t t-if="company.partner_id.email">
                                     <span class="fa fa-envelope theme-report-color" style="display: inline;">
-                                        <t t-set="email" t-value="company.sudo().partner_id.email"/>
+                                        <t t-set="email" t-value="company.partner_id.email"/>
                                         <a style="color: black;" href="mailto:email">
                                             <span style="font-size: 13px;" t-esc="email"/>
                                          </a>
@@ -49,7 +50,7 @@
                                 </t>
                                 <t t-if="company.partner_id.website">
                                     <span class="fa fa-globe theme-report-color" style="display: inline;">
-                                        <t t-set="website" t-value="company.sudo().partner_id.website"/>
+                                        <t t-set="website" t-value="company.partner_id.website"/>
                                         <a class="theme-report-color" href="website">
                                             <span style="font-size: 13px;" t-esc="website"/>
                                         </a>
@@ -57,7 +58,7 @@
                                 </t>
                                 <t t-if="company.partner_id.phone">
                                      <span class="fa fa-phone theme-report-color" style="display: inline;">
-                                        <t t-set="phone" t-value="company.sudo().partner_id.phone"/>
+                                        <t t-set="phone" t-value="company.partner_id.phone"/>
                                         <a style="color: black;" href="callto:phone">
                                             <span style="font-size: 13px;" t-esc="phone"/>
                                         </a>
