@@ -336,7 +336,7 @@ class WuaInvoicesetLine(models.Model):
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
