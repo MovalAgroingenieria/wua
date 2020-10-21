@@ -14,4 +14,43 @@
         </field>
     </record>
 
+    <record id="wua_watering_view_form" model="ir.ui.view">
+      <field name="name">Waterings (form view)</field>
+      <field name="model">wua.watering</field>
+      <field name="inherit_id"
+             ref="base_wua_gravity_irrigation.wua_watering_view_form"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='watering_duration_ddhhmm']" position="replace">
+          <field name="watering_duration_ddhhmm" invisible="1"/>
+          <field name="watering_duration_dechours"/>
+        </xpath>
+        <xpath expr="//field[@name='reservoiremptying_duration_ddhhmm']" position="replace">
+          <field name="reservoiremptying_duration_ddhhmm" invisible="1"/>
+          <field name="reservoiremptying_duration_dechours"/>
+        </xpath>
+        <xpath expr="//field[@name='total_accumulated_delay_time']" position="replace">
+          <field name="total_accumulated_delay_time" invisible="1"/>
+          <field name="total_accumulated_delay_time_dechours"/>
+        </xpath>
+        <xpath expr="//field[@name='early_shutdown_time']" position="replace">
+          <field name="early_shutdown_time" invisible="1"/>
+          <field name="early_shutdown_time_dechours"/>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="wua_watering_view_tree" model="ir.ui.view">
+      <field name="name">Waterings (tree view)</field>
+      <field name="model">wua.watering</field>
+      <field name="inherit_id"
+        ref="base_wua_gravity_irrigation.wua_watering_view_tree"/>
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='watering_duration_ddhhmm']" position="replace">
+          <field name="watering_duration_ddhhmm" invisible="1"/>
+          <field name="watering_duration_dechours"/>
+        </xpath>
+      </field>
+    </record>
+
+
 </odoo>
