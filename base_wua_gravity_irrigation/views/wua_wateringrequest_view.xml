@@ -34,7 +34,8 @@
                         <group name="master_data_left">
                             <field name="wateringperiod_id"
                                    domain="[('state', '=', 'open')]"
-                                   attrs="{'readonly': [('id','>',0)]}"/>
+                                   attrs="{'readonly': [('id','>',0)]}"
+                                   context="{'show_period_description': True}"/>
                             <field name="partner_id"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"

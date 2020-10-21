@@ -194,6 +194,11 @@ class WuaWateringperiod(models.Model):
             end_date_str = datetime.datetime.strptime(
                 record.end_date, '%Y-%m-%d').strftime('%x')
             name = initial_date_str + ' - ' + end_date_str
+            if self.env.context.get('show_period_description', False):
+                if record.description:
+                    name += ' [' + record.description + ']'
+                else:
+                    name += ' [' + _('No period description') + ']'
             result.append((record.id, name))
         return result
 
