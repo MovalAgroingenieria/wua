@@ -33,6 +33,10 @@ class WuaInvoiceset(models.Model):
         return ('%.1f' % watering_volume_real_of_irrigationgate).\
             replace('.', ',')
 
+
+class WuaInvoicesetLine(models.Model):
+    _inherit = 'wua.invoiceset.line'
+
     def populate_items_select_gravconsumption(self, product_id):
         gravconsumptions = self.env['wua.gravconsumption'].search([
             ('product_id', '=', product_id),
