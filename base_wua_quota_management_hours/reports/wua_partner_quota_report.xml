@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_partner_quota_report_document" inherit_id="base_wua_quota_management.wua_partner_quota_report_document">
+        <!-- Quotas -->
+        <xpath expr="//th[@name='th_balance']" position="after">
+            <th name="th_inputs_hours" class="text-right">Inputs (hours)</th>
+            <th name="th_consumption_hours" class="text-right">Consumptions (hours)</th>
+            <th name="th_balance_hours" class="text-right">Balance (hours)</th>
+        </xpath>
+        <xpath expr="//td[@name='td_balance']" position="after">
+            <td name="td_accumulated_input_hours" class="text-right">
+                <span t-field="q.accumulated_input_hours"/>
+            </td>
+            <td name="td_accumulated_consumption_hours" class="text-right">
+                <span t-field="q.accumulated_consumption_hours"/>
+            </td>
+            <td name="td_balance_hours" class="text-right">
+                <span t-field="q.balance_hours"/>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='td_total_balance']" position="after">
+            <t t-set="total_input_hours" t-value="o.recalcule_quota_total_hours(total_input)"/>
+            <t t-set="total_consumption_hours" t-value="o.recalcule_quota_total_hours(total_consumption)"/>
+            <t t-set="total_balance_hours" t-value="o.recalcule_quota_total_hours(total_balance)"/>
+            <td name="td_total_input_hours" class="text-right">
+                <strong><t t-esc="total_input_hours"/></strong>
+            </td>
+            <td name="td_total_consumption_hours" class="text-right">
+                <strong><t t-esc="total_consumption_hours"/></strong>
+            </td>
+            <td name="td_total_balance_hours" class="text-right">
+                <strong><t t-esc="total_balance_hours"/></strong>
+            </td>
+        </xpath>
+
+        <!-- Hydric movs -->
+        <xpath expr="//th[@name='th_volume']" position="after">
+            <th name="th_accounting_volume_hours" class="text-right">Accounting Volume (hours)</th>
+        </xpath>
+        <xpath expr="//td[@name='td_volume']" position="after">
+            <td name="td_volume_hours" class="text-right">
+                <span t-field="h.accounting_volume_hours"/>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>

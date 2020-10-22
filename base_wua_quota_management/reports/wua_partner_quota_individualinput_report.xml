@@ -48,46 +48,50 @@
                             <table class="table table-condensed" style="margin-top: 2px;border-style: hidden; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th style="width: 15%" class="text-center">ID</th>
-                                        <th style="width: 15%" class="text-center">Volume</th>
-                                        <th style="width: 15%" class="text-center">Effective volume</th>
-                                        <th style="width: 55%" class="text-center">Quota</th>
+                                        <th name="th_id" style="width: 15%" class="text-center">ID</th>
+                                        <th name="th_volume" style="width: 15%" class="text-center">Volume</th>
+                                        <th name="th_effective_volume" style="width: 15%" class="text-center">Effective volume</th>
+                                        <th name="th_quota" style="width: 55%" class="text-center">Quota</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr name="data">
-                                        <td class="text-center"><span t-field="o.category_id"/></td>
-                                        <td class="text-center">
+                                        <td name="td_id" class="text-center">
+                                            <span t-field="o.category_id"/>
+                                         </td>
+                                        <td name="td_volume" class="text-center">
                                             <span t-field="o.volume"/>
                                             <span>m<sup>3</sup></span>
                                         </td>
-                                        <td class="text-center">
+                                        <td name="td_effective_volume" class="text-center">
                                             <span t-field="o.effective_volume"/>
                                             <span>m<sup>3</sup></span>
                                         </td>
-                                        <td class="text-center"><span t-field="o.quota_id"/></td>
+                                        <td name="td_quota" class="text-center">
+                                            <span t-field="o.quota_id"/>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                             <table class="table table-condensed" style="margin-top: 12px;border-style: hidden; width: 100%;">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">Inputs</th>
-                                        <th class="text-center">Consumptions</th>
-                                        <th class="text-center">Balance_</th>
+                                        <th name="th_inputs" class="text-center">Inputs</th>
+                                        <th name="th_consumptions" class="text-center">Consumptions</th>
+                                        <th name="th_balance" class="text-center">Balance_</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr name="data">
-                                        <td class="text-center">
+                                        <td name="td_inputs" class="text-center">
                                             <span t-field="o.quota_accumulated_input"/>
                                             <span>m<sup>3</sup></span>
                                         </td>
-                                        <td class="text-center">
+                                        <td name="td_consumptions" class="text-center">
                                             <span t-field="o.quota_accumulated_consumption"/>
                                             <span>m<sup>3</sup></span>
                                         </td>
-                                        <td class="text-center">
+                                        <td name="td_balance" class="text-center">
                                             <span t-field="o.quota_balance"/>
                                             <span>m<sup>3</sup></span>
                                         </td>
@@ -148,7 +152,7 @@
                                                        <span>m<sup>3</sup></span>
                                                     </td>
                                                 </tr>
-                                                <tr name="tr_volume">
+                                                <tr name="tr_effective_volume">
                                                     <td><span><strong>Effective volume:</strong></span></td>
                                                     <td class="text-right">
                                                        <span t-field="o.effective_volume"/>
