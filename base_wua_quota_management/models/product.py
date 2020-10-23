@@ -73,7 +73,7 @@ class ProductTemplate(models.Model):
            vals['categ_id']):
             new_categ_for_product = self.env['product.category'].browse(
                 vals['categ_id'])[0]
-            if new_categ_for_product.productcategory_code not in {7, 8, 9}:
+            if new_categ_for_product.productcategory_code not in {7, 8, 11}:
                 superproduct_id = 0
                 if 'superproduct_id' in vals:
                     if vals['superproduct_id']:

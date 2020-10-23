@@ -201,7 +201,8 @@ class WuaInvoicesetLine(models.Model):
         if hydricmovements:
             user_id = self.env.user.id
             invoicesetline_id = self.id
-            # superproduct_id = self.product_id.superproduct_id.id
+            superproduct_id = self.product_id.related_product.\
+                superproduct_id.id
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -214,8 +215,9 @@ class WuaInvoicesetLine(models.Model):
                 quotaperiod_id, superproduct_id, partner_id,
                 event_time, volume, description, type
                 FROM wua_hydricmovement WHERE of_active_agriculturalseason
-                """,
-                                    (user_id, user_id, invoicesetline_id,))
+                AND superproduct_id = %s""",
+                                    (user_id, user_id, invoicesetline_id,
+                                     superproduct_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 # self.env.cr.execute("""
