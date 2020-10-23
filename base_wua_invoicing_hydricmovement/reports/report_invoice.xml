@@ -10,16 +10,16 @@
                 </t>
             </t>
             <t t-if="with_hydricmov_presconsumptions">
-                <p style="page-break-after:always;"></p>
                 <t t-set="consumptions" t-value="o.get_hydricmov_presconsumptions_from_lines(o.invoice_line_ids)"/>
                 <t t-if="consumptions">
+                    <br/>
                     <div name="consumptions">
                         <table class="table table-condensed">
                             <thead>
                                 <tr>
                                     <th>Water Connection</th>
-                                    <th>Initial time</th>
-                                    <th>Final time</th>
+                                    <th>Date initial time</th>
+                                    <th>Date final time</th>
                                     <th class="text-right">Initial Reading</th>
                                     <th class="text-right">Final Reading</th>
                                     <th class="text-right">Gross Vol. (m3)</th>
@@ -29,25 +29,25 @@
                             </thead>
                             <tbody class="invoice_tbody">
                                   <tr t-foreach="consumptions" t-as="c">
-                                      <t t-set="reading_initial_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y, %H:%M')"/>
-                                      <t t-set="reading_end_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y, %H:%M')"/>
+                                      <t t-set="reading_initial_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y')"/>
+                                      <t t-set="reading_end_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y')"/>
                                       <td><span t-esc="c['waterconnection']"/></td>
                                       <td><span t-esc="reading_initial_time"/></td>
                                       <td><span t-esc="reading_end_time"/></td>
                                       <td class="text-right">
-                                          <span t-esc="'{:.3f}'.format(c['initial_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                          <span t-esc="'{:.0f}'.format(c['initial_volume'])"/>
                                       </td>
                                       <td class="text-right">
-                                          <span t-esc="'{:.3f}'.format(c['end_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                          <span t-esc="'{:.0f}'.format(c['end_volume'])"/>
                                       </td>
                                       <td class="text-right">
-                                          <span t-esc="'{:.3f}'.format(c['volume']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                          <span t-esc="'{:.0f}'.format(c['volume'])"/>
                                       </td>
                                       <td class="text-right">
-                                          <span t-esc="'{:.3f}'.format(c['adjustement_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                          <span t-esc="'{:.0f}'.format(c['adjustement_volume'])"/>
                                       </td>
                                       <td class="text-right">
-                                          <span t-esc="'{:.3f}'.format(c['volume_real']).replace('.','%').replace(',','.').replace('%',',')"/>
+                                          <span t-esc="'{:.0f}'.format(c['volume_real'])"/>
                                       </td>
                                   </tr>
                             </tbody>
