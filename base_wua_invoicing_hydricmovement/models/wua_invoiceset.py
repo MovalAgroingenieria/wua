@@ -23,7 +23,8 @@ class WuaInvoiceset(models.Model):
                 [('invoiceset_id', '=', record.id)])
             for hydricmovement in hydricmovements:
                 hydricmovement_ids.append(hydricmovement.id)
-                if hydricmovement.presconsumption_id.invoiced_consumption_quota:
+                if hydricmovement.presconsumption_id.\
+                        invoiced_consumption_quota:
                     quota_pres_consumption_ids.append(
                         hydricmovement.presconsumption_id.id)
         res = super(WuaInvoiceset, self).unlink()
@@ -158,22 +159,22 @@ class WuaInvoiceset(models.Model):
                         quota_pres_consumption_ids)
                 quota_pres_consumption.write(
                     {'invoiced_consumption_quota': True})
+                # Add invoiced and invoiceset_id to hydricmovement selected
+                hydricmovement_ids = selected_hydricmovements.mapped(
+                    lambda x: x.hydricmovement_id.id)
+                if hydricmovement_ids:
+                    hydricmovements = \
+                        self.env['wua.hydricmovement'].browse(
+                            hydricmovement_ids)
+                    hydricmovements.write({
+                        'invoiced_hydricmovement': True,
+                        'invoiceset_id': invoiceset.id
+                        })
+                # Removed lines not selected
                 unselected_hydricmovements = \
                     line.line_hydricmovement_ids.filtered(
                         lambda x: x.selected is False)
                 if unselected_hydricmovements:
-                    hydricmovement_ids = []
-                    for line_hydricmovement in unselected_hydricmovements:
-                        hydricmovement_ids.append(
-                            line_hydricmovement.hydricmovement_id.id)
-                    if hydricmovement_ids:
-                        hydricmovements = \
-                            self.env['wua.hydricmovement'].browse(
-                                hydricmovement_ids)
-                        hydricmovements.write({
-                            'invoiced_hydricmovement': False,
-                            'invoiceset_id': None
-                            })
                     unselected_hydricmovements.unlink()
 
 
@@ -200,6 +201,7 @@ class WuaInvoicesetLine(models.Model):
         if hydricmovements:
             user_id = self.env.user.id
             invoicesetline_id = self.id
+            # superproduct_id = self.product_id.superproduct_id.id
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -212,21 +214,20 @@ class WuaInvoicesetLine(models.Model):
                 quotaperiod_id, superproduct_id, partner_id,
                 event_time, volume, description, type
                 FROM wua_hydricmovement WHERE of_active_agriculturalseason
-                AND NOT invoiced_hydricmovement
                 """,
-                                    (user_id, user_id, invoicesetline_id))
+                                    (user_id, user_id, invoicesetline_id,))
                 self.env.cr.commit()
                 self.env.invalidate_all()
-                self.env.cr.execute("""
-                    UPDATE wua_hydricmovement
-                    SET invoiceset_id=""" + str(self.invoiceset_id.id) +
-                                    """,
-                    invoiced_hydricmovement=TRUE
-                    WHERE
-                    of_active_agriculturalseason AND NOT
-                    invoiced_hydricmovement""")
-                self.env.cr.commit()
-                self.env.invalidate_all()
+                # self.env.cr.execute("""
+                #     UPDATE wua_hydricmovement
+                #     SET invoiceset_id=""" + str(self.invoiceset_id.id) +
+                #                     """,
+                #     invoiced_hydricmovement=TRUE
+                #     WHERE
+                #     of_active_agriculturalseason AND NOT
+                #     invoiced_hydricmovement""")
+                # self.env.cr.commit()
+                # self.env.invalidate_all()
                 self.configured_line = True
             except Exception:
                 self.env.cr.rollback()
