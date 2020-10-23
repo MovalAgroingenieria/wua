@@ -42,6 +42,12 @@ class WuaIrrigationshed(models.Model):
         required=True,
         index=True)
 
+    active = fields.Boolean(
+        default=True,
+        help='If the active field is set to False, it will allow you to ' +
+        'hide the register without removing it. For see archived register, ' +
+        'go to "Search-Filters" in tree view')
+
     description = fields.Char(
         string='Description',
         size=MAX_SIZE_DESCRIPTION)

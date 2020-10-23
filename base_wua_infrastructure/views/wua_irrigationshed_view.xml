@@ -11,6 +11,15 @@
                         <field name="gis_googlemaps_link" invisible="1"/>
                         <field name="gis_viewer_link" invisible="1"/>
                         <field name="with_gis_irrigationshed" invisible="1"/>
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-archive"
+                                groups="base_wua.group_wua_user">
+                                <field name="active"
+                                 widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
                         <button name="action_see_gis_googlemaps"
                                 type="object"
                                 class="oe_stat_button"
@@ -23,8 +32,8 @@
                                 class="oe_stat_button"
                                 string="GIS Viewer"
                                 icon="fa-map-marker"
-                                attrs="{'invisible': 
-                                        ['|',('gis_viewer_link','=',False), 
+                                attrs="{'invisible':
+                                        ['|',('gis_viewer_link','=',False),
                                         ('with_gis_irrigationshed','=',False)]}"/>
                     </div>
                     <group name="master_data" col="9">
@@ -43,7 +52,7 @@
                             <field name="number_of_parcels"/>
                             <field name="total_affected_area_official"/>
                             <field name="number_of_waterconnections"/>
-                        </group> 
+                        </group>
                     </group>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
@@ -144,6 +153,9 @@
                 <field name="hydraulicsector_id"/>
                 <filter string="Pumping: Yes" name="pumping_yes" domain="[('with_pumping','=',True)]"/>
                 <filter string="Pumping: No" name="pumping_no" domain="[('with_pumping','=',False)]"/>
+                <separator/>
+                <filter string="Archived" name="inactive"
+                 domain="[('active','=',False)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Hydraulic Sector"
                      name="hydraulic_sector"
