@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_quotas_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.quotas.configuration</field>
+        <field name="inherit_id" ref="base_wua_quota_management.wua_quotas_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="after">
+                <group string="Volume display">
+                    <field name="m3_to_minutes" style="width: 10%;"/>
+                    <field name="equivalence_hours_format"/>
+                    <field name="hours_as_hhmm"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
