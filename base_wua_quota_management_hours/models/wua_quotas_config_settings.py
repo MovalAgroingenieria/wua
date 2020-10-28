@@ -11,71 +11,83 @@ from odoo import models, fields, api
 class WuaQuotasConfiguration(models.TransientModel):
     _inherit = 'wua.quotas.configuration'
 
+    def _default_volume_time_equivalence(self):
+        volume_time_equivalence = self.env['ir.values'].get_default(
+            'wua.configuration', 'volume_time_equivalence')
+        return volume_time_equivalence
+
     hours_as_hhmm = fields.Boolean(
         string='Format HH:MM',
         default=False,
         help='If true the hours are shown in format HH:MM. By default are '
              'show in decimal format')
 
-    m3_to_minutes = fields.Integer(
-        string='Equivalence m³/minute',
-        default=0,
-        help='It establishes the equivalence between 1 cubic meter and its '
-             'time in minutes.\nFor example, if the value is 5, it means that '
-             '5 minutes equals 1 cubic meter.')
+    volume_time_equivalence = fields.Float(
+        string='1 hour, in m³',
+        digits=(32, 5),
+        default=_default_volume_time_equivalence,
+        compute="_compute_volume_time_equivalence",
+        help='Volume, in m³, which is equal to one hour.\n'
+             'The configuration of this parameter is done in '
+             'Census/Configuration/Parameters')
 
-    equivalence_hours_format = fields.Char(
-        string="Equivalence hours",
+    equivalence_hour_format = fields.Char(
+        string="1 m³ in hours",
         store=True,
-        compute="_compute_equivalence_hours_format")
-
-    _sql_constraints = [
-        ('no_negative_equivalence', 'CHECK (m3_to_minutes >= 0)',
-         'Then minute equivalence has to be 0 or a positive value.')
-        ]
+        compute="_compute_equivalence_hour_format",
+        help='It shows 1 m³ in hours format. Note that seconds are not shown '
+             'in views or reports when HH:MM format is used and decimal will '
+             'be rounded to two decimal places.')
 
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
         values.set_default('wua.quotas.configuration', 'hours_as_hhmm',
                            self.hours_as_hhmm)
-        values.set_default('wua.quotas.configuration', 'm3_to_minutes',
-                           self.m3_to_minutes)
         values.set_default(
-            'wua.quotas.configuration', 'equivalence_hours_format',
-            self.equivalence_hours_format)
+            'wua.quotas.configuration', 'volume_time_equivalence',
+            self.volume_time_equivalence)
+        values.set_default(
+            'wua.quotas.configuration', 'equivalence_hour_format',
+            self.equivalence_hour_format)
 
-    @api.depends('hours_as_hhmm', 'm3_to_minutes')
-    def _compute_equivalence_hours_format(self):
+    @api.multi
+    def _compute_volume_time_equivalence(self):
+        volume_time_equivalence = self.env['ir.values'].get_default(
+            'wua.configuration', 'volume_time_equivalence')
+        for record in self:
+            if volume_time_equivalence:
+                record.volume_time_equivalence = volume_time_equivalence
+
+    @api.depends('hours_as_hhmm', 'volume_time_equivalence')
+    def _compute_equivalence_hour_format(self):
         for record in self:
             hours_as_hhmm = record.hours_as_hhmm
-            value_m3_minutes = ""
-            value_m3_hours = ""
-            if record.m3_to_minutes > 0:
-                # 1m3 in minutes
-                value_m3_minutes = 1 * float(record.m3_to_minutes)
+            value_m3_hour = ""
+            if record.volume_time_equivalence > 0:
+                value_m3_hour = 1 / record.volume_time_equivalence
             else:
-                value_m3_minutes = 0.0
+                value_m3_hour = 0.0
             if not hours_as_hhmm:
-                value_m3_hours = value_m3_minutes / 60
-                value_m3_hours = np.format_float_positional(
-                    np.float(value_m3_hours), unique=False, precision=2)
-                value_m3_hours = \
-                    self.transform_float_to_spanish(value_m3_hours)
+                value_m3_hour = np.format_float_positional(
+                    np.float(value_m3_hour), unique=False, precision=5)
+                value_m3_hour = \
+                    self.transform_float_to_spanish(value_m3_hour)
             if hours_as_hhmm:
                 # Floor division with positive numbers (a // b != -a // b)
                 is_negative = False
-                if value_m3_minutes < 0:
-                    value_m3_minutes = abs(value_m3_minutes)
+                if value_m3_hour < 0:
+                    value_m3_hour = abs(value_m3_hour)
                     is_negative = True
                 duration_seconds = \
-                    timedelta(minutes=value_m3_minutes).total_seconds()
+                    timedelta(hours=value_m3_hour).total_seconds()
                 hours = duration_seconds // 3600
                 minutes = (duration_seconds % 3600) // 60
-                value_m3_hours = "%02d:%02d" % (hours, minutes)
+                seconds = (duration_seconds % 60)
+                value_m3_hour = "%02d:%02d:%02d" % (hours, minutes, seconds)
                 if is_negative:
-                    value_m3_hours = '-' + value_m3_hours
-            record.equivalence_hours_format = value_m3_hours
+                    value_m3_hour = '-' + value_m3_hour
+            record.equivalence_hour_format = value_m3_hour
 
     def transform_float_to_spanish(self, float_number):
         thousand_sep = "."

@@ -108,34 +108,33 @@ class WuaQuota(models.Model):
     def transform_to_quota_hours_format(self, value_m3):
         hours_as_hhmm = self.env['ir.values'].get_default(
             'wua.quotas.configuration', 'hours_as_hhmm')
-        m3_to_minutes = self.env['ir.values'].get_default(
-            'wua.quotas.configuration', 'm3_to_minutes')
-        value_m3_minutes = ""
-        value_m3_hours = ""
-        if value_m3 and m3_to_minutes > 0:
-            value_m3_minutes = float(value_m3) * float(m3_to_minutes)
+        volume_time_equivalence = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'volume_time_equivalence')
+        value_m3_hour = ""
+        if value_m3 and volume_time_equivalence > 0:
+            value_m3_hour = value_m3 / volume_time_equivalence
         else:
-            value_m3_minutes = 0.0
+            value_m3_hour = 0.0
         if not hours_as_hhmm:
-            value_m3_hours = value_m3_minutes / 60
-            value_m3_hours = np.format_float_positional(
-                np.float(value_m3_hours), unique=False, precision=2)
-            value_m3_hours = \
-                self.transform_float_to_spanish(value_m3_hours)
+            value_m3_hour = np.format_float_positional(
+                np.float(value_m3_hour), unique=False, precision=2)
+            value_m3_hour = \
+                self.transform_float_to_spanish(value_m3_hour)
         if hours_as_hhmm:
             # Floor division with positive numbers (a // b != -a // b)
             is_negative = False
-            if value_m3_minutes < 0:
-                value_m3_minutes = abs(value_m3_minutes)
+            if value_m3_hour < 0:
+                value_m3_hour = abs(value_m3_hour)
                 is_negative = True
             duration_seconds = \
-                timedelta(minutes=value_m3_minutes).total_seconds()
+                timedelta(hours=value_m3_hour).total_seconds()
             hours = duration_seconds // 3600
             minutes = (duration_seconds % 3600) // 60
-            value_m3_hours = "%02d:%02d" % (hours, minutes)
+            #seconds = (duration_seconds % 60)
+            value_m3_hour = "%02d:%02d" % (hours, minutes)
             if is_negative:
-                value_m3_hours = '-' + value_m3_hours
-        return value_m3_hours
+                value_m3_hour = '-' + value_m3_hour
+        return value_m3_hour
 
     def transform_to_quota_hours_format_form_view(self, value_m3, value_hours):
         vol_hours = \

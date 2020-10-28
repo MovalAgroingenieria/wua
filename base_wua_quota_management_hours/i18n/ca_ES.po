@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-26 15:29+0000\n"
-"PO-Revision-Date: 2020-10-26 15:29+0000\n"
+"POT-Creation-Date: 2020-10-28 18:23+0000\n"
+"PO-Revision-Date: 2020-10-28 18:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,10 +16,32 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_quota_management_hours
-#: code:addons/base_wua_quota_management_hours/models/wua_quota.py:143
+#: code:addons/base_wua_quota_management_hours/models/wua_quota.py:142
 #, python-format
 msgid " hours"
 msgstr " hores"
+
+#. module: base_wua_quota_management_hours
+#: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quotas_config_settings_view_form
+msgid "(*) The configuration of this parameter is done in Census/Configuration/Parameters.\n"
+"                        It will be updated after saving."
+msgstr "(*) La configuració d'aquest paràmetre es realitza en Cens/Configuració/Paràmetres.\n"
+"                        S'actualitzarà a l'desar."
+
+#. module: base_wua_quota_management_hours
+#: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quotas_configuration_volume_time_equivalence
+msgid "1 hour, in m³"
+msgstr "1 hora en m³"
+
+#. module: base_wua_quota_management_hours
+#: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quotas_config_settings_view_form
+msgid "1 hour, in m³ (*)"
+msgstr "1 hora en m³ (*)"
+
+#. module: base_wua_quota_management_hours
+#: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quotas_configuration_equivalence_hour_format
+msgid "1 m³ in hours"
+msgstr "1 m³ in hores"
 
 #. module: base_wua_quota_management_hours
 #: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_partner_quota_individualinput_report_document
@@ -114,16 +136,6 @@ msgid "Effective Volume (hours)"
 msgstr "Volum efectiu (hores)"
 
 #. module: base_wua_quota_management_hours
-#: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quotas_configuration_equivalence_hours_format
-msgid "Equivalence hours"
-msgstr "Equivalència hores"
-
-#. module: base_wua_quota_management_hours
-#: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quotas_configuration_m3_to_minutes
-msgid "Equivalence m³/minute"
-msgstr "Equivalència m³/minuts"
-
-#. module: base_wua_quota_management_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quotas_configuration_hours_as_hhmm
 msgid "Format HH:MM"
 msgstr "Format HH:MM"
@@ -164,11 +176,9 @@ msgid "Inputs (m³)"
 msgstr "Inputs (m³)"
 
 #. module: base_wua_quota_management_hours
-#: model:ir.model.fields,help:base_wua_quota_management_hours.field_wua_quotas_configuration_m3_to_minutes
-msgid "It establishes the equivalence between 1 cubic meter and its time in minutes.\n"
-"For example, if the value is 5, it means that 5 minutes equals 1 cubic meter."
-msgstr "Estableix l'equivalència entre 1 metre cúbic i el seu temps en minuts.\n"
-"Per exemple, si el valor és 5, vol dir que 5 minuts són iguals a 1 metre cúbic."
+#: model:ir.model.fields,help:base_wua_quota_management_hours.field_wua_quotas_configuration_equivalence_hour_format
+msgid "It shows 1 m³ in hours format. Note that seconds are not shown in views or reports when HH:MM format is used and decimal will be rounded to two decimal places."
+msgstr "Mostra 1 m³ en el format hores. Observar que els segons no es mostren a les vistes ni en els informes\nQuan es fa servir el format HH: MM i en format decimal serà arrodonit a dos decimals."
 
 #. module: base_wua_quota_management_hours
 #: model:ir.model,name:base_wua_quota_management_hours.model_res_partner
@@ -179,11 +189,6 @@ msgstr "Soci"
 #: model:ir.model,name:base_wua_quota_management_hours.model_wua_quota
 msgid "Quota"
 msgstr "Quota"
-
-#. module: base_wua_quota_management_hours
-#: sql_constraint:wua.quotas.configuration:0
-msgid "Then minute equivalence has to be 0 or a positive value."
-msgstr "L'equivalència en minuts ha de ser 0 o un valor positiu."
 
 #. module: base_wua_quota_management_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_cession_volume_vol_hours
@@ -201,4 +206,11 @@ msgstr "Volum (hores)"
 #: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quotas_config_settings_view_form
 msgid "Volume display"
 msgstr "Visualització de volums"
+
+#. module: base_wua_quota_management_hours
+#: model:ir.model.fields,help:base_wua_quota_management_hours.field_wua_quotas_configuration_volume_time_equivalence
+msgid "Volume, in m³, which is equal to one hour.\n"
+"The configuration of this parameter is done in Census/Configuration/Parameters"
+msgstr "Volum en m³ igual a 1 hora.\n"
+"La configuració d'aquest paràmetre es realitza en Cens/Configuració/Paràmetres"
 
