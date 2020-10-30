@@ -15,7 +15,9 @@
     "depends": [
         "base_wua_quota_management",],
     "data": [
-        "views/wua_wateringrequest_view.xml",],
+        "views/wua_wateringrequest_view.xml",
+        "reports/wua_wateringrequest_report.xml",
+    ],
     "installable": True,
     "application": False,
 }

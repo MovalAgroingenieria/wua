@@ -1,34 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="paperformat_portrait_standard_wateringrequest"
-            model="report.paperformat">
-        <field name="name">European A4 Portrait</field>
-        <field name="default" eval="True"/>
-        <field name="format">A4</field>
-        <field name="page_height">0</field>
-        <field name="page_width">0</field>
-        <field name="orientation">Portrait</field>
-        <field name="margin_top">37</field>
-        <field name="margin_bottom">77</field>
-        <field name="margin_left">14</field>
-        <field name="margin_right">14</field>
-        <field name="header_line" eval="False" />
-        <field name="header_spacing">30</field>
-        <field name="dpi">90</field>
-    </record>
-
     <report id="action_wua_wateringrequest_report"
             string="Watering Request"
             model="wua.wateringrequest"
             report_type="qweb-pdf"
             name="base_wua_gravity_irrigation.report_wua_wateringrequest"
-            paperformat="paperformat_portrait_standard_wateringrequest"/>
+            file="base_wua_gravity_irrigation.report_wua_wateringrequest"
+            paperformat="base_wua_report.paperformat_wua_reports"/>
 
     <template id="report_wua_wateringrequest">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout">
+                <t t-call="base_wua_report.wua_external_layout">
                     <t t-call="base_wua_gravity_irrigation.report_wua_wateringrequest_document"/>
                 </t>
             </t>
@@ -36,314 +20,281 @@
     </template>
 
     <template id="report_wua_wateringrequest_document">
-        <div class="page" style="font-family: lucidasansregular;font-size: 11; margin-left: 13px; margin-right: 13px">
-            <style type="text/css">
-            <![CDATA[
-            @font-face {
-                font-family: 'lucidasansregular';
-                src: local('Lucida Sans');
-            }
-            @font-face {
-                font-family: 'verdana';
-                src: local('Verdana');
-            }
-            @font-face {
-                font-family: 'dejavusansmono';
-                src: local('DejaVu Sans Mono');
-            }
-            ]]>
-            </style>
-            <div id="partner_info">
-                <div class="row">
-                    <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                        <span style="font-family: verdana">NOMBRE Y APELLIDOS O RAZÓN SOCIAL</span>
-                    </div>
-                    <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
-                        <span style="font-family: verdana">DNI/CIF</span>
-                    </div>
-                    <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
-                        <span style="font-family: verdana">TELÉFONO</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6" style="border: 1px solid black;">
-                        <span t-field="o.partner_id"/>
-                    </div>
-                    <div class="col-xs-3" style="border: 1px solid black;">
-                        <t t-if="o.partner_id.vat"><span t-field="o.partner_id.vat"/></t>
-                        <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                    </div>
-                    <div class="col-xs-3 text-center" style="border: 1px solid black;">
-                        <t t-if="o.partner_id.phones"><span t-field="o.partner_id.phones"/></t>
-                        <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                        <span style="font-family: verdana">DOMICILIO</span>
-                    </div>
-                    <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                        <span style="font-family: verdana">LOCALIDAD</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6" style="border: 1px solid black;">
-                        <t t-if="o.partner_id.street_type_show">
-                            <span t-field="o.partner_id.street_type_show"/>
-                        </t>
-                        <t t-if="o.partner_id.street">
-                            <span t-field="o.partner_id.street"/>
-                        </t>
-                        <t t-if="o.partner_id.street_num">
-                            <span t-field="o.partner_id.street_num"/>
-                        </t>
-                        <t t-if="o.partner_id.street2">
-                            <span t-field="o.partner_id.street2"/>
-                        </t>
-                        <t t-if="o.partner_id.zip">
-                            <span> </span>
-                            <span t-field="o.partner_id.zip"/>
-                        </t>
-                        <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                    </div>
-                    <div class="col-xs-6" style="border: 1px solid black;">
-                        <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/> (<span t-field="o.partner_id.state_id"/>)</t>
-                        <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                    </div>
-                </div>
-            </div>
-            <div class="row" style="border: 1px solid black;margin-top: 10px">
-                <div class="col-xs-12 text-center">
-                    <span style="font-family: verdana">EXPONE:</span><br/><br/>
-                </div>
-                <div class="col-xs-12">
-                    <span>En relación con los entandes adscritos al siguiente período de riego:</span><br/>
-                </div>
-                <div class="col-xs-12">
-                    <span t-field="o.wateringperiod_id"/>
-                </div>
-            </div>
-            <div class="row" name="section_detail_header" style="border: 1px solid black;margin-top: 10px">
-                <div class="col-xs-12 text-center">
-                    <span style="font-family: verdana">SOLICITA:</span><br/><br/>
-                </div>
-                <div class="col-xs-12">
-                    <span>La inclusión en los citados entandes de las subparcelas abajo reseñadas, junto con sus respectivos tiempos de riego:</span>
-                </div>
-            </div>
-            <div class="row" name="section_detail_content" style="margin-top: 10px">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Subparcela</th>
-                            <th class="text-center">Parcela</th>
-                            <th class="text-left">Acequia</th>
-                            <th class="text-right">Superficie</th>
-                            <th class="text-center">Ref.Catastral</th>
-                            <th class="text-right">Duración (min)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr t-foreach="o.gravconsumption_ids" t-as="l">
-                            <td align="center">
-                                <span t-field="l.subparcel_id"/>
-                            </td>
-                            <td align="center">
-                                <span t-field="l.parcel_id"/>
-                            </td>
-                            <td align="left">
-                                <span t-field="l.irrigationditch_id"/>
-                            </td>
-                            <td align="right">
-                                <span t-field="l.subparcel_id.area_official"/>
-                            </td>
-                            <td align="center">
-                                <span t-field="l.parcel_id.cadastral_reference"/>
-                            </td>
-                            <td align="right">
-                                <span t-field="l.watering_duration"/>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </template>
+        <div class="page">
 
-    <template id="report_wua_wateringrequest_external_layout">
-        <!-- Multicompany -->
-        <t t-if="not o and doc">
-            <t t-set="o" t-value="doc"/>
-        </t>
-        <t t-if="o and 'company_id' in o">
-            <t t-set="company" t-value="o.company_id"></t>
-        </t>
-        <t t-if="not o or not 'company_id' in o">
-            <t t-set="company" t-value="res_company"></t>
-        </t>
+            <!-- Title -->
+            <div name="title" class="text-center">
+                <h4><strong>Watering request</strong></h4>
+            </div>
 
-        <t t-call="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_header" />
-        <t t-raw="0" />
-        <t t-call="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_footer" />
-    </template>
-
-    <template id="report_wua_wateringrequest_external_layout_header">
-        <div class="header" name="header_content">
-            <div name="logo_title_header" class="row">
-                <div class="col-xs-4">
-                    <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 65px;"/>
+            <!-- Partner (irrigator) data -->
+            <div name="wua_irrigator_data">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                        <div style="float: left; display: inline;"><strong>Irrigator</strong></div>
+                    </div>
                 </div>
-                <div name="title_header">
-                    <div class="col-xs-8 text-right" style="margin-top:43px;font-family: dejavusansmono;font-size: 12px;">
-                        <span>SOLICITUD DE RIEGO</span>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="width: 60%; display: table-cell;">
+                            <t t-if="o.partner_id.name">
+                                <strong><span t-field="o.partner_id.name"/></strong>
+                                <t t-if="o.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="o.partner_id.vat"/>)</span></t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.street_type_show or o.partner_id.street or o.street_num or o.partner_id.street2">
+                                <t t-if="o.partner_id.street_type_show"><span t-field="o.partner_id.street_type_show"/></t>
+                                <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t>
+                                <t t-if="o.partner_id.street_num"><span t-field="o.partner_id.street_num"/></t>
+                                <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.city or o.partner_id.zip">
+                                <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
+                                <t t-if="o.partner_id.zip"><span>-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.state_id or o.partner_id.country_id">
+                                <t t-if="o.partner_id.state_id"><span t-field="o.partner_id.state_id"/></t>
+                                <t t-if="o.partner_id.country_id"><span>-&amp;nbsp;</span><span t-field="o.partner_id.country_id"></span></t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.phones or o.partner_id.phone or o.partner_id.mobile">
+                                <t t-if="o.partner_id.phones"><span t-field="o.partner_id.phones"/></t>
+                                <t t-else="">
+                                    <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                                    <t t-if="o.partner_id.mobile"><span t-field="o.partner_id.mobile"/></t>
+                                </t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/><br/></t>
+                        </div>
+                        <div style="width: 40%; display: table-cell; padding: 0px 32px;">
+                            <div>&amp;nbsp;</div>
+                            <t t-if="o.partner_id.partnerlink_ids">
+                                <t t-set="measurement_unit" t-value="o.partner_id.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
+                            </t>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td><span>Wua partner code:</span></td>
+                                        <td class="text-right" style="padding: 0 0 0 90px;">
+                                           <t t-if="o.partner_id.partner_code">
+                                               <t t-set="partner_code" t-value="str(o.partner_id.partner_code)"/>
+                                           </t>
+                                           <span t-esc="partner_code"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>Number of requests:</span></td>
+                                        <td class="text-right">
+                                           <t t-if="o.partner_id.number_of_requests">
+                                               <t t-set="number_of_requests" t-value="str(o.partner_id.number_of_requests)"/>
+                                           </t>
+                                           <span t-esc="number_of_requests"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>Number of gravity consumptions:</span></td>
+                                        <td class="text-right">
+                                           <t t-if="o.partner_id.number_of_gravconsumptions">
+                                               <t t-set="number_of_gravconsumptions" t-value="str(o.partner_id.number_of_gravconsumptions)"/>
+                                           </t>
+                                           <span t-esc="number_of_gravconsumptions"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row zero_min_height">
-                <div class="col-xs-12">
-                    <div style="border-bottom: 1px solid black;"></div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12" name="company_header" style="margin-top:4px;font-family: verdana;font-size: 12px;">
-                    <span t-field="company.partner_id"
-                    t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
-                </div>
-            </div>
-        </div>
-    </template>
 
-    <template id="report_wua_wateringrequest_external_layout_footer">
-        <t t-if="company.street and company.zip and company.city and company.state_id">
-            <t t-set="address" t-value="company.street + ' - ' + company.zip + ' ' + company.city + ' (' + company.state_id.name + ')'"/>
-        </t>
-        <div class="footer" name="footer_content" style="font-family: lucidasansregular;font-size: 11; margin-left: 13px; margin-right: 13px">
-            <style type="text/css">
-            <![CDATA[
-            @font-face {
-                font-family: 'lucidasansregular';
-                src: local('Lucida Sans');
-            }
-            @font-face {
-                font-family: 'verdana';
-                src: local('Verdana');
-            }
-            ]]>
-            </style>
-            <div class="row">
-                <div class="col-xs-5" name="sign_date" style="border: 1px solid black;font-size: 12px;">
-                    <div class="text-center" style="margin-top:4px;margin-bottom:14px;">
-                        <span style="font-family: verdana">LUGAR Y FECHA</span><br/><br/><br/>
-                        <p t-if="company.city and company.state_id"><span t-field="company.city"/> (<span t-field="company.state_id.name"/>), <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/><br/><span style="font-size: 10px;" t-esc="context_timestamp(datetime.datetime.now()).strftime('%H:%M:%S')"/></p>
+            <!-- Insert from base_wua_gravity_irrigation_with_quota -->
+
+            <!-- Watering request -->
+            <div name="watering_request_data" style="margin-top:20px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-moval-watering-request"/></div>
+                        <div style="float: left; display: inline;"><strong>Watering request</strong></div>
+                        <div style="float: right; width: 32px;">
+                            <t t-if="o.is_open"><span class="fa fa-moval-lock-open"/></t>
+                            <t t-if="not o.is_open"><span class="fa fa-lock"/></t>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xs-2"/>
-                <div class="col-xs-5" name="sign_text" style="border: 1px solid black;font-size: 12px;">
-                    <div class="text-center" style="margin-top:4px;margin-bottom:14px;">
-                        <span style="font-family: verdana">FIRMA</span><br/><br/>
-                        <t t-if="o.signature_image"><img t-att-src="'data:image/png;base64,%s' % o.signature_image" style="max-height: 51px;"/></t>
-                        <t t-else=""><br/><br/><br/></t>
-                   </div>
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-                <div class="col-xs-12 text-center" name="to_president" style="font-size: 11px;font-weight: bold;">
-                    Sr. Presidente de la <span t-field="company.partner_id"/>
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-                <div class="col-xs-12 text-justify" name="protected_data_warning" style="font-size: 8px;">
-                AVISO IMPORTANTE: De acuerdo con la Ley Orgánica 15/1999, de 13 de diciembre, de
-                Protección de Datos de Carácter Personal (LOPD), les informamos de la existencia de
-                un fichero que contiene datos de carácter personal, cuya finalidad principal es mantener
-                actualizados los datos de los comuneros e incluir en el censo los de los futuros. Este
-                fichero ha sido debidamente inscrito en la Agencia Española de Protección de Datos.
-                En caso de querer ejercer los derechos de acceso, rectificación, cancelación y
-                oposición, puede hacerlo en la dirección del responsable del fichero
-                <t t-if="address and company.email">: <span t-esc="address"/>, o en la dirección de
-                correo electrónico: <span t-field="company.email"/>.</t>
-                <t t-else="">.</t>
-                </div>
-            </div>
-            <div class="row zero_min_height">
-                <div class="col-xs-12">
-                    <div style="border-bottom: 1px solid black;"></div>
-                </div>
-            </div>
-            <div class="row" name="company_address_email">
-                <div class="col-xs-12 text-center" name="company_footer" style="margin-top:4px;font-family: verdana;font-size: 10px;">
-                    <span t-field="company.partner_id"/>
-                </div>
-                <t t-if="address">
-                    <div class="col-xs-12 text-center" style="font-size: 9px;">
-                        <span t-esc="address"/>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="display: table-cell;">
+                            <table name="request_data_left" class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr name="tr_name">
+                                        <td><span>Watering Request:</span></td>
+                                        <td class="text-right"><span t-field="o.name"/></td>
+                                    </tr>
+                                    <tr name="tr_wateringperiod_id">
+                                        <td>
+                                            <span>Watering Period:</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="o.wateringperiod_id"/>
+                                            <t t-if="o.is_open"><span class="fa fa-moval-lock-open"/></t>
+                                            <t t-if="not o.is_open"><span class="fa fa-lock"/></t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_agriculturalseason_id">
+                                        <td><span>Agricultural season:</span></td>
+                                        <td class="text-right"><span t-field="o.agriculturalseason_id"/></td>
+                                    </tr>
+                                    <tr name="tr_state">
+                                        <td><span>Request state:</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.state"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display: table-cell; padding-left: 10px;">
+                            <table name="request_data_right" class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr name="tr_request_date">
+                                        <td><span>Request Date:</span></td>
+                                        <td class="text-right"><span t-field="o.request_date"/></td>
+                                    </tr>
+                                     <tr name="tr_product_id">
+                                        <td><span>Water type:</span></td>
+                                        <td class="text-right"><span t-field="o.product_id"/></td>
+                                    </tr>
+                                    <tr name="tr_pnumber_of_subparcels">
+                                        <td><span>Number of subparcels:</span></td>
+                                        <td class="text-right"><span t-field="o.number_of_subparcels"/></td>
+                                    </tr>
+                                    <tr name="tr_is_portal_user">
+                                        <td><span>Created by the partner:</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.is_portal_user"><span class="fa fa-check"/></t>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </t>
-                <t t-if="company.email and company.phone and company.vat">
-                    <div class="col-xs-12 text-center" style="font-size: 9px;">
-                        <span t-field="company.email"/> - <span t-field="company.phone"/> - CIF <span t-field="company.vat"/>
+                </div>
+                <t t-if="o.notes">
+                    <div name="notes" style="margin-top: 12px;">
+                        <span><strong>Notes:</strong></span><br/>
+                        <span t-field="o.notes"/>
                     </div>
                 </t>
             </div>
-            <div class="row" name="pagination">
-                <div class="col-xs-12 text-center hidden-if-one-page" name="pages" style="margin-top:14px;font-family: verdana;font-size: 10px;">
-                    <span class="page"/> / <span class="topage"/>
+
+            <!-- Waterings -->
+            <div name="waterings_data" style="margin-top:20px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-moval-drop-water"/></div>
+                        <div style="float: left; display: inline;"><strong>Waterings</strong></div>
+                    </div>
+                </div>
+                <div style="margin-top: 4px;">
+                    <t t-if="o.gravconsumption_ids and len(o.gravconsumption_ids) > 0">
+                        <table class="table table-striped" style="width:100%;">
+                            <thead>
+                                <th name="th_subparcel" class="text-center">Subparcel</th>
+                                <th name="th_parcel" class="text-center">Parcel</th>
+                                <th name="th_irrigationditch" class="text-left">Irrigationditch</th>
+                                <th name="th_surface" class="text-right">
+                                    <span>Surface</span>
+                                    <t t-if="measurement_unit">
+                                        <span>(<t t-esc="measurement_unit"/>)</span>
+                                    </t>
+                                </th>
+                                <th name="th_cadastral_ref" class="text-center">Cadastral reference</th>
+                                <th name="th_duration" class="text-right">Duration (min)</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.gravconsumption_ids" t-as="l" style="page-break-inside: avoid;">
+                                    <tr>
+                                        <td name="td_subparcel" align="center">
+                                            <span t-field="l.subparcel_id"/>
+                                        </td>
+                                        <td name="td_parcel" align="center">
+                                            <span t-field="l.parcel_id"/>
+                                        </td>
+                                        <td name="td_irrigationditch" align="left">
+                                            <span t-field="l.irrigationditch_id"/>
+                                        </td>
+                                        <td name="td_surface" align="right">
+                                            <span t-field="l.subparcel_id.area_official"/>
+                                        </td>
+                                        <td name="td_cadastral_ref" align="center">
+                                            <span t-field="l.parcel_id.cadastral_reference"/>
+                                        </td>
+                                        <td name="th_duration" align="right">
+                                            <t t-if="l.watering_duration">
+                                                <t t-set="watering_duration" t-value="str(l.watering_duration)"/>
+                                                <span t-esc="l.watering_duration"/>
+                                            </t>
+                                            
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
                 </div>
             </div>
-        </div>
-    </template>
+    
+            <!-- Conformity -->
+            <div name="conformity" style="margin-top: 32px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                        <div style="float: left;"><strong>Conformity</strong></div>
+                    </div>
+                </div>
+                <div name="signature" class="row" style="border: 1px solid lightgrey; margin: 2px 1px; page-break-inside: avoid;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="border-right: 1px solid lightgrey; width: 50%; display: table-cell;">
+                            <p style="margin-left: -8px; margin-top: 2px; margin-bottom: 0px;">
+                                <span>Place and date</span>
+                            </p>
+                            <t t-if="request.env.user.company_id.city and request.env.user.company_id.state_id.name">
+                                <p class="text-center" style="margin-top: 4px;">
+                                    <span t-esc="request.env.user.company_id.city"/>
+                                    (<span t-esc="request.env.user.company_id.state_id.name"/>),
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/><br/>
+                                    <span style="font-size: 10px;" t-esc="context_timestamp(datetime.datetime.now()).strftime('%H:%M:%S')"/>
+                                </p>
+                            </t>
+                            <t t-else="">
+                                <p>&amp;nbsp;</p>
+                                <p>&amp;nbsp;</p>
+                            </t>
+                        </div>
+                        <div style="width: 50%; display: table-cell; padding: 0px 8px;">
+                            <p style="margin-top: 2px; margin-bottom: 0px">
+                                <span>Signature</span>
+                            </p>
+                             <t t-if="o.signature_image">
+                                <div class="text-center">
+                                    <img style="max-width: 380px;" t-attf-src="data:image/*;base64,{{o.signature_image}}"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p>&amp;nbsp;</p>
+                                <p>&amp;nbsp;</p>
+                                <p>&amp;nbsp;</p>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <template id="minimal_layout" inherit_id="report.minimal_layout">
-        <xpath expr="//t[@t-if='subst is True']" position="replace">
-            <t t-if="subst is True">
-                <script>
-                    function subst() {
-                        var vars = {};
-                        var x = document.location.search.substring(1).split('&amp;');
-                        for (var i in x) {
-                            var z = x[i].split('=', 2);
-                            vars[z[0]] = unescape(z[1]);
-                        }
-                        var x=['frompage', 'topage', 'page', 'webpage', 'section', 'subsection', 'subsubsection'];
-                        for (var i in x) {
-                            var y = document.getElementsByClassName(x[i]);
-                            for (var j=0; j&lt;y.length; ++j)
-                                y[j].textContent = vars[x[i]];
-                        }
-                        var operations = {
-                            'not-first-page': function (elt) {
-                                elt.style.visibility = (vars.page === vars.frompage) ? "hidden" : "visible";
-                            },
-                            'not-last-page': function (elt) {
-                                elt.style.visibility = (vars.page === vars.topage) ? "hidden" : "visible";
-                            },
-                            'first-page': function (elt) {
-                                elt.style.visibility = (vars.page === vars.frompage) ? "visible" : "hidden";
-                            },
-                            'last-page': function (elt) {
-                                elt.style.visibility = (vars.page === vars.topage) ? "visible" : "hidden";
-                            },
-                            'hidden-if-one-page': function (elt) {
-                                elt.style.visibility = (vars.topage > 1) ? "visible" : "hidden";
-                            },
-                            'hidden-even-page': function (elt) {
-                                elt.style.visibility = (vars.page % 2 == 1) ? "visible" : "hidden";
-                            },
-                            'hidden-odd-page': function (elt) {
-                                elt.style.visibility = (vars.page % 2 == 0) ? "visible" : "hidden";
-                            },
-                        };
-                        for (var klass in operations) {
-                            var y = document.getElementsByClassName(klass);
-                            for (var j=0; j&lt;y.length; ++j)
-                                operations[klass](y[j]);
-                        }
-                    }
-                </script>
-            </t>
-        </xpath>
+        </div><!-- end page -->
     </template>
 
 </odoo>
