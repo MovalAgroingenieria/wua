@@ -12,7 +12,14 @@
                     </div>
                 </div>
                 <div class="text-center" style="margin-top: 4px;">
-                    <span t-field="o.html_quota_balance"/>
+                    <t t-if="o.html_quota_balance">
+                        <span t-field="o.html_quota_balance"/>
+                    </t>
+                    <t t-else="">
+                        <div class="text-center">
+                            (There is no quotas associated with this watering request)
+                        </div>
+                    </t>
                 </div>
             </div>
         </xpath>

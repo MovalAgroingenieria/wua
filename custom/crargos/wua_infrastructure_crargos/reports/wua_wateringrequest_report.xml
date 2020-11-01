@@ -1,42 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="paperformat_portrait_standard_wateringrequest_crargos"
-            model="report.paperformat">
-        <field name="name">European A4 Portrait</field>
-        <field name="default" eval="True"/>
-        <field name="format">A4</field>
-        <field name="page_height">0</field>
-        <field name="page_width">0</field>
-        <field name="orientation">Portrait</field>
-        <field name="margin_top">35</field>
-        <field name="margin_bottom">82</field>
-        <field name="margin_left">14</field>
-        <field name="margin_right">14</field>
-        <field name="header_line" eval="False" />
-        <field name="header_spacing">25</field>
-        <field name="dpi">90</field>
-    </record>
-
-    <record id="base_wua_gravity_irrigation.action_wua_wateringrequest_report" model="ir.actions.report.xml">
-        <field name="paperformat_id" ref="wua_infrastructure_crargos.paperformat_portrait_standard_wateringrequest_crargos"/>
-    </record>
-
     <template id="report_wua_wateringrequest_document" inherit_id="base_wua_gravity_irrigation.report_wua_wateringrequest_document">
-        <xpath expr="//div[@name='section_detail_header']" position="replace">
-            <div class="row" name="section_detail_header" style="border: 1px solid black;margin-top: 10px">
-                <div class="col-xs-12 text-center">
-                    <span style="font-family: verdana">SOLICITA:</span><br/><br/>
+        <xpath expr="//div[@name='wua_irrigator_data']" position="replace">
+
+            <!-- Partner (irrigator) and agent data -->
+            <div name="wua_irrigator_data">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <t t-if="o.with_agent">
+                            <div style="float: left; width: 32px;"><span class="fa fa-users"/></div>
+                            <div style="float: left; display: inline;"><strong>Irrigator and agent</strong></div>
+                        </t>
+                        <t t-else="">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Irrigator</strong></div>
+                        </t>
+                    </div>
                 </div>
-                <div class="col-xs-12">
-                    <span>La inclusión en los citados entandes de los bancales abajo reseñados, junto con sus respectivos tiempos de riego:</span>
+                <!-- Irrigator -->
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="width: 60%; display: table-cell;">
+                            <t t-if="o.partner_id.name">
+                                <strong><span t-field="o.partner_id.name"/></strong>
+                                <t t-if="o.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="o.partner_id.vat"/>)</span></t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.street_type_show or o.partner_id.street or o.street_num or o.partner_id.street2">
+                                <t t-if="o.partner_id.street_type_show"><span t-field="o.partner_id.street_type_show"/></t>
+                                <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t>
+                                <t t-if="o.partner_id.street_num"><span t-field="o.partner_id.street_num"/></t>
+                                <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.city or o.partner_id.zip">
+                                <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
+                                <t t-if="o.partner_id.zip"><span>-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.state_id or o.partner_id.country_id">
+                                <t t-if="o.partner_id.state_id"><span t-field="o.partner_id.state_id"/></t>
+                                <t t-if="o.partner_id.country_id"><span>-&amp;nbsp;</span><span t-field="o.partner_id.country_id"></span></t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.phones or o.partner_id.phone or o.partner_id.mobile">
+                                <t t-if="o.partner_id.phones"><span t-field="o.partner_id.phones"/></t>
+                                <t t-else="">
+                                    <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                                    <t t-if="o.partner_id.mobile"><span t-field="o.partner_id.mobile"/></t>
+                                </t>
+                                <br/>
+                            </t>
+                            <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/><br/></t>
+                        </div>
+                        <div style="width: 40%; display: table-cell; padding: 0px 32px;">
+                            <div>&amp;nbsp;</div>
+                            <t t-if="o.partner_id.partnerlink_ids">
+                                <t t-set="measurement_unit" t-value="o.partner_id.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
+                            </t>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td><span>Wua partner code:</span></td>
+                                        <td class="text-right" style="padding: 0 0 0 90px;">
+                                           <t t-if="o.partner_id.partner_code">
+                                               <t t-set="partner_code" t-value="str(o.partner_id.partner_code)"/>
+                                           </t>
+                                           <span t-esc="partner_code"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>Number of requests:</span></td>
+                                        <td class="text-right">
+                                           <t t-if="o.partner_id.number_of_requests">
+                                               <t t-set="number_of_requests" t-value="str(o.partner_id.number_of_requests)"/>
+                                           </t>
+                                           <span t-esc="number_of_requests"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span>Number of gravity consumptions:</span></td>
+                                        <td class="text-right">
+                                           <t t-if="o.partner_id.number_of_gravconsumptions">
+                                               <t t-set="number_of_gravconsumptions" t-value="str(o.partner_id.number_of_gravconsumptions)"/>
+                                           </t>
+                                           <span t-esc="number_of_gravconsumptions"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+                <!-- Agent -->
+                <t t-if="o.with_agent">
+                    <t t-set="agent_id" t-value="o.sudo().agent_id"/>
+                    <hr style="margin: 4 0px;"/>
+                    <div class="row" style="margin-top: 4px;">
+                        <div class="col-xs-12" style="display: table;">
+                            <div style="width: 60%; display: table-cell;">
+                                <t t-if="agent_id.name">
+                                    <strong><span t-field="agent_id.name"/></strong>
+                                    <t t-if="agent_id.vat"><span>(NIF:&amp;nbsp;<span t-field="agent_id.vat"/>)</span></t>
+                                    <br/>
+                                </t>
+                                <t t-if="agent_id.street_type_show or agent_id.street or o.street_num or agent_id.street2">
+                                    <t t-if="agent_id.street_type_show"><span t-field="agent_id.street_type_show"/></t>
+                                    <t t-if="agent_id.street"><span t-field="agent_id.street"/></t>
+                                    <t t-if="agent_id.street_num"><span t-field="agent_id.street_num"/></t>
+                                    <t t-if="agent_id.street2"><span t-field="agent_id.street2"/></t>
+                                    <br/>
+                                </t>
+                                <t t-if="agent_id.city or agent_id.zip">
+                                    <t t-if="agent_id.city"><span t-field="agent_id.city"/></t>
+                                    <t t-if="agent_id.zip"><span>-&amp;nbsp;</span><span t-field="agent_id.zip"/></t>
+                                    <br/>
+                                </t>
+                                <t t-if="agent_id.state_id or agent_id.country_id">
+                                    <t t-if="agent_id.state_id"><span t-field="agent_id.state_id"/></t>
+                                    <t t-if="agent_id.country_id"><span>-&amp;nbsp;</span><span t-field="agent_id.country_id"></span></t>
+                                    <br/>
+                                </t>
+                                <t t-if="agent_id.phones or agent_id.phone or agent_id.mobile">
+                                    <t t-if="agent_id.phones"><span t-field="agent_id.phones"/></t>
+                                    <t t-else="">
+                                        <t t-if="agent_id.phone"><span t-field="agent_id.phone"/></t>
+                                        <t t-if="agent_id.mobile"><span t-field="agent_id.mobile"/></t>
+                                    </t>
+                                    <br/>
+                                </t>
+                                <t t-if="agent_id.email"><span t-field="agent_id.email"/><br/></t>
+                            </div>
+                            <div style="width: 40%; display: table-cell; padding: 0px 32px;">
+                                <div>&amp;nbsp;</div>
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td><span>Wua partner code:</span></td>
+                                            <td class="text-right" style="padding: 0 0 0 124px;">
+                                               <t t-if="agent_id.partner_code">
+                                                   <t t-set="partner_code" t-value="str(agent_id.partner_code)"/>
+                                               </t>
+                                               <span t-esc="partner_code"/>
+                                            </td>
+                                        </tr>
+                                        <tr name="tr_is_agent">
+                                            <td><span>Is agent:</span></td>
+                                            <td class="text-right">
+                                                <t t-if="agent_id.is_agent"><span class="fa fa-check"/></t>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </t>
             </div>
         </xpath>
-        <xpath expr="//div[@name='section_detail_content']" position="after">
+
+        <xpath expr="//th[@name='th_subparcel']" position="replace">
+            <th name="th_idbancal" class="text-center">Id. Bancal</th>
+        </xpath>
+        <xpath expr="//td[@name='td_subparcel']" position="replace">
+            <td name="td_subparcel" align="center">
+                <t t-if="l.subparcel_id.id_bancal">
+                    <t t-set="id_bancal" t-value="str(l.subparcel_id.id_bancal)"/>
+                    <span t-esc="id_bancal"/>
+                </t>
+            </td>
+        </xpath>
+
+        <xpath expr="//div[@name='conformity']" position="after">
+            <div class="row">
+                <div class="col-xs-12 text-center" name="to_president" style="margin-top: 2px;">
+                    <b>Sr. Presidente de la Comunidad de Regantes de las Aguas Reguladas por el Embalse del Argos</b>
+                </div>
+            </div>
+
+            <!-- Irrigation rules -->
             <p style="page-break-after:always;"></p>
-            <div class="row" name="section_norms">
+            <div class="row" name="section_norms" style="margin-top: 0px;">
                 <div class="col-xs-12 text-justify">
+                    <span><b>NORMAS GENERALES SOBRE RIEGO</b></span>
+                    <hr style="margin-top: 0px; margin-bottom: 8px;"/>
                     <span style="font-size: 13px;">
                         Que en la Junta General de 24 de marzo de 2017 se aprobó entre otros asuntos: el sistema de reparto general de agua según los 11 sectores existentes de riego tradicional, así como el procedimiento de cálculo de los turnos de riego para cada entande, todo ello en virtud de las obligaciones, competencias y funciones de la Comunidad de Regantes establecidas en la Ley y en las Ordenanzas de la Comunidad, de ordenación y distribución de las aguas, estableciendo los turnos o tandas de riego del modo más conveniente, velando por la seguridad del aprovechamiento y la conservación de presas, acequias y demás obras comunes, con potestad de sancionar a aquellos partícipes que infrinjan las ordenanzas.
                     </span>
@@ -60,10 +208,10 @@
                         Que el desconocimiento de las normas de funcionamiento no le exime de su cumplimiento, entre dichas normas destacan las siguientes:
                     </span>
                     <span style="font-size: 13px; margin-left: 10px;"><br/>
-                        - El Regante sólo puede tomar el agua por los tablachos o tomas de la red de riego tradicional; y no está
+                        - El Regante sólo puede tomar el agua por los tablachos o tomas de la red de riego tradicional; y no está permitido tomar agua por
                     </span>
-                    <span style="font-size: 13px; margin-left: 10px;"><br/>
-                          permitido tomar agua por cualquier otro sistema de toma no contemplado en las ordenanzas.
+                    <span style="font-size: 13px; margin-left: 18px;"><br/>
+                          cualquier otro sistema de toma no contemplado en las ordenanzas.
                     </span>
                     <span style="font-size: 13px; margin-left: 10px;"><br/>
                         - El Regante no puede tomar el agua cuando no sea su turno.
@@ -83,158 +231,18 @@
                 </div>
             </div>
         </xpath>
-        <xpath expr="//div[@name='section_detail_content']" position="replace">
-            <div class="row" name="section_detail_content" style="margin-top: 10px">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Id.Bancal</th>
-                            <th class="text-center">Parcela</th>
-                            <th class="text-left">Acequia</th>
-                            <th class="text-right">Superficie</th>
-                            <th class="text-center">Ref.Catastral</th>
-                            <th class="text-right">Duración (min)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr t-foreach="o.gravconsumption_ids" t-as="l">
-                            <td align="center">
-                                <span t-field="l.subparcel_id.id_bancal"/>
-                            </td>
-                            <td align="center">
-                                <span t-field="l.parcel_id"/>
-                            </td>
-                            <td align="left">
-                                <span t-field="l.irrigationditch_id"/>
-                            </td>
-                            <td align="right">
-                                <span t-field="l.subparcel_id.area_official"/>
-                            </td>
-                            <td align="center">
-                                <span t-field="l.parcel_id.cadastral_reference"/>
-                            </td>
-                            <td align="right">
-                                <span t-field="l.watering_duration"/>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </xpath>
 
-        <xpath expr="//div[@id='partner_info']" position="after">
-            <t t-if="o.with_agent">
-               <br/>
-               <div id="partner_agent_info">
-                   <div class="row">
-                       <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                           <span style="font-family: verdana">AGENT NAME</span>
-                       </div>
-                       <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
-                           <span style="font-family: verdana">DNI/CIF</span>
-                       </div>
-                       <div class="col-xs-3 text-center" style="background-color: #e9e9e9">
-                           <span style="font-family: verdana">PHONE</span>
-                       </div>
-                   </div>
-                   <div class="row">
-                       <div class="col-xs-6" style="border: 1px solid black;">
-                           <span t-field="o.sudo().agent_id.name"/>
-                       </div>
-                       <div class="col-xs-3" style="border: 1px solid black;">
-                           <t t-if="o.sudo().agent_id.vat"><span t-field="o.sudo().agent_id.vat"/></t>
-                           <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                       </div>
-                       <div class="col-xs-3 text-center" style="border: 1px solid black;">
-                           <t t-if="o.sudo().agent_id.phones"><span t-field="o.sudo().agent_id.phones"/></t>
-                           <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                       </div>
-                   </div>
-                   <div class="row">
-                       <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                           <span style="font-family: verdana">ADDRESS</span>
-                       </div>
-                       <div class="col-xs-6 text-center" style="background-color: #e9e9e9">
-                           <span style="font-family: verdana">LOCATION</span>
-                       </div>
-                   </div>
-                   <div class="row">
-                       <div class="col-xs-6" style="border: 1px solid black;">
-                           <t t-if="o.sudo().agent_id.street">
-                               <t t-if="o.sudo().agent_id.street_type_show">
-                                   <span t-field="o.sudo().agent_id.street_type_show"></span>
-                               </t>
-                               <span t-field="o.sudo().agent_id.street"/>
-                               <t t-if="o.sudo().agent_id.street_num">
-                                   <span t-field="o.sudo().agent_id.street_num"/>
-                               </t>
-                               <t t-if="o.sudo().agent_id.street2">
-                                   <span t-field="o.sudo().agent_id.street2"/>
-                               </t>
-                               <t t-if="o.sudo().agent_id.zip">
-                                   <span t-field="o.sudo().agent_id.zip"/>
-                               </t>
-                           </t>
-                           <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                       </div>
-                       <div class="col-xs-6" style="border: 1px solid black;">
-                           <t t-if="o.sudo().agent_id.city"><span t-field="o.sudo().agent_id.city"/> (<span t-field="o.sudo().agent_id.state_id"/>)</t>
-                           <t t-else=""><span><![CDATA[&nbsp;]]></span></t>
-                       </div>
-                   </div>
-               </div>
-           </t>
-           <t t-if="o.html_quota_balance">
-               <div style="margin-top: 4px;">
-                   <span t-raw="o.html_quota_balance"/>
-               </div>
-               <div style="font-size: 10px; padding-top: 4px; padding-bottom: 0px; padding-left: 80px; padding-right: 80px;">
-                   El saldo reflejado es un valor provisional que se verá modificado tras la configuración final
-                   del entande de riego, donde se aplicará la repercusión del volumen extra desembalsado.
-               </div>
+    </template>
+
+    <!-- base_wua_irrigation_with_quota -->
+    <template id="report_wua_wateringrequest_with_quota_document" inherit_id="base_wua_gravity_irrigation_with_quota.report_wua_wateringrequest_document">
+        <xpath expr="//span[@t-field='o.html_quota_balance']" position="after">
+            <t t-if="o.html_quota_balance">
+                <div style="font-size: 10px; padding: 0 74px; padding-top: 4px;" class="text-left">
+                    El saldo reflejado es un valor provisional que se verá modificado tras la configuración final
+                    del entande de riego, donde se aplicará la repercusión del volumen extra desembalsado.
+                </div>
             </t>
-        </xpath>
-    </template>
-
-    <template id="report_wua_wateringrequest_external_layout_header" inherit_id="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_header">
-        <xpath expr="//div[@name='title_header']" position="replace">
-            <div class="col-xs-8 text-right hidden-odd-page" style="margin-top: 10px;font-family: verdana;font-size: 16px;font-weight:bold;">
-                <span>NORMAS GENERALES SOBRE RIEGO</span>
-            </div>
-            <div class="col-xs-8 text-right hidden-even-page" style="margin-top: 10px;font-family: verdana;font-size: 16px;font-weight:bold;">
-                <span>SOLICITUD DE RIEGO</span>
-            </div>
-        </xpath>
-        <xpath expr="//div[@name='company_header']" position="replace">
-        </xpath>
-    </template>
-
-    <template id="report_wua_wateringrequest_external_layout_footer" inherit_id="base_wua_gravity_irrigation.report_wua_wateringrequest_external_layout_footer">
-        <xpath expr="//div[@name='footer_content']" position="attributes">
-            <attribute name="t-att-class">"footer hidden-even-page"</attribute>
-        </xpath>
-        <xpath expr="//div[@name='company_address_email']" position="after">
-            <div class="row" style="border: 1px solid black;font-size: 11px;margin-top:5px;">
-                <div class="col-xs-6">
-                    <span>SERVICIO DE VIGILANCIA DEL AGUA</span>
-                </div>
-                <div class="col-xs-6 text-right">
-                    <span><i>(ver normas de riego en el reverso)</i></span>
-                </div>
-            </div>
-            <div class="row" style="border: 1px solid black;font-size: 11px">
-                <div class="col-xs-4">
-                    <span>JOSÉ PÉREZ: 608120089</span>
-                </div>
-                <div class="col-xs-4 text-center">
-                    <span>JUAN MARTÍNEZ: 682321926</span>
-                </div>
-                <div class="col-xs-4 text-right">
-                    <span>TELF.GUARDIA: 638912427</span>
-                </div>
-            </div>
-        </xpath>
-        <xpath expr="//div[@name='pagination']" position="replace">
         </xpath>
     </template>
 

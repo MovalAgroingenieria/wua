@@ -186,7 +186,8 @@
                         </t>
                     </div>
                 </t>
-               <div class="text-right">
+                <!-- Details by document -->
+               <div class="text-right" name="details_by_document">
                    <!-- Details according document type -->
                    <t t-if="docs and docs[0]._name == 'account.invoice' and o.number">
                        <span t-field="o.number" style="font-size: 8px;"/>
@@ -200,9 +201,11 @@
                        <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
                    </t>
                    <!-- Page numbers -->
-                   <span class="page" style="font-size: 8px;"/>
-                   <span style="font-size: 8px;">/</span>
-                   <span class="topage" style="font-size: 8px;"/>
+                   <div name="page_numbers" style="display: inline;">
+                       <span class="page" style="font-size: 8px;"/>
+                       <span style="font-size: 8px;">/</span>
+                       <span class="topage" style="font-size: 8px;"/>
+                   </div>
                </div>
             </div>
         </div>
