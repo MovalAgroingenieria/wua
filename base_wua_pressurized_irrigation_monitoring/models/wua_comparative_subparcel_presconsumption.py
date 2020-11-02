@@ -519,7 +519,7 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                  ('cultivation_id', '=', subparcel.cultivation_id.id)])
             if row_kc:
                 row_kc = row_kc[0]
-                kc = row_kc.kc_big
+                kc = row_kc.kc_middle
                 if subparcel.age_category == 'm':
                     kc = row_kc.kc_middle
                 else:
