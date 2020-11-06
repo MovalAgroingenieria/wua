@@ -17,6 +17,7 @@
         "base_wua_invoicing_gravity_irrigation",
         "base_wua_invoicing_irrigation_report",
         "base_wua_invoicing_separate_parcel_billing",
+        "account_banking_debit_atrm",
     ],
     "data": [
         "security/ir.model.access.csv",
