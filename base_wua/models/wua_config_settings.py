@@ -2,8 +2,9 @@
 # Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
-
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+import re
 
 class WuaConfiguration(models.TransientModel):
     _inherit = 'res.config.settings'
@@ -137,6 +138,10 @@ class WuaConfiguration(models.TransientModel):
         help='Initial code for a possible alternative coding for ' +
              'partners. Only enabled if this parameter is greater than 0.')
 
+    reports_informative_clauses = fields.Html(
+        string="Informative clauses",
+        help="They will be printed in the information section of the reports.")
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
@@ -150,7 +155,7 @@ class WuaConfiguration(models.TransientModel):
         ('valid_second_initial_partner_code',
          'CHECK (second_initial_partner_code >= 0)',
          'The second initial code for partners must be a value zero or ' +
-         'positive.'),
+         'positive.')
         ]
 
     @api.multi
@@ -201,3 +206,5 @@ class WuaConfiguration(models.TransientModel):
                            self.path_frompgtoshp)
         values.set_default('wua.configuration', 'second_initial_partner_code',
                            self.second_initial_partner_code)
+        values.set_default('wua.configuration', 'reports_informative_clauses',
+                           self.reports_informative_clauses)
