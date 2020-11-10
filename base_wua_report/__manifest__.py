@@ -16,7 +16,7 @@
         "stock",
         "report",
         "account_banking_sepa_direct_debit",
-        "report_qweb_element_page_visibility",
+        "report_qweb_element_page_visibility_extended",
     ],
     "data": [
         "reports/wua_external_layout.xml",
