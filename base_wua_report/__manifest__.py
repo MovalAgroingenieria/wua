@@ -16,6 +16,7 @@
         "stock",
         "report",
         "account_banking_sepa_direct_debit",
+        "base_report",
         "report_qweb_element_page_visibility_extended",
     ],
     "data": [
