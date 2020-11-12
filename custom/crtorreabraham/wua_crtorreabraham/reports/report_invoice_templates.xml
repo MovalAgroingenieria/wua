@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="report_invoice_document" inherit_id="account_wua.wua_report_invoice_document">
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
         <xpath expr="//col[@name='product']" position="attributes">
           <attribute name="t-att-style">"display: none"</attribute>
         </xpath>
@@ -21,6 +21,9 @@
           <attribute name="t-att-style">"display: none"</attribute>
         </xpath>
 
+        <xpath expr="//col[@name='description']" position="attributes">
+          <attribute name="t-att-style">"width: 50%"</attribute>
+        </xpath>
         <xpath expr="//col[@name='quantity']" position="attributes">
           <attribute name="t-att-style">"width: 17%"</attribute>
         </xpath>

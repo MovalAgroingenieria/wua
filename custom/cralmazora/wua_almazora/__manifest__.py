@@ -15,6 +15,7 @@
         "base_wua_pressurized_irrigation",
         "base_wua_parcel_areas",
         "account_wua",
+        "account_invoice_report_due_list",
     ],
     "data": [
         "data/wua_almazora_config_settings_data.xml",

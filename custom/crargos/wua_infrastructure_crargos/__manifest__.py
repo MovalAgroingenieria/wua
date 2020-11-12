@@ -16,6 +16,7 @@
         "base_wua_gravity_irrigation",
         "base_wua_report",
         "base_wua_gravity_irrigation_with_quota",
+        "account_invoice_report_due_list",
     ],
     "data": [
         "data/wua_invoicing_config_settings_data.xml",

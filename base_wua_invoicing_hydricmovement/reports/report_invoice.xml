@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="report_invoice_document" inherit_id="account_wua.wua_report_invoice_document">
-        <xpath expr="//p[@t-if='o.fiscal_position_id.note']" position="after">
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@name='details_section']" position="after">
             <t t-set="with_hydricmov_presconsumptions" t-value="False"/>
             <t t-foreach="o.invoice_line_ids" t-as="l">
                 <t t-if="l.categ_id.productcategory_code == 14">
@@ -10,48 +10,55 @@
                 </t>
             </t>
             <t t-if="with_hydricmov_presconsumptions">
-                <t t-set="consumptions" t-value="o.get_hydricmov_presconsumptions_from_lines(o.invoice_line_ids)"/>
-                <t t-if="consumptions">
-                    <br/>
-                    <div name="consumptions">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Water Connection</th>
-                                    <th>Date initial time</th>
-                                    <th>Date final time</th>
-                                    <th class="text-right">Initial Reading</th>
-                                    <th class="text-right">Final Reading</th>
-                                    <th class="text-right">Gross Vol. (m3)</th>
-                                    <th class="text-right">Adjust. (m3)</th>
-                                    <th class="text-right">Real Vol. (m3)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="invoice_tbody">
-                                  <tr t-foreach="consumptions" t-as="c">
-                                      <t t-set="reading_initial_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y')"/>
-                                      <t t-set="reading_end_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y')"/>
-                                      <td><span t-esc="c['waterconnection']"/></td>
-                                      <td><span t-esc="reading_initial_time"/></td>
-                                      <td><span t-esc="reading_end_time"/></td>
-                                      <td class="text-right">
-                                          <span t-esc="'{:.0f}'.format(c['initial_volume'])"/>
-                                      </td>
-                                      <td class="text-right">
-                                          <span t-esc="'{:.0f}'.format(c['end_volume'])"/>
-                                      </td>
-                                      <td class="text-right">
-                                          <span t-esc="'{:.0f}'.format(c['volume'])"/>
-                                      </td>
-                                      <td class="text-right">
-                                          <span t-esc="'{:.0f}'.format(c['adjustement_volume'])"/>
-                                      </td>
-                                      <td class="text-right">
-                                          <span t-esc="'{:.0f}'.format(c['volume_real'])"/>
-                                      </td>
-                                  </tr>
-                            </tbody>
-                        </table>
+                <t t-set="consumptions_hydricmov" t-value="o.get_hydricmov_presconsumptions_from_lines(o.invoice_line_ids)"/>
+                <t t-if="consumptions_hydricmov">
+                    <div name="consumptions_hydricmov">
+                        <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-irrigation"/></div>
+                                <div style="float: left; display: inline;"><strong>Consumptions</strong></div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 4 8px;">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Water Connection</th>
+                                        <th>Date initial time</th>
+                                        <th>Date final time</th>
+                                        <th class="text-right">Initial Reading</th>
+                                        <th class="text-right">Final Reading</th>
+                                        <th class="text-right">Gross Vol. (m3)</th>
+                                        <th class="text-right">Adjust. (m3)</th>
+                                        <th class="text-right">Real Vol. (m3)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="invoice_tbody">
+                                      <tr t-foreach="consumptions_hydricmov" t-as="c">
+                                          <t t-set="reading_initial_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y')"/>
+                                          <t t-set="reading_end_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y')"/>
+                                          <td><span t-esc="c['waterconnection']"/></td>
+                                          <td><span t-esc="reading_initial_time"/></td>
+                                          <td><span t-esc="reading_end_time"/></td>
+                                          <td class="text-right">
+                                              <span t-esc="'{:.0f}'.format(c['initial_volume'])"/>
+                                          </td>
+                                          <td class="text-right">
+                                              <span t-esc="'{:.0f}'.format(c['end_volume'])"/>
+                                          </td>
+                                          <td class="text-right">
+                                              <span t-esc="'{:.0f}'.format(c['volume'])"/>
+                                          </td>
+                                          <td class="text-right">
+                                              <span t-esc="'{:.0f}'.format(c['adjustement_volume'])"/>
+                                          </td>
+                                          <td class="text-right">
+                                              <span t-esc="'{:.0f}'.format(c['volume_real'])"/>
+                                          </td>
+                                      </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </t>
             </t>

@@ -1,42 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Modification account wua report invoice -->
-    <template id="wua_report_invoice_document_argos" inherit_id="account.report_invoice_document">
-        <!-- Adapt columns width -->
-        <xpath expr="//col[@name='product']" position="attributes">
-            <attribute name="width">26%</attribute>
-        </xpath>
-        <xpath expr="//col[@name='description']" position="attributes">
-            <attribute name="width">40%</attribute>
-        </xpath>
-        <xpath expr="//col[@name='quantity']" position="attributes">
-            <attribute name="width">11%</attribute>
-        </xpath>
-        <xpath expr="//col[@name='price']" position="attributes">
-            <attribute name="width">15%</attribute>
-        </xpath>
-        <xpath expr="//col[@name='amount']" position="attributes">
-            <attribute name="width">8%</attribute>
-        </xpath>
-
-        <!-- Do not show taxes column -->
-        <xpath expr="//th[@name='taxes']" position="attributes">
-            <attribute name="class">hidden</attribute>
-        </xpath>
-        <xpath expr="//td[@name='taxes']" position="attributes">
-            <attribute name="class">hidden</attribute>
-        </xpath> 
-
-        <!-- Do hot show subtotal -->
-        <xpath expr="//tr[@class='border-black'][1]" position="attributes">
-            <attribute name="class">hidden</attribute>
-        </xpath>
-        <xpath expr="//t[@t-foreach='o._get_tax_amount_by_group()']/tr" position="attributes">
-            <attribute name="class">hidden</attribute>
-        </xpath>
-    </template>
-
     <template id="account_invoice_report_due_list.report_invoice_document" inherit_id="account.report_invoice_document">
         <xpath expr='//tr[@name="tr_due_date"]' position="attributes">
             <attribute name="t-att-class">'hidden' if o.multi_due else ''</attribute>

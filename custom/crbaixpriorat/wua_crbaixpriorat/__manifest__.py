@@ -10,6 +10,7 @@
     "license": "AGPL-3",
     "depends": [
         "account_wua",
+        "account_invoice_report_due_list",
     ],
     "data": [
         "reports/crbaixpriorat_report_invoice.xml",

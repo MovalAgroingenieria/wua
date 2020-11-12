@@ -16,6 +16,7 @@
         "invoice_comment_template",
         "sale",
         "account_financial_report_qweb",
+        "sale_stock",
     ],
     "data": [
         "views/partner_view.xml",

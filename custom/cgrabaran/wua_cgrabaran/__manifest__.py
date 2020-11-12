@@ -18,6 +18,7 @@
         "base_wua_invoicing_irrigation_report",
         "base_wua_invoicing_separate_parcel_billing",
         "account_banking_debit_atrm",
+        "account_invoice_report_due_list",
     ],
     "data": [
         "security/ir.model.access.csv",
@@ -38,6 +39,7 @@
         "views/wua_invoiceset_view.xml",
         "reports/wua_partner_report.xml",
         "reports/wua_sum_intakeconsumption_invoicing_report.xml",
+        "reports/report_invoice.xml",
     ],
     'qweb': ['static/src/xml/button_import_flowreadings.xml'],
     "installable": True,
