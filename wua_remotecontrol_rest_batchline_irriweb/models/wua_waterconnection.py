@@ -98,7 +98,8 @@ class WuaWaterconnection(models.Model):
                     '<p style="text-align:center;margin-top:2px;' + \
                     'margin-left:1px;margin-right:1px;">' + \
                     '<iframe sandbox="allow-scripts allow-forms ' + \
-                    'allow-pointer-lock allow-same-origin" ' + \
+                    'allow-pointer-lock allow-same-origin ' + \
+                    'allow-modals" ' + \
                     'id="iframe_scheduling" scrolling="no" ' + \
                     'marginheight="0" marginwidth="0" ' + \
                     'src="' + url + '" ' + \
