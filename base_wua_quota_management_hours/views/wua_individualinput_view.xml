@@ -6,11 +6,13 @@
         <field name="model">wua.individualinput</field>
         <field name="inherit_id" ref="base_wua_quota_management.wua_individualinput_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='volume']" position="replace">
-                <field name="volume_vol_hours" colspan="3" attrs="{'readonly':[('id','>',0)]}"/>
+            <xpath expr="//field[@name='volume']" position="after">
+                <div colspan="1"></div>
+                <field name="volume_hours" colspan="3"/>
             </xpath>
-            <xpath expr="//field[@name='effective_volume']" position="replace">
-                <field name="effective_volume_vol_hours" colspan="3"/>
+            <xpath expr="//field[@name='effective_volume']" position="after">
+                <div colspan="1"></div>
+                <field name="effective_volume_hours" colspan="3"/>
             </xpath>
             <xpath expr="//field[@name='quota_accumulated_input']" position="replace">
                 <field name="quota_accumulated_input_vol_hours"/>
