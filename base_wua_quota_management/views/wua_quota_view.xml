@@ -71,10 +71,10 @@
             <tree class="o_base_wua_quota_management_quota_view_tree"
                   colors="red:balance&lt;0"
                   create="false">
-                <field name="superproduct_id"/>                
                 <field name="partner_id"/>
                 <field name="quotaperiod_id"
                        widget="many2one_unclickable"/>
+                <field name="superproduct_id"/>
                 <field name="accumulated_input"/>
                 <field name="accumulated_consumption"/>
                 <field name="balance"/>
@@ -155,9 +155,7 @@
         <field name="context">
           {'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
-           'search_default_active_agriculturalseason': True,
-           'search_default_grouped_quotaperiod': True,
-           'search_default_grouped_superproduct': True,}
+           'search_default_active_agriculturalseason': True}
         </field>
     </record>
 
@@ -168,6 +166,16 @@
                ref="base_wua_quota_management.model_wua_quota"/>
         <field name="code">
           action = env["wua.quota"].action_recalculate_quotas()
+        </field>
+    </record>
+
+    <record id="technical_refresh_parcels_action"
+            model="ir.actions.server">
+        <field name="name">Refresh of parcels (quota flag)</field>
+        <field name="model_id"
+               ref="base_wua_quota_management.model_wua_quota"/>
+        <field name="code">
+          action = env["wua.quota"].action_refresh_parcels()
         </field>
     </record>
 
@@ -182,5 +190,11 @@
               parent="technical_menu"
               sequence="1"
               action="technical_calculation_quotas_action"/>
+
+    <menuitem id="technical_refresh_parcels_menu"
+              name="Calculation: parcels (refresh quota flag)"
+              parent="technical_menu"
+              sequence="2"
+              action="technical_refresh_parcels_action"/>
 
 </odoo>

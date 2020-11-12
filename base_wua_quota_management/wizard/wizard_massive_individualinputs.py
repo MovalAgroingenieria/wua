@@ -120,7 +120,6 @@ class WizardMassiveIndividualinputs(models.TransientModel):
                     selected_partnerlinks = \
                         self.env['wua.parcel.partnerlink'].browse(
                             partnerlinks_with_quota)
-
                     for partner_id in partners_with_quota:
                         selected_partnerlinks_of_partner = \
                             selected_partnerlinks.search(
@@ -129,17 +128,19 @@ class WizardMassiveIndividualinputs(models.TransientModel):
                         area = sum(x.area_official_water_costs_net
                                    for x in selected_partnerlinks_of_partner)
                         volume = area * self.provision
-                        agriculturalseason = quotaperiod.agriculturalseason_id
-                        self.env['wua.individualinput'].create({
-                            'agriculturalseason_id': agriculturalseason.id,
-                            'quotaperiod_id': quotaperiod.id,
-                            'superproduct_id': self.superproduct_id.id,
-                            'partner_id': partner_id,
-                            'category_id': self.category_id.id,
-                            'event_time': self.event_time,
-                            'volume': volume,
-                            'reason': self.reason,
-                        })
+                        if volume != 0:
+                            agriculturalseason = \
+                                quotaperiod.agriculturalseason_id
+                            self.env['wua.individualinput'].create({
+                                'agriculturalseason_id': agriculturalseason.id,
+                                'quotaperiod_id': quotaperiod.id,
+                                'superproduct_id': self.superproduct_id.id,
+                                'partner_id': partner_id,
+                                'category_id': self.category_id.id,
+                                'event_time': self.event_time,
+                                'volume': volume,
+                                'reason': self.reason,
+                                })
 
     def _get_current_quotaperiod_data(self):
         quotaperiod = self.env['wua.quotaperiod'].browse(

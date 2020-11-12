@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_provision_parcel_view_form" model="ir.ui.view">
+        <field name="name">Wizard to assign a initial provision to a parcel</field>
+        <field name="model">wizard.provision.parcel</field>
+        <field name="arch" type="xml">
+            <form string="Initial provision for a parcel">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '500px'});
+                    });
+                </script>            
+                <div style="text-align:center">
+                    <h4><field name="agriculturalseason_description"/></h4>
+                    <h4><span>Parcel: </span>
+                    <field name="parcel_name"/></h4>
+                </div>
+                <div>Enter the following data to create a initial provision:
+                </div>
+                <br/>
+                <group name="body">
+                    <field name="quotaperiod_id"
+                           options="{'no_quick_create': True,
+                                     'no_create_edit': True}"/>
+
+                    <field name="superproduct_id"
+                           options="{'no_quick_create': True,
+                                     'no_create_edit': True}"/>
+                    <field name="provision"/>
+                </group>
+                <br/><br/>
+                <div>WARNING: A provision will only be created for a partner (of the chosen parcel) if that partner does not have a quota yet.
+                </div>
+                <footer>
+                    <button name="assign_provision"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

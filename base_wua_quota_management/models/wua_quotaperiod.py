@@ -6,6 +6,7 @@ import datetime
 import locale
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
+from odoo.exceptions import ValidationError
 # from odoo.tools.profiler import profile
 
 
@@ -389,11 +390,17 @@ class WuaQuotaperiod(models.Model):
         self._delete_parcel_assignments(quotaperiod, only_unselected=True)
         self.env['wua.quota'].update_hydricmovements_from_consumptions(
             quotaperiod)
+        set_mapped_to_current_quotaperiod = \
+            (quotaperiod == self.get_current_generated_quotaperiod())
+        if set_mapped_to_current_quotaperiod:
+            self._set_mapped_to_current_quotaperiod(quotaperiod)
 
     @api.multi
     def action_cancel_quotaperiod(self):
         self.ensure_one()
         quotaperiod = self
+        reset_mapped_to_current_quotaperiod = \
+            (quotaperiod == self.get_current_generated_quotaperiod())
         if (quotaperiod.balances_to_next_quotaperiod or
            quotaperiod.balances_from_prev_quotaperiod):
             raise exceptions.UserError(_(
@@ -404,6 +411,8 @@ class WuaQuotaperiod(models.Model):
         self._delete_other_entities(quotaperiod)
         self._delete_quotas_hydricmovements(quotaperiod)
         self._delete_parcel_assignments(quotaperiod)
+        if reset_mapped_to_current_quotaperiod:
+            self._reset_mapped_to_current_quotaperiod()
         quotaperiod.action_open_quotaperiod()
         quotaperiod._compute_state()
 
@@ -499,6 +508,44 @@ class WuaQuotaperiod(models.Model):
             'target': 'new'
             }
         return act_window
+
+    def get_provision(self, quotaperiod, superproduct):
+        resp = 0
+        if quotaperiod and superproduct:
+            quotaperiod_lines = self.env['wua.quotaperiod.line'].search(
+                [('quotaperiod_id', '=', quotaperiod.id),
+                 ('superproduct_id', '=', superproduct.id)])
+            if quotaperiod_lines:
+                quotaperiod_line = quotaperiod_lines[0]
+                resp = quotaperiod_line.provision
+        return resp
+
+    def exists_superproduct_in_quotaperiod(self, quotaperiod, superproduct):
+        resp = False
+        if quotaperiod and superproduct:
+            quotaperiod_line = self.env['wua.quotaperiod.line'].search(
+                [('quotaperiod_id', '=', quotaperiod.id),
+                 ('superproduct_id', '=', superproduct.id)])
+            if quotaperiod_line:
+                resp = True
+        return resp
+
+    def exists_parcel_in_quotaperiodline(self,
+                                         quotaperiod, superproduct, parcel):
+        resp = False
+        if quotaperiod and superproduct and parcel:
+            quotaperiod_line = self.env['wua.quotaperiod.line'].search(
+                [('quotaperiod_id', '=', quotaperiod.id),
+                 ('superproduct_id', '=', superproduct.id)])
+            if quotaperiod_line:
+                quotaperiod_line = quotaperiod_line[0]
+                quotaperiod_line_parcel = \
+                    self.env['wua.quotaperiod.line.parcel'].search(
+                        [('quotaperiodline_id', '=', quotaperiod_line.id),
+                         ('parcel_id', '=', parcel.id)])
+                if quotaperiod_line_parcel:
+                    resp = True
+        return resp
 
     def _populate_pos_in_quotaperiodlines(self, vals):
         if vals and 'quotaperiodline_ids' in vals:
@@ -848,6 +895,53 @@ class WuaQuotaperiod(models.Model):
                     force_unlink=True).sudo().unlink()
         return resp
 
+    def get_current_generated_quotaperiod(self):
+        resp = None
+        current_date = datetime.datetime.today().strftime('%Y-%m-%d')
+        quotaperiods = self.env['wua.quotaperiod'].search([])
+        for quotaperiod in (quotaperiods or []):
+            initial_date = str(quotaperiod.initial_date)
+            end_date = str(quotaperiod.end_date)
+            if current_date >= initial_date and current_date <= end_date:
+                if quotaperiod.state == 'generated':
+                    resp = quotaperiod
+                break
+        return resp
+
+    def _reset_mapped_to_current_quotaperiod(self):
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                UPDATE wua_parcel
+                SET mapped_to_current_quotaperiod=FALSE""")
+        except Exception:
+            self.env.cr.rollback()
+            raise ValidationError(_('Error when updating records.'))
+
+    def _set_mapped_to_current_quotaperiod(self, quotaperiod, reset=True):
+        if quotaperiod:
+            if reset:
+                self._reset_mapped_to_current_quotaperiod()
+            self.env.cr.execute("""
+                SELECT DISTINCT qplp.parcel_id
+                FROM wua_quotaperiod_line_parcel qplp
+                INNER JOIN wua_quotaperiod_line qpl
+                ON qplp.quotaperiodline_id = qpl.id
+                INNER JOIN wua_quotaperiod qp
+                ON qpl.quotaperiod_id = qp.id
+                WHERE qp.id=""" + str(quotaperiod.id))
+            query_results = self.env.cr.dictfetchall()
+            if query_results:
+                parcel_ids = []
+                for query_result in query_results:
+                    parcel_ids.append(query_result['parcel_id'])
+                if parcel_ids:
+                    parcel_ids.sort()
+                    parcels_to_update = \
+                        self.env['wua.parcel'].browse(parcel_ids)
+                    parcels_to_update.write(
+                        {'mapped_to_current_quotaperiod': True})
+
 
 class WuaQuotaperiodLine(models.Model):
     _name = 'wua.quotaperiod.line'
@@ -1158,7 +1252,28 @@ class WuaQuotaperiodLineParcel(models.Model):
         string='Code',
         comodel_name='wua.parcel',
         required=True,
+        index=True,
         ondelete='restrict')
+
+    quotaperiod_id = fields.Many2one(
+        string='Quota Period',
+        comodel_name='wua.quotaperiod',
+        compute='_compute_quotaperiod_id')
+
+    superproduct_id = fields.Many2one(
+        string='Superproduct',
+        comodel_name='wua.superproduct',
+        compute='_compute_superproduct_id')
+
+    provision = fields.Float(
+        string='Provision',
+        digits=(32, 2),
+        compute='_compute_provision')
+
+    volume = fields.Float(
+        string='Volume (m3)',
+        digits=(32, 2),
+        compute='_compute_volume')
 
     cadastral_reference = fields.Char(
         string='Cadastral Reference',
@@ -1228,6 +1343,36 @@ class WuaQuotaperiodLineParcel(models.Model):
         relation='wua_quotaperiod_line_parcel_parceltag_rel',
         column1='quotaperiod_line_parcel_id', column2='parceltag_id',
         ondelete='cascade')
+
+    @api.multi
+    def _compute_quotaperiod_id(self):
+        for record in self:
+            quotaperiod_id = None
+            if record.quotaperiodline_id:
+                quotaperiod_id = record.quotaperiodline_id.quotaperiod_id
+            record.quotaperiod_id = quotaperiod_id
+
+    @api.multi
+    def _compute_superproduct_id(self):
+        for record in self:
+            superproduct_id = None
+            if record.quotaperiodline_id:
+                superproduct_id = record.quotaperiodline_id.superproduct_id
+            record.superproduct_id = superproduct_id
+
+    @api.multi
+    def _compute_provision(self):
+        for record in self:
+            provision = 0
+            if record.quotaperiodline_id:
+                provision = record.quotaperiodline_id.provision
+            record.provision = provision
+
+    @api.multi
+    def _compute_volume(self):
+        for record in self:
+            volume = record.provision * record.area_official
+            record.volume = volume
 
     @api.multi
     def add_to_quotaperiod(self):

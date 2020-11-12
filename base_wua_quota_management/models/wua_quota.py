@@ -11,7 +11,7 @@ class WuaQuota(models.Model):
     _name = 'wua.quota'
     _description = 'Quota'
     _inherit = 'mail.thread'
-    _order = 'name_quotaperiod, partner_code, pos_superproduct'
+    _order = 'partner_code, name_quotaperiod, pos_superproduct'
 
     MAX_SIZE_PARTNER_CODE = 6
     MAX_SIZE_SUPERPRODUCT_CODE = 6
@@ -628,6 +628,33 @@ class WuaQuota(models.Model):
                 model_quota = self.env['wua.quota']
                 for quota in quotas_to_refresh:
                     model_quota.refresh_quota(quota)
+
+    # Global refresh of parcels (only "admin")
+    def action_refresh_parcels(self):
+        self.do_refresh_parcels()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Parcels'),
+            'res_model': 'wua.parcel',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'target': 'current',
+            'context': {'search_default_inquotasyes': True}
+            }
+
+    def do_refresh_parcels(self):
+        quotaperiod_model = self.env['wua.quotaperiod']
+        current_date = datetime.datetime.today().strftime('%Y-%m-%d')
+        quotaperiods = quotaperiod_model.search([])
+        quotaperiod_model._reset_mapped_to_current_quotaperiod()
+        for quotaperiod in (quotaperiods or []):
+            initial_date = str(quotaperiod.initial_date)
+            end_date = str(quotaperiod.end_date)
+            if current_date >= initial_date and current_date <= end_date:
+                if quotaperiod.state == 'generated':
+                    quotaperiod_model._set_mapped_to_current_quotaperiod(
+                        quotaperiod, False)
+                break
 
     def _get_quotaperiod(self, event_time):
         resp = None
