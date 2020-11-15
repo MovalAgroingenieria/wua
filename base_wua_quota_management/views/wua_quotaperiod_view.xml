@@ -538,6 +538,33 @@
         </field>
     </record>
 
+    <record id="wua_quotaperiod_line_parcel_quota_data_view_tree" model="ir.ui.view" >
+        <field name="name">Parcels of quota-period lines, with quota data (tree view)</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_quotaperiod_line_parcel_quota_data_view_tree"
+                  create="false" edit="false" delete="false">
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <field name="quotaperiod_id"/>
+                <field name="superproduct_id"/>
+                <field name="provision"/>
+                <field name="area_official"/>
+                <field name="volume"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_quotaperiod_line_parcel_quota_data_view_search" model="ir.ui.view" >
+        <field name="name">Parcels of quota-period lines, with quota data (search view)</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+            </search>
+        </field>
+    </record>
+
     <record id="wua_add_parcel_to_quotaperiod" model="ir.actions.server">
         <field name="name">Add to quota period</field>
         <field name="model_id" ref="model_wua_quotaperiod_line_parcel"/>

@@ -47,21 +47,30 @@ class WuaIndividualinput(models.Model):
                 (self.env['wua.agriculturalseason'].
                  get_active_agriculturalseason())
             if active_agriculturalseason:
-                filtered_quotaperiods = self.env['wua.quotaperiod'].search(
-                    [('agriculturalseason_id', '=',
-                      active_agriculturalseason.id),
-                     ('state', '=', 'generated'), ('is_closed', '=', False)],
-                    order='initial_date', limit=1)
-                if filtered_quotaperiods:
-                    resp = filtered_quotaperiods[0].id
+                quotaperiod_model = self.env['wua.quotaperiod']
+                current_generated_quotaperiod = \
+                    quotaperiod_model.get_current_generated_quotaperiod()
+                if (current_generated_quotaperiod and
+                   current_generated_quotaperiod.agriculturalseason_id ==
+                   active_agriculturalseason):
+                    resp = current_generated_quotaperiod.id
                 else:
-                    filtered_quotaperiods = self.env['wua.quotaperiod'].search(
+                    filtered_quotaperiods = quotaperiod_model.search(
                         [('agriculturalseason_id', '=',
                           active_agriculturalseason.id),
-                         ('state', '=', 'generated')],
+                         ('state', '=', 'generated'),
+                         ('is_closed', '=', False)],
                         order='initial_date', limit=1)
                     if filtered_quotaperiods:
                         resp = filtered_quotaperiods[0].id
+                    else:
+                        filtered_quotaperiods = quotaperiod_model.search(
+                            [('agriculturalseason_id', '=',
+                              active_agriculturalseason.id),
+                             ('state', '=', 'generated')],
+                            order='initial_date', limit=1)
+                        if filtered_quotaperiods:
+                            resp = filtered_quotaperiods[0].id
         return resp
 
     def _default_superproduct_id(self):

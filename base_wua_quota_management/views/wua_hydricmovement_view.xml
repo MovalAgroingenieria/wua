@@ -82,7 +82,6 @@
                         attrs="{'invisible':
                                 [('is_consumption','=',True)],
                                 'readonly':'1'}"/>
-                <field name="superproduct_id"/>                
                 <field name="partner_id"/>
                 <button name="action_open_quota_form"
                         type="object"
@@ -90,6 +89,7 @@
                         icon="fa-external-link"/>
                 <field name="event_time"
                        string="Date" widget="date"/>
+                <field name="superproduct_id"/>                       
                 <field name="description"/>
                 <field name="accounting_volume"
                        string="Value (m3)"/>
@@ -232,10 +232,7 @@
         <field name="context">
           {'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
-           'search_default_active_agriculturalseason': True,
-           'search_default_grouped_quotaperiod': True,
-           'search_default_grouped_superproduct': True,
-           'search_default_grouped_type': True,}
+           'search_default_active_agriculturalseason': True}
         </field>
     </record>
 
