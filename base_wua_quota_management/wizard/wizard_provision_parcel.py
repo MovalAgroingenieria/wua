@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # Copyright 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
@@ -101,13 +100,18 @@ class WizardProvisionParcel(models.TransientModel):
             quotaperiod, superproduct, parcel)
         if not data_ok:
             raise exceptions.ValidationError(error_message)
-        provision = self.env['wua.quotaperiod'].get_provision(
-            self.quotaperiod_id, self.superproduct_id)
+        quotaperiod_model = self.env['wua.quotaperiod']
+        quotaperiodline_model = self.env['wua.quotaperiod.line']
+        quotaperiodlineparcel_model = self.env['wua.quotaperiod.line.parcel']
+        quota_model = self.env['wua.quota']
+        hydricmovement_model = self.env['wua.hydricmovement']
+        provision = quotaperiod_model.get_provision(
+            quotaperiod, superproduct)
         # 1. Create a new record for the quotaperiod-line
-        quotaperiod_line = self.env['wua.quotaperiod.line'].search(
+        quotaperiod_line = quotaperiodline_model.search(
             [('quotaperiod_id', '=', quotaperiod.id),
              ('superproduct_id', '=', superproduct.id)])[0]
-        self.env['wua.quotaperiod.line.parcel'].create({
+        quotaperiodlineparcel_model.create({
             'quotaperiodline_id': quotaperiod_line.id,
             'parcel_id': parcel.id,
             'cadastral_reference': parcel.cadastral_reference,
@@ -127,23 +131,53 @@ class WizardProvisionParcel(models.TransientModel):
             'with_irrigation_worker': parcel.with_irrigation_worker,
             'employee_id': parcel.employee_id.id})
         # 2. Add quota/s and hydric movement/s
-        quota_model = self.env['wua.quota']
         for partnerlink in (parcel.partnerlink_ids or []):
             partner = partnerlink.partner_id
             area = partnerlink.area_official_water_costs_net
             volume = area * provision
-            # Provisional
-            print area
-            print volume
             # If the partner has a quota for the quota period and the
             # superproduct, then find the initial hydric-movement and add
             # the new volume to the hydric-movement and the quota.
-            exist_quota = quota_model.search(
+            quota_to_update = quota_model.search(
                 [('partner_id', '=', partner.id),
                  ('quotaperiod_id', '=', quotaperiod.id),
                  ('superproduct_id', '=', superproduct.id)])
-            if not exist_quota:
-                print 'ok...'
+            if quota_to_update:
+                quota_to_update = quota_to_update[0]
+                initial_hydricmovement = \
+                    quota_to_update.hydricmovement_ids.filtered(
+                        lambda x: x.type == 'multiple_assign')
+                if initial_hydricmovement:
+                    initial_hydricmovement = initial_hydricmovement[0]
+                    initial_hydricmovement.volume = \
+                        initial_hydricmovement.volume + volume
+                else:
+                    hydricmovement_model.create({
+                        'quota_id': quota_to_update.id,
+                        'event_time':
+                            quota_to_update.quotaperiod_id.initial_date,
+                        'type': 'multiple_assign',
+                        'volume': volume,
+                        })
+            else:
+                new_quota = quota_model.create({
+                    'quotaperiod_id': quotaperiod.id,
+                    'partner_id': partner.id,
+                    'superproduct_id': superproduct.id,
+                    'initial_value': volume,
+                    })
+                hydricmovement_model.create({
+                    'quota_id': new_quota.id,
+                    'event_time': quotaperiod.initial_date,
+                    'type': 'multiple_assign',
+                    'volume': volume,
+                    })
+        # 3. Populate "mapped_to_current_quotaperiod", if necessary.
+        if not parcel.mapped_to_current_quotaperiod:
+            current_quotaperiod = \
+                quotaperiod_model.get_current_generated_quotaperiod()
+            if quotaperiod == current_quotaperiod:
+                parcel.mapped_to_current_quotaperiod = True
 
     def _get_current_parcel_data(self):
         agriculturalseason_description = ''

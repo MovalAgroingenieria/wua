@@ -675,6 +675,7 @@ class WuaQuotaperiod(models.Model):
                     # Performance Improvements: new (2/2) (1/4 of prev. time)
                     new_quotas = []
                     agriculturalseason = quotaperiod.agriculturalseason_id
+                    partner_model = self.env['res.partner']
                     for partner_id in partners_with_quota:
                         selected_partnerlinks_of_partner = \
                             selected_partnerlinks.search(
@@ -683,6 +684,9 @@ class WuaQuotaperiod(models.Model):
                         area = sum(x.area_official_water_costs_net
                                    for x in selected_partnerlinks_of_partner)
                         initial_value = area * provision
+                        partner_code = 0
+                        partner_code = \
+                            partner_model.browse(partner_id).partner_code
                         new_quotas.append({
                             'quotaperiod_id': quotaperiod.id,
                             'partner_id': partner_id,
@@ -691,6 +695,9 @@ class WuaQuotaperiod(models.Model):
                             'agriculturalseason_id': agriculturalseason.id,
                             'of_active_agriculturalseason':
                                 agriculturalseason.active_agriculturalseason,
+                            'partner_code': partner_code,
+                            'name_quotaperiod': quotaperiod.name,
+                            'pos_superproduct': quotaperiodline.pos,
                             })
                     try:
                         commit_ok = True
@@ -707,10 +714,11 @@ class WuaQuotaperiod(models.Model):
                                 agriculturalseason_id,
                                 of_active_agriculturalseason,
                                 accumulated_input, accumulated_consumption,
-                                balance)
+                                balance, partner_code, name_quotaperiod,
+                                pos_superproduct)
                                 VALUES (nextval('wua_quota_id_seq'), %s,
                                 %s, now(), now(), %s, %s, %s, %s, %s, %s,
-                                %s, 0.00, %s)
+                                %s, 0.00, %s, %s, %s, %s)
                                 """, (user_id, user_id,
                                       quota['quotaperiod_id'],
                                       quota['partner_id'],
@@ -719,7 +727,10 @@ class WuaQuotaperiod(models.Model):
                                       quota['agriculturalseason_id'],
                                       quota['of_active_agriculturalseason'],
                                       quota['initial_value'],
-                                      quota['initial_value']))
+                                      quota['initial_value'],
+                                      quota['partner_code'],
+                                      quota['name_quotaperiod'],
+                                      quota['pos_superproduct']))
                         if quota_ids:
                             last_id = quota_ids[0].id
                         else:
@@ -737,11 +748,12 @@ class WuaQuotaperiod(models.Model):
                                 agriculturalseason_id, partner_id,
                                 quotaperiod_id, superproduct_id,
                                 accounting_volume, is_consumption,
-                                of_active_agriculturalseason)
+                                of_active_agriculturalseason,
+                                partner_code, event_date, pos_superproduct)
                                 VALUES (nextval('wua_hydricmovement_id_seq'),
                                 %s, %s, now(), now(), %s, %s,
                                 'multiple_assign', %s, %s, %s, %s, %s, %s,
-                                FALSE, %s)
+                                FALSE, %s, %s, %s, %s)
                                 """, (user_id, user_id,
                                       quota.id,
                                       quota.quotaperiod_id.initial_date,
@@ -751,7 +763,10 @@ class WuaQuotaperiod(models.Model):
                                       quota.quotaperiod_id.id,
                                       quota.superproduct_id.id,
                                       quota.initial_value,
-                                      quota.of_active_agriculturalseason))
+                                      quota.of_active_agriculturalseason,
+                                      quota.partner_code,
+                                      quota.quotaperiod_id.initial_date,
+                                      quota.pos_superproduct))
                         if hydricmovement_ids:
                             last_id = hydricmovement_ids[0].id
                         else:
