@@ -344,7 +344,14 @@
                                                     <t t-set="uom_id" t-value="l.sudo().uom_id.name"/>
                                                 </t>
                                             </t>
-                                            <td><span t-field="p.sudo().name"/></td>
+                                            <td>
+                                                <span t-field="p.sudo().name"/>
+                                                <t t-if="p.sudo().attribute_value_ids">
+                                                    <t t-foreach="p.sudo().attribute_value_ids" t-as="a">
+                                                        <span t-field="a.name"/>
+                                                    </t>
+                                                </t>
+                                            </td>
                                             <td class="text-right">
                                                 <span t-esc="product_total_qty" t-options='{"widget": "float", "precision": 4}'/>
                                                 <span t-esc="uom_id"/>
