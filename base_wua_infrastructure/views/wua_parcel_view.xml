@@ -27,6 +27,9 @@
             <xpath expr="//field[@name='elev_ave']" position="after">
                 <field name="with_pumping" attrs="{'invisible':[('hydraulic_infrastructure_type','=', 2)]}"/>
             </xpath>
+            <xpath expr="//field[@name='with_votes']" position="after">
+                <field name="supply_suspended"/>
+            </xpath>
         </field>
     </record>
 
@@ -57,6 +60,9 @@
                 <filter string="Water Right: Gravity Irrigation" name="gravityfedirrigation"
                  domain="[('gravityfed_irrigation_right','=',True)]"/>
                 <separator/>
+                <filter string="With Supply Suspended" name="withsupplysuspended"
+                 domain="[('supply_suspended','=',True)]"/>
+                <separator/>
                 <filter string="With Irrigation Worker" name="withirrigationworker"
                  domain="[('with_irrigation_worker','=',True)]"/>
                 <separator/>
@@ -72,15 +78,31 @@
         </field>
     </record>
 
+    <record id="wua_parcel_view_tree" model="ir.ui.view">
+      <field name="name">Parcels (tree view)</field>
+      <field name="model">wua.parcel</field>
+      <field name="inherit_id" ref="base_wua.wua_parcel_view_tree"/>
+      <field name="arch" type="xml">
+        <xpath expr="//tree" position="attributes">
+          <attribute name="colors">saddlebrown:supply_suspended==True;</attribute>
+        </xpath>
+        <xpath expr="//field[@name='number_of_subparcels']" position="after">
+            <field name="supply_suspended" invisible="1"/>
+        </xpath>
+      </field>
+    </record>
+
+
+
     <record id="wua_edit_parcel_subparcel_view_tree" model="ir.ui.view">
         <field name="name">Subparcels</field>
         <field name="model">wua.parcel.subparcel</field>
-        <field name="inherit_id" ref="base_wua.wua_edit_parcel_subparcel_view_tree"/>        
+        <field name="inherit_id" ref="base_wua.wua_edit_parcel_subparcel_view_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='productionmethod_id']" position="after">
                 <field name="irrigationgate_id"/>
                 <field name="irrigation_duration_coefficient"/>
-            </xpath>        
+            </xpath>
         </field>
     </record>
 
@@ -111,7 +133,7 @@
                         <field name="waterconnection_id"
                                attrs="{'invisible':
                                         [('type','!=', 'WC')]}"/>
-                        <field name="irrigationshed_id"                
+                        <field name="irrigationshed_id"
                                attrs="{'invisible':
                                         [('type','!=', 'WC')]}"/>
                         <field name="irrigationgate_id"
@@ -184,7 +206,7 @@
                 <filter string="Hydraulic Sector" name="hydraulicsector"
                  context="{'group_by':'hydraulicsector_id'}"/>
                 <filter string="Irrigation Ditch" name="irrigationditch"
-                 context="{'group_by':'irrigationditch_id'}"/>            
+                 context="{'group_by':'irrigationditch_id'}"/>
             </xpath>
         </field>
     </record>
@@ -260,7 +282,7 @@
             <xpath expr="//field[@name='productionmethod_id']" position="after">
                 <field name="irrigationgate_id"/>
                 <field name="irrigation_duration_coefficient"/>
-            </xpath>        
+            </xpath>
         </field>
     </record>
 
@@ -301,5 +323,5 @@
               parent="base_wua_infrastructure_technical_menu"
               action="wua_technical_global_irrigationpoints_calculation_action"
               sequence="2"/>
-    
+
 </odoo>

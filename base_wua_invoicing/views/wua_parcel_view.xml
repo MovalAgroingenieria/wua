@@ -31,14 +31,14 @@
         <field name="name">Parcels (tree view)</field>
         <field name="model">wua.parcel</field>
         <field name="inherit_id"
-               ref="base_wua.wua_parcel_view_tree"/>
+               ref="base_wua_infrastructure.wua_parcel_view_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//tree" position="attributes">
-                <attribute name="colors">red:overdue==True</attribute>
+                <attribute name="colors">saddlebrown:supply_suspended==True;red:overdue==True</attribute>
             </xpath>
             <xpath expr="//field[@name='number_of_subparcels']" position="after">
                 <field name="overdue" invisible="1"/>
-            </xpath>            
+            </xpath>
         </field>
     </record>
 

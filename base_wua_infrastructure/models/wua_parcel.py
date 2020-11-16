@@ -98,6 +98,10 @@ class WuaParcel(models.Model):
         store=True,
         compute='_compute_with_pumping')
 
+    supply_suspended = fields.Boolean(
+        string='Supply suspended',
+        default=False)
+
     @api.depends('irrigationpoint_ids')
     def _compute_number_of_irrigationpoints(self):
         if len(self) == 1:
@@ -1278,6 +1282,7 @@ class WuaParcelIrrigationpoint(models.Model):
                record.waterconnection_id.with_pumping):
                 with_pumping = True
             record.with_pumping = with_pumping
+
 
 class WuaParcelSubparcel(models.Model):
     _inherit = 'wua.parcel.subparcel'
