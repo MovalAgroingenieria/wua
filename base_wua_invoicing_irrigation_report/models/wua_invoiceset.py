@@ -166,7 +166,7 @@ class WuaInvoiceset(models.Model):
                 hours = ''
                 if (hours_in_sexagesimal):
                     hours_value = int(irrigationreport.hours)
-                    minutes_value = (irrigationreport.hours*60) % 60
+                    minutes_value = round((irrigationreport.hours * 60) % 60)
                     hours = "%02d:%02d" % (hours_value, minutes_value)
                 else:
                     hours = str(irrigationreport.hours)
