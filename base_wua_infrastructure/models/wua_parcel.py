@@ -998,6 +998,14 @@ class WuaParcelIrrigationpoint(models.Model):
         store=True,
         compute='_compute_with_pumping')
 
+    partner_id = fields.Many2one(
+        string='Irrigation Partner',
+        comodel_name='res.partner',
+        index=True,
+        ondelete='restrict',
+        store=True,
+        compute='_compute_partner_id',)
+
     @api.depends('waterconnection_id')
     def _compute_irrigationshed_id(self):
         for record in self:
@@ -1041,6 +1049,14 @@ class WuaParcelIrrigationpoint(models.Model):
                     parcel.street_view_link
                 record.parcel_gis_viewer_link = \
                     parcel.gis_viewer_link
+
+    @api.depends('parcel_id', 'parcel_id.partner_id')
+    def _compute_partner_id(self):
+        for record in self:
+            partner_id = None
+            if (record.parcel_id and record.parcel_id.partner_id):
+                partner_id = record.parcel_id.partner_id
+            record.partner_id = partner_id
 
     @api.depends('parcel_id.area_official')
     def _compute_area_official_from_parcel_id(self):
