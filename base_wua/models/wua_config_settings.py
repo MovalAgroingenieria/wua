@@ -142,6 +142,13 @@ class WuaConfiguration(models.TransientModel):
         string="Informative clauses",
         help="They will be printed in the information section of the reports.")
 
+    reports_style = fields.Selection([
+        ('solid', 'Solid'),
+        ('light', 'Light')],
+        string='Style',
+        default="solid",
+        help='The general reports style.')
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
@@ -208,3 +215,5 @@ class WuaConfiguration(models.TransientModel):
                            self.second_initial_partner_code)
         values.set_default('wua.configuration', 'reports_informative_clauses',
                            self.reports_informative_clauses)
+        values.set_default('wua.configuration', 'reports_style',
+                           self.reports_style)

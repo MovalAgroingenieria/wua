@@ -25,6 +25,7 @@
                         <t t-set="agriculturalseason" t-value="str(not found)"/>
                     </t>
                     <t t-set="hydricmovements" t-value="o.get_partner_active_agriculturalseason_hydricmovements()"/>
+                    <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
                     <div class="page">
                         <!-- Report title -->
@@ -38,10 +39,18 @@
                         <!-- Partner data -->
                         <div name="wua_partner_data">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                    <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
-                                    <div style="float: left; display: inline;"><strong>Partner</strong></div>
-                                </div>
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                        <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                        <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                                    </div>
+                                </t>
                             </div>
                             <div class="row" style="margin-top: 4px;">
                                 <div class="col-xs-12" style="display: table;">
@@ -114,10 +123,18 @@
                         <!-- Quota data -->
                         <div name="wua_quota_data" style="margin-top: 20px;">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
-                                    <div style="float: left; display: inline;"><strong>Quotas</strong></div>
-                                </div>
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                        <div style="float: left; display: inline;"><strong>Quotas</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                        <div style="float: left; display: inline;"><strong>Quotas</strong></div>
+                                    </div>
+                                </t>
                             </div>
                             <!-- Group by quotaperiod_id -->
                             <t t-set="quota_periodes" t-value="[]"/>
@@ -180,10 +197,18 @@
                         <!-- Hydric movements data -->
                         <div name="wua_hydricmovements_data">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                    <div style="float: left; width: 32px;"><span class="fa fa-list-ol"/></div>
-                                    <div style="float: left; display: inline;"><strong>Hydric&amp;nbsp;movements</strong></div>
-                                </div>
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-list-ol"/></div>
+                                        <div style="float: left; display: inline;"><strong>Hydric&amp;nbsp;movements</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-list-ol"/></div>
+                                        <div style="float: left; display: inline;"><strong>Hydric&amp;nbsp;movements</strong></div>
+                                    </div>
+                                </t>
                             </div>
                             <table class="table table-striped" style="width:100%;">
                                 <thead>
@@ -219,10 +244,18 @@
                         <t t-if="informative_clauses">
                             <div name="info_div" style="margin-top: 20px;">
                                 <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                        <div style="float: left; width: 32px;"><span class="fa fa-info-circle"/></div>
-                                        <div style="float: left; display: inline;"><strong>Information</strong></div>
-                                    </div>
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-info-circle"/></div>
+                                            <div style="float: left; display: inline;"><strong>Information</strong></div>
+                                       </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-info-circle"/></div>
+                                            <div style="float: left; display: inline;"><strong>Information</strong></div>
+                                        </div>
+                                    </t>
                                 </div>
                             </div>
                             <t t-if="informative_clauses">

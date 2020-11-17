@@ -49,6 +49,17 @@
                     <field name="wua_portal_user_can_edit"/>
                 </group>
                 <group string="Reports configuration">
+                    <group style="width: 20%;">
+                        <field name="reports_style" widget="radio"/>
+                    </group>
+                    <group>
+                        <div style="display: inline-block;">
+                            <img src="/base_wua/static/img/style_solid.png" style="max-width: 256px;" attrs="{'invisible':[('reports_style', '=', 'light')]}"/>
+                            <img src="/base_wua/static/img/style_light.png" style="max-width: 256px;" attrs="{'invisible':[('reports_style', '=', 'solid')]}"/>
+                        </div>
+                    </group>
+                </group>
+                <group>
                     <field name="reports_informative_clauses"/>
                 </group>
             </form>

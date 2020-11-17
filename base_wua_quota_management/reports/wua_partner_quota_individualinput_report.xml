@@ -17,6 +17,10 @@
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
                     <div class="page">
+
+                        <!-- Vars -->
+                        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+
                         <!-- Report title -->
                         <div name="title" class="text-center" style="font-size: 16px;">
                             <strong>Individual input report</strong><br/>
@@ -28,10 +32,18 @@
                         <!-- Summary -->
                         <div name="individualinput_summary">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                    <div style="float: left; width: 32px;"><span class="fa fa-arrow-right"/></div>
-                                    <div style="float: left; display: inline;"><strong>Summary</strong></div>
-                                </div>
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-arrow-right"/></div>
+                                        <div style="float: left; display: inline;"><strong>Summary</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-arrow-right"/></div>
+                                        <div style="float: left; display: inline;"><strong>Summary</strong></div>
+                                    </div>
+                                </t>
                             </div>
                             <div style="margin-bottom: 12px;">
                                 <div>
@@ -103,10 +115,18 @@
                         <!-- Quota data -->
                         <div name="individualinput_data">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
-                                    <div style="float: left; display: inline;"><strong>Individual&amp;nbsp;input&amp;nbsp;data</strong></div>
-                                </div>
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                        <div style="float: left; display: inline;"><strong>Individual&amp;nbsp;input&amp;nbsp;data</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                        <div style="float: left; display: inline;"><strong>Individual&amp;nbsp;input&amp;nbsp;data</strong></div>
+                                    </div>
+                                </t>
                             </div>
                             <div class="row" style="margin-top: 4px;">
                                 <div class="col-xs-12" style="display: table;">
