@@ -132,6 +132,7 @@ class WuaConfiguration(models.TransientModel):
 
     @api.multi
     def set_default_values(self):
+        super(WuaConfiguration, self).set_default_values()
         values = self.env['ir.values'].sudo()
         values.set_default('wua.configuration', 'area_measurement_type',
                            self.area_measurement_type)
@@ -226,8 +227,4 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration',
                            'polling_system_rounding_type_company_03',
                            self.polling_system_rounding_type_company_03)
-        values.set_default('wua.configuration', 'reports_informative_clauses',
-                           self.reports_informative_clauses)
-        values.set_default('wua.configuration', 'reports_style',
-                           self.reports_style)
 

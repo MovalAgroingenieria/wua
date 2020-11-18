@@ -41,6 +41,7 @@ class WuaQuotasConfiguration(models.TransientModel):
 
     @api.multi
     def set_default_values(self):
+        super(WuaQuotasConfiguration, self).set_default_values()
         values = self.env['ir.values'].sudo()
         values.set_default('wua.quotas.configuration', 'hours_as_hhmm',
                            self.hours_as_hhmm)
