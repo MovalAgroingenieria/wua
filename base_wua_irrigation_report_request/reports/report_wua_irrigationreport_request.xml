@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Paper format for request report -->
+    <record id="paperformat_wua_reportrequest_report" model="report.paperformat">
+        <field name="name">European A4 Wua Request Report</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">4</field>
+        <field name="margin_bottom">4</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="action_report_wua_irrigationreport_request"
+            string="Irrigation report request"
+            model="wua.reportrequest"
+            report_type="qweb-pdf"
+            name="base_wua_irrigation_report_request.report_wua_irrigationreport_request"
+            paperformat="base_wua_irrigation_report_request.paperformat_wua_reportrequest_report"/>
+
+    <template id="wua_reportrequest_internal_layout" inherit_id="report.internal_layout">
+        <xpath expr="//div[@class='header']" position="replace"/>
+    </template>
+
+    <template id="report_wua_irrigationreport_request">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_irrigation_report_request.wua_reportrequest_internal_layout">
+                    <t t-call="base_wua_irrigation_report_request.report_wua_irrigationreport_request_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_irrigationreport_request_document">
+        <div class="page">
+
+            <!-- Vars -->
+            <t t-set="data_in_hours" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'data_in_hours')"/>
+            <t t-set="hours_sexagesimal" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'hours_sexagesimal')"/>
+            <t t-set="info_request_report" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'info_request_report')"/>
+            <t t-set="company" t-value="o.partner_id.company_id.sudo()"></t>
+
+            <div name="header_1" style="margin-bottom: 12px;">
+                <div class="row">
+                    <div class="col-xs-2 text-center">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
+                             style="max-height: 80px; max-width: 90px;"/>
+                    </div>
+                    <div class="col-xs-10" style="margin-bottom: 6px;">
+                        <div name="company_address">
+                            <t t-if="company.name">
+                                <li style="list-style:none;">
+                                    <strong><span t-field="company.name"/></strong>
+                                     <t t-if="company.vat">
+                                        <t t-set="mod_vat" t-value="company.vat[2:]"/>
+                                        <span>(TIN: <span t-esc="mod_vat"/>)</span>
+                                    </t>
+                                </li>
+                            </t>
+                            <t t-if="company.street or company.street2">
+                                <li style="list-style:none;">
+                                    <span t-field="company.street"/>
+                                    <t t-if="company.street2">
+                                        <span t-field="company.street2"/>
+                                    </t>
+                                    <t t-if="company.city">
+                                        <span t-field="company.city"/>
+                                    </t>
+                                    <t t-if="company.zip">
+                                        <span t-field="company.zip"/>
+                                    </t>
+                                    <t t-if="company.state_id">
+                                        <span t-field="company.state_id"/>
+                                    </t>
+                                    <t t-if="company.country_id">
+                                        <span t-field="company.country_id"/>
+                                    </t>
+                                </li>
+                            </t>
+                            <t t-if="company.partner_id">
+                                <li style="list-style:none; margin-left: 2px; width: 100%;">
+                                    <t t-if="company.partner_id.email or company.partner_id.phone">
+                                        <span class="fa fa-envelope theme-report-color" style="display: inline;">
+                                            <t t-set="email" t-value="company.sudo().partner_id.email"/>
+                                            <a style="color: black;" href="mailto:email">
+                                                <span style="font-size: 13px;" t-esc="email"/>
+                                             </a>
+                                        </span>
+                                        <t t-if="company.partner_id.phone">
+                                            <span class="fa fa-phone theme-report-color" style="display: inline;">
+                                                <t t-set="phone" t-value="company.sudo().partner_id.phone"/>
+                                                <a style="color: black;" href="callto:phone">
+                                                    <span style="font-size: 13px;" t-esc="phone"/>
+                                                </a>
+                                            </span><br/>
+                                        </t>
+                                    </t>
+                                    <t t-if="company.partner_id.website">
+                                        <span class="fa fa-globe theme-report-color" style="display: inline;">
+                                            <t t-set="website" t-value="company.sudo().partner_id.website"/>
+                                            <a class="theme-report-color" href="website">
+                                                <span style="font-size: 13px;" t-esc="website"/>
+                                            </a>
+                                        </span>
+                                    </t>
+                                </li>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <!-- separator line -->
+                <div class="row zero_min_height">
+                    <div class="col-xs-12">
+                        <div style="border-bottom: 1px solid black;"/>
+                    </div>
+                </div>
+            </div>
+
+            <div name="section_title">
+                <div name="title" style="font-size: 16;text-align: center;">
+                    <strong>Irrigation Report Request</strong>
+                    <t t-if="o.state == 'draft'">
+                        <span>( DRAFT )</span>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Partner and agricultural season data -->
+            <div name="wua_partner_data">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="width: 60%; display: table-cell;">
+                            <t t-if="o.partner_id.name">
+                                <strong>
+                                    <span t-field="o.partner_id.name"/>
+                                    <t t-if="o.partner_id.partner_code">
+                                        <t t-set="partner_code" t-value="str(o.partner_id.partner_code)"/>
+                                        <span>[</span>
+                                        <span t-esc="partner_code"/>
+                                        <span>]</span>
+                                    </t>
+                                </strong>
+                            <br/>
+                            </t>
+                            <t t-if="o.partner_id.phone and o.partner_id.mobile">
+                                    <span t-field="o.partner_id.phone"/>
+                                    <span>/</span>
+                                    <span t-field="o.partner_id.mobile"/>
+                            </t>
+                            <t t-else="">
+                                <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                                <t t-if="o.partner_id.mobile"><span t-field="o.partner_id.mobile"/></t>
+                            </t>
+                            <br/>
+                            <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/><br/></t>
+                        </div>
+                        <div style="width: 40%; display: table-cell; padding: 0px 32px;">
+                            <p style="margin-top: 2px; margin-bottom: 0px">
+                                <strong>Agricultural Season</strong>
+                                <t t-if="o.agriculturalseason_id">
+                                    <t t-if="o.agriculturalseason_id.active_agriculturalseason == True">
+                                        <span>(Active)</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span>(No active)</span>
+                                    </t>
+                                 </t>
+                            </p>
+                            <div style="margin-left: 8px;">
+                                <t t-if="o.agriculturalseason_id">
+                                    <div name="agriculturaseason_description">
+                                        <t t-if="o.agriculturalseason_id.description">
+                                            <span t-field="o.agriculturalseason_id.description"/>
+                                        </t>
+                                    </div>
+                                    <div name="agriculturaseason_dates">
+                                        <t t-if="o.agriculturalseason_id.initial_date">
+                                            <span>From </span>
+                                            <span t-field="o.agriculturalseason_id.initial_date"/>
+                                        </t>
+                                        <t t-if="o.agriculturalseason_id.end_date">
+                                            <span>to </span>
+                                            <span t-field="o.agriculturalseason_id.end_date"/>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Irrigation report request data -->
+            <div name="reportrequest_data" style="margin-top:8px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-file-irrigation-request"/></div>
+                            <div style="float: left; display: inline;"><strong>Report&amp;nbsp;request</strong></div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-file-irrigation-request"/></div>
+                            <div style="float: left; display: inline;"><strong>Report&amp;nbsp;request</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="display: table-cell;">
+                            <table name="request_data" class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr name="state">
+                                        <td><span>State:</span></td>
+                                        <t t-if="o.state">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.state"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <tr name="parcel_code">
+                                        <td><span>Parcel:</span></td>
+                                        <t t-if="o.parcel_id">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.parcel_id"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <t t-if="o.state == 'validated'">
+                                        <tr name="irrigationreport">
+                                            <td><span>Associated report:</span></td>
+                                            <t t-if="o.irrigationreport_id">
+                                                <td class="text-right">
+                                                    <strong><span t-field="o.irrigationreport_id"/></strong>
+                                                    <span class="fa fa-moval-file-irrigation"/>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display: table-cell; padding-left: 40px;">
+                            <table name="volume_info" class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr name="request_Date">
+                                        <td><span>Date:</span></td>
+                                        <t t-if="o.request_date">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.request_date"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <tr name="product">
+                                        <td><span>Product:</span></td>
+                                        <t t-if="o.product_id">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.product_id"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <t t-if="data_in_hours">
+                                        <tr name="hours">
+                                             <td><span>Hours:</span></td>
+                                             <t t-if="o.hours">
+                                                 <td class="text-right">
+                                                      <strong>
+                                                        <t t-if="hours_sexagesimal">
+                                                            <span t-esc="'%02d:%02d' % (int(o.hours), o.hours % 1 * 60)"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-field="o.hours" t-options='{"widget": "float", "precision": 2}'/>
+                                                        </t>
+                                                    </strong>
+                                                 </td>
+                                             </t>
+                                        </tr>
+                                    </t>
+                                    <t t-else="">
+                                        <tr name="volume">
+                                             <td><span>Volume:</span></td>
+                                             <t t-if="o.volume">
+                                                 <td class="text-right">
+                                                     <strong>
+                                                          <span t-field="o.volume"/>
+                                                          <span>(m³)</span>
+                                                     </strong>
+                                                 </td>
+                                             </t>
+                                        </tr>
+                                    </t>
+                                 </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <t t-if="o.notes">
+                    <div name="notes" style="margin-top: 4px;">
+                        <div style="margin-left: 4px; margin-right: 38px;">
+                            <span t-field="o.notes"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Conformity -->
+            <div name="conformity" style="margin-top: 8px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Conformity</strong></div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Conformity</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <div name="signature" class="row" style="border: 1px solid lightgrey; margin: 2px 1px; page-break-inside: avoid;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="border-right: 1px solid lightgrey; width: 50%; display: table-cell;">
+                            <p style="margin-left: -8px; margin-top: 2px; margin-bottom: 0px;">
+                                <span>User signature</span>
+                            </p>
+                            <t t-if="o.partner_id == o.sudo().user_id">
+                                <span>(To be signed by Wua User)</span>
+                                <p>&amp;nbsp;</p>
+                            </t>
+                            <t t-else="">
+                                <t t-if="o.sudo().user_id.signature_image">
+                                    <div class="text-center">
+                                        <img style="max-width: 380px;" t-attf-src="data:image/*;base64,{{o.sudo().user_id.signature_image}}"/>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <p>&amp;nbsp;</p>
+                                    <p>&amp;nbsp;</p>
+                                    <p>&amp;nbsp;</p>
+                                </t>
+                            </t>
+                        </div>
+                        <div style="width: 50%; display: table-cell; padding: 0px 8px;">
+                            <p style="margin-top: 2px; margin-bottom: 0px">
+                                <span>Partner signature</span>
+                            </p>
+                             <t t-if="o.signature_image">
+                                <div class="text-center">
+                                    <img style="max-width: 380px;" t-attf-src="data:image/*;base64,{{o.signature_image}}"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p>&amp;nbsp;</p>
+                                <p>&amp;nbsp;</p>
+                                <p>&amp;nbsp;</p>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <t t-if="info_request_report">
+                <div name="info_request_report_note" style="margin-top: 8px; background-color:#F8F8F8; padding: 4px">
+                    <span t-raw="info_request_report"/>
+                </div>
+            </t>
+
+            <div name="cutting_line" style="margin-top: 20px;margin-bottom: 8px; width: 100%;" class="text-center">
+                <span class="fa fa-cut"/>
+                <span style="color: lightgrey;">---------------------------------------------------------------------- copy for irrigator -------------------------------------------------------------------</span>
+            </div>
+
+            <!-- Copy for irrigator -->
+            <div name="header_2" style="margin-bottom: 12px;">
+                <t t-set="company" t-value="o.partner_id.company_id.sudo()"></t>
+                <div class="row">
+                    <div class="col-xs-2 text-center">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
+                             style="max-height: 80px; max-width: 90px;"/>
+                    </div>
+                    <div class="col-xs-10" style="margin-bottom: 6px;">
+                        <div name="company_address">
+                            <t t-if="company.name">
+                                <li style="list-style:none;">
+                                    <strong><span t-field="company.name"/></strong>
+                                     <t t-if="company.vat">
+                                        <t t-set="mod_vat" t-value="company.vat[2:]"/>
+                                        <span>(TIN: <span t-esc="mod_vat"/>)</span>
+                                    </t>
+                                </li>
+                            </t>
+                            <t t-if="company.street or company.street2">
+                                <li style="list-style:none;">
+                                    <span t-field="company.street"/>
+                                    <t t-if="company.street2">
+                                        <span t-field="company.street2"/>
+                                    </t>
+                                    <t t-if="company.city">
+                                        <span t-field="company.city"/>
+                                    </t>
+                                    <t t-if="company.zip">
+                                        <span t-field="company.zip"/>
+                                    </t>
+                                    <t t-if="company.state_id">
+                                        <span t-field="company.state_id"/>
+                                    </t>
+                                    <t t-if="company.country_id">
+                                        <span t-field="company.country_id"/>
+                                    </t>
+                                </li>
+                            </t>
+                            <t t-if="company.partner_id">
+                                <li style="list-style:none; margin-left: 2px; width: 100%;">
+                                    <t t-if="company.partner_id.email or company.partner_id.phone">
+                                        <span class="fa fa-envelope theme-report-color" style="display: inline;">
+                                            <t t-set="email" t-value="company.sudo().partner_id.email"/>
+                                            <a style="color: black;" href="mailto:email">
+                                                <span style="font-size: 13px;" t-esc="email"/>
+                                             </a>
+                                        </span>
+                                        <t t-if="company.partner_id.phone">
+                                            <span class="fa fa-phone theme-report-color" style="display: inline;">
+                                                <t t-set="phone" t-value="company.sudo().partner_id.phone"/>
+                                                <a style="color: black;" href="callto:phone">
+                                                    <span style="font-size: 13px;" t-esc="phone"/>
+                                                </a>
+                                            </span><br/>
+                                        </t>
+                                    </t>
+                                    <t t-if="company.partner_id.website">
+                                        <span class="fa fa-globe theme-report-color" style="display: inline;">
+                                            <t t-set="website" t-value="company.sudo().partner_id.website"/>
+                                            <a class="theme-report-color" href="website">
+                                                <span style="font-size: 13px;" t-esc="website"/>
+                                            </a>
+                                        </span>
+                                    </t>
+                                </li>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <!-- separator line -->
+                <div class="row zero_min_height">
+                    <div class="col-xs-12">
+                        <div style="border-bottom: 1px solid black;"/>
+                    </div>
+                </div>
+            </div>
+
+            <div name="section_title">
+                <div name="title" style="font-size: 16;text-align: center;">
+                    <strong>Irrigation Report Request</strong>
+                    <t t-if="o.state == 'draft'">
+                        <span>( DRAFT )</span>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Partner and agricultural season data -->
+            <div name="wua_partner_data">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                            <div style="float: right; display: inline; font-size:12px">
+                                <span>Irrigator&amp;nbsp;copy</span>
+                            </div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                            <div style="float: right; display: inline; font-size:12px">
+                                <span>Irrigator&amp;nbsp;copy</span>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="width: 60%; display: table-cell;">
+                            <t t-if="o.partner_id.name">
+                                <strong>
+                                    <span t-field="o.partner_id.name"/>
+                                    <t t-if="o.partner_id.partner_code">
+                                        <t t-set="partner_code" t-value="str(o.partner_id.partner_code)"/>
+                                        <span>[</span>
+                                        <span t-esc="partner_code"/>
+                                        <span>]</span>
+                                    </t>
+                                </strong>
+                            <br/>
+                            </t>
+                            <t t-if="o.partner_id.phone and o.partner_id.mobile">
+                                    <span t-field="o.partner_id.phone"/>
+                                    <span>/</span>
+                                    <span t-field="o.partner_id.mobile"/>
+                            </t>
+                            <t t-else="">
+                                <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                                <t t-if="o.partner_id.mobile"><span t-field="o.partner_id.mobile"/></t>
+                            </t>
+                            <br/>
+                            <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/><br/></t>
+                        </div>
+                        <div style="width: 40%; display: table-cell; padding: 0px 32px;">
+                            <p style="margin-top: 2px; margin-bottom: 0px">
+                                <strong>Agricultural Season</strong>
+                                <t t-if="o.agriculturalseason_id">
+                                    <t t-if="o.agriculturalseason_id.active_agriculturalseason == True">
+                                        <span>(Active)</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span>(No active)</span>
+                                    </t>
+                                 </t>
+                            </p>
+                            <div style="margin-left: 8px;">
+                                <t t-if="o.agriculturalseason_id">
+                                    <div name="agriculturaseason_description">
+                                        <t t-if="o.agriculturalseason_id.description">
+                                            <span t-field="o.agriculturalseason_id.description"/>
+                                        </t>
+                                    </div>
+                                    <div name="agriculturaseason_dates">
+                                        <t t-if="o.agriculturalseason_id.initial_date">
+                                            <span>From </span>
+                                            <span t-field="o.agriculturalseason_id.initial_date"/>
+                                        </t>
+                                        <t t-if="o.agriculturalseason_id.end_date">
+                                            <span>to </span>
+                                            <span t-field="o.agriculturalseason_id.end_date"/>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Irrigation report request data -->
+            <div name="reportrequest_data" style="margin-top:8px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-file-irrigation-request"/></div>
+                            <div style="float: left; display: inline;"><strong>Report&amp;nbsp;request</strong></div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-file-irrigation-request"/></div>
+                            <div style="float: left; display: inline;"><strong>Report&amp;nbsp;request</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="display: table-cell;">
+                            <table name="request_data" class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr name="state">
+                                        <td><span>State:</span></td>
+                                        <t t-if="o.state">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.state"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <tr name="parcel_code">
+                                        <td><span>Parcel:</span></td>
+                                        <t t-if="o.parcel_id">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.parcel_id"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <t t-if="o.state == 'validated'">
+                                        <tr name="irrigationreport">
+                                            <td><span>Associated report:</span></td>
+                                            <t t-if="o.irrigationreport_id">
+                                                <td class="text-right">
+                                                    <strong><span t-field="o.irrigationreport_id"/></strong>
+                                                    <span class="fa fa-moval-file-irrigation"/>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display: table-cell; padding-left: 40px;">
+                            <table name="volume_info" class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr name="request_Date">
+                                        <td><span>Date:</span></td>
+                                        <t t-if="o.request_date">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.request_date"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <tr name="product">
+                                        <td><span>Product:</span></td>
+                                        <t t-if="o.product_id">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.product_id"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <t t-if="data_in_hours">
+                                        <tr name="hours">
+                                             <td><span>Hours:</span></td>
+                                             <t t-if="o.hours">
+                                                 <td class="text-right">
+                                                      <strong>
+                                                        <t t-if="hours_sexagesimal">
+                                                            <span t-esc="'%02d:%02d' % (int(o.hours), o.hours % 1 * 60)"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span t-field="o.hours" t-options='{"widget": "float", "precision": 2}'/>
+                                                        </t>
+                                                    </strong>
+                                                 </td>
+                                             </t>
+                                        </tr>
+                                    </t>
+                                    <t t-else="">
+                                        <tr name="volume">
+                                             <td><span>Volume:</span></td>
+                                             <t t-if="o.volume">
+                                                 <td class="text-right">
+                                                     <strong>
+                                                          <span t-field="o.volume"/>
+                                                          <span>(m³)</span>
+                                                     </strong>
+                                                 </td>
+                                             </t>
+                                        </tr>
+                                    </t>
+                                 </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <t t-if="o.notes">
+                    <div name="notes" style="margin-top: 4px;">
+                        <div style="margin-left: 4px; margin-right: 38px;">
+                            <span t-field="o.notes"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Conformity -->
+            <div name="conformity" style="margin-top: 8px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Conformity</strong></div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                            <div style="float: left; display: inline;"><strong>Conformity</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <div name="signature" class="row" style="border: 1px solid lightgrey; margin: 2px 1px; page-break-inside: avoid;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="border-right: 1px solid lightgrey; width: 50%; display: table-cell;">
+                            <p style="margin-left: -8px; margin-top: 2px; margin-bottom: 0px;">
+                                <span>User signature</span>
+                            </p>
+                            <t t-if="o.partner_id == o.sudo().user_id">
+                                <span>(To be signed by Wua User)</span>
+                                <p>&amp;nbsp;</p>
+                            </t>
+                            <t t-else="">
+                                <t t-if="o.sudo().user_id.signature_image">
+                                    <div class="text-center">
+                                        <img style="max-width: 380px;" t-attf-src="data:image/*;base64,{{o.sudo().user_id.signature_image}}"/>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <p>&amp;nbsp;</p>
+                                    <p>&amp;nbsp;</p>
+                                    <p>&amp;nbsp;</p>
+                                </t>
+                            </t>
+                        </div>
+                        <div style="width: 50%; display: table-cell; padding: 0px 8px;">
+                            <p style="margin-top: 2px; margin-bottom: 0px">
+                                <span>Partner signature</span>
+                            </p>
+                             <t t-if="o.signature_image">
+                                <div class="text-center">
+                                    <img style="max-width: 380px;" t-attf-src="data:image/*;base64,{{o.signature_image}}"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p>&amp;nbsp;</p>
+                                <p>&amp;nbsp;</p>
+                                <p>&amp;nbsp;</p>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <t t-if="info_request_report">
+                <div name="info_request_report_note" style="margin-top: 8px; background-color:#F8F8F8; padding: 4px">
+                    <span t-raw="info_request_report"/>
+                </div>
+            </t>
+
+        </div><!-- end page -->
+    </template>
+
+</odoo>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="action_see_reportrequests"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-moval-file-irrigation-request"
+                        groups="base_wua.group_wua_user,
+                                base_wua.group_wua_portal_user"
+                        attrs="{'invisible':[('number_of_reportrequest','=', 0)]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value">
+                                <field name="number_of_reportrequest"/>
+                            </span>
+                            <span class="o_stat_text">Report requests</span>
+                        </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
