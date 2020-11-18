@@ -9,6 +9,9 @@
     <!-- Inhibit modifications of sale.report_invoice_document_inherit_sale -->
     <template id="wua_report_invoice_document_inherit_sale" inherit_id="sale.report_invoice_document_inherit_sale">
         <xpath expr="//div[@class='col-xs-5 col-xs-offset-7']" position="replace"/>
+        <xpath expr="//div[@name='invoice_address']"  position="attributes">
+            <attribute name="groups"></attribute>
+        </xpath>
     </template>
 
     <!-- Overwrite template in invoice_comment_template module -->
