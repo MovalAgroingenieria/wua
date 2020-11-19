@@ -18,7 +18,7 @@
                             attrs="{'invisible':
                                     ['|',
                                      ('configured_invoiceset','=',False),
-                                     ('state','=','generated')]}"                            
+                                     ('state','=','generated')]}"
                             groups="base_wua.group_wua_manager"
                             confirm="Are you sure you want to do this operation?"/>
                     <button name="cancel_invoiceset"
@@ -28,13 +28,13 @@
                             confirm="Are you sure you want to do this operation?"/>
                     <field name="state"
                            widget="statusbar"
-                           statusbar_visible="draft,generated"/>                
+                           statusbar_visible="draft,generated"/>
                 </header>
                 <sheet>
                     <div name="buttons" class="oe_button_box">
                         <button name="toggle_active"
                                 type="object"
-                                class="oe_stat_button" 
+                                class="oe_stat_button"
                                 icon="fa-archive"
                                 groups="base_wua.group_wua_manager">
                                 <field name="active"
@@ -54,7 +54,7 @@
                                     <span class="o_stat_text">
                                         Invoices
                                     </span>
-                                </div>                                
+                                </div>
                         </button>
                     </div>
                     <group name="master_data" col="10">
@@ -75,7 +75,7 @@
                         <group name="master_data_id02" colspan="4">
                             <field name="description"
                                    attrs="{'readonly':
-                                           [('state','=','generated')]}"/>                            
+                                           [('state','=','generated')]}"/>
                             <field name="journal_id"
                                    domain="[('type','=','sale')]"
                                    attrs="{'readonly':
@@ -97,7 +97,7 @@
                             <page name="lines_page" string="Lines">
                                 <field name="line_ids"
                                        context="{'tree_view_ref':
-                                                 'base_wua_invoicing.wua_edit_invoiceset_line_view_tree'}"/>                            
+                                                 'base_wua_invoicing.wua_edit_invoiceset_line_view_tree'}"/>
                             </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
@@ -127,7 +127,7 @@
                            widget="mail_followers" groups="base.group_user"/>
                     <field name="message_ids"
                            widget="mail_thread"/>
-                </div>                
+                </div>
             </form>
         </field>
     </record>
@@ -165,7 +165,7 @@
                 <filter string="Draft" name="draft"
                  domain="[('state','=','draft')]"/>
                 <filter string="Generated" name="generated"
-                 domain="[('state','=','generated')]"/>                 
+                 domain="[('state','=','generated')]"/>
                 <separator/>
                 <filter string="Archived" name="inactive"
                  domain="[('active','=',False)]"/>
@@ -175,9 +175,9 @@
                     <filter string="Salesperson" name="user"
                      context="{'group_by':'user_id'}"/>
                     <filter string="Year" name="year"
-                     context="{'group_by':'year_invoiceset'}"/>                     
+                     context="{'group_by':'year_invoiceset'}"/>
                     <filter string="Totals" name="totals"
-                     context="{'group_by':'active'}"/>                     
+                     context="{'group_by':'active'}"/>
                 </group>
             </search>
         </field>
@@ -202,14 +202,14 @@
                         attrs="{'invisible':
                                 [('configured_line','=',False)],
                                 'readonly':
-                                [('configured_line','=',True)]}"/>                
+                                [('configured_line','=',True)]}"/>
                 <field name="quantity"/>
                 <field name="price_unit"/>
                 <field name="amount_untaxed"/>
                 <field name="taxes_id" widget="many2many_tags"/>
                 <field name="amount_tax"/>
                 <field name="amount_total"/>
-            </tree>        
+            </tree>
         </field>
     </record>
 
@@ -241,10 +241,10 @@
                 <button name="action_select_linked_items"
                         type="object"
                         string="Select"/>
-            </tree>        
+            </tree>
         </field>
     </record>
-   
+
     <record id="wua_invoiceset_line_view_form" model="ir.ui.view">
         <field name="name">Invoice-Set Lines</field>
         <field name="model">wua.invoiceset.line</field>
@@ -286,6 +286,7 @@
                 <field name="cadastral_reference"/>
                 <field name="area_official"/>
                 <field name="leased_parcel"/>
+                <field name="farmproperty_id"/>
                 <field name="hydraulicsector_id"/>
                 <field name="irrigationditch_id"/>
             </tree>
@@ -301,6 +302,7 @@
                 <field name="tag_ids" string="Parcel Tag"/>
                 <field name="partner_id"/>
                 <field name="cadastral_reference"/>
+                <field name="farmproperty_id"/>
                 <field name="hydraulicsector_id"/>
                 <field name="irrigationditch_id"/>
                 <filter string="Selected" name="selected"
@@ -338,13 +340,15 @@
                      context="{'group_by':'selected'}"/>
                     <filter string="Irrigation Partner" name="partner"
                      context="{'group_by':'partner_id'}"/>
+                    <filter string="Farm Property" name="farmproperty"
+                     context="{'group_by':'farmproperty_id'}"/>
                     <filter string="Hydraulic Sector" name="hydraulicsector"
                      context="{'group_by':'hydraulicsector_id'}"/>
                     <filter string="Irrigation Ditch" name="irrigationditch"
                      context="{'group_by':'irrigationditch_id'}"/>
                     <filter string="Irrigation Worker" name="irrigationworker"
-                     context="{'group_by':'employee_id'}"/>                     
-                </group>                
+                     context="{'group_by':'employee_id'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -358,7 +362,7 @@
                 action = env['wua.invoiceset.line.parcel'].browse(context['active_ids']).add_to_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_add_parcel_to_invoiceset" model="ir.values">
         <field name="name">Add parcel to invoice set</field>
         <field name="model">wua.invoiceset.line.parcel</field>
@@ -376,7 +380,7 @@
                 action = env['wua.invoiceset.line.parcel'].browse(context['active_ids']).remove_from_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_remove_parcel_to_invoiceset" model="ir.values">
         <field name="name">Remove parcel from invoice set</field>
         <field name="model">wua.invoiceset.line.parcel</field>
@@ -396,9 +400,9 @@
                 <button type="object" class="oe_read_only"
                         icon="fa-check-circle"
                         attrs="{'invisible':
-                                [('selected','=',False)]}"/>                
+                                [('selected','=',False)]}"/>
                 <field name="number_of_votes"/>
-                <field name="is_owner"/>                
+                <field name="is_owner"/>
                 <field name="parcel_owner_number"/>
                 <field name="parcel_owner_area"/>
                 <field name="is_lessee"/>
@@ -407,7 +411,7 @@
                 <field name="is_payer"/>
                 <field name="parcel_payer_number"/>
                 <field name="parcel_payer_area"/>
-                <field name="is_company"/>                
+                <field name="is_company"/>
             </tree>
         </field>
     </record>
@@ -455,7 +459,7 @@
                 action = env['wua.invoiceset.line.partner'].browse(context['active_ids']).add_to_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_add_partner_to_invoiceset" model="ir.values">
         <field name="name">Add partner to invoice set</field>
         <field name="model">wua.invoiceset.line.partner</field>
@@ -473,7 +477,7 @@
                 action = env['wua.invoiceset.line.partner'].browse(context['active_ids']).remove_from_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_remove_partner_to_invoiceset" model="ir.values">
         <field name="name">Remove partner from invoice set</field>
         <field name="model">wua.invoiceset.line.partner</field>
@@ -493,7 +497,7 @@
                 <button type="object" class="oe_read_only"
                         icon="fa-check-circle"
                         attrs="{'invisible':
-                                [('selected','=',False)]}"/>                
+                                [('selected','=',False)]}"/>
                 <field name="irrigationshed_id"/>
                 <field name="hydraulicsector_id"/>
                 <field name="position"/>
@@ -525,7 +529,7 @@
                     <filter string="Irrigation Shed"
                      name="irrigation_shed"
                      context="{'group_by':'irrigationshed_id'}"/>
-                </group>                
+                </group>
             </search>
         </field>
     </record>
@@ -539,7 +543,7 @@
                 action = env['wua.invoiceset.line.waterconnection'].browse(context['active_ids']).add_to_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_add_waterconnection_to_invoiceset" model="ir.values">
         <field name="name">Add waterconnection to invoice set</field>
         <field name="model">wua.invoiceset.line.waterconnection</field>
@@ -557,7 +561,7 @@
                 action = env['wua.invoiceset.line.waterconnection'].browse(context['active_ids']).remove_from_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_remove_waterconnection_to_invoiceset" model="ir.values">
         <field name="name">Remove waterconnection from invoice set</field>
         <field name="model">wua.invoiceset.line.waterconnection</field>
@@ -570,18 +574,18 @@
         <field name="name">Invoice-set line for irrigation gates (tree view)</field>
         <field name="model">wua.invoiceset.line.irrigationgate</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_invoicing_invoiceset_line_irrigationgate_view_tree" 
+            <tree class="o_base_wua_invoicing_invoiceset_line_irrigationgate_view_tree"
                   create="false" edit="false" delete="false" export="false">
                 <field name="selected" invisible="1"/>
                 <field name="irrigationgate_id"/>
                 <button type="object" class="oe_read_only"
                         icon="fa-check-circle"
                         attrs="{'invisible':
-                                [('selected','=',False)]}"/>                
+                                [('selected','=',False)]}"/>
                 <field name="irrigationditch_id"/>
                 <field name="hydraulic_order"/>
                 <field name="total_affected_area_official"/>
-                <field name="number_of_parcels"/>                
+                <field name="number_of_parcels"/>
             </tree>
         </field>
     </record>
@@ -618,7 +622,7 @@
                 action = env['wua.invoiceset.line.irrigationgate'].browse(context['active_ids']).add_to_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_add_irrigationgate_to_invoiceset" model="ir.values">
         <field name="name">Add irrigationgate to invoice set</field>
         <field name="model">wua.invoiceset.line.irrigationgate</field>
@@ -636,7 +640,7 @@
                 action = env['wua.invoiceset.line.irrigationgate'].browse(context['active_ids']).remove_from_invoiceset()
         </field>
     </record>
-    
+
     <record id="wua_action_remove_irrigationgate_to_invoiceset" model="ir.values">
         <field name="name">Remove irrigationgate from invoice set</field>
         <field name="model">wua.invoiceset.line.irrigationgate</field>

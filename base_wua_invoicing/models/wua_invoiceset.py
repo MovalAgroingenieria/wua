@@ -1658,14 +1658,16 @@ class WuaInvoicesetLine(models.Model):
                     hydraulic_infrastructure_type,
                     pressurized_irrigation_right, gravityfed_irrigation_right,
                     hydraulicsector_id, irrigationditch_id,
-                    with_watering_shift, with_irrigation_worker, employee_id)
+                    with_watering_shift, with_irrigation_worker, employee_id,
+                    farmproperty_id)
                     SELECT nextval('wua_invoiceset_line_parcel_id_seq'), %s,
                     %s, now(), now(), %s, TRUE, id, cadastral_reference,
                     is_billable_water, is_billable_expenses, leased_parcel,
                     area_official, partner_id, hydraulic_infrastructure_type,
                     pressurized_irrigation_right, gravityfed_irrigation_right,
                     hydraulicsector_id, irrigationditch_id,
-                    with_watering_shift, with_irrigation_worker, employee_id
+                    with_watering_shift, with_irrigation_worker, employee_id,
+                    farmproperty_id
                     FROM wua_parcel WHERE active=TRUE
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.execute("""
@@ -1895,6 +1897,11 @@ class WuaInvoicesetLineParcel(models.Model):
     employee_id = fields.Many2one(
         string='Irrigation Worker',
         comodel_name='hr.employee',
+        ondelete='restrict')
+
+    farmproperty_id = fields.Many2one(
+        string='Farm Property',
+        comodel_name='wua.farmproperty',
         ondelete='restrict')
 
     tag_ids = fields.Many2many(
