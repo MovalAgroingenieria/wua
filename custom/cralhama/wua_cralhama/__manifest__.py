@@ -13,9 +13,11 @@
     "depends": [
         "mail_tracking",
         "base_wua_gravity_irrigation",
+        "base_wua_irrigation_report",
     ],
     "data": [
         "views/res_partner_view.xml",
+        "views/wua_irrigationreport_view.xml",
     ],
     "installable": True,
     "application": False,
