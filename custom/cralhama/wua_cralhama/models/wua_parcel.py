@@ -12,17 +12,16 @@ class WuaParcel(models.Model):
     def name_get(self):
         if self.env.context.get('show_extra_and_rurallocation', False):
             result = []
+            separator = ' - '
             for record in self:
-                extra_code = record.extra_code
-                if (not extra_code):
-                    extra_code = ''
-                rurallocation = record.rurallocation_id
-                if (not rurallocation):
-                    rurallocation = ''
-                else:
-                    rurallocation = rurallocation.name
-                name = record.name + ' [' + extra_code + ' - ' + \
-                    rurallocation + ']'
+                fields_to_show = []
+                if (record.extra_code):
+                    fields_to_show.append(record.extra_code)
+                if (record.rurallocation_id):
+                    fields_to_show.append(record.rurallocation_id.name)
+                name = record.name
+                if (len(fields_to_show) > 0):
+                    name = name + ' [' + separator.join(fields_to_show) + ']'
                 result.append((record.id, name))
             return result
         else:
