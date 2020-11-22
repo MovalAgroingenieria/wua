@@ -52,7 +52,7 @@ class WizardProvisionParcel(models.TransientModel):
     provision = fields.Float(
         string='Provision',
         digits=(32, 2),
-        readonly=True)
+        required=True)
 
     @api.onchange('quotaperiod_id', 'superproduct_id')
     def _onchange_quotaperiod_superproduct(self):
@@ -96,8 +96,9 @@ class WizardProvisionParcel(models.TransientModel):
         quotaperiod = self.quotaperiod_id
         superproduct = self.superproduct_id
         parcel = self.parcel_id
+        provision = self.provision
         data_ok, error_message = self._check_data(
-            quotaperiod, superproduct, parcel)
+            quotaperiod, superproduct, parcel, provision)
         if not data_ok:
             raise exceptions.ValidationError(error_message)
         quotaperiod_model = self.env['wua.quotaperiod']
@@ -105,8 +106,6 @@ class WizardProvisionParcel(models.TransientModel):
         quotaperiodlineparcel_model = self.env['wua.quotaperiod.line.parcel']
         quota_model = self.env['wua.quota']
         hydricmovement_model = self.env['wua.hydricmovement']
-        provision = quotaperiod_model.get_provision(
-            quotaperiod, superproduct)
         # 1. Create a new record for the quotaperiod-line
         quotaperiod_line = quotaperiodline_model.search(
             [('quotaperiod_id', '=', quotaperiod.id),
@@ -207,7 +206,7 @@ class WizardProvisionParcel(models.TransientModel):
             }
         return resp
 
-    def _check_data(self, quotaperiod, superproduct, parcel):
+    def _check_data(self, quotaperiod, superproduct, parcel, provision):
         data_ok = True
         error_message = ''
         if (not self.env['wua.quotaperiod'].exists_superproduct_in_quotaperiod(
@@ -221,6 +220,9 @@ class WizardProvisionParcel(models.TransientModel):
             data_ok = False
             error_message = _('The parcel is already included in the '
                               'quota period/superproduct.')
+        if (data_ok and provision < 0):
+            data_ok = False
+            error_message = _('Incorrect Provision Value.')
         return data_ok, error_message
 
     def _get_value_from_translation(self, module, src):

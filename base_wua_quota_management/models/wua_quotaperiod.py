@@ -215,11 +215,15 @@ class WuaQuotaperiod(models.Model):
     def _compute_balances_to_next_quotaperiod(self):
         for record in self:
             balances_to_next_quotaperiod = False
-            if record.hydricmovement_ids:
-                filtered_hydricmovement_ids = filter(
-                    lambda x: x['type'] == 'output_next_quota',
-                    record.hydricmovement_ids)
-                if filtered_hydricmovement_ids:
+            self.env.cr.execute("""
+                SELECT COUNT(*) FROM wua_hydricmovement
+                WHERE quotaperiod_id=""" + str(record.id) + """ AND
+                type='output_next_quota'""")
+            query_results = self.env.cr.dictfetchall()
+            if query_results and query_results[0].get('count') is not None:
+                number_of_hydricmovements_output_next_quota = \
+                    query_results[0].get('count')
+                if number_of_hydricmovements_output_next_quota > 0:
                     balances_to_next_quotaperiod = True
             record.balances_to_next_quotaperiod = \
                 balances_to_next_quotaperiod
@@ -228,11 +232,15 @@ class WuaQuotaperiod(models.Model):
     def _compute_balances_from_prev_quotaperiod(self):
         for record in self:
             balances_from_prev_quotaperiod = False
-            if record.hydricmovement_ids:
-                filtered_hydricmovement_ids = filter(
-                    lambda x: x['type'] == 'input_prev_quota',
-                    record.hydricmovement_ids)
-                if filtered_hydricmovement_ids:
+            self.env.cr.execute("""
+                SELECT COUNT(*) FROM wua_hydricmovement
+                WHERE quotaperiod_id=""" + str(record.id) + """ AND
+                type='input_prev_quota'""")
+            query_results = self.env.cr.dictfetchall()
+            if query_results and query_results[0].get('count') is not None:
+                number_of_hydricmovements_input_prev_quota = \
+                    query_results[0].get('count')
+                if number_of_hydricmovements_input_prev_quota > 0:
                     balances_from_prev_quotaperiod = True
             record.balances_from_prev_quotaperiod = \
                 balances_from_prev_quotaperiod
@@ -319,8 +327,7 @@ class WuaQuotaperiod(models.Model):
                 'domain': [('id', 'in', self.quota_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
-                            'search_default_active_agriculturalseason': True,
-                            'search_default_grouped_superproduct': True}
+                            'search_default_active_agriculturalseason': True}
                 }
             return act_window
 
@@ -349,9 +356,7 @@ class WuaQuotaperiod(models.Model):
                 'domain': [('id', 'in', self.hydricmovement_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
-                            'search_default_active_agriculturalseason': True,
-                            'search_default_grouped_superproduct': True,
-                            'search_default_grouped_partner': True}
+                            'search_default_active_agriculturalseason': True}
                 }
             return act_window
 

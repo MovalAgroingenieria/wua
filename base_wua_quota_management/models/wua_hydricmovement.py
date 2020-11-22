@@ -461,10 +461,19 @@ class WuaHydricmovement(models.Model):
             resp = _('Multiple Assignment') + '. ' + \
                 _('Quota Period') + ': ' + initial_date_str
         if type == 'pos_indiv_assign':
+            category_name = ''
+            category = hydricmovement.individualinput_id.category_id
+            category_no_variation = self.env.ref(
+                'base_wua_quota_management.'
+                'individualinputcategory_no_variation')
+            if category and category != category_no_variation:
+                category_name = category.name
             reason = hydricmovement.individualinput_id.reason
             suffix = ''
+            if category_name:
+                suffix = suffix + '. ' + category_name
             if reason:
-                suffix = '. ' + _('Reason') + ': ' + reason
+                suffix = suffix + '. ' + _('Reason') + ': ' + reason
             resp = _('Positive Individual-Input') + suffix
         if type == 'received_cession':
             reason = hydricmovement.source_cession_id.reason
@@ -502,10 +511,19 @@ class WuaHydricmovement(models.Model):
                 _('Intake') + ': ' + \
                 intake_name
         if type == 'neg_indiv_assign':
+            category_name = ''
+            category = hydricmovement.individualinput_id.category_id
+            category_no_variation = self.env.ref(
+                'base_wua_quota_management.'
+                'individualinputcategory_no_variation')
+            if category and category != category_no_variation:
+                category_name = category.name
             reason = hydricmovement.individualinput_id.reason
             suffix = ''
+            if category_name:
+                suffix = suffix + '. ' + category_name
             if reason:
-                suffix = '. ' + _('Reason') + ': ' + reason
+                suffix = suffix + '. ' + _('Reason') + ': ' + reason
             resp = _('Negative Individual-Input') + suffix
         if type == 'granted_cession':
             reason = hydricmovement.cession_id.reason

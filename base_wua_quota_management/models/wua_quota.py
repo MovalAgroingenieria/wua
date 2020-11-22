@@ -401,6 +401,8 @@ class WuaQuota(models.Model):
                         volume_of_hydric_consumption = \
                             (data_parcel['volume'] *
                              partnerlink.water_costs_percentage / 100)
+                        if volume_of_hydric_consumption == 0:
+                            continue
                         hydric_consumptions.append({
                             'quotaperiod_id': quotaperiod.id,
                             'superproduct_id': superproduct_id,
@@ -481,6 +483,8 @@ class WuaQuota(models.Model):
                 partner = partnerlink.partner_id
                 volume_of_hydric_consumption = \
                     (volume * partnerlink.water_costs_percentage / 100)
+                if volume_of_hydric_consumption == 0:
+                    continue
                 quota = self.env['wua.quota'].search(
                     [('quotaperiod_id', '=', quotaperiod.id),
                      ('superproduct_id', '=', superproduct.id),
@@ -532,6 +536,8 @@ class WuaQuota(models.Model):
                     partner = partnerlink.partner_id
                     volume_of_hydric_consumption = \
                         (volume * partnerlink.water_costs_percentage / 100)
+                    if volume_of_hydric_consumption == 0:
+                        continue
                     quota = self.env['wua.quota'].search(
                         [('quotaperiod_id', '=', quotaperiod.id),
                          ('superproduct_id', '=', superproduct.id),

@@ -186,9 +186,7 @@ class WuaAgriculturalseason(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.quota_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True,
-                            'search_default_grouped_quotaperiod': True,
-                            'search_default_grouped_superproduct': True}
+                            'compressed_quotaperiod': True}
                 }
             return act_window
 
@@ -216,10 +214,7 @@ class WuaAgriculturalseason(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.hydricmovement_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True,
-                            'search_default_grouped_quotaperiod': True,
-                            'search_default_grouped_superproduct': True,
-                            'search_default_grouped_partner': True}
+                            'compressed_quotaperiod': True}
                 }
             return act_window
 

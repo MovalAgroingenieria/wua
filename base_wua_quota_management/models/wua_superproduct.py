@@ -149,12 +149,14 @@ class WuaSuperproduct(models.Model):
         for record in self:
             number_of_quotas = 0
             if active_agriculturalseason_id:
-                filtered_quota_ids = filter(
-                    lambda x: x['agriculturalseason_id'] ==
-                    active_agriculturalseason_id,
-                    record.quota_ids)
-                if filtered_quota_ids:
-                    number_of_quotas = len(filtered_quota_ids)
+                self.env.cr.execute("""
+                    SELECT COUNT(*) FROM wua_quota
+                    WHERE agriculturalseason_id=%s AND
+                    superproduct_id=%s""", (active_agriculturalseason_id.id,
+                                            record.id))
+                query_results = self.env.cr.dictfetchall()
+                if query_results and query_results[0].get('count') is not None:
+                    number_of_quotas = query_results[0].get('count')
             record.number_of_quotas = number_of_quotas
 
     @api.multi
@@ -164,13 +166,14 @@ class WuaSuperproduct(models.Model):
         for record in self:
             number_of_hydricmovements = 0
             if active_agriculturalseason_id:
-                filtered_hydricmovement_ids = filter(
-                    lambda x: x['agriculturalseason_id'] ==
-                    active_agriculturalseason_id,
-                    record.hydricmovement_ids)
-                if filtered_hydricmovement_ids:
-                    number_of_hydricmovements = \
-                        len(filtered_hydricmovement_ids)
+                self.env.cr.execute("""
+                    SELECT COUNT(*) FROM wua_hydricmovement
+                    WHERE agriculturalseason_id=%s AND
+                    superproduct_id=%s""", (active_agriculturalseason_id.id,
+                                            record.id))
+                query_results = self.env.cr.dictfetchall()
+                if query_results and query_results[0].get('count') is not None:
+                    number_of_hydricmovements = query_results[0].get('count')
             record.number_of_hydricmovements = number_of_hydricmovements
 
     @api.multi
@@ -268,7 +271,7 @@ class WuaSuperproduct(models.Model):
                 'wua_quota_view_search')
             act_window = {
                 'type': 'ir.actions.act_window',
-                'name': _('Quotas'),
+                'name': _('Quotas') + ' (' + self.name + ')',
                 'res_model': 'wua.quota',
                 'view_type': 'form',
                 'view_mode': 'tree',
@@ -278,8 +281,7 @@ class WuaSuperproduct(models.Model):
                 'domain': [('id', 'in', self.quota_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
-                            'search_default_active_agriculturalseason': True,
-                            'search_default_grouped_quotaperiod': True}
+                            'search_default_active_agriculturalseason': True}
                 }
             return act_window
 
@@ -298,7 +300,7 @@ class WuaSuperproduct(models.Model):
                 'wua_hydricmovement_view_search')
             act_window = {
                 'type': 'ir.actions.act_window',
-                'name': _('Hydric Movements'),
+                'name': _('Hydric Movements') + ' (' + self.name + ')',
                 'res_model': 'wua.hydricmovement',
                 'view_type': 'form',
                 'view_mode': 'tree',
@@ -308,9 +310,7 @@ class WuaSuperproduct(models.Model):
                 'domain': [('id', 'in', self.hydricmovement_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
-                            'search_default_active_agriculturalseason': True,
-                            'search_default_grouped_quotaperiod': True,
-                            'search_default_grouped_partner': True}
+                            'search_default_active_agriculturalseason': True}
                 }
             return act_window
 
