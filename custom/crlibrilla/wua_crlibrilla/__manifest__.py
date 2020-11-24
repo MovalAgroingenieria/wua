@@ -18,6 +18,7 @@
         "views/wua_gravconsumption_view.xml",
         "views/wua_watering_view.xml",
         "views/wua_invoiceset_view.xml",
+        "reports/wua_wateringrequest_report.xml",
     ],
     "installable": True,
     "application": False,
