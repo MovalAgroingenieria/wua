@@ -14,6 +14,12 @@ class WuaIrrigationConfiguration(models.TransientModel):
         comodel_name='product.product',
         help='Default type of water for gravity consumptions')
 
+    default_set_product_id_for_wateringrequest = fields.Boolean(
+        string='Set Default Product for Wateringrequest',
+        default=True,
+        help='If active, the value of Default Water Type will be suggested '
+             'on a wateringrequest creation',)
+
     overprice_with_irrigation_worker = fields.Float(
         string='Overprice for assist. irrig.',
         digits=(32, 2),
@@ -31,3 +37,6 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'overprice_with_irrigation_worker',
                            self.overprice_with_irrigation_worker)
+        values.set_default('wua.irrigation.configuration',
+                           'default_set_product_id_for_wateringrequest',
+                           self.default_set_product_id_for_wateringrequest)
