@@ -9,6 +9,12 @@ class WuaWatering(models.Model):
     _inherit = 'wua.watering'
     _description = 'Entity (watering)'
 
+    number_of_invoiced_consumptions = fields.Integer(
+        name='Number of Invoiced Consumptions',
+        store=False,
+        compute='_compute_number_of_invoiced_consumptions',
+    )
+
     @api.model_cr
     def init(self):
         default_product = self._default_product_id()
@@ -42,6 +48,18 @@ class WuaWatering(models.Model):
         required=True,
         index=True,
         ondelete='restrict')
+
+    @api.depends('gravconsumption_ids',
+                 'gravconsumption_ids.invoiced_consumption')
+    def _compute_number_of_invoiced_consumptions(self):
+        for record in self:
+            number_of_invoiced_consumptions = 0
+            if (record.gravconsumption_ids):
+                number_of_invoiced_consumptions = len(
+                    record.gravconsumption_ids.filtered(
+                        lambda x: x.invoiced_consumption))
+            record.number_of_invoiced_consumptions = \
+                number_of_invoiced_consumptions
 
     @api.multi
     def unlink(self):

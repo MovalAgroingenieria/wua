@@ -13,6 +13,18 @@
                  domain="[('categ_id.productcategory_code','=',8)]"
                  attrs="{'readonly':[('initialized', '=', True)]}"/>
             </xpath>
+            <xpath expr="//field[@name='is_open']"
+             position="after">
+                <field name="number_of_invoiced_consumptions" invisible="1"/>
+            </xpath>
+            <xpath expr="//button[@name='cancel_watering']"
+             position="attributes">
+                <attribute name="attrs">
+                  {'invisible': ['|',
+                  ('number_of_invoiced_consumptions', '>', 0),
+                  ('state', '!=', 'validated')]}
+                  </attribute>
+            </xpath>
         </field>
     </record>
 
@@ -20,7 +32,7 @@
         <field name="name">Waterings (search view)</field>
         <field name="model">wua.watering</field>
         <field name="inherit_id"
-               ref="base_wua_gravity_irrigation.wua_watering_view_search"/>        
+               ref="base_wua_gravity_irrigation.wua_watering_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='wateringperiod']" position="after">
                 <filter string="Water Type" name="product"
