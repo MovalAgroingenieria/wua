@@ -611,6 +611,34 @@ class WuaWatering(models.Model):
             return act_window
 
     @api.multi
+    def cancel_watering(self):
+        self.ensure_one()
+        gravconsumption_to_remove = self.gravconsumption_ids.filtered(
+            lambda x: x.gravconsumption_type == 'distribution')
+        gravconsumption_to_remove.unlink()
+        gravconsumption_to_cancel = self.gravconsumption_ids.filtered(
+            lambda x: x.gravconsumption_type == 'request')
+        consumptions_to_select_ids = gravconsumption_to_cancel.mapped(
+            lambda x: x.id)
+        gravconsumption_to_cancel.write(
+            {
+                'state': 'proposed',
+                'watering_id': None,
+                'selected': False
+            }
+        )
+        self.initialized = False
+        self.state = 'draft'
+        self.select_consumptions()
+        new_gravconsumptions = self.gravconsumption_ids.filtered(
+            lambda x: x.gravconsumption_type == 'request')
+        new_gravconsumptions.filtered(lambda x: x.rejected).write(
+            {'rejected': False})
+        gravconsumptions_to_unselect = new_gravconsumptions.filtered(
+            lambda x: x.id not in consumptions_to_select_ids)
+        gravconsumptions_to_unselect.write({'selected': False})
+
+    @api.multi
     def select_consumptions(self):
         self.ensure_one()
         if not self.initialized:

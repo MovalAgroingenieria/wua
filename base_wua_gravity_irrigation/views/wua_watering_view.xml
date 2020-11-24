@@ -29,6 +29,12 @@
                                     [('state', '!=', 'calculated')]}"
                             groups="base_wua.group_wua_manager"
                             confirm="Are you sure you want to do this operation?"/>
+                    <button name="cancel_watering"
+                            type="object" string="CANCEL"
+                            attrs="{'invisible':
+                                    [('state', '!=', 'validated')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,calculated,validated"/>
