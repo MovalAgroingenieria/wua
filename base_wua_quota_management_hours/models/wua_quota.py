@@ -115,7 +115,8 @@ class WuaQuota(models.Model):
             value_m3_hour = 0.0
         if not hours_as_hhmm:
             value_m3_hour = \
-                self.transform_float_to_locale(value_m3_hour, 2)
+                self.env['wua.parcel'].transform_float_to_locale(
+                    value_m3_hour, 2)
         if hours_as_hhmm:
             # Floor division with positive numbers (a // b != -a // b)
             is_negative = False
@@ -126,14 +127,13 @@ class WuaQuota(models.Model):
                 timedelta(hours=value_m3_hour).total_seconds()
             hours = duration_seconds // 3600
             minutes = (duration_seconds % 3600) // 60
-            #seconds = (duration_seconds % 60)
+            # seconds = (duration_seconds % 60)
             value_m3_hour = "%02d:%02d" % (hours, minutes)
             if is_negative:
                 value_m3_hour = '-' + value_m3_hour
         return value_m3_hour
 
     def transform_to_quota_hours_format_form_view(self, value_m3, value_hours):
-        vol_hours = \
-            str(self.transform_float_to_locale(value_m3, 2)) +\
-            _(' m³ ') + '(' + value_hours + _(' hours') + ')'
+        vol_hours = str(self.env['wua.parcel'].transform_float_to_locale(
+            value_m3, 2)) + _(' m³ ') + '(' + value_hours + _(' hours') + ')'
         return vol_hours

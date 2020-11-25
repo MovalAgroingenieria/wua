@@ -49,7 +49,7 @@ class WuaCropplan(models.Model):
                 for quota in quotas:
                     superproduct = '<b>' + quota.superproduct_id.name + '</b>'
                     balance = '%.2f' % quota.balance
-                    balance = self.env['wua.quota'].transform_float_to_locale(
+                    balance = self.env['wua.parcel'].transform_float_to_locale(
                         quota.balance, 2)
                     balance = balance + _(' m³')
                     if quota.balance < 0:

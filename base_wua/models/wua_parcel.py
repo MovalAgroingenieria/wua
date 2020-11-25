@@ -9,6 +9,7 @@ import logging
 import subprocess
 import io
 import base64
+import locale
 from pyproj import Proj, transform
 from lxml import etree
 from collections import OrderedDict
@@ -1810,6 +1811,21 @@ class WuaParcel(models.Model):
                 'type': 'ir.actions.act_url',
                 'url': url,
                 'target': 'new', }
+
+    # # # # # # # # # # # # # # # # # # # # # # #
+    # Common methods to be used for all modules #
+    # # # # # # # # # # # # # # # # # # # # # # #
+
+    # Float to user locale format
+    # self.env['wua.parcel'].transform_float_to_locale(<float>, <precision>)
+    # self.env['wua.parcel'].transform_float_to_locale(5.1235, 2)
+    @api.model
+    def transform_float_to_locale(self, float_number, precision):
+        precision = '%.' + str(precision) + 'f'
+        locale.setlocale(locale.LC_NUMERIC, self.env.context['lang'] + '.utf8')
+        formated_float_number = locale.format(precision, float_number, True)
+        locale.resetlocale(locale.LC_NUMERIC)
+        return formated_float_number
 
 
 class WuaParcelSubparcel(models.Model):

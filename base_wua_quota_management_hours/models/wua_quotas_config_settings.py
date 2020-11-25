@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from datetime import timedelta
-import locale
 from odoo import models, fields, api
 
 
@@ -70,7 +69,7 @@ class WuaQuotasConfiguration(models.TransientModel):
                 value_m3_hour = 0.0
             if not hours_as_hhmm:
                 value_m3_hour = self.env[
-                    'wua.quota'].transform_float_to_locale(value_m3_hour, 5)
+                    'wua.parcel'].transform_float_to_locale(value_m3_hour, 5)
             if hours_as_hhmm:
                 # Floor division with positive numbers (a // b != -a // b)
                 is_negative = False

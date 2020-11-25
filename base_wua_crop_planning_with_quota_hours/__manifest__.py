@@ -4,9 +4,9 @@
 
 {
     "name": "Water Users Association: New functionalities of quotas in hours "
-            "for gravity irrigation",
+            "for crop plans",
     "summary": "New improvements to the user experience, such as get the "
-               "current balances in form view of watering requests.",
+               "current balances in form view of crop plans.",
     "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
@@ -14,7 +14,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_quota_management_hours",
-        "base_wua_gravity_irrigation_with_quota",
+        "base_wua_crop_planning_with_quota",
     ],
     "data": [],
     "installable": True,

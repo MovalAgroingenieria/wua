@@ -5,8 +5,8 @@
 from odoo import models, _
 
 
-class WuaWateringrequest(models.Model):
-    _inherit = 'wua.wateringrequest'
+class WuaCropplan(models.Model):
+    _inherit = 'wua.cropplan'
 
     # Overwrite original method
     def _get_html_quota_balance(self, partner):

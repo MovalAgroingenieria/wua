@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# 2020 Moval Agroingeniería
+# 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, _
 
 
-class WuaWateringrequest(models.Model):
-    _inherit = 'wua.wateringrequest'
+class WuaIrrigationreport(models.Model):
+    _inherit = 'wua.irrigationreport'
 
     # Overwrite original method
     def _get_html_quota_balance(self, partner):
