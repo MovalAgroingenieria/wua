@@ -3,8 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from datetime import timedelta
-import re
-import numpy as np
+import locale
 from odoo import models, fields, api
 
 
@@ -70,10 +69,8 @@ class WuaQuotasConfiguration(models.TransientModel):
             else:
                 value_m3_hour = 0.0
             if not hours_as_hhmm:
-                value_m3_hour = np.format_float_positional(
-                    np.float(value_m3_hour), unique=False, precision=5)
-                value_m3_hour = \
-                    self.transform_float_to_spanish(value_m3_hour)
+                value_m3_hour = self.env[
+                    'wua.quota'].transform_float_to_locale(value_m3_hour, 5)
             if hours_as_hhmm:
                 # Floor division with positive numbers (a // b != -a // b)
                 is_negative = False
@@ -89,11 +86,3 @@ class WuaQuotasConfiguration(models.TransientModel):
                 if is_negative:
                     value_m3_hour = '-' + value_m3_hour
             record.equivalence_hour_format = value_m3_hour
-
-    def transform_float_to_spanish(self, float_number):
-        thousand_sep = "."
-        decimal_sep = ","
-        float_number = str(float_number)
-        integer, decimal = float_number.split(".")
-        integer = re.sub(r"\B(?=(?:\d{3})+$)", thousand_sep, integer)
-        return integer + decimal_sep + decimal

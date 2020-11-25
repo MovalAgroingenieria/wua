@@ -944,3 +944,11 @@ class WuaQuota(models.Model):
             quota_ids = list(set(quota_ids))
             resp = self.env['wua.quota'].browse(quota_ids)
         return resp
+
+    def transform_float_to_locale(self, float_number, precision):
+        precision = '%.' + str(precision) + 'f'
+        locale.setlocale(locale.LC_NUMERIC, self.env.context['lang'] + '.utf8')
+        formated_float_number = locale.format(precision, float_number, True)
+        locale.resetlocale(locale.LC_NUMERIC)
+        return formated_float_number
+
