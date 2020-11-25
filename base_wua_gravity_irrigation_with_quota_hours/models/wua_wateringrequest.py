@@ -27,7 +27,7 @@ class WuaWateringrequest(models.Model):
                 for quota in quotas:
                     superproduct = '<b>' + quota.superproduct_id.name + '</b>'
                     balance = '%.2f' % quota.balance
-                    balance = self.env['wua.quota'].transform_float_to_spanish(balance)
+                    balance = self.env['wua.quota'].transform_float_to_locale(balance)
                     balance = balance + _(' m³')
                     balance_hours = self.env['wua.quota'].transform_to_quota_hours_format(quota.balance)
                     balance_hours = balance_hours + _(' hours')
