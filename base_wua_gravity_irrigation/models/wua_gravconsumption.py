@@ -475,7 +475,8 @@ class WuaGravconsumption(models.Model):
     @api.multi
     def unlink(self):
         for record in self:
-            if record.state == 'planned' or record.state == 'executed':
+            if (not self._context.get('force_remove') and
+                    (record.state == 'planned' or record.state == 'executed')):
                 raise exceptions.UserError(_(
                     'You cannot delete a gravity consumption in a planned or '
                     'executed state. First you must delete the watering.'))

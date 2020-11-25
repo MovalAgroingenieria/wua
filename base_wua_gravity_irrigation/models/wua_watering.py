@@ -615,7 +615,7 @@ class WuaWatering(models.Model):
         self.ensure_one()
         gravconsumption_to_remove = self.gravconsumption_ids.filtered(
             lambda x: x.gravconsumption_type == 'distribution')
-        gravconsumption_to_remove.unlink()
+        gravconsumption_to_remove.with_context(force_remove=True).unlink()
         gravconsumption_to_cancel = self.gravconsumption_ids.filtered(
             lambda x: x.gravconsumption_type == 'request')
         consumptions_to_select_ids = gravconsumption_to_cancel.mapped(

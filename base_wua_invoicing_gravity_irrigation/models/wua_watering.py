@@ -11,7 +11,6 @@ class WuaWatering(models.Model):
 
     number_of_invoiced_consumptions = fields.Integer(
         name='Number of Invoiced Consumptions',
-        store=False,
         compute='_compute_number_of_invoiced_consumptions',
     )
 
@@ -49,8 +48,7 @@ class WuaWatering(models.Model):
         index=True,
         ondelete='restrict')
 
-    @api.depends('gravconsumption_ids',
-                 'gravconsumption_ids.invoiced_consumption')
+    @api.multi
     def _compute_number_of_invoiced_consumptions(self):
         for record in self:
             number_of_invoiced_consumptions = 0
