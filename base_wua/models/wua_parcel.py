@@ -1822,7 +1822,8 @@ class WuaParcel(models.Model):
     @api.model
     def transform_float_to_locale(self, float_number, precision):
         precision = '%.' + str(precision) + 'f'
-        locale.setlocale(locale.LC_NUMERIC, self.env.context['lang'] + '.utf8')
+        locale.setlocale(locale.LC_NUMERIC,
+                         str(self.env.context['lang'] + '.utf8'))
         formated_float_number = locale.format(precision, float_number, True)
         locale.resetlocale(locale.LC_NUMERIC)
         return formated_float_number
