@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 Moval Agroingeniería
+# 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, _, exceptions
@@ -17,6 +17,14 @@ class WuaGravconsumption(models.Model):
     watering_duration_dechours_str = fields.Char(
         string='Duration (provisional)',
         compute='_compute_watering_duration_dechours_str')
+
+    confirmed_request = fields.Boolean(
+        string="Confirmed request",
+        default=False)
+
+    reported_time = fields.Boolean(
+        string="Reported time",
+        default=False)
 
     @api.constrains('watering_duration_dechours')
     def check_watering_duration_dechours(self):
@@ -63,3 +71,68 @@ class WuaGravconsumption(models.Model):
                     watering_duration_dechours = watering_duration_dechours + \
                         1
             gravcons.watering_duration_dechours = watering_duration_dechours
+
+
+    @api.multi
+    def change_to_confirmed(self):
+        self.ensure_one()
+        self.confirmed_request = True
+
+    @api.multi
+    def set_as_confirmed(self, active_gravconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        gravconsumptions = self.env['wua.gravconsumption'].browse(
+            active_gravconsumptions)
+        for gravconsumption in gravconsumptions:
+            if not gravconsumption.confirmed_request:
+                gravconsumption.change_to_confirmed()
+
+    @api.multi
+    def change_to_unconfirmed(self):
+        self.ensure_one()
+        self.confirmed_request = False
+
+    @api.multi
+    def set_as_unconfirmed(self, active_gravconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        gravconsumptions = self.env['wua.gravconsumption'].browse(
+            active_gravconsumptions)
+        for gravconsumption in gravconsumptions:
+            if gravconsumption.confirmed_request:
+                gravconsumption.change_to_unconfirmed()
+
+    @api.multi
+    def change_reported_time_to_confirmed(self):
+        self.ensure_one()
+        self.reported_time = True
+
+    @api.multi
+    def set_reported_time_as_confirmed(self, active_gravconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        gravconsumptions = self.env['wua.gravconsumption'].browse(
+            active_gravconsumptions)
+        for gravconsumption in gravconsumptions:
+            if not gravconsumption.reported_time:
+                gravconsumption.change_reported_time_to_confirmed()
+
+    @api.multi
+    def change_reported_time_to_unconfirmed(self):
+        self.ensure_one()
+        self.reported_time = False
+
+    @api.multi
+    def set_reported_time_as_unconfirmed(self, active_gravconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        gravconsumptions = self.env['wua.gravconsumption'].browse(
+            active_gravconsumptions)
+        for gravconsumption in gravconsumptions:
+            if gravconsumption.reported_time:
+                gravconsumption.change_reported_time_to_unconfirmed()

@@ -24,6 +24,19 @@
           <field name="watering_duration" invisible="1"/>
           <field name="watering_duration_dechours"/>
         </xpath>
+        <xpath expr="//field[@name='subparcel_id']" position="replace">
+          <field name="subparcel_id" invisible="1"/>
+          <field name="irrigationgate_id"/>
+        </xpath>
+        <xpath expr="//field[@name='area_official']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='watering_volume']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='extra_volume']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
       </field>
   </record>
 
@@ -78,5 +91,98 @@
         </xpath>
       </field>
   </record>
+
+    <record id="wua_gravconsumption_view_search" model="ir.ui.view">
+        <field name="name">Gravity Consumptions (search view)</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="inherit_id" ref="base_wua_gravity_irrigation.wua_gravconsumption_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='cancelled']" position="after">
+                <separator/>
+                <filter string="Confirmed request: Yes" name="confirmed_request_yes"
+                    domain="[('confirmed_request','=', True)]"/>
+                <filter string="Confirmed request: No" name="confirmed_request_no"
+                    domain="[('confirmed_request','=', False)]"/>
+                <separator/>
+                <filter string="Confirmed report time: Yes" name="confirmed_reported_time_yes"
+                    domain="[('reported_time','=', True)]"/>
+                <filter string="Confirmed report time: No" name="confirmed_reported_time_no"
+                    domain="[('reported_time','=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="wua_set_consumption_as_confirmed" model="ir.actions.server">
+        <field name="name">Set as confirmed</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_confirmed(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_consumption_as_confirmed" model="ir.values">
+        <field name="name">Set consumptions as confirmed</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_confirmed'))"/>
+    </record>
+
+    <record id="wua_set_consumption_as_unconfirmed" model="ir.actions.server">
+        <field name="name">Reverse confirmation</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_unconfirmed(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_consumption_as_unconfirmed" model="ir.values">
+        <field name="name">Set consumption as unconfirmed</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_consumption_as_unconfirmed'))"/>
+    </record>
+
+    <record id="wua_set_reported_time_as_confirmed" model="ir.actions.server">
+        <field name="name">Confirm reported time</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_reported_time_as_confirmed(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_reported_time_as_confirmed" model="ir.values">
+        <field name="name">Confirm reported times</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_reported_time_as_confirmed'))"/>
+    </record>
+
+    <record id="wua_set_reported_time_as_unconfirmed" model="ir.actions.server">
+        <field name="name">Reverse confirmation reported time</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_reported_time_as_unconfirmed(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_reported_time_as_unconfirmed" model="ir.values">
+        <field name="name">Reverse confirmation reported times</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_reported_time_as_unconfirmed'))"/>
+    </record>
 
 </odoo>
