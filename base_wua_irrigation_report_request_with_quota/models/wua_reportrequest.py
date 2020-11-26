@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, _
 
 
 class WuaReportrequest(models.Model):
@@ -48,7 +48,9 @@ class WuaReportrequest(models.Model):
                 body = ''
                 for quota in quotas:
                     superproduct = '<b>' + quota.superproduct_id.name + '</b>'
-                    balance = '%.2f' % quota.balance
+                    balance = self.env['wua.parcel'].transform_float_to_locale(
+                        quota.balance, 2)
+                    balance = balance + _(' m³')
                     if quota.balance < 0:
                         balance = '<span style="color:red">' + balance + \
                             '</span>'

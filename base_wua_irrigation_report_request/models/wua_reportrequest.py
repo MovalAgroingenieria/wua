@@ -16,7 +16,7 @@ class WuaReportrequest(models.Model):
     def _default_partner_id(self):
         resp = None
         user = self.env.user
-        if user.has_group('base_wua.group_wua_user'):
+        if user.has_group('base_wua.group_wua_portal_user'):
             partner = self.env['res.partner'].browse(user.partner_id.id)
             if partner and partner.is_wua_partner:
                 resp = partner.id
@@ -26,6 +26,13 @@ class WuaReportrequest(models.Model):
         active_agricultural_season = self.env['wua.agriculturalseason'].search(
             [('active_agriculturalseason', '=', True)])
         return active_agricultural_season
+
+    def _default_is_portal_user(self):
+        resp = None
+        user = self.env.user
+        if user.has_group('base_wua.group_wua_portal_user'):
+            resp = True
+        return resp
 
     partner_id = fields.Many2one(
         string='Partner',
@@ -116,7 +123,7 @@ class WuaReportrequest(models.Model):
 
     is_portal_user = fields.Boolean(
         string='Created by the partner',
-        default=False,
+        default=_default_is_portal_user,
         compute='_compute_is_portal_user')
 
     user_id = fields.Many2one(
@@ -165,7 +172,8 @@ class WuaReportrequest(models.Model):
                 partner_name = record.partner_id.name + ' ' + \
                     '[' + str(record.partner_id.partner_code) + ']'
                 language = record.partner_id.lang
-                product = record.with_context({'lang': language}).product_id.name
+                product = \
+                    record.with_context({'lang': language}).product_id.name
                 name = request_date_str + ' - ' + partner_name + ' - ' + \
                     product
             result.append((record.id, name))
@@ -191,6 +199,11 @@ class WuaReportrequest(models.Model):
         request = self
         if request.state == 'validated':
             if request.irrigationreport_id:
+                if request.irrigationreport_id.state == 'validated':
+                    raise exceptions.UserError(
+                        _('The associated irrigation report is already '
+                          'validated. It is not possible to return the draft '
+                          'state.'))
                 associated_irr_report = \
                     self.env['wua.irrigationreport'].browse(
                         request.irrigationreport_id.id)
@@ -291,13 +304,14 @@ class WuaReportrequest(models.Model):
     def _add_irrigation_report_from_request(self, request):
         resp = None
         report_initial_time = datetime.datetime.today().strftime('%Y-%m-%d')
+        notes = ""
         if request.notes:
             notes = _('<b>Notes from report request:</b><br\>') + \
-                    request.notes
+                request.notes
         # Search intakes associated to product
         intake_id = 0
         intake_ids = self.env['wua.intake'].search(
-            [('product_id','=',request.product_id.id)])
+            [('product_id', '=', request.product_id.id)])
         if intake_ids:
             intake_id = intake_ids[0].id
         if intake_id:

@@ -4,9 +4,9 @@
     <record id="view_partner_form" model="ir.ui.view">
         <field name="name">Partners (form view)</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="inherit_id" ref="base_wua_irrigation_report.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='toggle_active']" position="after">
+            <xpath expr="//button[@name='action_see_irrigationreports']" position="before">
                 <button name="action_see_reportrequests"
                         type="object"
                         class="oe_stat_button"

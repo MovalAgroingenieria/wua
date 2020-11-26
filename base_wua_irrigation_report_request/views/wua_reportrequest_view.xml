@@ -7,7 +7,6 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <field name="id" invisible="1"/>
-                <!-- <field name="mapped_to_irrigationreport" invisible="1"/>  -->
                 <field name="cancelled" invisible="1"/>
                 <field name="is_portal_user" invisible="1"/>
                 <header>
@@ -120,9 +119,6 @@
                 <filter name="is_cancelled" string="Cancelled"
                         domain="[('cancelled','=',True)]"/>
                 <group expand="0" string="Group By">
-                    <filter name="agriculturalseason"
-                            string="Active Agricultural Season"
-                            context="{'group_by':'agriculturalseason_id'}"/>
                     <filter name="product" string="Product"
                             context="{'group_by':'product_id'}"/>
                     <filter name="partner" string="Partner"

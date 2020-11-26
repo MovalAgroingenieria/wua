@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-# 2019 Moval Agroingeniería
+# 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-import datetime
-from lxml import etree
-from odoo import models, fields, api, exceptions, _
+
+from odoo import models, fields, api
 
 
 class WuaIrrigationReport(models.Model):
@@ -23,9 +22,9 @@ class WuaIrrigationReport(models.Model):
         compute='_compute_reportrequest_id')
 
     mapped_to_reportrequest = fields.Boolean(
-      string='Mapped to a report request',
-      store=True,
-      compute='_compute_mapped_to_reportrequest')
+        string='Mapped to a report request',
+        store=True,
+        compute='_compute_mapped_to_reportrequest')
 
     @api.depends('reportrequest_ids')
     def _compute_reportrequest_id(self):
