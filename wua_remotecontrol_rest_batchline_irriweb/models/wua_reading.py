@@ -69,4 +69,4 @@ class WuaReading(models.Model):
                     })
             else:
                 error_message = _(' It is not possible to get the readings. ')
-            return [readings, error_message, error_watermeters]
+        return [readings, error_message, error_watermeters]
