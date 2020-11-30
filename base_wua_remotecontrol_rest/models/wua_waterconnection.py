@@ -68,7 +68,7 @@ class WuaWaterconnection(models.Model):
     @api.depends('telecontrol_ids')
     def _compute_waterconnection_telecontrol_info(self):
         for record in self:
-            if record.telecontrol_ids:
+            if (record.telecontrol_ids and (len(record.telecontrol_ids) > 0)):
                 wc_telecontrol = record.telecontrol_ids[-1]
                 record.last_data_time = wc_telecontrol.data_time
                 record.last_waterflow = wc_telecontrol.waterflow
@@ -128,35 +128,34 @@ class WuaWaterconnection(models.Model):
         label_waterflow = _('Waterflow')
         last_waterflow = self.env['wua.parcel'].transform_float_to_locale(
             self.last_waterflow, 4)
-        label_valve_open = _('Valve Open')
-        label_valve_scheduled = _('Valve Scheduled')
-        label_yes = _('Yes')
-        label_no = _('No')
-        info_color = 'unset'
-        data_time = datetime.datetime.strptime(
-            self.last_data_time, '%Y-%m-%d %H:%M:%S')
-        data_time = pytz.timezone('UTC').localize(data_time)
-        if (self.env.user.tz):
-            local_timezone = pytz.timezone(self.env.user.tz)
-            data_time = data_time.astimezone(local_timezone)
-        last_data_time = data_time.strftime('%d/%m/%Y %H:%M:%S')
         if (self.last_valve_open):
-            label_valve_open_value = label_yes
+            label_valve_open = _('Valve Open: Yes')
         else:
-            label_valve_open_value = label_no
+            label_valve_open = _('Valve Open: No')
         if (self.last_valve_scheduled):
-            label_valve_scheduled_value = label_yes
+            label_valve_scheduled = _('Valve Scheduled: Yes')
         else:
-            label_valve_scheduled_value = label_no
+            label_valve_scheduled = _('Valve Scheduled: No')
+        info_color = 'unset'
+        if (self.last_data_time):
+            data_time = datetime.datetime.strptime(
+                self.last_data_time, '%Y-%m-%d %H:%M:%S')
+            data_time = pytz.timezone('UTC').localize(data_time)
+            if (self.env.user.tz):
+                local_timezone = pytz.timezone(self.env.user.tz)
+                data_time = data_time.astimezone(local_timezone)
+            last_data_time = data_time.strftime('%d/%m/%Y %H:%M:%S')
+        else:
+            last_data_time = '-'
         if (self.last_waterflow > 0):
             info_color = 'blue'
         body = '<div style="display: flex; justify-content: space-around;">' +\
             '<span>' + label_date + ': ' + last_data_time + '</span>' + \
             '<span>' + label_waterflow + ': ' + \
             str(last_waterflow) + ' (l/s)' + '</span>' + \
-            '<span>' + label_valve_open + ': ' + label_valve_open_value + \
-            '</span><span>' + label_valve_scheduled + ': ' + \
-            label_valve_scheduled_value + '</span>' + '</div>'
+            '<span>' + label_valve_open + \
+            '</span><span>' + label_valve_scheduled + \
+            '</span>' + '</div>'
         resp = '<div class="panel-body text-left" ' + \
                'style="background:#f4f6f6;border-radius:4px;' + \
                'border-color:#696969;border-width:1px;' + \

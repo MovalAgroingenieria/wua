@@ -141,15 +141,18 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     'valve_scheduled': info['valve_scheduled'],
                     'waterconnection_id': info['waterconnection_id'],
                 }
-                newest_info = wc.telecontrol_ids[-1]
-                if (newest_info.data_time < info['data_time']):
-                    # WHILE For the case when MAX_COUNT_HIST get lower than
-                    # current data
-                    while (wc.telecontrol_ids and
-                            len(wc.telecontrol_ids) >=
-                            self.MAX_COUNT_HIST):
-                        # Unlink the last one
-                        wc.telecontrol_ids[0].unlink()
+                if (wc.telecontrol_ids and len(wc.telecontrol_ids) > 0):
+                    newest_info = wc.telecontrol_ids[-1]
+                    if (newest_info.data_time < info['data_time']):
+                        # WHILE For the case when MAX_COUNT_HIST get lower than
+                        # current data
+                        while (wc.telecontrol_ids and
+                                len(wc.telecontrol_ids) >=
+                                self.MAX_COUNT_HIST):
+                            # Unlink the last one
+                            wc.telecontrol_ids[0].unlink()
+                        self.create(waterconnection_telecontrol_params)
+                else:
                     self.create(waterconnection_telecontrol_params)
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)
