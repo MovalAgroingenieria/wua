@@ -5,3 +5,4 @@
 from . import res_partner
 from . import wua_parcel
 from . import wua_reading
+from . import wua_waterconnection_telecontrol
