@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="wua_cron_import_waterconnection_telecontrol_info_action" model="ir.cron">
+            <field name="name">Get-Waterconnection Telecontrol Info Service</field>
+            <field name="interval_number">60</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">wua.waterconnection.telecontrol</field>
+            <field name="function">do_import_waterconnection_telecontrol_info</field>
+            <field name="args">(True, False)</field>
+            <field name="active" eval="True"/>
+    </record>
+
+    </data>
+
+</odoo>

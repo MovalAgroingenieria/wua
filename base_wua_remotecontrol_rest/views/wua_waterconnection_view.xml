@@ -5,7 +5,7 @@
         <field name="name">Water Connections (form view)</field>
         <field name="model">wua.waterconnection</field>
         <field name="inherit_id"
-               ref="base_wua_infrastructure.wua_waterconnection_view_form"/>
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
                 <field name="remotecontrol_enabled" invisible="1"/>
@@ -24,6 +24,43 @@
             <xpath expr="//field[@name='last_reading_value']" position="after">
               <field name="conversion_factor"/>
             </xpath>
+            <xpath expr="//group[@name='slave_data']" position="before">
+              <field name="html_last_telecontrol_info" nolabel="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_tree" model="ir.ui.view">
+        <field name="name">Water Connections (tree view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_tree"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='number_of_parcels']" position="after">
+            <field name="last_data_time"/>
+            <field name="last_waterflow"/>
+          </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_search" model="ir.ui.view">
+        <field name="name">Water Connections (search view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_search"/>
+        <field name="arch" type="xml">
+          <xpath expr="//filter[@name='withoutwatermeter']" position="after">
+            <separator/>
+            <filter string="Valve Open: Yes" name="last_valve_open_true"
+             domain="[('last_valve_open','=',True)]"/>
+            <filter string="Valve Open: No" name="last_valve_open_false"
+             domain="[('last_valve_open','=',False)]"/>
+            <separator/>
+            <filter string="Valve Scheduled: Yes" name="last_valve_scheduled_true"
+             domain="[('last_valve_scheduled','=',True)]"/>
+            <filter string="Valve Scheduled: No" name="last_valve_scheduled_false"
+             domain="[('last_valve_scheduled','=',False)]"/>
+          </xpath>
         </field>
     </record>
 

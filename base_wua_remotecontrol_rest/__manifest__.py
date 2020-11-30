@@ -17,6 +17,7 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "data/wua_waterconnection_telecontrol_cron.xml",
         "views/resources.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/res_partner_view.xml",

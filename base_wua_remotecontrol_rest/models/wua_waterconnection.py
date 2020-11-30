@@ -2,6 +2,8 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
+import pytz
 import logging
 from odoo import models, fields, api, exceptions, _
 
@@ -18,6 +20,36 @@ class WuaWaterconnection(models.Model):
         required=True,
         default=1)
 
+    telecontrol_ids = fields.One2many(
+        string="Waterconnection telecontrols",
+        comodel_name="wua.waterconnection.telecontrol",
+        inverse_name="waterconnection_id")
+
+    last_waterflow = fields.Float(
+        string='Waterconnection Waterflow (l/s)',
+        digits=(32, 4),
+        compute="_compute_waterconnection_telecontrol_info",
+        store=True)
+
+    last_valve_open = fields.Boolean(
+        string='Valve Open',
+        compute="_compute_waterconnection_telecontrol_info",
+        store=True)
+
+    last_valve_scheduled = fields.Boolean(
+        string='Valve Scheluded',
+        compute="_compute_waterconnection_telecontrol_info",
+        store=True)
+
+    last_data_time = fields.Datetime(
+        string='Last Capture Date',
+        compute="_compute_waterconnection_telecontrol_info",
+        store=True)
+
+    html_last_telecontrol_info = fields.Html(
+        string='Telecontrol Info',
+        compute='_compute_html_last_telecontrol_info')
+
     _sql_constraints = [
         ('conversion_factor_positive', 'CHECK (conversion_factor > 0)',
          'Conversion factor must be greater than 0.'),
@@ -32,6 +64,16 @@ class WuaWaterconnection(models.Model):
         for record in self:
             record.remotecontrol_enabled = \
                 enable_remotecontrol & import_from_waterconnection
+
+    @api.depends('telecontrol_ids')
+    def _compute_waterconnection_telecontrol_info(self):
+        for record in self:
+            if record.telecontrol_ids:
+                wc_telecontrol = record.telecontrol_ids[-1]
+                record.last_data_time = wc_telecontrol.data_time
+                record.last_waterflow = wc_telecontrol.waterflow
+                record.last_valve_open = wc_telecontrol.valve_open
+                record.last_valve_scheduled = wc_telecontrol.valve_scheduled
 
     @api.multi
     def do_import_readings_from_waterconnection(self):
@@ -72,3 +114,55 @@ class WuaWaterconnection(models.Model):
                 readings = [x for x in readings if x['waterconnection_id']
                             in active_waterconnections]
                 self.env['wua.reading'].save_readings(readings)
+
+    @api.multi
+    def _compute_html_last_telecontrol_info(self):
+        for record in self:
+            html_last_telecontrol_info = ''
+            html_last_telecontrol_info = self._get_html_last_telecontrol_info()
+            record.html_last_telecontrol_info = html_last_telecontrol_info
+
+    def _get_html_last_telecontrol_info(self):
+        resp = ''
+        label_date = _('Capture Date')
+        label_waterflow = _('Waterflow')
+        last_waterflow = self.env['wua.parcel'].transform_float_to_locale(
+            self.last_waterflow, 4)
+        label_valve_open = _('Valve Open')
+        label_valve_scheduled = _('Valve Scheduled')
+        label_yes = _('Yes')
+        label_no = _('No')
+        info_color = 'unset'
+        data_time = datetime.datetime.strptime(
+            self.last_data_time, '%Y-%m-%d %H:%M:%S')
+        data_time = pytz.timezone('UTC').localize(data_time)
+        if (self.env.user.tz):
+            local_timezone = pytz.timezone(self.env.user.tz)
+            data_time = data_time.astimezone(local_timezone)
+        last_data_time = data_time.strftime('%d/%m/%Y %H:%M:%S')
+        if (self.last_valve_open):
+            label_valve_open_value = label_yes
+        else:
+            label_valve_open_value = label_no
+        if (self.last_valve_scheduled):
+            label_valve_scheduled_value = label_yes
+        else:
+            label_valve_scheduled_value = label_no
+        if (self.last_waterflow > 0):
+            info_color = 'blue'
+        body = '<div style="display: flex; justify-content: space-around;">' +\
+            '<span>' + label_date + ': ' + last_data_time + '</span>' + \
+            '<span>' + label_waterflow + ': ' + \
+            str(last_waterflow) + ' (l/s)' + '</span>' + \
+            '<span>' + label_valve_open + ': ' + label_valve_open_value + \
+            '</span><span>' + label_valve_scheduled + ': ' + \
+            label_valve_scheduled_value + '</span>' + '</div>'
+        resp = '<div class="panel-body text-left" ' + \
+               'style="background:#f4f6f6;border-radius:4px;' + \
+               'border-color:#696969;border-width:1px;' + \
+               'border-style:solid;padding-top:8px;' + \
+               'padding-bottom:11px;' + \
+               'margin-left:40px;margin-right:40px;' + \
+               'color: ' + info_color + ';">' + \
+               body + '</div>'
+        return resp
