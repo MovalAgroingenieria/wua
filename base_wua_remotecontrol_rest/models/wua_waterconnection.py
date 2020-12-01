@@ -160,7 +160,7 @@ class WuaWaterconnection(models.Model):
                'style="background:#f4f6f6;border-radius:4px;' + \
                'border-color:#696969;border-width:1px;' + \
                'border-style:solid;padding-top:8px;' + \
-               'padding-bottom:11px;' + \
+               'padding-bottom:8px;' + \
                'margin-left:40px;margin-right:40px;' + \
                'color: ' + info_color + ';">' + \
                body + '</div>'
