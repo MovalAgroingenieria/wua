@@ -12,6 +12,8 @@ from odoo import models, _
 class WuaWaterconnectionTelecontrol(models.Model):
     _inherit = 'wua.waterconnection.telecontrol'
 
+    FACTOR_CONVERSION_M3H_LS = 3.6
+
     def get_token(self, url_remotecontrol_rest,
                   url_remotecontrol_rest_username,
                   url_remotecontrol_rest_password):
@@ -75,7 +77,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     wc_all_info.append({
                         'waterconnection': waterconnection,
                         # m³/h -> l/s
-                        'waterflow': waterflow / 3.6,
+                        'waterflow': waterflow / self.FACTOR_CONVERSION_M3H_LS,
                         'valve_open': valve_open,
                         'valve_scheduled': valve_scheduled,
                         'data_time': data_time
