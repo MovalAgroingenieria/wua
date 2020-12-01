@@ -70,10 +70,12 @@ class WuaWaterconnection(models.Model):
         for record in self:
             if (record.telecontrol_ids and (len(record.telecontrol_ids) > 0)):
                 wc_telecontrol = record.telecontrol_ids[-1]
-                record.last_data_time = wc_telecontrol.data_time
-                record.last_waterflow = wc_telecontrol.waterflow
-                record.last_valve_open = wc_telecontrol.valve_open
-                record.last_valve_scheduled = wc_telecontrol.valve_scheduled
+                record.write({
+                    'last_data_time': wc_telecontrol.data_time,
+                    'last_waterflow': wc_telecontrol.waterflow,
+                    'last_valve_open': wc_telecontrol.valve_open,
+                    'last_valve_scheduled': wc_telecontrol.valve_scheduled
+                })
 
     @api.multi
     def do_import_readings_from_waterconnection(self):
