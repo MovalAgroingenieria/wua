@@ -132,6 +132,16 @@ class WuaReportrequest(models.Model):
         default=lambda self: self.env.user,
         readonly=True)
 
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Currency',
+        compute='_compute_currency_id')
+
+    credit_overdue = fields.Monetary(
+        string='Overdue Receivable',
+        compute='_compute_credit_overdue',
+        help="Overdue amount this customer owes you.")
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing report request name.')
         ]
@@ -160,6 +170,22 @@ class WuaReportrequest(models.Model):
             if record.irrigationreport_id:
                 mapped_to_irrigationreport = True
             record.mapped_to_irrigationreport = mapped_to_irrigationreport
+
+    @api.depends('partner_id')
+    def _compute_currency_id(self):
+        for record in self:
+            currency_id = None
+            if (record.partner_id):
+                currency_id = record.partner_id.currency_id
+            record.currency_id = currency_id
+
+    @api.depends('partner_id', 'currency_id')
+    def _compute_credit_overdue(self):
+        for record in self:
+            credit_overdue = 0
+            if (record.partner_id and record.currency_id):
+                credit_overdue = record.partner_id.credit_overdue
+            record.credit_overdue = credit_overdue
 
     @api.multi
     def name_get(self):

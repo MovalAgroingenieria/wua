@@ -14,10 +14,12 @@
         "mail_tracking",
         "base_wua_gravity_irrigation",
         "base_wua_irrigation_report",
+        "base_wua_irrigation_report_request",
     ],
     "data": [
         "views/res_partner_view.xml",
         "views/wua_irrigationreport_view.xml",
+        "views/wua_reportrequest_view.xml",
     ],
     "installable": True,
     "application": False,

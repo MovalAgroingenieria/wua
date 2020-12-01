@@ -16,6 +16,7 @@
         "base_wua_infrastructure_primary",
         "wua_structure_irrigation",
         "web_widget_digitized_signature",
+        "base_wua_invoicing",
     ],
     "data": [
         "security/security.xml",

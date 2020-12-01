@@ -9,6 +9,7 @@
                 <field name="id" invisible="1"/>
                 <field name="cancelled" invisible="1"/>
                 <field name="is_portal_user" invisible="1"/>
+                <field name="credit_overdue" invisible="1"/>
                 <header>
                     <button name="validate_reportrequest" type="object" class="oe_highlight"
                             string="Validate"
@@ -34,6 +35,11 @@
                     <div name="warning_signature" class="oe_edit_only" style="display: inline-block;color:red;padding-top:10px;"
                          attrs="{'invisible':['|','|',('is_portal_user', '=', False),('signature_image', '!=', False),('state', '=', 'validated')]}">
                          NOTICE: It will be necessary to sign
+                    </div>
+                    <div name="hascreditoverdue"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
+                        ( CREDIT OVERDUE )
                     </div>
                     <field name="state" widget="statusbar" statusbar_visible="draft,validated"/>
                 </header>
@@ -231,10 +237,13 @@
     </record>
 
     <!-- Menu entries -->
-    <menuitem id="reportrequest_menu"
-            name="Report Requests"
-            parent="base_wua_irrigation_report.base_wua_irrigation_report_menu"
-            sequence="3"
-            action="wua_reportrequest_action"/>
+    <!-- Overwrite original to change position -->
+    <menuitem name="Reports" id="base_wua_irrigation_report.base_wua_irrigationreport_menu"
+        parent="base_wua_irrigation_report.base_wua_irrigation_report_menu" sequence="3"
+        action="base_wua_irrigation_report.wua_irrigationreport_action"/>
+
+    <menuitem name="Report Requests" id="reportrequest_menu"
+        parent="base_wua_irrigation_report.base_wua_irrigation_report_menu" sequence="2"
+        action="wua_reportrequest_action"/>
 
 </odoo>
