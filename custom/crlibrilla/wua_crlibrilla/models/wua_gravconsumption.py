@@ -72,7 +72,6 @@ class WuaGravconsumption(models.Model):
                         1
             gravcons.watering_duration_dechours = watering_duration_dechours
 
-
     @api.multi
     def change_to_confirmed(self):
         self.ensure_one()

@@ -11,6 +11,10 @@
           <field name="watering_duration" invisible="1"/>
           <field name="watering_duration_dechours"/>
         </xpath>
+        <xpath expr="//field[@name='wateringrequest_id']" position="after">
+          <field name="confirmed_request"/>
+          <field name="reported_time"/>
+        </xpath>
       </field>
     </record>
 
@@ -67,6 +71,19 @@
           <field name="watering_duration" invisible="1"/>
           <field name="watering_duration_dechours"/>
         </xpath>
+        <xpath expr="//field[@name='area_official']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='watering_volume']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='extra_volume']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='state']" position="after">
+          <field name="confirmed_request"/>
+          <field name="reported_time"/>
+        </xpath>
       </field>
   </record>
 
@@ -79,6 +96,23 @@
         <xpath expr="//field[@name='watering_duration']" position="replace">
           <field name="watering_duration" invisible="1"/>
           <field name="watering_duration_dechours"/>
+        </xpath>
+        <xpath expr="//field[@name='subparcel_id']" position="replace">
+          <field name="subparcel_id" invisible="1"/>
+          <field name="irrigationgate_id"/>
+        </xpath>
+        <xpath expr="//field[@name='area_official']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='watering_volume']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='extra_volume']" position="attributes">
+          <attribute name="invisible">1</attribute>
+        </xpath>
+        <xpath expr="//field[@name='state']" position="after">
+          <field name="confirmed_request"/>
+          <field name="reported_time"/>
         </xpath>
       </field>
   </record>
@@ -117,6 +151,45 @@
     </record>
 
     <!-- Actions -->
+    <!--
+    <record id="base_wua_gravity_irrigation.wua_set_consumption_as_selected" model="ir.actions.server">
+        <field name="name">Select for calculation</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_selected(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_action_set_consumption_as_selected" model="ir.values">
+        <field name="name">Set consumption as selected</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('base_wua_gravity_irrigation.wua_set_consumption_as_selected'))"/>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_set_consumption_as_unselected" model="ir.actions.server">
+        <field name="name">Unselect for calculation</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_unselected(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_action_set_consumption_as_unselected" model="ir.values">
+        <field name="name">Set consumption as unselected</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('base_wua_gravity_irrigation.wua_set_consumption_as_unselected'))"/>
+    </record>
+     -->
+
+
     <record id="wua_set_consumption_as_confirmed" model="ir.actions.server">
         <field name="name">Set as confirmed</field>
         <field name="model_id" ref="model_wua_gravconsumption"/>
@@ -188,5 +261,80 @@
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_reported_time_as_unconfirmed'))"/>
     </record>
+
+
+    <!--
+    <record id="base_wua_gravity_irrigation.wua_set_consumption_as_executed" model="ir.actions.server">
+        <field name="name">Set as executed (only if state is 'planned')</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_executed(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_action_set_consumption_as_executed" model="ir.values">
+        <field name="name">Set consumption as executed</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('base_wua_gravity_irrigation.wua_set_consumption_as_executed'))"/>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_set_consumption_as_planned" model="ir.actions.server">
+        <field name="name">Set as planned (only if state is 'executed')</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_planned(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_action_set_consumption_as_planned" model="ir.values">
+        <field name="name">Set consumption as planned</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('base_wua_gravity_irrigation.wua_set_consumption_as_planned'))"/>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_set_consumption_as_active" model="ir.actions.server">
+        <field name="name">Set as active (only if it's canceled)</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_active(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_action_set_consumption_as_active" model="ir.values">
+        <field name="name">Set consumption as active</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('base_wua_gravity_irrigation.wua_set_consumption_as_active'))"/>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_set_consumption_as_cancelled" model="ir.actions.server">
+        <field name="name">Set as cancelled (only if state is not 'executed')</field>
+        <field name="model_id" ref="model_wua_gravconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.gravconsumption'].set_as_cancelled(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="base_wua_gravity_irrigation.wua_action_set_consumption_as_cancelled" model="ir.values">
+        <field name="name">Set consumption as cancelled</field>
+        <field name="model">wua.gravconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('base_wua_gravity_irrigation.wua_set_consumption_as_cancelled'))"/>
+    </record>
+    -->
 
 </odoo>
