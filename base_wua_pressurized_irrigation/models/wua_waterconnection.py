@@ -33,7 +33,8 @@ class WuaWaterconnection(models.Model):
         string='Last Reading Value',
         digits=(32, 4),
         store=True,
-        compute='_compute_last_reading_value')
+        compute='_compute_last_reading_value',
+        group_operator=False)
 
     @api.depends('watermeter_id')
     def _compute_with_watermeter(self):
