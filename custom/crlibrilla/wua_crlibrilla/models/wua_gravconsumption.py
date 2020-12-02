@@ -26,6 +26,10 @@ class WuaGravconsumption(models.Model):
         string="Reported time",
         default=False)
 
+    with_notes = fields.Boolean(
+        string="With notes",
+        compute="_compute_with_notes")
+
     @api.constrains('watering_duration_dechours')
     def check_watering_duration_dechours(self):
         entire_value = str(self.watering_duration_dechours).split('.')
@@ -135,3 +139,9 @@ class WuaGravconsumption(models.Model):
         for gravconsumption in gravconsumptions:
             if gravconsumption.reported_time:
                 gravconsumption.change_reported_time_to_unconfirmed()
+
+    @api.multi
+    def _compute_with_notes(self):
+        for record in self:
+            if record.notes:
+                record.with_notes = True
