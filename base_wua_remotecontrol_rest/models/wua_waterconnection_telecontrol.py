@@ -51,6 +51,18 @@ class WuaWaterconnectionTelecontrol(models.Model):
             record.name = value
 
     @api.model
+    def create(self, vals):
+        telecontrol_info = super(WuaWaterconnectionTelecontrol, self).\
+            create(vals)
+        telecontrol_info.waterconnection_id.write({
+            'last_data_time': telecontrol_info.data_time,
+            'last_waterflow': telecontrol_info.waterflow,
+            'last_valve_open': telecontrol_info.valve_open,
+            'last_valve_scheduled': telecontrol_info.valve_scheduled
+        })
+        return telecontrol_info
+
+    @api.model
     def do_import_waterconnection_telecontrol_info(
             self, save_data=True, show_message=True):
         resp = [None, 0, '', None, 0]
@@ -131,7 +143,6 @@ class WuaWaterconnectionTelecontrol(models.Model):
         number_of_wc_info = len(wc_info)
         if number_of_wc_info > 0:
             for info in wc_info:
-                # Remove? Or Keep history?
                 wc = self.env['wua.waterconnection'].browse(
                     info['waterconnection_id'])
                 waterconnection_telecontrol_params = {

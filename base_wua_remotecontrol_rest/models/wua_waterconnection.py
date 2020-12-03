@@ -27,24 +27,16 @@ class WuaWaterconnection(models.Model):
 
     last_waterflow = fields.Float(
         string='Waterconnection Waterflow (l/s)',
-        digits=(32, 4),
-        compute="_compute_waterconnection_telecontrol_info",
-        store=True)
+        digits=(32, 4),)
 
     last_valve_open = fields.Boolean(
-        string='Valve Open',
-        compute="_compute_waterconnection_telecontrol_info",
-        store=True)
+        string='Valve Open',)
 
     last_valve_scheduled = fields.Boolean(
-        string='Valve Scheluded',
-        compute="_compute_waterconnection_telecontrol_info",
-        store=True)
+        string='Valve Scheluded',)
 
     last_data_time = fields.Datetime(
-        string='Last Capture Date',
-        compute="_compute_waterconnection_telecontrol_info",
-        store=True)
+        string='Last Capture Date',)
 
     html_last_telecontrol_info = fields.Html(
         string='Telecontrol Info',
@@ -64,18 +56,6 @@ class WuaWaterconnection(models.Model):
         for record in self:
             record.remotecontrol_enabled = \
                 enable_remotecontrol & import_from_waterconnection
-
-    @api.depends('telecontrol_ids')
-    def _compute_waterconnection_telecontrol_info(self):
-        for record in self:
-            if (record.telecontrol_ids and (len(record.telecontrol_ids) > 0)):
-                wc_telecontrol = record.telecontrol_ids[-1]
-                record.write({
-                    'last_data_time': wc_telecontrol.data_time,
-                    'last_waterflow': wc_telecontrol.waterflow,
-                    'last_valve_open': wc_telecontrol.valve_open,
-                    'last_valve_scheduled': wc_telecontrol.valve_scheduled
-                })
 
     @api.multi
     def do_import_readings_from_waterconnection(self):
