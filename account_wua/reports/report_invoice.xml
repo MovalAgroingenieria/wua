@@ -50,7 +50,7 @@
                         </t>
                     </div>
                     <div class="row" style="margin-top: 4px;">
-                        <!-- This div is modified by custom crargos, crbaixpriorat -->
+                        <!-- This div is modified by custom modules -->
                         <div name="invoice_address">
                             <div class="row" style="border: 1px solid white; margin: 4px 10px;">
                                 <div class="col-xs-12" style="display: table;">
@@ -247,8 +247,7 @@
                                         </tr>
 
                                         <!-- This field is modified by account_invoice_report_due_list 
-                                             The modification is done only in instances where module is installed: 
-                                             cr_baix_priorat, cr_almazora, cr_argos, cgrabaran -->
+                                             The modification is done only in instances where module is installed -->
                                         <tr name="tr_due_date" t-if="o.date_due and o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">
                                             <td><strong><span>Due Date:</span></strong></td>
                                             <td class="text-right"><span t-field="o.date_due"/></td>
@@ -259,7 +258,7 @@
                                             <p t-field="o.date_due"/>
                                         </div>
 
-                                        <!-- Do not show Custumer Code -->
+                                        <!-- Do not show Costumer Code -->
                                         <tr name="tr_customer_code" t-if="o.partner_id.ref" style="display: none;">
                                             <td><span><strong>Customer Code:</strong></span></td>
                                             <td class="text-right"><span t-field="o.partner_id.ref"/></td>
@@ -307,7 +306,7 @@
                         <!-- Top Comment from account_invoice_supplier comments template -->
 
                         <!-- Overwrite original table -->
-                        <!-- Modify by custom crargos, cralmazora, crsanpedro, crtorreabraham -->
+                        <!-- Modify by custom modules -->
                         <table class="table" name="details_table">
                             <col name="product" width="10%"/>
                             <col name="description" width="44%"/>
@@ -346,7 +345,7 @@
                                     </td>
                                     <td name="taxes">
                                         <!-- Change tax column from tax description to tax name (see below) -->
-                                        <!-- Hidden in custom crargos and cralmazora -->
+                                        <!-- Hidden in some custom modules -->
                                         <span t-esc="', '.join(map(lambda x: (x.name), l.invoice_line_tax_ids))"/>
                                     </td>
                                     <td name="amount" class="text-right">
@@ -506,9 +505,9 @@
 
                         <!-- Table added by account_invoice_report_due_list if o.multi_due -->
 
-                        <p t-if="o.fiscal_position_id.note">
+                        <p t-if="o.sudo().fiscal_position_id.note">
                             <strong>Fiscal Position Remark:</strong>
-                            <span t-field="o.fiscal_position_id.note"/>
+                            <span t-field="o.sudo().fiscal_position_id.note"/>
                         </p>
                     </div>
                 </div><!-- end payment term section -->
