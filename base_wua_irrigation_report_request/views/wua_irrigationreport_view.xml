@@ -10,6 +10,12 @@
                 <field name="mapped_to_reportrequest" invisible="1"/>
                 <field name="reportrequest_id" attrs="{'invisible':[('mapped_to_reportrequest','=', False)]}"/>
             </xpath>
+            <xpath expr="//field[@name='report_initial_time']" position="attributes">
+                <attribute name="attrs">{'readonly': [('id', '>', 0), ('mapped_to_reportrequest', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='report_end_time']" position="attributes">
+                <attribute name="attrs">{'readonly': [('id', '>', 0), ('mapped_to_reportrequest', '=', False)]}</attribute>
+            </xpath>
         </field>
     </record>
 

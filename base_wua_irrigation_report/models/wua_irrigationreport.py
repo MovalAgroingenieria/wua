@@ -192,7 +192,8 @@ class WuaIrrigationReport(models.Model):
                 raise exceptions.ValidationError(_('The delivery note must be'
                                                    ' 0 or a greater number'))
 
-    @api.depends('intake_id', 'agriculturalseason_id')
+    @api.depends('report_initial_time', 'report_end_time', 'intake_id',
+                 'agriculturalseason_id')
     def _compute_irrigationreport_number_name(self):
         for record in self:
             irrigationreport_number = 1
