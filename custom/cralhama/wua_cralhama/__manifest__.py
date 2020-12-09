@@ -20,6 +20,8 @@
         "views/res_partner_view.xml",
         "views/wua_irrigationreport_view.xml",
         "views/wua_reportrequest_view.xml",
+        "views/resources.xml",
+        "reports/report_wua_irrigationreport_request.xml",
     ],
     "installable": True,
     "application": False,

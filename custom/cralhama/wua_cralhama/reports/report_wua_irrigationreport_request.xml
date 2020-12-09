@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_wua_irrigationreport_request_document"
+        inherit_id="base_wua_irrigation_report_request.report_wua_irrigationreport_request_document">
+
+        <xpath expr="//t[@name='volume_1']" position="after">
+            <tr name="expected_amount">
+                 <td><span>Amount:</span></td>
+                 <t t-if="o.expected_amount">
+                     <td class="text-right">
+                          <strong>
+                            <span t-field="o.expected_amount"/>
+                        </strong>
+                     </td>
+                 </t>
+            </tr>
+        </xpath>
+        <xpath expr="//t[@name='volume_2']" position="after">
+            <tr name="expected_amount">
+                 <td><span>Amount:</span></td>
+                 <t t-if="o.expected_amount">
+                     <td class="text-right">
+                          <strong>
+                            <span t-field="o.expected_amount"/>
+                        </strong>
+                     </td>
+                 </t>
+            </tr>
+        </xpath>
+
+    </template>
+
+</odoo>
