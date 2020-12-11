@@ -10,6 +10,7 @@ class WuaWateringrequest(models.Model):
 
     @api.model
     def create(self, vals):
+        has_notes = ""
         if 'gravconsumption_ids' in vals and 'notes' in vals:
             has_gravconsumptions = vals.get('gravconsumption_ids')
             has_notes = vals.get('notes')
@@ -23,6 +24,7 @@ class WuaWateringrequest(models.Model):
 
     @api.multi
     def write(self, vals):
+        has_notes = ""
         if 'notes' in vals:
             has_notes = vals.get('notes')
             if has_notes:
