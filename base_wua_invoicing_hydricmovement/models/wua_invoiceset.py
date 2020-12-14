@@ -215,7 +215,7 @@ class WuaInvoicesetLine(models.Model):
                 quotaperiod_id, superproduct_id, partner_id,
                 event_time, volume, description, type
                 FROM wua_hydricmovement WHERE of_active_agriculturalseason
-                AND superproduct_id = %s""",
+                AND superproduct_id = %s AND NOT invoiced_hydricmovement""",
                                     (user_id, user_id, invoicesetline_id,
                                      superproduct_id))
                 self.env.cr.commit()
