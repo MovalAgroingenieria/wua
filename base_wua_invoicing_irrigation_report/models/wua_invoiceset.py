@@ -2,6 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import pytz
 import datetime
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
@@ -99,6 +100,11 @@ class WuaInvoiceset(models.Model):
         if irrigationreport:
             intake_name = irrigationreport.intake_id.name
             language = irrigationreport.partner_id.lang
+            tz = irrigationreport.partner_id.tz
+            if (not tz):
+                tz = 'Europe/Madrid'
+            userTz = pytz.timezone(tz)
+            utcTz = pytz.timezone('UTC')
             water_type = irrigationreport.with_context(
                 {'lang': language}).product_id.product_tmpl_id.name
             delivery_note = irrigationreport.delivery_note
@@ -121,6 +127,8 @@ class WuaInvoiceset(models.Model):
                 consumption_label = default_consumption_label
             report_initial_time = datetime.datetime.strptime(
                 irrigationreport.report_initial_time, '%Y-%m-%d %H:%M:%S')
+            report_initial_time = utcTz.localize(report_initial_time).\
+                astimezone(userTz)
             if (data_in_hours):
                 report_initial_time = report_initial_time.strftime('%x') + \
                     ' ' + report_initial_time.strftime('%H:%M')
@@ -128,6 +136,8 @@ class WuaInvoiceset(models.Model):
                 report_initial_time = report_initial_time.strftime('%x')
             report_end_time = datetime.datetime.strptime(
                 irrigationreport.report_end_time, '%Y-%m-%d %H:%M:%S')
+            report_end_time = utcTz.localize(report_end_time).\
+                astimezone(userTz)
             if (data_in_hours):
                 report_end_time = report_end_time.strftime('%x') + ' ' + \
                     report_end_time.strftime('%H:%M')
