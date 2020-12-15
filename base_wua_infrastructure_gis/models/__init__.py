@@ -4,3 +4,4 @@
 
 from . import wua_irrigationshed
 from . import wua_irrigationditch
+from . import wua_waterconnection
