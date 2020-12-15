@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-16 14:35+0000\n"
-"PO-Revision-Date: 2020-11-16 14:35+0000\n"
+"POT-Creation-Date: 2020-12-15 15:12+0000\n"
+"PO-Revision-Date: 2020-12-15 15:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -282,7 +282,7 @@ msgid "Duplicated hydraulic order."
 msgstr "Nº ordre hidràulic duplicat"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:143
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:211
 #, python-format
 msgid "Duplicated position."
 msgstr "Posició duplicada."
@@ -314,7 +314,7 @@ msgstr "Punt de subministrament en blanc."
 #: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:254
 #: code:addons/base_wua_infrastructure/models/wua_irrigationgate.py:169
 #: code:addons/base_wua_infrastructure/models/wua_irrigationshed.py:236
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:132
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:200
 #, python-format
 msgid "Empty Value."
 msgstr "Valor en blanc."
@@ -413,6 +413,7 @@ msgstr "Configuració GIS"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_gis_googlemaps_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_parcel_gis_viewer_link
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_gis_viewer_link
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationditch_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_form
 msgid "GIS Viewer"
@@ -430,6 +431,11 @@ msgstr "Visor GIS (zoom parcel·la)"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_tree
 msgid "GIS Viewer (zoom to point)"
 msgstr "Visor GIS (zoom a punt)"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_with_some_gis_parcel
+msgid "GIS Waterconnection"
+msgstr "GIS Waterconnection"
 
 #. module: base_wua_infrastructure
 #: model:ir.actions.server,name:base_wua_infrastructure.wua_technical_global_irrigationpoints_calculation_action
@@ -475,7 +481,7 @@ msgstr "Reg per gravetat"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Group By"
-msgstr "Agrupa per"
+msgstr "Agrupar per"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_hydraulic_order
@@ -832,6 +838,7 @@ msgstr "Name of irrigation-ditch param in the GIS viewer url"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_irrigationshed_param
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_waterconnection_param
 msgid "Name of irrigation-shed param in the GIS viewer url"
 msgstr "Nom del paràmetre caseta a la URL del visor GIS"
 
@@ -914,6 +921,11 @@ msgid "Param for irr. shed"
 msgstr "Paràmetre caseta"
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_waterconnection_param
+msgid "Param for waterconnection"
+msgstr "Paràmetre tome"
+
+#. module: base_wua_infrastructure
 #: model:ir.ui.menu,name:base_wua_infrastructure.wua_infrastructure_configuration_menu
 msgid "Parameters"
 msgstr "Paràmetres"
@@ -970,7 +982,7 @@ msgstr "Parcel·les:"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Soci"
 
 #. module: base_wua_infrastructure
 #: model:ir.actions.server,name:base_wua_infrastructure.res_partner_irrigationpoints_action
@@ -1171,7 +1183,7 @@ msgid "This irrigation gate is present in some parcels: It is not possible to ch
 msgstr "El tablacho està present en alguna parcel·la: No es pot canviar la sèquia."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:179
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:247
 #, python-format
 msgid "This water connection is present in some parcels: It is not possible to change the irrigation shed."
 msgstr "La presa està present en alguna parcel·la: No es pot canviar la caseta."

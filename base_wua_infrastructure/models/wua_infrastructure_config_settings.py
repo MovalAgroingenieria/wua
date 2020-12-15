@@ -27,6 +27,11 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         size=20,
         help='Name of irrigation-shed param in the GIS viewer url')
 
+    url_gis_viewer_waterconnection_param = fields.Char(
+        string='Param for waterconnection',
+        size=20,
+        help='Name of irrigation-shed param in the GIS viewer url')
+
     url_gis_viewer_irrigationditch_param = fields.Char(
         string='Param for irr. ditch',
         size=20,
@@ -47,6 +52,9 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_irrigationditch_param',
                            self.url_gis_viewer_irrigationditch_param)
+        values.set_default('wua.infrastructure.configuration',
+                           'url_gis_viewer_waterconnection_param',
+                           self.url_gis_viewer_waterconnection_param)
         self.assign_groups_id_to_menus()
 
     def assign_groups_id_to_menus(self):

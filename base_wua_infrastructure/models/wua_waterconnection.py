@@ -2,6 +2,9 @@
 # Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from Crypto.Cipher import AES
+import datetime
+import pytz
 from odoo import models, fields, api, exceptions, _
 
 
@@ -91,6 +94,15 @@ class WuaWaterconnection(models.Model):
         store=True,
         compute='_compute_with_pumping')
 
+    with_some_gis_parcel = fields.Boolean(
+        string='GIS Waterconnection',
+        compute='_compute_with_some_gis_parcel',
+        store='True')
+
+    gis_viewer_link = fields.Char(
+        string='GIS Viewer',
+        compute='_compute_gis_viewer_link')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_position',
@@ -103,6 +115,17 @@ class WuaWaterconnection(models.Model):
         for record in self:
             record.number_of_parcels = \
                 len(record.irrigationpoint_ids)
+
+    @api.depends('irrigationpoint_ids',
+                 'irrigationpoint_ids.parcel_id.with_gis_parcel')
+    def _compute_with_some_gis_parcel(self):
+        for record in self:
+            some_gis_parcel = False
+            for ip in record.irrigationpoint_ids:
+                if (ip.parcel_id.with_gis_parcel):
+                    some_gis_parcel = True
+                    break
+            record.with_some_gis_parcel = some_gis_parcel
 
     @api.depends('irrigationpoint_ids',
                  'irrigationpoint_ids.parcel_area_official')
@@ -124,6 +147,51 @@ class WuaWaterconnection(models.Model):
         for record in self:
             record.total_affected_area_official_hec = \
                 factor * record.total_affected_area_official
+
+    @api.multi
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        waterconnection_param = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'url_gis_viewer_waterconnection_param')
+        for record in self:
+            url_for_record = url
+            if url_for_record:
+                if waterconnection_param:
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        waterconnection_param + '=' + str(record.name)
+            if url_for_record and username and password:
+                credentials = username + "-" + password
+                credentials = credentials.ljust(32)
+                current_datetime = pytz.utc.localize(datetime.datetime.now())
+                current_datetime = current_datetime.astimezone(
+                    pytz.timezone('Europe/Madrid'))
+                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+                minimum = int(current_datetime[14:])
+                if minimum < 30:
+                    minimum = '00'
+                else:
+                    minimum = '30'
+                iv = current_datetime[:14] + minimum
+                aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+                cipher_text = aes_encryptor.encrypt(credentials)
+                cipher_text = cipher_text.encode('base64')
+                sep_char = '?'
+                if url_for_record.find('?') != -1:
+                    sep_char = '&'
+                url_for_record = url_for_record + sep_char + \
+                    "arg=" + cipher_text
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
 
     @api.constrains('name')
     def _check_name(self):
