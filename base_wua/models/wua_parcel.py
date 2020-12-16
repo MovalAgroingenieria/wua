@@ -376,7 +376,8 @@ class WuaParcel(models.Model):
         default=0)
 
     date_now = fields.Datetime(
-        default=datetime.datetime.now())
+        default=datetime.datetime.now(),
+        compute='_compute_date_now')
 
     _sql_constraints = [
         ('unique_name',
@@ -517,6 +518,11 @@ class WuaParcel(models.Model):
             if not url_for_record:
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
+
+    @api.multi
+    def _compute_date_now(self):
+        for record in self:
+            record.date_now = datetime.datetime.now()
 
     @api.multi
     def _compute_number_of_subparcels(self):
