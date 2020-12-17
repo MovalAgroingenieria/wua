@@ -22,12 +22,6 @@
         <div class="page">
 
             <div name="section_title">
-                <div name="title" style="font-size: 16;text-align: center;">
-                    <strong>Irrigation Contract</strong>
-                    <t t-if="o.state == 'draft'">
-                        <span>( DRAFT )</span>
-                    </t>
-                </div>
                 <div name="contract_num" style="text-align: right;">
                     <span>Contract number:</span>
                     <strong>
@@ -36,6 +30,12 @@
                 </div>
                 <div name="agriculturalseason_id" style="text-align: right;">
                     <span t-field="o.agriculturalseason_id"/>
+                </div>
+                <div name="title" style="font-size: 16;text-align: center;">
+                    <strong>Irrigation Contract</strong>
+                    <t t-if="o.state == 'draft'">
+                        <span>( DRAFT )</span>
+                    </t>
                 </div>
             </div>
 
@@ -203,22 +203,25 @@
                             <tr>
                                 <th>Water type</th>
                                 <th>Description</th>
-                                <th class="text-right">Volume (m³)</th>
+                                <th class="text-right" style="width: 18%">Volume (m³)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <t t-set="hydric_movements" t-value="o._get_hydricmovements(o.partner_id)"/>
+                            <t t-set="hydric_movements" t-value="o._get_hydricmovements(o.partner_id.id)"/>
+                            <t t-set="total_accounting_volume" t-value="0.0"/>
                             <t t-if="hydric_movements">
                                 <tr t-foreach="hydric_movements" t-as="h" style="page-break-inside: avoid;">
                                     <td><span t-field="h.superproduct_id.name"/></td>
                                     <td><span t-field="h.description"/></td>
-                                    <td align="right"><span t-field="h.accounting_volume"/></td>
+                                    <td align="right">
+                                        <span t-field="h.accounting_volume"/>
+                                        <t t-set="total_accounting_volume" t-value="total_accounting_volume + h.accounting_volume"/>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td></td><td></td>
                                     <td align="right">
-                                        <strong><span>Balance:</span></strong>
-                                        <span t-field="o.current_balance"/>
+                                        <strong><span>Balance:</span><span> </span></strong><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_accounting_volume, 2)"/>
                                     </td>
                                 </tr>
                             </t>

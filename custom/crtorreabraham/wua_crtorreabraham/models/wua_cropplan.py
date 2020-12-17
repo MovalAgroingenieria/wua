@@ -2,7 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api
 
 
 class WuaCropplan(models.Model):
@@ -17,8 +17,9 @@ class WuaCropplan(models.Model):
     def _get_hydricmovements(self, partner_id):
         hydric_movements = False
         hydric_movements = self.env['wua.hydricmovement'].search([
-            ('partner_id', '=', partner_id.id),
-            ('of_active_agriculturalseason', '=', True)], order='name')
+            ('partner_id', '=', partner_id),
+            ('of_active_agriculturalseason', '=', True),
+            ('type', '!=', 'pres_consumption')], order='event_time')
         return hydric_movements
 
     @api.multi
