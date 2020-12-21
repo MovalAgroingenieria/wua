@@ -116,6 +116,13 @@ class WuaReportrequest(models.Model):
         index=True,
         ondelete='restrict')
 
+    intake_id = fields.Many2one(
+        string='Intake',
+        comodel_name='wua.intake',
+        index=True,
+        ondelete='restrict',
+        required=True)
+
     mapped_to_irrigationreport = fields.Boolean(
         string='Mapped to a irrigation report',
         store=True,
@@ -334,15 +341,9 @@ class WuaReportrequest(models.Model):
         if request.notes:
             notes = _('<b>Notes from report request:</b><br\>') + \
                 request.notes
-        # Search intakes associated to product
-        intake_id = 0
-        intake_ids = self.env['wua.intake'].search(
-            [('product_id', '=', request.product_id.id)])
-        if intake_ids:
-            intake_id = intake_ids[0].id
-        if intake_id:
+        if request.intake_id:
             resp = self.env['wua.irrigationreport'].create({
-                'intake_id': intake_id,
+                'intake_id': request.intake_id.id,
                 'product_id': request.product_id.id,
                 'report_initial_time': report_initial_time,
                 'report_end_time': report_initial_time,

@@ -10,6 +10,7 @@
                 <field name="cancelled" invisible="1"/>
                 <field name="is_portal_user" invisible="1"/>
                 <field name="credit_overdue" invisible="1"/>
+                <field name="mapped_to_irrigationreport" invisible="1"/>
                 <header>
                     <button name="validate_reportrequest" type="object" class="oe_highlight"
                             string="Validate"
@@ -60,6 +61,10 @@
                             <field name="agriculturalseason_id"/>
                             <field name="product_id" domain="[('categ_id.productcategory_code','=',11)]"
                                 attrs="{'readonly': ['|',('state','=','validated'),('cancelled','=',True)]}"/>
+                            <field name="intake_id" domain="[('product_id','=', product_id)]"
+                                attrs="{'invisible': [('product_id','&lt;=', 0)],
+                                        'readonly': [('mapped_to_irrigationreport', '=', True)]
+                                       }"/>
                             <field name="hours" style="width:100px" digits="[32, 2]" widget="float_time"
                                 attrs="{'readonly': ['|',('state','=','validated'),('cancelled','=',True)]}"/>
                             <field name="volume" style="width:100px"
