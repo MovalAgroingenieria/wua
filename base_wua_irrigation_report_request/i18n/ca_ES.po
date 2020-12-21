@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-01 17:02+0000\n"
-"PO-Revision-Date: 2020-12-01 17:02+0000\n"
+"POT-Creation-Date: 2020-12-21 14:31+0000\n"
+"PO-Revision-Date: 2020-12-21 14:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,7 @@ msgid "(TIN:"
 msgstr "(NIF:"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:335
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:342
 #, python-format
 msgid "<b>Notes from report request:</b><br\\>"
 msgstr "<b>Notes de la petició:</b><br\\>"
@@ -159,7 +159,7 @@ msgid "<strong>Report&amp;nbsp;request</strong>"
 msgstr "<strong>Petició&amp;nbsp;Part&amp;nbsp;de&amp;nbsp;Reg</strong>"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:326
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:333
 #, python-format
 msgid "A portal user cannot modify a validated report request."
 msgstr "Un usuari de portal no pot modificar una Petició validada."
@@ -172,7 +172,7 @@ msgstr "Campanya activa"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_agriculturalseason_id
 msgid "Agricultural Season"
-msgstr "Campaña"
+msgstr "Campanya"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_form
@@ -182,19 +182,19 @@ msgstr "Esteu segur cancel·lar aquesta petició?"
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_form
 msgid "C A N C E L L E D"
-msgstr "C A N C E L · L A D A"
+msgstr "C A N C E L · L A T"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.actions.server,name:base_wua_irrigation_report_request.wua_cancel_reportrequests
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_form
 msgid "Cancel"
-msgstr "Treure validació"
+msgstr "Cancel·la"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_cancelled
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_search
 msgid "Cancelled"
-msgstr "Cancel·lada"
+msgstr "Cancel·lat"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model,name:base_wua_irrigation_report_request.model_wua_irrigation_configuration
@@ -209,7 +209,7 @@ msgstr "Creat per"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_is_portal_user
 msgid "Created by the partner"
-msgstr "Creada pel soci"
+msgstr "Creada pel regant"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_create_date
@@ -239,7 +239,7 @@ msgstr "Element (categoria de productes)"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model,name:base_wua_irrigation_report_request.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model,name:base_wua_irrigation_report_request.model_wua_reportrequest
@@ -272,6 +272,11 @@ msgid "Informative text for report of irrigation request"
 msgstr "Text informatiu per a totes les peticions de part de reg"
 
 #. module: base_wua_irrigation_report_request
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_intake_id
+msgid "Intake"
+msgstr "Captació"
+
+#. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_irrigationreport_id
 msgid "Irrigation Report"
 msgstr "Part de Reg"
@@ -291,7 +296,7 @@ msgid "Irrigation report request"
 msgstr "Petició part de reg"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:216
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:223
 #, python-format
 msgid "It is not possible to validate the request: the indicated type of water does not appear in any intake."
 msgstr "No és possible validar la petició: el tipus d'aigua indicada no apareix associada a cap captació."
@@ -366,12 +371,12 @@ msgstr "De campanya activa"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_credit_overdue
 msgid "Overdue Receivable"
-msgstr "Deute vençut"
+msgstr "Venç a cobrar"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,help:base_wua_irrigation_report_request.field_wua_reportrequest_credit_overdue
 msgid "Overdue amount this customer owes you."
-msgstr "Import vençut que ha de aquest client."
+msgstr "Quantitat endarrerida que aquest client li deu."
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_parcel_id
@@ -452,13 +457,13 @@ msgid "Text for request report"
 msgstr "Text per a la peticions de reg"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:230
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:237
 #, python-format
 msgid "The associated irrigation report is already validated. It is not possible to return the draft state."
 msgstr "El part de reg associat a aquesta petició ja ha estat validat. No és possible tornar a l'estat esborrany."
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:267
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:274
 #, python-format
 msgid "The partner must be the irrigator of the parcel."
 msgstr "El soci ha de ser el regant de la parcel·la."
@@ -505,17 +510,17 @@ msgid "Water Type"
 msgstr "Tipus d'aigua"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:313
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:322
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:320
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:329
 #, python-format
 msgid "You do not have permission to edit a report request."
 msgstr "No tens autorització per editar la petició de part."
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:361
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:370
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:379
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:388
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:362
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:371
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:380
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:389
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tens autorització per realitzar aquesta acció."
