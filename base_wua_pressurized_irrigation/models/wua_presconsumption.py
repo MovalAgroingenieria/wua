@@ -2,6 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from lxml import etree
 import datetime
 import pytz
 from odoo import models, fields, api, exceptions, _
@@ -113,6 +114,30 @@ class WuaPresconsumption(models.Model):
         store=True,
         compute='_compute_validated')
 
+    volume_perunitarea = fields.Float(
+        string="Volume (m³/Area U.)",
+        digits=(32, 4),
+        store=True,
+        compute='_compute_volume_perunitarea')
+
+    volume_perunitareaandday = fields.Float(
+        string="Volume (m³/Area U./day)",
+        digits=(32, 4),
+        store=True,
+        compute='_compute_volume_perunitareaandday')
+
+    volume_perunitarea_hec = fields.Float(
+        string="Volume (m³/ha)",
+        digits=(32, 4),
+        store=True,
+        compute='_compute_volume_perunitarea_hec')
+
+    volume_perunitareaandday_hec = fields.Float(
+        string="Volume (m³/ha/day)",
+        digits=(32, 4),
+        store=True,
+        compute='_compute_volume_perunitareaandday_hec')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Consumption.'),
         ('valid_reading_limits',
@@ -193,6 +218,60 @@ class WuaPresconsumption(models.Model):
                 validated = True
             record.validated = validated
 
+    @api.depends('volume_real')
+    def _compute_volume_perunitarea(self):
+        for record in self:
+            volume_perunitarea = 0
+            total_area_official = sum(
+                x.parcel_id.area_official for x in
+                record.waterconnection_id.irrigationpointwc_ids)
+            if total_area_official > 0:
+                volume_perunitarea = record.volume_real / total_area_official
+            record.volume_perunitarea = volume_perunitarea
+
+    @api.depends('volume_perunitarea')
+    def _compute_volume_perunitarea_hec(self):
+        factor = 1
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        if area_measurement_type == 1:
+            area_measurement_equivalence = \
+                self.env['ir.values'].get_default(
+                    'wua.configuration', 'area_measurement_equivalence')
+            if area_measurement_equivalence > 0:
+                factor = area_measurement_equivalence
+        for record in self:
+            record.volume_perunitarea_hec = record.volume_perunitarea * factor
+
+    @api.depends('volume_perunitarea', 'reading_initial_time',
+                 'reading_end_time')
+    def _compute_volume_perunitareaandday(self):
+        for record in self:
+            volume_perunitareaandday = 0
+            init_time = datetime.datetime.strptime(record.reading_initial_time,
+                                                   '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.datetime.strptime(record.reading_end_time,
+                                                  '%Y-%m-%d %H:%M:%S')
+            days = (end_time - init_time).days
+            days = days + 1
+            volume_perunitareaandday = record.volume_perunitarea / days
+            record.volume_perunitareaandday = volume_perunitareaandday
+
+    @api.depends('volume_perunitareaandday')
+    def _compute_volume_perunitareaandday_hec(self):
+        factor = 1
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        if area_measurement_type == 1:
+            area_measurement_equivalence = \
+                self.env['ir.values'].get_default(
+                    'wua.configuration', 'area_measurement_equivalence')
+            if area_measurement_equivalence > 0:
+                factor = area_measurement_equivalence
+        for record in self:
+            record.volume_perunitareaandday_hec = \
+                record.volume_perunitareaandday * factor
+
     @api.model
     def create(self, vals):
         agriculturalseasons = self.env['wua.agriculturalseason'].search(
@@ -246,3 +325,74 @@ class WuaPresconsumption(models.Model):
             'target': 'current',
             'context': self.env.context,
             }
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaPresconsumption, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        show_volume_perunitareaandday = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'show_volume_perunitareaandday')
+        doc = etree.XML(res['arch'])
+        area_measurement_name = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_name')
+        area_measurement_name = area_measurement_name.decode(
+            'utf_8')
+        if area_measurement_name == '':
+            area_measurement_name = 'ha'
+        area_measurement_name = area_measurement_name.lower()
+        for node in doc.xpath("//field[@name='volume_perunitarea']"):
+            original_label = \
+                self.sudo().get_value_from_translation(
+                    'wua_presconsumption',
+                    self.__class__.volume_perunitarea.string)
+            preBar = original_label.find('/')
+            if preBar != -1:
+                original_label = original_label[:preBar + 1]
+            node.set('string',
+                     original_label.decode('utf-8') +
+                     area_measurement_name + ')')
+        for node in doc.xpath("//field[@name='volume_perunitareaandday']"):
+            original_label = \
+                self.sudo().get_value_from_translation(
+                    'wua_presconsumption',
+                    self.__class__.volume_perunitareaandday.string)
+            preBar = original_label.find('/')
+            preBar2 = original_label.find('/', preBar + 1)
+            end_label = _('day')
+            if preBar2 != -1:
+                end_label = original_label[preBar2:]
+            if preBar != -1:
+                original_label = original_label[:preBar + 1]
+            node.set('string',
+                     original_label.decode('utf-8') +
+                     area_measurement_name + end_label.decode('utf-8'))
+        if show_volume_perunitareaandday:
+            for node in doc.xpath("//field[@name='volume_perunitarea']"):
+                node.set('invisible', '1')
+                node.set('modifiers',
+                         '{"invisible": true, \
+                           "tree_invisible": true}')
+        else:
+            for node in doc.xpath(
+                    "//field[@name='volume_perunitareaandday']"):
+                node.set('invisible', '1')
+                node.set('modifiers',
+                         '{"invisible": true, \
+                           "tree_invisible": true}')
+        res['arch'] = etree.tostring(doc)
+        return res
+
+    def get_value_from_translation(self, module, src):
+        resp = src
+        lang = self.env.context.get('lang')
+        translations = self.env['ir.translation']
+        condition = [('lang', '=', lang),
+                     ('module', '=', module),
+                     ('src', '=', src)]
+        filtered_translations = translations.search(condition)
+        if len(filtered_translations) > 0:
+            resp = filtered_translations[0].value
+        return resp
