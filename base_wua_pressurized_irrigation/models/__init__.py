@@ -9,3 +9,4 @@ from . import wua_reading
 from . import wua_presconsumption
 from . import wua_parcel
 from . import wua_agriculturalseason
+from . import wua_irrigation_config_settings
