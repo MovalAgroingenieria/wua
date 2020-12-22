@@ -13,10 +13,27 @@ class WuaReportrequest(models.Model):
         compute='_compute_expected_amount',
         help="Expected amount of irrigation report request.")
 
+    reportrequest_number = fields.Char(
+        string='Request Number',
+        required=True,
+        default=lambda self: self.env['ir.sequence'].next_by_code(
+            'wua.cralhama.reportrequest.seq'))
+
+    _sql_constraints = [
+        ('unique_reportrequest_number', 'UNIQUE (reportrequest_number)',
+         'Existing request number.')]
+
     @api.depends('product_id', 'currency_id', 'hours')
     def _compute_expected_amount(self):
         for record in self:
             expected_amount = 0
             if record.product_id and record.currency_id and record.hours:
-                expected_amount = record.hours * record.product_id.lst_price
+                if record.product_id.taxes_id and \
+                        record.product_id.taxes_id.amount > 0:
+                    expected_amount = \
+                        record.hours * record.product_id.taxes_id.amount * \
+                        record.product_id.lst_price
+                else:
+                    expected_amount = \
+                        record.hours * record.product_id.lst_price
             record.expected_amount = expected_amount

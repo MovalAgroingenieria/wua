@@ -3,7 +3,19 @@
 
     <template id="report_wua_irrigationreport_request_document"
         inherit_id="base_wua_irrigation_report_request.report_wua_irrigationreport_request_document">
-
+        <xpath expr="//span[@t-field='o.parcel_id']" position="replace">
+            <span t-field="o.with_context(show_extra_and_rurallocation=True).parcel_id"/>
+        </xpath>
+        <xpath expr="//tr[@name='parcel_code_1']" position="after">
+            <tr name="reportrequest_number_1">
+                <td><span>Request Number:</span></td>
+                <t t-if="o.reportrequest_number">
+                    <td class="text-right">
+                        <strong><span t-field="o.reportrequest_number"/></strong>
+                    </td>
+                </t>
+            </tr>
+        </xpath>
         <xpath expr="//t[@name='volume_1']" position="after">
             <tr name="expected_amount">
                  <td><span>Amount:</span></td>
@@ -14,6 +26,16 @@
                         </strong>
                      </td>
                  </t>
+            </tr>
+        </xpath>
+        <xpath expr="//tr[@name='parcel_code_2']" position="after">
+            <tr name="reportrequest_number_2">
+                <td><span>Request Number:</span></td>
+                <t t-if="o.reportrequest_number">
+                    <td class="text-right">
+                        <strong><span t-field="o.reportrequest_number"/></strong>
+                    </td>
+                </t>
             </tr>
         </xpath>
         <xpath expr="//t[@name='volume_2']" position="after">
@@ -28,7 +50,6 @@
                  </t>
             </tr>
         </xpath>
-
     </template>
 
 </odoo>

@@ -9,6 +9,9 @@
             <xpath expr="//field[@name='parcel_id']" position="attributes">
                 <attribute name="context">{'show_extra_and_rurallocation': True}</attribute>
             </xpath>
+            <xpath expr="//field[@name='irrigationreport_id']" position="before">
+                <field name="reportrequest_number"/>
+            </xpath>
             <xpath expr="//field[@name='volume']" position="after">
                 <field name="currency_id" invisible="1"/>
                 <field name="expected_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
@@ -21,9 +24,23 @@
         <field name="model">wua.reportrequest</field>
         <field name="inherit_id" ref="base_wua_irrigation_report_request.wua_reportrequest_view_tree"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='request_date']" position="before">
+                <field name="reportrequest_number"/>
+            </xpath>
             <xpath expr="//field[@name='state']" position="before">
                 <field name="currency_id" invisible="1"/>
                 <field name="expected_amount"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_reportrequest_view_search" model="ir.ui.view">
+        <field name="name">Report Requests (search view)</field>
+        <field name="model">wua.reportrequest</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report_request.wua_reportrequest_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']" position="after">
+                <field name="reportrequest_number"/>
             </xpath>
         </field>
     </record>

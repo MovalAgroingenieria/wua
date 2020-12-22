@@ -241,7 +241,7 @@
                                             </td>
                                         </t>
                                     </tr>
-                                    <tr name="parcel_code">
+                                    <tr name="parcel_code_1">
                                         <td><span>Parcel:</span></td>
                                         <t t-if="o.parcel_id">
                                             <td class="text-right">
@@ -289,7 +289,7 @@
                                                  <td class="text-right">
                                                       <strong>
                                                         <t t-if="hours_sexagesimal">
-                                                            <span t-esc="'%02d:%02d' % (int(o.hours), o.hours % 1 * 60)"/>
+                                                            <span t-esc="'%02d:%02d' % (int(o.hours), round(o.hours % 1 * 60))"/>
                                                         </t>
                                                         <t t-else="">
                                                             <span t-field="o.hours" t-options='{"widget": "float", "precision": 2}'/>
@@ -596,7 +596,7 @@
                                             </td>
                                         </t>
                                     </tr>
-                                    <tr name="parcel_code">
+                                    <tr name="parcel_code_2">
                                         <td><span>Parcel:</span></td>
                                         <t t-if="o.parcel_id">
                                             <td class="text-right">
@@ -644,7 +644,7 @@
                                                  <td class="text-right">
                                                       <strong>
                                                         <t t-if="hours_sexagesimal">
-                                                            <span t-esc="'%02d:%02d' % (int(o.hours), o.hours % 1 * 60)"/>
+                                                            <span t-esc="'%02d:%02d' % (int(o.hours), round(o.hours % 1 * 60))"/>
                                                         </t>
                                                         <t t-else="">
                                                             <span t-field="o.hours" t-options='{"widget": "float", "precision": 2}'/>

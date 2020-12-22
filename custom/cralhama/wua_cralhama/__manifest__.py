@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association Infrastructure (C.R.Alhama)",
     "summary": "Moval-Regadío customization for C.R.Alhama",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -22,6 +22,7 @@
         "views/wua_reportrequest_view.xml",
         "views/resources.xml",
         "reports/report_wua_irrigationreport_request.xml",
+        "data/wua_cralhama_sequences.xml",
     ],
     "installable": True,
     "application": False,

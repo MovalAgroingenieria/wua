@@ -144,7 +144,6 @@
                                          </td>
                                      </t>
                                 </tr>
-                                
                              </tbody>
                          </table>
                     </div>
@@ -160,7 +159,7 @@
                                              <td class="text-right">
                                                  <strong>
                                                       <t t-if="hours_sexagesimal">
-                                                          <span t-esc="'%02d:%02d' % (int(o.hours), o.hours % 1 * 60)"/>
+                                                          <span t-esc="'%02d:%02d' % (int(o.hours), round(o.hours % 1 * 60))"/>
                                                       </t>
                                                       <t t-else="">
                                                           <span t-field="o.hours"/>
