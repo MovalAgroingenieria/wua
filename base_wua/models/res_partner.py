@@ -64,6 +64,10 @@ class ResPartner(models.Model):
         string="Parcels, as owner",
         default=0)
 
+    parcel_owner_number_votes = fields.Integer(
+        string="Parcels, as owner (for votes)",
+        default=0)
+
     parcel_owner_area = fields.Float(
         string="Area, as owner (hectares)",
         digits=(32, 4),
@@ -74,6 +78,11 @@ class ResPartner(models.Model):
         digits=(32, 4),
         store=True,
         compute='_compute_parcel_owner_area_hec')
+
+    parcel_owner_area_hec_votes = fields.Float(
+        string="Area, as owner (hectares, for votes)",
+        digits=(32, 4),
+        default=0)
 
     parcel_lessee_number = fields.Integer(
         string="Parcels, as lessee",
@@ -340,19 +349,20 @@ class ResPartner(models.Model):
                 record.parcel_lessee_number + \
                 record.parcel_payer_number
 
-    @api.depends('parcel_owner_number', 'parcel_owner_area_hec')
+    @api.depends('parcel_owner_number_votes', 'parcel_owner_area_hec_votes')
     def _compute_number_of_votes(self):
         if len(self) != 1:
             return
         votes = 0
-        if self.parcel_owner_number > 0 or self.parcel_owner_area > 0:
+        if (self.parcel_owner_number_votes > 0 or
+           self.parcel_owner_area_hec_votes > 0):
             polling_system_type = self.env['ir.values'].get_default(
                 'wua.configuration', 'polling_system_type')
             if polling_system_type > 0:
                 if polling_system_type == 1:
-                    votes = self.parcel_owner_number
+                    votes = self.parcel_owner_number_votes
                 if polling_system_type == 2 or polling_system_type == 3:
-                    area_for_votes = self.parcel_owner_area_hec * 10000
+                    area_for_votes = self.parcel_owner_area_hec_votes * 10000
                     if polling_system_type == 2:
                         polling_system_interval = self.env['ir.values'].\
                             get_default('wua.configuration',

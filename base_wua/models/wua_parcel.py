@@ -1299,7 +1299,7 @@ class WuaParcel(models.Model):
         if len(self) == 1:
             for partnerlink in self.partnerlink_ids:
                 self._changed_partners.append(partnerlink.partner_id.id)
-            if 'partnerlink_ids' in vals:
+            if ('partnerlink_ids' in vals or 'with_votes' in vals):
                 self.recalculate_partners()
 
     def get_value_from_translation(self, module, src):
@@ -1724,10 +1724,12 @@ class WuaParcel(models.Model):
                     #              str(partner.partner_code) + ' - ' +
                     #              partner.name)
                     parcel_owner_number = 0
+                    parcel_owner_number_votes = 0
                     parcel_lessee_number = 0
                     parcel_payer_number = 0
                     parcel_owner_area = 0
                     parcel_owner_area_hec = 0
+                    parcel_owner_area_hec_votes = 0
                     parcel_lessee_area = 0
                     parcel_lessee_area_hec = 0
                     parcel_payer_area = 0
@@ -1747,6 +1749,12 @@ class WuaParcel(models.Model):
                                 partnerlink.area_official_net
                             parcel_owner_area_hec = parcel_owner_area_hec + \
                                 partnerlink.area_official_net_hec
+                            if partnerlink.parcel_id.with_votes:
+                                parcel_owner_number_votes = \
+                                    parcel_owner_number_votes + 1
+                                parcel_owner_area_hec_votes = \
+                                    parcel_owner_area_hec_votes + \
+                                    partnerlink.area_official_net_hec
                         if profile == 'L':
                             parcel_lessee_number = parcel_lessee_number + 1
                             parcel_lessee_area = parcel_lessee_area + \
@@ -1772,10 +1780,13 @@ class WuaParcel(models.Model):
                     # Option 2
                     partner_data = {
                         'parcel_owner_number': parcel_owner_number,
+                        'parcel_owner_number_votes': parcel_owner_number_votes,
                         'parcel_lessee_number': parcel_lessee_number,
                         'parcel_payer_number': parcel_payer_number,
                         'parcel_owner_area': parcel_owner_area,
                         'parcel_owner_area_hec': parcel_owner_area_hec,
+                        'parcel_owner_area_hec_votes':
+                            parcel_owner_area_hec_votes,
                         'parcel_lessee_area': parcel_lessee_area,
                         'parcel_lessee_area_hec': parcel_lessee_area_hec,
                         'parcel_payer_area': parcel_payer_area,
