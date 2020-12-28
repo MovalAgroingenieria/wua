@@ -345,18 +345,18 @@ class WuaPresconsumption(models.Model):
         for node in doc.xpath("//field[@name='volume_perunitarea']"):
             original_label = \
                 self.sudo().get_value_from_translation(
-                    'wua_presconsumption',
+                    'base_wua_pressurized_irrigation',
                     self.__class__.volume_perunitarea.string)
             preBar = original_label.find('/')
             if preBar != -1:
                 original_label = original_label[:preBar + 1]
             node.set('string',
-                     original_label.decode('utf-8') +
+                     original_label +
                      area_measurement_name + ')')
         for node in doc.xpath("//field[@name='volume_perunitareaandday']"):
             original_label = \
                 self.sudo().get_value_from_translation(
-                    'wua_presconsumption',
+                    'base_wua_pressurized_irrigation',
                     self.__class__.volume_perunitareaandday.string)
             preBar = original_label.find('/')
             preBar2 = original_label.find('/', preBar + 1)
@@ -366,8 +366,8 @@ class WuaPresconsumption(models.Model):
             if preBar != -1:
                 original_label = original_label[:preBar + 1]
             node.set('string',
-                     original_label.decode('utf-8') +
-                     area_measurement_name + end_label.decode('utf-8'))
+                     original_label +
+                     area_measurement_name + end_label)
         if show_volume_perunitareaandday:
             for node in doc.xpath("//field[@name='volume_perunitarea']"):
                 node.set('invisible', '1')
