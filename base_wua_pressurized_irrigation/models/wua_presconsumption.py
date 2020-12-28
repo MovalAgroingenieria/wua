@@ -117,26 +117,26 @@ class WuaPresconsumption(models.Model):
     volume_perunitarea = fields.Float(
         string="Volume (m³/Area U.)",
         digits=(32, 4),
-        store=True,
-        compute='_compute_volume_perunitarea')
+        readonly=True,
+        index=True)
 
     volume_perunitareaandday = fields.Float(
         string="Volume (m³/Area U./day)",
         digits=(32, 4),
-        store=True,
-        compute='_compute_volume_perunitareaandday')
+        readonly=True,
+        index=True)
 
     volume_perunitarea_hec = fields.Float(
         string="Volume (m³/ha)",
         digits=(32, 4),
-        store=True,
-        compute='_compute_volume_perunitarea_hec')
+        readonly=True,
+        index=True)
 
     volume_perunitareaandday_hec = fields.Float(
         string="Volume (m³/ha/day)",
         digits=(32, 4),
-        store=True,
-        compute='_compute_volume_perunitareaandday_hec')
+        readonly=True,
+        index=True)
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Consumption.'),
@@ -218,59 +218,6 @@ class WuaPresconsumption(models.Model):
                 validated = True
             record.validated = validated
 
-    @api.depends('volume_real')
-    def _compute_volume_perunitarea(self):
-        for record in self:
-            volume_perunitarea = 0
-            total_area_official = sum(
-                x.parcel_id.area_official for x in
-                record.waterconnection_id.irrigationpointwc_ids)
-            if total_area_official > 0:
-                volume_perunitarea = record.volume_real / total_area_official
-            record.volume_perunitarea = volume_perunitarea
-
-    @api.depends('volume_perunitarea')
-    def _compute_volume_perunitarea_hec(self):
-        factor = 1
-        area_measurement_type = self.env['ir.values'].get_default(
-            'wua.configuration', 'area_measurement_type')
-        if area_measurement_type == 1:
-            area_measurement_equivalence = \
-                self.env['ir.values'].get_default(
-                    'wua.configuration', 'area_measurement_equivalence')
-            if area_measurement_equivalence > 0:
-                factor = area_measurement_equivalence
-        for record in self:
-            record.volume_perunitarea_hec = record.volume_perunitarea * factor
-
-    @api.depends('volume_perunitarea')
-    def _compute_volume_perunitareaandday(self):
-        for record in self:
-            volume_perunitareaandday = 0
-            init_time = datetime.datetime.strptime(record.reading_initial_time,
-                                                   '%Y-%m-%d %H:%M:%S')
-            end_time = datetime.datetime.strptime(record.reading_end_time,
-                                                  '%Y-%m-%d %H:%M:%S')
-            days = (end_time - init_time).days
-            days = days + 1
-            volume_perunitareaandday = record.volume_perunitarea / days
-            record.volume_perunitareaandday = volume_perunitareaandday
-
-    @api.depends('volume_perunitareaandday')
-    def _compute_volume_perunitareaandday_hec(self):
-        factor = 1
-        area_measurement_type = self.env['ir.values'].get_default(
-            'wua.configuration', 'area_measurement_type')
-        if area_measurement_type == 1:
-            area_measurement_equivalence = \
-                self.env['ir.values'].get_default(
-                    'wua.configuration', 'area_measurement_equivalence')
-            if area_measurement_equivalence > 0:
-                factor = area_measurement_equivalence
-        for record in self:
-            record.volume_perunitareaandday_hec = \
-                record.volume_perunitareaandday * factor
-
     @api.model
     def create(self, vals):
         agriculturalseasons = self.env['wua.agriculturalseason'].search(
@@ -278,7 +225,16 @@ class WuaPresconsumption(models.Model):
              ('end_date', '>=', vals['reading_end_time'])])
         if len(agriculturalseasons) == 1:
             vals['agriculturalseason_id'] = agriculturalseasons[0].id
-        return super(WuaPresconsumption, self).create(vals)
+        new_pres = super(WuaPresconsumption, self).create(vals)
+        return new_pres
+
+    @api.multi
+    def write(self, vals):
+        resp = super(WuaPresconsumption, self).write(vals)
+        if len(self) == 1:
+            if ('adjustement_volume' in vals):
+                self.update_volume_perunitareas()
+        return resp
 
     @api.multi
     def name_get(self):
@@ -395,3 +351,35 @@ class WuaPresconsumption(models.Model):
         if len(filtered_translations) > 0:
             resp = filtered_translations[0].value
         return resp
+
+    def update_volume_perunitareas(self):
+        factor = 1
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        if area_measurement_type == 1:
+            area_measurement_equivalence = \
+                self.env['ir.values'].get_default(
+                    'wua.configuration', 'area_measurement_equivalence')
+            if area_measurement_equivalence > 0:
+                factor = area_measurement_equivalence
+        init_time = datetime.datetime.strptime(self.reading_initial_time,
+                                               '%Y-%m-%d %H:%M:%S')
+        end_time = datetime.datetime.strptime(self.reading_end_time,
+                                              '%Y-%m-%d %H:%M:%S')
+        days = (end_time - init_time).days
+        days = days + 1
+        volume_perunitarea = 0
+        total_area_official = sum(
+            x.parcel_id.area_official for x in
+            self.waterconnection_id.irrigationpointwc_ids)
+        if total_area_official > 0:
+            volume_perunitarea = self.volume_real / total_area_official
+        volume_perunitarea_hec = volume_perunitarea * factor
+        volume_perunitareaandday = volume_perunitarea / days
+        volume_perunitareaandday_hec = volume_perunitareaandday * factor
+        self.write({
+            'volume_perunitarea': volume_perunitarea,
+            'volume_perunitarea_hec': volume_perunitarea_hec,
+            'volume_perunitareaandday': volume_perunitareaandday,
+            'volume_perunitareaandday_hec': volume_perunitareaandday_hec
+        })

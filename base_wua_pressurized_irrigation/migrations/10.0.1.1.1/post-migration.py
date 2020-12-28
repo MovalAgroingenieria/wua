@@ -10,4 +10,5 @@ def migrate(cr, version):
     all_watermeters = env['wua.watermeter'].search([])
     all_watermeters._compute_average_consumption()
     all_presconsumptions = env['wua.presconsumption'].search([])
-    all_presconsumptions._compute_volume_perunitarea()
+    for pres in all_presconsumptions:
+        pres.update_volume_perunitareas()
