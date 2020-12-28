@@ -243,8 +243,7 @@ class WuaPresconsumption(models.Model):
         for record in self:
             record.volume_perunitarea_hec = record.volume_perunitarea * factor
 
-    @api.depends('volume_perunitarea', 'reading_initial_time',
-                 'reading_end_time')
+    @api.depends('volume_perunitarea')
     def _compute_volume_perunitareaandday(self):
         for record in self:
             volume_perunitareaandday = 0
