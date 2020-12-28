@@ -227,4 +227,3 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration',
                            'polling_system_rounding_type_company_03',
                            self.polling_system_rounding_type_company_03)
-

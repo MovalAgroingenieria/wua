@@ -668,6 +668,7 @@ class ResPartner(models.Model):
         resp = 0
         interval_list = polling_system_intervals.split(',')
         last_interval = None
+        area = int(round(area))
         for i, interval in enumerate(interval_list):
             if i > 0:
                 last_interval = interval_list[i - 1]
@@ -680,7 +681,7 @@ class ResPartner(models.Model):
                 try:
                     min_value = int(limits[0])
                     max_value = int(limits[1])
-                except:
+                except Exception:
                     min_value = 0
                     max_value = maxint
                 if area >= min_value and area <= max_value:

@@ -53,6 +53,8 @@ class WuaParcel(models.Model):
                         condition = [('partner_id', '=', partner.id)]
                     filtered_partnerlinks = partnerlinks.search(condition)
                     for partnerlink in filtered_partnerlinks:
+                        if (not partnerlink.parcel_id.with_votes):
+                            continue
                         profile = partnerlink.profile
                         if profile == 'O':
                             parcel_owner_number = parcel_owner_number + 1
