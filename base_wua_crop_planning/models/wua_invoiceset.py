@@ -49,8 +49,7 @@ class WuaInvoiceset(models.Model):
                 lambda x: x.waterconnection_id.id == waterconnection.id)
             parcels_of_waterconnection = \
                 [x.parcel_id for x in irrigationpoints_of_waterconnection
-                 if x.parcel_id.is_billable_water and
-                 x.parcel_id.can_be_watered]
+                 if x.parcel_id.is_billable_water]
             if len(parcels_of_waterconnection) > 0:
                 volume_real_of_waterconnection = \
                     filter(lambda x: x['wc_id'] ==
