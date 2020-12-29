@@ -39,8 +39,8 @@
                                       <t t-if="is_based_on_wc">
                                         <th style="width: 15%;">Water Connection</th>
                                         <th style="width: 16%;">Water Meter</th>
-                                        <th>Initial time date</th>
-                                        <th>Final time date</th>
+                                        <th id="th-initial-time-date-label">Initial time date</th>
+                                        <th id="th-final-time-date-label">Final time date</th>
                                         <th class="text-right">Initial Reading</th>
                                         <th class="text-right">Final Reading</th>
                                         <th class="text-right">Gross Vol. (m3)</th>
@@ -48,10 +48,10 @@
                                         <th class="text-right">Real Vol. (m3)</th>
                                       </t>
                                       <t t-else="">
-                                        <th>Water Connection</th>
+                                        <th id="th-water-connection-label">Water Connection</th>
                                         <th>Water Meter</th>
-                                        <th>Initial time</th>
-                                        <th>Final time</th>
+                                        <th id="th-initial-time-label">Initial time</th>
+                                        <th id="th-final-time-label">Final time</th>
                                         <th class="text-right">Initial Reading</th>
                                         <th class="text-right">Final Reading</th>
                                         <th class="text-right">Gross Vol. (m3)</th>
@@ -125,31 +125,31 @@
                                                datetime.datetime.strptime(
                                                c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
                                                strftime('%d/%m/%y, %H:%M')"/>
-                                          <td>
+                                          <td id="td-water-connection-value">
                                               <span t-esc="c['waterconnection']"/>
                                           </td>
                                           <td>
                                               <span t-esc="c['watermeter']"/>
                                           </td>
-                                          <td>
+                                          <td id="td-reading-initial-time-value">
                                               <span t-esc="reading_initial_time"/>
                                           </td>
-                                          <td>
+                                          <td id="td-reading-end-time-value">
                                               <span t-esc="reading_end_time"/>
                                           </td>
-                                          <td class="text-right">
+                                          <td id="td-initial-volume-value" class="text-right">
                                               <span t-esc="'{:.3f}'.format(c['initial_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
                                           </td>
-                                          <td class="text-right">
+                                          <td id="td-end-volume-value" class="text-right">
                                               <span t-esc="'{:.3f}'.format(c['end_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
                                           </td>
-                                          <td class="text-right">
+                                          <td id="td-volume-value" class="text-right">
                                               <span t-esc="'{:.3f}'.format(c['volume']).replace('.','%').replace(',','.').replace('%',',')"/>
                                           </td>
-                                          <td class="text-right">
+                                          <td id="td-adjustement-volume-value" class="text-right">
                                               <span t-esc="'{:.3f}'.format(c['adjustement_volume']).replace('.','%').replace(',','.').replace('%',',')"/>
                                           </td>
-                                          <td class="text-right">
+                                          <td id="td-volume-real-value" class="text-right">
                                               <span t-esc="'{:.3f}'.format(c['volume_real']).replace('.','%').replace(',','.').replace('%',',')"/>
                                           </td>
                                       </tr>

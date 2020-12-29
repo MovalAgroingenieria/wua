@@ -11,6 +11,7 @@
     "depends": [
         "account_wua",
         "account_invoice_report_due_list",
+        "base_wua_invoicing_pressurized_irrigation"
     ],
     "data": [
         "reports/crbaixpriorat_report_invoice.xml",

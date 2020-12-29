@@ -90,36 +90,59 @@ class WuaInvoiceset(models.Model):
                                 (percentage / 100)
                             quantity_str = ('%.4f' % quantity).\
                                 replace('.', ',')
+                            default_waterconnection_label = \
+                                _('Water Connection')
+                            default_parcel_label = _('Parcel')
+                            default_profile_name_label = _('profile')
+                            default_text01 = _('total consumption')
+                            default_text02 = \
+                                _('of total consumption of water meter')
+                            default_text03 = \
+                                _('of water payment for the parcel')
                             waterconnection_label = \
                                 self.get_value_from_translation(
                                     'base_wua_invoicing_'
                                     'pressurized_irrigation',
-                                    _('Water Connection'),
+                                    'Water Connection',
                                     partnerlink.partner_id.lang)
                             parcel_label = self.get_value_from_translation(
                                 'base_wua_invoicing_pressurized_irrigation',
-                                _('Parcel'),
+                                'Parcel',
                                 partnerlink.partner_id.lang)
                             profile_name_label = \
                                 self.get_value_from_translation(
                                     'base_wua_invoicing_'
                                     'pressurized_irrigation',
-                                    _('profile'),
+                                    'profile',
                                     partnerlink.partner_id.lang)
                             profile_name = self.get_profile_name(
                                 profile, partnerlink.partner_id.lang)
                             text01 = self.get_value_from_translation(
                                 'base_wua_invoicing_pressurized_irrigation',
-                                _('total consumption'),
+                                'total consumption',
                                 partnerlink.partner_id.lang)
                             text02 = self.get_value_from_translation(
                                 'base_wua_invoicing_pressurized_irrigation',
-                                _('of total consumption of water meter'),
+                                'of total consumption of water meter',
                                 partnerlink.partner_id.lang)
                             text03 = self.get_value_from_translation(
                                 'base_wua_invoicing_pressurized_irrigation',
-                                _('of water payment for the parcel'),
+                                'of water payment for the parcel',
                                 partnerlink.partner_id.lang)
+                            if not waterconnection_label:
+                                waterconnection_label = \
+                                    default_waterconnection_label
+                            if not parcel_label:
+                                parcel_label = default_parcel_label
+                            if not profile_name_label:
+                                profile_name_label = \
+                                    default_profile_name_label
+                            if not text01:
+                                text01 = default_text01
+                            if not text02:
+                                text02 = default_text02
+                            if not text03:
+                                text03 = default_text03
                             description = parcel_label + ' ' + \
                                 parcel_code + ' ' + \
                                 '(' + area_official_str + ' ' +  \

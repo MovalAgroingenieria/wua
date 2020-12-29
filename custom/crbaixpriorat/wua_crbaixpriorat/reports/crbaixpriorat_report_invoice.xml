@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- Modification layout report invoice -->
-    <template id="report_invoice_document_baix_priorat" inherit_id="account.report_invoice_document">
+    <template id="report_invoice_document_baix_priorat" inherit_id="base_wua_invoicing_pressurized_irrigation.report_invoice_document">
 
         <!-- Do not show country in invoicing addresses -->
         <xpath expr="//t[@id='country_invoicing_address_1']" position="replace"/>
@@ -37,42 +37,112 @@
         <xpath expr="//t[@id='state_shipping_address']" position="replace">
             <t  t-if="o.partner_shipping_id.state_id">
                 <span>(</span>
-                <span t-field="o.partner_shipping_id.state_id"/> 
+                <span t-field="o.partner_shipping_id.state_id"/>
                 <span>)</span>
             </t>
         </xpath>
 
+        <!-- REMOVE BREAKPAGE -->
+
+        <xpath expr="//t[@t-if='not is_based_on_wc']" position="replace">
+        </xpath>
+
+
+        <xpath expr="//th[@id='th-initial-time-label']" position="replace">
+          <th id="th-initial-time-label">Initial time date</th>
+        </xpath>
+
+        <xpath expr="//th[@id='th-final-time-label']" position="replace">
+          <th id="th-final-time-label">Final time date</th>
+        </xpath>
+
+        <xpath expr="//td[@id='td-reading-initial-time-value']" position="replace">
+          <td id="td-reading-initial-time-value">
+              <span t-esc="context_timestamp(
+                  datetime.datetime.strptime(
+                  c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).
+                  strftime('%d/%m/%y')"/>
+          </td>
+        </xpath>
+
+        <xpath expr="//td[@id='td-reading-end-time-value']" position="replace">
+          <td id="td-reading-end-time-value">
+              <span t-esc="context_timestamp(
+                  datetime.datetime.strptime(
+                  c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).
+                  strftime('%d/%m/%y')"/>
+          </td>
+        </xpath>
+
+        <xpath expr="//th[@id='th-water-connection-label']" position="replace">
+          <th id="th-water-connection-label" style="display: none;" ></th>
+        </xpath>
+
+        <xpath expr="//td[@id='td-water-connection-value']" position="replace">
+          <td id="td-water-connection-value" style="display: none;">
+          </td>
+        </xpath>
+
+        <xpath expr="//td[@id='td-initial-volume-value']" position="replace">
+          <td id="td-initial-volume-value" class="text-right">
+            <span t-esc="int(c['initial_volume'])"/>
+          </td>
+        </xpath>
+
+        <xpath expr="//td[@id='td-end-volume-value']" position="replace">
+          <td id="td-end-volume-value" class="text-right">
+            <span t-esc="int(c['end_volume'])"/>
+          </td>
+        </xpath>
+        <xpath expr="//td[@id='td-volume-value']" position="replace">
+          <td id="td-volume-value" class="text-right">
+            <span t-esc="int(c['volume'])"/>
+          </td>
+        </xpath>
+        <xpath expr="//td[@id='td-adjustement-volume-value']" position="replace">
+          <td id="td-adjustement-volume-value" class="text-right">
+            <span t-esc="int(c['adjustement_volume'])"/>
+          </td>
+        </xpath>
+        <xpath expr="//td[@id='td-volume-real-value']" position="replace">
+          <td id="td-volume-real-value" class="text-right">
+            <span t-esc="int(c['volume_real'])"/>
+          </td>
+        </xpath>
+
+
    </template>
 
-    <template id="account_invoice_report_due_list.report_invoice_document" inherit_id="account.report_invoice_document">
-        <xpath expr='//tr[@name="tr_due_date"]' position="attributes">
-            <attribute name="t-att-class">'hidden' if o.multi_due else ''</attribute>
-        </xpath>
-        <xpath expr="//span[@t-field='o.payment_term_id.note']" position="after">
-            <div class="row" t-if="o.multi_due">
-                <div class="col-xs-6">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Date Due</th>
-                                <th class="text-right">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr t-foreach="o.get_multi_due_list()" t-as="due_tuple">
-                                <td>
-                                    <span t-esc="due_tuple[0]" t-esc-options="{'widget': 'date'}"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-esc="due_tuple[1]"
-                                          t-esc-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </xpath>
-    </template>
+
+  <template id="account_invoice_report_due_list.report_invoice_document" inherit_id="account.report_invoice_document">
+      <xpath expr='//tr[@name="tr_due_date"]' position="attributes">
+          <attribute name="t-att-class">'hidden' if o.multi_due else ''</attribute>
+      </xpath>
+      <xpath expr="//span[@t-field='o.payment_term_id.note']" position="after">
+          <div class="row" t-if="o.multi_due">
+              <div class="col-xs-6">
+                  <table class="table table-striped">
+                      <thead>
+                          <tr>
+                              <th>Date Due</th>
+                              <th class="text-right">Amount</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <tr t-foreach="o.get_multi_due_list()" t-as="due_tuple">
+                              <td>
+                                  <span t-esc="due_tuple[0]" t-esc-options="{'widget': 'date'}"/>
+                              </td>
+                              <td class="text-right">
+                                  <span t-esc="due_tuple[1]"
+                                        t-esc-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                              </td>
+                          </tr>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </xpath>
+  </template>
 
 </odoo>
