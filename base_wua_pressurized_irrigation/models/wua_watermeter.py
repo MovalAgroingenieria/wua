@@ -105,6 +105,17 @@ class WuaWatermeter(models.Model):
         string="Serial Number",
         index=True)
 
+    presconsumption_ids = fields.One2many(
+        string='Consumptions',
+        comodel_name='wua.presconsumption',
+        inverse_name='watermeter_id')
+
+    average_consumption = fields.Float(
+        string='Average Consumption (m³)',
+        digits=(32, 2),
+        store=True,
+        compute='_compute_average_consumption')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_nominal_diameter',
@@ -146,6 +157,26 @@ class WuaWatermeter(models.Model):
                 hydraulicsector_id = \
                     record.waterconnection_id.hydraulicsector_id
             record.hydraulicsector_id = hydraulicsector_id
+
+    @api.depends('presconsumption_ids')
+    def _compute_average_consumption(self):
+        number_of_presconsumptions_for_average = \
+            self.env['ir.values'].get_default(
+                'wua.irrigation.configuration',
+                'number_of_presconsumptions_for_average')
+        for record in self:
+            average_consumption = 0
+            if (number_of_presconsumptions_for_average and
+               record.presconsumption_ids):
+                index = 0
+                iters = min(number_of_presconsumptions_for_average,
+                            len(record.presconsumption_ids))
+                while (index < iters):
+                    average_consumption = average_consumption + \
+                        record.presconsumption_ids[index].volume_real
+                    index = index + 1
+                average_consumption = average_consumption / iters
+            record.average_consumption = average_consumption
 
     @api.multi
     def action_see_readings(self):

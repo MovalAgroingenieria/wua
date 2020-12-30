@@ -217,6 +217,9 @@ class WuaReading(models.Model):
             watermeter.write(vals_watermeter)
         # Creation of reading.
         new_reading = super(WuaReading, self).create(vals)
+        # Here Presconsumption have the reference to the reading
+        pres_id = new_reading.presconsumption_id
+        pres_id.update_volume_perunitareas()
         return new_reading
 
     @api.multi
@@ -225,7 +228,10 @@ class WuaReading(models.Model):
         if len(self) == 1:
             if 'volume' in vals:
                 if self.presconsumption_id:
-                    self.presconsumption_id.end_volume = vals['volume']
+                    self.presconsumption_id.write({
+                        'end_volume': vals['volume']
+                    })
+                    self.presconsumption_id.update_volume_perunitareas()
                 self.watermeter_id.last_reading_value = vals['volume']
         return resp
 

@@ -36,6 +36,12 @@ class WuaWaterconnection(models.Model):
         compute='_compute_last_reading_value',
         group_operator=False)
 
+    average_consumption = fields.Float(
+        string='Average Consumption (m³)',
+        digits=(32, 2),
+        store=True,
+        compute='_compute_average_consumption')
+
     @api.depends('watermeter_id')
     def _compute_with_watermeter(self):
         for record in self:
@@ -59,6 +65,14 @@ class WuaWaterconnection(models.Model):
             if record.watermeter_id:
                 last_reading_value = record.watermeter_id.last_reading_value
             record.last_reading_value = last_reading_value
+
+    @api.depends('watermeter_id', 'watermeter_id.average_consumption')
+    def _compute_average_consumption(self):
+        for record in self:
+            average_consumption = 0
+            if record.watermeter_id:
+                average_consumption = record.watermeter_id.average_consumption
+            record.average_consumption = average_consumption
 
     @api.model
     def create(self, vals):
