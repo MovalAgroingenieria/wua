@@ -30,9 +30,10 @@ class WuaReportrequest(models.Model):
             if record.product_id and record.currency_id and record.hours:
                 if record.product_id.taxes_id and \
                         record.product_id.taxes_id.amount > 0:
-                    expected_amount = \
-                        record.hours * record.product_id.taxes_id.amount * \
-                        record.product_id.lst_price
+                    total_amount = record.hours * record.product_id.lst_price
+                    taxes = total_amount * \
+                        (record.product_id.taxes_id.amount / 100)
+                    expected_amount = total_amount + taxes
                 else:
                     expected_amount = \
                         record.hours * record.product_id.lst_price
