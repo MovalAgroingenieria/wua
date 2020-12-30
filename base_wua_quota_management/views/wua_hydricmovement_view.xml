@@ -44,7 +44,7 @@
                             <field name="individualinput_id"
                                    string="Individual Input"
                                    attrs="{'invisible':
-                                           [('type','!=','pos_indiv_assign'), 
+                                           [('type','!=','pos_indiv_assign'),
                                             ('type','!=','neg_indiv_assign')]}"/>
                             <field name="cession_id"
                                    string="Destination Quota"
@@ -89,7 +89,43 @@
                         icon="fa-external-link"/>
                 <field name="event_time"
                        string="Date" widget="date"/>
-                <field name="superproduct_id"/>                       
+                <field name="superproduct_id"/>
+                <field name="description"/>
+                <field name="accounting_volume"
+                       string="Value (m3)"/>
+                <field name="balance"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-arrow-right"
+                        attrs="{'invisible':
+                                [('is_consumption','=',False)],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_thechnical_hydricmovement_view_tree" model="ir.ui.view">
+        <field name="name">Hydric Movements (tree view)</field>
+        <field name="model">wua.hydricmovement</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_technical_hydricmovement_view_tree"
+                  colors="orangered:is_consumption==True;royalblue:is_consumption==False"
+                  create="false"
+                  default_order="create_date desc">
+                <field name="is_consumption" invisible="1"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-arrow-right"
+                        attrs="{'invisible':
+                                [('is_consumption','=',True)],
+                                'readonly':'1'}"/>
+                <field name="create_date"/>
+                <field name="partner_id"/>
+                <button name="action_open_quota_form"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-external-link"/>
+                <field name="event_time"
+                       string="Date" widget="date"/>
+                <field name="superproduct_id"/>
                 <field name="description"/>
                 <field name="accounting_volume"
                        string="Value (m3)"/>
@@ -194,7 +230,7 @@
                      context="{'group_by':'superproduct_id'}"/>
                     <filter string="Type"
                             name="grouped_type"
-                     context="{'group_by':'type'}"/>                     
+                     context="{'group_by':'type'}"/>
                     <filter string="Partner"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>
@@ -227,10 +263,34 @@
                 (0, 0, {'view_mode': 'form',
                         'view_id': ref('wua_hydricmovement_view_form')}),
                 (0, 0, {'view_mode': 'pivot',
-                        'view_id': ref('wua_hydricmovement_view_pivot')})]"/>        
+                        'view_id': ref('wua_hydricmovement_view_pivot')})]"/>
         <field name="search_view_id" ref="wua_hydricmovement_view_search"/>
         <field name="context">
           {'compressed_agriculturalseason': True,
+           'compressed_quotaperiod': True,
+           'search_default_active_agriculturalseason': True}
+        </field>
+    </record>
+
+    <record id="technical_hydricmovements_action"
+            model="ir.actions.act_window">
+        <field name="name">Hydric Movements</field>
+        <field name="res_model">wua.hydricmovement</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_thechnical_hydricmovement_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_hydricmovement_view_form')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_hydricmovement_view_pivot')})
+                        ]"/>
+        <field name="search_view_id" ref="wua_hydricmovement_view_search"/>
+        <field name="context">
+          {'order': 'created_date',
+           'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
            'search_default_active_agriculturalseason': True}
         </field>
@@ -241,5 +301,11 @@
               parent="management_menu"
               sequence="4"
               action="wua_hydricmovement_action"/>
+
+    <menuitem id="technical_hydricmovements_menu"
+              name="Hydric Movements (creation date)"
+              parent="technical_menu"
+              sequence="3"
+              action="technical_hydricmovements_action"/>
 
 </odoo>
