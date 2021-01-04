@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-10 11:09+0000\n"
-"PO-Revision-Date: 2020-10-10 11:09+0000\n"
+"POT-Creation-Date: 2021-01-04 13:17+0000\n"
+"PO-Revision-Date: 2021-01-04 13:17+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -98,6 +98,7 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlperiod_view_search
 msgid "Active Agricultural Season"
 msgstr ""
 
@@ -225,7 +226,7 @@ msgid "Calculated"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:260
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:266
 #, python-format
 msgid "Calculated control-period."
 msgstr ""
@@ -240,7 +241,7 @@ msgid "Cancel"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:278
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:284
 #, python-format
 msgid "Cancelled control-period."
 msgstr ""
@@ -380,7 +381,7 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_agriculturalseason.py:126
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_comparative_subparcel_presconsumption.py:595
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:334
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:340
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_controlpresconsumption_action
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_agriculturalseason_control_presconsumption_action
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_control_presconsumption_action
@@ -492,6 +493,14 @@ msgid "Cultivations (agregated comparative consumptions)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
+msgid "Current Controlperiod"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_cultivation.py:91
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_cultivation.py:136
 #, python-format
@@ -530,7 +539,7 @@ msgid "Deviation Percentage"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:265
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:271
 #, python-format
 msgid "Deviation:"
 msgstr ""
@@ -567,13 +576,13 @@ msgid "Drip. Nom. Flow (l/h)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:427
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:433
 #, python-format
 msgid "EMail from"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:444
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:450
 #, python-format
 msgid "ERROR"
 msgstr ""
@@ -647,13 +656,13 @@ msgid "Estimated Consumption (m3)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:261
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:267
 #, python-format
 msgid "Estimated consumption:"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:431
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:437
 #, python-format
 msgid "Excel file"
 msgstr ""
@@ -927,6 +936,16 @@ msgid "Irrigations Analysis"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlperiod_view_search
+msgid "Is Current"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlperiod_is_the_current
+msgid "Is the Current Controlperiod"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_cultivation.py:214
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_cultivation_kc_name
 #, python-format
@@ -1061,7 +1080,7 @@ msgid "M. between trees"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:426
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:432
 #, python-format
 msgid "Mail with agroclimatic data"
 msgstr ""
@@ -1209,7 +1228,6 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_drippers_number
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_drippers_number
 msgid "Number of drippers"
 msgstr ""
 
@@ -1221,7 +1239,12 @@ msgid "Number of readings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:433
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_drippers_number
+msgid "Number total of drippers"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:439
 #, python-format
 msgid "OK"
 msgstr ""
@@ -1426,7 +1449,7 @@ msgid "Real Value (m3)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:263
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:269
 #, python-format
 msgid "Real consumption:"
 msgstr ""
@@ -1515,7 +1538,7 @@ msgid "State: Draft"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:429
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:435
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_monitoring_configuration_incoming_mail_subject
 #, python-format
 msgid "Subject"
@@ -1548,7 +1571,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_agriculturalseason.py:101
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:311
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:317
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:621
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_action
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_subparcel_comparative_presconsumption_action
@@ -1611,7 +1634,7 @@ msgid "The ET0 must be a value zero or positive."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:348
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:354
 #, python-format
 msgid "The agricultural season is not active."
 msgstr ""
@@ -1628,13 +1651,13 @@ msgid "The consumption volume can not be a negative value."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:158
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:162
 #, python-format
 msgid "The control period limits are outside the agricultural season."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:168
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:172
 #, python-format
 msgid "The control period overlaps with another."
 msgstr ""
@@ -1763,7 +1786,7 @@ msgid "There are different water meters."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:353
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:359
 #, python-format
 msgid "There are no subparcels with monitored cultivations."
 msgstr ""
@@ -1955,8 +1978,8 @@ msgid "With adjustement"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:282
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:291
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:288
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:297
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:562
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:571
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:530

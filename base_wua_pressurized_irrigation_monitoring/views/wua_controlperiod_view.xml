@@ -128,6 +128,10 @@
                       name="state_calculated"
                       domain="[('state','=','calculated')]"/>
               <separator/>
+              <filter string="Active Agricultural Season"
+                      name="agriculturalseason_active"
+                      domain="[('agriculturalseason_id.active_agriculturalseason', '=', True)]"/>
+              <separator/>
               <filter string="Is Current"
                       name="is_the_current"
                       domain="[('is_the_current', '=', True)]"/>
@@ -192,6 +196,7 @@
                 (0, 0, {'view_mode': 'form',
                         'view_id': ref('wua_controlperiod_view_form')})]"/>
         <field name="search_view_id" ref="wua_controlperiod_view_search"/>
+        <field name="context">{'search_default_agriculturalseason_active': True}</field>
     </record>
 
     <record id="wua_process_incoming_mail" model="ir.actions.server">

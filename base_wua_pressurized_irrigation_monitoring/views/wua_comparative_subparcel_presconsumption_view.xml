@@ -142,6 +142,11 @@
                domain="[('consumption_category','=','b')]"/>
               <filter string="Unacceptable Irrigation" name="category_c"
                domain="[('consumption_category','=','c')]"/>
+              <separator/>
+              <filter string="Current Controlperiod"
+                      name="current_controlperiod"
+                      domain="[('controlperiod_id.is_the_current', '=', True)]"/>
+              <separator/>
               <group expand="0" string="Group By">
                   <filter string="Agricultural Season"
                    name="agriculturalseason"
@@ -209,8 +214,7 @@
                 (0, 0, {'view_mode': 'form',
                         'view_id': ref('wua_comparative_subparcel_presconsumption_view_form')})]"/>
         <field name="search_view_id" ref="wua_comparative_subparcel_presconsumption_view_search"/>
-        <field name="context">{'search_default_agriculturalseasonactive': True,
-                               'search_default_controlperiod': True,
+        <field name="context">{'search_default_current_controlperiod': True,
                                'graph_mode':'pie'}</field>
     </record>
 
