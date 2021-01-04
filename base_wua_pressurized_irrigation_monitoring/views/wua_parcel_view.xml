@@ -111,15 +111,17 @@
             <field readonly="1" name="cultivationvariety_id"/>
             <field name="tree_development"/>
             <field name="shaded_percentage"/>
+            <field name="plantation_year"/>
+            <field readonly="1" name="cultivation_age"/>
+            <field readonly="1" name="age_category"/>
             <field name="soil_type"/>
             <field name="organic_material_percentage"/>
+            <field name="tree_distance"/>
+            <field name="row_distance"/>
             <field name="orientation"/>
             <field name="drippers_number"/>
             <field name="drippers_nominal_flow"/>
             <field name="tree_lateral_number"/>
-            <field name="plantation_year"/>
-            <field name="tree_distance"/>
-            <field name="row_distance"/>
             <field name="tree_drippers_number"/>
           </group>
           <group name="fields_center" colspan="1" col="2">
@@ -131,8 +133,11 @@
                    string="Parcel %"/>
             <field readonly="1" name="updated_in_remotecontrol"
                    string="In Remote Control"/>
-            <field readonly="1" name="cultivation_age"/>
-            <field readonly="1" name="age_category"/>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
+            <div colspan="2">&#x2063;</div>
             <div colspan="2">&#x2063;</div>
             <div colspan="2">&#x2063;</div>
             <div colspan="2">&#x2063;</div>
@@ -156,7 +161,7 @@
             </page>
           </notebook>
         </group>
-        </sheet>      
+        </sheet>
       </form>
     </field>
   </record>
@@ -270,7 +275,7 @@
                       'view_id': ref('wua_monitoring_parcel_subparcel_view_pivot')})]"/>
       <field name="search_view_id" ref="wua_monitoring_parcel_subparcel_view_search"/>
       <field name="views">[[ref("base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_form"), "form"]]</field>
-      <field name="context">{'graph_mode':'pie'}</field>      
+      <field name="context">{'graph_mode':'pie'}</field>
   </record>
 
   <menuitem id="wua_monitoring_parcel_subparcel_menu"
