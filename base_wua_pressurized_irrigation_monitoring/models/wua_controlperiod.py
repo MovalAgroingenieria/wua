@@ -107,6 +107,10 @@ class WuaControlperiod(models.Model):
         inverse_name="controlperiod_id"
     )
 
+    is_the_current = fields.Boolean(
+        string="Is the Current Controlperiod"
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Quota Period.'),
@@ -553,7 +557,7 @@ class WuaControlperiod(models.Model):
                         attachment_file = base_path + attachment.store_fname
                         try:
                             os.remove(attachment_file)
-                        except:
+                        except Exception:
                             pass
                 message_to_delete.unlink()
 
@@ -565,3 +569,23 @@ class WuaControlperiod(models.Model):
         if controlperiod:
             resp = controlperiod[0]
         return resp
+
+    @api.model
+    def refresh_current_controlperiod(self):
+        now = datetime.datetime.now().strftime(
+            '%Y-%m-%d')
+        current_controlperiod_by_date = self._get_control_period(now)
+        current_controlperiod_by_field = self.env['wua.controlperiod'].search(
+            [('is_the_current', '=', True)])
+        current_controlperiod = None
+        if (current_controlperiod_by_field):
+            if (current_controlperiod_by_field.id ==
+                    current_controlperiod_by_date.id):
+                current_controlperiod = current_controlperiod_by_field
+            else:
+                current_controlperiod_by_field.is_the_current = False
+                current_controlperiod = current_controlperiod_by_date
+        else:
+            current_controlperiod = current_controlperiod_by_date
+        if (current_controlperiod):
+            current_controlperiod.is_the_current = True
