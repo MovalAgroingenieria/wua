@@ -108,7 +108,7 @@ class WuaControlperiod(models.Model):
     )
 
     is_the_current = fields.Boolean(
-        string="Is the Current Controlperiod"
+        string="Current Controlperiod"
     )
 
     _sql_constraints = [

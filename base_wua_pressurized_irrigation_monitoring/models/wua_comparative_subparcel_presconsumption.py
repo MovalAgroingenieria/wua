@@ -200,7 +200,7 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
     )
 
     drippers_number = fields.Integer(
-        string='Number of drippers'
+        string='Number total of drippers'
     )
 
     drippers_nominal_flow = fields.Float(

@@ -17,6 +17,7 @@ class WuaComparativeParcelPresconsumption(models.Model):
     controlperiod_id = fields.Many2one(
         string='Control Period',
         comodel_name='wua.controlperiod',
+        index=True,
     )
 
     parcel_id = fields.Many2one(
