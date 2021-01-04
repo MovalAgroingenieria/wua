@@ -8,6 +8,7 @@
             <tree class="o_base_wua_pressurized_irrigation_monitoring_cultivation_kc_view_tree"
                   editable="bottom" create="false" delete="false">
                 <field name="period_number" readonly="1"/>
+                <field name="controlperiod_id"/>
                 <field name="cultivation_id" readonly="1"/>
                 <field name="kc_big" string="Big"/>
                 <field name="kc_middle" string="Middle"/>
@@ -22,6 +23,7 @@
         <field name="arch" type="xml">
             <tree class="o_base_wua_pressurized_irrigation_monitoring_cultivation_kc_view_tree">
                 <field name="period_number"/>
+                <field name="controlperiod_id"/>
                 <field name="cultivation_id"/>
                 <field name="kc_big"/>
                 <field name="kc_middle"/>
@@ -72,13 +74,13 @@
               name="Coefficients Kc"
               parent="base_wua.base_wua_census_configuration_menu"
               sequence="8"
-              action="wua_cultivation_kc_action"/>    
-    
+              action="wua_cultivation_kc_action"/>
+
     <menuitem id="cultivation_kc_thecnical_menu"
               name="Coefficients Kc (import/export)"
               parent="base_wua_pressurized_irrigation_monitoring.monitoring_technical_menu"
               action="wua_cultivation_kc_thecnical_action"
               sequence="3"
-              groups="base.group_system"/>    
-    
+              groups="base.group_system"/>
+
 </odoo>

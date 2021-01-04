@@ -26,6 +26,11 @@ class WuaCultivationKc(models.Model):
         index=True,
         ondelete='restrict')
 
+    controlperiod_id = fields.Many2one(
+        string='Control Period',
+        comodel_name='wua.controlperiod',
+        compute='_compute_controlperiod_id')
+
     name = fields.Char(
         string='Kc',
         size=MAX_SIZE_NAME,
@@ -85,3 +90,17 @@ class WuaCultivationKc(models.Model):
                 record.cultivation_id.name
             result.append((record.id, name))
         return result
+
+    @api.multi
+    def _compute_controlperiod_id(self):
+        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        if (active_agriculturalseason):
+            for record in self:
+                controlperiod_id = None
+                if (len(active_agriculturalseason.controlperiod_ids) >=
+                        record.period_number):
+                    controlperiod_id = \
+                        active_agriculturalseason.controlperiod_ids[
+                            record.period_number - 1]
+                record.controlperiod_id = controlperiod_id
