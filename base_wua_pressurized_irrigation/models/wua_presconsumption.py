@@ -293,10 +293,11 @@ class WuaPresconsumption(models.Model):
         doc = etree.XML(res['arch'])
         area_measurement_name = self.env['ir.values'].get_default(
             'wua.configuration', 'area_measurement_name')
-        area_measurement_name = area_measurement_name.decode(
-            'utf_8')
-        if area_measurement_name == '':
+        if not area_measurement_name:
             area_measurement_name = 'ha'
+        else:
+            area_measurement_name = area_measurement_name.decode(
+                'utf_8')
         area_measurement_name = area_measurement_name.lower()
         for node in doc.xpath("//field[@name='volume_perunitarea']"):
             original_label = \
