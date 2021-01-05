@@ -219,7 +219,8 @@ class WuaReading(models.Model):
         new_reading = super(WuaReading, self).create(vals)
         # Here Presconsumption have the reference to the reading
         pres_id = new_reading.presconsumption_id
-        pres_id.update_volume_perunitareas()
+        if (pres_id):
+            pres_id.update_volume_perunitareas()
         return new_reading
 
     @api.multi
