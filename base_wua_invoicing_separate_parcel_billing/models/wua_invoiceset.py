@@ -56,8 +56,7 @@ class WuaInvoiceset(models.Model):
         parcel_id = 0
         is_watercosts = False
         if (invoice_detail['categ_code'] == 1 or
-           invoice_detail['categ_code'] == 3 or
-           invoice_detail['categ_code'] == 4):
+           invoice_detail['categ_code'] == 3):
             parcel_id = invoice_detail['key1']
         if (invoice_detail['categ_code'] == 5 or
            invoice_detail['categ_code'] == 6 or
