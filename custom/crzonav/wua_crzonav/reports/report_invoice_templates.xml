@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
+        <xpath expr="//col[@name='product']" position="attributes">
+          <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+        <xpath expr="//th[@name='product']" position="attributes">
+          <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+        <xpath expr="//td[@name='product']" position="attributes">
+          <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+        <xpath expr="//span[@t-field='o.invoiceset_id']" position="replace">
+          <span style="font-weight: bold;" t-field="o.invoiceset_id"/>
+        </xpath>
+    </template>
+
+
+
+</odoo>
