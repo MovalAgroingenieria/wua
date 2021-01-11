@@ -14,6 +14,10 @@
         <xpath expr="//span[@t-field='o.invoiceset_id']" position="replace">
           <span style="font-weight: bold;" t-field="o.invoiceset_id"/>
         </xpath>
+        <xpath expr="//span[@name='invoicing_address_partner_name']" position="replace">
+          <span name="invoicing_address_partner_name" t-field="o.partner_id.name"/>
+          <span t-esc="' [' + str(o.partner_id.partner_code) + ']'"/>
+        </xpath>
     </template>
 
 
