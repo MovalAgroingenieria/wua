@@ -22,6 +22,7 @@
         "views/wua_invoiceset_view.xml",
         "reports/wua_wateringrequest_report.xml",
         "views/wua_quota_view.xml",
+        "views/wua_hydricmovement_view.xml",
     ],
     "installable": True,
     "application": False,

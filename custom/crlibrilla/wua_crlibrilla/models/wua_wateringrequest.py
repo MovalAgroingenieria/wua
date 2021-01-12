@@ -45,8 +45,8 @@ class WuaWateringrequest(models.Model):
                     gravconsumption.notes = grav_vals
         return super(WuaWateringrequest, self).write(vals)
 
-    # The method detects if the base_wua_gravity_irrigation_with_quota_hours
-    # module is installed, and performs the same modifications.
+    # This method detects if the base_wua_gravity_irrigation_with_quota_hours
+    # module is installed and performs the same modifications.
     def _get_html_quota_balance(self, partner):
         resp = ''
         current_quotaperiod = self._get_current_quotaperiod()

@@ -16,3 +16,13 @@ class ResPartner(models.Model):
                 ('agriculturalseason_id.active_agriculturalseason',
                  '=', 'true'), ('accumulated_input', '>', 0)])
         return quotas
+
+    @api.multi
+    def get_partner_active_agriculturalseason_hydricmovements(self):
+        for record in self:
+            hydricmovements = self.env['wua.hydricmovement'].search(
+                [('partner_id.id', '=', record.id),
+                 ('agriculturalseason_id.active_agriculturalseason',
+                  '=', 'true'), ('accounting_volume', '!=', 0)],
+                order="event_time asc")
+        return hydricmovements

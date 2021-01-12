@@ -37,3 +37,33 @@ class WuaQuotaperiod(models.Model):
                             'search_default_active_agriculturalseason': True}
                 }
             return act_window
+
+    @api.multi
+    def action_get_hydric_movements(self):
+        self.ensure_one()
+        if self.hydricmovement_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_hydricmovement_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Hydric Movements'),
+                'res_model': 'wua.hydricmovement',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.hydricmovement_ids.ids),
+                           ('accounting_volume', '!=', 0)],
+                'context': {'compressed_agriculturalseason': True,
+                            'compressed_quotaperiod': True,
+                            'search_default_active_agriculturalseason': True}
+                }
+            return act_window
