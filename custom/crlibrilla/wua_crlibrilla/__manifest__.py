@@ -11,6 +11,8 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_invoicing_gravity_irrigation",
+        "base_wua_quota_management",
+        "base_wua_gravity_irrigation_with_quota",
     ],
     "data": [
         "views/resources.xml",
@@ -19,6 +21,7 @@
         "views/wua_watering_view.xml",
         "views/wua_invoiceset_view.xml",
         "reports/wua_wateringrequest_report.xml",
+        "views/wua_quota_view.xml",
     ],
     "installable": True,
     "application": False,

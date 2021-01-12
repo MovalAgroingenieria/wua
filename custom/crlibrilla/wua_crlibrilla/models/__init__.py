@@ -5,3 +5,7 @@ from . import wua_gravconsumption
 from . import wua_invoiceset
 from . import wua_watering
 from . import wua_wateringrequest
+from . import wua_agriculturalseason
+from . import res_partner
+from . import wua_quotaperiod
+from . import wua_superproduct
