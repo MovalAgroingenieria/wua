@@ -17,8 +17,10 @@
         "base_wua_report",
         "base_wua_gravity_irrigation_with_quota",
         "account_invoice_report_due_list",
+        "web"
     ],
     "data": [
+        "security/security.xml",
         "data/wua_invoicing_config_settings_data.xml",
         "views/wua_parcel_view.xml",
         "views/res_partner_view.xml",
