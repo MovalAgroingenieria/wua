@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing_separate_parcel_billing.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='payment_modes']" position="after">
+                <page name="payment_modes_ownership" string="Separate Billing By Ownership">
+                    <field name="ownershipcosts_mandate_required" invisible="1"/>
+                    <group name="container_payment_modes_ownership">
+                        <group name="ownership_costs" string="Ownership Costs">
+                            <field name="ownershipcosts_partner_id"
+                             string="Partner"/>
+                            <field name="ownershipcosts_payment_mode_id"
+                             string="Payment Mode"
+                             domain="[('payment_type','=','inbound')]"/>
+                            <field name="ownershipcosts_mandate_id"
+                             string="Direct Debit Mandate"
+                             attrs="{'invisible':
+                                     [('ownershipcosts_mandate_required',
+                                      '=',False)]}"
+                             domain="[('state','=','valid'),
+                                      ('partner_id','=',
+                                       ownershipcosts_partner_id)]"
+                             context="{'reduced_name_get_for_bankingmandate':
+                                       True}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view" >
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing_separate_parcel_billing.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='othercosts_separate_billing_no']" position="after">
+                <separator/>
+                <filter string="Separate billing for ownership costs: Yes"
+                 name="ownershipcosts_separate_billing_yes"
+                 domain="[('ownershipcosts_separate_billing','=',True)]"/>
+                <filter string="Separate billing for ownership costs: No"
+                 name="ownershipcosts_separate_billing_no"
+                 domain="[('ownershipcosts_separate_billing','=',False)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='othercosts_payment_mode_id_group']" position="after">
+                <filter string="Payment mode for ownership costs"
+                        name="ownershipcosts_payment_mode_id_group"
+                        context="{'group_by':'ownershipcosts_payment_mode_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

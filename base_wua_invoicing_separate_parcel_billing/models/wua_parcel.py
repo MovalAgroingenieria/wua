@@ -106,7 +106,7 @@ class WuaParcel(models.Model):
         comodel_name='account.banking.mandate',
         ondelete='restrict')
 
-    @api.depends('partnerlink_ids')
+    @api.depends('partnerlink_ids', 'partnerlink_ids.ownership_percentage')
     def _compute_watercosts_partner_id(self):
         for record in self:
             watercosts_partner_id = None
@@ -122,7 +122,7 @@ class WuaParcel(models.Model):
                 watercosts_partner_id = possible_partner_id
             record.watercosts_partner_id = watercosts_partner_id
 
-    @api.depends('partnerlink_ids')
+    @api.depends('partnerlink_ids', 'partnerlink_ids.ownership_percentage')
     def _compute_othercosts_partner_id(self):
         for record in self:
             othercosts_partner_id = None
