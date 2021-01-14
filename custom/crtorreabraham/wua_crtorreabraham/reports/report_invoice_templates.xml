@@ -27,9 +27,15 @@
         <xpath expr="//col[@name='quantity']" position="attributes">
           <attribute name="t-att-style">"width: 17%"</attribute>
         </xpath>
-        <xpath expr="//col[@name='price']" position="attributes">
-          <attribute name="t-att-style">"width: 14%"</attribute>
+        <xpath expr="//td[@name='price']" position="replace">
+          <td name="price" class="text-right" width="14%">
+              <span style="display: none;" t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
+              <span t-esc="l.env['wua.parcel'].transform_float_to_locale(l.price_unit, 4) + ' ' + l.currency_id.symbol"/>
+              <span>/</span>
+              <span t-field="l.uom_id" groups="product.group_uom"/>
+          </td>
         </xpath>
+
     </template>
 
     <!-- Irrigation settlement document -->
