@@ -62,7 +62,7 @@ class WuaWateringrequest(models.Model):
                 header = '<div class="text-center"><b><u>' + label_title + \
                          '</b></u></div>'
                 body = ''
-                hours_module = self.env['ir.module.module'].search([
+                hours_module = self.sudo().env['ir.module.module'].search([
                     ('name', '=',
                      'base_wua_gravity_irrigation_with_quota_hours'),
                     ('state', '=', 'installed')])
