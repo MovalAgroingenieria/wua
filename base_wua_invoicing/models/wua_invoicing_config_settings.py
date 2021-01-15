@@ -62,6 +62,14 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If marked, detail lines of waterconnections with the same payer '
              'will be grouped into just one')
 
+    show_irrigationditch = fields.Boolean(
+        string='Show Irrigationditch on invoices descriptions',
+        default=False,
+        required=True,
+        help='If it is marked, the invoices reports will show the '
+             'irrigationditch name on line description for products of '
+             'category 03')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -89,3 +97,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'group_detail_lines_of_wc_if_same_payer',
                            self.group_detail_lines_of_wc_if_same_payer)
+        values.set_default('wua.invoicing.configuration',
+                           'show_irrigationditch',
+                           self.show_irrigationditch)

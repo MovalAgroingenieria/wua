@@ -557,18 +557,21 @@ class WuaInvoiceset(models.Model):
         return area_measurement_name
 
     def get_alter_invoicing_behavior(self):
-        alter_invoicing_behavior = self.env['ir.values'].get_default(
-            'wua.invoicing.configuration', 'alter_invoicing_behavior')
+        alter_invoicing_behavior = self.get_invoicing_configuration_parameter(
+            'alter_invoicing_behavior')
         return alter_invoicing_behavior
+
+    def get_invoicing_configuration_parameter(self, field_name):
+        parameter = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', field_name)
+        return parameter
 
     def get_invoicing_area_measurement_name(self):
         configured_invoicing_area_measurement_name = ''
-        alter_invoicing_behavior = self.env['ir.values'].get_default(
-            'wua.invoicing.configuration', 'alter_invoicing_behavior')
+        alter_invoicing_behavior = self.get_alter_invoicing_behavior()
         if alter_invoicing_behavior:
             invoicing_area_measurement_name = \
-                self.env['ir.values'].get_default(
-                    'wua.invoicing.configuration',
+                self.get_invoicing_configuration_parameter(
                     'invoicing_area_measurement_name')
             configured_invoicing_area_measurement_name = \
                 invoicing_area_measurement_name.decode('utf_8')
@@ -576,12 +579,10 @@ class WuaInvoiceset(models.Model):
 
     def get_invoicing_area_measurement_equivalence(self):
         configured_invoicing_area_measurement_equivalence = 0
-        alter_invoicing_behavior = self.env['ir.values'].get_default(
-            'wua.invoicing.configuration', 'alter_invoicing_behavior')
+        alter_invoicing_behavior = self.get_alter_invoicing_behavior()
         if alter_invoicing_behavior:
             invoicing_area_measurement_equivalence = \
-                self.env['ir.values'].get_default(
-                    'wua.invoicing.configuration',
+                self.get_invoicing_configuration_parameter(
                     'invoicing_area_measurement_equivalence')
             configured_invoicing_area_measurement_equivalence = \
                 invoicing_area_measurement_equivalence
@@ -638,15 +639,21 @@ class WuaInvoiceset(models.Model):
         area_measurement_name = self.get_area_measurement_name()
         # Get Invoicing Area settings
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
+        show_irrigationditch = self.get_invoicing_configuration_parameter(
+            'show_irrigationditch')
         if alter_invoicing_behavior:
             area_invoicing_measurement_name = \
                 self.get_invoicing_area_measurement_name()
             area_invoicing_measurement_equivalence = \
                 self.get_invoicing_area_measurement_equivalence()
+        default_irrigationditch_label = _('Irrigationditch')
+        default_parcel_label = _('Parcel')
+        default_cost_label = _('cost:')
         for parcel in parcels:
             partnerlinks_of_parcel = partnerlinks.filtered(
                 lambda x: x.parcel_id.id == parcel.id and
                 x.other_costs_percentage > 0)
+            irrigationditch_content = ''
             if len(partnerlinks_of_parcel) > 0:
                 for partnerlink in partnerlinks_of_parcel:
                     partner_id = partnerlink.partner_id.id
@@ -670,7 +677,6 @@ class WuaInvoiceset(models.Model):
                         quantity = invoicing_area_official * (percentage / 100)
                     else:
                         quantity = area_official * (percentage / 100)
-                    default_parcel_label = _('Parcel')
                     parcel_label = self.get_value_from_translation(
                         'base_wua_invoicing', 'Parcel',
                         partnerlink.partner_id.lang)
@@ -678,10 +684,20 @@ class WuaInvoiceset(models.Model):
                         parcel_label = default_parcel_label
                     profile_name_label = self.get_profile_name(
                         profile, partnerlink.partner_id.lang)
-                    default_cost_label = _('cost:')
                     cost_label = self.get_value_from_translation(
                         'base_wua_invoicing', 'cost:',
                         partnerlink.partner_id.lang)
+                    if (show_irrigationditch and parcel.irrigationditch_id):
+                        irrigationditch_label = self.\
+                            get_value_from_translation(
+                                'base_wua_invoicing', 'Irrigationditch',
+                                partnerlink.partner_id.lang)
+                        if not irrigationditch_label:
+                            irrigationditch_label = \
+                                default_irrigationditch_label
+                        irrigationditch_content = '. ' + \
+                            irrigationditch_label + ': ' + \
+                            parcel.irrigationditch_id.name
                     if not cost_label:
                         cost_label = default_cost_label
                     # Set description according to Invoicing Area setting
@@ -690,15 +706,16 @@ class WuaInvoiceset(models.Model):
                             + '(' + area_official_str + ' ' + \
                             area_measurement_name + ', ' + \
                             invoicing_area_official_str + ' ' \
-                            + area_invoicing_measurement_name + '), ' + \
+                            + area_invoicing_measurement_name + \
+                            irrigationditch_content + '), ' + \
                             profile_name_label + \
                             ' (' + cost_label + ' ' + percentage_str + ' %)'
                     else:
                         description = parcel_label + ' ' + parcel_code \
                             + ' ' + '(' + area_official_str + ' ' +  \
-                            area_measurement_name + '), ' + \
-                            profile_name_label + \
-                            ' (' + cost_label + ' ' + percentage_str + ' %)'
+                            area_measurement_name + irrigationditch_content + \
+                            '), ' + profile_name_label + ' (' + cost_label + \
+                            ' ' + percentage_str + ' %)'
                     result = {
                         'partner_id': partner_id,
                         'product_id': product_id,
