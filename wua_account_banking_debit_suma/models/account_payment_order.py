@@ -43,6 +43,93 @@ class AccountPaymentOrder(models.Model):
                   (partner_id.name)))
         return fixed_number
 
+    def create_details_lines(self, description, line, invoice):
+        # Detail line 1 - Position [244-318] Length 75
+        # @INFO: It is filled with invoiceset name, invoice number and amount
+        #        Description and line are not used (parent hook)
+        line_detail_1 = ""
+        if invoice and invoice.invoiceset_id:
+            amount_total = self.env['wua.parcel'].transform_float_to_locale(
+                invoice.amount_total, 2)
+            line_detail_1 = invoice.invoiceset_id.description + ' ' \
+                + invoice.number + ' ' + amount_total + ' ' \
+                + invoice.currency_id.name
+            line_detail_1 = line_detail_1[:75].ljust(75)
+        else:
+            line_detail_1 = str(" " * 75)
+
+        # Detail line 2 - Position [319-393] Length 75
+        # @INFO: Product 1 + total quantity + price currency/unit
+
+        # Detail line 3 - Position [319-393] Length 75
+        # @INFO: Product 2 + total quantity + price currency/unit
+
+        # Detail line 3 - Position [319-393] Length 75
+        # @INFO: Product 3 + total quantity + price currency/unit
+
+        # Get products
+        products = []
+        if invoice and invoice.invoice_line_ids:
+            for iline in invoice.invoice_line_ids:
+                if iline.product_id not in products:
+                    products.append(iline.product_id)
+
+        # Construct product lines
+        product_lines = []
+        if products:
+            for product in products:
+                product_name = ""
+                product_total_qty = 0.0
+                for iline in invoice.invoice_line_ids:
+                    if iline.product_id.id == product.id:
+                        product_total_qty = product_total_qty + iline.quantity
+                product_total_qty = \
+                    self.env['wua.parcel'].transform_float_to_locale(
+                         product_total_qty, 2)
+                product_price = \
+                    self.env['wua.parcel'].transform_float_to_locale(
+                        product.lst_price, 2)
+                product_unit = product.uom_id.name
+                if product.attribute_value_ids:
+                    for variant in product.attribute_value_ids:
+                        product_name = product.name + ' ' + variant.name
+                else:
+                    product_name = product.name
+                product_line = product_name + ' ' + product_total_qty + ' ' \
+                    + product_unit + ' ' + _('to') + ' ' + product_price + ' '\
+                    + invoice.currency_id.name + '/' + product_unit
+                product_lines.append(product_line)
+
+        lines_dic = {}
+        if product_lines:
+            detail_line_num = 2
+            for i in range(len(product_lines)):
+                lines_dic["line_detail_{0}".format(detail_line_num)] = \
+                    product_lines[i]
+                detail_line_num += 1
+
+        line_detail_2 = line_detail_3 = line_detail_4 = ""
+        if lines_dic:
+            if "line_detail_2" in lines_dic:
+                line_detail_2 = lines_dic["line_detail_2"][:75].ljust(75)
+            else:
+                line_detail_2 = str(" " * 75)
+            if "line_detail_3" in lines_dic:
+                line_detail_3 = lines_dic["line_detail_3"][:75].ljust(75)
+            else:
+                line_detail_3 = str(" " * 75)
+            if "line_detail_4" in lines_dic:
+                line_detail_4 = lines_dic["line_detail_4"][:75].ljust(75)
+            else:
+                line_detail_4 = str(" " * 75)
+            if "line_detail_5" in lines_dic:
+                remaining_products = len(lines_dic) - 2
+                line_detail_4 = \
+                    _("There are still %s products left, see invoice for "
+                      "details.") % remaining_products
+
+        return line_detail_1, line_detail_2, line_detail_3, line_detail_4
+
     @api.multi
     def generated2uploaded(self):
         res = super(AccountPaymentOrder, self).generated2uploaded()
