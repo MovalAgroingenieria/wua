@@ -14,7 +14,9 @@
             </xpath>
             <xpath expr="//field[@name='volume']" position="after">
                 <field name="currency_id" invisible="1"/>
+                <field name="extra_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 <field name="expected_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="final_expected_amount" widget="monetary" options="{'currency_field': 'currency_id'}"/>
             </xpath>
         </field>
     </record>
@@ -29,7 +31,7 @@
             </xpath>
             <xpath expr="//field[@name='state']" position="before">
                 <field name="currency_id" invisible="1"/>
-                <field name="expected_amount"/>
+                <field name="final_expected_amount"/>
             </xpath>
         </field>
     </record>

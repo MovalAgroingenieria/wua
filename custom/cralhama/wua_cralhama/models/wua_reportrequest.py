@@ -19,6 +19,18 @@ class WuaReportrequest(models.Model):
         default=lambda self: self.env['ir.sequence'].next_by_code(
             'wua.cralhama.reportrequest.seq'))
 
+    extra_amount = fields.Monetary(
+        string='Extra amount',
+        default=0,
+        help="Positive or negative extra amount for irrigation report "
+            "request.")
+
+    final_expected_amount = fields.Monetary(
+        string='Final amount',
+        store=True,
+        compute='_compute_final_expected_amount',
+        help="Final expected amount of irrigation report request.")
+
     _sql_constraints = [
         ('unique_reportrequest_number', 'UNIQUE (reportrequest_number)',
          'Existing request number.')]
@@ -38,3 +50,9 @@ class WuaReportrequest(models.Model):
                     expected_amount = \
                         record.hours * record.product_id.lst_price
             record.expected_amount = expected_amount
+
+    @api.depends('expected_amount', 'extra_amount')
+    def _compute_final_expected_amount(self):
+        for record in self:
+            record.final_expected_amount = \
+                record.expected_amount + record.extra_amount
