@@ -22,4 +22,19 @@
         </field>
     </record>
 
+    <record id="wua_irrigationreport_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Reports (search view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='state']" position="before">
+                <filter name="mapped_to_report_request_true" string="Mapped to request: Yes"
+                        domain="[('mapped_to_reportrequest','=',True)]"/>
+                <filter name="mapped_to_report_request_false" string="Mapped to request: No"
+                        domain="[('mapped_to_reportrequest','=',False)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

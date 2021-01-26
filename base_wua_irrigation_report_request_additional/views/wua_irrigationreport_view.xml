@@ -30,4 +30,20 @@
         </field>
     </record>
 
+     <record id="wua_irrigationreport_view_search_inherit_reportrequest" model="ir.ui.view">
+        <field name="name">Irrigation Reports (search view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report_request.wua_irrigationreport_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='mapped_to_report_request_true']" position="replace">
+                <filter name="mapped_to_source_request_true" string="Mapped to source request: Yes"
+                        domain="[('mapped_to_source_reportrequest_id','=',True)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='mapped_to_report_request_false']" position="replace">
+                <filter name="mapped_to_source_request_false" string="Mapped to source request: No"
+                        domain="[('mapped_to_source_reportrequest_id','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>

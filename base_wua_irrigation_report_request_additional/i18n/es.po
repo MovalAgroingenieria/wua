@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-26 07:27+0000\n"
-"PO-Revision-Date: 2021-01-26 07:27+0000\n"
+"POT-Creation-Date: 2021-01-26 15:27+0000\n"
+"PO-Revision-Date: 2021-01-26 15:27+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgid "<span class=\"o_stat_text\">\n"
 "                                Irrigation reports\n"
 "                            </span>"
 msgstr "<span class=\"o_stat_text\">\n"
-"                                Partes\n"
+"                                Partes de riego\n"
 "                            </span>"
 
 #. module: base_wua_irrigation_report_request_additional
@@ -30,11 +30,32 @@ msgid "Entity (irrigation-report request)"
 msgstr "Elemento (Petición parte de riego)"
 
 #. module: base_wua_irrigation_report_request_additional
-#: code:addons/base_wua_irrigation_report_request_additional/models/wua_reportrequest.py:56
+#: code:addons/base_wua_irrigation_report_request_additional/models/wua_reportrequest.py:61
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request_additional.field_wua_reportrequest_mapped_irrigationreport_ids
 #, python-format
 msgid "Irrigation reports"
 msgstr "Partes de riego"
+
+#. module: base_wua_irrigation_report_request_additional
+#: code:addons/base_wua_irrigation_report_request_additional/models/wua_reportrequest.py:37
+#, python-format
+msgid "It is not possible to validate the request: the indicated type of water does not appear in any intake."
+msgstr "No es posible validar la petición: el tipo de agua indicada no aparece asociada a ninguna captación."
+
+#. module: base_wua_irrigation_report_request_additional
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_request_additional.field_wua_irrigationreport_mapped_to_source_reportrequest_id
+msgid "Mapped to a source report request"
+msgstr "Asociada a una petición de origen"
+
+#. module: base_wua_irrigation_report_request_additional
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_request_additional.wua_irrigationreport_view_search_inherit_reportrequest
+msgid "Mapped to source request: No"
+msgstr "Asociada a una petición de origen: No"
+
+#. module: base_wua_irrigation_report_request_additional
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_request_additional.wua_irrigationreport_view_search_inherit_reportrequest
+msgid "Mapped to source request: Yes"
+msgstr "Asociada a una petición de origen: Sí"
 
 #. module: base_wua_irrigation_report_request_additional
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request_additional.field_wua_reportrequest_num_mapped_irrigationreport_ids
@@ -50,5 +71,5 @@ msgstr "Petición de origen"
 #. module: base_wua_irrigation_report_request_additional
 #: model:ir.model,name:base_wua_irrigation_report_request_additional.model_wua_irrigationreport
 msgid "WUA Irrigation Report"
-msgstr "Parte de Riego CR"
+msgstr "Parte de Riego WUA"
 

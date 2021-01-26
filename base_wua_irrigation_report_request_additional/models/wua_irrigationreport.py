@@ -15,10 +15,16 @@ class WuaIrrigationReport(models.Model):
         store=True,
         ondelete="restrict")
 
-    @api.multi
-    def validate_irrigationreport(self):
-        super(WuaIrrigationReport, self).validate_irrigationreport()
-        self.ensure_one()
-        report = self
-        if not report.source_reportrequest_id:
-            report.source_reportrequest_id = report.reportrequest_id
+    mapped_to_source_reportrequest_id = fields.Boolean(
+        string='Mapped to a source report request',
+        store=True,
+        compute='_compute_mapped_to_source_reportrequest_id')
+
+    @api.depends('source_reportrequest_id')
+    def _compute_mapped_to_source_reportrequest_id(self):
+        for record in self:
+            mapped_to_source_reportrequest_id = False
+            if record.source_reportrequest_id:
+                mapped_to_source_reportrequest_id = True
+            record.mapped_to_source_reportrequest_id = \
+                mapped_to_source_reportrequest_id

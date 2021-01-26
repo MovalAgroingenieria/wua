@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-# 2020 Moval Agroingeniería
+# 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
 from odoo import models, fields, api
 
 
@@ -56,3 +57,24 @@ class WuaReportrequest(models.Model):
         for record in self:
             record.final_expected_amount = \
                 record.expected_amount + record.extra_amount
+
+    @api.multi
+    def name_get(self):
+        if self.env.context.get('show_reportrequest_number', False):
+            result = []
+            for record in self:
+                name = ''
+                if (record.request_date and record.partner_id and
+                    record.product_id and record.reportrequest_number):
+                    reportrequest_number = str(record.reportrequest_number)
+                    request_date_str = datetime.datetime.strptime(
+                        record.request_date, '%Y-%m-%d').strftime('%x')
+                    language = record.partner_id.lang
+                    product = \
+                        record.with_context({'lang': language}).product_id.name
+                    name = reportrequest_number + ' - ' + request_date_str + \
+                        ' - ' + product
+                result.append((record.id, name))
+        else:
+            result = super(WuaReportrequest, self).name_get()
+        return result
