@@ -43,6 +43,7 @@
         <div class="page">
 
             <!-- Vars -->
+            <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
             <t t-set="data_in_hours" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'data_in_hours')"/>
             <t t-set="hours_sexagesimal" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'hours_sexagesimal')"/>
             <t t-set="info_request_report" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'info_request_report')"/>
@@ -234,7 +235,7 @@
                             <table name="request_data" class="table-condensed" style="width:90%;">
                                 <tbody>
                                     <tr name="state">
-                                        <td><span>State:</span></td>
+                                        <td><span>State</span></td>
                                         <t t-if="o.state">
                                             <td class="text-right">
                                                 <strong><span t-field="o.state"/></strong>
@@ -242,7 +243,7 @@
                                         </t>
                                     </tr>
                                     <tr name="parcel_code_1">
-                                        <td><span>Parcel:</span></td>
+                                        <td><span>Parcel</span></td>
                                         <t t-if="o.parcel_id">
                                             <td class="text-right">
                                                 <strong><span t-field="o.parcel_id"/></strong>
@@ -251,7 +252,7 @@
                                     </tr>
                                     <t t-if="o.state == 'validated'">
                                         <tr name="irrigationreport">
-                                            <td><span>Associated report:</span></td>
+                                            <td><span>Associated report</span></td>
                                             <t t-if="o.irrigationreport_id">
                                                 <td class="text-right">
                                                     <strong><span t-field="o.irrigationreport_id"/></strong>
@@ -267,7 +268,7 @@
                             <table name="volume_info" class="table-condensed" style="width:90%;">
                                 <tbody>
                                     <tr name="request_Date">
-                                        <td><span>Date:</span></td>
+                                        <td><span>Date</span></td>
                                         <t t-if="o.request_date">
                                             <td class="text-right">
                                                 <strong><span t-field="o.request_date"/></strong>
@@ -275,7 +276,7 @@
                                         </t>
                                     </tr>
                                     <tr name="product">
-                                        <td><span>Product:</span></td>
+                                        <td><span>Product</span></td>
                                         <t t-if="o.product_id">
                                             <td class="text-right">
                                                 <strong><span t-field="o.product_id"/></strong>
@@ -284,7 +285,7 @@
                                     </tr>
                                     <t t-if="data_in_hours" name="hours_1">
                                         <tr name="hours">
-                                             <td><span>Hours:</span></td>
+                                             <td><span>Hours</span></td>
                                              <t t-if="o.hours">
                                                  <td class="text-right">
                                                       <strong>
@@ -301,7 +302,7 @@
                                     </t>
                                     <t t-else="" name="volume_1">
                                         <tr name="volume">
-                                             <td><span>Volume:</span></td>
+                                             <td><span>Volume</span></td>
                                              <t t-if="o.volume">
                                                  <td class="text-right">
                                                      <strong>
@@ -589,7 +590,7 @@
                             <table name="request_data" class="table-condensed" style="width:90%;">
                                 <tbody>
                                     <tr name="state">
-                                        <td><span>State:</span></td>
+                                        <td><span>State</span></td>
                                         <t t-if="o.state">
                                             <td class="text-right">
                                                 <strong><span t-field="o.state"/></strong>
@@ -597,7 +598,7 @@
                                         </t>
                                     </tr>
                                     <tr name="parcel_code_2">
-                                        <td><span>Parcel:</span></td>
+                                        <td><span>Parcel</span></td>
                                         <t t-if="o.parcel_id">
                                             <td class="text-right">
                                                 <strong><span t-field="o.parcel_id"/></strong>
@@ -606,7 +607,7 @@
                                     </tr>
                                     <t t-if="o.state == 'validated'">
                                         <tr name="irrigationreport">
-                                            <td><span>Associated report:</span></td>
+                                            <td><span>Associated report</span></td>
                                             <t t-if="o.irrigationreport_id">
                                                 <td class="text-right">
                                                     <strong><span t-field="o.irrigationreport_id"/></strong>
@@ -622,7 +623,7 @@
                             <table name="volume_info" class="table-condensed" style="width:90%;">
                                 <tbody>
                                     <tr name="request_Date">
-                                        <td><span>Date:</span></td>
+                                        <td><span>Date</span></td>
                                         <t t-if="o.request_date">
                                             <td class="text-right">
                                                 <strong><span t-field="o.request_date"/></strong>
@@ -630,7 +631,7 @@
                                         </t>
                                     </tr>
                                     <tr name="product">
-                                        <td><span>Product:</span></td>
+                                        <td><span>Product</span></td>
                                         <t t-if="o.product_id">
                                             <td class="text-right">
                                                 <strong><span t-field="o.product_id"/></strong>
@@ -639,7 +640,7 @@
                                     </tr>
                                     <t t-if="data_in_hours" name="hours_2">
                                         <tr name="hours">
-                                             <td><span>Hours:</span></td>
+                                             <td><span>Hours</span></td>
                                              <t t-if="o.hours">
                                                  <td class="text-right">
                                                       <strong>
@@ -656,7 +657,7 @@
                                     </t>
                                     <t t-else="" name="volume_2">
                                         <tr name="volume">
-                                             <td><span>Volume:</span></td>
+                                             <td><span>Volume</span></td>
                                              <t t-if="o.volume">
                                                  <td class="text-right">
                                                      <strong>

@@ -21,6 +21,9 @@
     <template id="report_wua_irrigationreport_document">
         <div class="page">
 
+            <!-- Vars -->
+            <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+
             <div name="section_header">
                 <div name="title" style="font-size: 16;text-align: center;">
                     <strong>Irrigation Report</strong>
@@ -135,6 +138,14 @@
                                          <t t-if="o.irrigationreport_number">
                                              <td class="text-right">
                                                  <strong><span t-field="o.irrigationreport_number"/></strong>
+                                             </td>
+                                         </t>
+                                    </tr>
+                                    <tr name="delivery_note_str">
+                                         <td><span>Delivery Note</span></td>
+                                         <t t-if="o.delivery_note_str">
+                                             <td class="text-right">
+                                                 <strong><span t-field="o.delivery_note_str"/></strong>
                                              </td>
                                          </t>
                                     </tr>

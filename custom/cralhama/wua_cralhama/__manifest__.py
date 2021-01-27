@@ -23,7 +23,6 @@
         "views/resources.xml",
         "reports/report_wua_irrigationreport_request.xml",
         "data/wua_cralhama_sequences.xml",
-        "reports/report_wua_irrigationreport.xml",
     ],
     "installable": True,
     "application": False,
