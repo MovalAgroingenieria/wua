@@ -127,6 +127,7 @@ class AccountPaymentOrder(models.Model):
                 line_detail_4 = \
                     _("There are still %s products left, see invoice for "
                       "details.") % remaining_products
+                line_detail_4 = line_detail_4[:75].ljust(75)
 
         return line_detail_1, line_detail_2, line_detail_3, line_detail_4
 
