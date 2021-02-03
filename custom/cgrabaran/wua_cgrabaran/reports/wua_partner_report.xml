@@ -2,180 +2,201 @@
 <odoo>
 
     <template id="wua_partner_report_document" inherit_id="base_wua.wua_partner_report_document">
-      <xpath expr="//div[@name='wua_partnerlinks_ids']" position="replace">
-        <div name="wua_partnerlinks_ids" style="margin-top: 20px;">
-            <t t-if="o.partnerlink_ids">
-                <t t-set="company_01_id" t-value="o.env['ir.values'].get_default(
+        <xpath expr="//tr[@name='tr_number_of_votes']" position="replace">
+            <t t-set="company_01_name" t-value="o.env['ir.values'].get_default(
+                      'wua.configuration', 'company_01_abv')"/>
+            <t t-set="company_02_name" t-value="o.env['ir.values'].get_default(
+                      'wua.configuration', 'company_02_abv')"/>
+            <t t-set="company_03_name" t-value="o.env['ir.values'].get_default(
+                      'wua.configuration', 'company_03_abv')"/>
+            <tr name="tr_number_of_votes_company_01">
+                <td><span>Number of votes <t t-esc="company_01_name"/>:</span></td>
+                <td class="text-right"><span t-field="o.number_of_votes_company_01"/></td>
+            </tr>
+            <tr name="tr_number_of_votes_company_02">
+                <td><span>Number of votes <t t-esc="company_02_name"/>:</span></td>
+                <td class="text-right"><span t-field="o.number_of_votes_company_02"/></td>
+            </tr>
+            <tr name="tr_number_of_votes_company_03">
+                <td><span>Number of votes <t t-esc="company_03_name"/>:</span></td>
+                <td class="text-right"><span t-field="o.number_of_votes_company_03"/></td>
+            </tr>
+        </xpath>
+
+        <xpath expr="//div[@name='wua_partnerlinks_ids']" position="replace">
+            <div name="wua_partnerlinks_ids" style="margin-top: 20px;">
+                <t t-if="o.partnerlink_ids">
+                    <t t-set="company_01_id" t-value="o.env['ir.values'].get_default(
                           'wua.configuration', 'company_01')"/>
-                <t t-set="company_02_id" t-value="o.env['ir.values'].get_default(
+                    <t t-set="company_02_id" t-value="o.env['ir.values'].get_default(
                           'wua.configuration', 'company_02')"/>
-                <t t-set="company_03_id" t-value="o.env['ir.values'].get_default(
+                    <t t-set="company_03_id" t-value="o.env['ir.values'].get_default(
                           'wua.configuration', 'company_03')"/>
-                <t t-set="company_01_name" t-value="o.env['ir.values'].get_default(
+                    <t t-set="company_01_name" t-value="o.env['ir.values'].get_default(
                           'wua.configuration', 'company_01_abv')"/>
-                <t t-set="company_02_name" t-value="o.env['ir.values'].get_default(
+                    <t t-set="company_02_name" t-value="o.env['ir.values'].get_default(
                           'wua.configuration', 'company_02_abv')"/>
-                <t t-set="company_03_name" t-value="o.env['ir.values'].get_default(
+                    <t t-set="company_03_name" t-value="o.env['ir.values'].get_default(
                           'wua.configuration', 'company_03_abv')"/>
-                <t t-set="partnerlinks_company_01" t-value="o.partnerlink_ids.filtered(lambda x: x.company_id.id == company_01_id)"/>
-                <t t-set="partnerlinks_company_02" t-value="o.partnerlink_ids.filtered(lambda x: x.company_id.id == company_02_id)"/>
-                <t t-set="partnerlinks_company_03" t-value="o.partnerlink_ids.filtered(lambda x: x.company_id.id == company_03_id)"/>
-                <t t-if="partnerlinks_company_01">
-                  <t t-set="total_area_official" t-value="sum(p.area_official for p in partnerlinks_company_01)"/>
-                  <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                      <t t-if="report_style == 'light'">
-                           <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                               <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                               <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_01_name"/></strong></div>
-                          </div>
-                       </t>
-                       <t t-else="">
-                          <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                               <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                               <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_01_name"/></strong></div>
-                          </div>
+                    <t t-set="partnerlinks_company_01" t-value="o.partnerlink_ids.filtered(lambda x: x.company_id.id == company_01_id)"/>
+                    <t t-set="partnerlinks_company_02" t-value="o.partnerlink_ids.filtered(lambda x: x.company_id.id == company_02_id)"/>
+                    <t t-set="partnerlinks_company_03" t-value="o.partnerlink_ids.filtered(lambda x: x.company_id.id == company_03_id)"/>
+                    <t t-if="partnerlinks_company_01">
+                        <t t-set="total_area_official" t-value="sum(p.area_official for p in partnerlinks_company_01)"/>
+                        <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                            <t t-if="report_style == 'light'">
+                                <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                    <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_01_name"/></strong></div>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                    <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_01_name"/></strong></div>
+                                </div>
+                            </t>
+                        </div>
+                        <table class="table table-striped" style="margin-top: 2px;">
+                            <thead>
+                                <tr>
+                                    <th>Parcel</th>
+                                    <th name="th_cadastral_reference_name">Cadastral reference</th>
+                                    <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
+                                    <th name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
+                                    <th name="th_profile_name">Profile</th>
+                                    <th name="th_ownership_name" class="text-right">Ownership (%)</th>
+                                    <th name="th_water_name" class="text-right">Water (%)</th>
+                                    <th name="th_costs_name" class="text-right">Costs (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="partnerlinks_company_01" t-as="p">
+                                    <td><span t-field="p.parcel_id"/></td>
+                                    <td name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
+                                    <td class="text-right"><span t-field="p.area_official"/></td>
+                                    <td name="td_irrigation_partner_name" class="text-center">
+                                        <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
+                                        <t t-else=""><span>No</span></t>
+                                    </td>
+                                    <td name="td_profile_name" ><span t-field="p.profile"/></td>
+                                    <td name="td_ownership_name" class="text-right"><span t-field="p.ownership_percentage"/></td>
+                                    <td name="td_water_name" class="text-right"><span t-field="p.water_costs_percentage"/></td>
+                                    <td name="td_costs_name" class="text-right"><span t-field="p.other_costs_percentage"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" name="td_total" class="text-left"><b>TOTAL:</b></td>
+                                    <td name="td_total_area_official" class="text-right"><b><t t-esc="total_area_official"/></b></td>
+                                    <td colspan="5"/>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+                    <t t-if="partnerlinks_company_02">
+                        <t t-set="total_area_official" t-value="sum(p.area_official for p in partnerlinks_company_02)"/>
+                        <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                            <t t-if="report_style == 'light'">
+                                 <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                     <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                     <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_02_name"/></strong></div>
+                                </div>
+                             </t>
+                             <t t-else="">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                    <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_02_name"/></strong></div>
+                                </div>
+                            </t>
+                        </div>
+                        <table class="table table-striped" style="margin-top: 2px;">
+                            <thead>
+                                <tr>
+                                    <th>Parcel</th>
+                                    <th name="th_cadastral_reference_name">Cadastral reference</th>
+                                    <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
+                                    <th name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
+                                    <th name="th_profile_name">Profile</th>
+                                    <th name="th_ownership_name" class="text-right">Ownership (%)</th>
+                                    <th name="th_water_name" class="text-right">Water (%)</th>
+                                    <th name="th_costs_name" class="text-right">Costs (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="partnerlinks_company_02" t-as="p">
+                                    <td><span t-field="p.parcel_id"/></td>
+                                    <td name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
+                                    <td class="text-right"><span t-field="p.area_official"/></td>
+                                    <td name="td_irrigation_partner_name" class="text-center">
+                                        <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
+                                        <t t-else=""><span>No</span></t>
+                                    </td>
+                                    <td name="td_profile_name" ><span t-field="p.profile"/></td>
+                                    <td name="td_ownership_name" class="text-right"><span t-field="p.ownership_percentage"/></td>
+                                    <td name="td_water_name" class="text-right"><span t-field="p.water_costs_percentage"/></td>
+                                    <td name="td_costs_name" class="text-right"><span t-field="p.other_costs_percentage"/></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" name="td_total" class="text-left"><b>TOTAL:</b></td>
+                                    <td name="td_total_area_official" class="text-right"><b><t t-esc="total_area_official"/></b></td>
+                                  <td colspan="5"/>
+                                </tr>
+                            </tbody>
+                        </table>
                       </t>
-                  </div>
-                  <table class="table table-striped" style="margin-top: 2px;">
-                      <thead>
-                          <tr>
-                              <th>Parcel</th>
-                              <th name="th_cadastral_reference_name">Cadastral reference</th>
-                              <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
-                              <th name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
-                              <th name="th_profile_name">Profile</th>
-                              <th name="th_ownership_name" class="text-right">Ownership (%)</th>
-                              <th name="th_water_name" class="text-right">Water (%)</th>
-                              <th name="th_costs_name" class="text-right">Costs (%)</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr t-foreach="partnerlinks_company_01" t-as="p">
-                              <td><span t-field="p.parcel_id"/></td>
-                              <td name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
-                              <td class="text-right"><span t-field="p.area_official"/></td>
-                              <td name="td_irrigation_partner_name" class="text-center">
-                                  <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
-                                  <t t-else=""><span>No</span></t>
-                              </td>
-                              <td name="td_profile_name" ><span t-field="p.profile"/></td>
-                              <td name="td_ownership_name" class="text-right"><span t-field="p.ownership_percentage"/></td>
-                              <td name="td_water_name" class="text-right"><span t-field="p.water_costs_percentage"/></td>
-                              <td name="td_costs_name" class="text-right"><span t-field="p.other_costs_percentage"/></td>
-                          </tr>
-                          <tr>
-                            <td colspan="2" name="td_total" class="text-left"><b>TOTAL:</b></td>
-                            <td name="td_total_area_official" class="text-right"><b><t t-esc="total_area_official"/></b></td>
-                            <td colspan="5"/>
-                          </tr>
-                      </tbody>
-                    </table>
-                </t>
-                <t t-if="partnerlinks_company_02">
-                  <t t-set="total_area_official" t-value="sum(p.area_official for p in partnerlinks_company_02)"/>
-                  <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                      <t t-if="report_style == 'light'">
-                           <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                               <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                               <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_02_name"/></strong></div>
-                          </div>
-                       </t>
-                       <t t-else="">
-                          <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                              <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                              <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_02_name"/></strong></div>
-                          </div>
+                      <t t-if="partnerlinks_company_03">
+                        <t t-set="total_area_official" t-value="sum(p.area_official for p in partnerlinks_company_03)"/>
+                        <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                            <t t-if="report_style == 'light'">
+                                 <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                     <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                     <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_03_name"/></strong></div>
+                                </div>
+                             </t>
+                             <t t-else="">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                    <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_03_name"/></strong></div>
+                                </div>
+                            </t>
+                        </div>
+                        <table class="table table-striped" style="margin-top: 2px;">
+                            <thead>
+                                <tr>
+                                    <th>Parcel</th>
+                                    <th name="th_cadastral_reference_name">Cadastral reference</th>
+                                    <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
+                                    <th name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
+                                    <th name="th_profile_name">Profile</th>
+                                    <th name="th_ownership_name" class="text-right">Ownership (%)</th>
+                                    <th name="th_water_name" class="text-right">Water (%)</th>
+                                    <th name="th_costs_name" class="text-right">Costs (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="partnerlinks_company_03" t-as="p">
+                                    <td><span t-field="p.parcel_id"/></td>
+                                    <td name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
+                                    <td class="text-right"><span t-field="p.area_official"/></td>
+                                    <td name="td_irrigation_partner_name" class="text-center">
+                                        <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
+                                        <t t-else=""><span>No</span></t>
+                                    </td>
+                                    <td name="td_profile_name" ><span t-field="p.profile"/></td>
+                                    <td name="td_ownership_name" class="text-right"><span t-field="p.ownership_percentage"/></td>
+                                    <td name="td_water_name" class="text-right"><span t-field="p.water_costs_percentage"/></td>
+                                    <td name="td_costs_name" class="text-right"><span t-field="p.other_costs_percentage"/></td>
+                                </tr>
+                                <tr>
+                                  <td colspan="2" name="td_total" class="text-left"><b>TOTAL:</b></td>
+                                  <td name="td_total_area_official" class="text-right"><b><t t-esc="total_area_official"/></b></td>
+                                  <td colspan="5"/>
+                                </tr>
+                            </tbody>
+                        </table>
                       </t>
-                  </div>
-                  <table class="table table-striped" style="margin-top: 2px;">
-                      <thead>
-                          <tr>
-                              <th>Parcel</th>
-                              <th name="th_cadastral_reference_name">Cadastral reference</th>
-                              <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
-                              <th name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
-                              <th name="th_profile_name">Profile</th>
-                              <th name="th_ownership_name" class="text-right">Ownership (%)</th>
-                              <th name="th_water_name" class="text-right">Water (%)</th>
-                              <th name="th_costs_name" class="text-right">Costs (%)</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr t-foreach="partnerlinks_company_02" t-as="p">
-                              <td><span t-field="p.parcel_id"/></td>
-                              <td name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
-                              <td class="text-right"><span t-field="p.area_official"/></td>
-                              <td name="td_irrigation_partner_name" class="text-center">
-                                  <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
-                                  <t t-else=""><span>No</span></t>
-                              </td>
-                              <td name="td_profile_name" ><span t-field="p.profile"/></td>
-                              <td name="td_ownership_name" class="text-right"><span t-field="p.ownership_percentage"/></td>
-                              <td name="td_water_name" class="text-right"><span t-field="p.water_costs_percentage"/></td>
-                              <td name="td_costs_name" class="text-right"><span t-field="p.other_costs_percentage"/></td>
-                          </tr>
-                          <tr>
-                            <td colspan="2" name="td_total" class="text-left"><b>TOTAL:</b></td>
-                            <td name="td_total_area_official" class="text-right"><b><t t-esc="total_area_official"/></b></td>
-                            <td colspan="5"/>
-                          </tr>
-                      </tbody>
-                  </table>
-                </t>
-                <t t-if="partnerlinks_company_03">
-                  <t t-set="total_area_official" t-value="sum(p.area_official for p in partnerlinks_company_03)"/>
-                  <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                      <t t-if="report_style == 'light'">
-                           <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                               <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                               <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_03_name"/></strong></div>
-                          </div>
-                       </t>
-                       <t t-else="">
-                          <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                              <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                              <div style="float: left; display: inline;"><strong>Parcels <t t-esc="company_03_name"/></strong></div>
-                          </div>
-                      </t>
-                  </div>
-                  <table class="table table-striped" style="margin-top: 2px;">
-                      <thead>
-                          <tr>
-                              <th>Parcel</th>
-                              <th name="th_cadastral_reference_name">Cadastral reference</th>
-                              <th class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
-                              <th name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
-                              <th name="th_profile_name">Profile</th>
-                              <th name="th_ownership_name" class="text-right">Ownership (%)</th>
-                              <th name="th_water_name" class="text-right">Water (%)</th>
-                              <th name="th_costs_name" class="text-right">Costs (%)</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <tr t-foreach="partnerlinks_company_03" t-as="p">
-                              <td><span t-field="p.parcel_id"/></td>
-                              <td name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
-                              <td class="text-right"><span t-field="p.area_official"/></td>
-                              <td name="td_irrigation_partner_name" class="text-center">
-                                  <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
-                                  <t t-else=""><span>No</span></t>
-                              </td>
-                              <td name="td_profile_name" ><span t-field="p.profile"/></td>
-                              <td name="td_ownership_name" class="text-right"><span t-field="p.ownership_percentage"/></td>
-                              <td name="td_water_name" class="text-right"><span t-field="p.water_costs_percentage"/></td>
-                              <td name="td_costs_name" class="text-right"><span t-field="p.other_costs_percentage"/></td>
-                          </tr>
-                          <tr>
-                            <td colspan="2" name="td_total" class="text-left"><b>TOTAL:</b></td>
-                            <td name="td_total_area_official" class="text-right"><b><t t-esc="total_area_official"/></b></td>
-                            <td colspan="5"/>
-                          </tr>
-                      </tbody>
-                  </table>
-                </t>
-            </t>
-        </div>
-      </xpath>
+                  </t>
+            </div>
+        </xpath>
     </template>
 
 </odoo>
