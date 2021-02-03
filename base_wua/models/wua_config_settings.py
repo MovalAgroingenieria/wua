@@ -149,6 +149,10 @@ class WuaConfiguration(models.TransientModel):
         default="solid",
         help='The general reports style.')
 
+    reports_consent_clauses = fields.Html(
+        string="Consent clauses",
+        help="They will be printed in the consent section of the reports.")
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
@@ -217,3 +221,6 @@ class WuaConfiguration(models.TransientModel):
                            self.reports_informative_clauses)
         values.set_default('wua.configuration', 'reports_style',
                            self.reports_style)
+        values.set_default('wua.configuration', 'reports_consent_clauses',
+                           self.reports_consent_clauses)
+

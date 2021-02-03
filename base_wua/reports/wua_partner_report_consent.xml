@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner report consent (droplist menu) -->
+    <report
+        id="wua_partner_report_consent"
+        string="Wua partner report (consent)"
+        model="res.partner"
+        report_type="qweb-pdf"
+        file="base_wua.wua_partner_report_document_consent"
+        name="base_wua.wua_partner_report_document_consent"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <!-- Wua partner report consent -->
+    <template id="wua_partner_report_document_consent" inherit_id="base_wua.wua_partner_report_document">
+        <xpath expr="//t[@t-if='informative_clauses']" position="replace">
+            <t t-set="consent_clauses" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_consent_clauses')"/>
+            <t t-if="consent_clauses">
+                <div name="info_div" style="margin-top: 20px;">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                                <div style="float: left; display: inline;"><strong>Consent</strong></div>
+                           </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                                <div style="float: left; display: inline;"><strong>Consent</strong></div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <t t-if="consent_clauses">
+                    <div name="consent_clause_div">
+                        <span t-raw="consent_clauses"/>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
