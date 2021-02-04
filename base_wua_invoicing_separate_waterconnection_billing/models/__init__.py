@@ -6,3 +6,4 @@ from . import wua_waterconnection
 from . import account_banking_mandate
 from . import wua_invoiceset
 from . import account_invoice
+from . import wua_reading
