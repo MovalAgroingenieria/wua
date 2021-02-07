@@ -25,6 +25,7 @@ class WizardCopyRequests(models.TransientModel):
                     'wateringperiod_id': destination_wateringperiod_id.id,
                     'partner_id': request.partner_id.id,
                     'agent_id': request.agent_id.id,
+                    'product_id': request.product_id.id,
                     'gravconsumption_ids': gravconsumption_ids,
                     }
             else:
@@ -32,5 +33,6 @@ class WizardCopyRequests(models.TransientModel):
                     'wateringperiod_id': destination_wateringperiod_id.id,
                     'partner_id': request.partner_id.id,
                     'agent_id': request.agent_id.id,
+                    'product_id': request.product_id.id,
                     }
             self.env['wua.wateringrequest'].create(wateringrequest_vals)
