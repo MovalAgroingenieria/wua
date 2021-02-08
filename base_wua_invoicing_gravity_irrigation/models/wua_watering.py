@@ -71,10 +71,10 @@ class WuaWatering(models.Model):
 
     @api.multi
     def validate_consumptions(self):
-        super(WuaWatering, self).validate_consumptions()
         for gravconsumption in self.gravconsumption_ids:
             if gravconsumption.gravconsumption_type == 'distribution':
                 gravconsumption.product_id = self.product_id
             if gravconsumption.gravconsumption_type == 'request':
                 gravconsumption.product_id = \
                     gravconsumption.wateringrequest_id.product_id
+        super(WuaWatering, self).validate_consumptions()
