@@ -33,6 +33,25 @@ class WuaInvoiceset(models.Model):
         return ('%.1f' % watering_volume_real_of_irrigationgate).\
             replace('.', ',')
 
+    def remove_final_lines(self,original_description):
+        first_line = ""
+        if original_description:
+            first_line = original_description.split('\n')[0]
+        return first_line
+ 
+    def calculate_invoice_details_others_categ(self, product_id, categ_code,
+                                               item_ids, partnerlinks):
+        invoice_details = \
+            super(WuaInvoiceset, self).calculate_invoice_details_others_categ(
+                product_id, categ_code, item_ids, partnerlinks)
+        if categ_code == 8:
+            for invoice_detail in (invoice_details or []):
+                original_description = invoice_detail['description']
+                final_description = \
+                    self.remove_final_lines(original_description)
+                invoice_detail['description'] = final_description
+        return invoice_details
+
 
 class WuaInvoicesetLine(models.Model):
     _inherit = 'wua.invoiceset.line'
