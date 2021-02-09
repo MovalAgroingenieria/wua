@@ -103,7 +103,7 @@ class WuaGravconsumption(models.Model):
                     str(record.number).zfill(
                         self.MAX_SIZE_NUMBER)
                 if (record.wateringrequest_suffix > 0):
-                    value += '-' + record.wateringrequest_suffix.zfill(
+                    value += '-' + str(record.wateringrequest_suffix).zfill(
                         self.MAX_WATERINGREQUEST_SUFFIX)
             record.name = value
 
