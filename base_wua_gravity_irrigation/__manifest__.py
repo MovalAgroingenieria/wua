@@ -13,7 +13,9 @@
     "license": "AGPL-3",
     "depends": [
         "wua_structure_irrigation",
-        "web_widget_digitized_signature", ],
+        "web_widget_digitized_signature",
+        "base_wua_invoicing",
+    ],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",

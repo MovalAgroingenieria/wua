@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-26 14:50+0000\n"
-"PO-Revision-Date: 2020-11-26 14:50+0000\n"
+"POT-Creation-Date: 2021-02-09 15:40+0000\n"
+"PO-Revision-Date: 2021-02-09 15:40+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -24,6 +24,11 @@ msgstr "&amp;nbsp;"
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_gravconsumption_view_form
 msgid "( CANCELLED )"
 msgstr "( CANCELADO )"
+
+#. module: base_wua_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_wateringrequest_view_form
+msgid "( CREDIT OVERDUE )"
+msgstr "( DEUDA PENDIENTE )"
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.report_wua_wateringrequest_document
@@ -374,7 +379,7 @@ msgstr "Cerrado"
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuración del riego con tipo de agua"
+msgstr "Configuration of irrigation with type of water"
 
 #. module: base_wua_gravity_irrigation
 #: selection:wua.watering,calculation_model:0
@@ -453,6 +458,11 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: base_wua_gravity_irrigation
+#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringrequest_currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod_description
 msgid "Description"
 msgstr "Descripción"
@@ -513,7 +523,7 @@ msgstr "Reparto"
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_watering_view_search
 #: selection:wua.watering,state:0
 msgid "Draft"
-msgstr "Borrador"
+msgstr "No suscrito"
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.report_wua_wateringrequest_document
@@ -555,7 +565,7 @@ msgstr "Elemento (campaña)"
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_gravconsumption
 msgid "Entity (gravity consumption)"
-msgstr "Entity (gravity consumption)"
+msgstr "Elemento (consumo gravedad)"
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_irrigationditch
@@ -865,7 +875,7 @@ msgstr "No es posible abrir el período, ya que no hay riego previsto en él."
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringperiod___last_update
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringrequest___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última actualización por"
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wizard_copy_requests_write_uid
@@ -1020,6 +1030,16 @@ msgid "Operation not allowed for multiple records."
 msgstr "Operación no permitida para varios elementos."
 
 #. module: base_wua_gravity_irrigation
+#: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_wateringrequest_credit_overdue
+msgid "Overdue Receivable"
+msgstr "Deuda vencida"
+
+#. module: base_wua_gravity_irrigation
+#: model:ir.model.fields,help:base_wua_gravity_irrigation.field_wua_wateringrequest_credit_overdue
+msgid "Overdue amount this customer owes you."
+msgstr "Importe vencido que debe este cliente."
+
+#. module: base_wua_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_gravity_irrigation.field_wua_gravconsumption_parcel_id
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.report_wua_wateringrequest_document
 msgid "Parcel"
@@ -1028,7 +1048,7 @@ msgstr "Parcela"
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_parcel
 msgid "Parcels (integrated GIS)"
-msgstr "Parcels (integrated GIS)"
+msgstr "Parcelas (integradas GIS)"
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_gravconsumption_one_employee_view_search
@@ -1037,7 +1057,7 @@ msgstr "Parcels (integrated GIS)"
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_gravconsumption_to_select_view_search
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_gravconsumption_view_search
 msgid "Partner"
-msgstr "Empresa"
+msgstr "Asociado"
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_res_partner
@@ -1464,13 +1484,13 @@ msgid "Year"
 msgstr "Año"
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:236
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:262
 #, python-format
 msgid "You cannot delete a closed watering request."
 msgstr "No se permite eliminar una solicitud de riego cerrada."
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:239
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:265
 #, python-format
 msgid "You cannot delete a executed watering request."
 msgstr "No se permite eliminar una solicitud de riego ejecutada."
@@ -1488,9 +1508,9 @@ msgid "You cannot delete a watering if there are executed consumptions."
 msgstr "No es posible eliminar un entande si tiene asociados consumos ejecutados."
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:192
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:207
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:244
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:218
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:233
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:270
 #, python-format
 msgid "You do not have permission to edit data."
 msgstr "No tiene permiso para añadir, actualizar o eliminar datos."

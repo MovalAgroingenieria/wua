@@ -10,9 +10,15 @@
                     <button name="%(action_copy_requests)d"
                             type="action" string="Copy request"
                             groups="base_wua.group_wua_manager"/>
+                    <field name="credit_overdue" invisible="1"/>
+                    <div name="hascreditoverdue"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
+                        ( CREDIT OVERDUE )
+                    </div>
                     <field name="state"
                            widget="statusbar"
-                           statusbar_visible="pending,intermediate,executed"/>                
+                           statusbar_visible="pending,intermediate,executed"/>
                 </header>
                 <field name="id" invisible="1"/>
                 <field name="is_open" invisible="1"/>

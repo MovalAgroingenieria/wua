@@ -110,6 +110,16 @@ class WuaWateringrequest(models.Model):
         store=True,
         compute='_compute_is_portal_user')
 
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Currency',
+        compute='_compute_currency_id')
+
+    credit_overdue = fields.Monetary(
+        compute='_compute_credit_overdue',
+        string='Overdue Receivable',
+        help="Overdue amount this customer owes you.")
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Watering Request.'),
@@ -183,6 +193,22 @@ class WuaWateringrequest(models.Model):
                 if partner.is_wua_partner:
                     is_portal_user = True
             record.is_portal_user = is_portal_user
+
+    @api.depends('partner_id')
+    def _compute_currency_id(self):
+        for record in self:
+            currency_id = None
+            if (record.partner_id):
+                currency_id = record.partner_id.currency_id
+            record.currency_id = currency_id
+
+    @api.depends('partner_id', 'currency_id')
+    def _compute_credit_overdue(self):
+        for record in self:
+            credit_overdue = 0
+            if (record.partner_id and record.currency_id):
+                credit_overdue = record.partner_id.credit_overdue
+            record.credit_overdue = credit_overdue
 
     @api.model
     def create(self, vals):
