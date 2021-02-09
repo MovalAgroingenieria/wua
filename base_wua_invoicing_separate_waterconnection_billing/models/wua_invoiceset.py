@@ -86,20 +86,38 @@ class WuaInvoiceset(models.Model):
             waterconnections = self.env['wua.waterconnection'].browse(
                 waterconnection_ids).sorted(key=lambda x: x.name)
             for waterconnection in waterconnections:
-                result = {
-                    'partner_id': partner.id,
-                    'partner_code': partner.partner_code,
-                    'account_id': partner.property_account_receivable_id.id,
-                    'payment_term_id': partner.property_payment_term_id.id,
-                    'payment_mode_id': partner.customer_payment_mode_id.id,
-                    'customer_invoice_transmit_method_id':
-                        partner.customer_invoice_transmit_method_id.id,
-                    'detail': filter(
-                        lambda x: x['partner_id'] == partner.id and
-                        x['key1'] == waterconnection.id,
-                        invoice_details_of_partner),
-                    }
-                invoices_data.append(result)
+                invoice_details_same_partner_wc = filter(
+                    lambda x: x['partner_id'] == partner.id and
+                    x['key1'] == waterconnection.id,
+                    invoice_details_of_partner)
+                payment_mandates = []
+                for item in invoice_details_same_partner_wc:
+                    payment_mandates.append(
+                        item['payment_mode_id'],
+                        item['mandate_id'] if
+                        'mandate_id' in item else False)
+                payment_mandates_grouped = list(set(payment_mandates))
+                for payment_mandate in payment_mandates_grouped:
+                    result = {
+                        'partner_id': partner.id,
+                        'partner_code': partner.partner_code,
+                        'account_id': partner.
+                        property_account_receivable_id.id,
+                        'payment_term_id': partner.property_payment_term_id.id,
+                        'payment_mode_id': partner.customer_payment_mode_id.id,
+                        'customer_invoice_transmit_method_id':
+                            partner.customer_invoice_transmit_method_id.id,
+                        'detail': filter(
+                            lambda x:
+                            x['payment_mode_id'] == payment_mandate[0] and (
+                                ('mandate_id' not in x and not
+                                 payment_mandate[1]) or
+                                ('mandate_id' in x and x['mandate_id'] ==
+                                 payment_mandate[1])
+                            ),
+                            invoice_details_same_partner_wc),
+                        }
+                    invoices_data.append(result)
         return invoices_data
 
     def add_to_invoice_data_line_other_data(

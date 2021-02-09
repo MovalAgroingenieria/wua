@@ -71,21 +71,39 @@ class WuaInvoiceset(models.Model):
 
     def group_invoice_details_with_separate_billing(self, invoice_details):
         invoices_data = []
+        # Tuple [0] = partner, [1] = payment_mode_id, [2] = False or mandate_id
+        partner_n_payment_info = []
+        # Get all Tuples of partner, payment_mode and mandate_id (When
+        # present) and create a set for no repeated tuples
         for invoice_detail in invoice_details:
-            partner = self.env['res.partner'].browse(
-                invoice_detail['partner_id'])
-            if partner:
-                result = {
-                    'partner_id': invoice_detail['partner_id'],
-                    'partner_code': partner.partner_code,
-                    'account_id': partner.property_account_receivable_id.id,
-                    'payment_term_id': partner.property_payment_term_id.id,
-                    'payment_mode_id': partner.customer_payment_mode_id.id,
-                    'customer_invoice_transmit_method_id':
-                        partner.customer_invoice_transmit_method_id.id,
-                    'detail': [invoice_detail],
-                    }
-                invoices_data.append(result)
+            partner_n_payment_info.append(
+                (self.env['res.partner'].browse(invoice_detail['partner_id']),
+                 invoice_detail['payment_mode_id'],
+                 invoice_detail['mandate_id'] if
+                 'mandate_id' in invoice_detail else False))
+        # Ensure only not repeated tuples
+        data_grouped = list(set(partner_n_payment_info))
+        # Order by the partner_code
+        data_grouped = sorted(data_grouped, key=lambda x: x[0].partner_code,
+                              reverse=False)
+        for item in data_grouped:
+            result = {
+                'partner_id': item[0].id,
+                'partner_code': item[0].partner_code,
+                'account_id': item[0].property_account_receivable_id.id,
+                'payment_term_id': item[0].property_payment_term_id.id,
+                'payment_mode_id': item[0].customer_payment_mode_id.id,
+                'customer_invoice_transmit_method_id':
+                    item[0].customer_invoice_transmit_method_id.id,
+                # Get invoice details with same partner, payment and mandate
+                'detail': filter(
+                    lambda x: x['partner_id'] == item[0].id and
+                    x['payment_mode_id'] == item[1] and (
+                        ('mandate_id' not in x and not item[2]) or
+                        ('mandate_id' in x and x['mandate_id'] == item[2])
+                    ), invoice_details),
+                }
+            invoices_data.append(result)
         return invoices_data
 
     def add_to_invoice_data_line_other_data(
