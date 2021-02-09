@@ -2,12 +2,19 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
 from odoo import models, fields, api
 
 
 class WuaWateringrequest(models.Model):
     _inherit = 'wua.wateringrequest'
     _description = 'Entity (watering request)'
+
+    # Size of field "name".
+    MAX_SIZE_PARTNER_CODE = 6
+    MAX_WATERINGREQUEST_SUFFIX = 3
+    # Last + 1 for '-' before suffix
+    MAX_SIZE_NAME = 11 + MAX_SIZE_PARTNER_CODE + MAX_WATERINGREQUEST_SUFFIX + 1
 
     @api.model_cr
     def init(self):
@@ -39,6 +46,9 @@ class WuaWateringrequest(models.Model):
                     resp = categ_08_products[0].id
         return resp
 
+    name = fields.Char(
+        size=MAX_SIZE_NAME,)
+
     product_id = fields.Many2one(
         string='Water Type',
         comodel_name='product.product',
@@ -46,3 +56,61 @@ class WuaWateringrequest(models.Model):
         required=True,
         index=True,
         ondelete='restrict')
+
+    @api.depends('wateringperiod_id', 'partner_id', 'product_id')
+    def _compute_name(self):
+        for record in self:
+            name = ''
+            if record.wateringperiod_id and record.partner_id and \
+                    record.product_id:
+                # Default name
+                name = record.wateringperiod_id.name + '-' + \
+                    str(record.partner_id.partner_code).zfill(
+                        self.MAX_SIZE_PARTNER_CODE)
+                wua_wateringrequest = self.env['wua.wateringrequest']
+                wateringrequests = wua_wateringrequest.search(
+                    [('wateringperiod_id', '=', record.wateringperiod_id.id),
+                     ('partner_id', '=', record.partner_id.id),
+                     ('id', '!=', record.id)])
+                if (len(wateringrequests) > 0):
+                    wrs_with_product = wua_wateringrequest.search(
+                        [('product_id', '=', record.product_id.id),
+                         ('wateringperiod_id', '=',
+                            record.wateringperiod_id.id),
+                         ('partner_id', '=', record.partner_id.id),
+                         ('id', '!=', record.id)])
+                    # If not wateringrequest with the same product_id
+                    # Add suffix
+                    if (len(wrs_with_product) == 0):
+                        suffix = 1
+                        name_temp = name + '-' + str(suffix).zfill(
+                            self.MAX_WATERINGREQUEST_SUFFIX)
+                        # Try with suffix 001 and keep iterating until no new
+                        # one appear
+                        while len(wua_wateringrequest.search(
+                                [('name', '=', name_temp)])) > 0:
+                            suffix += 1
+                            name_temp = name + '-' + str(suffix).zfill(
+                                self.MAX_WATERINGREQUEST_SUFFIX)
+                        name = name_temp
+            record.name = name
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            name = ''
+            if record.wateringperiod_id and record.partner_id and \
+                    record.product_id:
+                initial_date_str = datetime.datetime.strptime(
+                    record.wateringperiod_id.initial_date,
+                    '%Y-%m-%d').strftime('%x')
+                end_date_str = datetime.datetime.strptime(
+                    record.wateringperiod_id.end_date,
+                    '%Y-%m-%d').strftime('%x')
+                partner_name = record.partner_id.name + ' ' + \
+                    '[' + str(record.partner_id.partner_code) + ']'
+                name = initial_date_str + ' - ' + end_date_str + ' - ' + \
+                    partner_name + ' - ' + record.product_id.name
+            result.append((record.id, name))
+        return result
