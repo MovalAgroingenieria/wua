@@ -20,10 +20,12 @@
 
                         <!-- Vars -->
                         <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="partnerlinks_as_owner" t-value="request.env['wua.parcel.partnerlink'].search([('partner_id', '=', o.id),('profile', '=', 'O')])"/>
+                        <t t-set="measurement_unit" t-value="partnerlinks_as_owner[0].parcel_id._compute_area_measurement_name()"/>
 
                         <div name="section_header">
                             <div name="title" style="font-size: 16;text-align: center;">
-                                <strong>Request start-up watercounter</strong>
+                                <strong>REQUEST START-UP WATERCOUNTER</strong>
                             </div>
                         </div>
 
@@ -84,19 +86,17 @@
                                             <tbody>
                                                 <tr>
                                                     <td><span>Wua partner code:</span></td>
-                                                    <td class="text-right"><span t-field="o.partner_code"/></td>
+                                                    <td class="text-right">
+                                                        <t t-set="partner_code" t-value="str(o.partner_code)"/>
+                                                        <span t-esc="partner_code"/>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td><span>Number of available parcels:</span></td>
-                                                    <td class="text-right"><span t-field="o.parcel_number"/></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><span>Total area:</span></td>
-                                                    <td class="text-right" style="padding: 0 0 0 28px;">
-                                                        <span t-field="o.parcel_total_area"/>
-                                                        <t t-if="o.partnerlink_ids">
-                                                            <t t-set="measurement_unit" t-value="o.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
-                                                            <span><t t-esc="measurement_unit"/></span>
+                                                    <td class="text-right">
+                                                        <t t-if="partnerlinks_as_owner">
+                                                            <t t-set="num_available_parcels" t-value="len(partnerlinks_as_owner)"/>
+                                                            <span t-esc="num_available_parcels"/>
                                                         </t>
                                                     </td>
                                                 </tr>
@@ -109,7 +109,7 @@
 
                         <!-- Available parcels -->
                         <div name="wua_partnerlinks_ids" style="margin-top: 20px;">
-                            <t t-if="o.partnerlink_ids">
+                            <t t-if="partnerlinks_as_owner">
                                 <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                                     <t t-if="report_style == 'light'">
                                         <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
@@ -141,7 +141,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr t-foreach="o.partnerlink_ids" t-as="p" style="page-break-inside: avoid;">
+                                        <tr t-foreach="partnerlinks_as_owner" t-as="p" style="page-break-inside: avoid;">
                                             <td class="text-center"><span style="color:grey; font-size:1.4em;" class="fa fa-moval-water-counter"/></td>
                                             <td class="text-center"><span t-field="p.parcel_id"/></td>
                                             <td class="text-center" name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
@@ -230,7 +230,7 @@
                                 <span t-field="o.company_id"/> to start-up and activate the drip water counters
                                 for parcels marked in the previous table.<br/><br/>
                                 And for the record, I sign this document in <span t-field="o.company_id.city"/> on
-                                 <span t-field="o.partnerlink_ids[0].parcel_id.date_now" t-field-options='{"format": "dd MMMM yyyy"}'/>.
+                                 <span t-field="partnerlinks_as_owner[0].parcel_id.date_now" t-field-options='{"format": "dd MMMM yyyy"}'/>.
                                 <br/><br/>
                                 <div class="text-right">
                                     <div style="margin-right: 240px;">Signed</div><br/>
