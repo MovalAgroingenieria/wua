@@ -28,7 +28,6 @@ class WuaReportrequest(models.Model):
 
     final_expected_amount = fields.Monetary(
         string='Final amount',
-        store=True,
         compute='_compute_final_expected_amount',
         help="Final expected amount of irrigation report request.")
 
@@ -43,13 +42,17 @@ class WuaReportrequest(models.Model):
             if record.product_id and record.currency_id and record.hours:
                 if record.product_id.taxes_id and \
                         record.product_id.taxes_id.amount > 0:
-                    total_amount = record.hours * record.product_id.lst_price
+                    # Round var hours before calculation (invoiceset behavior)
+                    hours = round(record.hours, 2)
+                    total_amount = hours * record.product_id.lst_price
                     taxes = total_amount * \
                         (record.product_id.taxes_id.amount / 100)
                     expected_amount = total_amount + taxes
                 else:
+                    # Round var hours before calculation (invoiceset behavior)
+                    hours = round(record.hours, 2)
                     expected_amount = \
-                        record.hours * record.product_id.lst_price
+                        hours * record.product_id.lst_price
             record.expected_amount = expected_amount
 
     @api.depends('expected_amount', 'extra_amount')
