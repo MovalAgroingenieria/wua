@@ -32,6 +32,7 @@
                 <field name="quotaperiod_id"/>
                 <field name="superproduct_id"/>
                 <field name="partner_id"/>
+                <field name="category_id"/>
                 <field name="event_time"/>
                 <field name="type"/>
                 <field name="description"/>
@@ -69,7 +70,7 @@
                 <filter string="Selected" name="selected"
                  domain="[('selected','=',True)]"/>
                 <filter string="Not Selected" name="notselected"
-                 domain="[('selected','!=',True)]"/>        
+                 domain="[('selected','!=',True)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Quota period"
                             name="grouped_quotaperiod_id"
@@ -83,6 +84,9 @@
                     <filter string="Date"
                             name="grouped_event_time"
                             context="{'group_by':'event_time'}"/>
+                    <filter string="Categ."
+                            name="grouped_category"
+                            context="{'group_by':'category_id'}"/>
                     <filter string="Type"
                             name="grouped_type"
                             context="{'group_by':'type'}"/>

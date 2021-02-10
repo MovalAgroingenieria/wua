@@ -209,10 +209,10 @@ class WuaInvoicesetLine(models.Model):
                 INSERT INTO wua_invoiceset_line_hydricmovement (id,
                 create_uid,write_uid,create_date,write_date,invoicesetline_id,
                 hydricmovement_id, selected, quotaperiod_id,superproduct_id,
-                partner_id,event_time, volume, description, type)
+                partner_id,category_id,event_time, volume, description, type)
                 SELECT nextval('wua_invoiceset_line_hydricmovement_id_seq'),
                 %s,%s,now(),now(),%s, id, TRUE,
-                quotaperiod_id, superproduct_id, partner_id,
+                quotaperiod_id, superproduct_id, partner_id, category_id,
                 event_time, volume, description, type
                 FROM wua_hydricmovement WHERE of_active_agriculturalseason
                 AND superproduct_id = %s AND NOT invoiced_hydricmovement""",
@@ -332,6 +332,11 @@ class WuaInvoicesetLineHydricmovement(models.Model):
     partner_id = fields.Many2one(
         string="Partner",
         comodel_name="res.partner",
+        ondelete="restrict")
+
+    category_id = fields.Many2one(
+        string='Categ.',
+        comodel_name='wua.individualinput.category',
         ondelete="restrict")
 
     event_time = fields.Datetime(
