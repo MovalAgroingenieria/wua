@@ -173,6 +173,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="partner_id"/>
+                <field name="category_id"/>
                 <filter string="Active Agricultural Season"
                         name="active_agriculturalseason"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
@@ -231,6 +232,9 @@
                     <filter string="Type"
                             name="grouped_type"
                      context="{'group_by':'type'}"/>
+                     <filter string="Categ."
+                             name="grouped_category"
+                      context="{'group_by':'category_id'}"/>
                     <filter string="Partner"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>

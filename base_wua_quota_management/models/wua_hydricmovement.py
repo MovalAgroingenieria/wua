@@ -205,6 +205,13 @@ class WuaHydricmovement(models.Model):
         readonly=True,
         ondelete='cascade')
 
+    category_id = fields.Many2one(
+        string='Categ.',
+        comodel_name='wua.individualinput.category',
+        index=True,
+        store=True,
+        compute='_compute_category_id')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Hydric Movement.'),
@@ -306,6 +313,15 @@ class WuaHydricmovement(models.Model):
             if record.is_consumption:
                 accounting_volume = -accounting_volume
             record.accounting_volume = accounting_volume
+
+    @api.depends('individualinput_id', 'individualinput_id.category_id')
+    def _compute_category_id(self):
+        for record in self:
+            category_id = None
+            if (record.individualinput_id and
+               record.individualinput_id.category_id):
+                category_id = record.individualinput_id.category_id
+            record.category_id = category_id
 
     @api.multi
     def _compute_balance(self):
