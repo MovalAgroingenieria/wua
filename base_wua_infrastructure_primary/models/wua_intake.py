@@ -2,7 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions, _
 from Crypto.Cipher import AES
 import datetime
 import pytz
@@ -144,6 +144,22 @@ class WuaIntake(models.Model):
             if not url_for_record:
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
+
+    @api.constrains('flowmeter_id')
+    def _check_flowmeter_id(self):
+        if len(self) == 1:
+            current_intake = self
+            if current_intake.flowmeter_id:
+                current_flowmeter = current_intake.flowmeter_id
+                # The flow-meter for this intake ("current_flowmeter") cannot
+                # be assigned to another intake.
+                # Provisional
+                other_intakes_of_flowmeter = self.env['wua.intake'].search(
+                    [('id', '!=', current_intake.id),
+                     ('flowmeter_id', '=', current_flowmeter.id)])
+                if other_intakes_of_flowmeter:
+                    raise exceptions.ValidationError(
+                        _('Only one intake per flowmeter is allowed.'))
 
     @api.multi
     def action_see_gis_viewer(self):

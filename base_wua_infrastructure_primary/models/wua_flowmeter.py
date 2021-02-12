@@ -161,12 +161,6 @@ class WuaFlowmeter(models.Model):
                                                'allowed in the name '
                                                'of the flowmeter.'))
 
-    @api.constrains('intake_ids')
-    def _check_intake_ids(self):
-        if (len(self) == 1 and len(self.intake_ids) > 1):
-            raise exceptions.ValidationError(_('Only one intake per '
-                                               'flowmeter is allowed.'))
-
     @api.multi
     def action_see_gis_viewer(self):
         self.ensure_one()

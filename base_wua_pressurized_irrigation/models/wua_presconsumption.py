@@ -351,6 +351,8 @@ class WuaPresconsumption(models.Model):
         filtered_translations = translations.search(condition)
         if len(filtered_translations) > 0:
             resp = filtered_translations[0].value
+        else:
+            resp = resp.decode('utf8')
         return resp
 
     def update_volume_perunitareas(self):
