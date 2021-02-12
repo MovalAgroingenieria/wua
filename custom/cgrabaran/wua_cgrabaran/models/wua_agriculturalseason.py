@@ -403,6 +403,12 @@ class WuaSumIntakeconsumptionInvoicing(models.Model):
             ) invoicing
             ON
             wam1.month = invoicing.month AND
-            extract(year from (wa1.initial_date)) = invoicing.year
+            wam1.agriculturalseason_id = (SELECT id FROM 
+                wua_agriculturalseason WHERE 
+                make_date(CAST(invoicing.year AS integer), 
+                    CAST(invoicing.month AS integer), 01) BETWEEN 
+                wua_agriculturalseason.initial_date AND 
+                wua_agriculturalseason.end_date
+                )
             ) a )
             """)
