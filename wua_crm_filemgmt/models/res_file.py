@@ -14,6 +14,19 @@ class ResFile(models.Model):
         inverse_name='file_id',
         track_visibility='onchange')
 
+    has_parcellinks = fields.Boolean(
+        string='Has parcellinks',
+        default=False,
+        compute="_compute_has_parcellinks",)
+
+    @api.depends('parcellink_ids')
+    def _compute_has_parcellinks(self):
+        for record in self:
+            has_parcellinks = False
+            if record.parcellink_ids:
+                has_parcellinks = True
+            record.has_parcellinks = has_parcellinks
+
     @api.constrains('parcellink_ids')
     def _check_parcellink_ids(self):
         if len(self) == 1:

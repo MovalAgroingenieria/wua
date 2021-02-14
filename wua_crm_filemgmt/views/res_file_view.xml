@@ -16,6 +16,22 @@
         </field>
     </record>
 
+    <record id="res_file_view_kanban" model="ir.ui.view">
+        <field name="name">Files (kanban view)</field>
+        <field name="model">res.file</field>
+        <field name="inherit_id" ref="crm_filemgmt.res_file_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='has_registres']" position="after">
+                <field name="has_parcellinks"/>
+            </xpath>
+            <xpath expr="//t[@t-if='record.has_registres.raw_value']" position="after">
+                <t t-if="record.has_parcellinks.raw_value">
+                    <span style="float:right; margin-right:3%;" class="fa fa-moval-parcel o_button_icon"/>
+                </t>
+            </xpath>
+        </field>
+    </record>
+
     <record id="res_file_parcellink_view_form" model="ir.ui.view">
         <field name="name">File Parcellink (form view)</field>
         <field name="model">res.file.parcellink</field>
