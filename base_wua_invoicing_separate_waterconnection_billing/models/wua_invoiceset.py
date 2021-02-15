@@ -131,21 +131,6 @@ class WuaInvoiceset(models.Model):
             data['wc_mandate_id'] = invoice_data_line['mandate_id']
         return data
 
-    def calculate_invoice_details_categ07_based_on_wc(
-            self, product_id, categ_code, item_ids, partnerlinks):
-        invoice_details_categ07 = super(
-            WuaInvoiceset, self).calculate_invoice_details_categ07_based_on_wc(
-                product_id, categ_code, item_ids, partnerlinks)
-        presconsumptions = self.env['wua.presconsumption'].browse(item_ids)
-        for presconsumption in presconsumptions:
-            if presconsumption.waterconnection_id.watercosts_separate_billing:
-                partner_id_for_reading = \
-                    presconsumption.waterconnection_id.watercosts_partner_id
-                reading = presconsumption.reading_id
-                reading.partner_with_separate_billing_id = \
-                    partner_id_for_reading
-        return invoice_details_categ07
-
     def create_invoices(self, invoices_data, record, product_data):
         number_of_invoices = \
             super(WuaInvoiceset, self).create_invoices(
@@ -161,24 +146,3 @@ class WuaInvoiceset(models.Model):
                 if first_detail_line.wc_mandate_id:
                     invoice.mandate_id = first_detail_line.wc_mandate_id
         return number_of_invoices
-
-    def after_cancel_invoiceset(self, invoiceset):
-        # Check if reading has partner with watercosts associated and remove it
-        if (self.env['ir.values'].get_default(
-                'wua.invoicing.configuration', 'invoicing_based_on_wc')):
-            for line in invoiceset.line_ids:
-                if line.categ_id.productcategory_code == 7:
-                    reading_ids = []
-                    for line_presconsumption in line.line_presconsumption_ids:
-                        if (line_presconsumption.presconsumption_id.
-                                reading_id):
-                            reading_ids.append(
-                                line_presconsumption.presconsumption_id.
-                                reading_id.id)
-                    if reading_ids:
-                        readings = self.env['wua.reading'].browse(reading_ids)
-                        vals = {
-                            'partner_with_separate_billing_id': None,
-                            }
-                        readings.write(vals)
-        super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
