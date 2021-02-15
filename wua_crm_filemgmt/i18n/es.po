@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-11 09:36+0000\n"
-"PO-Revision-Date: 2020-09-11 09:36+0000\n"
+"POT-Creation-Date: 2021-02-15 08:50+0000\n"
+"PO-Revision-Date: 2021-02-15 08:50+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,8 +22,8 @@ msgid "<span class=\"o_stat_text\">\n"
 "                            <span attrs=\"{'invisible': [('number_of_file_registers','=', 1)]}\"> file registers</span>\n"
 "                        </span>"
 msgstr "<span class=\"o_stat_text\">\n"
-"                            <span attrs=\"{'invisible': [('number_of_file_registers','&gt;', 1)]}\"> registro expediente</span>\n"
-"                            <span attrs=\"{'invisible': [('number_of_file_registers','=', 1)]}\"> registros expediente</span>\n"
+"                            <span attrs=\"{'invisible': [('number_of_file_registers','&gt;', 1)]}\"> registro</span>\n"
+"                            <span attrs=\"{'invisible': [('number_of_file_registers','=', 1)]}\"> registros</span>\n"
 "                        </span>"
 
 #. module: wua_crm_filemgmt
@@ -66,12 +66,12 @@ msgstr "Creado el"
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_display_name
 msgid "Display Name"
-msgstr "Nombre mostrado"
+msgstr "Nombre a mostrar"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_file_id
 msgid "File"
-msgstr "Archivo"
+msgstr "Expediente"
 
 #. module: wua_crm_filemgmt
 #: code:addons/wua_crm_filemgmt/models/wua_parcel.py:53
@@ -101,6 +101,11 @@ msgid "GIS Viewer (zoom to parcel)"
 msgstr "Visor GIS (zoom a parcela)"
 
 #. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_has_parcellinks
+msgid "Has parcellinks"
+msgstr "Tiene parcelas"
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_id
 msgid "ID"
 msgstr "ID"
@@ -123,7 +128,7 @@ msgstr "Última actualización por"
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_write_date
 msgid "Last Updated on"
-msgstr "Última actualización en"
+msgstr "Última actualización el"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_rural_location_county
@@ -143,7 +148,7 @@ msgstr "Nº registros expediente"
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wua_parcel_number_of_files
 msgid "Num. of files"
-msgstr "Nº de expedientes"
+msgstr "Nº expedientes"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_area_official
@@ -176,7 +181,7 @@ msgid "Subject"
 msgstr "Asunto"
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:26
+#: code:addons/wua_crm_filemgmt/models/res_file.py:39
 #, python-format
 msgid "There are repeated parcels."
 msgstr "Hay parcelas repetidas."
