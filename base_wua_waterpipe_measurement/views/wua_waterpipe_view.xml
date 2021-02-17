@@ -6,6 +6,19 @@
         <field name="model">wua.waterpipe</field>
         <field name="inherit_id" ref="base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="before">
+                <field name="id" invisible="True"/>
+                <button name="action_see_waterpipeconsumptions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-moval-flowmeter"
+                        groups="base_wua.group_wua_user"
+                        attrs="{'invisible': [('id', '=', False)]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Consumptions</span>
+                        </div>
+                </button>
+            </xpath>
             <xpath expr="//field[@name='waterpipe_code']" position="after">
                 <field name="flowmeter_id"/>
             </xpath>

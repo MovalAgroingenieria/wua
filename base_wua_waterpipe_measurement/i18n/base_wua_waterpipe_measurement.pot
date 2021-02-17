@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-17 09:30+0000\n"
-"PO-Revision-Date: 2021-02-17 09:30+0000\n"
+"POT-Creation-Date: 2021-02-17 22:12+0000\n"
+"PO-Revision-Date: 2021-02-17 22:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wua_waterpipe_view_form
+msgid "<span class=\"o_stat_text\">Consumptions</span>"
+msgstr ""
 
 #. module: base_wua_waterpipe_measurement
 #: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wua_agriculturalseason_view_form
@@ -64,7 +69,7 @@ msgid "Connected to waterpipe: Yes"
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_flowmeter.py:140
+#: code:addons/base_wua_waterpipe_measurement/models/wua_flowmeter.py:177
 #: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipe.py:110
 #, python-format
 msgid "Consumptions"
@@ -228,6 +233,12 @@ msgid "Flowmeter already on waterpipe."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:153
+#, python-format
+msgid "Flowmeter not associated with any waterpipe."
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_wp_fm_assign_start
 msgid "From date"
 msgstr ""
@@ -290,6 +301,7 @@ msgid "Initialization Reading"
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
+#: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_reading_instantflow_original
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_reading_instantflow_show
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_waterpipeflowreading_instantflow
 msgid "Last Instant Flow (m3/h)"
@@ -314,6 +326,7 @@ msgid "Last Reading Instant Flow"
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
+#: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_reading_time_original
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_reading_time_show
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_waterpipeflowreading_time
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_waterpipe_last_reading_time
@@ -326,6 +339,7 @@ msgid "Last Reading Value"
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
+#: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_reading_value_original
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_reading_value_show
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_last_waterpipeflowreading_value
 msgid "Last Reading Value (m3)"
@@ -454,25 +468,26 @@ msgid "The reading end time can't be lower than the reading start time."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:164
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:168
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:188
 #, python-format
 msgid "The reading time is minor than the time of the previous reading."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:237
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:253
 #, python-format
 msgid "There are different flow meters."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:239
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:255
 #, python-format
 msgid "There can be no final readings without eliminating."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:253
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:269
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr ""

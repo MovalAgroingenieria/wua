@@ -23,13 +23,22 @@
                 <field name="waterpipe_id" attrs="{'invisible': [('connected_to_waterpipe','!=', True)]}"/>
             </xpath>
             <xpath expr="//field[@name='last_reading_time']" position="replace">
-                <field name="last_reading_time_show"/>
+                <field name="last_reading_time_original"
+                    attrs="{'invisible': [('id', '>', 0)]}"/>
+                <field name="last_reading_time_show"
+                    attrs="{'invisible': [('id', '=', False)]}"/>
             </xpath>
             <xpath expr="//field[@name='last_reading_value']" position="replace">
-                <field name="last_reading_value_show"/>
+                <field name="last_reading_value_original"
+                    attrs="{'invisible': [('id', '>', 0)]}"/>
+                <field name="last_reading_value_show"
+                    attrs="{'invisible': [('id', '=', False)]}"/>
             </xpath>
             <xpath expr="//field[@name='last_reading_instantflow']" position="replace">
-                <field name="last_reading_instantflow_show"/>
+                <field name="last_reading_instantflow_original"
+                    attrs="{'invisible': [('id', '>', 0)], 'readonly': True}"/>
+                <field name="last_reading_instantflow_show"
+                    attrs="{'invisible': [('id', '=', False)]}"/>
             </xpath>
             <xpath expr="//page[@name='intake_page']" position="after">
                 <page name="waterpipe_page" string="Waterpipes">

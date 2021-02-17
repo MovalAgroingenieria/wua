@@ -36,6 +36,17 @@ class WuaFlowmeter(models.Model):
         compute='_compute_last_reading_instantflow_show',
         store=True,)
 
+    last_reading_time_original = fields.Datetime(
+        string='Last Reading Time',)
+
+    last_reading_value_original = fields.Float(
+        string='Last Reading Value (m3)',
+        digits=(32, 4),)
+
+    last_reading_instantflow_original = fields.Float(
+        string='Last Instant Flow (m3/h)',
+        digits=(32, 4),)
+
     waterpipe_ids = fields.One2many(
         string='Waterpipes',
         comodel_name='wua.waterpipe',
@@ -94,6 +105,8 @@ class WuaFlowmeter(models.Model):
                 last_reading_time_show = record.last_waterpipeflowreading_time
             elif (record.connected_to_intake):
                 last_reading_time_show = record.last_reading_time
+            else:
+                last_reading_time_show = record.last_reading_time_original
             record.last_reading_time_show = last_reading_time_show
 
     @api.depends('connected_to_waterpipe', 'last_waterpipeflowreading_value',
@@ -106,6 +119,8 @@ class WuaFlowmeter(models.Model):
                     record.last_waterpipeflowreading_value
             elif (record.connected_to_intake):
                 last_reading_value_show = record.last_reading_value
+            else:
+                last_reading_value_show = record.last_reading_value_original
             record.last_reading_value_show = last_reading_value_show
 
     @api.depends('connected_to_waterpipe', 'connected_to_intake',
@@ -120,8 +135,30 @@ class WuaFlowmeter(models.Model):
             elif (record.connected_to_intake):
                 last_reading_instantflow_show = \
                     record.last_reading_instantflow
+            else:
+                last_reading_instantflow_show = \
+                    record.last_reading_instantflow_original
             record.last_reading_instantflow_show = \
                 last_reading_instantflow_show
+
+    @api.model
+    def create(self, vals):
+        if ('last_reading_time_original' in vals):
+            vals['last_reading_time'] = \
+                vals['last_reading_time_original']
+            vals['last_waterpipeflowreading_time'] = \
+                vals['last_reading_time_original']
+        if ('last_reading_value_original' in vals):
+            vals['last_reading_value'] = \
+                vals['last_reading_value_original']
+            vals['last_waterpipeflowreading_value'] = \
+                vals['last_reading_value_original']
+        if ('last_reading_instantflow_original' in vals):
+            vals['last_reading_instantflow'] = \
+                vals['last_reading_instantflow_original']
+            vals['last_waterpipeflowreading_instantflow'] = \
+                vals['last_reading_instantflow_original']
+        return super(WuaFlowmeter, self).create(vals)
 
     @api.multi
     def action_see_waterpipeconsumptions(self):

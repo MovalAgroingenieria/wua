@@ -149,21 +149,28 @@ class WuaWaterpipeflowreading(models.Model):
             waterpipe_id = flowmeter.waterpipe_id
         if waterpipe_id:
             vals['waterpipe_id'] = waterpipe_id.id
+        else:
+            raise exceptions.UserError(_('Flowmeter not associated with '
+                                         'any waterpipe.'))
         # New consumption.
-        if not vals['initialization_reading'] and waterpipe_id:
+        if not vals['initialization_reading']:
             reading_initial_time = reading_end_time
             initial_volume = end_volume
+            last_reading = self.env['wua.waterpipeflowreading'].search(
+                [('flowmeter_id', '=', vals['flowmeter_id'])],
+                limit=1, order='reading_time desc')
             previous_reading = self.env['wua.waterpipeflowreading'].search(
                 [('flowmeter_id', '=', vals['flowmeter_id']),
                  ('reading_time', '<', reading_end_time)],
                 limit=1, order='reading_time desc')
-            if len(previous_reading) == 1:
-                reading_initial_time = previous_reading[0].reading_time
-                initial_volume = previous_reading[0].volume
-            else:
+            if (not last_reading or not previous_reading or last_reading.id !=
+                    previous_reading.id):
                 raise exceptions.UserError(_('The reading time is minor '
                                              'than the time of the previous '
                                              'reading.'))
+            else:
+                reading_initial_time = previous_reading[0].reading_time
+                initial_volume = previous_reading[0].volume
             waterpipeconsumption_vals = {
                 'reading_initial_time': reading_initial_time,
                 'initial_volume': initial_volume,
@@ -172,6 +179,15 @@ class WuaWaterpipeflowreading(models.Model):
                 }
             new_waterpipeconsumption = self.env['wua.waterpipeconsumption'].\
                 create(waterpipeconsumption_vals)
+        else:
+            last_reading = self.env['wua.waterpipeflowreading'].search(
+                [('flowmeter_id', '=', vals['flowmeter_id'])],
+                limit=1, order='reading_time desc')
+            if (last_reading and last_reading.reading_time >
+                    reading_end_time):
+                raise exceptions.UserError(_('The reading time is minor '
+                                             'than the time of the previous '
+                                             'reading.'))
         if new_waterpipeconsumption is not None:
             vals['waterpipeconsumption_id'] = new_waterpipeconsumption.id
         # Updating the "last_reading_time" and "last_reading_value" fields
