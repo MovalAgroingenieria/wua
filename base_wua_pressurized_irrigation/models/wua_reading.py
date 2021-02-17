@@ -190,13 +190,18 @@ class WuaReading(models.Model):
                 [('watermeter_id', '=', vals['watermeter_id']),
                  ('reading_time', '<', reading_end_time)],
                 limit=1, order='reading_time desc')
-            if len(previous_reading) == 1:
-                reading_initial_time = previous_reading[0].reading_time
-                initial_volume = previous_reading[0].volume
-            else:
+            last_reading = self.env['wua.reading'].search(
+                [('watermeter_id', '=', vals['watermeter_id'])],
+                limit=1, order='reading_time desc')
+            # Must be at least one reading and must be the last one
+            if (not last_reading or not previous_reading or last_reading.id !=
+                    previous_reading.id):
                 raise exceptions.UserError(_('The reading time is minor '
                                              'than the time of the previous '
                                              'reading.'))
+            else:
+                reading_initial_time = previous_reading[0].reading_time
+                initial_volume = previous_reading[0].volume
             presconsumption_vals = {
                 'reading_initial_time': reading_initial_time,
                 'initial_volume': initial_volume,
@@ -205,6 +210,15 @@ class WuaReading(models.Model):
                 }
             new_presconsumption = self.env['wua.presconsumption'].create(
                 presconsumption_vals)
+        else:
+            last_reading = self.env['wua.reading'].search(
+                [('watermeter_id', '=', vals['watermeter_id'])],
+                limit=1, order='reading_time desc')
+            if (last_reading and last_reading.reading_time >
+                    reading_end_time):
+                raise exceptions.UserError(_('The reading time is minor '
+                                             'than the time of the previous '
+                                             'reading.'))
         if new_presconsumption is not None:
             vals['presconsumption_id'] = new_presconsumption.id
         # Updating the "last_reading_time" and "last_reading_value" fields
