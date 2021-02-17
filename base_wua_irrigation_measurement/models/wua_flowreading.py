@@ -148,21 +148,29 @@ class WuaFlowreading(models.Model):
             intake_id = flowmeter.intake_id
         if intake_id:
             vals['intake_id'] = intake_id.id
+        else:
+            raise exceptions.UserError(_('Flowmeter not associated with '
+                                         'any intake.'))
         # New consumption.
-        if not vals['initialization_reading'] and intake_id:
+        if not vals['initialization_reading']:
             reading_initial_time = reading_end_time
             initial_volume = end_volume
+            last_reading = self.env['wua.flowreading'].search(
+                [('flowmeter_id', '=', vals['flowmeter_id'])],
+                limit=1, order='reading_time desc')
             previous_reading = self.env['wua.flowreading'].search(
                 [('flowmeter_id', '=', vals['flowmeter_id']),
                  ('reading_time', '<', reading_end_time)],
                 limit=1, order='reading_time desc')
-            if len(previous_reading) == 1:
-                reading_initial_time = previous_reading[0].reading_time
-                initial_volume = previous_reading[0].volume
-            else:
+            # Must be at least one reading and must be the last one
+            if (not last_reading or not previous_reading or last_reading.id !=
+                    previous_reading.id):
                 raise exceptions.UserError(_('The reading time is minor '
                                              'than the time of the previous '
                                              'reading.'))
+            else:
+                reading_initial_time = previous_reading[0].reading_time
+                initial_volume = previous_reading[0].volume
             intakeconsumption_vals = {
                 'reading_initial_time': reading_initial_time,
                 'initial_volume': initial_volume,
@@ -171,6 +179,17 @@ class WuaFlowreading(models.Model):
                 }
             new_intakeconsumption = self.env['wua.intakeconsumption'].create(
                 intakeconsumption_vals)
+        # If initialization reading check reading time is greater than the last
+        # flowreading
+        else:
+            last_reading = self.env['wua.flowreading'].search(
+                [('flowmeter_id', '=', vals['flowmeter_id'])],
+                limit=1, order='reading_time desc')
+            if (last_reading and last_reading.reading_time >
+                    reading_end_time):
+                raise exceptions.UserError(_('The reading time is minor '
+                                             'than the time of the previous '
+                                             'reading.'))
         if new_intakeconsumption is not None:
             vals['intakeconsumption_id'] = new_intakeconsumption.id
         # Updating the "last_reading_time" and "last_reading_value" fields
