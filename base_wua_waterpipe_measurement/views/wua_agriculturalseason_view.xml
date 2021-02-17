@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_agriculturalseason_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_intakeconsumptions']" position="after">
+                <button name="action_see_waterpipeconsumptions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-moval-flowmeter"
+                        groups="base_wua.group_wua_user"
+                        attrs="{'invisible':[('id', '=', False)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Waterpipe Cons.</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='total_volume']" position="after">
+                <field name="number_of_waterpipeconsumptions"/>
+                <field name="total_waterpipevolume"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_agriculturalseason_view_tree" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (tree view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_agriculturalseason_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='total_volume']" position="after">
+                <field name="number_of_waterpipeconsumptions"/>
+                <field name="total_waterpipevolume"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

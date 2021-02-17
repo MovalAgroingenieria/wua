@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowmeter_view_form" model="ir.ui.view">
+        <field name="name">Flowmeters (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_flowmeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_flowmeterconsumptions']" position="before">
+            <button name="action_see_waterpipeconsumptions"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-moval-flowmeter"
+                    groups="base_wua.group_wua_user"
+                    attrs="{'invisible': [('id', '=', False)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Waterpipe Cons.</span>
+                    </div>
+            </button>
+            </xpath>
+            <xpath expr="//field[@name='intake_id']" position="after">
+                <field name="connected_to_waterpipe" invisible="1"/>
+                <field name="waterpipe_id" attrs="{'invisible': [('connected_to_waterpipe','!=', True)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='last_reading_time']" position="replace">
+                <field name="last_reading_time_show"/>
+            </xpath>
+            <xpath expr="//field[@name='last_reading_value']" position="replace">
+                <field name="last_reading_value_show"/>
+            </xpath>
+            <xpath expr="//field[@name='last_reading_instantflow']" position="replace">
+                <field name="last_reading_instantflow_show"/>
+            </xpath>
+            <xpath expr="//page[@name='intake_page']" position="after">
+                <page name="waterpipe_page" string="Waterpipes">
+                    <field name="wpfm_ids">
+                        <tree create="false" edit="false" delete="false"
+                        class="o_base_wua_waterpipe_measurement_waterpipe_view_tree_notebook">
+                            <field name="assign_start"/>
+                            <field name="assign_end"/>
+                            <field name="waterpipe_id"/>
+                            <field name="waterpipe_path"/>
+                            <field name="waterpipe_hydraulicsector_id"/>
+                            <field name="days" sum="Total"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_flowmeter_view_tree" model="ir.ui.view">
+        <field name="name">Flowmeters (tree view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_flowmeter_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='connected_to_intake']" position="after">
+                <field name="connected_to_waterpipe"/>
+            </xpath>
+            <xpath expr="//field[@name='last_reading_time']" position="replace">
+                <field name="last_reading_time_show"/>
+            </xpath>
+            <xpath expr="//field[@name='last_reading_value']" position="replace">
+                <field name="last_reading_value_show"/>
+            </xpath>
+            <xpath expr="//field[@name='last_reading_instantflow']" position="replace">
+                <field name="last_reading_instantflow_show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_flowmeter_view_search" model="ir.ui.view">
+        <field name="name">Flowmeters (search view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='connected_intake_no']" position="after">
+                <separator/>
+                <filter string="Connected to waterpipe: Yes" name="connected_waterpipe_yes" domain="[('connected_to_waterpipe','=', True)]"/>
+                <filter string="Connected to waterpipe: No" name="connected_waterpipe_no" domain="[('connected_to_waterpipe','=', False)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='intake']" position="after">
+                <filter string="Waterpipe" name="waterpipe" context="{'group_by':'waterpipe_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
