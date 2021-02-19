@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_remove_waterpipe_flowmeter_readings_view_form" model="ir.ui.view">
+        <field name="name">Wizard to delete waterpipe flowmeter readings</field>
+        <field name="model">wizard.remove.waterpipe.flowmeter.readings</field>
+        <field name="arch" type="xml">
+            <form string="Delete waterpipe flowmeter readings">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '450px'});
+                        $('.modal-dialog').css({'height': '420px'});
+                    });
+                </script>
+                <group name="body">
+                    <field name="initial_date"/>
+                    <field name="end_date"/>
+                    <field name="num_readings_to_delete"/>
+                </group>
+                <div>
+                    NOTE: The date range must include the last reading.
+                </div>
+                <footer>
+                    <button name="get_delete_period"
+                            type="object"
+                            string="Delete"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_delete_waterpipe_flowmeter_readings"
+        name="Delete waterpipe flow-meter readings"
+        res_model="wizard.remove.waterpipe.flowmeter.readings"
+        src_model="wua.waterpipeflowreading"
+        view_mode="form"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+
+</odoo>

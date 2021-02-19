@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterpipe_view_form" model="ir.ui.view">
+        <field name="name">Water pipe (form view)</field>
+        <field name="model">wua.waterpipe</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="before">
+                <field name="id" invisible="True"/>
+                <button name="action_see_waterpipeconsumptions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-moval-flowmeter"
+                        groups="base_wua.group_wua_user"
+                        attrs="{'invisible': [('id', '=', False)]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Consumptions</span>
+                        </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='waterpipe_code']" position="after">
+                <field name="flowmeter_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterpipe_view_tree" model="ir.ui.view">
+        <field name="name">Water pipe (tree view)</field>
+        <field name="model">wua.waterpipe</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='total_affected_area_official']" position="after">
+                <field name="flowmeter_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterpipe_view_search" model="ir.ui.view">
+        <field name="name">Water pipe (search view)</field>
+        <field name="model">wua.waterpipe</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='waterpipe_id']" position="after">
+                <field name="flowmeter_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='hydraulic_sector']" position="after">
+                <filter string="Flowmeter" name="flowmeter" context="{'group_by':'flowmeter_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

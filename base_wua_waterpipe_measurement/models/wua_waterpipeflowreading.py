@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2019 Moval Agroingeniería
+# 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
@@ -7,13 +7,13 @@ import pytz
 from odoo import models, fields, api, exceptions, _
 
 
-class WuaFlowreading(models.Model):
-    _name = 'wua.flowreading'
-    _description = 'Entity (flow reading)'
+class WuaWaterpipeflowreading(models.Model):
+    _name = 'wua.waterpipeflowreading'
+    _description = 'Entity (waterpipe flow reading)'
     _order = 'reading_time desc, name'
 
     name = fields.Char(
-        string='Flow-Meter Reading',
+        string='Waterpipe Flow-Meter Reading',
         index=True,
         store=True,
         compute="_compute_name",
@@ -47,22 +47,22 @@ class WuaFlowreading(models.Model):
         required=True,
         default=False)
 
-    intake_id = fields.Many2one(
-        string='Intake',
-        comodel_name='wua.intake',
+    waterpipe_id = fields.Many2one(
+        string='Waterpipe',
+        comodel_name='wua.waterpipe',
         ondelete='restrict',
         readonly=True)
 
-    intakeconsumption_id = fields.Many2one(
-        string='Intake Consumption',
-        comodel_name='wua.intakeconsumption',
+    waterpipeconsumption_id = fields.Many2one(
+        string='Waterpipe Consumption',
+        comodel_name='wua.waterpipeconsumption',
         ondelete='restrict',
         readonly=True)
 
-    reading_of_intake = fields.Boolean(
-        string='Reading of intake',
+    reading_of_waterpipe = fields.Boolean(
+        string='Reading of waterpipe',
         store=True,
-        compute='_compute_reading_of_intake')
+        compute='_compute_reading_of_waterpipe')
 
     notes = fields.Html(
         string="Notes",
@@ -75,7 +75,7 @@ class WuaFlowreading(models.Model):
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
-         'Existing flow-reading identifier.'),
+         'Existing waterpipe flow-reading identifier.'),
         ('volume',
          'CHECK (volume >= 0)',
          'Volume of water can\'t be negative.'),
@@ -89,18 +89,19 @@ class WuaFlowreading(models.Model):
                 name = record.flowmeter_id.name + '-' + record.reading_time
             record.name = name
 
-    @api.depends('intake_id')
-    def _compute_reading_of_intake(self):
+    @api.depends('waterpipe_id')
+    def _compute_reading_of_waterpipe(self):
         for record in self:
-            reading_of_intake = False
-            if record.intake_id:
-                reading_of_intake = True
-            record.reading_of_intake = reading_of_intake
+            reading_of_waterpipe = False
+            if record.waterpipe_id:
+                reading_of_waterpipe = True
+            record.reading_of_waterpipe = reading_of_waterpipe
 
     @api.multi
     def _compute_is_last_reading(self):
         for record in self:
-            if record.reading_time == record.flowmeter_id.last_reading_time:
+            if record.reading_time == record.flowmeter_id.\
+                    last_waterpipeflowreading_time:
                 record.is_last_reading = True
             else:
                 record.is_last_reading = False
@@ -133,36 +134,35 @@ class WuaFlowreading(models.Model):
                 fields.remove('volume')
             if 'instant_flow' in fields:
                 fields.remove('instant_flow')
-            return super(WuaFlowreading, self).read_group(
+            return super(WuaWaterpipeflowreading, self).read_group(
                 domain, fields, groupby, offset, limit, orderby, lazy)
 
     @api.model
     def create(self, vals):
-        new_intakeconsumption = None
+        new_waterpipeconsumption = None
         reading_end_time = vals['reading_time']
         end_volume = vals['volume']
         end_instantflow = vals['instant_flow']
         flowmeter = self.env['wua.flowmeter'].browse(vals['flowmeter_id'])
-        intake_id = None
+        waterpipe_id = None
         if flowmeter:
-            intake_id = flowmeter.intake_id
-        if intake_id:
-            vals['intake_id'] = intake_id.id
+            waterpipe_id = flowmeter.waterpipe_id
+        if waterpipe_id:
+            vals['waterpipe_id'] = waterpipe_id.id
         else:
             raise exceptions.UserError(_('Flowmeter not associated with '
-                                         'any intake.'))
+                                         'any waterpipe.'))
         # New consumption.
         if not vals['initialization_reading']:
             reading_initial_time = reading_end_time
             initial_volume = end_volume
-            last_reading = self.env['wua.flowreading'].search(
+            last_reading = self.env['wua.waterpipeflowreading'].search(
                 [('flowmeter_id', '=', vals['flowmeter_id'])],
                 limit=1, order='reading_time desc')
-            previous_reading = self.env['wua.flowreading'].search(
+            previous_reading = self.env['wua.waterpipeflowreading'].search(
                 [('flowmeter_id', '=', vals['flowmeter_id']),
                  ('reading_time', '<', reading_end_time)],
                 limit=1, order='reading_time desc')
-            # Must be at least one reading and must be the last one
             if (not last_reading or not previous_reading or last_reading.id !=
                     previous_reading.id):
                 raise exceptions.UserError(_('The reading time is minor '
@@ -171,18 +171,16 @@ class WuaFlowreading(models.Model):
             else:
                 reading_initial_time = previous_reading[0].reading_time
                 initial_volume = previous_reading[0].volume
-            intakeconsumption_vals = {
+            waterpipeconsumption_vals = {
                 'reading_initial_time': reading_initial_time,
                 'initial_volume': initial_volume,
                 'reading_end_time': reading_end_time,
                 'end_volume': end_volume,
                 }
-            new_intakeconsumption = self.env['wua.intakeconsumption'].create(
-                intakeconsumption_vals)
-        # If initialization reading check reading time is greater than the last
-        # flowreading
+            new_waterpipeconsumption = self.env['wua.waterpipeconsumption'].\
+                create(waterpipeconsumption_vals)
         else:
-            last_reading = self.env['wua.flowreading'].search(
+            last_reading = self.env['wua.waterpipeflowreading'].search(
                 [('flowmeter_id', '=', vals['flowmeter_id'])],
                 limit=1, order='reading_time desc')
             if (last_reading and last_reading.reading_time >
@@ -190,28 +188,29 @@ class WuaFlowreading(models.Model):
                 raise exceptions.UserError(_('The reading time is minor '
                                              'than the time of the previous '
                                              'reading.'))
-        if new_intakeconsumption is not None:
-            vals['intakeconsumption_id'] = new_intakeconsumption.id
+        if new_waterpipeconsumption is not None:
+            vals['waterpipeconsumption_id'] = new_waterpipeconsumption.id
         # Updating the "last_reading_time" and "last_reading_value" fields
         # of the flowmeter.
         if flowmeter:
             vals_flowmeter = {
-                'last_reading_time': reading_end_time,
-                'last_reading_value': end_volume,
-                'last_reading_instantflow': end_instantflow}
+                'last_waterpipeflowreading_time': reading_end_time,
+                'last_waterpipeflowreading_value': end_volume,
+                'last_waterpipeflowreading_instantflow': end_instantflow}
             flowmeter.write(vals_flowmeter)
         # Creation of reading.
-        new_reading = super(WuaFlowreading, self).create(vals)
+        new_reading = super(WuaWaterpipeflowreading, self).create(vals)
         return new_reading
 
     @api.multi
     def write(self, vals):
-        resp = super(WuaFlowreading, self).write(vals)
+        resp = super(WuaWaterpipeflowreading, self).write(vals)
         if len(self) == 1:
             if 'volume' in vals:
-                if self.intakeconsumption_id:
-                    self.intakeconsumption_id.end_volume = vals['volume']
-                self.flowmeter_id.last_reading_value = vals['volume']
+                if self.waterpipeconsumption_id:
+                    self.waterpipeconsumption_id.end_volume = vals['volume']
+                self.flowmeter_id.last_waterpipeflowreading_value = \
+                    vals['volume']
         return resp
 
     @api.multi
@@ -220,10 +219,10 @@ class WuaFlowreading(models.Model):
         # reading only has that reading.
         if len(self) == 1:
             flowmeter = self.flowmeter_id
-            readings_of_flowmeter = self.env['wua.flowreading'].search(
-                [('flowmeter_id', '=', flowmeter.id)])
+            readings_of_flowmeter = self.env['wua.waterpipeflowreading'].\
+                search([('flowmeter_id', '=', flowmeter.id)])
             if len(readings_of_flowmeter) == 1:
-                resp = super(WuaFlowreading, self).unlink()
+                resp = super(WuaWaterpipeflowreading, self).unlink()
                 flowmeter.unlink()
                 return resp
         # Loop to get the oldest reading to delete, and also the newest one.
@@ -256,7 +255,7 @@ class WuaFlowreading(models.Model):
             raise exceptions.UserError(_('There can be no final readings '
                                          'without eliminating.'))
         # Get the time of the new "last-reading".
-        readings = self.env['wua.flowreading']
+        readings = self.env['wua.waterpipeflowreading']
         new_last_reading = readings.search(
             [('flowmeter_id', '=', flowmeter.id),
              ('reading_time', '<', older_reading_time)],
@@ -270,7 +269,7 @@ class WuaFlowreading(models.Model):
             raise exceptions.UserError(_('There can be no intermediate '
                                          'readings without eliminating.'))
         # Delete the readings.
-        resp = super(WuaFlowreading, self).unlink()
+        resp = super(WuaWaterpipeflowreading, self).unlink()
         # Update the "last-reading" and "last-volume" of the water meter from
         # the new "last-reading".
         new_last_reading_time = None
@@ -279,7 +278,7 @@ class WuaFlowreading(models.Model):
             new_last_reading_time = new_last_reading.reading_time
             new_last_reading_value = new_last_reading.volume
         vals_flowmeter = {
-            'last_reading_time': new_last_reading_time,
-            'last_reading_value': new_last_reading_value, }
+            'last_waterpipeflowreading_time': new_last_reading_time,
+            'last_waterpipeflowreading_value': new_last_reading_value, }
         flowmeter.write(vals_flowmeter)
         return resp

@@ -1,28 +1,30 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-# 	* base_wua_irrigation_measurement
+#	* base_wua_irrigation_measurement
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-25 07:53+0000\n"
-"PO-Revision-Date: 2019-11-25 10:01+0100\n"
+"POT-Creation-Date: 2021-02-17 22:23+0000\n"
+"PO-Revision-Date: 2021-02-17 22:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-"Language: es\n"
-"X-Generator: Poedit 2.2.4\n"
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intake_view_form
+msgid "<span class=\"o_stat_text\">Consumptions</span>"
+msgstr "<span class=\"o_stat_text\">Consumos</span>"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowmeter_view_form
-#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intake_view_form
-msgid "<span class=\"o_stat_text\">Consumptions</span>"
-msgstr "<span class=\"o_stat_text\">Consumos</span>"
+msgid "<span class=\"o_stat_text\">Intake Cons.</span>"
+msgstr "<span class=\"o_stat_text\">Cons. captación</span>"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_adjustement_volume
@@ -238,6 +240,12 @@ msgid "Flowmeter Readings"
 msgstr "Lecturas de caudalímetros"
 
 #. module: base_wua_irrigation_measurement
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:152
+#, python-format
+msgid "Flowmeter not associated with any intake."
+msgstr "Caudalímetro no asociado con ninguna toma."
+
+#. module: base_wua_irrigation_measurement
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intake_view_form
 msgid "Flowmeters"
 msgstr "Caudalímetros"
@@ -332,6 +340,7 @@ msgstr "Consumo de captación"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_intakeconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intake_intakeconsumption_ids
 #: model:ir.ui.menu,name:base_wua_irrigation_measurement.wua_intakeconsumption_menu
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_pivot
 #, python-format
 msgid "Intake Consumptions"
 msgstr "Consumos de captaciones"
@@ -386,7 +395,7 @@ msgstr "Último valor de lectura (m3)"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_write_uid
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_write_uid
 msgid "Last Updated by"
-msgstr "Última actualización por"
+msgstr "Última modificación por"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wizard_remove_flowmeter_readings_write_date
@@ -444,8 +453,7 @@ msgstr "Número de lecturas para ser borradas."
 #: code:addons/base_wua_irrigation_measurement/wizard/wizard_remove_flowmeter_readings.py:50
 #, python-format
 msgid "Operation not allowed for multiple records."
-msgstr ""
-"Operación no permitida para múltiples registros\n"
+msgstr "Operación no permitida para múltiples registros\n"
 "."
 
 #. module: base_wua_irrigation_measurement
@@ -506,25 +514,26 @@ msgid "The reading end time can't be lower than the reading start time."
 msgstr "El tiempo de lectura no puede ser menor que el inicial."
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:163
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:168
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:190
 #, python-format
 msgid "The reading time is minor than the time of the previous reading."
 msgstr "El tiempo de lectura es anterior a la lectura previa."
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:235
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:254
 #, python-format
 msgid "There are different flow meters."
 msgstr "Hay caudalímetros diferentes."
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:237
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:256
 #, python-format
 msgid "There can be no final readings without eliminating."
 msgstr "No puede haber lecturas finales sin eliminar."
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:251
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:270
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr "No puedesn habe lecturas intermedias sin eliminar."
@@ -582,7 +591,8 @@ msgid "Value (m3)"
 msgstr "Valor (m3)"
 
 #. module: base_wua_irrigation_measurement
-#: sql_constraint:wua.flowreading:0 sql_constraint:wua.intakeconsumption:0
+#: sql_constraint:wua.flowreading:0
+#: sql_constraint:wua.intakeconsumption:0
 msgid "Volume of water can't be negative."
 msgstr "Cantidad de agua no puede ser negativa."
 
