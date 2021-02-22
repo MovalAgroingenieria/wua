@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models, _, exceptions
+from odoo import models
 
 
 class WuaParcel(models.Model):
@@ -37,10 +37,10 @@ class WuaParcel(models.Model):
         resp = None
         if vals and 'name' in vals:
             name = vals['name']
-            watermeter = ''
+            watermeters = []
             if vals['irrigationpointwc_ids']:
-                watermeter = self.get_watermeter_of_vals(
-                    vals['irrigationpointwc_ids'], name)
+                watermeters = self.get_watermeter_of_vals(
+                    vals['irrigationpointwc_ids'])
             area_official_hec = 0
             area_official_hec = self.get_area_official_hec(
                 vals['area_official'])
@@ -66,7 +66,7 @@ class WuaParcel(models.Model):
                 area_measurement_type = 'ha'
             resp = {
                 'name': name,
-                'watermeter': watermeter,
+                'watermeter': watermeters,
                 'area_official_hec': area_official_hec,
                 'area_unit': area_measurement_type,
                 'partner_code': partner_code,
@@ -97,7 +97,7 @@ class WuaParcel(models.Model):
                 'Identificador': data['name'],
                 'RegantePropietario': data['partner_code'],
                 'RegantePagadorAgua': data['water_payer'],
-                'Hidrante': data['watermeter'],
+                'Hidrantes': data['watermeter'],
                 'Paraje': data['rurallocation'],
                 'Sector': data['hydraulicsector'],
                 'Superficie': data['area_official_hec'],
@@ -117,15 +117,9 @@ class WuaParcel(models.Model):
         resp = None
         if parcel:
             name = parcel.name
-            watermeter = ''
-            if parcel.irrigationpointwc_ids:
-                if len(parcel.irrigationpointwc_ids) > 1:
-                    error_message = _('Parcel cannot have more than one '
-                                      'watermeter')
-                    error_message = error_message + ' (' + parcel.name + ').'
-                    raise exceptions.UserError(error_message)
-                watermeter = parcel.irrigationpointwc_ids[0].\
-                    waterconnection_id.name
+            watermeters = []
+            for irrigationpointwc in (parcel.irrigationpointwc_ids or []):
+                watermeters.append(irrigationpointwc.waterconnection_id.name)
             area_official_hec = self.get_area_official_hec(
                 parcel.area_official)
             partner_code = 0
@@ -149,7 +143,7 @@ class WuaParcel(models.Model):
                 area_measurement_type = 'ha'
             resp = {
                 'name': name,
-                'watermeter': watermeter,
+                'watermeter': watermeters,
                 'area_official_hec': area_official_hec,
                 'area_unit': area_measurement_type,
                 'partner_code': partner_code,
@@ -181,7 +175,7 @@ class WuaParcel(models.Model):
                 'Identificador': data['name'],
                 'RegantePropietario': data['partner_code'],
                 'RegantePagadorAgua': data['water_payer'],
-                'Hidrante': data['watermeter'],
+                'Hidrantes': data['watermeter'],
                 'Paraje': data['rurallocation'],
                 'Sector': data['hydraulicsector'],
                 'Superficie': data['area_official_hec'],
@@ -253,7 +247,7 @@ class WuaParcel(models.Model):
                 'Identificador': data['name'],
                 'RegantePropietario': data['partner_code'],
                 'RegantePagadorAgua': data['water_payer'],
-                'Hidrante': data['watermeter'],
+                'Hidrantes': data['watermeter'],
                 'Paraje': data['rurallocation'],
                 'Sector': data['hydraulicsector'],
                 'Superficie': data['area_official_hec'],
@@ -290,7 +284,7 @@ class WuaParcel(models.Model):
                     'Identificador': data['name'],
                     'RegantePropietario': data['partner_code'],
                     'RegantePagadorAgua': data['water_payer'],
-                    'Hidrante': data['watermeter'],
+                    'Hidrantes': data['watermeter'],
                     'Paraje': data['rurallocation'],
                     'Sector': data['hydraulicsector'],
                     'Superficie': data['area_official_hec'],
@@ -305,14 +299,16 @@ class WuaParcel(models.Model):
                     parcels_not_ok.append(data['name'])
         return parcels_ok, parcels_not_ok
 
-    def get_watermeter_of_vals(self, irrigationpointwc_ids, parcel_code):
-        if (len(irrigationpointwc_ids) > 1):
-            error_message = _('Parcel cannot have more than one watermeter')
-            error_message = error_message + ' (' + parcel_code + ').'
-            raise exceptions.UserError(error_message)
-        waterconnection = self.env['wua.waterconnection'].browse(
-            irrigationpointwc_ids[0][2]['waterconnection_id'])
-        resp = waterconnection.name
+    def get_watermeter_of_vals(self, irrigationpointwc_ids):
+        resp = []
+        waterconnection_ids = []
+        for data_irrigationpoint in irrigationpointwc_ids:
+            waterconnection_ids.append(
+                data_irrigationpoint[2]['waterconnection_id'])
+        waterconnections = self.env['wua.waterconnection'].browse(
+            waterconnection_ids)
+        for waterconnection in waterconnections:
+                resp.append(waterconnection.name)
         return resp
 
     def get_water_payer_of_vals(self, partnerlink_ids):
