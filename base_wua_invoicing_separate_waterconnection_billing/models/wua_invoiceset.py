@@ -93,9 +93,9 @@ class WuaInvoiceset(models.Model):
                 payment_mandates = []
                 for item in invoice_details_same_partner_wc:
                     payment_mandates.append(
-                        item['payment_mode_id'],
-                        item['mandate_id'] if
-                        'mandate_id' in item else False)
+                        (item['payment_mode_id'],
+                         item['mandate_id'] if
+                         'mandate_id' in item else False))
                 payment_mandates_grouped = list(set(payment_mandates))
                 for payment_mandate in payment_mandates_grouped:
                     result = {
