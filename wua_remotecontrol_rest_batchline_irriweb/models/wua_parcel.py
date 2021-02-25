@@ -41,9 +41,11 @@ class WuaParcel(models.Model):
             if vals['irrigationpointwc_ids']:
                 watermeters = self.get_watermeter_of_vals(
                     vals['irrigationpointwc_ids'])
-            area_official_hec = 0
-            area_official_hec = self.get_area_official_hec(
-                vals['area_official'])
+            # Official area in measure unit of WUA
+            area_official = vals['area_official']
+            # area_official_hec = 0
+            # area_official_hec = self.get_area_official_hec(
+            #     vals['area_official'])
             partner_code = 0
             if 'partnerlink_ids' in vals:
                 partner_code = self.get_partner_of_vals(
@@ -67,7 +69,7 @@ class WuaParcel(models.Model):
             resp = {
                 'name': name,
                 'watermeter': watermeters,
-                'area_official_hec': area_official_hec,
+                'area_official': area_official,
                 'area_unit': area_measurement_type,
                 'partner_code': partner_code,
                 'water_payer': water_payer,
@@ -100,7 +102,7 @@ class WuaParcel(models.Model):
                 'Hidrantes': data['watermeter'],
                 'Paraje': data['rurallocation'],
                 'Sector': data['hydraulicsector'],
-                'Superficie': data['area_official_hec'],
+                'Superficie': data['area_official'],
                 'UnidadesSuperficie': data['area_unit'],
                 }
             resprest = requests.put(url_send_new_parcel,
@@ -120,8 +122,10 @@ class WuaParcel(models.Model):
             watermeters = []
             for irrigationpointwc in (parcel.irrigationpointwc_ids or []):
                 watermeters.append(irrigationpointwc.waterconnection_id.name)
-            area_official_hec = self.get_area_official_hec(
-                parcel.area_official)
+            # Official area in measure unit of WUA
+            area_official = parcel.area_official
+            # area_official_hec = self.get_area_official_hec(
+            #     parcel.area_official)
             partner_code = 0
             water_payer = 0
             if parcel.partnerlink_ids:
@@ -144,7 +148,7 @@ class WuaParcel(models.Model):
             resp = {
                 'name': name,
                 'watermeter': watermeters,
-                'area_official_hec': area_official_hec,
+                'area_official': area_official,
                 'area_unit': area_measurement_type,
                 'partner_code': partner_code,
                 'water_payer': water_payer,
@@ -178,7 +182,7 @@ class WuaParcel(models.Model):
                 'Hidrantes': data['watermeter'],
                 'Paraje': data['rurallocation'],
                 'Sector': data['hydraulicsector'],
-                'Superficie': data['area_official_hec'],
+                'Superficie': data['area_official'],
                 'UnidadesSuperficie': data['area_unit'],
                 }
             resprest = requests.put(url_update_parcel,
@@ -250,7 +254,7 @@ class WuaParcel(models.Model):
                 'Hidrantes': data['watermeter'],
                 'Paraje': data['rurallocation'],
                 'Sector': data['hydraulicsector'],
-                'Superficie': data['area_official_hec'],
+                'Superficie': data['area_official'],
                 'UnidadesSuperficie': data['area_unit'],
             }
             resprest = requests.put(url_syncrhonize_parcel,
@@ -287,7 +291,7 @@ class WuaParcel(models.Model):
                     'Hidrantes': data['watermeter'],
                     'Paraje': data['rurallocation'],
                     'Sector': data['hydraulicsector'],
-                    'Superficie': data['area_official_hec'],
+                    'Superficie': data['area_official'],
                     'UnidadesSuperficie': data['area_unit'],
                 }
                 resprest = requests.put(url_syncrhonize_parcel,
