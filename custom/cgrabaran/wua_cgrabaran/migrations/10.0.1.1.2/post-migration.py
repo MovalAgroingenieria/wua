@@ -15,8 +15,8 @@ def migrate(cr, version):
 #   Thats the reason is used on post-migration
     for agriculturalseason in agriculturalseasons:
         if (not agriculturalseason.balance_id):
-            start_date = agriculturalseason
-            end_date = agriculturalseason
+            start_date = agriculturalseason.initial_date
+            end_date = agriculturalseason.end_date
             initial_date_str = datetime.datetime.strptime(
                 start_date, '%Y-%m-%d').strftime('%x')
             end_date_str = datetime.datetime.strptime(

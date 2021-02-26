@@ -39,8 +39,8 @@ class WuaAgriculturalseason(models.Model):
         agriculturalseason_created =  \
             super(WuaAgriculturalseason, self).create(vals)
         if agriculturalseason_created:
-            start_date = agriculturalseason_created
-            end_date = agriculturalseason_created
+            start_date = agriculturalseason_created.initial_date
+            end_date = agriculturalseason_created.end_date
             initial_date_str = datetime.datetime.strptime(
                 start_date, '%Y-%m-%d').strftime('%x')
             end_date_str = datetime.datetime.strptime(
