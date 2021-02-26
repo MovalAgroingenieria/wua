@@ -3,22 +3,22 @@
 
     <!-- Wua partner report (droplist menu) -->
     <report
-        id="wua_sum_intakeconsumption_invoicing_report"
+        id="wua_sum_intakeconsumption_agriculturalseason_invoicing_report"
         string="Consumptions balance report"
-        model="wua.intakeconsumption.balance"
+        model="wua.agriculturalseason"
         report_type="qweb-pdf"
-        file="wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document"
-        name="wua_cgrabaran.wua_sum_intakeconsumption_invoicing_report_document"
+        file="wua_cgrabaran.wua_sum_intakeconsumption_agriculturalseason_invoicing_report_document"
+        name="wua_cgrabaran.wua_sum_intakeconsumption_agriculturalseason_invoicing_report_document"
         paperformat="base_wua_report.paperformat_wua_reports"
     />
 
     <!-- Wua partner report -->
-    <template id="wua_sum_intakeconsumption_invoicing_report_document">
+    <template id="wua_sum_intakeconsumption_agriculturalseason_invoicing_report_document">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
                     <div class="page">
-                      <t t-set="months_data" t-value="o.env['wua.sum.intakeconsumption.invoicing'].search([('balance_id','=', o.id)])"/>
+                      <t t-set="months_data" t-value="o.env['wua.sum.intakeconsumption.invoicing'].search([('balance_id','=', o.balance_id.id)])"/>
                       <t t-set="company_01_name" t-value="o.env['ir.values'].get_default(
                                 'wua.configuration', 'company_01_abv')"/>
                       <t t-set="company_02_name" t-value="o.env['ir.values'].get_default(
@@ -35,7 +35,7 @@
                           <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                               <div class="col-xs-12 text-center" style="background: lightgray; padding: 1px 16px;">
                                 <div name="title">
-                                  <span>BALANCE INTAKE/INVOICING </span><span t-esc="o.description"/>
+                                  <span>BALANCE INTAKE/INVOICING AGRICULTURALSEASON </span><span t-esc="o.description"/>
                                 </div>
                               </div>
                           </div>
