@@ -2,6 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
 from odoo import models, fields, api, _
 
 
@@ -38,8 +39,16 @@ class WuaAgriculturalseason(models.Model):
         agriculturalseason_created =  \
             super(WuaAgriculturalseason, self).create(vals)
         if agriculturalseason_created:
+            start_date = agriculturalseason_created
+            end_date = agriculturalseason_created
+            initial_date_str = datetime.datetime.strptime(
+                start_date, '%Y-%m-%d').strftime('%x')
+            end_date_str = datetime.datetime.strptime(
+                end_date, '%Y-%m-%d').strftime('%x')
+            description = initial_date_str + ' - ' + end_date_str
             self.env['wua.intakeconsumption.balance'].create({
                 'agriculturalseason_id': agriculturalseason_created.id,
-                'balance_type': 'C'
+                'balance_type': 'C',
+                'description': description
                 })
         return agriculturalseason_created
