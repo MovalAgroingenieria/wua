@@ -6,6 +6,11 @@ from odoo import models, fields, api, exceptions, _
 import datetime
 from Crypto.Cipher import AES
 import pytz
+import io
+import base64
+from xml.etree import ElementTree
+from owslib.wms import WebMapService
+from owslib.wfs import WebFeatureService
 
 
 class WuaParcel(models.Model):
@@ -124,9 +129,19 @@ class WuaParcelSubparcel(models.Model):
     aerial_img = fields.Binary(
         string="Aerial Image",
         readonly=True,
-        attachment=True,
-        compute='_compute_aerial_img'
-    )
+        attachment=True)
+
+    aerial_img_scale = fields.Integer(
+        string='Scale',
+        readonly=True)
+
+    aerial_img_date = fields.Date(
+        string='Date of aerial image')
+
+    aerial_img_accuracy = fields.Float(
+        string='Accuracy (m/px)',
+        digits=(32, 2),
+        default=0)
 
     cadastral_reference = fields.Char(
         string='Cadastral Reference',
@@ -242,14 +257,6 @@ class WuaParcelSubparcel(models.Model):
                         if cultivation_age > upper_age_middle:
                             age_category = 'b'
             record.age_category = age_category
-
-    @api.multi
-    def _compute_aerial_img(self):
-        for record in self:
-            aerial_img = None
-            if record.parcel_id.aerial_img:
-                aerial_img = record.parcel_id.aerial_img
-            record.aerial_img = aerial_img
 
     @api.depends('parcel_id', 'parcel_id.cadastral_reference_link')
     def _compute_cadastral_reference_link(self):
@@ -584,6 +591,170 @@ class WuaParcelSubparcel(models.Model):
             'type': 'ir.actions.client',
             'tag': 'reload',
         }
+
+    @api.multi
+    def action_regenerate_aerial_img(self):
+        subparcels = self.env['wua.parcel.subparcel'].search([])
+        subparcels.regenerate_aerial_img()
+
+    def get_sld_body(self):
+        body = ''
+        body = body + '<?xml version="1.0" encoding="UTF-8"?>' +\
+            '<StyledLayerDescriptor version="1.0.0" ' + \
+            'xmlns="http://www.opengis.net/sld" xmlns:ogc="' +\
+            'http://www.opengis.net/ogc" xmlns:xlink="' +\
+            'http://www.w3.org/1999/xlink" xmlns:xsi="' +\
+            'http://www.w3.org/2001/XMLSchema-instance"' +\
+            'xsi:schemaLocation="http://www.opengis.net/sld ' +\
+            'http://schemas.opengis.net/sld/1.0.0/StyledLaye' +\
+            'rDescriptor.xsd">' +\
+            '<NamedLayer><Name>subparcel</Name>' +\
+            '<UserStyle><Title>xxx</Title><FeatureTypeStyle>' +\
+            '<Rule><Filter><PropertyIsLike ' +\
+            'wildCard="*" singleChar="." escape="!"><Property' +\
+            'Name>subp_code</PropertyName><Literal>' + self.subparcel_code +\
+            '</Literal></PropertyIsLike></Filter>' +\
+            '<PolygonSymbolizer>' +\
+            '<Stroke>' +\
+            '<CssParameter name="stroke">#000000</CssParameter>' +\
+            '<CssParameter name="stroke-width">14</CssParameter>' +\
+            '<CssParameter name="stroke-linecap">round</CssParameter>' +\
+            '</Stroke>' +\
+            '</PolygonSymbolizer>' +\
+            '</Rule></FeatureTypeStyle>' +\
+            '</UserStyle></NamedLayer>' +\
+            '<NamedLayer><Name>subparcel_perimeter</Name>' +\
+            '<UserStyle><Title>xxx2</Title><FeatureTypeStyle>' +\
+            '<Rule><Filter><PropertyIsLike ' +\
+            'wildCard="*" singleChar="." escape="!"><Property' +\
+            'Name>subp_code</PropertyName><Literal>' + self.subparcel_code +\
+            '</Literal></PropertyIsLike></Filter>' +\
+            '<PolygonSymbolizer>' +\
+            '<Stroke>' +\
+            '<CssParameter name="stroke">#ffffff</CssParameter>' +\
+            '<CssParameter name="stroke-width">5</CssParameter>' +\
+            '<CssParameter name="stroke-linecap">round</CssParameter>' +\
+            '</Stroke>' +\
+            '</PolygonSymbolizer>' +\
+            '</Rule></FeatureTypeStyle>' +\
+            '</UserStyle></NamedLayer>' +\
+            '</StyledLayerDescriptor>'
+        return body
+
+    # Get a fraction of base closest to the target number
+    def getClosestDiv(self, base, target):
+        div = base
+        result = div
+        while div > target:
+            result = div
+            div = div / 2.0
+        return result
+
+    def getClosestMul(self, base, target):
+        mul = base
+        result = mul
+        while mul < target:
+            mul = mul * 2.0
+            result = mul
+        return result
+
+    def regenerate_aerial_img(self):
+        url_gis_viewer_wms = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wms')
+        url_gis_viewer_wfs = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wfs')
+        if (not url_gis_viewer_wms or not url_gis_viewer_wfs):
+            raise exceptions.UserError(_('The "URL GIS Viewer WMS" parameter '
+                                         'or "URL GIS Viewer WFS" are not '
+                                         'populated.'))
+        else:
+            mapserver_dpi = 90
+            wms = WebMapService(url=url_gis_viewer_wms, version='1.1.1')
+            wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
+            wms_pnoa = WebMapService(url='http://www.ign.es/wms-inspire/'
+                                         'pnoa-ma', version='1.3.0')
+            for record in self:
+                filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
+                    '>subp_code</ValueReference><Literal>' + \
+                    record.subparcel_code + \
+                    '</Literal></PropertyIsEqualTo></Filter>'
+                sld_body = record.get_sld_body()
+                try:
+                    response = wfs.getfeature(typename='fes:subparcel',
+                                              filter=filterxml)
+                    parsed_response = ElementTree.fromstring(
+                        response.getvalue())
+                    ns = parsed_response[0].tag.split('}')[0] + '}'
+                    parcel_member = parsed_response.find(ns + 'featureMember')
+                    parcel_envelop = parcel_member[0][0][0]
+                    crs = parcel_envelop.attrib['srsName']
+                    lowerCorner = [float(n) for n in (parcel_envelop.find(
+                        ns + 'lowerCorner').text).split(' ')]
+                    upperCorner = [float(n) for n in (parcel_envelop.find(
+                        ns + 'upperCorner').text).split(' ')]
+                    width = int(upperCorner[0] - lowerCorner[0])
+                    height = int(upperCorner[1] - lowerCorner[1])
+                    max_width = 824
+                    max_height = 824
+                    if (width > max_width or height > max_height):
+                        increment = (int(self.getClosestMul(
+                            max_width, max(height, width))))
+                        incrementX = (increment - width)/2
+                        incrementY = (increment - height)/2
+                        lowerCorner[0] = lowerCorner[0] - incrementX
+                        upperCorner[0] = upperCorner[0] + incrementX
+                        lowerCorner[1] = lowerCorner[1] - incrementY
+                        upperCorner[1] = upperCorner[1] + incrementY
+                    elif (width < max_width or height < max_height):
+                        increment = int(self.getClosestDiv(
+                            max_width, max(height, width)))
+                        incrementX = (increment - width)/2
+                        incrementY = (increment - height)/2
+                        lowerCorner[0] = lowerCorner[0] - incrementX
+                        upperCorner[0] = upperCorner[0] + incrementX
+                        lowerCorner[1] = lowerCorner[1] - incrementY
+                        upperCorner[1] = upperCorner[1] + incrementY
+                    width = max_width
+                    height = max_height
+                    bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
+                            (int(upperCorner[0])), (int(upperCorner[1])))
+                    data_pnoa = wms_pnoa.getfeatureinfo(
+                        layers=['OI.MosaicElement'],
+                        srs=crs, bbox=bbox, size=(width, height),
+                        format='image/jpeg', info_format='text/xml',
+                        xy=(width/2, height/2))
+                    data_pnoa_parsed = ElementTree.fromstring(
+                        data_pnoa.read())
+                    data_pnoa_info_rows = data_pnoa_parsed.find('body').\
+                        find('table').findall('tr')
+                    date = data_pnoa_info_rows[0].findall('td')[1].text
+                    date = datetime.datetime.strptime(date, '%Y-%m')
+                    resolution = data_pnoa_info_rows[1].findall('td')[1].\
+                        text
+                    img = wms.getmap(layers=['pnoa', 'subparcel',
+                                             'subparcel_perimeter',
+                                             'n_arrow'],
+                                     styles=['default', 'default',
+                                             'default', 'default'],
+                                     srs=crs, bbox=bbox, size=(width, height),
+                                     format='image/jpeg', transparent=True,
+                                     SLD_BODY=sld_body)
+                    image = io.BytesIO(img.read())
+                    base64_img = base64.b64encode(image.getvalue())
+                    # GET SCALE:
+                    # With BBOX get meters in the real world
+                    width_in_real_meters = bbox[2] - bbox[0]
+                    # With pixels Width and dpi get the size of the image
+                    width_in_image_meters = (width / mapserver_dpi) * \
+                        0.0254
+                    aerial_img_scale = width_in_real_meters /\
+                        width_in_image_meters
+                    record.write({'aerial_img': base64_img,
+                                  'aerial_img_scale': aerial_img_scale,
+                                  'aerial_img_accuracy': resolution,
+                                  'aerial_img_date': date})
+                except Exception:
+                    pass
 
     def _search_cultivation_age(self, operator, value):
         current_year = int(datetime.date.today().strftime("%Y"))
