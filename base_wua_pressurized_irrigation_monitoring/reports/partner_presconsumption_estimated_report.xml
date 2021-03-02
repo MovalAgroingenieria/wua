@@ -2,15 +2,15 @@
 <odoo>
 
     <report
-        id="partner_presconsumption_monitoring_report"
-        string="Partner monitoring report"
+        id="partner_presconsumption_estimated_report"
+        string="Partner estimated report"
         model="wua.comparative.partner.presconsumption"
         report_type="qweb-pdf"
-        file="base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document"
-        name="base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document"
+        file="base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document"
+        name="base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document"
         paperformat="base_wua_report.paperformat_wua_reports"/>
 
-    <template id="partner_presconsumption_monitoring_report_document">
+    <template id="partner_presconsumption_estimated_report_document">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
@@ -19,8 +19,6 @@
                         <!-- Vars -->
                         <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
                         <t t-set="control_periodicity" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
-                        <t t-set="percentage_categ_01" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_01')"/>
-                        <t t-set="percentage_categ_02" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_02')"/>
                         <t t-set="partner_subparcels_for_period"
                            t-value="o.get_partner_subparcels_for_period()"/>
                         <t t-set="num_monitored_subparcels" t-value="len(partner_subparcels_for_period)"/>
@@ -127,15 +125,15 @@
                             </div>
                         </div>
 
-                        <!-- Irrigation analysis by period data -->
-                        <div name="analysis_by_period" style="margin-top: 20px;">
+                        <!-- Irrigation recommendations by period data -->
+                        <div name="recommendations_by_period" style="margin-top: 20px;">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                                 <t t-if="report_style == 'light'">
                                     <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-monitoring-monitor"/></div>
                                         <div style="float: left; display: inline;">
                                             <strong>
-                                                <span>Irrigation&amp;nbsp;analysis&amp;nbsp;·&amp;nbsp;Period&amp;nbsp;</span>
+                                                <span>Irrigation&amp;nbsp;recommendations&amp;nbsp;·&amp;nbsp;Period&amp;nbsp;</span>
                                                 <span t-field="o.controlperiod_id.initial_date"/>
                                                 <span>to</span>
                                                 <span t-field="o.controlperiod_id.end_date"/>
@@ -148,7 +146,7 @@
                                         <div style="float: left; width: 32px;"><span class="fa fa-monitoring-monitor"/></div>
                                         <div style="float: left; display: inline;">
                                             <strong>
-                                                <span>Irrigation&amp;nbsp;analysis&amp;nbsp;·&amp;nbsp;Period&amp;nbsp;</span>
+                                                <span>Irrigation&amp;nbsp;recommendations&amp;nbsp;·&amp;nbsp;Period&amp;nbsp;</span>
                                                 <span t-field="o.controlperiod_id.initial_date"/>
                                                 <span>to</span>
                                                 <span t-field="o.controlperiod_id.end_date"/>
@@ -161,7 +159,7 @@
                                 <div class="row" style="margin-top: 4px;">
                                     <div class="col-xs-12" style="display: table;">
                                         <div style="width: 70%; display: table-cell;">
-                                            <span>- The volume measurements are referred to the period, currently set to </span>
+                                            <span>- The volume recommendations are referred to the period, currently set to </span>
                                             <t t-if="control_periodicity == 's'">
                                                 <span>weekly (m³/week).</span>
                                             </t>
@@ -172,45 +170,19 @@
                                                 <span>monthly (m³/month).</span>
                                             </t>
                                             <br/>
-                                            <span>- Totals are calculated using the four decimal places of the variable, so the sum of the data displayed may differ.</span>
+                                            <span>- Volume estimates are based on the prior period.</span>
                                             <br/>
-                                            <span>- In the legend you can see the limit percentages configured for each category.</span>
-                                        </div>
-                                        <div style="padding-left: 24px;">
-                                            <table style="width: 100%; border: solid lightgrey 1px;">
-                                                <thead>
-                                                    <th style="padding-top:6px; padding-bottom:2px;" class="text-center">Category</th>
-                                                    <th class="text-right">Max. Deviation</th>
-                                                    <th class="text-center">Symbol</th>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td class="text-center">A</td>
-                                                        <td class="text-right"><span>± </span><span t-esc="percentage_categ_01"/> %</td>
-                                                        <td class="text-center"><span class="fa-circle" style="color: green;"/></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-center">B</td>
-                                                        <td class="text-right"><span> ± </span><span t-esc="percentage_categ_02"/> %</td>
-                                                        <td class="text-center"><span class="fa-circle" style="color: orange;"/></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-center">C</td>
-                                                        <td class="text-right"><span> &gt; or &lt; </span><span t-esc="percentage_categ_02"/> %</td>
-                                                        <td class="text-center"><span class="fa-circle" style="color: red;"/></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            <span>- Totals are calculated using the four decimal places of the variable, so the sum of the data displayed may differ.</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Partner -->
-                            <table name="by_parnert" class="table table-striped" style="margin-top: 2px; width:80%;">
+                            <table name="by_parnert" class="table table-striped" style="margin-top: 2px; width:40%;">
                                 <caption>
                                     <span class="fa fa-user"/>
-                                    <span>ANALYSIS BY PARTNER</span>
+                                    <span>RECOMMENDATIONS BY PARTNER</span>
                                 </caption>
                                 <thead>
                                     <tr>
@@ -218,33 +190,12 @@
                                             Area (<span t-esc="measurement_unit"/>)
                                          </th>
                                         <th class="text-right">Estimated consumption (m³)</th>
-                                        <th class="text-right">Real consumption (m³)</th>
-                                        <th class="text-right">Deviation</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td class="text-right"><span t-field="o.area_official"/></td>
                                         <td class="text-right"><span t-field="o.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
-                                        <td class="text-right"><span t-field="o.real_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
-                                        <td>
-                                            <div style="float:right;">
-                                                <t t-set="category" t-value="o.consumption_category[:1]"/>
-                                                <t t-if="category == 'A'">
-                                                    <span class="fa-circle" style="color: green;"/>
-                                                </t>
-                                                <t t-if="category == 'B'">
-                                                    <span class="fa-circle" style="color: orange;"/>
-                                                </t>
-                                                <t t-if="category == 'C'">
-                                                    <span class="fa-circle" style="color: red;"/>
-                                                </t>
-                                            </div>
-                                            <div style="float:right;margin-right:14px;">
-                                                <t t-set="partner_deviation_percentage" t-value="float(o.deviation_percentage.replace('%', ''))"/>
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(partner_deviation_percentage, 0)"/> %</span>
-                                            </div>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -253,19 +204,10 @@
                             <table name="by_subparcel" class="table table-striped" style="margin-top: 2px; width:100%;">
                                 <caption>
                                     <span class="fa fa-moval-subparcel"/>
-                                    <span>ANALYSIS BY SUBPARCEL</span>
+                                    <span>RECOMMENDATIONS BY SUBPARCEL</span>
                                 </caption>
                                 <col/><col/><col/><col/><col/><colgroup span="2"/><col/>
                                 <thead>
-                                    <tr>
-                                        <th style="border: none;"/>
-                                        <th style="border: none;"/>
-                                        <th style="border: none;"/>
-                                        <th style="border: none;"/>
-                                        <th style="border: none;"/>
-                                        <th style="border: none; background: #F9F9F9;" colspan="2" scope="colgroup" class="text-right">Consumptions (m³)</th>
-                                        <th style="border: none;"/>
-                                    </tr>
                                     <tr>
                                         <th width="22%" class="text-center">Subparcel</th>
                                         <th class="text-center">Waterconnection</th>
@@ -274,9 +216,7 @@
                                         <th class="text-right">
                                             Surface (<span t-esc="measurement_unit"/>)
                                          </th>
-                                        <th scope="col" class="text-right" style="background: #F9F9F9;">Estimated</th>
-                                        <th scope="col" class="text-right" style="background: #F9F9F9;">Real</th>
-                                        <th class="text-right">Deviation</th>
+                                        <th class="text-right">Estimated consumption (m³)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -291,35 +231,16 @@
                                             <td><span t-field="s.cultivationvariety_id"/></td>
                                             <td class="text-right"><span t-field="s.area_official"/></td>
                                             <td class="text-right"><span t-field="s.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
-                                            <td class="text-right"><span t-field="s.real_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
-                                            <td>
-                                                <div style="float:right;">
-                                                    <t t-set="category" t-value="s.consumption_category[:1]"/>
-                                                    <t t-if="category == 'A'">
-                                                        <span class="fa-circle" style="color: green;"/>
-                                                    </t>
-                                                    <t t-if="category == 'B'">
-                                                        <span class="fa-circle" style="color: orange;"/>
-                                                    </t>
-                                                    <t t-if="category == 'C'">
-                                                        <span class="fa-circle" style="color: red;"/>
-                                                    </t>
-                                                </div>
-                                                <div style="float:right;margin-right:14px;">
-                                                    <t t-set="deviation_percentage" t-value="float(s.deviation_percentage.replace('%', ''))"/>
-                                                    <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(deviation_percentage, 0)"/> %</span>
-                                                </div>
-                                            </td>
                                         </tr>
                                     </t>
                                 </tbody>
                             </table>
 
                             <!-- Cultivation/Variety -->
-                            <table name="by_cultivation_var" class="table table-striped" style="margin-top:2px;width:90%;">
+                            <table name="by_cultivation_var" class="table table-striped" style="margin-top:2px;width:50%;">
                                 <caption>
                                     <span class="fa fa-moval-grape"/>
-                                    <span>ANALYSIS BY CULTIVATION / VARIETY</span>
+                                    <span>RECOMMENDATIONS BY CULTIVATION / VARIETY</span>
                                 </caption>
                                 <thead>
                                     <tr>
@@ -327,10 +248,6 @@
                                         <th class="text-right">
                                             <span>Estimated endowment (m³/<span t-esc="measurement_unit"/>)</span>
                                         </th>
-                                        <th class="text-right">
-                                            <span>Real endowment (m³/<span t-esc="measurement_unit"/>)</span>
-                                        </th>
-                                        <th class="text-right">Deviation</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -340,19 +257,11 @@
                                         <tr t-foreach="cultivation_var_data" t-as="c" style="page-break-inside: avoid;">
                                             <t t-set="total_estimated_consumption_cultivation"
                                                t-value="total_estimated_consumption_cultivation + c_value[0]"/>
-                                            <t t-set="total_real_consumption_cultivation"
-                                               t-value="total_real_consumption_cultivation + c_value[1]"/>
                                             <td>
                                                 <span t-esc="c.cultivation_id.name"/> / <span t-esc="c.name"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>
-                                            </td>
-                                            <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[1], 1)"/>
-                                            </td>
-                                            <td class="text-right">
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[2], 1)"/> %</span>
                                             </td>
                                         </tr>
                                         <tr name="totals_cultivations">
@@ -360,31 +269,22 @@
                                             <td class="text-right">
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_cultivation, 1)"/>
                                             </td>
-                                            <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_real_consumption_cultivation, 1)"/>
-                                            </td>
-                                            <td class="text-right">
-                                                <t t-set="total_deviation_cultivation" t-value="o.compute_deviation_percentage(total_estimated_consumption_cultivation, total_real_consumption_cultivation)"/>
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_deviation_cultivation, 0)"/> %</span>
-                                            </td>
                                         </tr>
                                     </t>
                                 </tbody>
                             </table>
 
                             <!-- Waterconnection -->
-                            <table name="by_waterconnection" class="table table-striped" style="margin-top:2px;width:80%;">
+                            <table name="by_waterconnection" class="table table-striped" style="margin-top:2px;width:60%;">
                                 <caption>
                                     <span class="fa fa-moval-infra"/>
-                                    <span>ANALYSIS BY WATERCONNECTION</span>
+                                    <span>RECOMMENDATIONS BY WATERCONNECTION</span>
                                 </caption>
                                 <thead>
                                     <tr>
                                         <th>Hydraulic sector</th>
                                         <th class="text-center">Waterconnection</th>
                                         <th class="text-right">Estimated consumption (m³)</th>
-                                        <th class="text-right">Real consumption (m³)</th>
-                                        <th class="text-right">Deviation</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -399,22 +299,11 @@
                                             <td class="text-right">
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(w_value[0], 1)"/>
                                             </td>
-                                            <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(w_value[1], 1)"/>
-                                            </td>
-                                            <td class="text-right">
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(w_value[2], 0)"/> %</span>
-                                            </td>
                                         </tr>
                                         <tr name="totals_waterconnections">
                                             <td></td>
                                             <td class="text-right"><b>TOTAL:</b></td>
                                             <td class="text-right"><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_wc,1)"/></td>
-                                            <td class="text-right"><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_real_consumption_wc,1)"/></td>
-                                            <td class="text-right">
-                                                <t t-set="total_deviation_wc" t-value="o.compute_deviation_percentage(total_estimated_consumption_wc, total_real_consumption_wc)"/>
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_deviation_wc,0)"/> %</span>
-                                            </td>
                                         </tr>
                                     </t>
                                 </tbody>

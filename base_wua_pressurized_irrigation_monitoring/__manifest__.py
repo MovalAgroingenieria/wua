@@ -38,6 +38,7 @@
         "views/res_partner_view.xml",
         "views/wua_cultivation_view.xml",
         "views/wua_cultivation_kc_view.xml",
+        "reports/partner_presconsumption_estimated_report.xml",
         "reports/partner_presconsumption_monitoring_report.xml",
         ],
     'qweb': ['static/src/xml/button_import_controlreadings.xml'],
