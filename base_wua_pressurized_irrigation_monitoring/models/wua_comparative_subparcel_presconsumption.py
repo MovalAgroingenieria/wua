@@ -28,7 +28,7 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         comodel_name='wua.parcel.subparcel',
         required=True,
         index=True,
-        ondelete='restrict',
+        ondelete='cascade',
     )
 
     controlperiod_id = fields.Many2one(

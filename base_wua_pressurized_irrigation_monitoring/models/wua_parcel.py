@@ -16,6 +16,13 @@ from owslib.wfs import WebFeatureService
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
+    @api.model
+    def create(self, vals):
+        new_parcel = super(WuaParcel, self).create(vals)
+        for subparcel in (new_parcel.subparcel_ids or []):
+            subparcel.regenerate_comparative_consumptions()
+        return new_parcel
+
     def get_wua_parcel_comparative_presconsumption_action(self):
         current_parcel_id = self.env.context.get('active_id')
         condition = [('parcel_id', '=', current_parcel_id)]
@@ -412,51 +419,6 @@ class WuaParcelSubparcel(models.Model):
                 'url': self.cadastral_reference_link,
                 'target': 'new',
             }
-
-    @api.model
-    def create(self, vals):
-        new_subparcel = super(WuaParcelSubparcel, self).create(vals)
-        active_agriculturalseason = self.env['wua.agriculturalseason'].search(
-            [('active_agriculturalseason', '=', True)])
-        if (len(active_agriculturalseason) == 1):
-            comp_subp_presc = \
-                self.env['wua.comparative.subparcel.presconsumption']
-            for controlperiod in active_agriculturalseason.controlperiod_ids:
-                comp_subp_presc.create({
-                    'subparcel_id': new_subparcel.id,
-                    'parcel_id': new_subparcel.parcel_id.id,
-                    'cadastral_reference':
-                        new_subparcel.parcel_id.cadastral_reference,
-                    'area_perc': new_subparcel.area_perc,
-                    'irrigationsystem_id':
-                        new_subparcel.irrigationsystem_id.id,
-                    'tree_distance': new_subparcel.tree_distance,
-                    'tree_drippers_number': new_subparcel.tree_drippers_number,
-                    'tree_development': new_subparcel.tree_development,
-                    'tree_lateral_number': new_subparcel.tree_lateral_number,
-                    'row_distance': new_subparcel.row_distance,
-                    'controlperiod_id': controlperiod.id,
-                    'partner_id': new_subparcel.partner_id.id,
-                    'hydraulicsector_id': new_subparcel.hydraulicsector_id.id,
-                    'cultivation_id': new_subparcel.cultivation_id.id,
-                    'cultivationvariety_id':
-                        new_subparcel.cultivationvariety_id.id,
-                    'area_official': new_subparcel.area_official,
-                    'productionmethod_id':
-                        new_subparcel.productionmethod_id.id,
-                    'shaded_percentage': new_subparcel.shaded_percentage,
-                    'soil_type': new_subparcel.soil_type,
-                    'organic_material_percentage':
-                        new_subparcel.organic_material_percentage,
-                    'orientation': new_subparcel.orientation,
-                    'drippers_number': new_subparcel.drippers_number,
-                    'drippers_nominal_flow':
-                        new_subparcel.drippers_nominal_flow,
-                    'plantation_year': new_subparcel.plantation_year,
-                    'cultivation_age': new_subparcel.cultivation_age,
-                    'age_category': new_subparcel.age_category,
-                    })
-        return new_subparcel
 
     @api.multi
     def write(self, vals):
