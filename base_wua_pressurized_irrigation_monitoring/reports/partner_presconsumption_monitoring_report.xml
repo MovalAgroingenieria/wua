@@ -171,12 +171,11 @@
                                         <t t-set="total_surface_subparcels" t-value="0.0"/>
                                         <t t-set="total_estimated_consumption_subparcels" t-value="0.0"/>
                                         <t t-set="total_real_consumption_subparcels" t-value="0.0"/>
-                                        <t t-set="total_deviation_subparcels" t-value="0.0"/>
+                                        
                                         <tr t-foreach="partner_subparcels_for_period" t-as="s" style="page-break-inside: avoid;">
                                             <t t-set="total_surface_subparcels" t-value="total_surface_subparcels + s.area_official"/>
                                             <t t-set="total_estimated_consumption_subparcels" t-value="total_estimated_consumption_subparcels + s.estimated_consumption"/>
                                             <t t-set="total_real_consumption_subparcels" t-value="total_real_consumption_subparcels + s.real_consumption"/>
-                                            <t t-set="total_deviation_subparcels" t-value="total_deviation_subparcels + s.deviation"/>
                                             <td class="text-center"><span t-field="s.subparcel_id"/></td>
                                             <td class="text-center"><span t-field="s.hydraulicsector_id"/></td>
                                             <td class="text-center">
@@ -213,8 +212,20 @@
                                             <td class="text-right"><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_subparcels,1)"/></td>
                                             <td class="text-right"><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_real_consumption_subparcels,1)"/></td>
                                             <td>
+                                                <t t-set="total_deviation_subparcels"
+                                                   t-value="o.compute_deviation_percentage(total_estimated_consumption_subparcels, total_real_consumption_subparcels)"/>
+                                                <t t-set="total_category" 
+                                                   t-value="o.compute_consumption_category(total_estimated_consumption_subparcels, total_real_consumption_subparcels, total_deviation_subparcels)"/>
                                                 <div style="float:right;">
-                                                    <span class="fa-circle" style="color: lightgrey;"/>
+                                                    <t t-if="total_category == 'A'">
+                                                        <span class="fa-circle" style="color: green;"/>
+                                                    </t>
+                                                    <t t-if="total_category == 'B'">
+                                                        <span class="fa-circle" style="color: orange;"/>
+                                                    </t>
+                                                    <t t-if="total_category == 'C'">
+                                                        <span class="fa-circle" style="color: red;"/>
+                                                    </t>
                                                 </div>
                                                 <div style="float:right;margin-right:14px;">
                                                     <span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_deviation_subparcels,0)"/>%
@@ -242,11 +253,9 @@
                                     <t t-if="waterconnections_data">
                                         <t t-set="total_estimated_consumption_wc" t-value="0.0"/>
                                         <t t-set="total_real_consumption_wc" t-value="0.0"/>
-                                        <t t-set="total_deviation_wc" t-value="0.0"/>
                                         <tr t-foreach="waterconnections_data" t-as="w" style="page-break-inside: avoid;">
                                             <t t-set="total_estimated_consumption_wc" t-value="total_estimated_consumption_wc + w_value[0]"/>
                                             <t t-set="total_real_consumption_wc" t-value="total_real_consumption_wc + w_value[1]"/>
-                                            <t t-set="total_deviation_wc" t-value="total_deviation_wc + w_value[2]"/>
                                             <td class="text-center"><span t-field="w.hydraulicsector_id"/></td>
                                             <td class="text-center"><span t-field="w.name"/></td>
                                             <td class="text-right">
@@ -259,12 +268,13 @@
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(w_value[2], 0)"/>%
                                             </td>
                                         </tr>
-                                        <tr name="totals_subparcels">
+                                        <tr name="totals_waterconnections">
                                             <td></td>
                                             <td class="text-right"><b>TOTAL:</b></td>
                                             <td class="text-right"><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_wc,1)"/></td>
                                             <td class="text-right"><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_real_consumption_wc,1)"/></td>
                                             <td class="text-right">
+                                                <t t-set="total_deviation_wc" t-value="o.compute_deviation_percentage(total_estimated_consumption_wc, total_real_consumption_wc)"/>
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_deviation_wc,0)"/>%
                                             </td>
                                         </tr>
@@ -306,20 +316,20 @@
                                                         <tr>
                                                             <td>
                                                                 <strong>Subparcel</strong>
-                                                                <t t-if="s.subparcel_id.parcel_id.aerial_img_date">
-                                                                    <span style="font-size:10px;">(image of <span t-field="s.subparcel_id.parcel_id.aerial_img_date" t-options="{'format': 'MMMM YYYY'}"></span>)</span>
+                                                                <t t-if="s.subparcel_id.aerial_img_date">
+                                                                    <span style="font-size:10px;">(image of <span t-field="s.subparcel_id.aerial_img_date" t-options="{'format': 'MMMM YYYY'}"></span>)</span>
                                                                 </t>
                                                             </td>
-                                                            <td class="text-right"><span t-field="s.subparcel_id.parcel_id"/></td>
+                                                            <td class="text-right"><span t-field="s.subparcel_id"/></td>
                                                         </tr>
                                                         <tr>
                                                             <td><strong>Cadastral reference</strong></td>
-                                                            <td class="text-right"><span t-field="s.subparcel_id.parcel_id.cadastral_reference"/></td>
+                                                            <td class="text-right"><span t-field="s.subparcel_id.cadastral_reference"/></td>
                                                         </tr>
                                                         <tr>
                                                             <td><strong>Area</strong></td>
                                                             <td class="text-right">
-                                                                <span t-field="s.subparcel_id.parcel_id.area_official"/>
+                                                                <span t-field="s.subparcel_id.area_official"/>
                                                                 <span t-esc="measurement_unit"/>
                                                             </td>
                                                         </tr>
@@ -328,7 +338,7 @@
                                             </div>
                                             <div name="subparcel_aerial_image" class="text-center">
                                                 <t t-if="s.subparcel_id.parcel_id.aerial_img">
-                                                    <img t-attf-src="data:image/png;base64, #{s.subparcel_id.parcel_id.aerial_img}" style="max-width: 408px; max-height: 408px;"/>
+                                                    <img t-attf-src="data:image/png;base64, #{s.subparcel_id.aerial_img}" style="max-width: 408px; max-height: 408px;"/>
                                                 </t>
                                                 <t t-else="">
                                                     <div class="text-center text-muted" style="width: 408px; height: 408px; padding-top: 40%;">

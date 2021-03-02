@@ -58,3 +58,26 @@ class WuaComparativePartnerPresconsumption(models.Model):
                 deviation_percentage = \
                     (deviation * 100) / real_consumption
         return deviation_percentage
+
+    def compute_consumption_category(self, theoretical_consumption,
+                                      real_consumption, deviation):
+        percentage_categ_01 = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'max_deviation_categ_01')
+        percentage_categ_02 = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'max_deviation_categ_02')
+        if theoretical_consumption == 0 and real_consumption == 0:
+            consumption_category = 'A'
+        else:
+            deviation = abs(deviation)
+            consumption_category = 'C'
+            deviation_percentage = 100
+            if deviation > 0 and real_consumption > 0:
+                deviation_percentage = \
+                    (deviation * 100) / real_consumption
+                if (deviation_percentage <= percentage_categ_01):
+                    consumption_category = 'A'
+                elif (deviation_percentage <= percentage_categ_02):
+                    consumption_category = 'B'
+            consumption_category = consumption_category
+        return consumption_category
+
