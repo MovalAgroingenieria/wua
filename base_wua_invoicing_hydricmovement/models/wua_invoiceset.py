@@ -215,9 +215,14 @@ class WuaInvoicesetLine(models.Model):
                 quotaperiod_id, superproduct_id, partner_id, category_id,
                 event_time, volume, description, type
                 FROM wua_hydricmovement WHERE of_active_agriculturalseason
-                AND superproduct_id = %s AND NOT invoiced_hydricmovement""",
-                                    (user_id, user_id, invoicesetline_id,
-                                     superproduct_id))
+                AND superproduct_id = %s AND NOT invoiced_hydricmovement
+                AND CASE
+                        WHEN type = 'grav_consumption' THEN gravconsumption_id
+                            IN (SELECT id FROM wua_gravconsumption WHERE
+                                state = 'executed')
+                        ELSE TRUE
+                    END;
+                """, (user_id, user_id, invoicesetline_id, superproduct_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 # self.env.cr.execute("""
