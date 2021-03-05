@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="action_get_partner_tankconsumptions" class="oe_stat_button"
+                    type="object" icon="fa-moval-watertank"
+                    groups="base_wua.group_wua_user, base_wua.group_wua_portal_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Tank cons.</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_form_tank" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_payer']" position="after">
+                <field name="tank_permission" attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_search" model="ir.ui.view">
+        <field name="name">Partners (search view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <filter string="Tank permission: Yes" name="tankpermission_yes"
+                    domain="[('tank_permission','=',True)]"/>
+                <filter string="Tank permission: No" name="tankpermission_no"
+                    domain="[('tank_permission','=',False)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

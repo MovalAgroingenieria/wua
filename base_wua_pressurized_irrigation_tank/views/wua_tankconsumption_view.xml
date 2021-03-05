@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_tankconsumption_view_form" model="ir.ui.view">
+        <field name="name">Tank consumptions (form view)</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <header>
+                </header>
+                <sheet>
+                     <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="id" invisible="1"/>
+                            <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}"
+                                   domain="[('is_wua_partner', '=', True)]"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="tank_id" options="{'no_quick_create':True, 'no_create_edit':True}"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="initial_time" attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="end_time" attrs="{'readonly': [('id', '>', 0)]}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="hydraulicsector_id"/>
+                            <field name="agriculturalseason_id"/>
+                            <field name="volume_request" style="width:100px"/>
+                            <field name="volume_real" style="width:100px"/>
+                            <field name="validated"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_tankconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Tank consumptions (tree view)</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irritation_tankconsumption_view_tree">
+                <field name="tank_id"/>
+                <field name="initial_time"/>
+                <field name="end_time"/>
+                <field name="partner_id"/>
+                <field name="volume_request"/>
+                <field name="volume_real"/>
+                <field name="validated"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_tankconsumption_view_search" model="ir.ui.view">
+        <field name="name">Tank consumptions (search view)</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="tank_id"/>
+                <filter name="validated_yes" string="Validated: Yes"
+                    domain="[('validated','=',True)]"/>
+                <filter name="validated_no" string="Validated: No"
+                    domain="[('validated','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural season" name="agricultural_season"
+                        context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Hydraulic Sector" name="hydraulic_sector"
+                        context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Partner" name="partner"
+                        context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_tankconsumption_view_grap" model="ir.ui.view">
+        <field name="name">Tank consumptions (graph view)</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="arch" type="xml">
+            <graph string="Tank consumptions">
+                <field name="hydraulicsector_id"/>
+                <field name="volume_real" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_tankconsumption_view_pivot" model="ir.ui.view" >
+        <field name="name">Tank consumptions (pivot view)</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="arch" type="xml">
+            <pivot string="Tank consumptions" display_quantity="true">
+                <field name="hydraulicsector_id"/>
+                <field name="volume_real" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_tankconsumption_action" model="ir.actions.act_window">
+        <field name="name">Tank consumptions</field>
+        <field name="res_model">wua.tankconsumption</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_tankconsumption_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_tankconsumption_view_form')})]"/>
+        <field name="search_view_id" ref="wua_tankconsumption_view_search"/>
+    </record>
+
+    <record id="wua_validate_tankconsumptions" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_tankconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.tankconsumption'].validate_tankconsumptions(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_validate_tankconsumptions" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_tankconsumptions'))"/>
+    </record>
+
+    <record id="wua_cancel_tankconsumptions" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_tankconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.tankconsumption'].cancel_tankconsumptions(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_cancel_tankconsumptions" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_tankconsumptions'))"/>
+    </record>
+
+    <record id="wua_technical_assign_agriculturalseason_to_tankconsumptions_action" model="ir.actions.server">
+        <field name="name">Assign agricultural seasons to tank consumptions</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation.model_wua_presconsumption"/>
+        <field name="code">action = env["wua.tankconsumption"].action_assign_agriculturalseason_to_tankconsumptions()</field>
+    </record>
+
+    <menuitem id="wua_tankconsumption_menu"
+              name="Tank consumptions"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="wua_tankconsumption_action"
+              sequence="6"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="wua_technical_assign_agriculturalseason_to_tankconsumptions_menu"
+              name="Calculation: tank consumptions"
+              parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+              action="wua_technical_assign_agriculturalseason_to_tankconsumptions_action"
+              sequence="4"/>
+
+</odoo>
