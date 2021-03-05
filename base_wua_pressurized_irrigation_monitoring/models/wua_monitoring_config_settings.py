@@ -74,6 +74,10 @@ class WuaMonitoringConfiguration(models.TransientModel):
         help='For incoming mails related to agroclimatic data: '
              'in the attached excel file, name of the precipitation column')
 
+    monitoring_informative_clauses = fields.Html(
+        string="Informative clauses",
+        help="They will be printed in Partner monitoring report.")
+
     _sql_constraints = [
         ('valid_max_deviation_categ_01',
          'CHECK (max_deviation_categ_01 >= 0)',
@@ -125,3 +129,6 @@ class WuaMonitoringConfiguration(models.TransientModel):
         values.set_default('wua.monitoring.configuration',
                            'incoming_mail_col_pe',
                            self.incoming_mail_col_pe)
+        values.set_default('wua.monitoring.configuration',
+                           'monitoring_informative_clauses',
+                           self.monitoring_informative_clauses)
