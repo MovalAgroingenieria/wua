@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="email_template_form" model="ir.ui.view">
+        <field name="name">email.template.form</field>
+        <field name="model">mail.template</field>
+        <field name="inherit_id" ref="mail.email_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='model_id']" position="after">
+                <field name="comp_cons" invisible="1"/>
+                <field name="comp_cons_send_after_calculate"
+                       string="Send after calculating"
+                       attrs="{'invisible': [('comp_cons','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

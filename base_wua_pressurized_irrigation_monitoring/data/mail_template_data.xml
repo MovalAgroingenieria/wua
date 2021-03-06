@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="1">
+    
+        <record id="partner_presconsumption_monitoring_report_email_template"
+                model="mail.template">
+            <field name="name">Informe de análisis de riego</field>
+            <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_comparative_partner_presconsumption"/>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="subject">Análisis de riego: ${object.partner_id.name}, ${object.controlperiod_id.initial_date[8:10] + '/' + object.controlperiod_id.initial_date[5:7] + '/' + object.controlperiod_id.initial_date[:4]} - ${object.controlperiod_id.end_date[8:10] + '/' + object.controlperiod_id.end_date[5:7] + '/' + object.controlperiod_id.end_date[:4]}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Estimado Sr./Sra. ${object.partner_id.name},
+                        <br/><br/>
+                        Adjuntamos su informe de análisis de riego correspondiente al siguiente período: ${object.controlperiod_id.initial_date[8:10] + '/' + object.controlperiod_id.initial_date[5:7] + '/' + object.controlperiod_id.initial_date[:4]} - ${object.controlperiod_id.end_date[8:10] + '/' + object.controlperiod_id.end_date[5:7] + '/' + object.controlperiod_id.end_date[:4]}.
+                        <br/><br/>
+                        Reciba un cordial saludo.
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="report_template" ref="partner_presconsumption_monitoring_report"/>
+            <field name="report_name">Analisis_Riego_${object.controlperiod_id.initial_date}_${object.controlperiod_id.end_date}_${object.partner_id.name.replace(' ','_')}</field>
+            <field name="comp_cons">True</field>
+        </record>
+
+        <record id="partner_presconsumption_estimated_report_email_template"
+                model="mail.template">
+            <field name="name">Informe de estimación de riego</field>
+            <field name="model_id" ref="base_wua_pressurized_irrigation_monitoring.model_wua_comparative_partner_presconsumption"/>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="subject">Estimación de riego: ${object.partner_id.name}, ${object.controlperiod_id.initial_date[8:10] + '/' + object.controlperiod_id.initial_date[5:7] + '/' + object.controlperiod_id.initial_date[:4]} - ${object.controlperiod_id.end_date[8:10] + '/' + object.controlperiod_id.end_date[5:7] + '/' + object.controlperiod_id.end_date[:4]}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Estimado Sr./Sra. ${object.partner_id.name},
+                        <br/><br/>
+                        Adjuntamos su informe de estimación de riego correspondiente al siguiente período: ${object.controlperiod_id.initial_date[8:10] + '/' + object.controlperiod_id.initial_date[5:7] + '/' + object.controlperiod_id.initial_date[:4]} - ${object.controlperiod_id.end_date[8:10] + '/' + object.controlperiod_id.end_date[5:7] + '/' + object.controlperiod_id.end_date[:4]}.
+                        <br/><br/>
+                        Reciba un cordial saludo.
+                    </p>
+                </div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="report_template" ref="partner_presconsumption_estimated_report"/>
+            <field name="report_name">Estimacion_Riego_${object.controlperiod_id.initial_date}_${object.controlperiod_id.end_date}_${object.partner_id.name.replace(' ','_')}</field>
+            <field name="comp_cons">True</field>
+        </record>
+
+    </data>
+
+</odoo>

@@ -431,7 +431,7 @@ class WuaControlperiod(models.Model):
                 error_message = ''
                 preffix_message = _('Mail with agroclimatic data') + '. ' + \
                     _('EMail from') + ': ' + \
-                    incoming_message.email_from + ' .' + \
+                    incoming_message.email_from + '. ' + \
                     _('Subject') + ': ' + \
                     incoming_message.subject + '. ' + \
                     _('Excel file') + ': ' + \
@@ -459,6 +459,9 @@ class WuaControlperiod(models.Model):
                             'et0_value': et0,
                             'pe_value': pe,
                             })
+                        # Update recommendations for next control period
+                        # and send mails.
+                        self.post_run_process_incoming_mail(controlperiod)
             incoming_message.incoming_mail_processed = True
         # If the recipient of the emails is "admin", delete all emails
         # with a subject other than "agroclimatic data".
@@ -589,3 +592,87 @@ class WuaControlperiod(models.Model):
             current_controlperiod = current_controlperiod_by_date
         if (current_controlperiod):
             current_controlperiod.is_the_current = True
+
+    @api.model
+    def post_run_process_incoming_mail(self, controlperiod):
+        # Step 1: message "calculated control period" to log.
+        _logger = logging.getLogger(self.__class__.__name__)
+        general_preffix = _('After incoming agroclimatic email')
+        message_01 = general_preffix + ', ' + \
+            _('control-period') + ' ' + controlperiod.name + \
+            ': ' + _('calculated')
+        _logger.info(message_01)
+        # Step 2: send monitoring-mail to parnters.
+        # Provisional (final: remove comment)
+        # comp_partner_presconsumptions_to_send = \
+        #     self.env['wua.comparative.partner.presconsumption'].search(
+        #         [('controlperiod_id', '=', controlperiod.id)])
+        # Provisional (final: add comment)
+        comp_partner_presconsumptions_to_send = \
+            self.env['wua.comparative.partner.presconsumption'].search(
+                [('controlperiod_id', '=', controlperiod.id),
+                 ('partner_id.partner_code', '=', 62)])
+        if (comp_partner_presconsumptions_to_send and
+           len(comp_partner_presconsumptions_to_send) > 0):
+            monitoring_template_id = self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'partner_presconsumption_monitoring_report_email_template').id
+            if monitoring_template_id:
+                monitoring_template = self.env['mail.template'].browse(
+                    monitoring_template_id)
+                if monitoring_template.comp_cons_send_after_calculate:
+                    num_mails = 0
+                    for id in comp_partner_presconsumptions_to_send.ids:
+                        monitoring_template.send_mail(id, force_send=True)
+                        num_mails = num_mails + 1
+                    message_02 = general_preffix + ', ' + \
+                        _('emails with monitoring report to partners, '
+                          'for control-period') + ' ' + controlperiod.name + \
+                        ': ' + str(num_mails)
+                    _logger.info(message_02)
+        # Step 3: if there is, populate the estimations to next control period.
+        controlperiods_after_current = self.env['wua.controlperiod'].search(
+            [('agriculturalseason_id', '=',
+              controlperiod.agriculturalseason_id.id),
+             ('initial_date', '>', controlperiod.end_date)],
+            order='initial_date')
+        if controlperiods_after_current:
+            next_controlperiod = controlperiods_after_current[0]
+            next_controlperiod.write({
+                'et0_value': controlperiod.et0_value,
+                'pe_value': controlperiod.pe_value,
+                })
+            message_03 = general_preffix + ', ' + \
+                _('control-period') + ' ' + next_controlperiod.name + \
+                ': ' + _('calculated -estimations-')
+            _logger.info(message_03)
+            # Step 4: send estimation-mail to parnters.
+            # Provisional (final: remove comment)
+            # comp_partner_presconsumptions_to_send = \
+            #     self.env['wua.comparative.partner.presconsumption'].search(
+            #         [('controlperiod_id', '=', next_controlperiod.id)])
+            # Provisional (final: add comment)
+            comp_partner_presconsumptions_to_send = \
+                self.env['wua.comparative.partner.presconsumption'].search(
+                    [('controlperiod_id', '=', next_controlperiod.id),
+                     ('partner_id.partner_code', '=', 62)])
+            if (comp_partner_presconsumptions_to_send and
+               len(comp_partner_presconsumptions_to_send) > 0):
+                estimation_template_id = self.env.ref(
+                    'base_wua_pressurized_irrigation_monitoring.'
+                    'partner_presconsumption_estimated_report_email_'
+                    'template').id
+                if estimation_template_id:
+                    estimation_template = self.env['mail.template'].browse(
+                        estimation_template_id)
+                    if estimation_template.comp_cons_send_after_calculate:
+                        num_mails = 0
+                        for id in comp_partner_presconsumptions_to_send.ids:
+                            estimation_template.send_mail(id, force_send=True)
+                            num_mails = num_mails + 1
+                        message_04 = general_preffix + ', ' + \
+                            _('emails with estimations report to partners, '
+                              'for control-period') + ' ' + \
+                            next_controlperiod.name + \
+                            ': ' + str(num_mails) + ' ' + _('-estimations-')
+                        _logger.info(message_04)
