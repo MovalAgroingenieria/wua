@@ -75,8 +75,12 @@ class WuaMonitoringConfiguration(models.TransientModel):
              'in the attached excel file, name of the precipitation column')
 
     monitoring_informative_clauses = fields.Html(
-        string="Informative clauses",
+        string="Monitoring informative clauses",
         help="They will be printed in Partner monitoring report.")
+
+    estimated_informative_clauses = fields.Html(
+        string="Estimated informative clauses",
+        help="They will be printed in Partner estimated report.")
 
     _sql_constraints = [
         ('valid_max_deviation_categ_01',
@@ -132,3 +136,6 @@ class WuaMonitoringConfiguration(models.TransientModel):
         values.set_default('wua.monitoring.configuration',
                            'monitoring_informative_clauses',
                            self.monitoring_informative_clauses)
+        values.set_default('wua.monitoring.configuration',
+                           'estimated_informative_clauses',
+                           self.estimated_informative_clauses)

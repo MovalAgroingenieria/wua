@@ -179,24 +179,30 @@
                                         <div style="padding-left: 24px;">
                                             <table style="width: 100%; border: solid lightgrey 1px;">
                                                 <thead>
-                                                    <th style="padding-top:6px; padding-bottom:2px;" class="text-center">Category</th>
-                                                    <th class="text-right">Max. Deviation</th>
-                                                    <th class="text-center">Symbol</th>
+                                                    <th style="padding-top:6px; padding-bottom:2px;padding-left:8px;">Category</th>
+                                                    <th class="text-right" style="padding-right:6px;">Max. Deviation</th>
+                                                    <th class="text-center" style="padding-right:8px;">Symbol</th>
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td class="text-center">A</td>
-                                                        <td class="text-right"><span>± </span><span t-esc="percentage_categ_01"/> %</td>
+                                                        <td style="padding-left:8px;">A - Correct</td>
+                                                        <td class="text-right" style="padding-right:6px;">
+                                                            <span>± <span t-esc="request.env['wua.parcel'].transform_float_to_locale(percentage_categ_01,0)"/> %</span>
+                                                        </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: green;"/></td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="text-center">B</td>
-                                                        <td class="text-right"><span> ± </span><span t-esc="percentage_categ_02"/> %</td>
+                                                        <td style="padding-left:8px;">B - Acceptable</td>
+                                                        <td class="text-right" style="padding-right:6px;">
+                                                            <span>± <span t-esc="request.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
+                                                        </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: orange;"/></td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="text-center">C</td>
-                                                        <td class="text-right"><span> &gt; or &lt; </span><span t-esc="percentage_categ_02"/> %</td>
+                                                        <td style="padding-left:8px;padding-bottom:4px">C - Unsatisfactory</td>
+                                                        <td class="text-right" style="padding-right:6px;">
+                                                            <span> &gt; or &lt; <span t-esc="request.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
+                                                        </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: red;"/></td>
                                                     </tr>
                                                 </tbody>
@@ -352,7 +358,7 @@
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[1], 1)"/>
                                             </td>
                                             <td class="text-right">
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[2], 1)"/> %</span>
+                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[2], 0)"/> %</span>
                                             </td>
                                         </tr>
                                         <tr name="totals_cultivations">
@@ -441,11 +447,9 @@
                                         </t>
                                     </div>
                                 </div>
-                                <t t-if="informative_clauses">
-                                    <div name="informative_clause_div">
-                                        <span t-raw="informative_clauses"/>
-                                    </div>
-                                </t>
+                                <div name="informative_clause_div">
+                                    <span t-raw="informative_clauses"/>
+                                </div>
                             </t>
                         </div>
 
@@ -455,13 +459,13 @@
                                 <t t-if="report_style == 'light'">
                                     <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-image"/></div>
-                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;location</span></strong></div>
+                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;aerial&amp;nbsp;image</span></strong></div>
                                    </div>
                                 </t>
                                 <t t-else="">
                                     <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-image"/></div>
-                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;location</span></strong></div>
+                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;aerial&amp;nbsp;image</span></strong></div>
                                     </div>
                                 </t>
                             </div>
