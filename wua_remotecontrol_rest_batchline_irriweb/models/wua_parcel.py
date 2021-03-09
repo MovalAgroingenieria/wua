@@ -10,6 +10,10 @@ from odoo import models
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
+    _remotecontrol_parcel_fields = [
+        'name', 'partnerlink_ids', 'rurallocation_id', 'irrigationpointwc_ids',
+        'area_official']
+
     def get_token(self, url_remotecontrol_rest,
                   url_remotecontrol_rest_username,
                   url_remotecontrol_rest_password):
@@ -312,7 +316,7 @@ class WuaParcel(models.Model):
         waterconnections = self.env['wua.waterconnection'].browse(
             waterconnection_ids)
         for waterconnection in waterconnections:
-                resp.append(waterconnection.name)
+            resp.append(waterconnection.name)
         return resp
 
     def get_water_payer_of_vals(self, partnerlink_ids):

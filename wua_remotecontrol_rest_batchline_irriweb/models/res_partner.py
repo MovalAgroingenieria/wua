@@ -9,6 +9,9 @@ from odoo import models, _
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+    _remotecontrol_partner_fields = [
+        'partner_code', 'firstname', 'lastname', 'lastname2', 'vat', 'email'
+    ]
 
     def get_token(self, url_remotecontrol_rest,
                   url_remotecontrol_rest_username,
