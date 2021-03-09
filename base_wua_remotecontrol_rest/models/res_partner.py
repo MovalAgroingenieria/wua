@@ -10,6 +10,8 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     _in_create_or_synchro = False
+    # Populate on children
+    _remotecontrol_partner_fields = []
 
     @api.model_cr
     def init(self):
@@ -96,8 +98,14 @@ class ResPartner(models.Model):
     @api.multi
     def write(self, vals):
         resp = super(ResPartner, self).write(vals)
+        some_remotecontrol_key = False
+        all_vals = vals.keys()
+        # Intersect the vals written and the possible keys taht will trigger
+        # the update (_remotecontrol_partner_fields)
+        some_remotecontrol_key = len(
+            list(set(all_vals) & set(self._remotecontrol_partner_fields))) > 0
         if (self.__class__._in_create_or_synchro or len(self) != 1 or
-           not self.is_wua_partner):
+           not self.is_wua_partner or not some_remotecontrol_key):
             return resp
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')

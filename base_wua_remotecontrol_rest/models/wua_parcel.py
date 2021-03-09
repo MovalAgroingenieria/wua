@@ -10,6 +10,7 @@ class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
     _in_create_or_synchro = False
+    _remotecontrol_parcel_fields = []
 
     @api.model_cr
     def init(self):
@@ -90,7 +91,14 @@ class WuaParcel(models.Model):
     @api.multi
     def write(self, vals):
         resp = super(WuaParcel, self).write(vals)
-        if (self.__class__._in_create_or_synchro or len(self) != 1):
+        some_remotecontrol_key = False
+        all_vals = vals.keys()
+        # Intersect the vals written and the possible keys taht will trigger
+        # the update (_remotecontrol_parcel_fields)
+        some_remotecontrol_key = len(
+            list(set(all_vals) & set(self._remotecontrol_parcel_fields))) > 0
+        if (self.__class__._in_create_or_synchro or len(self) != 1 or not
+                some_remotecontrol_key):
             return resp
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
