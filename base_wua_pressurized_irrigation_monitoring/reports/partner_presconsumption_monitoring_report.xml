@@ -18,21 +18,22 @@
 
                         <!-- Vars -->
                         <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
-                        <t t-set="control_periodicity" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
-                        <t t-set="percentage_categ_01" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_01')"/>
-                        <t t-set="percentage_categ_02" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_02')"/>
-                        <t t-set="partner_subparcels_for_period"
-                           t-value="o.get_partner_subparcels_for_period()"/>
+                        <t t-set="control_periodicity"
+                            t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
+                        <t t-set="percentage_categ_01"
+                            t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_01')"/>
+                        <t t-set="percentage_categ_02"
+                            t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_02')"/>
+                        <t t-set="partner_subparcels_for_period" t-value="o.get_partner_subparcels_for_period()"/>
                         <t t-set="num_monitored_subparcels" t-value="len(partner_subparcels_for_period)"/>
                         <t t-set="cultivations" t-value="[]"/>
                         <t t-foreach="partner_subparcels_for_period" t-as="s">
                             <t t-set="cultivations" t-value="cultivations + [s.cultivation_id]"/>
                         </t>
-                        <t t-set="cultivation_var_data"
-                           t-value="o.get_cultivation_var_data()"/>
+                        <t t-set="cultivation_var_data" t-value="o.get_cultivation_var_data()"/>
                         <t t-set="waterconnections_data" t-value="o.get_consumptions_by_waterconnection()"/>
                         <t t-set="measurement_unit"
-                           t-value="partner_subparcels_for_period[0].subparcel_id.parcel_id._compute_area_measurement_name()"/>
+                            t-value="partner_subparcels_for_period[0].subparcel_id.parcel_id._compute_area_measurement_name()"/>
 
                         <!-- Partner data -->
                         <div name="wua_partner_data">
@@ -176,7 +177,7 @@
                                             <br/>
                                             <span>- In the legend you can see the limit percentages configured for each category.</span>
                                         </div>
-                                        <div style="padding-left: 24px;">
+                                        <div style="padding-left: 12px;">
                                             <table style="width: 100%; border: solid lightgrey 1px;">
                                                 <thead>
                                                     <th style="padding-top:6px; padding-bottom:2px;padding-left:8px;">Category</th>
@@ -201,7 +202,10 @@
                                                     <tr>
                                                         <td style="padding-left:8px;padding-bottom:4px">C - Unsatisfactory</td>
                                                         <td class="text-right" style="padding-right:6px;">
-                                                            <span> &gt; or &lt; <span t-esc="request.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
+                                                            <span>
+                                                                <span>&gt; &lt; </span>
+                                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
+                                                            </span>
                                                         </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: red;"/></td>
                                                     </tr>
@@ -325,11 +329,11 @@
                             <table name="by_cultivation_var" class="table table-striped" style="margin-top:2px;width:90%;">
                                 <caption>
                                     <span class="fa fa-moval-grape"/>
-                                    <span>ANALYSIS BY CULTIVATION / VARIETY</span>
+                                    <span>ANALYSIS BY CULTIVATION</span>
                                 </caption>
                                 <thead>
                                     <tr>
-                                        <th>Cultivation / Variety</th>
+                                        <th>Cultivation</th>
                                         <th class="text-right">
                                             <span>Estimated endowment (m³/<span t-esc="measurement_unit"/>)</span>
                                         </th>
@@ -349,7 +353,7 @@
                                             <t t-set="total_real_consumption_cultivation"
                                                t-value="total_real_consumption_cultivation + c_value[1]"/>
                                             <td>
-                                                <span t-esc="c.cultivation_id.name"/> / <span t-esc="c.name"/>
+                                                <span t-esc="c.name"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>

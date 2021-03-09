@@ -108,12 +108,16 @@ class WuaComparativeCultivationPresconsumption(models.Model):
                 record.deviation_percentage = '0%'
             else:
                 deviation_percentage = 100
-                deviation = abs(record.deviation)
+                is_negative = False
+                deviation = record.deviation
+                if deviation < 0:
+                    deviation = abs(deviation)
+                    is_negative = True
                 if deviation > 0 and record.real_consumption > 0:
                     deviation_percentage = \
                         (deviation * 100) / record.real_consumption
-                    if deviation_percentage > 100:
-                        deviation_percentage = 100
+                if is_negative:
+                    deviation_percentage = deviation_percentage * -1
                 record.deviation_percentage = \
                     '{:.2f}'.format(deviation_percentage) + '%'
 

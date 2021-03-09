@@ -18,19 +18,18 @@
 
                         <!-- Vars -->
                         <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
-                        <t t-set="control_periodicity" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
-                        <t t-set="partner_subparcels_for_period"
-                           t-value="o.get_partner_subparcels_for_period()"/>
+                        <t t-set="control_periodicity"
+                            t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
+                        <t t-set="partner_subparcels_for_period" t-value="o.get_partner_subparcels_for_period()"/>
                         <t t-set="num_monitored_subparcels" t-value="len(partner_subparcels_for_period)"/>
                         <t t-set="cultivations" t-value="[]"/>
                         <t t-foreach="partner_subparcels_for_period" t-as="s">
                             <t t-set="cultivations" t-value="cultivations + [s.cultivation_id]"/>
                         </t>
-                        <t t-set="cultivation_var_data"
-                           t-value="o.get_cultivation_var_data()"/>
+                        <t t-set="cultivation_var_data" t-value="o.get_cultivation_var_data()"/>
                         <t t-set="waterconnections_data" t-value="o.get_consumptions_by_waterconnection()"/>
                         <t t-set="measurement_unit"
-                           t-value="partner_subparcels_for_period[0].subparcel_id.parcel_id._compute_area_measurement_name()"/>
+                            t-value="partner_subparcels_for_period[0].subparcel_id.parcel_id._compute_area_measurement_name()"/>
 
                         <!-- Partner data -->
                         <div name="wua_partner_data">
@@ -240,7 +239,7 @@
                             <table name="by_cultivation_var" class="table table-striped" style="margin-top:2px;width:50%;">
                                 <caption>
                                     <span class="fa fa-moval-grape"/>
-                                    <span>RECOMMENDATIONS BY CULTIVATION / VARIETY</span>
+                                    <span>RECOMMENDATIONS BY CULTIVATION</span>
                                 </caption>
                                 <thead>
                                     <tr>
@@ -258,7 +257,7 @@
                                             <t t-set="total_estimated_consumption_cultivation"
                                                t-value="total_estimated_consumption_cultivation + c_value[0]"/>
                                             <td>
-                                                <span t-esc="c.cultivation_id.name"/> / <span t-esc="c.name"/>
+                                                <span t-esc="c.name"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>

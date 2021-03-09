@@ -28,8 +28,8 @@ class WuaComparativePartnerPresconsumption(models.Model):
             total_real_endowment = 0.0
             subparcels = record.get_partner_subparcels_for_period()
             for subparcel in subparcels:
-                cultivationvariety_id = \
-                    subparcel.subparcel_id.cultivationvariety_id
+                cultivation_id = \
+                    subparcel.subparcel_id.cultivation_id
                 total_estimated_consumption += subparcel.estimated_consumption
                 total_real_consumption += subparcel.real_consumption
                 total_surface += subparcel.area_official
@@ -38,7 +38,7 @@ class WuaComparativePartnerPresconsumption(models.Model):
                 total_real_endowment = total_real_consumption / total_surface
                 deviation = self.compute_deviation_percentage(
                     total_estimated_endowment, total_real_endowment)
-                data[cultivationvariety_id] = \
+                data[cultivation_id] = \
                     [total_estimated_endowment, total_real_endowment,
                      deviation]
         return data
