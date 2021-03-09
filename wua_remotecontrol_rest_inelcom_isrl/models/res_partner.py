@@ -9,6 +9,10 @@ from odoo import models, _
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
+    _remotecontrol_partner_fields = [
+        'partner_code', 'firstname', 'lastname', 'lastname2', 'vat', 'email',
+        'street', 'city', 'state', 'country', 'zip', 'phone', 'mobile'
+    ]
 
     # Implemented hook
     def populate_data_for_send_new_partner(self, vals):

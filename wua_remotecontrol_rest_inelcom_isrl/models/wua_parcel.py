@@ -10,6 +10,11 @@ from odoo import models, _
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
+    _remotecontrol_parcel_fields = [
+        'name', 'partnerlink_ids', 'rurallocation_id', 'irrigationpointwc_ids',
+        'area_official', 'county_id', 'hydraulicsector_id', 'cadastral_parcel',
+        'cadastral_polygon']
+
     # Implemented hook
     def populate_data_for_send_new_parcel(self, vals):
         resp = None
