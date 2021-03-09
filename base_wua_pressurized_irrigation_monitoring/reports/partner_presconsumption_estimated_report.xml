@@ -18,19 +18,18 @@
 
                         <!-- Vars -->
                         <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
-                        <t t-set="control_periodicity" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
-                        <t t-set="partner_subparcels_for_period"
-                           t-value="o.get_partner_subparcels_for_period()"/>
+                        <t t-set="control_periodicity"
+                            t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
+                        <t t-set="partner_subparcels_for_period" t-value="o.get_partner_subparcels_for_period()"/>
                         <t t-set="num_monitored_subparcels" t-value="len(partner_subparcels_for_period)"/>
                         <t t-set="cultivations" t-value="[]"/>
                         <t t-foreach="partner_subparcels_for_period" t-as="s">
                             <t t-set="cultivations" t-value="cultivations + [s.cultivation_id]"/>
                         </t>
-                        <t t-set="cultivation_var_data"
-                           t-value="o.get_cultivation_var_data()"/>
+                        <t t-set="cultivation_var_data" t-value="o.get_cultivation_var_data()"/>
                         <t t-set="waterconnections_data" t-value="o.get_consumptions_by_waterconnection()"/>
                         <t t-set="measurement_unit"
-                           t-value="partner_subparcels_for_period[0].subparcel_id.parcel_id._compute_area_measurement_name()"/>
+                            t-value="partner_subparcels_for_period[0].subparcel_id.parcel_id._compute_area_measurement_name()"/>
 
                         <!-- Partner data -->
                         <div name="wua_partner_data">
@@ -240,11 +239,11 @@
                             <table name="by_cultivation_var" class="table table-striped" style="margin-top:2px;width:50%;">
                                 <caption>
                                     <span class="fa fa-moval-grape"/>
-                                    <span>RECOMMENDATIONS BY CULTIVATION / VARIETY</span>
+                                    <span>RECOMMENDATIONS BY CULTIVATION</span>
                                 </caption>
                                 <thead>
                                     <tr>
-                                        <th>Cultivation / Variety</th>
+                                        <th>Cultivation</th>
                                         <th class="text-right">
                                             <span>Estimated endowment (m³/<span t-esc="measurement_unit"/>)</span>
                                         </th>
@@ -258,7 +257,7 @@
                                             <t t-set="total_estimated_consumption_cultivation"
                                                t-value="total_estimated_consumption_cultivation + c_value[0]"/>
                                             <td>
-                                                <span t-esc="c.cultivation_id.name"/> / <span t-esc="c.name"/>
+                                                <span t-esc="c.name"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>
@@ -312,7 +311,7 @@
 
                         <!-- Info -->
                         <div name="info" style="page-break-inside: avoid">
-                            <t t-set="informative_clauses" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'monitoring_informative_clauses')"/>
+                            <t t-set="informative_clauses" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'estimated_informative_clauses')"/>
                             <t t-if="informative_clauses">
                                 <div name="info_div" style="margin-top: 20px;">
                                     <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
@@ -330,11 +329,9 @@
                                         </t>
                                     </div>
                                 </div>
-                                <t t-if="informative_clauses">
-                                    <div name="informative_clause_div">
-                                        <span t-raw="informative_clauses"/>
-                                    </div>
-                                </t>
+                                <div name="informative_clause_div">
+                                    <span t-raw="informative_clauses"/>
+                                </div>
                             </t>
                         </div>
 
@@ -344,13 +341,13 @@
                                 <t t-if="report_style == 'light'">
                                     <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-image"/></div>
-                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;location</span></strong></div>
+                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;aerial&amp;nbsp;image</span></strong></div>
                                    </div>
                                 </t>
                                 <t t-else="">
                                     <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-image"/></div>
-                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;location</span></strong></div>
+                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;aerial&amp;nbsp;image</span></strong></div>
                                     </div>
                                 </t>
                             </div>
