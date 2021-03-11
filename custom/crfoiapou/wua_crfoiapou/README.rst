@@ -6,7 +6,10 @@
 Water Users Association: Share management
 =========================================
 
-This module add format to invoicing. 
+This module add:
+- format to invoicing
+- custom header for monitoring reports
+
 
 Description
 ===========

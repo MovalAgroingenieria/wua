@@ -11,9 +11,11 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_invoicing_consumption_ranges",
+        "base_wua_pressurized_irrigation_monitoring",
     ],
     "data": [
        "reports/report_invoice_templates.xml",
+       "reports/wua_external_layout.xml",
     ],
     "installable": True,
     "application": False,
