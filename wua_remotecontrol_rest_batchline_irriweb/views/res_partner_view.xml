@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+
+    <record id="res_partner_waterconnection_view_tree" model="ir.ui.view">
+        <field name="name">Partner Waterconnections (tree view)</field>
+        <field name="model">res.partner.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_remotecontrol_rest.res_partner_waterconnection_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='last_valve_scheduled']" position="after">
+                <button name="action_see_readings"
+                    type="object" class="oe_stat_button"
+                    string="Waterconnection (readings)"
+                    icon="fa-list"/>
+                <button name="action_see_consumptions"
+                    type="object" class="oe_stat_button"
+                    string="Waterconnection (consumptions)"
+                    icon="fa-moval-irrigation"/>
+                <button name="action_see_scheduling"
+                    type="object" class="oe_stat_button"
+                    string="Waterconnection (scheduling)"
+                    icon="fa-calendar"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>
