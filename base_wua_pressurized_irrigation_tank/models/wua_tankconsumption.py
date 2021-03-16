@@ -80,7 +80,7 @@ class WuaTank(models.Model):
         ('valid_volume_limits', 'CHECK (volume_real >= volume_request)',
          'The requested volume can not be greater than real volume.'),
         ('valid_volume_real', 'CHECK (volume_real >= 0)',
-         'The consumed volume can not be a negative value.'),]
+         'The consumed volume can not be a negative value.'), ]
 
     @api.depends('end_time', 'tank_id')
     def _compute_name(self):

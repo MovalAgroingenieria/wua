@@ -2,7 +2,7 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, _
 
 
 class WuaTank(models.Model):
@@ -28,7 +28,7 @@ class WuaTank(models.Model):
         required=True,
         index=True)
 
-    tankconsumption_ids  = fields.One2many(
+    tankconsumption_ids = fields.One2many(
         string='Consumptions',
         comodel_name='wua.tankconsumption',
         inverse_name='tank_id')
@@ -37,7 +37,7 @@ class WuaTank(models.Model):
         string='Notes')
 
     _sql_constraints = [
-        ('unique_name', 'UNIQUE (name)', 'Existing Tank.'),]
+        ('unique_name', 'UNIQUE (name)', 'Existing Tank.'), ]
 
     @api.multi
     def action_see_tankconsumptions(self):
