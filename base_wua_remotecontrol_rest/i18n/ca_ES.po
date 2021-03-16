@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-15 12:28+0000\n"
-"PO-Revision-Date: 2021-03-15 12:28+0000\n"
+"POT-Creation-Date: 2021-03-16 11:51+0000\n"
+"PO-Revision-Date: 2021-03-16 11:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgid "Can be sent partner census"
 msgstr "Cens de socis en telecontrol"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:109
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:113
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_data_time
 #, python-format
 msgid "Capture Date"
@@ -127,24 +127,14 @@ msgid "Entity (irrigation shed)"
 msgstr "Element (caseta)"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_invoiceset_line
-msgid "Entity (line of a WUA invoice set)"
-msgstr "Element (línia de lot de factures)"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_negative_reading
 msgid "Entity (negative reading)"
 msgstr "Element (lectura negativa)"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_presconsumption
-msgid "Entity (pressure consumption)"
-msgstr "Element (consum de pressió)"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_reading
-msgid "Entity (reading)"
-msgstr "Element (lecture)"
+msgid "Entity (pressure reading)"
+msgstr "Entity (pressure reading)"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_waterconnection
@@ -262,11 +252,13 @@ msgid "Irrigation Shed"
 msgstr "Caseta"
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_last_data_time
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_last_data_time
 msgid "Last Capture Date"
 msgstr "Última data informació"
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection___last_update
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading___last_update
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol___last_update
 msgid "Last Modified on"
@@ -419,7 +411,7 @@ msgid "Remote Control: Error getting readings"
 msgstr "Remote Control: Error getting readings"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:99
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:104
 #, python-format
 msgid "Remote Control: Error getting waterconnection info"
 msgstr "Remote Control: Error getting waterconnection info"
@@ -431,7 +423,7 @@ msgid "Remote Control: Getting readings"
 msgstr "Remote Control: Getting readings"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:170
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:177
 #, python-format
 msgid "Remote Control: Saved WaterconnectionTelecontrol Info"
 msgstr "Remote Control: Saved WaterconnectionTelecontrol Info"
@@ -462,8 +454,8 @@ msgid "Remote Control: Starting reading in irrigationsheds"
 msgstr "Remote Control: Starting reading in irrigationsheds"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:63
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:84
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:67
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:88
 #, python-format
 msgid "Remote Control: Starting reading in water connections"
 msgstr "Remote Control: Starting reading in water connections"
@@ -563,7 +555,7 @@ msgstr "Informació telecontrol"
 #: code:addons/base_wua_remotecontrol_rest/models/res_partner.py:353
 #: code:addons/base_wua_remotecontrol_rest/models/wua_parcel.py:366
 #: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:103
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:106
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:111
 #, python-format
 msgid "The communication with the remote control is not enabled."
 msgstr "La comunicació amb el telecontrol no està habilitada."
@@ -595,6 +587,19 @@ msgstr "Aquest grup serà assignat per ocultar els menús de l'telecontrol"
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_reading_time
 msgid "Time"
 msgstr "Data"
+
+#. module: base_wua_remotecontrol_rest
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:114
+#, python-format
+msgid "Total"
+msgstr "Total"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_last_total_volume
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_last_total_volume
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_total_volume
+msgid "Total (m³)"
+msgstr "Total (m³)"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.view_partner_form
@@ -650,28 +655,28 @@ msgid "Valve Open"
 msgstr "Vàlvula oberta"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:116
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:123
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_view_search
 #, python-format
 msgid "Valve Open: No"
 msgstr "Vàlvula oberta: No"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:114
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:121
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_view_search
 #, python-format
 msgid "Valve Open: Yes"
 msgstr "Vàlvula oberta: Sí"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:120
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:127
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_view_search
 #, python-format
 msgid "Valve Scheduled: No"
 msgstr "Vàlvula programada: No"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:118
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:125
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_view_search
 #, python-format
 msgid "Valve Scheduled: Yes"
@@ -727,7 +732,7 @@ msgid "Waterconnections (form view)"
 msgstr "Presses (form view)"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:110
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:117
 #, python-format
 msgid "Waterflow"
 msgstr "Cabal"
@@ -737,7 +742,7 @@ msgstr "Cabal"
 #: code:addons/base_wua_remotecontrol_rest/models/wua_hydraulicsector.py:45
 #: code:addons/base_wua_remotecontrol_rest/models/wua_irrigationshed.py:79
 #: code:addons/base_wua_remotecontrol_rest/models/wua_parcel.py:273
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:79
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:83
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No té permís per realitzar aquesta acció."
