@@ -111,8 +111,8 @@
                       icon="fa-cubes"
                       attrs="{'invisible': [('cadastral_reference_link','=','')]}"/>
               <field name="cultivation_id"/>
-              <field name="estimated_consumption"/>
               <field name="real_consumption"/>
+              <field name="estimated_consumption"/>
               <field name="deviation"/>
               <field name="deviation_percentage" string="(%)"/>
               <field name="consumption_category" invisible="1" />
@@ -147,6 +147,10 @@
                       name="current_controlperiod"
                       domain="[('controlperiod_id.is_the_current', '=', True)]"/>
               <separator/>
+              <filter string="Previous Current Controlperiod"
+                     name="previous_current_controlperiod"
+                     domain="[('controlperiod_id.is_the_previous_to_current', '=', True)]"/>
+             <separator/>
               <group expand="0" string="Group By">
                   <filter string="Agricultural Season"
                    name="agriculturalseason"

@@ -317,7 +317,7 @@ class WuaParcelSubparcel(models.Model):
     @api.depends('estimated_consumption', 'real_consumption')
     def _compute_deviation(self):
         for record in self:
-            deviation = record.estimated_consumption - record.real_consumption
+            deviation = record.real_consumption - record.estimated_consumption
             record.deviation = deviation
 
     @api.multi

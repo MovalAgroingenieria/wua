@@ -111,6 +111,10 @@ class WuaControlperiod(models.Model):
         string="Current Controlperiod"
     )
 
+    is_the_previous_to_current = fields.Boolean(
+        string="Previous Current Controlperiod"
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Quota Period.'),
@@ -151,7 +155,7 @@ class WuaControlperiod(models.Model):
     @api.depends('estimated_consumption', 'real_consumption')
     def _compute_deviation(self):
         for record in self:
-            deviation = record.estimated_consumption - record.real_consumption
+            deviation = record.real_consumption - record.estimated_consumption
             record.deviation = deviation
 
     @api.constrains('initial_date', 'end_date')
@@ -573,14 +577,27 @@ class WuaControlperiod(models.Model):
             resp = controlperiod[0]
         return resp
 
+    def _get_control_period_previous_to_current(self, ref_date):
+        resp = None
+        controlperiod = self.env['wua.controlperiod'].search(
+            [('end_date', '<', ref_date)], order='end_date desc')
+        if controlperiod:
+            resp = controlperiod[0]
+        return resp
+
     @api.model
     def refresh_current_controlperiod(self):
         now = datetime.datetime.now().strftime(
             '%Y-%m-%d')
         current_controlperiod_by_date = self._get_control_period(now)
+        previous_controlperiod_by_date = \
+            self._get_control_period_previous_to_current(now)
         current_controlperiod_by_field = self.env['wua.controlperiod'].search(
             [('is_the_current', '=', True)])
+        previous_controlperiod_by_field = self.env['wua.controlperiod'].search(
+            [('is_the_previous_to_current', '=', True)])
         current_controlperiod = None
+        previous_controlperiod = None
         if (current_controlperiod_by_field):
             if (current_controlperiod_by_field.id ==
                     current_controlperiod_by_date.id):
@@ -590,8 +607,20 @@ class WuaControlperiod(models.Model):
                 current_controlperiod = current_controlperiod_by_date
         else:
             current_controlperiod = current_controlperiod_by_date
+        if (previous_controlperiod_by_field):
+            if (previous_controlperiod_by_field.id ==
+                    previous_controlperiod_by_date.id):
+                previous_controlperiod = previous_controlperiod_by_field
+            else:
+                previous_controlperiod_by_field.is_the_previous_to_current = \
+                    False
+                previous_controlperiod = previous_controlperiod_by_date
+        else:
+            previous_controlperiod = previous_controlperiod_by_date
         if (current_controlperiod):
             current_controlperiod.is_the_current = True
+        if (previous_controlperiod):
+            previous_controlperiod.is_the_previous_to_current = True
 
     @api.model
     def post_run_process_incoming_mail(self, controlperiod):
