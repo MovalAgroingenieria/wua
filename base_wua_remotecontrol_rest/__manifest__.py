@@ -7,7 +7,7 @@
     "summary": "In a water users association, base module for other modules "
                "that implement communication dialogues with remote control "
                "systems for irrigation (with REST API)",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -27,6 +27,7 @@
         "views/wua_hydraulicsector_view.xml",
         "views/wua_reading_view.xml",
         "views/wua_negative_reading_view.xml", ],
+    "post_init_hook": "post_init_hook",
     'qweb': ['static/src/xml/button_import_readings.xml'],
     "installable": True,
     "application": False,

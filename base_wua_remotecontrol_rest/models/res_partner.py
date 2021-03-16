@@ -484,19 +484,25 @@ class ResPartnerWaterconnection(models.Model):
         string='Valve Scheluded',)
 
     def init(self):
-        tools.drop_view_if_exists(self.env.cr,
-                                  'res_partner_waterconnection')
         self.env.cr.execute("""
-            CREATE OR REPLACE VIEW res_partner_waterconnection AS (
-            SELECT row_number() OVER() AS id, a.* FROM (
-                SELECT wpi1.partner_id, wpi1.waterconnection_id,
-                ww1.last_data_time, ww1.last_total_volume, ww1.last_waterflow,
-                ww1.last_valve_open, ww1.last_valve_scheduled FROM
-                wua_parcel_irrigationpoint wpi1 INNER JOIN
-                wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
-                WHERE wpi1.type='WC' GROUP BY  wpi1.partner_id,
-                wpi1.waterconnection_id, ww1.last_data_time,
-                ww1.last_waterflow, ww1.last_valve_open,
-                ww1.last_valve_scheduled, ww1.last_total_volume
-            ) a )
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='res_partner_waterconnection')
             """)
+        if self.env.cr.fetchone()[0]:
+            tools.drop_view_if_exists(self.env.cr,
+                                      'res_partner_waterconnection')
+            self.env.cr.execute("""
+                CREATE OR REPLACE VIEW res_partner_waterconnection AS (
+                SELECT row_number() OVER() AS id, a.* FROM (
+                    SELECT wpi1.partner_id, wpi1.waterconnection_id,
+                    ww1.last_data_time, ww1.last_total_volume,
+                    ww1.last_waterflow,
+                    ww1.last_valve_open, ww1.last_valve_scheduled FROM
+                    wua_parcel_irrigationpoint wpi1 INNER JOIN
+                    wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
+                    WHERE wpi1.type='WC' GROUP BY  wpi1.partner_id,
+                    wpi1.waterconnection_id, ww1.last_data_time,
+                    ww1.last_waterflow, ww1.last_valve_open,
+                    ww1.last_valve_scheduled, ww1.last_total_volume
+                ) a )
+                """)
