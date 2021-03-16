@@ -80,9 +80,9 @@ class WuaComparativePartnerPresconsumption(models.Model):
             wcsp1.agriculturalseason_id,
             CASE
              WHEN (
-                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (SUM(wcsp1.estimated_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
-                     SUM(wcsp1.real_consumption) <=
+                     SUM(wcsp1.estimated_consumption) <=
                      (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
                       FLOAT) FROM ir_values WHERE model =
                       'wua.monitoring.configuration' AND name LIKE
@@ -91,9 +91,9 @@ class WuaComparativePartnerPresconsumption(models.Model):
                     )
                 ) THEN 'A'
              WHEN (
-                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (SUM(wcsp1.estimated_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
-                     SUM(wcsp1.real_consumption) <=
+                     SUM(wcsp1.estimated_consumption) <=
                      (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
                       FLOAT) FROM ir_values WHERE model =
                       'wua.monitoring.configuration' AND name LIKE
@@ -122,9 +122,9 @@ class WuaComparativePartnerPresconsumption(models.Model):
                 if deviation < 0:
                     deviation = abs(deviation)
                     is_negative = True
-                if deviation > 0 and record.real_consumption > 0:
+                if deviation > 0 and record.estimated_consumption > 0:
                     deviation_percentage = \
-                        (deviation * 100) / record.real_consumption
+                        (deviation * 100) / record.estimated_consumption
                 if is_negative:
                     deviation_percentage = deviation_percentage * -1
                 record.deviation_percentage = \

@@ -149,9 +149,9 @@ class WuaComparativeParcelPresconsumption(models.Model):
                 if deviation < 0:
                     deviation = abs(deviation)
                     is_negative = True
-                if deviation > 0 and record.real_consumption > 0:
+                if deviation > 0 and record.estimated_consumption > 0:
                     deviation_percentage = \
-                        (deviation * 100) / record.real_consumption
+                        (deviation * 100) / record.estimated_consumption
                 if is_negative:
                     deviation_percentage = deviation_percentage * -1
                 record.deviation_percentage = \
