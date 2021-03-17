@@ -66,15 +66,15 @@ class WuaComparativePartnerPresconsumption(models.Model):
         if (estimated_consumption == 0 and real_consumption == 0):
             deviation_percentage = 0
         else:
-            deviation = real_consumption - estimated_consumption
             deviation_percentage = 100
             is_negative = False
+            deviation = real_consumption - estimated_consumption
             if deviation < 0:
                 deviation = abs(deviation)
                 is_negative = True
-            if deviation > 0 and real_consumption > 0:
+            if deviation > 0 and estimated_consumption > 0:
                 deviation_percentage = \
-                    (deviation * 100) / real_consumption
+                    (deviation * 100) / estimated_consumption
             if is_negative:
                 deviation_percentage = deviation_percentage * -1
         return deviation_percentage

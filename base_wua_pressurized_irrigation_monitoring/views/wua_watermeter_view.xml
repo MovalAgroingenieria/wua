@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_watermeter_view_form" model="ir.ui.view">
+        <field name="name">Water Meters (form view)</field>
+        <field name="model">wua.watermeter</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_watermeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_readings']" position="after">
+                <button name="action_see_control_readings" type="object" class="oe_stat_button"
+                    icon="fa-monitoring-control" groups="base_wua.group_wua_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text"> Ctrl. readings</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

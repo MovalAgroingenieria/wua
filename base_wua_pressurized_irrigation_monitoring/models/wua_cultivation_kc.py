@@ -51,7 +51,7 @@ class WuaCultivationKc(models.Model):
         default=0)
 
     kc_big = fields.Float(
-        string='Kc for big cultivations',
+        string='Kc for full production cultivations',
         digits=(32, 3),
         required=True,
         default=0)

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <button name="action_see_control_consumptions" type="object" class="oe_stat_button"
+                   icon="fa-monitoring-compare" groups="base_wua.group_wua_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text"> Ctrl. consumptions</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
