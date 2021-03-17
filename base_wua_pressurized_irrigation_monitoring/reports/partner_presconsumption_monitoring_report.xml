@@ -17,13 +17,13 @@
                     <div class="page">
 
                         <!-- Vars -->
-                        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
                         <t t-set="control_periodicity"
-                            t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
+                            t-value="o.env['ir.values'].get_default('wua.monitoring.configuration', 'control_periodicity')"/>
                         <t t-set="percentage_categ_01"
-                            t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_01')"/>
+                            t-value="o.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_01')"/>
                         <t t-set="percentage_categ_02"
-                            t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_02')"/>
+                            t-value="o.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_02')"/>
                         <t t-set="partner_subparcels_for_period" t-value="o.get_partner_subparcels_for_period()"/>
                         <t t-set="num_monitored_subparcels" t-value="len(partner_subparcels_for_period)"/>
                         <t t-set="cultivations" t-value="[]"/>
@@ -188,14 +188,14 @@
                                                     <tr>
                                                         <td style="padding-left:8px;">A - Correct</td>
                                                         <td class="text-right" style="padding-right:6px;">
-                                                            <span>± <span t-esc="request.env['wua.parcel'].transform_float_to_locale(percentage_categ_01,0)"/> %</span>
+                                                            <span>± <span t-esc="o.env['wua.parcel'].transform_float_to_locale(percentage_categ_01,0)"/> %</span>
                                                         </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: green;"/></td>
                                                     </tr>
                                                     <tr>
                                                         <td style="padding-left:8px;">B - Acceptable</td>
                                                         <td class="text-right" style="padding-right:6px;">
-                                                            <span>± <span t-esc="request.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
+                                                            <span>± <span t-esc="o.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
                                                         </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: orange;"/></td>
                                                     </tr>
@@ -204,7 +204,7 @@
                                                         <td class="text-right" style="padding-right:6px;">
                                                             <span>
                                                                 <span>&gt; &lt; </span>
-                                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
+                                                                <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
                                                             </span>
                                                         </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: red;"/></td>
@@ -252,7 +252,7 @@
                                             </div>
                                             <div style="float:right;margin-right:14px;">
                                                 <t t-set="partner_deviation_percentage" t-value="float(o.deviation_percentage.replace('%', ''))"/>
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(partner_deviation_percentage, 0)"/> %</span>
+                                                <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(partner_deviation_percentage, 0)"/> %</span>
                                             </div>
                                         </td>
                                     </tr>
@@ -317,7 +317,7 @@
                                                 </div>
                                                 <div style="float:right;margin-right:14px;">
                                                     <t t-set="deviation_percentage" t-value="float(s.deviation_percentage.replace('%', ''))"/>
-                                                    <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(deviation_percentage, 0)"/> %</span>
+                                                    <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(deviation_percentage, 0)"/> %</span>
                                                 </div>
                                             </td>
                                         </tr>
@@ -356,26 +356,26 @@
                                                 <span t-esc="c.name"/>
                                             </td>
                                             <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>
                                             </td>
                                             <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[1], 1)"/>
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[1], 1)"/>
                                             </td>
                                             <td class="text-right">
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[2], 0)"/> %</span>
+                                                <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[2], 0)"/> %</span>
                                             </td>
                                         </tr>
                                         <tr name="totals_cultivations">
                                             <td class="text-right"><b>TOTAL:</b></td>
                                             <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_cultivation, 1)"/>
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_cultivation, 1)"/>
                                             </td>
                                             <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_real_consumption_cultivation, 1)"/>
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_real_consumption_cultivation, 1)"/>
                                             </td>
                                             <td class="text-right">
                                                 <t t-set="total_deviation_cultivation" t-value="o.compute_deviation_percentage(total_estimated_consumption_cultivation, total_real_consumption_cultivation)"/>
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_deviation_cultivation, 0)"/> %</span>
+                                                <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_deviation_cultivation, 0)"/> %</span>
                                             </td>
                                         </tr>
                                     </t>
@@ -407,23 +407,23 @@
                                             <td><span t-field="w.hydraulicsector_id"/></td>
                                             <td class="text-center"><span t-field="w.name"/></td>
                                             <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(w_value[0], 1)"/>
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[0], 1)"/>
                                             </td>
                                             <td class="text-right">
-                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(w_value[1], 1)"/>
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[1], 1)"/>
                                             </td>
                                             <td class="text-right">
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(w_value[2], 0)"/> %</span>
+                                                <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[2], 0)"/> %</span>
                                             </td>
                                         </tr>
                                         <tr name="totals_waterconnections">
                                             <td></td>
                                             <td class="text-right"><b>TOTAL:</b></td>
-                                            <td class="text-right"><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_wc,1)"/></td>
-                                            <td class="text-right"><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_real_consumption_wc,1)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_wc,1)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_real_consumption_wc,1)"/></td>
                                             <td class="text-right">
                                                 <t t-set="total_deviation_wc" t-value="o.compute_deviation_percentage(total_estimated_consumption_wc, total_real_consumption_wc)"/>
-                                                <span><span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_deviation_wc,0)"/> %</span>
+                                                <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_deviation_wc,0)"/> %</span>
                                             </td>
                                         </tr>
                                     </t>
@@ -433,7 +433,7 @@
 
                         <!-- Info -->
                         <div name="info" style="page-break-inside: avoid">
-                            <t t-set="informative_clauses" t-value="request.env['ir.values'].get_default('wua.monitoring.configuration', 'monitoring_informative_clauses')"/>
+                            <t t-set="informative_clauses" t-value="o.env['ir.values'].get_default('wua.monitoring.configuration', 'monitoring_informative_clauses')"/>
                             <t t-if="informative_clauses">
                                 <div name="info_div" style="margin-top: 20px;">
                                     <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
