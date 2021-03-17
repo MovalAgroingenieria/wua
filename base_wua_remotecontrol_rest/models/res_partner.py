@@ -483,6 +483,7 @@ class ResPartnerWaterconnection(models.Model):
     last_valve_scheduled = fields.Boolean(
         string='Valve Scheluded',)
 
+    @api.model_cr
     def init(self):
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
