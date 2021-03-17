@@ -77,8 +77,6 @@ class WuaTank(models.Model):
         ('unique_name', 'UNIQUE (name)', 'Existing Tank Consumption.'),
         ('valid_time_limits', 'CHECK (end_time >= initial_time)',
          'The end time must be greater than or equal to initial time.'),
-        ('valid_volume_limits', 'CHECK (volume_real >= volume_request)',
-         'The requested volume can not be greater than real volume.'),
         ('valid_volume_real', 'CHECK (volume_real >= 0)',
          'The consumed volume can not be a negative value.'), ]
 

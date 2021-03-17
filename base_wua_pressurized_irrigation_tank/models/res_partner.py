@@ -17,6 +17,16 @@ class ResPartner(models.Model):
         string="Tank permission",
         default=False)
 
+    number_of_tankconsumptions = fields.Integer(
+        string="Number of tankconsumptions",
+        store=True,
+        compute='_compute_number_of_tankconsumptions')
+
+    @api.depends('tankconsumption_ids')
+    def _compute_number_of_tankconsumptions(self):
+        for record in self:
+            record.number_of_tankconsumptions = len(record.tankconsumption_ids)
+
     @api.multi
     def action_get_partner_tankconsumptions(self):
         self.ensure_one()

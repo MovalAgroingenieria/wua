@@ -14,7 +14,7 @@
                         <group name="master_data_left">
                             <field name="id" invisible="1"/>
                             <field name="partner_id" options="{'no_quick_create':True,'no_create_edit':True}"
-                                   domain="[('is_wua_partner', '=', True)]"
+                                   domain="[('is_wua_partner', '=', True),('tank_permission', '=', True)]"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="tank_id" options="{'no_quick_create':True, 'no_create_edit':True}"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
@@ -106,7 +106,7 @@
         <field name="name">Tank consumptions</field>
         <field name="res_model">wua.tankconsumption</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
