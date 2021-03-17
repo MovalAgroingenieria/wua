@@ -64,6 +64,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                 outputrest = json.loads(resprest.text)
                 for wc_info in outputrest:
                     waterconnection = wc_info['Id']
+                    total_volume = wc_info['Volumen']
                     waterflow = wc_info['Caudal']
                     valve_open = wc_info['ValvulaAbierta']
                     valve_scheduled = wc_info['ModoAuto']
@@ -76,11 +77,12 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         strftime('%Y-%m-%d %H:%M:%S')
                     wc_all_info.append({
                         'waterconnection': waterconnection,
+                        'total_volume': total_volume,
                         # m³/h -> l/s
                         'waterflow': waterflow / self.FACTOR_CONVERSION_M3H_LS,
                         'valve_open': valve_open,
                         'valve_scheduled': valve_scheduled,
-                        'data_time': data_time
+                        'data_time': data_time,
                     })
             else:
                 error_message = _(' It is not possible to get the info. ')

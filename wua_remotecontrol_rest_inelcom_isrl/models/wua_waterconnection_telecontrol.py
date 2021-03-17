@@ -63,11 +63,12 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             waterflow = wc_info['caudal']
                             wc_all_info.append({
                                 'waterconnection': waterconnection,
+                                'total_volume': 0,
                                 'waterflow': waterflow,
                                 'valve_open': False,
                                 'valve_scheduled': False,
                                 'data_time': date_time_now.strftime(
-                                    '%Y-%m-%d %H:%M:%S')
+                                    '%Y-%m-%d %H:%M:%S'),
                             })
             else:
                 error_message = _(' It is not possible to get the info. ')

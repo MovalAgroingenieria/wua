@@ -19,7 +19,8 @@
         "data/wua_irrigation_config_settings_data.xml",
         "wizard/wizard_scheduling_waterconnection_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
-        "views/wua_waterconnection_view.xml",],
+        "views/wua_waterconnection_view.xml",
+        "views/res_partner_view.xml", ],
     "installable": True,
     "application": False,
 }

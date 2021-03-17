@@ -24,6 +24,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
         required=True,
         ondelete='cascade')
 
+    total_volume = fields.Float(
+        string='Total (m³)',
+        digits=(32, 4))
+
     waterflow = fields.Float(
         string='Waterconnection Waterflow (l/s)',
         digits=(32, 4))
@@ -56,9 +60,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
             create(vals)
         telecontrol_info.waterconnection_id.write({
             'last_data_time': telecontrol_info.data_time,
+            'last_total_volume': telecontrol_info.total_volume,
             'last_waterflow': telecontrol_info.waterflow,
             'last_valve_open': telecontrol_info.valve_open,
-            'last_valve_scheduled': telecontrol_info.valve_scheduled
+            'last_valve_scheduled': telecontrol_info.valve_scheduled,
         })
         return telecontrol_info
 
@@ -132,6 +137,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     'waterconnection_id': waterconnection.id,
                     'valve_open': info['valve_open'],
                     'valve_scheduled': info['valve_scheduled'],
+                    'total_volume': info['total_volume'],
                     'waterflow': info['waterflow'] / conversion_factor,
                     'data_time': info['data_time'],
                     }
@@ -147,6 +153,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     info['waterconnection_id'])
                 waterconnection_telecontrol_params = {
                     'data_time': info['data_time'],
+                    'total_volume': info['total_volume'],
                     'waterflow': info['waterflow'],
                     'valve_open': info['valve_open'],
                     'valve_scheduled': info['valve_scheduled'],

@@ -25,6 +25,10 @@ class WuaWaterconnection(models.Model):
         comodel_name="wua.waterconnection.telecontrol",
         inverse_name="waterconnection_id")
 
+    last_total_volume = fields.Float(
+        string='Total (m³)',
+        digits=(32, 4),)
+
     last_waterflow = fields.Float(
         string='Waterconnection Waterflow (l/s)',
         digits=(32, 4),)
@@ -107,6 +111,9 @@ class WuaWaterconnection(models.Model):
     def _get_html_last_telecontrol_info(self):
         resp = ''
         label_date = _('Capture Date')
+        label_total_volume = _('Total')
+        last_total_volume = self.env['wua.parcel'].transform_float_to_locale(
+            self.last_total_volume, 4)
         label_waterflow = _('Waterflow')
         last_waterflow = self.env['wua.parcel'].transform_float_to_locale(
             self.last_waterflow, 4)
@@ -133,6 +140,8 @@ class WuaWaterconnection(models.Model):
             info_color = 'blue'
         body = '<div style="display: flex; justify-content: space-around;">' +\
             '<span>' + label_date + ': ' + last_data_time + '</span>' + \
+            '<span>' + label_total_volume + ': ' + \
+            str(last_total_volume) + u' (m³)' + '</span>' + \
             '<span>' + label_waterflow + ': ' + \
             str(last_waterflow) + ' (l/s)' + '</span>' + \
             '<span>' + label_valve_open + \

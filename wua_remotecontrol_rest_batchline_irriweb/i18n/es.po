@@ -6,14 +6,20 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-07 10:21+0000\n"
-"PO-Revision-Date: 2020-07-07 10:21+0000\n"
+"POT-Creation-Date: 2021-03-16 12:05+0000\n"
+"PO-Revision-Date: 2021-03-16 12:05+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_telecontrol.py:88
+#, python-format
+msgid " It is not possible to get the info. "
+msgstr " No es posible recuperar la información. "
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
 #: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_reading.py:71
@@ -48,13 +54,18 @@ msgstr "Nombre a mostrar"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model,name:wua_remotecontrol_rest_batchline_irriweb.model_wua_reading
-msgid "Entity (reading)"
-msgstr "Elemento (lectura)"
+msgid "Entity (pressure reading)"
+msgstr "Elemento (lectura de presión)"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model,name:wua_remotecontrol_rest_batchline_irriweb.model_wua_waterconnection
 msgid "Entity (water connection)"
 msgstr "Elemento (toma)"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model,name:wua_remotecontrol_rest_batchline_irriweb.model_wua_waterconnection_telecontrol
+msgid "Entity (waterconnection telecontrol)"
+msgstr "Elemento (toma de telecontrol)"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model.fields,help:wua_remotecontrol_rest_batchline_irriweb.field_wua_irrigation_configuration_php_frame_type_consumo
@@ -72,22 +83,35 @@ msgid "For build a PHP url that gives the scheduling of water connections. Examp
 msgstr "Para generar la url de un PHP que da acceso a la pantalla de programación de tomas. Ejemplo: http://78.136.122.3:8080/demo/baja/programacion.php"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.ui.view,arch_db:wua_remotecontrol_rest_batchline_irriweb.res_partner_waterconnection_view_tree
+msgid "Historical consumptions"
+msgstr "Histórico de consumos"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.ui.view,arch_db:wua_remotecontrol_rest_batchline_irriweb.res_partner_waterconnection_view_tree
+msgid "Historical readings"
+msgstr "Histórico de lecturas"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wizard_scheduling_waterconnection_id
 msgid "ID"
 msgstr "ID"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_res_partner_waterconnection_html_consumptions_url
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_waterconnection_html_consumptions_frame
 #: model:ir.ui.view,arch_db:wua_remotecontrol_rest_batchline_irriweb.wua_waterconnection_view_form
 msgid "IrriWEB Consumptions"
 msgstr "Consumos (IrriWEB)"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_res_partner_waterconnection_html_readings_url
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_waterconnection_html_readings_frame
 msgid "IrriWEB Readings"
 msgstr "Lecturas (IrriWEB)"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_res_partner_waterconnection_html_scheduling_url
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wizard_scheduling_waterconnection_html_scheduling_frame
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_waterconnection_html_scheduling_frame
 msgid "IrriWEB Scheduling"
@@ -179,13 +203,6 @@ msgid "PHP (frames), scheduling width"
 msgstr "PHP (frames), programación -ancho-"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
-#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_parcel.py:123
-#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_parcel.py:310
-#, python-format
-msgid "Parcel cannot have more than one watermeter"
-msgstr "Una parcela no puede tener más de una toma"
-
-#. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model,name:wua_remotecontrol_rest_batchline_irriweb.model_wua_parcel
 msgid "Parcels (integrated GIS)"
 msgstr "Parcels (integrated GIS)"
@@ -201,14 +218,24 @@ msgid "Schedule"
 msgstr "Programar"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
-#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection.py:122
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection.py:123
 #: model:ir.ui.view,arch_db:wua_remotecontrol_rest_batchline_irriweb.wizard_scheduling_waterconnection_view_form
 #, python-format
 msgid "Schedule water connection"
 msgstr "Programación de toma"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
-#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/res_partner.py:91
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/res_partner.py:104
 #, python-format
 msgid "User already exists, info updated"
 msgstr "Usuario ya existente, información actualizada"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.ui.view,arch_db:wua_remotecontrol_rest_batchline_irriweb.res_partner_waterconnection_view_tree
+msgid "Waterconnection (scheduling)"
+msgstr "Toma (programación)"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model,name:wua_remotecontrol_rest_batchline_irriweb.model_res_partner_waterconnection
+msgid "res.partner.waterconnection"
+msgstr "res.partner.waterconnection"

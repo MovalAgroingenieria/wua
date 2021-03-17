@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, exceptions, _, tools
 
 
 class ResPartner(models.Model):
@@ -420,3 +420,90 @@ class ResPartner(models.Model):
                     self.__class__._in_create_or_synchro = True
                     self.updated_in_remotecontrol = False
                     self.__class__._in_create_or_synchro = False
+
+    def get_res_partner_waterconnections_action(self):
+        context = {}
+        current_partner_id = self.env.context.get('active_id')
+        condition = [('partner_id', '=', current_partner_id)]
+        if (self.env.user.has_group('base_wua.group_wua_user')):
+            context = {
+                'is_wua_user': True,
+            }
+        # Check if portal user and thenn only show the ones of
+        # condition = [()]
+        id_tree_view = \
+            self.env.ref('base_wua_remotecontrol_rest.'
+                         'res_partner_waterconnection_view_tree').id
+        id_search_view = \
+            self.env.ref('base_wua_remotecontrol_rest.'
+                         'res_partner_waterconnection_view_search').id
+        waterconnections = self.sudo().get_value_from_translation(
+            'base_wua_remotecontrol_rest',
+            'Waterconnections')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': waterconnections,
+            'res_model': 'res.partner.waterconnection',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
+            'target': 'current',
+            'context': context,
+            'domain': condition,
+            }
+        return act_window
+
+
+class ResPartnerWaterconnection(models.Model):
+    _name = 'res.partner.waterconnection'
+    _auto = False
+
+    partner_id = fields.Many2one(
+        string='Irrigation Partner',
+        comodel_name='res.partner',)
+
+    waterconnection_id = fields.Many2one(
+        string='Waterconnection',
+        comodel_name='wua.waterconnection',)
+
+    last_data_time = fields.Datetime(
+        string='Last Capture Date',)
+
+    last_total_volume = fields.Float(
+        string='Total (m³)',
+        digits=(32, 4),)
+
+    last_waterflow = fields.Float(
+        string='Waterconnection Waterflow (l/s)',
+        digits=(32, 4),)
+
+    last_valve_open = fields.Boolean(
+        string='Valve Open',)
+
+    last_valve_scheduled = fields.Boolean(
+        string='Valve Scheluded',)
+
+    @api.model_cr
+    def init(self):
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='res_partner_waterconnection')
+            """)
+        if self.env.cr.fetchone()[0]:
+            tools.drop_view_if_exists(self.env.cr,
+                                      'res_partner_waterconnection')
+            self.env.cr.execute("""
+                CREATE OR REPLACE VIEW res_partner_waterconnection AS (
+                SELECT row_number() OVER() AS id, a.* FROM (
+                    SELECT wpi1.partner_id, wpi1.waterconnection_id,
+                    ww1.last_data_time, ww1.last_total_volume,
+                    ww1.last_waterflow,
+                    ww1.last_valve_open, ww1.last_valve_scheduled FROM
+                    wua_parcel_irrigationpoint wpi1 INNER JOIN
+                    wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
+                    WHERE wpi1.type='WC' GROUP BY  wpi1.partner_id,
+                    wpi1.waterconnection_id, ww1.last_data_time,
+                    ww1.last_waterflow, ww1.last_valve_open,
+                    ww1.last_valve_scheduled, ww1.last_total_volume
+                ) a )
+                """)

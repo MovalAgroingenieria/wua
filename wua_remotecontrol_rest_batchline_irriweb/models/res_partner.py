@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models, _
+from odoo import models, _, fields, api
 
 
 class ResPartner(models.Model):
@@ -298,3 +298,139 @@ class ResPartner(models.Model):
         if value:
             resp = value
         return resp
+
+
+class ResPartnerWaterconnection(models.Model):
+    _inherit = 'res.partner.waterconnection'
+
+    html_readings_url = fields.Text(
+        string='IrriWEB Readings',
+        compute='_compute_html_readings_url'
+        )
+
+    html_consumptions_url = fields.Text(
+        string='IrriWEB Consumptions',
+        compute='_compute_html_consumptions_url'
+        )
+
+    html_scheduling_url = fields.Text(
+        string='IrriWEB Scheduling',
+        compute='_compute_html_scheduling_url'
+        )
+
+    @api.multi
+    def _compute_html_readings_url(self):
+        url_ok, url = self.sudo()._get_url_frame_info('historico')
+        for record in self:
+            if url_ok:
+                hidrante_param = record.sudo().waterconnection_id.\
+                    irrigationshed_id.name
+                toma_param = str(record.sudo().waterconnection_id.position)
+                clientidentify_param = self.sudo().env.user.name
+                url = url + '&hidrante=' + hidrante_param + '&' + \
+                    'toma=' + toma_param + '&' + \
+                    'clientidentify=' + clientidentify_param
+                record.html_readings_url = url
+            else:
+                record.html_readings_url = ''
+
+    @api.multi
+    def _compute_html_consumptions_url(self):
+        url_ok, url = self.sudo()._get_url_frame_info('consumo')
+        for record in self:
+            if url_ok:
+                hidrante_param = record.sudo().waterconnection_id.\
+                    irrigationshed_id.name
+                toma_param = str(record.sudo().waterconnection_id.position)
+                clientidentify_param = self.sudo().env.user.name
+                url = url + '&hidrante=' + hidrante_param + '&' + \
+                    'toma=' + toma_param + '&' + \
+                    'clientidentify=' + clientidentify_param
+                record.html_consumptions_url = url
+            else:
+                record.html_consumptions_url = ''
+
+    @api.multi
+    def _compute_html_scheduling_url(self):
+        url_ok, url = self.sudo()._get_url_frame_info('programacion')
+        for record in self:
+            if url_ok:
+                hidrante_param = record.sudo().waterconnection_id.\
+                    irrigationshed_id.name
+                toma_param = str(record.sudo().waterconnection_id.position)
+                clientidentify_param = self.sudo().env.user.name
+                url = url + '&hidrante=' + hidrante_param + '&' + \
+                    'toma=' + toma_param + '&' + \
+                    'clientidentify=' + clientidentify_param
+                record.html_scheduling_url = url
+            else:
+                record.html_scheduling_url = ''
+
+    def _get_url_frame_info(self, type):
+        url_ok = False
+        url = ''
+        php_frame_enabled = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'php_frame_enabled')
+        php_frame_url = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'php_frame_url')
+        url_irriweb = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'url_remotecontrol_application')
+        url_ok = php_frame_enabled and php_frame_url and url_irriweb
+        if url_ok:
+            if type == 'historico':
+                php_frame_type = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_historico')
+            if type == 'consumo':
+                php_frame_type = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_consumo')
+            if type == 'programacion':
+                php_frame_type = \
+                    self.env['ir.values'].get_default(
+                        'wua.irrigation.configuration',
+                        'php_frame_type_programacion')
+            php_frame_client = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'php_frame_client')
+            php_frame_accesskey = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'php_frame_accesskey')
+            php_frame_secretkey = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'php_frame_secretkey')
+            url = php_frame_url + '?type=' + php_frame_type + \
+                '&url_irriweb=' + url_irriweb + \
+                '&client=' + php_frame_client + \
+                '&accesskey=' + php_frame_accesskey + \
+                '&secretkey=' + php_frame_secretkey
+        return url_ok, url
+
+    @api.multi
+    def action_see_readings(self):
+        self.ensure_one()
+        if self.html_readings_url:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.html_readings_url,
+                'target': 'new',
+            }
+
+    @api.multi
+    def action_see_consumptions(self):
+        self.ensure_one()
+        if self.html_readings_url:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.html_consumptions_url,
+                'target': 'new',
+            }
+
+    @api.multi
+    def action_see_scheduling(self):
+        self.ensure_one()
+        if self.html_readings_url:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.html_scheduling_url,
+                'target': 'new',
+            }
