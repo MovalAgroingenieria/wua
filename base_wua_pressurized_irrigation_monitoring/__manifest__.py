@@ -41,6 +41,8 @@
         "views/wua_cultivation_view.xml",
         "views/wua_cultivation_kc_view.xml",
         "views/mail_template_views.xml",
+        "views/wua_watermeter_view.xml",
+        "views/wua_waterconnection_view.xml",
         "reports/partner_presconsumption_monitoring_report.xml",
         ],
     'qweb': ['static/src/xml/button_import_controlreadings.xml'],

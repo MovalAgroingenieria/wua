@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 Moval Agroingeniería
+# 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
 import datetime
 import locale
-from Crypto.Cipher import AES
 import pytz
+from Crypto.Cipher import AES
+from lxml import etree
+from odoo import models, fields, api, _
 
 
 class WuaComparativeSubparcelPresconsumption(models.Model):
@@ -223,7 +224,7 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
     age_category = fields.Selection([
         ('l', 'Little'),
         ('m', 'Middle'),
-        ('b', 'Big')],
+        ('b', 'Full production')],
         'Age Category')
 
     tree_distance = fields.Float(
@@ -342,8 +343,8 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         percentage_categ_02 = self.env['ir.values'].get_default(
             'wua.monitoring.configuration', 'max_deviation_categ_02')
         for record in self:
-            if (record.theoretical_consumption == 0 and
-               record.real_consumption == 0):
+            if record.theoretical_consumption == 0 and \
+                    record.real_consumption == 0:
                 record.consumption_category = 'A'
             else:
                 deviation = abs(record.deviation)
@@ -361,8 +362,8 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
     @api.multi
     def _compute_deviation_percentage(self):
         for record in self:
-            if (record.estimated_consumption == 0 and
-               record.real_consumption == 0):
+            if record.estimated_consumption == 0 and \
+                    record.real_consumption == 0:
                 record.deviation_percentage = '0%'
             else:
                 deviation_percentage = 100
@@ -507,16 +508,17 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                             irrigationpoint.parcel_id.subparcel_ids
                         if subparcel in subparcels_of_irrigationpoint:
                             prorrated_consumption = \
-                                (controlpresconsumption.volume_real *
-                                 (subparcel.area_official / total_area))
+                                controlpresconsumption.volume_real * \
+                                (subparcel.area_official / total_area)
                             resp = resp + prorrated_consumption
         return resp
 
     # Get the theoretical consumption of a subparcel comparative-consumption.
     def get_theoretical_consumption(self, subparcel, controlperiod):
         resp = 0
-        if (subparcel and controlperiod and
-           subparcel.cultivation_id and subparcel.cultivation_id.monitoring):
+        if subparcel and controlperiod and \
+                subparcel.cultivation_id and \
+                subparcel.cultivation_id.monitoring:
             et0 = controlperiod.et0_value
             pe = controlperiod.pe_value
             number_of_period = self.get_number_of_period(controlperiod)
@@ -537,8 +539,8 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                         'uniformity_irrigation_application')
                 if not uniformity_irrig_applic:
                     uniformity_irrig_applic = 0.9
-                resp = (10 * subparcel.area_official_hec *
-                        (((et0 * kc) - pe) / uniformity_irrig_applic))
+                resp = 10 * subparcel.area_official_hec * \
+                    (((et0 * kc) - pe) / uniformity_irrig_applic)
                 if resp < 0:
                     resp = 0
         return resp
@@ -609,3 +611,67 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
             'context': self.env.context,
             }
         return act_window
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(WuaComparativeSubparcelPresconsumption, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+        if view_type == 'form' or view_type == 'tree':
+            control_periodicity = control_periodicity_raw = \
+                area_measure_name = ""
+            doc = etree.XML(res['arch'])
+            control_periodicity_raw = self.env['ir.values'].get_default(
+                'wua.monitoring.configuration', 'control_periodicity')
+            area_measure_name = \
+                self.env['wua.parcel'].sudo()._compute_area_measurement_name()
+            if control_periodicity_raw == 's':
+                control_periodicity = _('(m³/week)')
+            elif control_periodicity_raw == 'b':
+                control_periodicity = _('(m³/biweek)')
+            elif control_periodicity_raw == 'm':
+                control_periodicity = _('(m³/month)')
+            if view_type == 'form':
+                for node in doc.xpath(
+                        "//field[@name='theoretical_consumption']"):
+                    original_label = self.env['wua.parcel'].sudo().\
+                        get_value_from_translation(
+                            'base_wua_pressurized_irrigation_monitoring',
+                            self.__class__.theoretical_consumption.string)
+                    node.set(
+                        'string', original_label + ' ' + control_periodicity)
+                for node in doc.xpath(
+                        "//field[@name='regularization']"):
+                    original_label = self.env['wua.parcel'].sudo().\
+                        get_value_from_translation(
+                            'base_wua_pressurized_irrigation_monitoring',
+                            self.__class__.regularization.string)
+                    node.set(
+                        'string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='estimated_consumption']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.estimated_consumption.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='real_consumption']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.real_consumption.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='deviation']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.deviation.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='area_official']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua', self.__class__.area_official.string)
+                node.set(
+                    'string', original_label + ' (' + area_measure_name + ')')
+            res['arch'] = etree.tostring(doc)
+        return res

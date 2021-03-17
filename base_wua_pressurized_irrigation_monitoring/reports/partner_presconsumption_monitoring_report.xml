@@ -226,17 +226,17 @@
                                     <tr>
                                         <th class="text-right">
                                             Area (<span t-esc="measurement_unit"/>)
-                                         </th>
-                                        <th class="text-right">Estimated consumption (m³)</th>
+                                        </th>
                                         <th class="text-right">Real consumption (m³)</th>
+                                        <th class="text-right">Estimated consumption (m³)</th>
                                         <th class="text-right">Deviation</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td class="text-right"><span t-field="o.area_official"/></td>
-                                        <td class="text-right"><span t-field="o.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
                                         <td class="text-right"><span t-field="o.real_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
+                                        <td class="text-right"><span t-field="o.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
                                         <td>
                                             <div style="float:right;">
                                                 <t t-set="category" t-value="o.consumption_category[:1]"/>
@@ -284,8 +284,8 @@
                                         <th class="text-right">
                                             Surface (<span t-esc="measurement_unit"/>)
                                          </th>
-                                        <th scope="col" class="text-right" style="background: #F9F9F9;">Estimated</th>
                                         <th scope="col" class="text-right" style="background: #F9F9F9;">Real</th>
+                                        <th scope="col" class="text-right" style="background: #F9F9F9;">Estimated</th>
                                         <th class="text-right">Deviation</th>
                                     </tr>
                                 </thead>
@@ -300,8 +300,8 @@
                                             <td><span t-field="s.cultivation_id"/></td>
                                             <td><span t-field="s.cultivationvariety_id"/></td>
                                             <td class="text-right"><span t-field="s.area_official"/></td>
-                                            <td class="text-right"><span t-field="s.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
                                             <td class="text-right"><span t-field="s.real_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
+                                            <td class="text-right"><span t-field="s.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
                                             <td>
                                                 <div style="float:right;">
                                                     <t t-set="category" t-value="s.consumption_category[:1]"/>
@@ -335,10 +335,10 @@
                                     <tr>
                                         <th>Cultivation</th>
                                         <th class="text-right">
-                                            <span>Estimated endowment (m³/<span t-esc="measurement_unit"/>)</span>
+                                            <span>Real endowment (m³/<span t-esc="measurement_unit"/>)</span>
                                         </th>
                                         <th class="text-right">
-                                            <span>Real endowment (m³/<span t-esc="measurement_unit"/>)</span>
+                                            <span>Estimated endowment (m³/<span t-esc="measurement_unit"/>)</span>
                                         </th>
                                         <th class="text-right">Deviation</th>
                                     </tr>
@@ -356,10 +356,17 @@
                                                 <span t-esc="c.name"/>
                                             </td>
                                             <td class="text-right">
+<<<<<<< HEAD
                                                 <span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[1], 1)"/>
+=======
+                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[1], 1)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>
+>>>>>>> 10.0-jst-upd-base_wua_pressurized_irrigation_monitoring-improvements_points_6_7_9_af_2021-02
                                             </td>
                                             <td class="text-right">
                                                 <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[2], 0)"/> %</span>
@@ -368,10 +375,17 @@
                                         <tr name="totals_cultivations">
                                             <td class="text-right"><b>TOTAL:</b></td>
                                             <td class="text-right">
+<<<<<<< HEAD
                                                 <span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_cultivation, 1)"/>
                                             </td>
                                             <td class="text-right">
                                                 <span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_real_consumption_cultivation, 1)"/>
+=======
+                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_real_consumption_cultivation, 1)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="request.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_cultivation, 1)"/>
+>>>>>>> 10.0-jst-upd-base_wua_pressurized_irrigation_monitoring-improvements_points_6_7_9_af_2021-02
                                             </td>
                                             <td class="text-right">
                                                 <t t-set="total_deviation_cultivation" t-value="o.compute_deviation_percentage(total_estimated_consumption_cultivation, total_real_consumption_cultivation)"/>
@@ -392,8 +406,8 @@
                                     <tr>
                                         <th>Hydraulic sector</th>
                                         <th class="text-center">Waterconnection</th>
-                                        <th class="text-right">Estimated consumption (m³)</th>
                                         <th class="text-right">Real consumption (m³)</th>
+                                        <th class="text-right">Estimated consumption (m³)</th>
                                         <th class="text-right">Deviation</th>
                                     </tr>
                                 </thead>
@@ -407,10 +421,10 @@
                                             <td><span t-field="w.hydraulicsector_id"/></td>
                                             <td class="text-center"><span t-field="w.name"/></td>
                                             <td class="text-right">
-                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[0], 1)"/>
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[1], 1)"/>
                                             </td>
                                             <td class="text-right">
-                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[1], 1)"/>
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[0], 1)"/>
                                             </td>
                                             <td class="text-right">
                                                 <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[2], 0)"/> %</span>
@@ -419,8 +433,8 @@
                                         <tr name="totals_waterconnections">
                                             <td></td>
                                             <td class="text-right"><b>TOTAL:</b></td>
-                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_wc,1)"/></td>
                                             <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_real_consumption_wc,1)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_wc,1)"/></td>
                                             <td class="text-right">
                                                 <t t-set="total_deviation_wc" t-value="o.compute_deviation_percentage(total_estimated_consumption_wc, total_real_consumption_wc)"/>
                                                 <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_deviation_wc,0)"/> %</span>

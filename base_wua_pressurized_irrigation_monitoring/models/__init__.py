@@ -19,3 +19,4 @@ from . import wua_cultivation
 from . import wua_cultivation_kc
 from . import mail_message
 from . import mail_template
+from . import wua_waterconnection

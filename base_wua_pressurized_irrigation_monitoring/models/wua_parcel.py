@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
-# 2020 Moval Agroingeniería
+# 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
 import datetime
-from Crypto.Cipher import AES
 import pytz
 import io
 import base64
+from lxml import etree
+from Crypto.Cipher import AES
 from xml.etree import ElementTree
 from owslib.wms import WebMapService
 from owslib.wfs import WebFeatureService
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaParcel(models.Model):
@@ -111,7 +112,7 @@ class WuaParcelSubparcel(models.Model):
     age_category = fields.Selection([
         ('l', 'Little'),
         ('m', 'Middle'),
-        ('b', 'Big')],
+        ('b', 'Full production')],
         'Age Category',
         compute='_compute_age_category')
 
@@ -762,3 +763,33 @@ class WuaParcelSubparcel(models.Model):
             'context': {'search_default_agriculturalseasonactive': True},
             }
         return act_window
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(WuaParcelSubparcel, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+        if view_type == 'form' or view_type == 'tree':
+            doc = etree.XML(res['arch'])
+            unit = _('(m³/agriculturalseason)')
+            for node in doc.xpath("//field[@name='estimated_consumption']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.estimated_consumption.string)
+                node.set('string', original_label + ' ' + unit)
+            for node in doc.xpath("//field[@name='real_consumption']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.real_consumption.string)
+                node.set('string', original_label + ' ' + unit)
+            for node in doc.xpath("//field[@name='deviation']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.deviation.string)
+                node.set('string', original_label + ' ' + unit)
+            res['arch'] = etree.tostring(doc)
+        return res

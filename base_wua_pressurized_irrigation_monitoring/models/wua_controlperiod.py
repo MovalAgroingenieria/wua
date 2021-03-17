@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2020 Moval Agroingeniería
+# 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
@@ -7,6 +7,7 @@ import locale
 import os
 import logging
 import xlrd
+from lxml import etree
 from datetime import timedelta
 from odoo import models, fields, api, _, exceptions, SUPERUSER_ID
 from odoo.tools import config
@@ -705,3 +706,41 @@ class WuaControlperiod(models.Model):
                             next_controlperiod.name + \
                             ': ' + str(num_mails) + ' ' + _('-estimations-')
                         _logger.info(message_04)
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(WuaControlperiod, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+        if view_type == 'form' or view_type == 'tree':
+            control_periodicity = control_periodicity_raw = ""
+            doc = etree.XML(res['arch'])
+            control_periodicity_raw = self.env['ir.values'].get_default(
+                'wua.monitoring.configuration', 'control_periodicity')
+            if control_periodicity_raw == 's':
+                control_periodicity = _('(m³/week)')
+            elif control_periodicity_raw == 'b':
+                control_periodicity = _('(m³/biweek)')
+            elif control_periodicity_raw == 'm':
+                control_periodicity = _('(m³/month)')
+            for node in doc.xpath("//field[@name='estimated_consumption']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.estimated_consumption.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='real_consumption']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.real_consumption.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='deviation']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.deviation.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            res['arch'] = etree.tostring(doc)
+        return res

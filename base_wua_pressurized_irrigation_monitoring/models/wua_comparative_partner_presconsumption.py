@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2020 Moval Agroingeniería
+# 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, tools, api
 import datetime
-from Crypto.Cipher import AES
 import pytz
+from lxml import etree
+from Crypto.Cipher import AES
+from odoo import models, fields, tools, api, _
 
 
 class WuaComparativePartnerPresconsumption(models.Model):
@@ -185,3 +186,50 @@ class WuaComparativePartnerPresconsumption(models.Model):
                 'url': self.gis_viewer_link,
                 'target': 'new',
             }
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(WuaComparativePartnerPresconsumption, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+        if view_type == 'tree':
+            control_periodicity = control_periodicity_raw = \
+                area_measure_name = ""
+            doc = etree.XML(res['arch'])
+            control_periodicity_raw = self.env['ir.values'].get_default(
+                'wua.monitoring.configuration', 'control_periodicity')
+            area_measure_name = \
+                self.env['wua.parcel'].sudo()._compute_area_measurement_name()
+            if control_periodicity_raw == 's':
+                control_periodicity = _('(m³/week)')
+            elif control_periodicity_raw == 'b':
+                control_periodicity = _('(m³/biweek)')
+            elif control_periodicity_raw == 'm':
+                control_periodicity = _('(m³/month)')
+            for node in doc.xpath("//field[@name='estimated_consumption']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.estimated_consumption.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='real_consumption']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.real_consumption.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='deviation']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.deviation.string)
+                node.set('string', original_label + ' ' + control_periodicity)
+            for node in doc.xpath("//field[@name='area_official']"):
+                original_label = self.env['wua.parcel'].sudo().\
+                    get_value_from_translation(
+                        'base_wua', self.__class__.area_official.string)
+                node.set(
+                    'string', original_label + ' (' + area_measure_name + ')')
+            res['arch'] = etree.tostring(doc)
+        return res
