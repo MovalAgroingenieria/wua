@@ -72,9 +72,13 @@ class WuaComparativeCultivationPresconsumption(models.Model):
             real_consumption, SUM(wcsp1.deviation) AS deviation,
             CASE
              WHEN (
-                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (SUM(wcsp1.real_consumption) = 0) AND
+                    (SUM(wcsp1.estimated_consumption) = 0)
+                ) THEN ''
+             WHEN (
+                    (SUM(wcsp1.estimated_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
-                     SUM(wcsp1.real_consumption) <=
+                     SUM(wcsp1.estimated_consumption) <=
                      (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
                       FLOAT) FROM ir_values WHERE model =
                       'wua.monitoring.configuration' AND name LIKE
@@ -83,9 +87,9 @@ class WuaComparativeCultivationPresconsumption(models.Model):
                     )
                 ) THEN 'A'
              WHEN (
-                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (SUM(wcsp1.estimated_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
-                     SUM(wcsp1.real_consumption) <=
+                     SUM(wcsp1.estimated_consumption) <=
                      (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
                       FLOAT) FROM ir_values WHERE model =
                       'wua.monitoring.configuration' AND name LIKE

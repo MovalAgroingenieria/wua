@@ -52,13 +52,6 @@ class WuaParcel(models.Model):
 class WuaParcelSubparcel(models.Model):
     _inherit = 'wua.parcel.subparcel'
 
-    tree_development = fields.Selection([
-        ('seedlings', 'Seedlings'),
-        ('intermediate', 'Intermediate'),
-        ('full_production', 'Full production')],
-        string='Tree Development'
-    )
-
     shaded_percentage = fields.Float(
         string='Shaded %',
         digits=(32, 2)
@@ -88,6 +81,8 @@ class WuaParcelSubparcel(models.Model):
 
     drippers_number = fields.Integer(
         string='Number total of drippers',
+        store=True,
+        compute='_compute_drippers_number'
     )
 
     drippers_nominal_flow = fields.Float(
@@ -114,7 +109,8 @@ class WuaParcelSubparcel(models.Model):
         ('m', 'Middle'),
         ('b', 'Full production')],
         'Age Category',
-        compute='_compute_age_category')
+        compute='_compute_age_category',
+        search='_search_age_category')
 
     tree_distance = fields.Float(
         string='M. between trees',
@@ -124,6 +120,18 @@ class WuaParcelSubparcel(models.Model):
     row_distance = fields.Float(
         string='M. between rows',
         digits=(32, 2)
+    )
+
+    number_of_trees = fields.Integer(
+        string='N. of trees',
+        store=True,
+        compute='_compute_number_of_trees'
+    )
+
+    plantation_density = fields.Float(
+        string='Density (trees/ha)',
+        store=True,
+        compute='_compute_plantation_density'
     )
 
     tree_drippers_number = fields.Integer(
@@ -205,6 +213,20 @@ class WuaParcelSubparcel(models.Model):
         store=True
     )
 
+    deviation_percentage = fields.Char(
+        string='Deviation Percentage',
+        compute='_compute_deviation_percentage',
+    )
+
+    consumption_category = fields.Selection([
+        ('A', 'A (correct irrigation)'),
+        ('B', 'B (acceptable irrigation)'),
+        ('C', 'C (unsatisfactory irrigation)'),
+        ],
+        string='Consumption Category',
+        compute='_compute_consumption_category',
+    )
+
     _sql_constraints = [
         ('valid_shaded_percentage',
          'CHECK (shaded_percentage >= 0 and shaded_percentage <= 100)',
@@ -225,18 +247,12 @@ class WuaParcelSubparcel(models.Model):
         ('valid_plantation_year',
          'CHECK (plantation_year >= 0)',
          'The plantation year cannot be a negative value.'),
-        ('valid_tree_lateral_number',
-         'CHECK (tree_lateral_number >= 0 and tree_lateral_number <= 2)',
-         'The \"N. of lateral/tree\" value must be 1 or 2.'),
         ('valid_tree_distance',
          'CHECK (tree_distance >= 0)',
          'The distance between trees cannot be a negative value.'),
         ('valid_row_distance',
          'CHECK (row_distance >= 0)',
          'The distance between rows cannot be a negative value.'),
-        ('valid_tree_drippers_number',
-         'CHECK (tree_drippers_number >= 0 and tree_drippers_number <= 2)',
-         'The \"N. of drippers/tree\" value must be 1 or 2.'),
         ]
 
     @api.multi
@@ -265,6 +281,38 @@ class WuaParcelSubparcel(models.Model):
                         if cultivation_age > upper_age_middle:
                             age_category = 'b'
             record.age_category = age_category
+
+    @api.depends('area_official_hec', 'tree_distance', 'row_distance')
+    def _compute_number_of_trees(self):
+        for record in self:
+            number_of_trees = 0
+            if (record.area_official_hec and record.tree_distance and
+               record.row_distance):
+                area_m2 = record.area_official_hec * 10000
+                tree_distance = record.tree_distance
+                row_distance = record.row_distance
+                number_of_trees = area_m2 / (tree_distance * row_distance)
+            record.number_of_trees = number_of_trees
+
+    @api.depends('number_of_trees', 'area_official_hec')
+    def _compute_plantation_density(self):
+        for record in self:
+            plantation_density = 0
+            if record.area_official_hec:
+                area_ha = record.area_official_hec
+                number_of_trees = record.number_of_trees
+                plantation_density = number_of_trees / area_ha
+            record.plantation_density = plantation_density
+
+    @api.depends('number_of_trees', 'tree_drippers_number')
+    def _compute_drippers_number(self):
+        for record in self:
+            drippers_number = 0
+            if record.number_of_trees and record.tree_drippers_number:
+                number_of_trees = record.number_of_trees
+                tree_drippers_number = record.tree_drippers_number
+                drippers_number = number_of_trees * tree_drippers_number
+            record.drippers_number = drippers_number
 
     @api.depends('parcel_id', 'parcel_id.cadastral_reference_link')
     def _compute_cadastral_reference_link(self):
@@ -320,6 +368,50 @@ class WuaParcelSubparcel(models.Model):
         for record in self:
             deviation = record.real_consumption - record.estimated_consumption
             record.deviation = deviation
+
+    @api.multi
+    def _compute_deviation_percentage(self):
+        for record in self:
+            if record.estimated_consumption == 0 and \
+                    record.real_consumption == 0:
+                record.deviation_percentage = '0%'
+            else:
+                deviation_percentage = 100
+                is_negative = False
+                deviation = record.deviation
+                if deviation < 0:
+                    deviation = abs(deviation)
+                    is_negative = True
+                if deviation > 0 and record.estimated_consumption > 0:
+                    deviation_percentage = \
+                        (deviation * 100) / record.estimated_consumption
+                if is_negative:
+                    deviation_percentage = deviation_percentage * -1
+                record.deviation_percentage = \
+                    '{:.2f}'.format(deviation_percentage) + '%'
+
+    @api.multi
+    def _compute_consumption_category(self):
+        percentage_categ_01 = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'max_deviation_categ_01')
+        percentage_categ_02 = self.env['ir.values'].get_default(
+            'wua.monitoring.configuration', 'max_deviation_categ_02')
+        for record in self:
+            if record.estimated_consumption == 0 and \
+                    record.real_consumption == 0:
+                record.consumption_category = ''
+            else:
+                deviation = abs(record.deviation)
+                consumption_category = 'C'
+                deviation_percentage = 100
+                if deviation > 0 and record.estimated_consumption > 0:
+                    deviation_percentage = \
+                        (deviation * 100) / record.estimated_consumption
+                    if (deviation_percentage <= percentage_categ_01):
+                        consumption_category = 'A'
+                    elif (deviation_percentage <= percentage_categ_02):
+                        consumption_category = 'B'
+                record.consumption_category = consumption_category
 
     @api.multi
     def action_regenerate_comparative_consumptions(self):
@@ -472,8 +564,6 @@ class WuaParcelSubparcel(models.Model):
             if 'tree_drippers_number' in vals:
                 update_vals['tree_drippers_number'] = \
                     vals['tree_drippers_number']
-            if 'tree_development' in vals:
-                update_vals['tree_development'] = vals['tree_development']
             if 'tree_lateral_number' in vals:
                 update_vals['tree_lateral_number'] = \
                     vals['tree_lateral_number']
@@ -481,6 +571,10 @@ class WuaParcelSubparcel(models.Model):
                 update_vals['row_distance'] = vals['row_distance']
             if 'area_perc' in vals:
                 update_vals['area_perc'] = vals['area_perc']
+            if 'number_of_trees' in vals:
+                update_vals['number_of_trees'] = vals['number_of_trees']
+            if 'plantation_density' in vals:
+                update_vals['plantation_density'] = vals['plantation_density']
             if (update_vals):
                 if (self.subparcel_presconsumption_ids and
                         len(self.subparcel_presconsumption_ids) > 0):
@@ -525,7 +619,6 @@ class WuaParcelSubparcel(models.Model):
                             'tree_distance': record.tree_distance,
                             'tree_drippers_number':
                                 record.tree_drippers_number,
-                            'tree_development': record.tree_development,
                             'tree_lateral_number': record.tree_lateral_number,
                             'row_distance': record.row_distance,
                             'controlperiod_id': controlperiod.id,
@@ -546,8 +639,8 @@ class WuaParcelSubparcel(models.Model):
                             'drippers_nominal_flow':
                                 record.drippers_nominal_flow,
                             'plantation_year': record.plantation_year,
-                            'cultivation_age': record.cultivation_age,
-                            'age_category': record.age_category,
+                            'number_of_trees': record.number_of_trees,
+                            'plantation_density': record.plantation_density,
                             })
                     record.subparcel_modified = False
         return {
@@ -734,6 +827,74 @@ class WuaParcelSubparcel(models.Model):
             [('plantation_year', '!=', 0),
              ('plantation_year', new_operator, current_year - value)])
         return ([('id', 'in', [x.id for x in subparcels])])
+
+    def _search_age_category(self, operator, value):
+        subparcel_ids = []
+        operator_of_filter = 'in'
+        if (not value):
+            # Case #1: subparcels without age category (it is not possible).
+            # Case #2: subparcels with age category (all).
+            if operator == '!=':
+                subparcel_ids = self.env['wua.parcel.subparcel'].search([]).ids
+        else:
+            # Remaining cases: there is a age category to compare...
+            # Case #3, age category is "little" (l): there is not a
+            # cultivation, or the "plantation_year" field is empty, or
+            # the age cultivation is smaller than the "lower_age_middle"
+            # field (of the cultivation).
+            # Case #4, age category is "middle" (m): the age cultivation
+            # is greather or equal than "lower_age_middle" and it is
+            # smaller or equal than "upper_age_middle" (of the cultivation).
+            # Case #5, age category is "big" (m): the age cultivation
+            # is greather than "upper_age_middle" (of the cultivation).
+            subparcel_ids = self.get_subparcel_ids_of_category(value)
+            if operator == '!=':
+                operator_of_filter = 'not in'
+        return ([('id', operator_of_filter, subparcel_ids)])
+
+    def get_subparcel_ids_of_category(self, age_category):
+        resp = []
+        if age_category in ['l', 'm', 'b']:
+            sql_for_litte = """
+                select s.id from wua_parcel_subparcel s
+                inner join wua_cultivation c
+                on s.cultivation_id = c.id
+                where date_part('year', CURRENT_DATE) -
+                (case when s.plantation_year=0 or s.plantation_year is null
+                then date_part('year', CURRENT_DATE) else s.plantation_year
+                end) < c.lower_age_middle order by id;"""
+            sql_for_middle = """
+                select s.id from wua_parcel_subparcel s
+                inner join wua_cultivation c
+                on s.cultivation_id = c.id
+                where date_part('year', CURRENT_DATE) -
+                (case when s.plantation_year=0 or s.plantation_year is null
+                then date_part('year', CURRENT_DATE) else s.plantation_year
+                end) >= c.lower_age_middle and
+                date_part('year', CURRENT_DATE) -
+                (case when s.plantation_year=0 or s.plantation_year is null
+                then date_part('year', CURRENT_DATE) else s.plantation_year
+                end) <= c.upper_age_middle order by id;"""
+            sql_for_big = """
+                select s.id from wua_parcel_subparcel s
+                inner join wua_cultivation c
+                on s.cultivation_id = c.id
+                where date_part('year', CURRENT_DATE) -
+                (case when s.plantation_year=0 or s.plantation_year is null
+                then date_part('year', CURRENT_DATE) else s.plantation_year
+                end) > c.upper_age_middle order by id;"""
+            sql_statement = sql_for_litte
+            if age_category == 'm':
+                sql_statement = sql_for_middle
+            else:
+                if age_category == 'b':
+                    sql_statement = sql_for_big
+            self.env.cr.execute(sql_statement)
+            sql_resp = self.env.cr.fetchall()
+            if sql_resp:
+                for item in sql_resp:
+                    resp.append(item[0])
+        return resp
 
     def get_wua_subparcel_comparative_presconsumption_action(self):
         current_subparcel_id = self.env.context.get('active_id')

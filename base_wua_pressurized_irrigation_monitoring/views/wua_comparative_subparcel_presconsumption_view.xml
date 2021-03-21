@@ -33,18 +33,19 @@
                           <field name="controlperiod_id" readonly="1"/>
                           <field name="cultivation_id" readonly="1"/>
                           <field name="cultivationvariety_id" readonly="1"/>
-                          <field name="tree_development" readonly="1"/>
+                          <field name="plantation_year" readonly="1"/>
                           <field name="shaded_percentage" readonly="1"/>
+                          <field name="orientation" readonly="1"/>
                           <field name="soil_type" readonly="1"/>
                           <field name="organic_material_percentage" readonly="1"/>
-                          <field name="orientation" readonly="1"/>
-                          <field name="drippers_number" readonly="1"/>
-                          <field name="drippers_nominal_flow" readonly="1"/>
-                          <field name="tree_lateral_number" readonly="1"/>
-                          <field name="plantation_year" readonly="1"/>
                           <field name="tree_distance" readonly="1"/>
                           <field name="row_distance" readonly="1"/>
+                          <field name="number_of_trees" readonly="1"/>
+                          <field name="plantation_density" readonly="1"/>
+                          <field name="drippers_nominal_flow" readonly="1"/>
+                          <field name="tree_lateral_number" readonly="1"/>
                           <field name="tree_drippers_number" readonly="1"/>
+                          <field name="drippers_number" readonly="1"/>
                       </group>
                       <group name="master_data_right">
                           <field name="partner_id" readonly="1"/>
@@ -58,18 +59,18 @@
                           <field name="age_category" readonly="1"/>
                           <div colspan="2">&#x2063;</div>
                           <div colspan="2">&#x2063;</div>
-                          <field name="consumption_category" readonly="1"
-                                 string="CATEGORY"/>
-                          <div colspan="2">&#x2063;</div>
-                          <div colspan="2">&#x2063;</div>
+                          <field name="real_consumption" readonly="1"/>
                           <field name="theoretical_consumption" readonly="1"
                                  string="Theor. Consumption"/>
                           <field name="regularization"/>
                           <field name="estimated_consumption" readonly="1"
                                  string="Est. Consumption"/>
-                          <field name="real_consumption" readonly="1"/>
                           <field name="deviation" readonly="1"/>
-
+                          <div colspan="2">&#x2063;</div>
+                          <div colspan="2">&#x2063;</div>
+                          <field name="consumption_category" readonly="1"
+                                 string="CATEGORY"
+                                 attrs="{'invisible':[('consumption_category', '=', False)]}"/>
                       </group>
                   </group>
                   <group name="slave_data">
@@ -111,6 +112,7 @@
                       icon="fa-cubes"
                       attrs="{'invisible': [('cadastral_reference_link','=','')]}"/>
               <field name="cultivation_id"/>
+              <field name="cultivationvariety_id"/>
               <field name="real_consumption"/>
               <field name="estimated_consumption"/>
               <field name="deviation"/>
@@ -131,6 +133,8 @@
               <field name="parcel_id"/>
               <field name="partner_id"/>
               <field name="cultivation_id"/>
+              <field name="cultivation_age"/>
+              <field name="age_category"/>              
               <field name="hydraulicsector_id"/>
               <field name="controlperiod_id"/>
               <filter string="Active Agricultural Season" name="agriculturalseasonactive"
@@ -142,6 +146,16 @@
                domain="[('consumption_category','=','b')]"/>
               <filter string="Unacceptable Irrigation" name="category_c"
                domain="[('consumption_category','=','c')]"/>
+              <separator/>
+              <filter string="Age Category: Little"
+                      name="age_category_l"
+                      domain="[('age_category', '=', 'l')]"/>
+              <filter string="Age Category: Middle"
+                      name="age_category_m"
+                      domain="[('age_category', '=', 'm')]"/>
+              <filter string="Age Category: Full Production"
+                      name="age_category_b"
+                      domain="[('age_category', '=', 'b')]"/>
               <separator/>
               <filter string="Current Controlperiod"
                       name="current_controlperiod"
@@ -161,9 +175,9 @@
                   <filter string="Cultivation"
                    name="cultivation"
                    context="{'group_by':'cultivation_id'}"/>
-                  <filter string="Tree Development"
-                   name="treedevelopment"
-                   context="{'group_by':'tree_development'}"/>
+                  <filter string="Age Category"
+                   name="agecategory"
+                   context="{'group_by':'age_category'}"/>
                   <filter string="Soil Type"
                    name="soiltype"
                    context="{'group_by':'soil_type'}"/>

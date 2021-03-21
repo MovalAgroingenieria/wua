@@ -81,6 +81,10 @@ class WuaComparativePartnerPresconsumption(models.Model):
             wcsp1.agriculturalseason_id,
             CASE
              WHEN (
+                    (SUM(wcsp1.real_consumption) = 0) AND
+                    (SUM(wcsp1.estimated_consumption) = 0)
+                ) THEN ''            
+             WHEN (
                     (SUM(wcsp1.estimated_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
                      SUM(wcsp1.estimated_consumption) <=

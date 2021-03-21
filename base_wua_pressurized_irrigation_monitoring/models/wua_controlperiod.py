@@ -92,6 +92,11 @@ class WuaControlperiod(models.Model):
         store=True
     )
 
+    deviation_percentage = fields.Char(
+        string='Deviation Percentage',
+        compute='_compute_deviation_percentage',
+    )
+
     notes = fields.Html(
         string='Notes'
     )
@@ -159,6 +164,27 @@ class WuaControlperiod(models.Model):
             deviation = record.real_consumption - record.estimated_consumption
             record.deviation = deviation
 
+    @api.multi
+    def _compute_deviation_percentage(self):
+        for record in self:
+            if record.estimated_consumption == 0 and \
+                    record.real_consumption == 0:
+                record.deviation_percentage = '0%'
+            else:
+                deviation_percentage = 100
+                is_negative = False
+                deviation = record.deviation
+                if deviation < 0:
+                    deviation = abs(deviation)
+                    is_negative = True
+                if deviation > 0 and record.estimated_consumption > 0:
+                    deviation_percentage = \
+                        (deviation * 100) / record.estimated_consumption
+                if is_negative:
+                    deviation_percentage = deviation_percentage * -1
+                record.deviation_percentage = \
+                    '{:.2f}'.format(deviation_percentage) + '%'
+
     @api.constrains('initial_date', 'end_date')
     def _check_initial_end_dates(self):
         if (len(self) == 1 and
@@ -201,7 +227,6 @@ class WuaControlperiod(models.Model):
                     'area_perc': subparcel.area_perc,
                     'irrigationsystem_id': subparcel.irrigationsystem_id.id,
                     'tree_distance': subparcel.tree_distance,
-                    'tree_development': subparcel.tree_development,
                     'tree_lateral_number': subparcel.tree_lateral_number,
                     'tree_drippers_number': subparcel.tree_drippers_number,
                     'row_distance': subparcel.row_distance,
@@ -221,8 +246,8 @@ class WuaControlperiod(models.Model):
                     'drippers_number': subparcel.drippers_number,
                     'drippers_nominal_flow': subparcel.drippers_nominal_flow,
                     'plantation_year': subparcel.plantation_year,
-                    'cultivation_age': subparcel.cultivation_age,
-                    'age_category': subparcel.age_category,
+                    'number_of_trees': subparcel.number_of_trees,
+                    'plantation_density': subparcel.plantation_density,
                     })
         return new_controlperiod
 
@@ -269,10 +294,10 @@ class WuaControlperiod(models.Model):
         controlperiod.state = 'calculated'
         controlperiod.message_post(
             _('Calculated control-period.') + ' ' +
-            _('Estimated consumption:') + ' ' +
-            '{:.2f}'.format(controlperiod.estimated_consumption) + ' m3. ' +
             _('Real consumption:') + ' ' +
             '{:.2f}'.format(controlperiod.real_consumption) + ' m3. ' +
+            _('Estimated consumption:') + ' ' +
+            '{:.2f}'.format(controlperiod.estimated_consumption) + ' m3. ' +
             _('Deviation:') + ' ' +
             '{:.2f}'.format(controlperiod.deviation) + ' m3.')
 
@@ -377,7 +402,6 @@ class WuaControlperiod(models.Model):
                 'irrigationsystem_id': subparcel.irrigationsystem_id.id,
                 'tree_distance': subparcel.tree_distance,
                 'tree_drippers_number': subparcel.tree_drippers_number,
-                'tree_development': subparcel.tree_development,
                 'tree_lateral_number': subparcel.tree_lateral_number,
                 'row_distance': subparcel.row_distance,
                 'controlperiod_id': controlperiod.id,
@@ -395,8 +419,8 @@ class WuaControlperiod(models.Model):
                 'drippers_number': subparcel.drippers_number,
                 'drippers_nominal_flow': subparcel.drippers_nominal_flow,
                 'plantation_year': subparcel.plantation_year,
-                'cultivation_age': subparcel.cultivation_age,
-                'age_category': subparcel.age_category,
+                'number_of_trees': subparcel.number_of_trees,
+                'plantation_density': subparcel.plantation_density,
                 })
             subparcel.subparcel_modified = False
 

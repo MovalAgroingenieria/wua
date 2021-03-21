@@ -166,13 +166,6 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         compute='_compute_updated_in_telecontrol'
     )
 
-    tree_development = fields.Selection([
-        ('seedlings', 'Seedlings'),
-        ('intermediate', 'Intermediate'),
-        ('full_production', 'Full production')],
-        string='Tree Development'
-    )
-
     shaded_percentage = fields.Float(
         string='Shaded %',
         digits=(32, 2)
@@ -218,14 +211,18 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
     )
 
     cultivation_age = fields.Integer(
-        string='Cultivation Age'
+        string='Cultivation Age',
+        store=True,
+        compute='_compute_cultivation_age'
     )
 
     age_category = fields.Selection([
         ('l', 'Little'),
         ('m', 'Middle'),
         ('b', 'Full production')],
-        'Age Category')
+        'Age Category',
+        store=True,
+        compute='_compute_age_category')
 
     tree_distance = fields.Float(
         string='M. between trees',
@@ -235,6 +232,14 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
     row_distance = fields.Float(
         string='M. between rows',
         digits=(32, 2),
+    )
+
+    number_of_trees = fields.Integer(
+        string='N. of trees',
+    )
+
+    plantation_density = fields.Float(
+        string='Density (trees/ha)',
     )
 
     tree_drippers_number = fields.Integer(
@@ -273,18 +278,12 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         ('valid_plantation_year',
          'CHECK (plantation_year >= 0)',
          'The plantation year cannot be a negative value.'),
-        ('valid_tree_lateral_number',
-         'CHECK (tree_lateral_number >= 0 and tree_lateral_number <= 2)',
-         'The \"N. of lateral/tree\" value must be 1 or 2.'),
         ('valid_tree_distance',
          'CHECK (tree_distance >= 0)',
          'The distance between trees cannot be a negative value.'),
         ('valid_row_distance',
          'CHECK (row_distance >= 0)',
          'The distance between rows cannot be a negative value.'),
-        ('valid_tree_drippers_number',
-         'CHECK (tree_drippers_number >= 0 and tree_drippers_number <= 2)',
-         'The \"N. of drippers/tree\" value must be 1 or 2.'),
         ]
 
     @api.depends('partner_id', 'partner_id.partner_code',
@@ -296,6 +295,41 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                 name = record.controlperiod_id.initial_date + '-' + \
                     str(record.subparcel_id.subparcel_code)
             record.name = name
+
+    @api.depends('subparcel_id.plantation_year',
+                 'controlperiod_id.initial_date')
+    def _compute_cultivation_age(self):
+        for record in self:
+            cultivation_age = 0
+            if (record.subparcel_id.plantation_year and
+               record.subparcel_id.plantation_year > 0):
+                plantation_year = record.subparcel_id.plantation_year
+                year_of_controlperiod = \
+                    int(record.controlperiod_id.initial_date[:4])
+                if year_of_controlperiod > plantation_year:
+                    cultivation_age = year_of_controlperiod - plantation_year
+            record.cultivation_age = cultivation_age
+
+    @api.depends('cultivation_age')
+    def _compute_age_category(self):
+        for record in self:
+            age_category = 'l'
+            if (record.cultivation_age and
+               record.subparcel_id.cultivation_id and
+               record.subparcel_id.cultivation_id.lower_age_middle and
+               record.subparcel_id.cultivation_id.upper_age_middle):
+                cultivation_age = record.cultivation_age
+                lower_age_middle = \
+                    record.subparcel_id.cultivation_id.lower_age_middle
+                upper_age_middle = \
+                    record.subparcel_id.cultivation_id.upper_age_middle
+                if (cultivation_age >= lower_age_middle and
+                   cultivation_age <= upper_age_middle):
+                    age_category = 'm'
+                else:
+                    if cultivation_age > upper_age_middle:
+                        age_category = 'b'
+            record.age_category = age_category
 
     @api.depends('theoretical_consumption', 'regularization')
     def _compute_estimated_consumption(self):
@@ -343,16 +377,16 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         percentage_categ_02 = self.env['ir.values'].get_default(
             'wua.monitoring.configuration', 'max_deviation_categ_02')
         for record in self:
-            if record.theoretical_consumption == 0 and \
+            if record.estimated_consumption == 0 and \
                     record.real_consumption == 0:
-                record.consumption_category = 'A'
+                record.consumption_category = ''
             else:
                 deviation = abs(record.deviation)
                 consumption_category = 'C'
                 deviation_percentage = 100
-                if deviation > 0 and record.real_consumption > 0:
+                if deviation > 0 and record.estimated_consumption > 0:
                     deviation_percentage = \
-                        (deviation * 100) / record.real_consumption
+                        (deviation * 100) / record.estimated_consumption
                     if (deviation_percentage <= percentage_categ_01):
                         consumption_category = 'A'
                     elif (deviation_percentage <= percentage_categ_02):
@@ -488,7 +522,8 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
             comparative_consumption.real_consumption = real_consumption
         theoretical_consumption = self.get_theoretical_consumption(
             comparative_consumption.subparcel_id,
-            comparative_consumption.controlperiod_id)
+            comparative_consumption.controlperiod_id,
+            comparative_consumption.age_category)
         if theoretical_consumption:
             comparative_consumption.theoretical_consumption = \
                 theoretical_consumption
@@ -514,35 +549,42 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         return resp
 
     # Get the theoretical consumption of a subparcel comparative-consumption.
-    def get_theoretical_consumption(self, subparcel, controlperiod):
+    def get_theoretical_consumption(self, subparcel, controlperiod,
+                                    age_category):
         resp = 0
         if subparcel and controlperiod and \
                 subparcel.cultivation_id and \
                 subparcel.cultivation_id.monitoring:
-            et0 = controlperiod.et0_value
-            pe = controlperiod.pe_value
-            number_of_period = self.get_number_of_period(controlperiod)
-            row_kc = self.env['wua.cultivation.kc'].search(
-                [('period_number', '=', number_of_period),
-                 ('cultivation_id', '=', subparcel.cultivation_id.id)])
-            if row_kc:
-                row_kc = row_kc[0]
-                kc = row_kc.kc_middle
-                if subparcel.age_category == 'm':
-                    kc = row_kc.kc_middle
-                else:
-                    if subparcel.age_category == 'b':
-                        kc = row_kc.kc_big
-                uniformity_irrig_applic = \
-                    self.env['ir.values'].get_default(
-                        'wua.monitoring.configuration',
-                        'uniformity_irrigation_application')
-                if not uniformity_irrig_applic:
-                    uniformity_irrig_applic = 0.9
-                resp = 10 * subparcel.area_official_hec * \
-                    (((et0 * kc) - pe) / uniformity_irrig_applic)
-                if resp < 0:
-                    resp = 0
+            calculate = True
+            if subparcel.plantation_year and subparcel.plantation_year > 0:
+                year_of_controlperiod = int(controlperiod.initial_date[:4])
+                if year_of_controlperiod < subparcel.plantation_year:
+                    calculate = False
+            if calculate:
+                et0 = controlperiod.et0_value
+                pe = controlperiod.pe_value
+                number_of_period = self.get_number_of_period(controlperiod)
+                row_kc = self.env['wua.cultivation.kc'].search(
+                    [('period_number', '=', number_of_period),
+                     ('cultivation_id', '=', subparcel.cultivation_id.id)])
+                if row_kc:
+                    row_kc = row_kc[0]
+                    kc = row_kc.kc_little
+                    if age_category == 'm':
+                        kc = row_kc.kc_middle
+                    else:
+                        if age_category == 'b':
+                            kc = row_kc.kc_big
+                    uniformity_irrig_applic = \
+                        self.env['ir.values'].get_default(
+                            'wua.monitoring.configuration',
+                            'uniformity_irrigation_application')
+                    if not uniformity_irrig_applic:
+                        uniformity_irrig_applic = 0.9
+                    resp = 10 * subparcel.area_official_hec * \
+                        (((et0 * kc) - pe) / uniformity_irrig_applic)
+                    if resp < 0:
+                        resp = 0
         return resp
 
     # Get the number of period of a control period.

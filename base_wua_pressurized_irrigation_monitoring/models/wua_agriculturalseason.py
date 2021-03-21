@@ -42,6 +42,11 @@ class WuaAgriculturalseason(models.Model):
         store=True
     )
 
+    deviation_percentage = fields.Char(
+        string='Deviation Percentage',
+        compute='_compute_deviation_percentage',
+    )
+
     @api.depends('controlperiod_ids')
     def _compute_number_of_controlperiods(self):
         for record in self:
@@ -73,6 +78,27 @@ class WuaAgriculturalseason(models.Model):
         for record in self:
             deviation = record.real_consumption - record.estimated_consumption
             record.deviation = deviation
+
+    @api.multi
+    def _compute_deviation_percentage(self):
+        for record in self:
+            if record.estimated_consumption == 0 and \
+                    record.real_consumption == 0:
+                record.deviation_percentage = '0%'
+            else:
+                deviation_percentage = 100
+                is_negative = False
+                deviation = record.deviation
+                if deviation < 0:
+                    deviation = abs(deviation)
+                    is_negative = True
+                if deviation > 0 and record.estimated_consumption > 0:
+                    deviation_percentage = \
+                        (deviation * 100) / record.estimated_consumption
+                if is_negative:
+                    deviation_percentage = deviation_percentage * -1
+                record.deviation_percentage = \
+                    '{:.2f}'.format(deviation_percentage) + '%'
 
     @api.multi
     def write(self, vals):

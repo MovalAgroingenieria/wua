@@ -304,15 +304,17 @@
                                             <td class="text-right"><span t-field="s.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
                                             <td>
                                                 <div style="float:right;">
-                                                    <t t-set="category" t-value="s.consumption_category[:1]"/>
-                                                    <t t-if="category == 'A'">
-                                                        <span class="fa-circle" style="color: green;"/>
-                                                    </t>
-                                                    <t t-if="category == 'B'">
-                                                        <span class="fa-circle" style="color: orange;"/>
-                                                    </t>
-                                                    <t t-if="category == 'C'">
-                                                        <span class="fa-circle" style="color: red;"/>
+                                                    <t t-if="s.consumption_category">
+                                                        <t t-set="category" t-value="s.consumption_category[:1]"/>
+                                                        <t t-if="category == 'A'">
+                                                            <span class="fa-circle" style="color: green;"/>
+                                                        </t>
+                                                        <t t-if="category == 'B'">
+                                                            <span class="fa-circle" style="color: orange;"/>
+                                                        </t>
+                                                        <t t-if="category == 'C'">
+                                                            <span class="fa-circle" style="color: red;"/>
+                                                        </t>
                                                     </t>
                                                 </div>
                                                 <div style="float:right;margin-right:14px;">

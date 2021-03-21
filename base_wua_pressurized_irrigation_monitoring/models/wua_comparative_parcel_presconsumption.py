@@ -71,6 +71,10 @@ class WuaComparativeParcelPresconsumption(models.Model):
         compute='_compute_cadastral_reference_link',
     )
 
+    number_of_subparcels = fields.Integer(
+        string='Subparcels',
+        compute='_compute_number_of_subparcels')
+
     gis_viewer_link = fields.Char(
         string='GIS Viewer',
         compute='_compute_gis_viewer_link'
@@ -97,9 +101,13 @@ class WuaComparativeParcelPresconsumption(models.Model):
             wp1.hydraulicsector_id,
             CASE
              WHEN (
-                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (SUM(wcsp1.real_consumption) = 0) AND
+                    (SUM(wcsp1.estimated_consumption) = 0)
+                ) THEN ''
+             WHEN (
+                    (SUM(wcsp1.estimated_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
-                     SUM(wcsp1.real_consumption) <=
+                     SUM(wcsp1.estimated_consumption) <=
                      (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
                       FLOAT) FROM ir_values WHERE model =
                       'wua.monitoring.configuration' AND name LIKE
@@ -108,9 +116,9 @@ class WuaComparativeParcelPresconsumption(models.Model):
                     )
                 ) THEN 'A'
              WHEN (
-                    (SUM(wcsp1.real_consumption) > 0) AND
+                    (SUM(wcsp1.estimated_consumption) > 0) AND
                     (ABS(SUM(wcsp1.deviation)) * 100 /
-                     SUM(wcsp1.real_consumption) <=
+                     SUM(wcsp1.estimated_consumption) <=
                      (SELECT CAST(substring(value FROM \'\\d+.?\\d*\') AS
                       FLOAT) FROM ir_values WHERE model =
                       'wua.monitoring.configuration' AND name LIKE
@@ -157,6 +165,11 @@ class WuaComparativeParcelPresconsumption(models.Model):
                     deviation_percentage = deviation_percentage * -1
                 record.deviation_percentage = \
                     '{:.2f}'.format(deviation_percentage) + '%'
+
+    @api.multi
+    def _compute_number_of_subparcels(self):
+        for record in self:
+            record.number_of_subparcels = len(record.parcel_id.subparcel_ids)
 
     @api.multi
     def _compute_gis_viewer_link(self):
