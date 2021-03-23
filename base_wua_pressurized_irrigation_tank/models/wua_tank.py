@@ -3,6 +3,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, _
+from Crypto.Cipher import AES
+import datetime
+import pytz
 
 
 class WuaTank(models.Model):
@@ -36,8 +39,62 @@ class WuaTank(models.Model):
     notes = fields.Html(
         string='Notes')
 
+    gis_viewer_link = fields.Char(
+        string='GIS Viewer',
+        compute='_compute_gis_viewer_link')
+
+    with_gis_tank = fields.Boolean(
+        string="GIS Tank",
+        readonly=True)
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Tank.'), ]
+
+    @api.multi
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        tank_param = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'url_gis_viewer_tank_param')
+        for record in self:
+            url_for_record = url
+            if url_for_record:
+                if tank_param:
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        tank_param + '=' + \
+                        str(record.name)
+            if url_for_record and username and password:
+                credentials = username + "-" + password
+                credentials = credentials.ljust(32)
+                current_datetime = pytz.utc.localize(datetime.datetime.now())
+                current_datetime = current_datetime.astimezone(
+                    pytz.timezone('Europe/Madrid'))
+                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+                minimum = int(current_datetime[14:])
+                if minimum < 30:
+                    minimum = '00'
+                else:
+                    minimum = '30'
+                iv = current_datetime[:14] + minimum
+                aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+                cipher_text = aes_encryptor.encrypt(credentials)
+                cipher_text = cipher_text.encode('base64')
+                sep_char = '?'
+                if url_for_record.find('?') != -1:
+                    sep_char = '&'
+                url_for_record = url_for_record + sep_char + \
+                    "arg=" + cipher_text
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
 
     @api.multi
     def action_see_tankconsumptions(self):
@@ -64,3 +121,13 @@ class WuaTank(models.Model):
             'target': 'current',
             }
         return act_window
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }

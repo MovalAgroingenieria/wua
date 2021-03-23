@@ -22,6 +22,7 @@
         "views/res_partner_view.xml",
         "views/wua_hydraulicsector_view.xml",
         "views/wua_agriculturalseason_view.xml",
+        "views/wua_infrastructure_config_settings_view.xml",
     ],
     "installable": True,
     "application": False,

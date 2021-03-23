@@ -7,6 +7,8 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <sheet>
+                    <field name="gis_viewer_link" invisible="1"/>
+                    <field name="with_gis_tank" invisible="1"/>
                     <div name="buttons" class="oe_button_box">
                         <button name="action_see_tankconsumptions" class="oe_stat_button"
                             type="object" icon="fa-moval-watertank" groups="base_wua.group_wua_user">
@@ -14,6 +16,9 @@
                                 <span class="o_stat_text">Tank consumptions</span>
                             </div>
                         </button>
+                        <button name="action_see_gis_viewer" type="object"
+                            class="oe_stat_button" string="GIS Viewer" icon="fa-map-marker"
+                            attrs="{'invisible': ['|',('gis_viewer_link','=',False), ('with_gis_tank','=',False)]}"/>
                     </div>
                     <group name="master_data">
                         <group name="master_data_fields">
@@ -39,7 +44,14 @@
         <field name="model">wua.tank</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_pressurized_irritation_tank_view_tree">
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_tank" invisible="1"/>
                 <field name="name"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_tank','=',False)]}"/>
                 <field name="hydraulicsector_id"/>
                 <field name="description"/>
             </tree>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-16 10:27+0000\n"
-"PO-Revision-Date: 2021-03-16 10:27+0000\n"
+"POT-Creation-Date: 2021-03-23 14:25+0000\n"
+"PO-Revision-Date: 2021-03-23 14:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -51,6 +51,11 @@ msgstr "Cálculo: consumos cuba"
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_tank.wua_cancel_tankconsumptions
 msgid "Cancel"
 msgstr "Quitar validación"
+
+#. module: base_wua_pressurized_irrigation_tank
+#: model:ir.model,name:base_wua_pressurized_irrigation_tank.model_wua_infrastructure_configuration
+msgid "Configuration of base_wua_infrastructure_primary module"
+msgstr "Configuración del módulo base_wua_infrastructure_primary"
 
 #. module: base_wua_pressurized_irrigation_tank
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_wua_tank_tankconsumption_ids
@@ -106,6 +111,22 @@ msgid "Existing Tank."
 msgstr "La cuba ya existe."
 
 #. module: base_wua_pressurized_irrigation_tank
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_wua_tank_with_gis_tank
+msgid "GIS Tank"
+msgstr "Cuba GIS"
+
+#. module: base_wua_pressurized_irrigation_tank
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_wua_tank_gis_viewer_link
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_tank.wua_tank_view_form
+msgid "GIS Viewer"
+msgstr "Visor GIS"
+
+#. module: base_wua_pressurized_irrigation_tank
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_tank.wua_tank_view_tree
+msgid "GIS Viewer (zoom to point)"
+msgstr "Visor GIS (zoom al punto)"
+
+#. module: base_wua_pressurized_irrigation_tank
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_tank.wua_tank_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_tank.wua_tankconsumption_view_search
 msgid "Group By"
@@ -144,12 +165,28 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: base_wua_pressurized_irrigation_tank
+#: model:ir.model.fields,help:base_wua_pressurized_irrigation_tank.field_wua_infrastructure_configuration_url_gis_viewer_tank_param
+msgid "Name of tank param in the GIS viewer url"
+msgstr "Nombre del parámetro de cubas en el visor GIS"
+
+#. module: base_wua_pressurized_irrigation_tank
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_wua_tank_notes
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_wua_tankconsumption_notes
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_tank.wua_tank_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_tank.wua_tankconsumption_view_form
 msgid "Notes"
 msgstr "Notas"
+
+#. module: base_wua_pressurized_irrigation_tank
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_res_partner_number_of_tankconsumptions
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_res_users_number_of_tankconsumptions
+msgid "Number of tankconsumptions"
+msgstr "Nº de consumos de cuba"
+
+#. module: base_wua_pressurized_irrigation_tank
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_wua_infrastructure_configuration_url_gis_viewer_tank_param
+msgid "Param for tank"
+msgstr "Parámetro para cuba"
 
 #. module: base_wua_pressurized_irrigation_tank
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_wua_tankconsumption_partner_id
@@ -185,11 +222,11 @@ msgid "Tank Consumptions"
 msgstr "Consumos de cuba"
 
 #. module: base_wua_pressurized_irrigation_tank
-#: code:addons/base_wua_pressurized_irrigation_tank/models/res_partner.py:35
+#: code:addons/base_wua_pressurized_irrigation_tank/models/res_partner.py:45
 #: code:addons/base_wua_pressurized_irrigation_tank/models/wua_agriculturalseason.py:31
 #: code:addons/base_wua_pressurized_irrigation_tank/models/wua_hydraulicsector.py:31
-#: code:addons/base_wua_pressurized_irrigation_tank/models/wua_tank.py:57
-#: code:addons/base_wua_pressurized_irrigation_tank/models/wua_tankconsumption.py:168
+#: code:addons/base_wua_pressurized_irrigation_tank/models/wua_tank.py:114
+#: code:addons/base_wua_pressurized_irrigation_tank/models/wua_tankconsumption.py:166
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_tank.wua_tankconsumption_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_res_partner_tankconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_tank.field_res_users_tankconsumption_ids
@@ -235,11 +272,6 @@ msgid "The end time must be greater than or equal to initial time."
 msgstr "El fin del llenado debe ser mayor o igual al inicio del llenado."
 
 #. module: base_wua_pressurized_irrigation_tank
-#: sql_constraint:wua.tankconsumption:0
-msgid "The requested volume can not be greater than real volume."
-msgstr "El volumen solicitado no puede ser mayor que el volumen consumido."
-
-#. module: base_wua_pressurized_irrigation_tank
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_tank.wua_validate_tankconsumptions
 msgid "Validate"
 msgstr "Validar"
@@ -270,9 +302,8 @@ msgid "Vol. requested (m³)"
 msgstr "Vol. solicitado (m³)"
 
 #. module: base_wua_pressurized_irrigation_tank
-#: code:addons/base_wua_pressurized_irrigation_tank/models/wua_tankconsumption.py:145
-#: code:addons/base_wua_pressurized_irrigation_tank/models/wua_tankconsumption.py:155
+#: code:addons/base_wua_pressurized_irrigation_tank/models/wua_tankconsumption.py:143
+#: code:addons/base_wua_pressurized_irrigation_tank/models/wua_tankconsumption.py:153
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene suficientes permisos para realizar esta acción."
-
