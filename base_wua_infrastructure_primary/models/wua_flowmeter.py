@@ -68,10 +68,6 @@ class WuaFlowmeter(models.Model):
         store=True,
         compute="_compute_connected_to_intake")
 
-    with_gis_flowmeter = fields.Boolean(
-        string="GIS Flowmeter",
-        readonly=True)
-
     notes = fields.Html(
         string="Notes",
         help="Notes about flow-meter")
@@ -81,7 +77,8 @@ class WuaFlowmeter(models.Model):
         compute='_compute_gis_viewer_link')
 
     with_gis_flowmeter = fields.Boolean(
-        string='GIS Flow-Meter')
+        string="GIS Flowmeter",
+        readonly=True)
 
     _sql_constraints = [
         ('unique_name',
