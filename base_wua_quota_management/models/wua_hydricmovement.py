@@ -10,7 +10,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaHydricmovement(models.Model):
     _name = 'wua.hydricmovement'
     _description = 'Hydric Movement'
-    _order = 'partner_code, event_date, pos_superproduct'
+    _order = 'partner_code, event_date, event_time, pos_superproduct'
 
     MAX_SIZE_PARTNER_CODE = 6
     MAX_SIZE_SUPERPRODUCT_CODE = 6
