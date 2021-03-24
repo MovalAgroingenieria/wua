@@ -7,7 +7,7 @@ import pytz
 from odoo import models, fields, api, exceptions, _
 
 
-class WuaTank(models.Model):
+class WuaTankconsumption(models.Model):
     _name = 'wua.tankconsumption'
     _description = 'Tank Consumptions'
     _order = 'end_time desc, name'

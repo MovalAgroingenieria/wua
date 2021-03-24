@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_tankconsumption_view_form" model="ir.ui.view">
+        <field name="name">Tank Consumptions (form view)</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation_tank.wua_tankconsumption_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='volume_request']" position="attributes">
+                <attribute name="attrs">{'readonly':[('invoiced_consumption','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='volume_real']" position="attributes">
+                <attribute name="attrs">{'readonly':[('invoiced_consumption','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='volume_real']" position="after">
+                <field name="product_id"/>
+                <field name="invoiceset_id" readonly="1"/>
+                <field name="invoiced_consumption" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_tankconsumption_view_search" model="ir.ui.view">
+        <field name="name">Tank Consumptions (search view)</field>
+        <field name="model">wua.tankconsumption</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation_tank.wua_tankconsumption_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tank_id']" position="after">
+                <field name="product_id"/>
+                <field name="invoiceset_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='validated_no']" position="after">
+                <separator/>
+                <filter string="Invoiced" name="invoiced" domain="[('invoiced_consumption','=',True)]"/>
+                <filter string="Not invoiced" name="notinvoiced" domain="[('invoiced_consumption','!=',True)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='partner']" position="after">
+                <filter string="Water Type" name="product" context="{'group_by':'product_id'}"/>
+                <filter string="Invoice Set" name="invoiceset" context="{'group_by':'invoiceset_id'}"/>
+                <filter string="Invoiced (Yes/No)" name="invoicedgroup" context="{'group_by':'invoiced_consumption'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
