@@ -7,3 +7,4 @@ from . import res_partner
 from . import wua_hydraulicsector
 from . import wua_agriculturalseason
 from . import wua_infrastructure_config_settings
+from . import wua_parcel
