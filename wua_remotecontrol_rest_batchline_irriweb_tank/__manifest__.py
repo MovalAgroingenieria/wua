@@ -17,6 +17,7 @@
         "base_wua_pressurized_irrigation_tank",
         "wua_remotecontrol_rest_batchline_irriweb", ],
     "data": [
+        "data/wua_irrigation_config_settings_data.xml",
         "views/resources.xml",
     ],
     'qweb': ['static/src/xml/button_import_tankconsumptions.xml'],
