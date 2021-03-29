@@ -18,6 +18,9 @@
         "wua_remotecontrol_rest_batchline_irriweb", ],
     "data": [
         "data/wua_irrigation_config_settings_data.xml",
+        "wizard/wizard_scheduling_tank_view.xml",
+        "views/res_partner_view.xml",
+        "views/wua_irrigation_config_settings_view.xml",
         "views/resources.xml",
     ],
     'qweb': ['static/src/xml/button_import_tankconsumptions.xml'],

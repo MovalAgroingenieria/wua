@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua_remotecontrol_rest.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='do_unsynchronization_partner']" position="after">
+                <field name="html_scheduling_frame" invisible="1"/>
+                <button name="action_scheduling_tank"
+                            type="object" string="Schedule Tank"
+                            icon="fa-moval-watertank"
+                            attrs="{'invisible':
+                                    ['|', ('tank_permission','=',False),
+                                        ('html_scheduling_frame','=',False)]}"
+                            groups="base_wua.group_wua_manager,base_wua.group_wua_portal_user"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

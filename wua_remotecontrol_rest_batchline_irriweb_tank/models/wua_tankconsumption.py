@@ -127,12 +127,12 @@ class WuaTankconsumption(models.Model):
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if token:
-            from_date = '1970-01-01'
+            from_date = '2021-01-01'
             to_date = '9999-12-31'
             # Check if all tanks have consumptions and in that case
             # check for the last consumptions to ask for
             if len(self.env['wua.tank'].search(
-                    [('with_tankconsumptions', '=', False)])) > 0:
+                    [('with_tankconsumptions', '=', False)])) != 0:
                 all_tankconsumptions = self.env['wua.tankconsumption'].search(
                     [], order='end_time desc')
                 if (all_tankconsumptions and all_tankconsumptions[0]):
@@ -178,7 +178,8 @@ class WuaTankconsumption(models.Model):
                     end_time = end_time.astimezone(
                         pytz.timezone('UTC')).strftime('%Y-%m-%d %H:%M:%S')
                     tankconsumptions.append({
-                        'tank': tank,
+                        # Remove -01 of all tanks
+                        'tank': tank[:-3],
                         'volume_request': volume_request,
                         'volume_real': volume_real,
                         "partner_id": partner,

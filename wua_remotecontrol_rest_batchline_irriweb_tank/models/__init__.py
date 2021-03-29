@@ -5,3 +5,4 @@
 from . import wua_tank
 from . import wua_tankconsumption
 from . import wua_irrigation_config_settings
+from . import res_partner

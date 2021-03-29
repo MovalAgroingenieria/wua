@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_scheduling_tank_view_form" model="ir.ui.view">
+        <field name="name">Wizard to do the scheduling of a tank</field>
+        <field name="model">wizard.scheduling.tank</field>
+        <field name="arch" type="xml">
+            <form string="Schedule tank">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '500px'});
+                        $(".modal-footer").hide();
+                    });
+                </script>
+                <field name="html_scheduling_frame" widget="html"/>
+            </form>
+        </field>
+    </record>
+
+</odoo>
