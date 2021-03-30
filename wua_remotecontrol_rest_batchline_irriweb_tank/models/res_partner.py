@@ -101,7 +101,7 @@ class ResPartner(models.Model):
     def populate_data_for_send_new_partner(self, vals):
         resp = super(ResPartner, self).populate_data_for_send_new_partner(vals)
         if (resp):
-            tank_permission = self.get_val(vals, 'tank_permission')
+            tank_permission = not not self.get_val(vals, 'tank_permission')
             resp.update({
                 'tank_permission': tank_permission
             })
@@ -154,7 +154,8 @@ class ResPartner(models.Model):
         resp = super(ResPartner, self).populate_data_for_update_partner(
             partner)
         if resp and partner:
-            tank_permission = self.refine_value(partner.tank_permission)
+            tank_permission = not not self.refine_value(
+                partner.tank_permission)
             resp.update({
                 'tank_permission': tank_permission
             })
