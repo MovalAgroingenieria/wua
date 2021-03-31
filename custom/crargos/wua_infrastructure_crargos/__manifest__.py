@@ -31,6 +31,7 @@
         "reports/wua_wateringrequest_report.xml",
         "reports/wua_reservoiremptyingorder_report.xml",
         "reports/report_invoice.xml",
+        "views/contact_views.xml",
     ],
     "installable": True,
     "application": False,
