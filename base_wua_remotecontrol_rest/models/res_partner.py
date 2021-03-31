@@ -457,6 +457,7 @@ class ResPartner(models.Model):
 class ResPartnerWaterconnection(models.Model):
     _name = 'res.partner.waterconnection'
     _auto = False
+    _order = 'waterconnection_id'
 
     partner_id = fields.Many2one(
         string='Irrigation Partner',
