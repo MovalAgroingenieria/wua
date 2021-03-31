@@ -34,7 +34,7 @@ class WuaParcel(models.Model):
                     tank_code = gis_tank[0]
                     filtered_tanks = \
                         tanks.filtered(
-                            lambda x: x.tank_code == tank_code)
+                            lambda x: x.name == tank_code)
                     if len(filtered_tanks) == 1:
                         tank = filtered_tanks[0]
                         tank.write({
