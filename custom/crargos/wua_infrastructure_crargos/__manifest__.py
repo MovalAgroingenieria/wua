@@ -17,7 +17,9 @@
         "base_wua_report",
         "base_wua_gravity_irrigation_with_quota",
         "account_invoice_report_due_list",
-        "web"
+        "web",
+        "crm_lettermgmt",
+        "document_directory_extension_security",
     ],
     "data": [
         "security/security.xml",
@@ -32,6 +34,8 @@
         "reports/wua_reservoiremptyingorder_report.xml",
         "reports/report_invoice.xml",
         "views/contact_views.xml",
+        "views/res_letter_view.xml",
+        "views/document.xml",
     ],
     "installable": True,
     "application": False,
