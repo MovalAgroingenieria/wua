@@ -48,13 +48,7 @@ class WuaFlowreading(models.Model):
         resp = [None, 0, '', None, 0]
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
-        there_are_flowreadings_not_validated = False
-        flowreadings_not_validated = self.env['wua.flowreading'].search(
-            [('validated', '=', False)])
-        if flowreadings_not_validated:
-            there_are_flowreadings_not_validated = True
-        if (enable_remotecontrol and
-           not there_are_flowreadings_not_validated):
+        if (enable_remotecontrol):
             url_scada_server = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'url_scada_server')
             scada_server_username = self.env['ir.values'].\
@@ -106,14 +100,9 @@ class WuaFlowreading(models.Model):
                                          suffix_message_02)
         else:
             if show_message:
-                if there_are_flowreadings_not_validated:
-                    raise exceptions.UserError(_('There are flowreadings not '
-                                                 'validated. Please, first '
-                                                 'validate or delete them.'))
-                else:
-                    raise exceptions.UserError(_('The communication with '
-                                                 'the remote control is not '
-                                                 'enabled.'))
+                raise exceptions.UserError(_('The communication with '
+                                             'the remote control is not '
+                                             'enabled.'))
         return resp
 
     def populate_data_for_import_flowreadings(self, url_scada_server,
