@@ -46,13 +46,7 @@ class WuaTankconsumption(models.Model):
             'wua.irrigation.configuration', 'enable_remotecontrol')
         import_from_tankconsumptions = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'import_from_tankconsumptions')
-        there_are_tankconsumptions_not_validated = False
-        tankconsumptions_not_validated = self.env['wua.tankconsumption'].\
-            search([('validated', '=', False)])
-        if tankconsumptions_not_validated:
-            there_are_tankconsumptions_not_validated = True
-        if (enable_remotecontrol and import_from_tankconsumptions and
-           not there_are_tankconsumptions_not_validated):
+        if (enable_remotecontrol and import_from_tankconsumptions):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'url_remotecontrol_rest')
             url_remotecontrol_rest_username = self.env['ir.values'].\
@@ -99,14 +93,9 @@ class WuaTankconsumption(models.Model):
                                          suffix_message_02)
         else:
             if show_message:
-                if there_are_tankconsumptions_not_validated:
-                    raise exceptions.UserError(_('There are tankconsumptions '
-                                                 'not validated. Please, first'
-                                                 ' validate or delete them.'))
-                else:
-                    raise exceptions.UserError(_('The communication with '
-                                                 'the remote control is not '
-                                                 'enabled.'))
+                raise exceptions.UserError(_('The communication with '
+                                             'the remote control is not '
+                                             'enabled.'))
         return resp
 
     # Hook
