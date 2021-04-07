@@ -42,13 +42,7 @@ class WuaReading(models.Model):
             'wua.irrigation.configuration', 'enable_remotecontrol')
         import_from_readings = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'import_from_readings')
-        there_are_readings_not_validated = False
-        readings_not_validated = self.env['wua.reading'].search(
-            [('validated', '=', False)])
-        if readings_not_validated:
-            there_are_readings_not_validated = True
-        if (enable_remotecontrol and import_from_readings and
-           not there_are_readings_not_validated):
+        if (enable_remotecontrol and import_from_readings):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'url_remotecontrol_rest')
             url_remotecontrol_rest_username = self.env['ir.values'].\
@@ -95,14 +89,9 @@ class WuaReading(models.Model):
                                          suffix_message_02)
         else:
             if show_message:
-                if there_are_readings_not_validated:
-                    raise exceptions.UserError(_('There are readings not '
-                                                 'validated. Please, first '
-                                                 'validate or delete them.'))
-                else:
-                    raise exceptions.UserError(_('The communication with '
-                                                 'the remote control is not '
-                                                 'enabled.'))
+                raise exceptions.UserError(_('The communication with '
+                                             'the remote control is not '
+                                             'enabled.'))
         return resp
 
     # Hook
