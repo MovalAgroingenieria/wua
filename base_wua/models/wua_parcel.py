@@ -1098,7 +1098,7 @@ class WuaParcel(models.Model):
             wms = WebMapService(url=url_gis_viewer_wms, version='1.1.1')
             wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
             wms_pnoa = WebMapService(url='http://www.ign.es/wms-inspire/'
-                                         'pnoa-ma', version='1.3.0')
+                                         'pnoa-ma', version='1.1.1')
             for record in self:
                 if record.with_gis_parcel:
                     filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
