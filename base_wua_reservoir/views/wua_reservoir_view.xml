@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_reservoir_view_form" model="ir.ui.view">
+        <field name="name">Reservoirs (form view)</field>
+        <field name="model">wua.reservoir</field>
+        <field name="arch" type="xml">
+            <form create="false" duplicate="0">
+                <header></header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="action_see_reservoir_readings" class="oe_stat_button" type="object"
+                            icon="fa-moval-reservoir" groups="base_wua.group_wua_user">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Reservoir Readings</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="reservoir_code"/>
+                            <field name="name"/>
+                            <field name="county_id"/>
+                            <field name="rurallocation_id"/>
+                            <field name="coordinate_x"/>
+                            <field name="coordinate_y"/>
+                            <field name="implementation_year"/>
+                            <field name="age"/>
+                            <field name="typology"/>
+                            <field name="waterproofingmaterial"/>
+                            <field name="sheet_thickness"/>
+                            <field name="geotextile"/>
+                            <div name="lastreading_title" colspan="2" style="margin: 10px 0px;" class="text-center">
+                                <span><b>LAST READING</b></span>
+                            </div>
+                            <field name="last_reading_time"/>
+                            <field name="last_volume"/>
+                            <field name="last_differential_volume"/>
+                            <br/><br/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="volume_nmn"/>
+                            <field name="water_sheet_area_nmn"/>
+                            <field name="water_sheet_level_nmn"/>
+                            <field name="volume_nme"/>
+                            <field name="water_sheet_area_nme"/>
+                            <field name="water_sheet_level_nme"/>
+                            <field name="platform_level"/>
+                            <field name="terrain_level"/>
+                            <field name="excavated_terrain"/>
+                            <field name="spillway_level"/>
+                            <field name="crest_level"/>
+                            <field name="max_height_embankment"/>
+                            <field name="normal_guard"/>
+                            <field name="depth"/>
+                            <field name="crest_length"/>
+                            <field name="crest_aisle_width"/>
+                            <field name="exterior_slope_hv"/>
+                            <field name="interior_slope_hv"/>
+                            <br/><br/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="consumptions_graph_page" string="Graph">
+                                <field name="consumptions_graph" widget="bokeh_chart" nolabel="1"/>
+                            </page>
+                            <page name="page_drainage_system" string="Drainage System">
+                                <field name="drainage_system"/>
+                            </page>
+                            <page name="page_spillway_system" string="Spillway System">
+                                <field name="spillway_system"/>
+                            </page>
+                            <page name="page_outfall_elements" string="Outfall Elements">
+                                <field name="outfall_elements"/>
+                            </page>
+                            <page name="page_filling_elements" string="Filling Elements">
+                                <field name="filling_elements"/>
+                            </page>
+                            <page name="page_other_characteristics" string="Other Characteristics">
+                                <field name="other_characteristics"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_reservoir_view_tree" model="ir.ui.view">
+        <field name="name">Reservoirs (tree view)</field>
+        <field name="model">wua.reservoir</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_reservoir_view_tree">
+                <field name="reservoir_code"/>
+                 <field name="name"/>
+                 <field name="county_id"/>
+                 <field name="rurallocation_id"/>
+                 <field name="volume_nmn" string="V. NMN (m³)"/>
+                 <field name="last_reading_time"/>
+                 <field name="last_volume"/>
+                 <field name="last_differential_volume"/>
+                 <field name="depth"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_reservoir_view_search" model="ir.ui.view">
+        <field name="name">Reservoirs (search view)</field>
+        <field name="model">wua.reservoir</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reservoir_code"/>
+                <field name="name"/>
+                <field name="county_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="County" name="grouped_county"
+                        context="{'group_by':'county_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_reservoir_action" model="ir.actions.act_window">
+        <field name="name">Reservoirs</field>
+        <field name="res_model">wua.reservoir</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_reservoir_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_reservoir_view_form')})]"/>
+        <field name="search_view_id" ref="wua_reservoir_view_search"/>
+    </record>
+
+    <menuitem
+        name="Reservoirs"
+        id="wua_reservoir_menu"
+        parent="base_wua_infrastructure_primary.base_wua_infrastructure_primary_menu"
+        sequence="20"
+        action="wua_reservoir_action"/>
+
+</odoo>

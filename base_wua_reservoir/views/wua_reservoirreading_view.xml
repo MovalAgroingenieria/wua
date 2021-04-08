@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_reservoirreading_view_form" model="ir.ui.view">
+        <field name="name">Reservoir Readings (form view)</field>
+        <field name="model">wua.reservoirreading</field>
+        <field name="arch" type="xml">
+            <form create="false" duplicate="0">
+                <header>
+                </header>
+                <sheet>
+                    <field name="id" invisible="1"/>
+                    <field name="is_last_reading" invisible="1"/>
+                    <div name="buttons" class="oe_button_box">
+                        <img src="/base_wua_pressurized_irrigation/static/image/img_last.png"
+                             hspace="2" attrs="{'invisible':[('is_last_reading', '=', False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="measurements_in_height" invisible="1"/>
+                            <field name="reservoir_id"/>
+                            <field name="reading_time"/>
+                            <field name="height" attrs="{'invisible':[('measurements_in_height', '=', False)]}"/>
+                            <field name="volume_entered" attrs="{'invisible':[('measurements_in_height', '=', True)]}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="agriculturalseason_id"/>
+                            <field name="differential_volume"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_reservoirreading_view_tree" model="ir.ui.view">
+        <field name="name">Reservoir Readings (tree view)</field>
+        <field name="model">wua.reservoirreading</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_reservoirreading_view_tree">
+                <field name="reservoir_id"/>
+                <field name="agriculturalseason_id"/>
+                <field name="reading_time"/>
+                <field name="volume"/>
+                <field name="differential_volume"/>
+                <field name="is_last_reading"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_reservoirreading_view_search" model="ir.ui.view">
+        <field name="name">Reservoir Readings (search view)</field>
+        <field name="model">wua.reservoirreading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reservoir_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Reservoir" name="grouped_reservoir"
+                        context="{'group_by':'reservoir_id'}"/>
+                    <filter string="Agricultural season" name="grouped_agriculturalseason"
+                        context="{'group_by':'agriculturalseason_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_reservoirreading_action" model="ir.actions.act_window">
+        <field name="name">Reservoir Readings</field>
+        <field name="res_model">wua.reservoirreading</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_reservoirreading_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_reservoirreading_view_form')})]"/>
+        <field name="search_view_id" ref="wua_reservoirreading_view_search"/>
+    </record>
+
+    <menuitem id="wua_reservoirreading_menu"
+        name="Reservoir Readings"
+        parent="base_wua_irrigation_measurement.base_wua_irrigation_measurement_menu"
+        sequence="6"
+        action="wua_reservoirreading_action"/>
+
+    <record id="wua_technical_assign_agriculturalseason_volume_to_reservoirreadings_action"
+            model="ir.actions.server">
+        <field name="name">Assign agricultural season and volume to reservoir readings</field>
+        <field name="model_id" ref="base_wua_reservoir.model_wua_reservoirreading"/>
+        <field name="code">action = env["wua.reservoirreading"].action_assign_agriculturalseason_volume_to_reservoirreadings()</field>
+    </record>
+
+    <menuitem id="wua_technical_assign_agriculturalseason_volume_to_reservoirreadings"
+        name="Calculation: reservoir readings"
+        parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+        action="wua_technical_assign_agriculturalseason_volume_to_reservoirreadings_action"
+        sequence="5"/>
+
+</odoo>
