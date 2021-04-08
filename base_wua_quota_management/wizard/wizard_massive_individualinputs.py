@@ -128,7 +128,7 @@ class WizardMassiveIndividualinputs(models.TransientModel):
                         area = sum(x.area_official_water_costs_net
                                    for x in selected_partnerlinks_of_partner)
                         volume = area * self.provision
-                        if volume != 0:
+                        if abs(volume) > 0.01:
                             agriculturalseason = \
                                 quotaperiod.agriculturalseason_id
                             self.env['wua.individualinput'].create({
