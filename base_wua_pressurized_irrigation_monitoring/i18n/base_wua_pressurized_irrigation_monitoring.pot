@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-21 13:44+0000\n"
-"PO-Revision-Date: 2021-03-21 13:44+0000\n"
+"POT-Creation-Date: 2021-04-07 14:50+0000\n"
+"PO-Revision-Date: 2021-04-07 14:50+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -113,11 +113,11 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:mail.template,body_html:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_email_template
 msgid "<div style=\"margin: 0px; padding: 0px;\">\n"
-"                    <p style=\"font-size:13px;font-family:&quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif;margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
 "                        Estimado Sr./Sra. ${object.partner_id.name},\n"
-"                        <br><br>\n"
+"                        <br/><br/>\n"
 "                        Adjuntamos su informe de análisis de riego correspondiente al siguiente período: ${object.controlperiod_id.initial_date[8:10] + '/' + object.controlperiod_id.initial_date[5:7] + '/' + object.controlperiod_id.initial_date[:4]} - ${object.controlperiod_id.end_date[8:10] + '/' + object.controlperiod_id.end_date[5:7] + '/' + object.controlperiod_id.end_date[:4]}.\n"
-"                        <br><br>\n"
+"                        <br/><br/>\n"
 "                        Reciba un cordial saludo.\n"
 "                    </p>\n"
 "                </div>\n"
@@ -127,11 +127,11 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:mail.template,body_html:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_email_template
 msgid "<div style=\"margin: 0px; padding: 0px;\">\n"
-"                    <p style=\"font-size:13px;font-family:&quot;Lucida Grande&quot;, Helvetica, Verdana, Arial, sans-serif;margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
 "                        Estimado Sr./Sra. ${object.partner_id.name},\n"
-"                        <br><br>\n"
+"                        <br/><br/>\n"
 "                        Adjuntamos su informe de estimación de riego correspondiente al siguiente período: ${object.controlperiod_id.initial_date[8:10] + '/' + object.controlperiod_id.initial_date[5:7] + '/' + object.controlperiod_id.initial_date[:4]} - ${object.controlperiod_id.end_date[8:10] + '/' + object.controlperiod_id.end_date[5:7] + '/' + object.controlperiod_id.end_date[:4]}.\n"
-"                        <br><br>\n"
+"                        <br/><br/>\n"
 "                        Reciba un cordial saludo.\n"
 "                    </p>\n"
 "                </div>\n"
@@ -265,6 +265,13 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
+msgid "<span>Below you can find a summary with the main characteristics and the aerial image of each of the monitored subparcels.</span>\n"
+"                            <br/>"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
 msgid "<span>Involved cultivations:</span>"
 msgstr ""
 
@@ -282,12 +289,6 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
 msgid "<span>Number of monitored subparcels:</span>"
-msgstr ""
-
-#. module: base_wua_pressurized_irrigation_monitoring
-#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
-#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
-msgid "<span>On the following pages you will find the aerial images of the monitored subparcels.</span>"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
@@ -329,7 +330,7 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
-msgid "<strong><span>Subparcels&amp;nbsp;aerial&amp;nbsp;image</span></strong>"
+msgid "<strong><span>Subparcels&amp;nbsp;information&amp;nbsp;summary</span></strong>"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
@@ -1628,6 +1629,12 @@ msgid "Monthly"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
+msgid "N. drippers"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_tree_drippers_number
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_tree_drippers_number
 msgid "N. of drippers/tree"
@@ -1821,6 +1828,8 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_plantation_year
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_plantation_year
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
 msgid "Plantation Year"
 msgstr ""
 
@@ -2013,6 +2022,8 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_soil_type
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_soil_type
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_search
 msgid "Soil Type"
