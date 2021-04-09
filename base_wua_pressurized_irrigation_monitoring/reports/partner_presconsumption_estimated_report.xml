@@ -225,7 +225,12 @@
                                 </thead>
                                 <tbody>
                                     <t t-if="partner_subparcels_for_period">
+                                        <t t-set="total_area_subparcels" t-value="0.0"/>
+                                        <t t-set="total_estimated_consumption_subparcels" t-value="0.0"/>
                                         <tr t-foreach="partner_subparcels_for_period" t-as="s" style="page-break-inside: avoid;">
+                                            <t t-set="total_area_subparcels" t-value="total_area_subparcels + s.area_official"/>
+                                            <t t-set="total_estimated_consumption_subparcels"
+                                                t-value="total_estimated_consumption_subparcels + s.estimated_consumption"/>
                                             <td class="text-center"><span t-field="s.subparcel_id"/></td>
                                             <td class="text-center">
                                                 <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>
@@ -235,6 +240,12 @@
                                             <td><span t-field="s.cultivationvariety_id"/></td>
                                             <td class="text-right"><span t-field="s.area_official"/></td>
                                             <td class="text-right"><span t-field="s.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
+                                        </tr>
+                                        <tr name="totals_subparcels">
+                                            <td></td><td></td><td></td>
+                                            <td class="text-right"><b>TOTAL:</b></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area_subparcels,4)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_subparcels,1)"/></td>
                                         </tr>
                                     </t>
                                 </tbody>

@@ -161,7 +161,7 @@
                             <div name="intro_legend" style="font-size: 10px;">
                                 <div class="row" style="margin-top: 4px;">
                                     <div class="col-xs-12" style="display: table;">
-                                        <div style="width: 70%; display: table-cell;">
+                                        <div style="width: 66%; display: table-cell;">
                                             <span>- The volume measurements are referred to the period, currently set to </span>
                                             <t t-if="control_periodicity == 's'">
                                                 <span>weekly (m³/week).</span>
@@ -177,7 +177,7 @@
                                             <br/>
                                             <span>- In the legend you can see the limit percentages configured for each category.</span>
                                         </div>
-                                        <div style="padding-left: 12px;">
+                                        <div>
                                             <table style="width: 100%; border: solid lightgrey 1px;">
                                                 <thead>
                                                     <th style="padding-top:6px; padding-bottom:2px;padding-left:8px;">Category</th>
@@ -186,21 +186,21 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr>
-                                                        <td style="padding-left:8px;">A - Correct</td>
+                                                        <td style="padding-left:8px;">A - Correct irrigation</td>
                                                         <td class="text-right" style="padding-right:6px;">
                                                             <span>± <span t-esc="o.env['wua.parcel'].transform_float_to_locale(percentage_categ_01,0)"/> %</span>
                                                         </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: green;"/></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="padding-left:8px;">B - Acceptable</td>
+                                                        <td style="padding-left:8px;">B - Acceptable irrigation</td>
                                                         <td class="text-right" style="padding-right:6px;">
                                                             <span>± <span t-esc="o.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
                                                         </td>
                                                         <td class="text-center"><span class="fa-circle" style="color: orange;"/></td>
                                                     </tr>
                                                     <tr>
-                                                        <td style="padding-left:8px;padding-bottom:4px">C - Unsatisfactory</td>
+                                                        <td style="padding-left:8px;padding-bottom:4px">C - Unsatisfactory irrigation</td>
                                                         <td class="text-right" style="padding-right:6px;">
                                                             <span>
                                                                 <span>&gt; &lt; </span>
@@ -296,7 +296,15 @@
                                 </thead>
                                 <tbody>
                                     <t t-if="partner_subparcels_for_period">
+                                        <t t-set="total_area_subparcels" t-value="0.0"/>
+                                        <t t-set="total_estimated_consumption_subparcels" t-value="0.0"/>
+                                        <t t-set="total_real_consumption_subparcels" t-value="0.0"/>
                                         <tr t-foreach="partner_subparcels_for_period" t-as="s" style="page-break-inside: avoid;">
+                                            <t t-set="total_area_subparcels" t-value="total_area_subparcels + s.area_official"/>
+                                            <t t-set="total_estimated_consumption_subparcels"
+                                                t-value="total_estimated_consumption_subparcels + s.estimated_consumption"/>
+                                            <t t-set="total_real_consumption_subparcels"
+                                                t-value="total_real_consumption_subparcels + s.real_consumption"/>
                                             <td class="text-center"><span t-field="s.subparcel_id"/></td>
                                             <td class="text-center">
                                                 <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>
@@ -328,6 +336,38 @@
                                                 <div style="float:right;margin-right:14px;">
                                                     <t t-set="deviation_percentage" t-value="float(s.deviation_percentage.replace('%', ''))"/>
                                                     <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(deviation_percentage, 0)"/> %</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr name="totals_subparcels">
+                                            <td></td><td></td><td></td>
+                                            <td class="text-right"><b>TOTAL:</b></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area_subparcels,4)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_real_consumption_subparcels,1)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_subparcels,1)"/></td>
+                                            <td>
+                                                <t t-set="total_deviation_subparcels"
+                                                    t-value="o.compute_deviation_percentage(total_estimated_consumption_subparcels, total_real_consumption_subparcels)"/>
+                                                <t t-set="total_consumption_category_subparcels"
+                                                    t-value="o.compute_consumption_category(total_deviation_subparcels)"/>
+                                                <div style="float:right;">
+                                                    <t t-if="total_consumption_category_subparcels">
+                                                        <t t-if="total_consumption_category_subparcels == 'A'">
+                                                            <span class="fa-circle" style="color: green;"/>
+                                                        </t>
+                                                        <t t-if="total_consumption_category_subparcels == 'B'">
+                                                            <span class="fa-circle" style="color: orange;"/>
+                                                        </t>
+                                                        <t t-if="total_consumption_category_subparcels == 'C'">
+                                                            <span class="fa-circle" style="color: red;"/>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span>-</span>
+                                                    </t>
+                                                </div>
+                                                <div style="float:right;margin-right:14px;">
+                                                    <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_deviation_subparcels,0)"/> %</span>
                                                 </div>
                                             </td>
                                         </tr>
