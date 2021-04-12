@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+   <record id="wua_pumpgroup_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup (form view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pump.wua_pumpgroup_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='slave_data']" position="after">
+                <templates>
+                    <t t-name="gisviewer">
+                         <field name="with_gis_pumpgroup" invisible="1"/>
+                         <div id="gisviewer_pumpgroup" attrs="{'invisible': [('with_gis_pumpgroup','=',False)]}">
+                             <field name="html_gisviewer_frame" widget="html"/>
+                         </div>
+                    </t>
+                </templates>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
