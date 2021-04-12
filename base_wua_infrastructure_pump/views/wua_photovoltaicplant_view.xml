@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_photovoltaicplant_view_form" model="ir.ui.view">
+        <field name="name">Photovoltaicplant (form view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_photovoltaicplant" invisible="1"/>
+                        <button name="action_see_pumpgroups"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-watering-request">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_pumpgroups"/>
+                                </span>
+                                <span class="o_stat_text">
+                                    Pumpgroups
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                      ['|',('gis_viewer_link','=',False),
+                                      ('with_gis_photovoltaicplant','=',False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="photovoltaicplant_code"/>
+                            <field name="name"/>
+                            <field name="implementation_year" string="First year"/>
+                            <field name="installed_capacity" string="P. installed (KW)"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="age"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicplant_view_tree" model="ir.ui.view">
+        <field name="name">Photovoltaicplants (tree view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_pump_photovoltaicplant_view_tree">
+                <field name="photovoltaicplant_code"/>
+                <field name="name"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_photovoltaicplant" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),
+                               ('with_gis_photovoltaicplant','=',False)]}"/>
+                <field name="installed_capacity"/>
+                <field name="age"/>
+                <field name="number_of_pumpgroups"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicplant_view_search" model="ir.ui.view">
+        <field name="name">Photovoltaicplants (search view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="photovoltaicplant_code"/>
+                <field name="name"/>
+                <filter string="GIS Photovoltaicplant: Yes" name="gisphotovoltaicplantyes"
+                        domain="[('with_gis_photovoltaicplant','=',True)]"/>
+                <filter string="GIS Photovoltaicplant: No" name="gispumpgroupno"
+                        domain="[('with_gis_photovoltaicplant','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicplant_action" model="ir.actions.act_window">
+        <field name="name">Photovoltaicplants</field>
+        <field name="res_model">wua.photovoltaicplant</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_photovoltaicplant_view_tree"/>
+        <field name="search_view_id" ref="wua_photovoltaicplant_view_search"/>
+    </record>
+
+    <menuitem
+        name="Photovoltaicplants"
+        id="wua_photovoltaicplant_menu"
+        parent="base_wua_infrastructure_primary.base_wua_infrastructure_primary_menu"
+        sequence="21"
+        action="wua_photovoltaicplant_action"/>
+
+</odoo>

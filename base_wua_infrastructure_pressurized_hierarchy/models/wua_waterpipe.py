@@ -152,8 +152,7 @@ class WuaWaterpipe(models.Model):
         compute='_compute_gis_viewer_link')
 
     with_gis_waterpipe = fields.Boolean(
-        string='GIS Waterpipe',
-        store=True)
+        string='GIS Waterpipe',)
 
     _sql_constraints = [
         ('unique_code', 'UNIQUE (waterpipe_code)', 'Existing Code.'),

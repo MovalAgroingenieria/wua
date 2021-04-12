@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pumpgroup_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup (form view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_pumpgroup" invisible="1"/>
+                        <button name="action_see_pumpunits"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-watering-request">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_pumpunits"/>
+                                </span>
+                                <span class="o_stat_text">
+                                    Pumpunits
+                                </span>
+                            </div>
+                        </button>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                      ['|',('gis_viewer_link','=',False),
+                                      ('with_gis_pumpgroup','=',False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="pumpgroup_code"/>
+                            <field name="name"/>
+                            <field name="implementation_year" string="First year"/>
+                            <field name="typology"/>
+                            <field name="nominal_flow"/>
+                            <field name="nominal_height"/>
+                            <field name="intake_id" string="Intake"/>
+                            <field name="waterpipe_id" string="Waterpipe"/>
+                            <field name="powersupply_type"/>
+                            <field name="photovoltaicplant_id"
+                                 attrs="{'invisible': [('powersupply_type','not in',['02_photovpumping', '03_photovpumping_electricalgrid']),]}"/>/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="hydraulicsector_id"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="building_characteristics_page" string="Building Characteristics">
+                                <field name="building_characteristics"/>
+                            </page>
+                            <page name="regulation_system_page" string="Regulation System">
+                                <field name="regulation_system"/>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroup_view_tree" model="ir.ui.view">
+        <field name="name">Pumpgroups (tree view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_pump_pumpgroup_view_tree">
+                <field name="pumpgroup_code"/>
+                <field name="name"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_pumpgroup" invisible="1"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),
+                               ('with_gis_pumpgroup','=',False)]}"/>
+                <field name="typology"/>
+                <field name="nominal_flow"/>
+                <field name="nominal_height"/>
+                <field name="powersupply_type"/>
+                <field name="age"/>
+                <field name="number_of_pumpunits"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroup_view_search" model="ir.ui.view">
+        <field name="name">Pumpgroups (search view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="pumpgroup_code"/>
+                <field name="name"/>
+                <filter string="Typology: Elevation to constant level" name="typology_elevation" domain="[('typology','=','01_elevation')]"/>
+                <filter string="Typology: Injection to network" name="typology_injection" domain="[('typology','=','02_injection')]"/>
+                <filter string="Typology: Irrigation Well" name="typology_well" domain="[('typology','=','03_well')]"/>
+                <separator/>
+                <filter string="Power-Supply Type: Electrical Grid" name="powersupply_type_electricalgrid" domain="[('powersupply_type','=','01_electricalgrid')]"/>
+                <filter string="Power-Supply Type: Isolated Photovoltaic Pumping" name="powersupply_type_photovpumping" domain="[('powersupply_type','=','02_photovpumping')]"/>
+                <filter string="Power-Supply Type: Photovoltaic Pumping and Electrical Grid" name="powersupply_type_photovpumping_electricalgrid" domain="[('powersupply_type','=','03_photovpumping_electricalgrid')]"/>
+                <filter string="Power-Supply Type: Generator" name="powersupply_type_generator" domain="[('powersupply_type','=','04_generator')]"/>
+                <separator/>
+                <filter string="GIS Pumpgroup: Yes" name="gispumpgroupyes"
+                        domain="[('with_gis_pumpgroup','=',True)]"/>
+                <filter string="GIS Pumpgroup: No" name="gispumpgroupno"
+                        domain="[('with_gis_pumpgroup','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Typology" name="typology" context="{'group_by':'typology'}"/>
+                    <filter string="Power Supply Type" name="powersupply_type" context="{'group_by':'powersupply_type'}"/>
+                    <filter string="Intake" name="intake_id" context="{'group_by':'intake_id'}"/>
+                    <filter string="Waterpipe" name="waterpipe" context="{'group_by':'waterpipe_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroup_action" model="ir.actions.act_window">
+        <field name="name">Pumpgroups</field>
+        <field name="res_model">wua.pumpgroup</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_pumpgroup_view_tree"/>
+        <field name="search_view_id" ref="wua_pumpgroup_view_search"/>
+    </record>
+
+    <menuitem
+        name="Pumpgroups"
+        id="wua_pumpgroup_menu"
+        parent="base_wua_infrastructure_primary.base_wua_infrastructure_primary_menu"
+        sequence="31"
+        action="wua_pumpgroup_action"/>
+
+</odoo>

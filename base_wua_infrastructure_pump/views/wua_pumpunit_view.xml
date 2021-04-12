@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pumpunit_view_form" model="ir.ui.view">
+        <field name="name">Pumpunit (form view)</field>
+        <field name="model">wua.pumpunit</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="pumpgroup_id"/>
+                            <field name="pumpunit_number"/>
+                            <field name="pumpunit_alias"/>
+                            <field name="pump_trademark"/>
+                            <field name="pump_model"/>
+                            <field name="engine_trademark"/>
+                            <field name="engine_model"/>
+                            <field name="typology"/>
+                            <field name="nominal_flow"/>
+                            <field name="nominal_height"/>
+                            <field name="rpm"/>
+                            <field name="nominal_power"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="number_of_pumpunits"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="page_start_and_regulation" string="Start/Regulation">
+                                <field name="start_and_regulation"/>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_pumpunit_view_tree" model="ir.ui.view">
+        <field name="name">Pumpunits (tree view)</field>
+        <field name="model">wua.pumpunit</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_pump_pumpunit_view_tree">
+                <field name="pumpgroup_id"/>
+                <field name="pumpunit_number"/>
+                <field name="pumpunit_alias"/>
+                <field name="typology"/>
+                <field name="pump_trademark"/>
+                <field name="pump_model"/>
+                <field name="nominal_flow"/>
+                <field name="nominal_height"/>
+                <field name="rpm"/>
+                <field name="nominal_power"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_pumpunit_view_search" model="ir.ui.view">
+        <field name="name">Pumpunits (search view)</field>
+        <field name="model">wua.pumpunit</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="pumpgroup_id"/>
+                <field name="pumpunit_alias"/>
+                <filter string="Typology: Elevation to constant level" name="typology_vcaldriedengine" domain="[('typology','=','01_vcaldriedengine')]"/>
+                <filter string="Typology: Vertical" name="typology_vcal" domain="[('typology','=','02_vcal')]"/>
+                <filter string="Typology: Well Pump" name="typology_wellpump" domain="[('typology','=','03_wellpump')]"/>
+                <filter string="Typology: Horizontal Split Camera" name="typology_htalsplitcamera" domain="[('typology','=','04_htalsplitcamera')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Typology" name="typology" context="{'group_by':'typology'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_pumpunit_action" model="ir.actions.act_window">
+        <field name="name">Pumpunits</field>
+        <field name="res_model">wua.pumpunit</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_pumpunit_view_tree"/>
+        <field name="search_view_id" ref="wua_pumpunit_view_search"/>
+    </record>
+
+    <menuitem
+        name="Pumpunits"
+        id="wua_pumpunit_menu"
+        parent="base_wua_infrastructure_primary.base_wua_infrastructure_primary_menu"
+        sequence="41"
+        action="wua_pumpunit_action"/>
+
+</odoo>

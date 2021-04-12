@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_hydraulicsector_view_form" model="ir.ui.view">
+        <field name="name">Hydraulic Sectors (form view)</field>
+        <field name="model">wua.hydraulicsector</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pressurized_hierarchy.wua_hydraulicsector_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="(//div[@name='buttons']/button)[last()]" position="before">
+                <button name="action_see_pumpgroups"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-watering-request">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">
+                            Pumpgroups
+                        </span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

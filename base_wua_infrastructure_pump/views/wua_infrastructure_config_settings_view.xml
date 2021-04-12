@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters (Pump Infrastucture)</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pressurized_hierarchy.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='url_gis_viewer_waterpipe_param']" position="after">
+                <field name="url_gis_viewer_photovoltaicplant_param"/>
+                <field name="url_gis_viewer_pumpgroup_param"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
