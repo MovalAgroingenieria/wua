@@ -3,7 +3,7 @@
    :alt: License: AGPL-3
 
 ===============================================
-Water Users Association: Primary Infrastructure
+Water Users Association: Pump Infrastructure
 ===============================================
 
 This module allows you to manage the pumping infrastructure of water users associations.
@@ -11,7 +11,7 @@ This module allows you to manage the pumping infrastructure of water users assoc
 Description
 ===========
 
-Management of the primary infrastructure of a water user association:
+Management of the pumping infrastructure of a water user association:
 
 * Photovoltaicplants.
 * Pumpunits.

@@ -2,16 +2,16 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-===============================================
-Water Users Association: Primary Infrastructure
-===============================================
+===================================================
+Water Users Association: Pumping Infrastructure GIS
+===================================================
 
 This module allows you to manage the pumping infrastructure of water users associations.
 
 Description
 ===========
 
-Management of the primary infrastructure of a water user association (GIS):
+Management of the pumping infrastructure of a water user association (GIS):
 
 * Integrated GIS Management for Photovoltaic Plants and and Pumpgroups.
 
