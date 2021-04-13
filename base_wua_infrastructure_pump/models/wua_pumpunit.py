@@ -41,14 +41,12 @@ class WuaPumpunit(models.Model):
         string='Pump Trademark',
         size=40,
         index=True,
-        required=True,
     )
 
     pump_model = fields.Char(
         string='Pump Model',
         size=40,
         index=True,
-        required=True,
     )
 
     engine_trademark = fields.Char(
