@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-12 13:29+0000\n"
-"PO-Revision-Date: 2021-04-12 13:29+0000\n"
+"POT-Creation-Date: 2021-04-14 10:13+0000\n"
+"PO-Revision-Date: 2021-04-14 10:13+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -160,8 +160,8 @@ msgstr "Código de instalación foltovoltaica existente."
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.photovoltaicplant:0
-msgid "Existing photovoltaicplant identifier."
-msgstr "Identificador de instalación fotovoltaica existente."
+msgid "Existing photovoltaicplant name."
+msgstr "Nombre de instalación fotovoltaica existente."
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpunit:0
@@ -179,12 +179,6 @@ msgid "Existing pumpgroup."
 msgstr "Bombeo existente."
 
 #. module: base_wua_infrastructure_pump
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_form
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
-msgid "First year"
-msgstr "Primer año"
-
-#. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_with_gis_photovoltaicplant
 msgid "GIS Photovoltaicplant"
 msgstr "Instalación fotovoltaica GIS"
@@ -192,12 +186,12 @@ msgstr "Instalación fotovoltaica GIS"
 #. module: base_wua_infrastructure_pump
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_search
 msgid "GIS Photovoltaicplant: No"
-msgstr "Instalación fotovoltaica: No"
+msgstr "Instalación fotovoltaica GIS: No"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_search
 msgid "GIS Photovoltaicplant: Yes"
-msgstr "Instalación fotovoltaica: Sí"
+msgstr "Instalación fotovoltaica GIS: Sí"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_with_gis_pumpgroup
@@ -274,14 +268,19 @@ msgid "Injection to network"
 msgstr "Inyección a red"
 
 #. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_form
+msgid "Inst. Power (kW)"
+msgstr "Pot. Instalada (kW)"
+
+#. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_installed_capacity
 msgid "Installed Capacity (kW)"
 msgstr "Potencia instalada (kW)"
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.photovoltaicplant:0
-msgid "Installed capacity must be a positive number."
-msgstr "Potencia instalada debe ser un número positivo."
+msgid "Installed capacity cannot be a negative value."
+msgstr "La potencia instalada no puede ser un valor negativo."
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
@@ -318,7 +317,7 @@ msgstr "Bombeo fotovoltaico aislado"
 #: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:178
 #, python-format
 msgid "It is not possible to populate the intake and waterpipe fields."
-msgstr "No es posible rellenear los campos de captación y ramal, elimine uno."
+msgstr "No es posible rellenar los campos de captación y ramal, elimine uno."
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant___last_update
@@ -352,6 +351,11 @@ msgid "N. of pump units"
 msgstr "Nº de bombas"
 
 #. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "N. pumpunits (pumpgroup)"
+msgstr "Nº bombas (bombeo)"
+
+#. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_name
 msgid "Name"
@@ -366,6 +370,23 @@ msgstr "Nombre del parámetro de instalación fotovoltaica en la URL del visor G
 #: model:ir.model.fields,help:base_wua_infrastructure_pump.field_wua_infrastructure_configuration_url_gis_viewer_pumpgroup_param
 msgid "Name of pumpgroup param in the GIS viewer url"
 msgstr "Nombre del parámetro de bombeo en la URL del visor GIS"
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "Nom. Flow (m³/h)"
+msgstr "Caudal nom. (m³/h)"
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "Nom. Height (mca)"
+msgstr "Altura nom. (mca)"
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "Nom. Power (kW)"
+msgstr "Pot. nominal (kW)"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_nominal_flow
@@ -386,24 +407,20 @@ msgstr "Potencia nominal (kW)"
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpgroup:0
-msgid "Nominal flow must be a positive number."
-msgstr "El caudal nominal debe ser un número positivo."
-
-#. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpunit:0
-msgid "Nominal flow must be positive number."
-msgstr "El caudal nominal debe ser un número positivo."
+msgid "Nominal flow cannot be a negative value."
+msgstr "El caudal nominal no puede ser un valor negativo."
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpgroup:0
 #: sql_constraint:wua.pumpunit:0
-msgid "Nominal height must be a positive number."
-msgstr "La altura nominal debe ser un número positivo."
+msgid "Nominal height cannot be a negative value."
+msgstr "La altura nominal no puede ser un valor negativo."
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpunit:0
-msgid "Nominal power must be a positive number."
-msgstr "La potencia nominal debe ser un número positivo."
+msgid "Nominal power cannot be a negative value."
+msgstr "La potencia nominal no puede ser un valor negativo."
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_notes
@@ -421,11 +438,6 @@ msgid "Number of pump units of the pump group"
 msgstr "Nº bombas del bombeo"
 
 #. module: base_wua_infrastructure_pump
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_form
-msgid "P. installed (KW)"
-msgstr "P. instalada (KW)"
-
-#. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_infrastructure_configuration_url_gis_viewer_photovoltaicplant_param
 msgid "Param for photovoltaicplant"
 msgstr "Parámetro instalación fotovoltaica"
@@ -439,6 +451,11 @@ msgstr "Parámetro bombeo"
 #: model:ir.model,name:base_wua_infrastructure_pump.model_wua_parcel
 msgid "Parcels (integrated GIS)"
 msgstr "Parcels (integrated GIS)"
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
+msgid "Photo. Plant"
+msgstr "Inst. fotovoltaica"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_photovoltaicplant_id
@@ -527,7 +544,7 @@ msgstr "Bombas"
 #. module: base_wua_infrastructure_pump
 #: code:addons/base_wua_infrastructure_pump/models/wua_hydraulicsector.py:30
 #: code:addons/base_wua_infrastructure_pump/models/wua_intake.py:30
-#: code:addons/base_wua_infrastructure_pump/models/wua_photovoltaicplant.py:205
+#: code:addons/base_wua_infrastructure_pump/models/wua_photovoltaicplant.py:221
 #: code:addons/base_wua_infrastructure_pump/models/wua_waterpipe.py:30
 #: model:ir.actions.act_window,name:base_wua_infrastructure_pump.wua_pumpgroup_action
 #: model:ir.ui.menu,name:base_wua_infrastructure_pump.wua_pumpgroup_menu
@@ -536,7 +553,7 @@ msgid "Pumpgroups"
 msgstr "Bombeos"
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:307
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:323
 #: model:ir.actions.act_window,name:base_wua_infrastructure_pump.wua_pumpunit_action
 #: model:ir.ui.menu,name:base_wua_infrastructure_pump.wua_pumpunit_menu
 #, python-format
@@ -550,8 +567,8 @@ msgstr "RPM"
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpunit:0
-msgid "RPM must be a positive number."
-msgstr "RPM debe ser un número positivo."
+msgid "RPM cannot be a negative value."
+msgstr "Las RPM no pueden ser un valor negativo."
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_regulation_system
@@ -630,7 +647,8 @@ msgid "Well Pump"
 msgstr "Bomba pozo"
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpunit.py:157
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpunit.py:155
 #, python-format
 msgid "pump"
 msgstr "bomba"
+

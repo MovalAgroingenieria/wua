@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-12 13:28+0000\n"
-"PO-Revision-Date: 2021-04-12 13:28+0000\n"
+"POT-Creation-Date: 2021-04-14 10:12+0000\n"
+"PO-Revision-Date: 2021-04-14 10:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -154,7 +154,7 @@ msgstr ""
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.photovoltaicplant:0
-msgid "Existing photovoltaicplant identifier."
+msgid "Existing photovoltaicplant name."
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
@@ -170,12 +170,6 @@ msgstr ""
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpgroup:0
 msgid "Existing pumpgroup."
-msgstr ""
-
-#. module: base_wua_infrastructure_pump
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_form
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
-msgid "First year"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
@@ -268,13 +262,18 @@ msgid "Injection to network"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_form
+msgid "Inst. Power (KW)"
+msgstr ""
+
+#. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_installed_capacity
 msgid "Installed Capacity (kW)"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.photovoltaicplant:0
-msgid "Installed capacity must be a positive number."
+msgid "Installed capacity cannot be a negative value."
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
@@ -346,6 +345,11 @@ msgid "N. of pump units"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "N. pumpunits (pumpgroup)"
+msgstr ""
+
+#. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_name
 msgid "Name"
@@ -359,6 +363,23 @@ msgstr ""
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,help:base_wua_infrastructure_pump.field_wua_infrastructure_configuration_url_gis_viewer_pumpgroup_param
 msgid "Name of pumpgroup param in the GIS viewer url"
+msgstr ""
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "Nom. Flow (m³/h)"
+msgstr ""
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "Nom. Height (mca)"
+msgstr ""
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "Nom. Power (KW)"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
@@ -380,23 +401,19 @@ msgstr ""
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpgroup:0
-msgid "Nominal flow must be a positive number."
-msgstr ""
-
-#. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpunit:0
-msgid "Nominal flow must be positive number."
+msgid "Nominal flow cannot be a negative value."
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpgroup:0
 #: sql_constraint:wua.pumpunit:0
-msgid "Nominal height must be a positive number."
+msgid "Nominal height cannot be a negative value."
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpunit:0
-msgid "Nominal power must be a positive number."
+msgid "Nominal power cannot be a negative value."
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
@@ -415,11 +432,6 @@ msgid "Number of pump units of the pump group"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
-#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_form
-msgid "P. installed (KW)"
-msgstr ""
-
-#. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_infrastructure_configuration_url_gis_viewer_photovoltaicplant_param
 msgid "Param for photovoltaicplant"
 msgstr ""
@@ -432,6 +444,11 @@ msgstr ""
 #. module: base_wua_infrastructure_pump
 #: model:ir.model,name:base_wua_infrastructure_pump.model_wua_parcel
 msgid "Parcels (integrated GIS)"
+msgstr ""
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
+msgid "Photo. Plant"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
@@ -521,7 +538,7 @@ msgstr ""
 #. module: base_wua_infrastructure_pump
 #: code:addons/base_wua_infrastructure_pump/models/wua_hydraulicsector.py:30
 #: code:addons/base_wua_infrastructure_pump/models/wua_intake.py:30
-#: code:addons/base_wua_infrastructure_pump/models/wua_photovoltaicplant.py:205
+#: code:addons/base_wua_infrastructure_pump/models/wua_photovoltaicplant.py:221
 #: code:addons/base_wua_infrastructure_pump/models/wua_waterpipe.py:30
 #: model:ir.actions.act_window,name:base_wua_infrastructure_pump.wua_pumpgroup_action
 #: model:ir.ui.menu,name:base_wua_infrastructure_pump.wua_pumpgroup_menu
@@ -530,7 +547,7 @@ msgid "Pumpgroups"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:307
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:323
 #: model:ir.actions.act_window,name:base_wua_infrastructure_pump.wua_pumpunit_action
 #: model:ir.ui.menu,name:base_wua_infrastructure_pump.wua_pumpunit_menu
 #, python-format
@@ -544,7 +561,7 @@ msgstr ""
 
 #. module: base_wua_infrastructure_pump
 #: sql_constraint:wua.pumpunit:0
-msgid "RPM must be a positive number."
+msgid "RPM cannot be a negative value."
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
@@ -624,7 +641,7 @@ msgid "Well Pump"
 msgstr ""
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpunit.py:157
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpunit.py:155
 #, python-format
 msgid "pump"
 msgstr ""

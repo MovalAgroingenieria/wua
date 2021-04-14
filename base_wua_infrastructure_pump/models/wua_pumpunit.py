@@ -119,20 +119,20 @@ class WuaPumpunit(models.Model):
          'Existing pump unit.'),
         ('correct_pumpunit_number',
          'CHECK (pumpunit_number >= 1 AND '
-         'pumpunit_number < 999999)',
+         'pumpunit_number <= 999999)',
          'Invalid pumpunit number.'),
         ('positive_nominal_flow',
          'CHECK (nominal_flow >= 0)',
-         'Nominal flow must be positive number.'),
+         'Nominal flow cannot be a negative value.'),
         ('positive_nominal_height',
          'CHECK (nominal_height >= 0)',
-         'Nominal height must be a positive number.'),
+         'Nominal height cannot be a negative value.'),
         ('positive_rpm',
          'CHECK (rpm >= 0)',
-         'RPM must be a positive number.'),
+         'RPM cannot be a negative value.'),
         ('positive_nominal_power',
          'CHECK (nominal_power >= 0)',
-         'Nominal power must be a positive number.'),
+         'Nominal power cannot be a negative value.'),
         ]
 
     @api.onchange('pumpgroup_id')

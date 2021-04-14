@@ -88,20 +88,20 @@ class WuaPhotovoltaicplant(models.Model):
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
-         'Existing photovoltaicplant identifier.'),
+         'Existing photovoltaicplant name.'),
         ('unique_code',
          'UNIQUE (photovoltaicplant_code)',
          'Existing photovoltaicplant code.'),
         ('correct_photovoltaicplant_code',
          'CHECK (photovoltaicplant_code >= 1 AND '
-         'photovoltaicplant_code < 999999)',
+         'photovoltaicplant_code <= 999999)',
          'Invalid photovoltaicplant code.'),
         ('positive_implementation_year',
          'CHECK (implementation_year > 0)',
          'Implementation year must be greater than 0.'),
         ('positive_installed_capacity',
          'CHECK (installed_capacity >= 0)',
-         'Installed capacity must be a positive number.'),
+         'Installed capacity cannot be a negative value.'),
     ]
 
     @api.multi
@@ -120,6 +120,22 @@ class WuaPhotovoltaicplant(models.Model):
             if record.pumpgroup_ids:
                 number_of_pumpgroups = len(record.pumpgroup_ids)
             record.number_of_pumpgroups = number_of_pumpgroups
+
+    def _search_age(self, operator, value):
+        current_year = int(datetime.date.today().strftime("%Y"))
+        new_operator = operator
+        if operator == '>':
+            new_operator = '<'
+        elif operator == '>=':
+            new_operator = '<='
+        elif operator == '<':
+            new_operator = '>'
+        elif operator == '<=':
+            new_operator = '>='
+        photovoltaicplants = self.env['wua.photovoltaicplant'].search(
+            [('implementation_year', '!=', 0),
+             ('implementation_year', new_operator, current_year - value)])
+        return ([('id', 'in', [x.id for x in photovoltaicplants])])
 
     @api.multi
     def name_get(self):
@@ -212,19 +228,3 @@ class WuaPhotovoltaicplant(models.Model):
             'target': 'current',
         }
         return act_window
-
-    def _search_age(self, operator, value):
-        current_year = int(datetime.date.today().strftime("%Y"))
-        new_operator = operator
-        if operator == '>':
-            new_operator = '<'
-        elif operator == '>=':
-            new_operator = '<='
-        elif operator == '<':
-            new_operator = '>'
-        elif operator == '<=':
-            new_operator = '>='
-        photovoltaicplants = self.env['wua.photovoltaicplant'].search(
-            [('implementation_year', '!=', 0),
-             ('implementation_year', new_operator, current_year - value)])
-        return ([('id', 'in', [x.id for x in photovoltaicplants])])

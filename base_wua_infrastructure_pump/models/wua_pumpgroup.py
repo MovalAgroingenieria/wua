@@ -159,17 +159,17 @@ class WuaPumpgroup(models.Model):
          'Existing pumpgroup.'),
         ('correct_pumpgroup_code',
          'CHECK (pumpgroup_code >= 1 AND '
-         'pumpgroup_code < 999999)',
+         'pumpgroup_code <= 999999)',
          'Invalid pumpgroup code.'),
         ('positive_implementation_year',
          'CHECK (implementation_year > 0)',
          'Implementation year must be greater than 0.'),
         ('positive_nominal_flow',
          'CHECK (nominal_flow >= 0)',
-         'Nominal flow must be a positive number.'),
+         'Nominal flow cannot be a negative value.'),
         ('positive_nominal_height',
          'CHECK (nominal_height >= 0)',
-         'Nominal height must be a positive number.'),
+         'Nominal height cannot be a negative value.'),
         ]
 
     @api.constrains('intake_id', 'waterpipe_id')
@@ -203,6 +203,22 @@ class WuaPumpgroup(models.Model):
             if record.pumpunit_ids:
                 number_of_pumpunits = len(record.pumpunit_ids)
             record.number_of_pumpunits = number_of_pumpunits
+
+    def _search_age(self, operator, value):
+        current_year = int(datetime.date.today().strftime("%Y"))
+        new_operator = operator
+        if operator == '>':
+            new_operator = '<'
+        elif operator == '>=':
+            new_operator = '<='
+        elif operator == '<':
+            new_operator = '>'
+        elif operator == '<=':
+            new_operator = '>='
+        pumpgroups = self.env['wua.pumpgroup'].search(
+            [('implementation_year', '!=', 0),
+             ('implementation_year', new_operator, current_year - value)])
+        return ([('id', 'in', [x.id for x in pumpgroups])])
 
     @api.multi
     def name_get(self):
@@ -314,19 +330,3 @@ class WuaPumpgroup(models.Model):
             'target': 'current',
         }
         return act_window
-
-    def _search_age(self, operator, value):
-        current_year = int(datetime.date.today().strftime("%Y"))
-        new_operator = operator
-        if operator == '>':
-            new_operator = '<'
-        elif operator == '>=':
-            new_operator = '<='
-        elif operator == '<':
-            new_operator = '>'
-        elif operator == '<=':
-            new_operator = '>='
-        pumpgroups = self.env['wua.pumpgroup'].search(
-            [('implementation_year', '!=', 0),
-             ('implementation_year', new_operator, current_year - value)])
-        return ([('id', 'in', [x.id for x in pumpgroups])])
