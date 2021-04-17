@@ -73,6 +73,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
         resp = [None, 0, '', None, 0]
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        if enable_remotecontrol is None:
+            enable_remotecontrol = False
         if (enable_remotecontrol):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'url_remotecontrol_rest')

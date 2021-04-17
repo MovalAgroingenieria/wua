@@ -657,15 +657,9 @@ class WuaControlperiod(models.Model):
             ': ' + _('calculated')
         _logger.info(message_01)
         # Step 2: send monitoring-mail to parnters.
-        # Provisional (final: remove comment)
-        # comp_partner_presconsumptions_to_send = \
-        #     self.env['wua.comparative.partner.presconsumption'].search(
-        #         [('controlperiod_id', '=', controlperiod.id)])
-        # Provisional (final: add comment)
         comp_partner_presconsumptions_to_send = \
             self.env['wua.comparative.partner.presconsumption'].search(
-                [('controlperiod_id', '=', controlperiod.id),
-                 ('partner_id.partner_code', '=', 62)])
+                [('controlperiod_id', '=', controlperiod.id)])
         if (comp_partner_presconsumptions_to_send and
            len(comp_partner_presconsumptions_to_send) > 0):
             monitoring_template_id = self.env.ref(
@@ -701,15 +695,9 @@ class WuaControlperiod(models.Model):
                 ': ' + _('calculated -estimations-')
             _logger.info(message_03)
             # Step 4: send estimation-mail to parnters.
-            # Provisional (final: remove comment)
-            # comp_partner_presconsumptions_to_send = \
-            #     self.env['wua.comparative.partner.presconsumption'].search(
-            #         [('controlperiod_id', '=', next_controlperiod.id)])
-            # Provisional (final: add comment)
             comp_partner_presconsumptions_to_send = \
                 self.env['wua.comparative.partner.presconsumption'].search(
-                    [('controlperiod_id', '=', next_controlperiod.id),
-                     ('partner_id.partner_code', '=', 62)])
+                    [('controlperiod_id', '=', next_controlperiod.id)])
             if (comp_partner_presconsumptions_to_send and
                len(comp_partner_presconsumptions_to_send) > 0):
                 estimation_template_id = self.env.ref(

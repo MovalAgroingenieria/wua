@@ -36,6 +36,10 @@ class WuaParcel(models.Model):
             'wua.irrigation.configuration', 'enable_remotecontrol')
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'can_be_sent_parcels_census')
+        if enable_remotecontrol is None:
+            enable_remotecontrol = False
+        if can_be_sent_parcels_census is None:
+            can_be_sent_parcels_census = False
         for record in self:
             record.remotecontrol_enabled = \
                 enable_remotecontrol & can_be_sent_parcels_census

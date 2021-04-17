@@ -22,6 +22,10 @@ class WuaIrrigationshed(models.Model):
             'wua.irrigation.configuration', 'enable_remotecontrol')
         import_from_irrigationshed = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'import_from_irrigationshed')
+        if enable_remotecontrol is None:
+            enable_remotecontrol = False
+        if import_from_irrigationshed is None:
+            import_from_irrigationshed = False
         for record in self:
             record.remotecontrol_enabled = \
                 enable_remotecontrol & import_from_irrigationshed
