@@ -72,6 +72,14 @@ class WuaPhotovoltaicplant(models.Model):
         store=False,
     )
 
+    photo_01 = fields.Binary(
+        string='Photo 1',
+        attachment=True)
+
+    photo_02 = fields.Binary(
+        string='Photo 2',
+        attachment=True)
+
     notes = fields.Html(
         string="Notes",
     )

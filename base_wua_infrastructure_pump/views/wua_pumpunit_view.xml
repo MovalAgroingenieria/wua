@@ -33,9 +33,20 @@
                             <page name="page_start_and_regulation" string="Start/Regulation">
                                 <field name="start_and_regulation"/>
                             </page>
+                            <page name="page_photos" string="Photos">
+                                <group name="photos" col="4">
+                                    <field name="photo_01"
+                                           widget="image"
+                                           class="oe_img_259_160"/>
+                                    <field name="photo_02"
+                                           widget="image"
+                                           class="oe_img_259_160"/>
+                                </group>
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
                             </page>
+
                         </notebook>
                     </group>
                 </sheet>
@@ -73,6 +84,7 @@
                 <filter string="Typology: Vertical" name="typology_vcal" domain="[('typology','=','02_vcal')]"/>
                 <filter string="Typology: Well Pump" name="typology_wellpump" domain="[('typology','=','03_wellpump')]"/>
                 <filter string="Typology: Horizontal Split Camera" name="typology_htalsplitcamera" domain="[('typology','=','04_htalsplitcamera')]"/>
+                <filter string="Typology: Horizontal Monoblock" name="typology_htalmonoblock" domain="[('typology','=','05_htalmonoblock')]"/>
                 <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Typology" name="typology" context="{'group_by':'typology'}"/>

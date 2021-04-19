@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-14 10:12+0000\n"
-"PO-Revision-Date: 2021-04-14 10:12+0000\n"
+"POT-Creation-Date: 2021-04-19 12:05+0000\n"
+"PO-Revision-Date: 2021-04-19 12:05+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -235,6 +235,11 @@ msgstr "Agrupa per"
 
 #. module: base_wua_infrastructure_pump
 #: selection:wua.pumpunit,typology:0
+msgid "Horizontal Monoblock"
+msgstr "Horitzontal monobloc"
+
+#. module: base_wua_infrastructure_pump
+#: selection:wua.pumpunit,typology:0
 msgid "Horizontal Split Camera"
 msgstr "Horitzontal càmera partida"
 
@@ -314,7 +319,7 @@ msgid "Isolated Photovoltaic Pumping"
 msgstr "Bombament fotovoltaic aïllat"
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:178
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:186
 #, python-format
 msgid "It is not possible to populate the intake and waterpipe fields."
 msgstr "No és possible omplir els camps de captació i ramal, elimini un."
@@ -450,12 +455,33 @@ msgstr "Paràmetre bombament"
 #. module: base_wua_infrastructure_pump
 #: model:ir.model,name:base_wua_infrastructure_pump.model_wua_parcel
 msgid "Parcels (integrated GIS)"
-msgstr "Parcels (integrated GIS)"
+msgstr "Parcel·les (GIS integrat)"
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_photo_01
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_photo_01
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpunit_photo_01
+msgid "Photo 1"
+msgstr "Foto 1"
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_photo_02
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_photo_02
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpunit_photo_02
+msgid "Photo 2"
+msgstr "Foto 2"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
 msgid "Photo. Plant"
 msgstr "Inst. fotovoltaica"
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_photovoltaicplant_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_form
+msgid "Photos"
+msgstr "Fotos"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_photovoltaicplant_id
@@ -544,7 +570,7 @@ msgstr "Bombes"
 #. module: base_wua_infrastructure_pump
 #: code:addons/base_wua_infrastructure_pump/models/wua_hydraulicsector.py:30
 #: code:addons/base_wua_infrastructure_pump/models/wua_intake.py:30
-#: code:addons/base_wua_infrastructure_pump/models/wua_photovoltaicplant.py:221
+#: code:addons/base_wua_infrastructure_pump/models/wua_photovoltaicplant.py:229
 #: code:addons/base_wua_infrastructure_pump/models/wua_waterpipe.py:30
 #: model:ir.actions.act_window,name:base_wua_infrastructure_pump.wua_pumpgroup_action
 #: model:ir.ui.menu,name:base_wua_infrastructure_pump.wua_pumpgroup_menu
@@ -553,7 +579,7 @@ msgid "Pumpgroups"
 msgstr "Bombaments"
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:323
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:331
 #: model:ir.actions.act_window,name:base_wua_infrastructure_pump.wua_pumpunit_action
 #: model:ir.ui.menu,name:base_wua_infrastructure_pump.wua_pumpunit_menu
 #, python-format
@@ -602,8 +628,13 @@ msgstr "Tipologia: Elevació a cota constant"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_search
+msgid "Typology: Horizontal Monoblock"
+msgstr "Tipología: Horitzontal monobloc"
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpunit_view_search
 msgid "Typology: Horizontal Split Camera"
-msgstr "Tipología: Horizontal cámara partida"
+msgstr "Tipología: Horitzontal càmera partida"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_pump.wua_pumpgroup_view_search
@@ -647,8 +678,7 @@ msgid "Well Pump"
 msgstr "Bomba de pou"
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpunit.py:155
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpunit.py:164
 #, python-format
 msgid "pump"
 msgstr "bomba"
-

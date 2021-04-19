@@ -51,6 +51,14 @@ class WuaPumpgroup(models.Model):
         store=False,
     )
 
+    photo_01 = fields.Binary(
+        string='Photo 1',
+        attachment=True)
+
+    photo_02 = fields.Binary(
+        string='Photo 2',
+        attachment=True)
+
     typology = fields.Selection(
         [
             ('01_elevation', 'Elevation to constant level'),

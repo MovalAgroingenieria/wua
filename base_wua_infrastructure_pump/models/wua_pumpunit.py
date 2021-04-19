@@ -65,12 +65,21 @@ class WuaPumpunit(models.Model):
         default=0,
     )
 
+    photo_01 = fields.Binary(
+        string='Photo 1',
+        attachment=True)
+
+    photo_02 = fields.Binary(
+        string='Photo 2',
+        attachment=True)
+
     typology = fields.Selection(
         [
             ('01_vcaldriedengine', 'Vertical Dried Engine'),
             ('02_vcal', 'Vertical'),
             ('03_wellpump', 'Well Pump'),
             ('04_htalsplitcamera', 'Horizontal Split Camera'),
+            ('05_htalmonoblock', 'Horizontal Monoblock'),
         ],
         string='Typology',
         required=True,
