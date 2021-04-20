@@ -514,8 +514,6 @@ class WuaControlreading(models.Model):
                             'validated': True,
                             })
                         ref_date = reading_time[0:10]
-                        # Provisional
-                        print ref_date
                         controlperiod = \
                             controlperiod_model._get_control_period(ref_date)
                         if controlperiod:
