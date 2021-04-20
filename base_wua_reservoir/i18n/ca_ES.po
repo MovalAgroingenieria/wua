@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-19 09:13+0000\n"
-"PO-Revision-Date: 2021-04-19 09:13+0000\n"
+"POT-Creation-Date: 2021-04-20 13:24+0000\n"
+"PO-Revision-Date: 2021-04-20 13:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,8 +27,8 @@ msgstr "<span class=\"o_stat_text\">Reservoir readings</span>"
 
 #. module: base_wua_reservoir
 #: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoir_view_form
-msgid "<span>LAST READING</span>"
-msgstr "<span>LAST READING</span>"
+msgid "<span><b>LAST READING</b></span>"
+msgstr "<span><b>LAST READING</b></span>"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_age
@@ -77,13 +77,13 @@ msgstr "Gràfic de consums"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_coordinate_x
-msgid "Coordinate x"
-msgstr "Coordinate x"
+msgid "Coordinate X"
+msgstr "Coordinate X"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_coordinate_y
-msgid "Coordinate y"
-msgstr "Coordinate y"
+msgid "Coordinate Y"
+msgstr "Coordinate Y"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_county_id
@@ -248,11 +248,6 @@ msgid "Indicates whether the readings are height or volume."
 msgstr "Indicates whether the readings are height or volume."
 
 #. module: base_wua_reservoir
-#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_reading_time
-msgid "Instant"
-msgstr "Instant"
-
-#. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_interior_slope_hv
 msgid "Interior slope H/V (X/1)"
 msgstr "Interior slope H/V (X/1)"
@@ -261,6 +256,12 @@ msgstr "Interior slope H/V (X/1)"
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_interior_slope_hv
 msgid "Interior slope."
 msgstr "Interior slope."
+
+#. module: base_wua_reservoir
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:231
+#, python-format
+msgid "It is not possible to record a reading prior to the last reading."
+msgstr "It is not possible to record a reading prior to the last reading."
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_last_differential_volume
@@ -420,6 +421,16 @@ msgid "Reservoir Readings"
 msgstr "Reservoir Readings"
 
 #. module: base_wua_reservoir
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_coordinate_x
+msgid "Reservoir X coordinate in the EPSG reference system: 25830."
+msgstr "Reservoir X coordinate in the EPSG reference system: 25830."
+
+#. module: base_wua_reservoir
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_coordinate_y
+msgid "Reservoir Y coordinate in the EPSG reference system: 25830."
+msgstr "Reservoir Y coordinate in the EPSG reference system: 25830."
+
+#. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_crest_aisle_width
 msgid "Reservoir crest aisle width."
 msgstr "Reservoir crest aisle width."
@@ -444,16 +455,6 @@ msgstr "Reservoir readings"
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_typology
 msgid "Reservoir typology"
 msgstr "Reservoir typology"
-
-#. module: base_wua_reservoir
-#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_coordinate_x
-msgid "Reservoir x coordinate in the EPSG reference system: 25830."
-msgstr "Reservoir x coordinate in the EPSG reference system: 25830."
-
-#. module: base_wua_reservoir
-#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_coordinate_y
-msgid "Reservoir y coordinate in the EPSG reference system: 25830."
-msgstr "Reservoir y coordinate in the EPSG reference system: 25830."
 
 #. module: base_wua_reservoir
 #: model:ir.actions.act_window,name:base_wua_reservoir.wua_reservoir_action
@@ -613,7 +614,8 @@ msgid "The volume entered must be zero or positive."
 msgstr "The volume entered must be zero or positive."
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:196
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:199
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:202
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr "There can be no intermediate readings without eliminating."
@@ -622,6 +624,11 @@ msgstr "There can be no intermediate readings without eliminating."
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_sheet_thickness
 msgid "Thickness of the waterproofing sheet."
 msgstr "Thickness of the waterproofing sheet."
+
+#. module: base_wua_reservoir
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_reading_time
+msgid "Time"
+msgstr "Data"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_typology
@@ -717,4 +724,19 @@ msgstr "Waterproofing material"
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_implementation_year
 msgid "Year of commissioning of the reservoir."
 msgstr "Year of commissioning of the reservoir."
+
+#. module: base_wua_reservoir
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_a
+msgid "volume = (A * height * height) + (b * height) + c"
+msgstr "volume = (A * height * height) + (b * height) + c"
+
+#. module: base_wua_reservoir
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_b
+msgid "volume = (a * height * height) + (B * height) + c"
+msgstr "volume = (a * height * height) + (B * height) + c"
+
+#. module: base_wua_reservoir
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_c
+msgid "volume = (a * height * height) + (b * height) + C"
+msgstr "volume = (a * height * height) + (b * height) + C"
 

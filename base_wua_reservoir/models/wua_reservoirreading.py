@@ -10,7 +10,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaReservoirReading(models.Model):
     _name = 'wua.reservoirreading'
     _description = 'Reservoir Reading'
-    _order = 'reading_time desc, name'
+    _order = 'name desc,reading_time desc'
 
     def _default_measurements_in_height(self):
         resp = False
@@ -28,7 +28,7 @@ class WuaReservoirReading(models.Model):
         ondelete='restrict')
 
     reading_time = fields.Datetime(
-        string='Instant',
+        string='Time',
         required=True,
         index=True)
 
@@ -94,32 +94,6 @@ class WuaReservoirReading(models.Model):
          'The height must be zero or positive.'),
         ]
 
-    @api.multi
-    def name_get(self):
-        result = []
-        for record in self:
-            if record.reservoir_id and record.reading_time:
-                if record.reservoir_id.reservoir_code > 0:
-                    reservoir_name = \
-                        record.reservoir_id.name + ' [' + \
-                        str(record.reservoir_id.reservoir_code) + ']'
-                else:
-                    name = record.name
-                reading_time = \
-                    fields.Datetime.from_string(record.reading_time)
-                if self.env.user.tz:
-                    local_timezone = pytz.timezone(self.env.user.tz)
-                    offset = local_timezone.utcoffset(reading_time)
-                    reading_time = reading_time + offset
-                reading_time_str = str(reading_time)
-                date_str = reading_time_str[:10]
-                hour_str = reading_time_str[-8:]
-                name = reservoir_name + ' - ' + \
-                    datetime.datetime.strptime(
-                        date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
-                result.append((record.id, name))
-        return result
-
     @api.depends('reading_time')
     def _compute_agriculturalseason_id(self):
         agriculturalseasons = self.env['wua.agriculturalseason'].search(
@@ -135,6 +109,17 @@ class WuaReservoirReading(models.Model):
                         agriculturalseason = agriculturalseasons[i]
                     i = i + 1
             record.agriculturalseason_id = agriculturalseason
+
+    @api.depends('reading_time', 'reservoir_id')
+    def _compute_name(self):
+        for record in self:
+            value = ''
+            if record.reservoir_id and record.reading_time:
+                if record.reservoir_id.reservoir_code > 0:
+                    value = str(record.reservoir_id.reservoir_code).zfill(6) +\
+                        ' - ' + record.reservoir_id.name + ' - ' + \
+                        record.reading_time
+            record.name = value
 
     @api.depends('height', 'volume_entered')
     def _compute_volume(self):
@@ -152,7 +137,8 @@ class WuaReservoirReading(models.Model):
             volume = 0
             if measurements_in_height:
                 height = record.height
-                volume = (a * height * height) + (b * height) + c
+                # v = a*(h^2) + b*h + c
+                volume = a * (height * height) + (b * height) + c
             else:
                 volume = record.volume_entered
             record.volume = volume
@@ -162,7 +148,8 @@ class WuaReservoirReading(models.Model):
         for record in self:
             differential_volume = 0
             two_last_readings = self.env['wua.reservoirreading'].search(
-                [('reservoir_id', '=', record.reservoir_id.id)],
+                [('reservoir_id', '=', record.reservoir_id.id),
+                 ('reading_time', '<=', record.reading_time)],
                 limit=2, order='reading_time desc')
             if two_last_readings:
                 last_reading = two_last_readings[0]
@@ -193,10 +180,14 @@ class WuaReservoirReading(models.Model):
                     initial_time_to_delete = reading.reading_time
             readings_within_interval = self.env['wua.reservoirreading'].search(
                 [('reading_time', '>=', initial_time_to_delete),
-                 ('reading_time', '<=', final_time_to_delete)])
+                 ('reading_time', '<=', final_time_to_delete),
+                 ('id', 'in', readings_to_delete.ids)])
             if len(readings_within_interval) != number_of_readings_to_delete:
                 raise exceptions.UserError(_('There can be no intermediate '
                                              'readings without eliminating.'))
+        else:
+            raise exceptions.UserError(_('There can be no intermediate '
+                                         'readings without eliminating.'))
         return super(WuaReservoirReading, self).unlink()
 
     @api.multi
@@ -213,6 +204,45 @@ class WuaReservoirReading(models.Model):
                 record.is_last_reading = True
             else:
                 record.is_last_reading = False
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            if record.reservoir_id and record.reading_time:
+                if record.reservoir_id.reservoir_code > 0:
+                    reservoir_name = \
+                        record.reservoir_id.name + ' [' + \
+                        str(record.reservoir_id.reservoir_code) + ']'
+                else:
+                    name = record.name
+                reading_time = \
+                    fields.Datetime.from_string(record.reading_time)
+                if self.env.user.tz:
+                    local_timezone = pytz.timezone(self.env.user.tz)
+                    offset = local_timezone.utcoffset(reading_time)
+                    reading_time = reading_time + offset
+                reading_time_str = str(reading_time)
+                date_str = reading_time_str[:10]
+                hour_str = reading_time_str[-8:]
+                name = reservoir_name + ' - ' + \
+                    datetime.datetime.strptime(
+                        date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
+                result.append((record.id, name))
+        return result
+
+    @api.constrains('reading_time')
+    def _check_reservoirreading_timeline(self):
+        if (len(self) == 1):
+            reservoir_last_reading = False
+            reservoir_last_reading = self.env['wua.reservoirreading'].search(
+                [('reservoir_id', '=', self.reservoir_id.id)],
+                order='reading_time desc')[0]
+            if reservoir_last_reading:
+                if self.reading_time < reservoir_last_reading.reading_time:
+                    raise exceptions.ValidationError(
+                        _('It is not possible to record a reading prior to '
+                          'the last reading.'))
 
     def action_assign_agriculturalseason_volume_to_reservoirreadings(self):
         all_readings = self.env['wua.reservoirreading'].search([])

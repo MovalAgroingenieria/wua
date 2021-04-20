@@ -14,15 +14,18 @@ class WuaInfrastructureConfiguration(models.TransientModel):
 
     to_vol_coef_a = fields.Float(
         string='Vol. coefficient A',
-        digits=(32, 4))
+        digits=(32, 4),
+        help="volume = (A * height * height) + (b * height) + c")
 
     to_vol_coef_b = fields.Float(
         string='Vol. coefficient B',
-        digits=(32, 4))
+        digits=(32, 4),
+        help="volume = (a * height * height) + (B * height) + c")
 
     to_vol_coef_c = fields.Float(
         string='Vol. coefficient C',
-        digits=(32, 4))
+        digits=(32, 4),
+        help="volume = (a * height * height) + (b * height) + C")
 
     url_gis_viewer_reservoir_param = fields.Char(
         string='Param for water reservoir',

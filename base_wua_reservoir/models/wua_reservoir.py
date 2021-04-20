@@ -51,12 +51,12 @@ class WuaReservoir(models.Model):
         ondelete='restrict')
 
     coordinate_x = fields.Integer(
-        string='Coordinate x',
-        help="Reservoir x coordinate in the EPSG reference system: 25830.")
+        string='Coordinate X',
+        help="Reservoir X coordinate in the EPSG reference system: 25830.")
 
     coordinate_y = fields.Integer(
-        string='Coordinate y',
-        help="Reservoir y coordinate in the EPSG reference system: 25830.")
+        string='Coordinate Y',
+        help="Reservoir Y coordinate in the EPSG reference system: 25830.")
 
     implementation_year = fields.Integer(
         string='Implementation year',
