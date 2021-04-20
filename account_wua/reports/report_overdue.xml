@@ -3,10 +3,27 @@
 
     <template id="report_overdue_document" inherit_id="account.report_overdue_document">
 
-        <!-- Customize address -->
-        <xpath expr="//div[@class='col-xs-5 col-xs-offset-7']" position="replace">
+        <!-- Replace full document -->
+        <xpath expr="//div[@class='row']" position="replace">
+            <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+
+            <!-- Customize address -->
             <div name="overdue_address">
-                <div class="row" style="border: 1px solid white; margin: 0px 20px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Client</strong></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Client</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="border: 1px solid white; margin: 0px 20px; margin-top: 4px;">
                     <div class="col-xs-12" style="display: table;">
                         <div style="border-right: 1px solid white; width: 60%; display: table-cell;">
                             <p style="margin-bottom: 0px"><i>Invoicing address</i></p>
@@ -97,70 +114,100 @@
                     </div>
                 </div>
             </div>
-        </xpath>
 
-        <!-- Change document description, do not show client ref, change date format -->
-        <xpath expr="//div[@class='row']/p" position="replace">
-            <br/>
-            <p>
-                 Document: Account statement<br/>
-                 Date: <span t-esc="Date.strftime('%d-%m-%Y')"/><br/>
-            </p>
-        </xpath>
+            <div name="overdue_state" style="margin-top:20px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file"/></div>
+                            <div style="float: left; display: inline;"><strong>Account&amp;nbsp;statement</strong></div>
+                            <div style="float: right;">
+                                <strong><span t-esc="Date.strftime('%d-%m-%Y')"/></strong>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-file"/></div>
+                            <div style="float: left; display: inline;"><strong>Account&amp;nbsp;statement</strong></div>
+                            <div style="float: right;">
+                                <strong><span t-esc="Date.strftime('%d-%m-%Y')"/></strong>
+                            </div>
+                        </div>
+                    </t>
+                </div>
 
-        <!-- Change dates format and do not show litigation column -->
-        <!-- Is not possible to use a positional xpath -->
-        <xpath expr="//t[@t-if='Lines[o.id]']" position="replace">
-            <t t-if="Lines[o.id]">
-                <span t-field="res_company.with_context(lang=o.lang).overdue_msg"/>
-                <table class="table table-condensed" t-foreach="Lines[o.id]" t-as="currency">
-                    <thead>
-                        <tr>
-                            <th>Reference</th>
-                            <th class="text-center">Date</th>
-                            <th class="text-center">Due Date</th>
-                            <th>Communication</th>
-                            <th class="text-right">Due</th>
-                            <th class="text-right">Paid</th>
-                        </tr>
-                    </thead>
-                    <tr t-foreach="Lines[o.id][currency]" t-as="line">
-                        <td>
-                            <span t-esc="line['move_id']"/>
-                        </td>
-                        <td class="text-center">
-                            <span t-esc="datetime.datetime.strptime(line['date'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
-                        </td>
-                        <td class="text-center">
-                            <span t-esc="datetime.datetime.strptime(line['date_maturity'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
-                        </td>
-                        <td>
-                            <t t-if="line['name'] != '/'"><span t-esc="line['name']"/></t>
-                            <span t-esc="line['ref']"/>
-                        </td>
-                        <td class="text-right">
-                            <span t-esc="line['debit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
-                        </td>
-                        <td class="text-right">
-                            <span t-esc="line['credit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"></td>
-                        <td><strong>Subtotal :</strong></td>
-                        <td class="text-right"><span t-esc="Totals[o.id][currency]['due']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
-                        <td class="text-right"><span t-esc="Totals[o.id][currency]['paid']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"></td>
-                        <td><strong>Balance:</strong></td>
-                        <td class="text-right">
-                            <span t-esc="Totals[o.id][currency]['due'] - Totals[o.id][currency]['paid']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
-                        </td>
-                    </tr>
-                </table>
-            </t>
+                <!-- Change dates format and do not show litigation column -->
+                <t t-if="Lines[o.id]">
+                    <span t-field="res_company.with_context(lang=o.lang).overdue_msg"/>
+                    <div name="overdue_details" style="margin-top:20px;">
+                        <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                            <t t-if="report_style == 'light'">
+                                <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-th-list"/></div>
+                                    <div style="float: left; display: inline;"><strong>Details</strong></div>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-th-list"/></div>
+                                    <div style="float: left; display: inline;"><strong>Details</strong></div>
+                                </div>
+                            </t>
+                        </div>
+                        <table class="table table-condensed" t-foreach="Lines[o.id]" t-as="currency">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th class="text-center">Date</th>
+                                    <th class="text-center">Due Date</th>
+                                    <th>Communication</th>
+                                    <th class="text-right">Due</th>
+                                    <th class="text-right">Paid</th>
+                                </tr>
+                            </thead>
+                            <tr t-foreach="Lines[o.id][currency]" t-as="line">
+                                <td>
+                                    <span t-esc="line['move_id']"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="datetime.datetime.strptime(line['date'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="datetime.datetime.strptime(line['date_maturity'], '%Y-%m-%d').strftime('%d-%m-%Y')"/>
+                                </td>
+                                <td>
+                                    <t t-if="line['name'] != '/'"><span t-esc="line['name']"/></t>
+                                    <span t-esc="line['ref']"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="line['debit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="line['credit']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td><strong>Subtotal :</strong></td>
+                                <td class="text-right"><span t-esc="Totals[o.id][currency]['due']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+                                <td class="text-right"><span t-esc="Totals[o.id][currency]['paid']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td><strong>Balance:</strong></td>
+                                <td class="text-right">
+                                    <span t-esc="Totals[o.id][currency]['due'] - Totals[o.id][currency]['paid']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+                <p t-if="not Lines[o.id]">
+                    <strong>There is nothing due with this customer.</strong>
+                </p>
+            </div>
         </xpath>
 
     </template>
