@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_photovoltaicmeasurement_view_form" model="ir.ui.view">
+        <field name="name">Photovoltaicmeasurements (form view)</field>
+        <field name="model">wua.photovoltaicmeasurement</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="is_last_measurement" invisible="1"/>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <img src="/base_wua_pressurized_irrigation_photovoltaic_monitoring/static/image/img_last.png"
+                             hspace="2"
+                             attrs="{'invisible':[('is_last_measurement', '=', False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="photovoltaicplant_id" string="Photo. Plant"/>
+                            <field name="measurement_time"/>
+                            <field name="generated_power" string="Gen. Power (kW)"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="agriculturalseason_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicmeasurement_view_tree" model="ir.ui.view">
+        <field name="name">Photovoltaicmeasurements (tree view)</field>
+        <field name="model">wua.photovoltaicmeasurement</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_photovoltaic_measurement_view_tree">
+                <field name="photovoltaicplant_id"/>
+                <field name="agriculturalseason_id"/>
+                <field name="measurement_time"/>
+                <field name="generated_power"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicmeasurement_view_search" model="ir.ui.view">
+        <field name="name">Photovoltaicmeasurements (search view)</field>
+        <field name="model">wua.photovoltaicmeasurement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="photovoltaicplant_id"/>
+                <filter string="Active agriculturalseason" name="active_agriculturalseason"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Photovoltaicplant"
+                     name="photovoltaicplant"
+                     context="{'group_by':'photovoltaicplant_id'}"/>
+                    <filter string="Agriculturalseason"
+                     name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_technical_action_assign_agriculturalseason_to_photovoltaicmeasurements"
+            model="ir.actions.server">
+        <field name="name">Assign agricultural seasons to photovoltaicmeasurements</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation_photovoltaic_monitoring.model_wua_photovoltaicmeasurement"/>
+        <field name="code">action = env["wua.photovoltaicmeasurement"].action_assign_agriculturalseason_to_photovoltaicmeasurements()</field>
+    </record>
+
+    <menuitem id="wua_technical_assign_agriculturalseason_to_photovoltaicmeasurements"
+        name="Calculation: measurements"
+        parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+        action="wua_technical_action_assign_agriculturalseason_to_photovoltaicmeasurements"
+        sequence="3"/>
+
+
+</odoo>

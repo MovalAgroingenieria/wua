@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_photovoltaicplant_view_form" model="ir.ui.view">
+        <field name="name">Photovoltaicplant (form view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_pump.wua_photovoltaicplant_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_pumpgroups']" position="after">
+                <button name="action_show_photovoltaicmeasurements"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-list">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_measurements"/>
+                        </span>
+                        <span class="o_stat_text">
+                            Measurements
+                        </span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='age']" position="after">
+                <div colspan="2" style="margin-top: 30px; margin-bottom: 30px;">
+                    <span style="font-weight: bold; margin-left: 85px;">LAST MEASUREMENT</span>
+                </div>
+                <field name="last_measurement_time" string="Instant"/>
+                <field name="last_measurement_generated_power" string="Gen. Power (kW)"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicplant_view_tree" model="ir.ui.view">
+        <field name="name">Photovoltaicplants (tree view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_pump.wua_photovoltaicplant_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="class">o_base_wua_pressurized_irrigation_photovoltaic_monitoring_photovoltaicplant_view_tree</attribute>
+            </xpath>
+            <xpath expr="//field[@name='number_of_pumpgroups']" position="after">
+                <field name="last_measurement_time"/>
+                <field name="last_measurement_generated_power"/>
+                <field name="number_of_measurements"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
