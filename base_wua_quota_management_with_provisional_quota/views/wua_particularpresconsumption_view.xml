@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_particularpresconsumption_with_total_view_tree"
+            model="ir.ui.view">
+        <field name="name">Particular Pressurized Consumptions (tree view)</field>
+        <field name="model">wua.particularpresconsumption</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" 
+                  class="o_base_wua_quota_management_with_provisional_quota_particularpresconsumption_with_total_view_tree">
+                <field name="waterconnection_id"/>
+                <field name="parcel_id"/>
+                <field name="reading_end_time"
+                       string="Reading Time"/>
+                <field name="product_id"/>
+                <field name="controlpresconsumption_id"
+                       string="Source Consumption"/>
+                <field name="volume_real" sum="Total Volume (m³)"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_particularpresconsumption_with_total_view_search" model="ir.ui.view">
+        <field name="name">Particular Pressurized Consumptions (search view)</field>
+        <field name="model">wua.particularpresconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterconnection_id"/>
+                <field name="parcel_id"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>
