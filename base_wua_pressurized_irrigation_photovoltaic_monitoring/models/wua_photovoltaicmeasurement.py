@@ -10,7 +10,7 @@ import pytz
 class WuaPhotovoltaicmeasurement(models.Model):
     _name = 'wua.photovoltaicmeasurement'
     _description = 'Entity (photovoltaicmeasurement)'
-    _order = 'name'
+    _order = 'measurement_time desc'
 
     MAX_NAME_SIZE = 27
 
