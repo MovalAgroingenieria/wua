@@ -463,7 +463,7 @@ class WuaWaterpipe(models.Model):
     def action_get_parcels(self):
         self.ensure_one()
         current_waterpipe = self
-        condition = ['|', '|', '|', '|',
+        condition = ['|', '|', '|', '|', '|', '|', '|', '|', '|',
                      ('id', 'in',
                       current_waterpipe.parcel_wp_01_ids.ids),
                      ('id', 'in',
