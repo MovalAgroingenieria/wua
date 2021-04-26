@@ -147,6 +147,14 @@ class WuaCropplan(models.Model):
         store=True,
         compute='_compute_is_portal_user')
 
+    @api.constrains('state', 'enrolledsubparcel_ids')
+    def _check_flowmeter_id(self):
+        if len(self) == 1:
+            if self.state == 'validated' and \
+                    len(self.enrolledsubparcel_ids) <= 0:
+                raise exceptions.ValidationError(
+                    _('The crop plan must have one or more parcels.'))
+
     @api.multi
     def name_get(self):
         result = []
@@ -245,10 +253,7 @@ class WuaCropplan(models.Model):
             'wua.cropplan.ordernumber')
         vals['state'] = 'draft'
         new_cropplan = super(WuaCropplan, self).create(vals)
-        if new_cropplan.number_of_enrolledsubparcels == 0:
-            raise exceptions.UserError(_('The crop plan must have one '
-                                         'or more parcels.'))
-        if accumulative_data:
+        if new_cropplan.number_of_enrolledsubparcels > 0 and accumulative_data:
             if not self.all_enrolledparcels_with_correct_partner(
                partner_id, accumulative_data):
                 raise exceptions.UserError(_('There is some parcel with a '
@@ -285,10 +290,7 @@ class WuaCropplan(models.Model):
                 accumulative_data = self.process_vals_enrolledsubparcel_ids(
                     vals['enrolledsubparcel_ids'])
             super(WuaCropplan, self).write(vals)
-            if self.number_of_enrolledsubparcels == 0:
-                raise exceptions.UserError(_('The crop plan must have one '
-                                             'or more parcels.'))
-            if accumulative_data:
+            if self.number_of_enrolledsubparcels > 0 and accumulative_data:
                 self.sudo().update_census(self.id, accumulative_data,
                                           self.enrolledsubparcel_ids)
                 new_ids_parcel = self.get_ids_parcel_from_accumulative_data(
@@ -738,6 +740,36 @@ class WuaCropplan(models.Model):
     def cancel_cropplan(self):
         self.ensure_one()
         self.state = 'draft'
+
+    @api.multi
+    def get_parcels(self):
+        self.ensure_one()
+        subparcels_of_partner = self.env['wua.parcel.subparcel'].search(
+            [('partner_id', '=', self.partner_id.id)])
+        # Order is gonna be the number of subparcel for each parcel
+        # store how many subparcels of each parcels
+        parcels = {}
+        for subparcel in subparcels_of_partner:
+            order = 1
+            # Get order of subparcel
+            if (parcels.get(subparcel.parcel_id.id)):
+                # Old
+                order = parcels.get(subparcel.parcel_id.id) + 1
+            # UPdate for future references
+            parcels.update({
+                subparcel.parcel_id.id: order,
+            })
+            self.env['wua.enrolledsubparcel'].create({
+                'cropplan_id': self.id,
+                'parcel_id': subparcel.parcel_id.id,
+                'area_official': subparcel.area_official,
+                'area_perc': subparcel.area_perc,
+                'cultivation_id': subparcel.cultivation_id.id,
+                'cultivationvariety_id': subparcel.cultivationvariety_id.id,
+                'irrigationsystem_id': subparcel.irrigationsystem_id.id,
+                'productionmethod_id': subparcel.productionmethod_id.id,
+                'order': order,
+            })
 
     def validate_cropplans(self, active_cropplans):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):

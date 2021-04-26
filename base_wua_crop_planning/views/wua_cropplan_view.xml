@@ -23,6 +23,12 @@
                             attrs="{'invisible': ['|',('id','=',False),
                                                   ('state','=','draft')]}"
                             groups="base_wua.group_wua_manager"/>
+                    <button name="get_parcels"
+                            string="Bring Parcels"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state','!=','draft')]}"
+                            groups="base_wua.group_wua_manager"/>
                     <div name="cropplanoutoftime"
                          style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
                          attrs="{'invisible':[('out_of_time','=',False)]}">
