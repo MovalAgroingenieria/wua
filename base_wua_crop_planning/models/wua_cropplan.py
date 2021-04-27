@@ -253,7 +253,7 @@ class WuaCropplan(models.Model):
             'wua.cropplan.ordernumber')
         vals['state'] = 'draft'
         new_cropplan = super(WuaCropplan, self).create(vals)
-        if new_cropplan.number_of_enrolledsubparcels > 0 and accumulative_data:
+        if accumulative_data:
             if not self.all_enrolledparcels_with_correct_partner(
                partner_id, accumulative_data):
                 raise exceptions.UserError(_('There is some parcel with a '
@@ -266,8 +266,8 @@ class WuaCropplan(models.Model):
                                                     new_cropplan.id)
             self.sudo().update_registered_cropplan_for_waterconnections(
                 new_ids_parcel, new_cropplan.id)
-            self.sudo().update_cropplan_for_partner(partner_id,
-                                                    new_cropplan.id)
+        self.sudo().update_cropplan_for_partner(partner_id,
+                                                new_cropplan.id)
         return new_cropplan
 
     @api.multi
@@ -284,13 +284,18 @@ class WuaCropplan(models.Model):
                 return True
             accumulative_data = []
             new_ids_parcel = []
+            old_ids_parcel = self.get_ids_parcel_from_enrolledsubparcels(
+                self.enrolledsubparcel_ids)
             if 'enrolledsubparcel_ids' in vals:
-                old_ids_parcel = self.get_ids_parcel_from_enrolledsubparcels(
-                    self.enrolledsubparcel_ids)
                 accumulative_data = self.process_vals_enrolledsubparcel_ids(
                     vals['enrolledsubparcel_ids'])
             super(WuaCropplan, self).write(vals)
-            if self.number_of_enrolledsubparcels > 0 and accumulative_data:
+            # Control if deleted all enrollwsaubparcels
+            if (self.number_of_enrolledsubparcels == 0 and old_ids_parcel):
+                self.sudo().update_cropplan_for_parcels(old_ids_parcel, 0)
+                self.sudo().update_registered_cropplan_for_waterconnections(
+                    old_ids_parcel, 0)
+            if accumulative_data:
                 self.sudo().update_census(self.id, accumulative_data,
                                           self.enrolledsubparcel_ids)
                 new_ids_parcel = self.get_ids_parcel_from_accumulative_data(
@@ -742,25 +747,13 @@ class WuaCropplan(models.Model):
         self.state = 'draft'
 
     @api.multi
-    def get_parcels(self):
+    def get_subparcels(self):
         self.ensure_one()
         subparcels_of_partner = self.env['wua.parcel.subparcel'].search(
             [('partner_id', '=', self.partner_id.id)])
-        # Order is gonna be the number of subparcel for each parcel
-        # store how many subparcels of each parcels
-        parcels = {}
+        enrolledsubparcels = []
         for subparcel in subparcels_of_partner:
-            order = 1
-            # Get order of subparcel
-            if (parcels.get(subparcel.parcel_id.id)):
-                # Old
-                order = parcels.get(subparcel.parcel_id.id) + 1
-            # UPdate for future references
-            parcels.update({
-                subparcel.parcel_id.id: order,
-            })
-            self.env['wua.enrolledsubparcel'].create({
-                'cropplan_id': self.id,
+            enrolledsubparcel = {
                 'parcel_id': subparcel.parcel_id.id,
                 'area_official': subparcel.area_official,
                 'area_perc': subparcel.area_perc,
@@ -768,7 +761,11 @@ class WuaCropplan(models.Model):
                 'cultivationvariety_id': subparcel.cultivationvariety_id.id,
                 'irrigationsystem_id': subparcel.irrigationsystem_id.id,
                 'productionmethod_id': subparcel.productionmethod_id.id,
-                'order': order,
+            }
+            enrolledsubparcels.append([0, False, enrolledsubparcel])
+        if (enrolledsubparcels):
+            self.write({
+                'enrolledsubparcel_ids': enrolledsubparcels
             })
 
     def validate_cropplans(self, active_cropplans):
