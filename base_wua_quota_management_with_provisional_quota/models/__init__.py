@@ -5,3 +5,4 @@
 from . import wua_quota
 from . import wua_controlpresconsumption
 from . import wua_particularpresconsumption
+from . import wua_reading
