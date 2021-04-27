@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-24 10:43+0000\n"
-"PO-Revision-Date: 2020-11-24 10:43+0000\n"
+"POT-Creation-Date: 2021-04-27 10:53+0000\n"
+"PO-Revision-Date: 2021-04-27 10:53+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.report_invoice_document
+msgid "<strong>Consumptions</strong>"
+msgstr "<strong>Consumos</strong>"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.actions.server,name:base_wua_invoicing_gravity_irrigation.wua_add_gravconsumption_to_invoiceset
@@ -44,7 +49,7 @@ msgstr "Ref. Catastral"
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuración del riego con gestión del tipo de agua"
+msgstr "Configuration of irrigation with type of water"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_create_uid
@@ -67,6 +72,11 @@ msgid "Default type of water for gravity consumptions"
 msgstr "Tipo de agua por defecto para los tablachos"
 
 #. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_wizard_copy_requests
+msgid "Dialog box to copy watering requests"
+msgstr "Cuadro de diálogo para copiar solicitudes de riego"
+
+#. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
@@ -78,24 +88,39 @@ msgid "Distribution"
 msgstr "Reparto"
 
 #. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.report_invoice_document
+msgid "Ditch"
+msgstr "Acequia"
+
+#. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.report_invoice_document
+msgid "Duration (hours)"
+msgstr "Duración (horas)"
+
+#. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.report_invoice_document
+msgid "End time"
+msgstr "Fin del riego"
+
+#. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_product_category
 msgid "Entity (WUA Product Category)"
-msgstr "Elemento (categoría de productos)"
+msgstr "Elemento (categoría de producto)"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Elemento (producto C.R.)"
+msgstr "Elemento (plantilla producto)"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_wua_gravconsumption
 msgid "Entity (gravity consumption)"
-msgstr "Elemento (consumo de gravedad)"
+msgstr "Elemento (consumo gravedad)"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_wua_invoiceset
-msgid "Entity (invoice set of a WUA)"
-msgstr "Elemento (lote de facturas)"
+msgid "Entity (invoice set)"
+msgstr "Elemento (lote)"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_wua_invoiceset_line
@@ -123,6 +148,11 @@ msgstr "Error al actualizar los registros."
 #: selection:wua.invoiceset.line.gravconsumption,gravconsumption_type:0
 msgid "Explicit Request"
 msgstr "Petición"
+
+#. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.report_invoice_document
+msgid "Gate"
+msgstr "Tablacho"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:356
@@ -156,6 +186,11 @@ msgid "If active, the value of Default Water Type will be suggested on a waterin
 msgstr "Si está activo, el valor de \"Agua por defecto\" se sugerirá en la creación de una solicitud de riego."
 
 #. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.report_invoice_document
+msgid "Initial time"
+msgstr "Inicio del riego"
+
+#. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model,name:base_wua_invoicing_gravity_irrigation.model_account_invoice
 msgid "Invoice"
 msgstr "Factura"
@@ -167,7 +202,7 @@ msgid "Invoice Set"
 msgstr "Lote"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_gravconsumption.py:51
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_gravconsumption.py:71
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_gravconsumption_invoiced_consumption
 #: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.wua_gravconsumption_view_search
 #, python-format
@@ -221,7 +256,7 @@ msgstr "Última actualización el"
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_invoicesetline_id
 msgid "Line"
-msgstr "Línea"
+msgstr "Linea"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_line_gravconsumption_ids
@@ -229,7 +264,7 @@ msgid "Lines for gravity consumptions"
 msgstr "Líneas para consumos de gravedad"
 
 #. module: base_wua_invoicing_gravity_irrigation
-#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_gravconsumption.py:53
+#: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_gravconsumption.py:73
 #, python-format
 msgid "Not Invoiced"
 msgstr "No facturado"
@@ -243,6 +278,11 @@ msgstr "No facturado"
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_number
 msgid "Number"
 msgstr "Número"
+
+#. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_watering_number_of_invoiced_consumptions
+msgid "Number of invoiced consumptions"
+msgstr "Number of invoiced consumptions"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_irrigation_configuration_overprice_with_irrigation_worker
@@ -292,6 +332,11 @@ msgid "Total Vol. (m3)"
 msgstr "Vol. Total (m3)"
 
 #. module: base_wua_invoicing_gravity_irrigation
+#: model:product.template,name:base_wua_invoicing_gravity_irrigation.product_08
+msgid "Trasvase Gravedad (h)"
+msgstr "Trasvase Gravedad (h) (copia)"
+
+#. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_gravconsumption_type
 msgid "Type"
 msgstr "Tipo"
@@ -300,6 +345,11 @@ msgstr "Tipo"
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_vat
 msgid "VAT"
 msgstr "NIF"
+
+#. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.report_invoice_document
+msgid "Volume (m³)"
+msgstr "Volumen (m³)"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:product.category,name:base_wua_invoicing_gravity_irrigation.categ_08
@@ -317,6 +367,11 @@ msgid "Water Type"
 msgstr "Tipo de agua"
 
 #. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.report_invoice_document
+msgid "Water type"
+msgstr "Tipo de agua"
+
+#. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_watering_id
 #: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.wua_invoiceset_line_gravconsumption_view_search
 msgid "Watering"
@@ -327,6 +382,11 @@ msgstr "Entande"
 #: model:ir.ui.view,arch_db:base_wua_invoicing_gravity_irrigation.wua_invoiceset_line_gravconsumption_view_search
 msgid "Watering Period"
 msgstr "Período"
+
+#. module: base_wua_invoicing_gravity_irrigation
+#: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_gravconsumption_wateringrequest_suffix
+msgid "Watering Request Suffix"
+msgstr "Watering Request Suffix"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_gravity_irrigation.field_wua_invoiceset_line_gravconsumption_with_irrigation_worker
@@ -346,7 +406,7 @@ msgstr "Si la parcela tiene regador, el precio del agua se incrementará en este
 #. module: base_wua_invoicing_gravity_irrigation
 #: model:product.uom,name:base_wua_invoicing_gravity_irrigation.product_uom_m3
 msgid "m3"
-msgstr "m3"
+msgstr "m³"
 
 #. module: base_wua_invoicing_gravity_irrigation
 #: code:addons/base_wua_invoicing_gravity_irrigation/models/wua_invoiceset.py:137
@@ -365,3 +425,4 @@ msgstr "perfil"
 #, python-format
 msgid "total consumption"
 msgstr "consumo total"
+

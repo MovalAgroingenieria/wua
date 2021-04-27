@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_invoice_document" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@name='details_section']" position="after">
+            <t t-set="with_gravconsumptions" t-value="False"/>
+            <t t-foreach="o.invoice_line_ids" t-as="l">
+                <t t-if="l.categ_id.productcategory_code == 8">
+                    <t t-set="with_gravconsumptions" t-value="True"/>
+                </t>
+            </t>
+            <t t-if="with_gravconsumptions">
+                <t t-set="consumptions"
+                   t-value="o.sudo()._get_gravconsumptions_from_lines(o.invoice_line_ids)"/>
+                <t t-if="consumptions">
+                    <div name="consumptions">
+                        <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                            <t t-if="report_style == 'light'">
+                                <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-drop-water"/></div>
+                                    <div style="float: left; display: inline;"><strong>Consumptions</strong></div>
+                               </div>
+                            </t>
+                            <t t-else="">
+                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                    <div style="float: left; width: 32px;"><span class="fa fa-moval-drop-water"/></div>
+                                    <div style="float: left; display: inline;"><strong>Consumptions</strong></div>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="row" style="margin: 4 8px;">
+                            <table class="table table-condensed">
+                                <col name="ditch" width="22%"/>
+                                <col name="gate" width="12%"/>
+                                <col name="water_type" width="16%"/>
+                                <col name="initial_time" width="12%"/>
+                                <col name="end_time" width="12%"/>
+                                <col name="duration" width="10%"/>
+                                <col name="volume" width="10%"/>
+                                <thead>
+                                    <tr>
+                                        <th>Ditch</th>
+                                        <th>Gate</th>
+                                        <th>Water type</th>
+                                        <th class="text-center">Initial time</th>
+                                        <th class="text-center">End time</th>
+                                        <th class="text-right">Duration (hours)</th>
+                                        <th class="text-right">Volume (m³)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="invoice_tbody">
+                                    <tr t-foreach="consumptions" t-as="c">
+                                        <t t-set="watering_initial_time" t-value="context_timestamp(datetime.datetime.strptime(
+                                            c['watering_initial_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%Y %H:%M:%S')"/>
+                                        <t t-set="watering_end_time" t-value="context_timestamp(datetime.datetime.strptime(
+                                            c['watering_end_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%Y %H:%M:%S')"/>
+                                        <t t-set="watering_duration" t-value="o.env['wua.parcel'].transform_float_to_locale(
+                                            c['watering_duration'],3)"/>
+                                        <t t-set="watering_volume_real" t-value="o.env['wua.parcel'].transform_float_to_locale(
+                                            c['watering_volume_real'],1)"/>
+                                        <td><span t-esc="c['irrigationditch']"/></td>
+                                        <td><span t-esc="c['irrigationgate']"/></td>
+                                        <td><span t-esc="c['product']"/></td>
+                                        <td class="text-center"><span t-esc="watering_initial_time"/></td>
+                                        <td class="text-center"><span t-esc="watering_end_time"/></td>
+                                        <td class="text-right"><span t-esc="watering_duration"/></td>
+                                        <td class="text-right"><span t-esc="watering_volume_real"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

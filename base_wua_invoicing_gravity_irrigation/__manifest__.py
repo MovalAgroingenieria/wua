@@ -13,7 +13,8 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_gravity_irrigation",
-        "base_wua_invoicing", ],
+        "base_wua_invoicing",
+    ],
     "data": [
         "security/ir.model.access.csv",
         "data/product_category_data.xml",
@@ -23,7 +24,9 @@
         "views/wua_wateringrequest_view.xml",
         "views/wua_gravconsumption_view.xml",
         "views/wua_invoiceset_view.xml",
-        "views/account_invoice_view.xml", ],
+        "views/account_invoice_view.xml",
+        "reports/report_invoice_templates.xml",
+    ],
     "post_init_hook": "post_init_hook",
     "installable": True,
     "application": True,
