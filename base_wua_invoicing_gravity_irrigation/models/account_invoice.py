@@ -27,34 +27,38 @@ class AccountInvoice(models.Model):
     # For report
     def _get_gravconsumptions_from_lines(self, invoice_lines):
         resp = []
+        consumptions = []
         lines = []
         for invoice_line in invoice_lines:
             if invoice_line.categ_id.productcategory_code == 8:
                 resp.append(invoice_line)
         if resp:
             for line in resp:
-                irrigationditch_id = line.irrigationditch_id
+                irrigationgate_id = line.irrigationgate_id
                 parcel_id = line.parcel_id
+                invoiceset_id = line.invoiceset_id
                 data_current_line = \
                     self.env['wua.gravconsumption'].search(
                         [('parcel_id', '=', parcel_id.id),
-                         ('irrigationditch_id', '=', irrigationditch_id.id)])
+                         ('irrigationgate_id', '=', irrigationgate_id.id),
+                         ('invoiceset_id', '=', invoiceset_id.id)])
                 if data_current_line:
-                    for consumption in data_current_line:
-                        watering_initial_time = \
-                            consumption.watering_initial_time
-                        watering_end_time = consumption.watering_end_time
-                        watering_duration_min = consumption.watering_duration
-                        watering_duration = float(watering_duration_min) / 60
-                        watering_volume_real = consumption.watering_volume_real
-                    item = {
-                        'irrigationditch': irrigationditch_id.name,
-                        'irrigationgate': consumption.irrigationgate_id.name,
-                        'product': consumption.product_id.name,
-                        'watering_initial_time': watering_initial_time,
-                        'watering_end_time': watering_end_time,
-                        'watering_duration': watering_duration,
-                        'watering_volume_real': watering_volume_real,
-                        }
-                    lines.append(item)
+                    consumptions.extend(data_current_line)
+        if consumptions:
+            for consumption in consumptions:
+                watering_initial_time = consumption.watering_initial_time
+                watering_end_time = consumption.watering_end_time
+                watering_duration_min = consumption.watering_duration
+                watering_duration = float(watering_duration_min) / 60
+                watering_volume_real = consumption.watering_volume_real
+                item = {
+                    'irrigationditch': consumption.irrigationditch_id.name,
+                    'irrigationgate': consumption.irrigationgate_id.name,
+                    'product': consumption.product_id.name,
+                    'watering_initial_time': watering_initial_time,
+                    'watering_end_time': watering_end_time,
+                    'watering_duration': watering_duration,
+                    'watering_volume_real': watering_volume_real,
+                }
+                lines.append(item)
         return lines
