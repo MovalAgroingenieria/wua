@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-20 13:25+0000\n"
-"PO-Revision-Date: 2021-04-20 13:25+0000\n"
+"POT-Creation-Date: 2021-04-28 09:47+0000\n"
+"PO-Revision-Date: 2021-04-28 09:47+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -119,7 +119,7 @@ msgid "Crest level (m)"
 msgstr "Cota de coronación (m)"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:416
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:494
 #, python-format
 msgid "Date"
 msgstr "Fecha"
@@ -244,6 +244,7 @@ msgstr "Año de ejecución"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_infrastructure_configuration_measurements_in_height
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_measurements_in_height
 msgid "Indicates whether the readings are height or volume."
 msgstr "Indica si los volúmenes son medidos en altura o volumen."
 
@@ -258,7 +259,7 @@ msgid "Interior slope."
 msgstr "Talud interior."
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:231
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:244
 #, python-format
 msgid "It is not possible to record a reading prior to the last reading."
 msgstr "No se puede registrar una lectura anterior a la última lectura."
@@ -272,7 +273,7 @@ msgstr "Última variación (m³)"
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir___last_update
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última modificación el"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_is_last_reading
@@ -294,12 +295,12 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_write_date
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_write_date
 msgid "Last Updated on"
-msgstr "Última actualización el"
+msgstr "Última actualización en"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_last_volume
 msgid "Last Volume (m³)"
-msgstr "Última lectura (m³)"
+msgstr "Último volumen (m³)"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_crest_level
@@ -314,7 +315,7 @@ msgstr "Cota del terreno natural."
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_spillway_level
 msgid "Level of the spillway."
-msgstr "Cota del alivaidero."
+msgstr "Cota del aliviadero."
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_waterproofingmaterial
@@ -328,6 +329,7 @@ msgstr "Altura máxima del terraplén."
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_infrastructure_configuration_measurements_in_height
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_measurements_in_height
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_measurements_in_height
 msgid "Measurements in height"
 msgstr "Medidas en altura"
@@ -350,7 +352,7 @@ msgstr "Área del nivel máximo normal."
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_volume_nmn
 msgid "Normal maximum level volume."
-msgstr "Área del nivel máximo normal."
+msgstr "Cota del nivel máximo normal."
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_notes
@@ -394,7 +396,7 @@ msgid "Readings"
 msgstr "Lecturas"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:415
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:493
 #, python-format
 msgid "Readings of the active agricultural season"
 msgstr "Lecturas de la campaña activa"
@@ -412,7 +414,7 @@ msgid "Reservoir Reading"
 msgstr "Lectura de balsa"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:374
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:452
 #: model:ir.actions.act_window,name:base_wua_reservoir.wua_reservoirreading_action
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_agriculturalseason_reservoirreading_ids
 #: model:ir.ui.menu,name:base_wua_reservoir.wua_reservoirreading_menu
@@ -526,12 +528,12 @@ msgstr "Cota terreno (m)"
 #. module: base_wua_reservoir
 #: sql_constraint:wua.reservoir:0
 msgid "The Crest aisle width must be zero or positive."
-msgstr "Pasillo de coronación debe de ser cero o un valor positivo."
+msgstr "El pasillo de coronación debe de ser cero o un valor positivo."
 
 #. module: base_wua_reservoir
 #: sql_constraint:wua.reservoir:0
 msgid "The Crest length must be zero or positive."
-msgstr "La longitud de coronació debe de ser cero o un valor positivo."
+msgstr "La longitud de coronación debe de ser cero o un valor positivo."
 
 #. module: base_wua_reservoir
 #: sql_constraint:wua.reservoir:0
@@ -591,7 +593,7 @@ msgstr "El Área lámina NMN debe de ser cero o un valor positivo."
 #. module: base_wua_reservoir
 #: sql_constraint:wua.reservoir:0
 msgid "The coordinate X must be zero or positive."
-msgstr "The coordenada X debe de ser cero o un valor positivo."
+msgstr "La coordenada X debe de ser cero o un valor positivo."
 
 #. module: base_wua_reservoir
 #: sql_constraint:wua.reservoir:0
@@ -601,7 +603,7 @@ msgstr "La coordenada Y debe de ser cero o un valor positivo."
 #. module: base_wua_reservoir
 #: sql_constraint:wua.reservoirreading:0
 msgid "The height must be zero or positive."
-msgstr "LA altura debe de ser cero o un valor positivo."
+msgstr "La altura debe de ser cero o un valor positivo."
 
 #. module: base_wua_reservoir
 #: sql_constraint:wua.reservoir:0
@@ -611,14 +613,14 @@ msgstr "El año de ejecución debe de ser cero o un valor positivo."
 #. module: base_wua_reservoir
 #: sql_constraint:wua.reservoirreading:0
 msgid "The volume entered must be zero or positive."
-msgstr "El volumén medido debe de ser cero o un valor positivo."
+msgstr "El volumen medido debe de ser cero o un valor positivo."
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:199
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:202
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:186
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:189
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
-msgstr "No pueden existir lecturas intermedias sin eleminar."
+msgstr "No pueden existir lecturas intermedias sin eliminar."
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_sheet_thickness
@@ -651,32 +653,32 @@ msgid "Variation (m³)"
 msgstr "Variación (m³)"
 
 #. module: base_wua_reservoir
-#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_a
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_to_vol_coef_a
 msgid "Vol. coefficient A"
 msgstr "Vol. coeficiente A"
 
 #. module: base_wua_reservoir
-#: sql_constraint:wua.infrastructure.configuration:0
+#: sql_constraint:wua.reservoir:0
 msgid "Vol. coefficient A must be a positive number"
 msgstr "Vol. coeficiente A debe de ser cero o un valor positivo."
 
 #. module: base_wua_reservoir
-#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_b
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_to_vol_coef_b
 msgid "Vol. coefficient B"
 msgstr "Vol. coeficiente B"
 
 #. module: base_wua_reservoir
-#: sql_constraint:wua.infrastructure.configuration:0
+#: sql_constraint:wua.reservoir:0
 msgid "Vol. coefficient B must be a positive number"
 msgstr "Vol. coeficiente B debe de ser cero o un valor positivo."
 
 #. module: base_wua_reservoir
-#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_c
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_to_vol_coef_c
 msgid "Vol. coefficient C"
 msgstr "Vol. coeficiente C"
 
 #. module: base_wua_reservoir
-#: sql_constraint:wua.infrastructure.configuration:0
+#: sql_constraint:wua.reservoir:0
 msgid "Vol. coefficient C must be a positive number"
 msgstr "Vol. coeficiente C debe de ser cero o un valor positivo."
 
@@ -726,17 +728,17 @@ msgid "Year of commissioning of the reservoir."
 msgstr "Año de puesta en servicio de la balsa."
 
 #. module: base_wua_reservoir
-#: model:ir.model.fields,help:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_a
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_to_vol_coef_a
 msgid "volume = (A * height * height) + (b * height) + c"
 msgstr "volumen = (A * altura * altura) + (b * altura) + c"
 
 #. module: base_wua_reservoir
-#: model:ir.model.fields,help:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_b
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_to_vol_coef_b
 msgid "volume = (a * height * height) + (B * height) + c"
 msgstr "volumen = (a * altura * altura) + (B * altura) + c"
 
 #. module: base_wua_reservoir
-#: model:ir.model.fields,help:base_wua_reservoir.field_wua_infrastructure_configuration_to_vol_coef_c
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_to_vol_coef_c
 msgid "volume = (a * height * height) + (b * height) + C"
 msgstr "volumen = (a * altura * altura) + (b * altura) + C"
 

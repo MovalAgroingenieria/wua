@@ -22,7 +22,8 @@
         "views/wua_agriculturalseason_view.xml",
     ],
     "external_dependencies": {
-        "python": ["numpy", "bokeh"]},
+        "python": ["numpy", "bokeh"]
+    },
     "installable": True,
     "application": True,
 }

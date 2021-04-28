@@ -25,6 +25,33 @@ class WuaReservoir(models.Model):
             resp = 1
         return resp
 
+    def _default_to_vol_coef_a(self):
+        coef_a = 0
+        measurements_in_height = \
+            self.env['ir.values'].get_default(
+                'wua.infrastructure.configuration', 'measurements_in_height')
+        if not measurements_in_height:
+            coef_a = 0
+        return coef_a
+
+    def _default_to_vol_coef_b(self):
+        coef_b = 0
+        measurements_in_height = \
+            self.env['ir.values'].get_default(
+                'wua.infrastructure.configuration', 'measurements_in_height')
+        if not measurements_in_height:
+            coef_b = 0
+        return coef_b
+
+    def _default_to_vol_coef_c(self):
+        coef_c = 0
+        measurements_in_height = \
+            self.env['ir.values'].get_default(
+                'wua.infrastructure.configuration', 'measurements_in_height')
+        if not measurements_in_height:
+            coef_c = 0
+        return coef_c
+
     reservoir_code = fields.Integer(
         string='Code',
         default=_default_reservoir_code,
@@ -217,6 +244,32 @@ class WuaReservoir(models.Model):
         string='Consumptions Graph',
         compute='_compute_consumptions_graph')
 
+    measurements_in_height = fields.Boolean(
+        string="Measurements in height",
+        compute='_compute_measurements_in_height',
+        help="Indicates whether the readings are height or volume.")
+
+    to_vol_coef_a = fields.Float(
+        string='Vol. coefficient A',
+        digits=(32, 4),
+        required=True,
+        default=_default_to_vol_coef_a,
+        help="volume = (A * height * height) + (b * height) + c")
+
+    to_vol_coef_b = fields.Float(
+        string='Vol. coefficient B',
+        digits=(32, 4),
+        required=True,
+        default=_default_to_vol_coef_b,
+        help="volume = (a * height * height) + (B * height) + c")
+
+    to_vol_coef_c = fields.Float(
+        string='Vol. coefficient C',
+        digits=(32, 4),
+        required=True,
+        default=_default_to_vol_coef_c,
+        help="volume = (a * height * height) + (b * height) + C")
+
     _sql_constraints = [
         ('unique_code', 'UNIQUE (reservoir_code)', 'Existing reservoir code.'),
         ('unique_name', 'UNIQUE (name)', 'Existing reservoir.'),
@@ -271,6 +324,12 @@ class WuaReservoir(models.Model):
         ('valid_interior_slope_hv',
          'CHECK (interior_slope_hv >= 0)',
          'The Interior slope must be zero or positive.'),
+        ('to_vol_coef_a_positive', 'CHECK (to_vol_coef_a >= 0)',
+         'Vol. coefficient A must be a positive number'),
+        ('to_vol_coef_b_positive', 'CHECK (to_vol_coef_b >= 0)',
+         'Vol. coefficient B must be a positive number'),
+        ('to_vol_coef_c_positive', 'CHECK (to_vol_coef_c >= 0)',
+         'Vol. coefficient C must be a positive number'),
         ]
 
     @api.depends('implementation_year')
@@ -423,3 +482,12 @@ class WuaReservoir(models.Model):
                 script, div = components(p)
                 if script and div:
                     record.consumptions_graph = '%s%s' % (div, script)
+
+    @api.multi
+    def _compute_measurements_in_height(self):
+        measurements_in_height = \
+            self.env['ir.values'].get_default(
+                'wua.infrastructure.configuration', 'measurements_in_height')
+        for record in self:
+            record.measurements_in_height = measurements_in_height
+

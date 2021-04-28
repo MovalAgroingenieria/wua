@@ -5,7 +5,8 @@
         <field name="name">Reservoirs (form view)</field>
         <field name="model">wua.reservoir</field>
         <field name="arch" type="xml">
-            <form create="false" duplicate="0">
+            <form duplicate="0">
+                <field name="measurements_in_height" invisible="1"/>
                 <header></header>
                 <sheet>
                     <div name="buttons" class="oe_button_box">
@@ -30,6 +31,9 @@
                             <field name="waterproofingmaterial"/>
                             <field name="sheet_thickness"/>
                             <field name="geotextile"/>
+                            <field name="to_vol_coef_a" attrs="{'invisible':[('measurements_in_height','=',False)]}"/>
+                            <field name="to_vol_coef_b" attrs="{'invisible':[('measurements_in_height','=',False)]}"/>
+                            <field name="to_vol_coef_c" attrs="{'invisible':[('measurements_in_height','=',False)]}"/>
                             <div name="lastreading_title" colspan="2" style="margin: 10px 0px;" class="text-center">
                                 <span><b>LAST READING</b></span>
                             </div>

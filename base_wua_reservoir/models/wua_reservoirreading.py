@@ -125,20 +125,20 @@ class WuaReservoirReading(models.Model):
     def _compute_volume(self):
         measurements_in_height = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration', 'measurements_in_height')
-        a = b = c = 0
-        if measurements_in_height:
-            a = self.env['ir.values'].get_default(
-                'wua.infrastructure.configuration', 'to_vol_coef_a')
-            b = self.env['ir.values'].get_default(
-                'wua.infrastructure.configuration', 'to_vol_coef_b')
-            c = self.env['ir.values'].get_default(
-                'wua.infrastructure.configuration', 'to_vol_coef_c')
         for record in self:
             volume = 0
-            if measurements_in_height:
+            if measurements_in_height and record.reservoir_id:
                 height = record.height
-                # v = a*(h^2) + b*h + c
-                volume = a * (height * height) + (b * height) + c
+                a = record.reservoir_id.to_vol_coef_a
+                b = record.reservoir_id.to_vol_coef_b
+                c = record.reservoir_id.to_vol_coef_c
+                if a == 0 and b == 0 and c == 0:
+                    raise exceptions.UserError(
+                        _('All coefficients for measuring in height are zero '
+                          'for the reservoir %s.') % record.reservoir_id.name)
+                volume = (a * height * height) + (b * height) + c
+                if volume < 0:
+                    volume = 0
             else:
                 volume = record.volume_entered
             record.volume = volume
