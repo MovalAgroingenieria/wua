@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_partner_quota_report_document" inherit_id="base_wua_quota_management_hours.wua_partner_quota_report_document">
+        <xpath expr="//th[@name='th_consumption_hours']" position="after">
+            <th name="th_consumption_hours" class="text-right">Extra consumptions (hours)</th>
+        </xpath>
+        <xpath expr="//td[@name='td_accumulated_consumption_hours']" position="after">
+            <td name="td_provisional_extra_consumption_hours" class="text-right">
+                <span t-field="q.provisional_extra_consumption_hours"/>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='td_balance_hours']" position="replace">
+            <td name="td_provisional_balance_hours" class="text-right">
+                <span t-field="q.provisional_balance_hours"/>
+            </td>
+        </xpath>
+        <xpath expr="//t[@ t-set='total_balance_hours']" position="after">
+            <t t-set="total_provisional_extra_consumption_hours" t-value="o.recalcule_quota_total_hours(total_extra_consumption)"/>
+            <t t-set="total_provisional_balance_hours" t-value="o.recalcule_quota_total_hours(total_balance)"/>
+            <td name="td_total_provisional_extra_consumption_hours" class="text-right">
+                <strong><t t-esc="total_provisional_extra_consumption_hours"/></strong>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='td_total_balance_hours']" position="replace">
+            <td name="td_total_provisional_balance_hours" class="text-right">
+                <strong><t t-esc="total_provisional_balance_hours"/></strong>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>

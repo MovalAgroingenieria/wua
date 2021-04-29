@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_partner_quota_report_document"
+        inherit_id="base_wua_quota_management.wua_partner_quota_report_document">
+
+        <xpath expr="//t[@t-set='total_consumption']" position="after">
+            <t t-set="total_extra_consumption" t-value="0.0"/>
+        </xpath>
+        <xpath expr="//th[@name='th_consumption']" position="after">
+            <th name="th_extra_consumption" class="text-right">Extra consumptions (m<sup>3</sup>)</th>
+        </xpath>
+        <xpath expr="//td[@name='td_balance']" position="replace">
+            <td name="td_extra_consumption" class="text-right">
+                <span t-field="q.provisional_extra_consumption"/>
+                <t t-set="total_extra_consumption"
+                    t-value="total_extra_consumption + q.provisional_extra_consumption"/>
+            </td>
+            <td name="td_balance" class="text-right">
+                <span t-field="q.provisional_balance"/>
+                <t t-set="total_balance" t-value="total_balance + q.provisional_balance"/>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='td_total_consumption']" position="after">
+            <td name="td_total_extra_consumption" class="text-right">
+               <strong><t t-esc="total_extra_consumption" t-options='{"widget": "float", "precision": 2}'/></strong>
+            </td>
+        </xpath>
+
+    </template>
+</odoo>

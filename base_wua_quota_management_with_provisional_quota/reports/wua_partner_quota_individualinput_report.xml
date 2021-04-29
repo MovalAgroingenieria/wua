@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_partner_quota_individualinput_report_document"
+        inherit_id="base_wua_quota_management.wua_partner_quota_individualinput_report_document">
+
+        <xpath expr="//th[@name='th_consumptions']" position="after">
+            <th name="th_extra_consumption" class="text-center">Extra consumptions</th>
+        </xpath>
+        <xpath expr="//td[@name='td_balance']" position="replace">
+            <td name="td_extra_consumption" class="text-center">
+                <span t-field="o.quota_provisional_extra_consumption"/>
+                <span>m<sup>3</sup></span>
+            </td>
+            <td name="td_balance" class="text-center">
+                <span t-field="o.quota_provisional_balance"/>
+                <span>m<sup>3</sup></span>
+            </td>
+        </xpath>
+
+    </template>
+</odoo>

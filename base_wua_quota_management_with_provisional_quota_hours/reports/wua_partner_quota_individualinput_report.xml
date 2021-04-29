@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_partner_quota_individualinput_report_document"
+        inherit_id="base_wua_quota_management_with_provisional_quota.wua_partner_quota_individualinput_report_document">
+        <xpath expr="//td[@name='td_extra_consumption']" position="replace">
+            <td name="td_extra_consumption_vol_hours" class="text-center">
+                <span t-field="o.quota_provisional_extra_consumption_vol_hours"/>
+            </td>
+        </xpath>
+    </template>
+
+    <template id="wua_partner_quota_individualinput_report_document_2"
+        inherit_id="base_wua_quota_management_hours.wua_partner_quota_individualinput_report_document">
+        <xpath expr="//td[@name='td_balance_vol_hours']" position="replace">
+            <td name="td_provisional_balance_vol_hours" class="text-center">
+                <span t-field="o.quota_provisional_balance_vol_hours"/>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>
