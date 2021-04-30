@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-28 09:47+0000\n"
-"PO-Revision-Date: 2021-04-28 09:47+0000\n"
+"POT-Creation-Date: 2021-04-30 09:25+0000\n"
+"PO-Revision-Date: 2021-04-30 09:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -44,6 +44,12 @@ msgstr "Campanya"
 #: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoirreading_view_search
 msgid "Agricultural season"
 msgstr "Campanya"
+
+#. module: base_wua_reservoir
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:137
+#, python-format
+msgid "All coefficients for measuring in height are zero for the reservoir %s."
+msgstr "Tots els coeficients per mesurar l'alçada són nuls per a la bassa %s."
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_water_sheet_area_nme
@@ -119,7 +125,7 @@ msgid "Crest level (m)"
 msgstr "Cota de coronació (m)"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:494
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:484
 #, python-format
 msgid "Date"
 msgstr "Data"
@@ -204,6 +210,22 @@ msgstr "Entrada i omplert"
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_platform_level
 msgid "Floor level of the bottom of the resovoir."
 msgstr "Cota de solera de fons de la bassa."
+
+#. module: base_wua_reservoir
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_with_gis_reservoir
+msgid "GIS Reservoir"
+msgstr "Bassa GIS"
+
+#. module: base_wua_reservoir
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_gis_viewer_link
+#: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoir_view_form
+msgid "GIS Viewer"
+msgstr "Visor GIS"
+
+#. module: base_wua_reservoir
+#: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoir_view_tree
+msgid "GIS Viewer (zoom to point)"
+msgstr "Visor GIS (zoom a punt)"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_geotextile
@@ -396,7 +418,7 @@ msgid "Readings"
 msgstr "Lectures"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:493
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:483
 #, python-format
 msgid "Readings of the active agricultural season"
 msgstr "Lectures de la campanya activa"
@@ -414,7 +436,7 @@ msgid "Reservoir Reading"
 msgstr "Lectura de bassa"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:452
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:442
 #: model:ir.actions.act_window,name:base_wua_reservoir.wua_reservoirreading_action
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_agriculturalseason_reservoirreading_ids
 #: model:ir.ui.menu,name:base_wua_reservoir.wua_reservoirreading_menu
@@ -741,4 +763,3 @@ msgstr "volum = (a * alçada * alçada) + (B * alçada) + c"
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_to_vol_coef_c
 msgid "volume = (a * height * height) + (b * height) + C"
 msgstr "volum = (a * alçada * alçada) + (b * alçada) + C"
-

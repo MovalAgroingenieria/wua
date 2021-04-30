@@ -16,6 +16,11 @@
                                 <span class="o_stat_text">Reservoir Readings</span>
                             </div>
                         </button>
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_reservoir" invisible="1"/>
+                        <button name="action_see_gis_viewer" type="object"
+                            class="oe_stat_button" string="GIS Viewer" icon="fa-map-marker"
+                            attrs="{'invisible': ['|',('gis_viewer_link','=',False), ('with_gis_reservoir','=',False)]}"/>
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
@@ -96,14 +101,21 @@
         <field name="model">wua.reservoir</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_reservoir_view_tree">
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_reservoir" invisible="1"/>
                 <field name="reservoir_code"/>
-                 <field name="name"/>
-                 <field name="county_id"/>
-                 <field name="rurallocation_id"/>
-                 <field name="volume_nmn" string="V. NMN (m³)"/>
-                 <field name="last_reading_time"/>
-                 <field name="last_volume"/>
-                 <field name="last_differential_volume"/>
+                <field name="name"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_reservoir','=',False)]}"/>
+                <field name="county_id"/>
+                <field name="rurallocation_id"/>
+                <field name="volume_nmn" string="V. NMN (m³)"/>
+                <field name="last_reading_time"/>
+                <field name="last_volume"/>
+                <field name="last_differential_volume"/>
             </tree>
         </field>
     </record>
