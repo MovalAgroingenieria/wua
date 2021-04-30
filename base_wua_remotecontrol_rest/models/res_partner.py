@@ -425,51 +425,9 @@ class ResPartner(models.Model):
                     self.updated_in_remotecontrol = False
                     self.__class__._in_create_or_synchro = False
 
-    def get_res_partner_waterconnections_action(self):
-        context = {}
-        current_partner_id = self.env.context.get('active_id')
-        condition = [('partner_id', '=', current_partner_id)]
-        if (self.env.user.has_group('base_wua.group_wua_user')):
-            context = {
-                'is_wua_user': True,
-            }
-        # Check if portal user and thenn only show the ones of
-        # condition = [()]
-        id_tree_view = \
-            self.env.ref('base_wua_remotecontrol_rest.'
-                         'res_partner_waterconnection_view_tree').id
-        id_search_view = \
-            self.env.ref('base_wua_remotecontrol_rest.'
-                         'res_partner_waterconnection_view_search').id
-        waterconnections = self.sudo().get_value_from_translation(
-            'base_wua_remotecontrol_rest',
-            'Waterconnections')
-        act_window = {
-            'type': 'ir.actions.act_window',
-            'name': waterconnections,
-            'res_model': 'res.partner.waterconnection',
-            'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
-            'target': 'current',
-            'context': context,
-            'domain': condition,
-            }
-        return act_window
-
 
 class ResPartnerWaterconnection(models.Model):
-    _name = 'res.partner.waterconnection'
-    _auto = False
-    _order = 'waterconnection_id'
-
-    partner_id = fields.Many2one(
-        string='Irrigation Partner',
-        comodel_name='res.partner',)
-
-    waterconnection_id = fields.Many2one(
-        string='Waterconnection',
-        comodel_name='wua.waterconnection',)
+    _inherit = 'res.partner.waterconnection'
 
     last_data_time = fields.Datetime(
         string='Last Capture Date',)
