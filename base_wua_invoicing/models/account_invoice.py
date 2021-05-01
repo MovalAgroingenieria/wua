@@ -8,7 +8,8 @@ from odoo.tools.misc import formatLang
 
 
 class AccountInvoice(models.Model):
-    _inherit = 'account.invoice'
+    _name = 'account.invoice'
+    _inherit = ['account.invoice', 'simpleattachment.model']
 
     invoiceset_id = fields.Many2one(
         string='Invoice Set',
