@@ -2,7 +2,7 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, tools
+from odoo import models, fields, api, tools, _
 
 
 class ResPartner(models.Model):
@@ -51,11 +51,11 @@ class ResPartner(models.Model):
     def get_res_partner_waterconnections_action(self):
         context = {}
         current_partner_id = self.env.context.get('active_id')
-        condition = [('partner_id', '=', current_partner_id)]
         if (self.env.user.has_group('base_wua.group_wua_user')):
             context = {
                 'is_wua_user': True,
             }
+        condition = [('partner_id', '=', current_partner_id)]
         # Check if portal user and thenn only show the ones of
         # condition = [()]
         id_tree_view = \
@@ -67,6 +67,8 @@ class ResPartner(models.Model):
         waterconnections = self.sudo().get_value_from_translation(
             'base_wua_infrastructure',
             'Waterconnections')
+        if (not waterconnections):
+            waterconnections = _("Waterconnections")
         act_window = {
             'type': 'ir.actions.act_window',
             'name': waterconnections,
@@ -103,14 +105,15 @@ class ResPartnerWaterconnection(models.Model):
         if self.env.cr.fetchone()[0]:
             tools.drop_view_if_exists(self.env.cr,
                                       'res_partner_waterconnection')
-        self.env.cr.execute("""
-            CREATE OR REPLACE VIEW res_partner_waterconnection AS (
-            SELECT row_number() OVER() AS id, a.* FROM (
-                SELECT wpi1.partner_id, wpi1.waterconnection_id
-                FROM
-                wua_parcel_irrigationpoint wpi1 INNER JOIN
-                wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
-                WHERE wpi1.type='WC' GROUP BY  wpi1.partner_id,
-                wpi1.waterconnection_id
-            ) a )
-            """)
+            self.env.cr.execute("""
+                CREATE OR REPLACE VIEW res_partner_waterconnection AS (
+                SELECT row_number() OVER() AS id, a.* FROM (
+                    SELECT wpp1.partner_id, wpi1.waterconnection_id
+                    FROM
+                    wua_parcel_irrigationpoint wpi1 INNER JOIN
+                    wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
+                    INNER JOIN wua_parcel_partnerlink wpp1 ON wpp1.parcel_id =
+                    wpi1.parcel_id WHERE wpi1.type='WC'
+                    GROUP BY  wpp1.partner_id, wpi1.waterconnection_id
+                ) a )
+                """)
