@@ -11,14 +11,18 @@ def post_init_hook(cr, registry):
     env.cr.execute("""
         CREATE OR REPLACE VIEW res_partner_waterconnection AS (
         SELECT row_number() OVER() AS id, a.* FROM (
-            SELECT wpi1.partner_id, wpi1.waterconnection_id,
-            ww1.last_data_time, ww1.last_total_volume, ww1.last_waterflow,
-            ww1.last_valve_open, ww1.last_valve_scheduled FROM
+            SELECT wpp1.partner_id, wpi1.waterconnection_id,
+            ww1.last_data_time, ww1.last_total_volume,
+            ww1.last_waterflow, ww1.last_valve_open,
+            ww1.last_valve_scheduled
+            FROM
             wua_parcel_irrigationpoint wpi1 INNER JOIN
             wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
-            WHERE wpi1.type='WC' GROUP BY  wpi1.partner_id,
-            wpi1.waterconnection_id, ww1.last_data_time,
-            ww1.last_waterflow, ww1.last_valve_open,
-            ww1.last_valve_scheduled, ww1.last_total_volume
+            INNER JOIN wua_parcel_partnerlink wpp1 ON wpp1.parcel_id =
+            wpi1.parcel_id WHERE wpi1.type='WC'
+            GROUP BY  wpp1.partner_id, wpi1.waterconnection_id,
+            ww1.last_data_time, ww1.last_waterflow,
+            ww1.last_valve_open, ww1.last_valve_scheduled,
+            ww1.last_total_volume
         ) a )
         """)
