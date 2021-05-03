@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-28 08:52+0000\n"
-"PO-Revision-Date: 2020-12-28 08:52+0000\n"
+"POT-Creation-Date: 2021-05-03 14:49+0000\n"
+"PO-Revision-Date: 2021-05-03 14:49+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,6 +22,7 @@ msgid "<span class=\"o_stat_text\">Consumptions</span>"
 msgstr "<span class=\"o_stat_text\">Consums</span>"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_form
 msgid "<span class=\"o_stat_text\">Readings</span>"
 msgstr "<span class=\"o_stat_text\">Lectures</span>"
@@ -96,8 +97,8 @@ msgstr "Treure validació"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_irrigation_configuration
-msgid "Configuration of wua_almazora module"
-msgstr "Configuration of wua_almazora module"
+msgid "Configuration of irrigation with type of water"
+msgstr "Configuració de reg amb tipus d'aigua"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
@@ -124,7 +125,7 @@ msgstr "Consum"
 
 #. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_agriculturalseason.py:39
-#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:320
+#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:276
 #: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:162
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_presconsumption_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_agriculturalseason_presconsumption_ids
@@ -217,12 +218,12 @@ msgstr "Electromagnètic"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_agriculturalseason_view_tree
 msgid "End Date"
-msgstr "Data finalització"
+msgstr "Data final"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_presconsumption
@@ -232,7 +233,7 @@ msgstr "Element (consum de pressió)"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_reading
 msgid "Entity (pressure reading)"
-msgstr "Entity (pressure reading)"
+msgstr "Element (lectura de pressió)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_waterconnection
@@ -538,6 +539,7 @@ msgid "Reading Start Time"
 msgstr "Data lectura inicial"
 
 #. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:190
 #: code:addons/base_wua_pressurized_irrigation/models/wua_watermeter.py:193
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_reading_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_reading_ids
@@ -604,13 +606,14 @@ msgid "The reading end time must be greather than or equal to reading initial ti
 msgstr "La data de lectura inicial ha de ser igual o major que la data de lectura final."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:243
+#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:264
 #, python-format
 msgid "The reading is mapped to a invoiced consumption: it is not possible to cancel the reading."
 msgstr "La lectura està relacionada amb un consum facturat: no és possible eliminar la lectura."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:197
+#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:199
+#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:219
 #, python-format
 msgid "The reading time is minor than the time of the previous reading."
 msgstr "La data de lectura és menor que la data de lectura anterior."
@@ -627,19 +630,19 @@ msgid "The water meter is mandatory, it must be active and it must have a water 
 msgstr "El comptador és obligatori, hagi de ser actiu i hagi de tenir una toma."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:304
+#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:325
 #, python-format
 msgid "There are different water meters."
 msgstr "Hi ha comptadors diferents."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:306
+#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:327
 #, python-format
 msgid "There can be no final readings without eliminating."
 msgstr "No hi pot haver-hi cap lectura final sense eliminar."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:320
+#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:341
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr "No hi pot haver-hi cap lecturas intermèdies sense eliminar."
@@ -682,7 +685,7 @@ msgstr "Sense definir"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
 msgid "Valid"
-msgstr "Valid"
+msgstr "Vàlid"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_one_waterconnection_view_tree
@@ -706,6 +709,11 @@ msgid "Validate"
 msgstr "Validar"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_validated
+msgid "Validated Consumption"
+msgstr "Consum validat"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_one_waterconnection_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 msgid "Validated Consumption: No"
@@ -716,6 +724,11 @@ msgstr "Validat: No"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 msgid "Validated Consumption: Yes"
 msgstr "Validat: Sí"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_validated
+msgid "Validated Reading"
+msgstr "Lectura validada"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
@@ -786,7 +799,7 @@ msgstr "Relació Tomas - Comptadors"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_nominal_water_flow
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_nominal_water_flow
 msgid "Water Flow (m3/hour)"
-msgstr "Cabal (m3/hour)"
+msgstr "Cabal (m3 / hora)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_parcel_irrigationpointwc_watermeter_id
@@ -835,14 +848,14 @@ msgid "Woltmann"
 msgstr "Woltmann"
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:339
-#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:348
+#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:360
+#: code:addons/base_wua_pressurized_irrigation/models/wua_reading.py:369
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No teniu permís per executar aquesta acció."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:363
+#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:320
 #, python-format
 msgid "day"
 msgstr "dia"
