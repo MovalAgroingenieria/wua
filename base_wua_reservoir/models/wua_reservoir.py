@@ -27,6 +27,13 @@ class WuaReservoir(models.Model):
             resp = 1
         return resp
 
+    def _default_measurements_in_height(self):
+        measurements_in_height = False
+        measurements_in_height = \
+            self.env['ir.values'].get_default(
+                'wua.infrastructure.configuration', 'measurements_in_height')
+        return measurements_in_height
+
     def _default_to_vol_coef_a(self):
         coef_a = 0
         measurements_in_height = \
@@ -248,6 +255,7 @@ class WuaReservoir(models.Model):
 
     measurements_in_height = fields.Boolean(
         string="Measurements in height",
+        default=_default_measurements_in_height,
         compute='_compute_measurements_in_height',
         help="Indicates whether the readings are height or volume.")
 
