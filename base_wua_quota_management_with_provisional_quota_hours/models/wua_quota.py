@@ -26,15 +26,14 @@ class WuaQuota(models.Model):
         compute='_compute_provisional_balance_vol_hours')
 
 
-    @api.depends('provisional_extra_consumption')
+    @api.multi
     def _compute_provisional_extra_consumption_hours(self):
         for record in self:
             record.provisional_extra_consumption_hours = \
                 self.transform_to_quota_hours_format(
                     record.provisional_extra_consumption)
 
-    @api.depends('provisional_extra_consumption',
-                 'provisional_extra_consumption_hours')
+    @api.multi
     def _compute_provisional_extra_consumption_vol_hours(self):
         for record in self:
             provisional_extra_consumption_vol_hours = \
@@ -44,14 +43,14 @@ class WuaQuota(models.Model):
             record.provisional_extra_consumption_vol_hours = \
                 provisional_extra_consumption_vol_hours
 
-    @api.depends('provisional_balance')
+    @api.multi
     def _compute_provisional_balance_hours(self):
         for record in self:
             record.provisional_balance_hours = \
                 self.transform_to_quota_hours_format(
                     record.provisional_balance)
 
-    @api.depends('provisional_balance', 'provisional_balance_hours')
+    @api.multi
     def _compute_provisional_balance_vol_hours(self):
         for record in self:
             provisional_balance_vol_hours = \

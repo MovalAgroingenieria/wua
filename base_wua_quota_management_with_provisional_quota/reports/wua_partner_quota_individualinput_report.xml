@@ -7,15 +7,17 @@
         <xpath expr="//th[@name='th_consumptions']" position="after">
             <th name="th_extra_consumption" class="text-center">Extra consumptions</th>
         </xpath>
-        <xpath expr="//td[@name='td_balance']" position="replace">
+        <xpath expr="//td[@name='td_consumptions']" position="after">
             <td name="td_extra_consumption" class="text-center">
                 <span t-field="o.quota_provisional_extra_consumption"/>
                 <span>m<sup>3</sup></span>
             </td>
+        </xpath>
+        <xpath expr="//td[@name='td_balance']" position="replace">
             <td name="td_balance" class="text-center">
-                <span t-field="o.quota_provisional_balance"/>
-                <span>m<sup>3</sup></span>
-            </td>
+                 <span t-field="o.quota_provisional_balance"/>
+                 <span>m<sup>3</sup></span>
+             </td>
         </xpath>
 
     </template>
