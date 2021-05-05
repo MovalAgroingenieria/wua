@@ -32,8 +32,8 @@ class WuaParcel(models.Model):
     def _compute_number_of_files(self):
         for record in self:
             number_of_files = 0
-            parcellinks_of_parcel = self.sudo().env['res.file.parcellink'].search(
-                [('parcel_id', '=', record.id)])
+            parcellinks_of_parcel = self.sudo().env['res.file.parcellink'].\
+                search([('parcel_id', '=', record.id)])
             if parcellinks_of_parcel:
                 number_of_files = len(parcellinks_of_parcel)
             record.number_of_files = number_of_files
