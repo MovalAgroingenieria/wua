@@ -7,19 +7,37 @@
         <field name="code">action = env["res.partner"].get_res_partner_irrigationpoints_action()</field>
     </record>
 
+    <record id="res_partner_waterconnections_action" model="ir.actions.server">
+        <field name="name">Waterconnections (form view)</field>
+        <field name="model_id" ref="base_wua_infrastructure.model_res_partner"/>
+        <field name="code">action = env["res.partner"].get_res_partner_waterconnections_action()</field>
+    </record>
+
     <record id="view_partner_form" model="ir.ui.view">
         <field name="name">res.partner.view.form.inh.wua</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base_wua.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="%(res_partner_waterconnections_action)d"
+                        attrs="{'invisible':[('is_wua_partner','=',False)]}"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-moval-water-counter"
+                        groups="base_wua.group_wua_user,
+                                base_wua.group_wua_portal_user">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Waterconnections
+                            </span>
+                        </div>
+                </button>
                 <button name="%(res_partner_irrigationpoints_action)d"
                         attrs="{'invisible':[('is_wua_partner','=',False)]}"
                         type="action"
                         class="oe_stat_button"
                         icon="fa-moval-infra"
-                        groups="base_wua.group_wua_user,
-                                base_wua.group_wua_portal_user">
+                        groups="base_wua.group_wua_user">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_text">
                                 Irrig. supplies
@@ -27,6 +45,33 @@
                         </div>
                 </button>
             </xpath>
+        </field>
+    </record>
+
+    <record id="res_partner_waterconnection_view_tree" model="ir.ui.view">
+        <field name="name">Partner Waterconnections (tree view)</field>
+        <field name="model">res.partner.waterconnection</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                    class="o_base_wua_infrastructure_rest_partner_waterconnection_view_tree">
+                <field name="partner_id" invisible="not context.get('is_wua_user',False)"/>
+                <field name="waterconnection_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_partner_waterconnection_view_search" model="ir.ui.view">
+        <field name="name">Partner Waterconnections (search view)</field>
+        <field name="model">res.partner.waterconnection</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="waterconnection_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner" name="grouped_partner"
+                        context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
         </field>
     </record>
 

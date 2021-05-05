@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
+# 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models
+from odoo import models, fields, api, tools, _
 
 
 class ResPartner(models.Model):
@@ -47,3 +47,78 @@ class ResPartner(models.Model):
             'context': self.env.context,
             }
         return act_window
+
+    def get_res_partner_waterconnections_action(self):
+        context = {}
+        current_partner_id = self.env.context.get('active_id')
+        if (self.env.user.has_group('base_wua.group_wua_user')):
+            context = {
+                'is_wua_user': True,
+            }
+        condition = [('partner_id', '=', current_partner_id)]
+        # Check if portal user and thenn only show the ones of
+        # condition = [()]
+        id_tree_view = \
+            self.env.ref('base_wua_infrastructure.'
+                         'res_partner_waterconnection_view_tree').id
+        id_search_view = \
+            self.env.ref('base_wua_infrastructure.'
+                         'res_partner_waterconnection_view_search').id
+        waterconnections = self.sudo().get_value_from_translation(
+            'base_wua_infrastructure',
+            'Waterconnections')
+        if (not waterconnections):
+            waterconnections = _("Waterconnections")
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': waterconnections,
+            'res_model': 'res.partner.waterconnection',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
+            'target': 'current',
+            'context': context,
+            'domain': condition,
+            }
+        return act_window
+
+
+class ResPartnerWaterconnection(models.Model):
+    _name = 'res.partner.waterconnection'
+    _auto = False
+    _order = 'waterconnection_id'
+
+    partner_id = fields.Many2one(
+        string='Irrigation Partner',
+        comodel_name='res.partner',)
+
+    waterconnection_id = fields.Many2one(
+        string='Waterconnection',
+        comodel_name='wua.waterconnection',)
+
+    @api.model_cr
+    def init(self):
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='res_partner_waterconnection')
+            """)
+        if self.env.cr.fetchone()[0]:
+            tools.drop_view_if_exists(self.env.cr,
+                                      'res_partner_waterconnection')
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                CREATE OR REPLACE VIEW res_partner_waterconnection AS (
+                SELECT row_number() OVER() AS id, a.* FROM (
+                    SELECT wpp1.partner_id, wpi1.waterconnection_id
+                    FROM
+                    wua_parcel_irrigationpoint wpi1 INNER JOIN
+                    wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
+                    INNER JOIN wua_parcel_partnerlink wpp1 ON wpp1.parcel_id =
+                    wpi1.parcel_id WHERE wpi1.type='WC' AND ww1.watermeter_id
+                    IS NOT NULL
+                    GROUP BY  wpp1.partner_id, wpi1.waterconnection_id
+                ) a )
+                """)
+        except Exception:
+            self.env.cr.rollback()
