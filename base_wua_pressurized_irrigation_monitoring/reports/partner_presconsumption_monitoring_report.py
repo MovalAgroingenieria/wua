@@ -106,3 +106,26 @@ class WuaComparativePartnerPresconsumption(models.Model):
         else:
             consumption_category = 'C'
         return consumption_category
+
+    @api.multi
+    def get_previous_period_precipitations(self):
+        area_measurement_type = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_type')
+        if area_measurement_type:
+            conversion_factor = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_equivalence')
+        else:
+            conversion_factor = 1
+        for record in self:
+            precipitations = {}
+            previous_period = record.env['wua.controlperiod'].search([
+                ('is_the_previous_to_current', '=', True)])
+            if len(previous_period) == 1 and conversion_factor:
+                previous_period_id = previous_period.id
+                precipitations_mm = previous_period.pe_value
+                precipitations_ha = previous_period.pe_value * 10
+                precipitations_eq = \
+                    previous_period.pe_value / conversion_factor
+                precipitations[previous_period_id] = \
+                    [precipitations_mm, precipitations_ha, precipitations_eq]
+        return precipitations

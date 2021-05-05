@@ -34,6 +34,7 @@
                         <t t-set="waterconnections_data" t-value="o.get_consumptions_by_waterconnection()"/>
                         <t t-set="measurement_unit"
                             t-value="partner_subparcels_for_period[0].subparcel_id.parcel_id._compute_area_measurement_name()"/>
+                        <t t-set="period_precipitations" t-value="o.get_previous_period_precipitations()"/>
 
                         <!-- Partner data -->
                         <div name="wua_partner_data">
@@ -158,6 +159,40 @@
                                     </div>
                                 </t>
                             </div>
+                            <div name="precipitations">
+                                <t t-if="period_precipitations">
+                                    <table name="precipitations_table" class="table table-striped" style="margin-bottom:12px;width:40%;">
+                                        <caption>
+                                            <span class="fa fa-moval-drop-water"/>
+                                            <span>PRECIPITATIONS OF THE PREVIUS PERIOD</span>
+                                        </caption>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-right">mm</th>
+                                                <th class="text-right">m³/ha</th>
+                                                <th class="text-right">m³/<span t-esc="measurement_unit"/></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="period_precipitations" t-as="p">
+                                               <td class="text-right">
+                                                   <span t-esc="o.env['wua.parcel'].transform_float_to_locale(p_value[0],2)"/>
+                                               </td>
+                                               <td class="text-right">
+                                                   <span t-esc="o.env['wua.parcel'].transform_float_to_locale(p_value[1],2)"/>
+                                               </td>
+                                               <td class="text-right">
+                                                   <span t-esc="o.env['wua.parcel'].transform_float_to_locale(p_value[2],2)"/>
+                                               </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </t>
+                            </div>
+                            <caption>
+                                <span class="fa fa-eye" style="color: #777777;"/>
+                                <span style="color: #777777;">ANALYSIS OBSERVATIONS</span>
+                            </caption>
                             <div name="intro_legend" style="font-size: 10px;">
                                 <div class="row" style="margin-top: 4px;">
                                     <div class="col-xs-12" style="display: table;">
