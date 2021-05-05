@@ -105,6 +105,8 @@ class ResPartnerWaterconnection(models.Model):
         if self.env.cr.fetchone()[0]:
             tools.drop_view_if_exists(self.env.cr,
                                       'res_partner_waterconnection')
+        try:
+            self.env.cr.savepoint()
             self.env.cr.execute("""
                 CREATE OR REPLACE VIEW res_partner_waterconnection AS (
                 SELECT row_number() OVER() AS id, a.* FROM (
@@ -118,3 +120,5 @@ class ResPartnerWaterconnection(models.Model):
                     GROUP BY  wpp1.partner_id, wpi1.waterconnection_id
                 ) a )
                 """)
+        except Exception:
+            self.env.cr.rollback()
