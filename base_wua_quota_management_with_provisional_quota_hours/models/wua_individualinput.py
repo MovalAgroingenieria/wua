@@ -17,11 +17,11 @@ class WuaIndividualinput(models.Model):
         compute='_compute_quota_provisional_extra_consumption_vol_hours')
 
     quota_provisional_balance_hours = fields.Char(
-        string='Balance (hours)',
+        string='Balance provisional (hours)',
         compute='_compute_quota_provisional_balance_hours')
 
     quota_provisional_balance_vol_hours = fields.Char(
-        string='Balance (hours)',
+        string='Balance provisional (hours)',
         compute='_compute_quota_provisional_balance_vol_hours')
 
     @api.depends('quota_provisional_extra_consumption')

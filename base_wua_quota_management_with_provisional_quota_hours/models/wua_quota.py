@@ -18,11 +18,11 @@ class WuaQuota(models.Model):
         compute='_compute_provisional_extra_consumption_vol_hours')
 
     provisional_balance_hours = fields.Char(
-        string='Balance (hours)',
+        string='Balance provisional (hours)',
         compute='_compute_provisional_balance_hours')
 
     provisional_balance_vol_hours = fields.Char(
-        string='Balance',
+        string='Balance provisional',
         compute='_compute_provisional_balance_vol_hours')
 
 
