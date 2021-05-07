@@ -16,8 +16,7 @@ def post_init_hook(cr, registry):
             wua_parcel_irrigationpoint wpi1 INNER JOIN
             wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
             INNER JOIN wua_parcel_partnerlink wpp1 ON wpp1.parcel_id =
-            wpi1.parcel_id WHERE wpi1.type='WC' AND ww1.watermeter_id
-            IS NOT NULL
+            wpi1.parcel_id WHERE wpi1.type='WC'
             GROUP BY  wpp1.partner_id, wpi1.waterconnection_id
         ) a )
         """)
