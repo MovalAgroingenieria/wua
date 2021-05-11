@@ -2,12 +2,20 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import logging
 from odoo import models, fields, api, exceptions, _, tools
 
 
 class ResPartnerWaterconnection(models.Model):
     _inherit = 'res.partner.waterconnection'
+
+    last_reading_time = fields.Datetime(
+        string='Last Reading Time',
+    )
+
+    last_reading_value = fields.Float(
+        string='Last Reading Value',
+        digits=(32, 4),
+    )
 
     @api.model_cr
     def init(self):
@@ -23,14 +31,16 @@ class ResPartnerWaterconnection(models.Model):
             self.env.cr.execute("""
                 CREATE OR REPLACE VIEW res_partner_waterconnection AS (
                 SELECT row_number() OVER() AS id, a.* FROM (
-                    SELECT wpp1.partner_id, wpi1.waterconnection_id
+                    SELECT wpp1.partner_id, wpi1.waterconnection_id,
+                    ww1.last_reading_time, ww1.last_reading_value
                     FROM
                     wua_parcel_irrigationpoint wpi1 INNER JOIN
                     wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
                     INNER JOIN wua_parcel_partnerlink wpp1 ON wpp1.parcel_id =
                     wpi1.parcel_id WHERE wpi1.type='WC' AND ww1.watermeter_id
                     IS NOT NULL
-                    GROUP BY  wpp1.partner_id, wpi1.waterconnection_id
+                    GROUP BY  wpp1.partner_id, wpi1.waterconnection_id,
+                    ww1.last_reading_time, ww1.last_reading_value
                 ) a )
                 """)
         except Exception:

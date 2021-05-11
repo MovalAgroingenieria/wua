@@ -461,6 +461,7 @@ class ResPartnerWaterconnection(models.Model):
                 CREATE OR REPLACE VIEW res_partner_waterconnection AS (
                 SELECT row_number() OVER() AS id, a.* FROM (
                     SELECT wpp1.partner_id, wpi1.waterconnection_id,
+                    ww1.last_reading_time, ww1.last_reading_value,
                     ww1.last_data_time, ww1.last_total_volume,
                     ww1.last_waterflow, ww1.last_valve_open,
                     ww1.last_valve_scheduled
@@ -472,6 +473,7 @@ class ResPartnerWaterconnection(models.Model):
                     wpi1.parcel_id WHERE wpi1.type='WC' AND
                     ww1.watermeter_id IS NOT NULL
                     GROUP BY  wpp1.partner_id, wpi1.waterconnection_id,
+                    ww1.last_reading_time, ww1.last_reading_value,
                     ww1.last_data_time, ww1.last_waterflow,
                     ww1.last_valve_open, ww1.last_valve_scheduled,
                     ww1.last_total_volume

@@ -18,6 +18,7 @@
         "security/ir.model.access.csv",
         "wizard/wizard_remove_readings_view.xml",
         "views/resources.xml",
+        "views/res_partner_view.xml",
         "views/wua_watermeter_view.xml",
         "views/wua_waterconnection_view.xml",
         "views/wua_reading_view.xml",
