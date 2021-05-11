@@ -11,11 +11,6 @@
                             type="action" string="Copy request"
                             groups="base_wua.group_wua_manager"/>
                     <field name="credit_overdue" invisible="1"/>
-                    <div name="hascreditoverdue"
-                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
-                         attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
-                        ( CREDIT OVERDUE )
-                    </div>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="pending,intermediate,executed"/>
@@ -23,6 +18,12 @@
                 <field name="id" invisible="1"/>
                 <field name="is_open" invisible="1"/>
                 <sheet>
+                    <div name="hascreditoverdue" style="display: inline-block;" attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
+                        <div class="panel-body" style="background:#ffe6e6;border-radius:4px; font-weight: bold; color:red;
+                            border-color:red;border-width:1px; border-style:solid;padding: 10px 200px">
+                           <span class="blink_text">( CREDIT OVERDUE )</span>
+                        </div>
+                    </div>
                     <div name="buttons" class="oe_button_box">
                         <span class="oe_edit_only"
                               style="color:Red;font-weight: bold;"
