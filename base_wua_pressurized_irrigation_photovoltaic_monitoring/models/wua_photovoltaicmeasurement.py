@@ -12,7 +12,7 @@ class WuaPhotovoltaicmeasurement(models.Model):
     _description = 'Entity (photovoltaicmeasurement)'
     _order = 'measurement_time desc'
 
-    MAX_NAME_SIZE = 27
+    MAX_NAME_SIZE = 30
 
     photovoltaicplant_id = fields.Many2one(
         string='Photovoltaic Plant',
