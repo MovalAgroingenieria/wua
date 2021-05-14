@@ -14,84 +14,197 @@
             <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
         </xpath>
 
-        <!-- Change address format -->
+        <!-- Do no show h2 and h3 titles -->
+        <xpath expr="//h2[@id='policy_level']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+        <xpath expr="//h3" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+
+        <!-- Address and report format -->
         <xpath expr="//div[@id='address']" position="replace">
-            <div class="row" id="address" style="border: 1px solid white; margin: 0px 20px;">
-                <div class="col-xs-12" style="display: table;">
-                    <div style="border-right: 1px solid white; width: 60%; display: table-cell;"/>
-                    <div style="width: 40%; display: table-cell; padding: 0px 8px;">
-                        <div>
-                            <t t-if="doc.partner_id.name">
-                                <strong><span t-field="doc.partner_id.name"/></strong>
-                            </t>
-                            <br/>
-                            <t t-if="doc.partner_id.street_type_show">
-                                <span t-field="doc.partner_id.street_type_show"/>
-                            </t>
-                            <t t-if="doc.partner_id.street">
-                                <span t-field="doc.partner_id.street"/>
-                            </t>
-                            <t t-if="doc.partner_id.street_num">
-                                <span t-field="doc.partner_id.street_num"/>
-                            </t>
-                            <t t-if="doc.partner_id.street2">
-                                <span>-</span>
-                                <span t-field="doc.partner_id.street2"/>
-                            </t>
-                            <br/>
-                            <t t-if="doc.partner_id.city">
-                                <span t-field="doc.partner_id.city"/>
-                            </t>
-                            <t t-if="doc.partner_id.zip">
-                                <span>-</span>
-                                <span t-field="doc.partner_id.zip"/>
-                            </t>
-                            <br/>
-                            <t t-if="doc.partner_id.state_id">
-                                <span t-field="doc.partner_id.state_id"/>
-                                <t t-if="doc.partner_id.country_id">
-                                    <span>-</span>
-                                </t>
-                            </t>
-                            <t t-if="doc.partner_id.country_id">
-                                <span t-field="doc.partner_id.country_id"/>
-                            </t>
+            <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+
+            <div name="partner_data">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                            <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="margin-top: 4px;" id='address'>
+                    <div name="invoice_address">
+                        <div class="row" style="border: 1px solid white; margin: 4px 10px;">
+                            <div class="col-xs-12" style="display: table;">
+                                <div style="border-right: 1px solid white; width: 50%; display: table-cell;">
+                                    <p style="margin-bottom: 0px"><i>Invoicing address</i></p>
+                                    <div>
+                                        <t t-if="doc.partner_id.name">
+                                            <strong><span name="invoicing_address_partner_name" t-field="doc.partner_id.name"/></strong>
+                                            <span>[<span t-field="doc.partner_id.partner_code"/>]</span>
+                                        </t><br/>
+                                        <t t-if="doc.partner_id.vat">
+                                            <t t-set="mod_vat" t-value="doc.partner_id.vat[2:]"/>
+                                            <span>TIN:&amp;nbsp;</span>
+                                            <span t-esc="mod_vat"/>
+                                        </t><br/>
+                                        <t t-if="doc.partner_id.street_type_show"><span t-field="doc.partner_id.street_type_show"/></t>
+                                        <t t-if="doc.partner_id.street"><span t-field="doc.partner_id.street"/></t>
+                                        <t t-if="doc.partner_id.street_num"><span t-field="doc.partner_id.street_num"/></t>
+                                        <t t-if="doc.partner_id.street2"><span t-field="doc.partner_id.street2"/></t>
+                                        <br/>
+                                        <t t-if="doc.partner_id.city"><span t-field="doc.partner_id.city"/></t>
+                                        <t t-if="doc.partner_id.zip">
+                                            <span>&amp;nbsp;-&amp;nbsp;</span>
+                                            <span t-field="doc.partner_id.zip"/>
+                                        </t>
+                                        <t id="state_invoicing_address_1" t-if="doc.partner_id.state_id">
+                                            <span t-tag="span">(</span><span t-field="doc.partner_id.state_id"/>
+                                            <t t-if="not doc.partner_id.country_id"><span>)</span></t>
+                                            <t t-else=""><span>-</span></t>
+                                        </t>
+                                        <t id="country_invoicing_address_1" t-if="doc.partner_id.country_id">
+                                            <t t-if="not doc.partner_id.state_id"><span>(</span></t>
+                                            <span t-field="doc.partner_id.country_id"></span><span>)</span>
+                                        </t>
+                                    </div>
+                                </div>
+                                <div style="width: 40%; display: table-cell; padding: 0px 4px;">
+                                    <p style="margin-bottom: 0px"><i>Shipping Address</i></p>
+                                    <div groups="!sale.group_delivery_invoice_address">
+                                        <div>
+                                            <t t-if="doc.partner_id.name"><strong><span t-field="doc.partner_id.name"/></strong></t><br/>
+                                            <t t-if="doc.partner_id.street_type_show"><span t-field="doc.partner_id.street_type_show"/></t>
+                                            <t t-if="doc.partner_id.street"><span t-field="doc.partner_id.street"/></t>
+                                            <t t-if="doc.partner_id.street_num"><span t-field="doc.partner_id.street_num"/></t>
+                                            <t t-if="doc.partner_id.street2"><span t-field="doc.partner_id.street2"/></t>
+                                            <br/>
+                                            <t t-if="doc.partner_id.city"><span t-field="doc.partner_id.city"/></t>
+                                            <t t-if="doc.partner_id.zip">
+                                                <span>&amp;nbsp;-&amp;nbsp;</span>
+                                                <span t-field="doc.partner_id.zip"/>
+                                            </t>
+                                            <t id="state_invoicing_address_2" t-if="doc.partner_id.state_id">
+                                                <span t-tag="span">(</span><span t-field="doc.partner_id.state_id"/>
+                                                <t t-if="not doc.partner_id.country_id"><span>)</span></t>
+                                                <t t-else=""><span>-</span></t>
+                                            </t>
+                                            <t id="country_invoicing_address_2" t-if="doc.partner_id.country_id">
+                                                <t t-if="not doc.partner_id.state_id"><span>(</span></t>
+                                                <span t-field="doc.partner_id.country_id"></span><span>)</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <div groups="sale.group_delivery_invoice_address">
+                                        <t t-if="doc.partner_shipping_id and doc.partner_shipping_id != doc.partner_id">
+                                            <t t-if="doc.partner_shipping_id.name"><strong><span t-field="doc.partner_shipping_id.name"/></strong></t><br/>
+                                            <t t-if="doc.partner_shipping_id.street_type_show"><span t-field="doc.partner_shipping_id.street_type_show"/></t>
+                                            <t t-if="doc.partner_shipping_id.street"><span t-field="doc.partner_shipping_id.street"/></t>
+                                            <t t-if="doc.partner_shipping_id.street_num"><span t-field="doc.partner_shipping_id.street_num"/></t>
+                                            <t t-if="doc.partner_shipping_id.street2"><span t-field="doc.partner_shipping_id.street2"/></t>
+                                            <br/>
+                                            <t t-if="doc.partner_shipping_id.city"><span t-field="doc.partner_shipping_id.city"/></t>
+                                            <t t-if="doc.partner_shipping_id.zip">
+                                                <span>&amp;nbsp;-&amp;nbsp;</span>
+                                                <span t-field="doc.partner_shipping_id.zip"/>
+                                            </t>
+                                            <t id="state_shipping_address" t-if="doc.partner_shipping_id.state_id">
+                                                <span t-tag="span">(</span><span t-field="doc.partner_shipping_id.state_id"/>
+                                                <t t-if="not doc.partner_id.country_id"><span>)</span></t>
+                                                <t t-else=""><span>-</span></t>
+                                            </t>
+                                            <t id="country_shipping_address" t-if="doc.partner_shipping_id.country_id">
+                                                <t t-if="not doc.partner_shipping_id.state_id"><span>(</span></t>
+                                                <span t-field="doc.partner_shipping_id.country_id"></span><span>)</span>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <t t-if="doc.partner_id.name"><strong><span t-field="doc.partner_id.name"/></strong></t><br/>
+                                            <t t-if="doc.partner_id.street_type_show"><span t-field="doc.partner_id.street_type_show"/></t>
+                                            <t t-if="doc.partner_id.street"><span t-field="doc.partner_id.street"/></t>
+                                            <t t-if="doc.partner_id.street_num"><span t-field="doc.partner_id.street_num"/></t>
+                                            <t t-if="doc.partner_id.street2"><span t-field="doc.partner_id.street2"/></t>
+                                            <br/>
+                                            <t t-if="doc.partner_id.city"><span t-field="doc.partner_id.city"/></t>
+                                            <t t-if="doc.partner_id.zip">
+                                                <span>&amp;nbsp;-&amp;nbsp;</span>
+                                                <span t-field="doc.partner_id.zip"/>
+                                            </t>
+                                            <t id="state_invoicing_address_3" t-if="doc.partner_id.state_id">
+                                                <span t-tag="span">(</span><span t-field="doc.partner_id.state_id"/>
+                                                <t t-if="not doc.partner_id.country_id"><span>)</span></t>
+                                                <t t-else=""><span>-</span></t>
+                                            </t>
+                                            <t id="country_invoicing_address_3" t-if="doc.partner_id.country_id">
+                                                <t t-if="not doc.partner_id.state_id"><span>(</span></t>
+                                                <span t-field="doc.partner_id.country_id"></span><span>)</span>
+                                            </t>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </xpath>
 
-        <!-- Add other partner personal data -->
-        <xpath expr="//table[@id='summary_table']" position="before">
-            <table border="0" name="other_personal_data"
-                style="margin-bottom:10px; margin-left: 30px;">
-                <t t-if="doc.partner_id.partner_code">
-                    <tr>
-                        <td><strong>Partner num.</strong></td>
-                        <td style="padding-left: 10px;">
-                            <span t-field="doc.partner_id.partner_code" class="text-left"/>
-                        </td>
-                    </tr>
+        <xpath expr="//div[@class='row mt32 mb32'][1]" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+
+        <xpath expr="//h2[@id='policy_level']" position="after">
+            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                 <t t-if="report_style == 'light'">
+                     <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                         <div style="float: left; width: 32px;"><span class="fa fa-money"/></div>
+                         <div style="float: left; display: inline;"><strong>Communication&amp;nbsp;debt</strong></div>
+                         <div style="float: right;">
+                             <strong><span t-field="doc.report_date"/></strong>
+                         </div>
+                     </div>
+                 </t>
+                 <t t-else="">
+                     <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                         <div style="float: left; width: 32px;"><span class="fa fa-money"/></div>
+                         <div style="float: left; display: inline;"><strong>Communication&amp;nbsp;debt</strong></div>
+                         <div style="float: right;">
+                             <strong><span t-field="doc.report_date"/></strong>
+                         </div>
+                     </div>
+                 </t>
+             </div>
+             <div>
+                <span t-field="doc.current_policy_level.custom_text"/>
+             </div>
+        </xpath>
+
+        <xpath expr="//table[@id='summary_table']/thead/tr/th" position="after">
+            <th name="invoiceset_id">Invoiceset</th>
+        </xpath>
+        <xpath expr="//t[@t-if='not l.invoice_id']" position="after">
+            <td>
+                <t t-if="l.invoiceset_id">
+                    <span t-field="l.invoiceset_id.description"/>
                 </t>
-                <t t-if="doc.partner_id.name">
-                    <tr>
-                        <td><strong>Name</strong></td>
-                        <td style="padding-left: 10px;">
-                            <span t-field="doc.partner_id.name" class="text-left"/>
-                        </td>
-                    </tr>
-                </t>
-                <t t-if="doc.partner_id.vat">
-                    <tr>
-                        <td><strong>VAT</strong></td>
-                        <td style="padding-left: 10px;">
-                            <t t-set="mod_vat" t-value="doc.partner_id.vat[2:]"/>
-                            <span t-esc="mod_vat" class="text-left"/>
-                        </td>
-                    </tr>
-                </t>
-            </table>
+            </td>
+        </xpath>
+
+        <xpath expr="//t[@t-if='doc.current_policy_level.custom_text_after_details']" position="replace">
+            <t t-if="doc.current_policy_level.custom_text_after_details">
+                <div style="margin-bottom:20px;">
+                    <p t-field="doc.current_policy_level.custom_text_after_details"/>
+                </div>
+            </t>
         </xpath>
 
     </template>
