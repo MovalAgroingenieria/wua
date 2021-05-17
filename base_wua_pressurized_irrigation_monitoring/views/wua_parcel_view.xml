@@ -112,7 +112,7 @@
             <field name="plantation_year"/>
             <field name="shaded_percentage"/>
             <field name="orientation"/>
-            <field name="soil_type"/>
+            <field name="soiltype_id"/>
             <field name="organic_material_percentage"/>
             <field name="tree_distance"/>
             <field name="row_distance"/>
@@ -122,6 +122,7 @@
             <field name="tree_lateral_number"/>
             <field name="tree_drippers_number"/>
             <field name="drippers_number"/>
+            <field name="irrigation_flow_manual"/>
           </group>
           <group name="fields_center" colspan="1" col="2">
             <field readonly="1" name="partner_id"/>
@@ -133,9 +134,8 @@
             <field readonly="1" name="updated_in_remotecontrol"
                    string="In Remote Control"/>
             <field readonly="1" name="cultivation_age"/>
-            <field readonly="1" name="age_category"/>
-            <div colspan="2">&#x2063;</div>
-            <div colspan="2">&#x2063;</div>
+            <field name="minimum_irrigation_dose"/>
+            <field name="irrigation_flow"/>
             <div colspan="2">&#x2063;</div>
             <div colspan="2">&#x2063;</div>
             <field readonly="1" name="real_consumption"/>
@@ -241,7 +241,7 @@
                   <filter string="Cultivation" name="cultivationid"
                    context="{'group_by':'cultivation_id'}"/>
                   <filter string="Soil Type" name="soiltype"
-                   context="{'group_by':'soil_type'}"/>
+                   context="{'group_by':'soiltype_id'}"/>
                   <filter string="Hydraulic Sector" name="hydraulicsectorid"
                    context="{'group_by':'hydraulicsector_id'}"/>
                   <filter string="Parcel" name="parcelid"

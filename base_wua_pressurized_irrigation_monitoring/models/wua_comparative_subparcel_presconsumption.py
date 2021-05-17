@@ -183,6 +183,28 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         string='Soil Type'
     )
 
+    soiltype_id = fields.Many2one(
+        comodel_name='wua.soiltype',
+        string='Soil Type',
+        index=True,
+    )
+
+    number_of_irrigations = fields.Integer(
+        string='Number of irrigations',
+        compute='_compute_number_of_irrigations'
+    )
+
+    irrigation_duration = fields.Integer(
+        string='Irrigation Duration (min)',
+        compute='_compute_irrigation_duration'
+    )
+
+    irrigation_duration_hhmm = fields.Char(
+        size=10,
+        string='Irrigation Duration (h)',
+        compute='_compute_irrigation_duration_hhmm'
+    )
+
     organic_material_percentage = fields.Float(
         string='Organic Material %',
         digits=(32, 2)
@@ -392,6 +414,65 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
                     elif (deviation_percentage <= percentage_categ_02):
                         consumption_category = 'B'
                 record.consumption_category = consumption_category
+
+    @api.multi
+    def _compute_number_of_irrigations(self):
+        model_values = self.env['ir.values'].sudo()
+        control_periodicity = 's'
+        control_periodicity_in_values = model_values.get_default(
+            'wua.monitoring.configuration', 'control_periodicity'
+        )
+        if control_periodicity_in_values:
+            control_periodicity = control_periodicity_in_values
+        if control_periodicity == 'b':
+            max_irrigations = 14
+        elif control_periodicity == 'm':
+            max_irrigations = 28
+        else:
+            max_irrigations = 7
+        for record in self:
+            number_of_irrigations = 0
+            estimated_consumption = record.estimated_consumption
+            minimum_irrigation_dose = \
+                record.subparcel_id.minimum_irrigation_dose
+            if (estimated_consumption > 0 and minimum_irrigation_dose > 0):
+                number_of_irrigations = \
+                    estimated_consumption / minimum_irrigation_dose
+            if (number_of_irrigations > 0):
+                number_of_irrigations = int(round(number_of_irrigations))
+                # Must be 1 or an integer between 1 and max_irrigations
+                number_of_irrigations = max(
+                    1, min(max_irrigations, number_of_irrigations))
+            record.number_of_irrigations = number_of_irrigations
+
+    @api.multi
+    def _compute_irrigation_duration(self):
+        for record in self:
+            irrigation_duration = 0
+            estimated_consumption = record.estimated_consumption
+            number_of_irrigations = record.number_of_irrigations
+            irrigation_flow = record.subparcel_id.irrigation_flow
+            if (estimated_consumption > 0 and number_of_irrigations > 0 and
+                    irrigation_flow > 0):
+                estimated_consumption_per_irrigation = \
+                    estimated_consumption / number_of_irrigations
+                irrigation_duration = int(round(
+                    60 * (estimated_consumption_per_irrigation /
+                          irrigation_flow)))
+            record.irrigation_duration = irrigation_duration
+
+    @api.multi
+    def _compute_irrigation_duration_hhmm(self):
+        for record in self:
+            irrigation_duration_hhmm = '00:00'
+            irrigation_duration = record.irrigation_duration
+            if (irrigation_duration > 0):
+                hours = str(irrigation_duration / 60)
+                minutes = str(irrigation_duration % 60)
+                hours = hours.zfill(2)
+                minutes = minutes.zfill(2)
+                irrigation_duration_hhmm = hours + ':' + minutes
+            record.irrigation_duration_hhmm = irrigation_duration_hhmm
 
     @api.multi
     def _compute_deviation_percentage(self):

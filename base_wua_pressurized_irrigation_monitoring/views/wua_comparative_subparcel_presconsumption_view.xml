@@ -36,7 +36,7 @@
                           <field name="plantation_year" readonly="1"/>
                           <field name="shaded_percentage" readonly="1"/>
                           <field name="orientation" readonly="1"/>
-                          <field name="soil_type" readonly="1"/>
+                          <field name="soiltype_id" readonly="1"/>
                           <field name="organic_material_percentage" readonly="1"/>
                           <field name="tree_distance" readonly="1"/>
                           <field name="row_distance" readonly="1"/>
@@ -58,6 +58,8 @@
                           <field name="cultivation_age" readonly="1"/>
                           <field name="age_category" readonly="1"/>
                           <div colspan="2">&#x2063;</div>
+                          <field name="number_of_irrigations" string="Recommended number of irrigations"/>
+                          <field name="irrigation_duration_hhmm" string="Recommended duration"/>
                           <div colspan="2">&#x2063;</div>
                           <field name="real_consumption" readonly="1"/>
                           <field name="theoretical_consumption" readonly="1"
@@ -134,7 +136,7 @@
               <field name="partner_id"/>
               <field name="cultivation_id"/>
               <field name="cultivation_age"/>
-              <field name="age_category"/>              
+              <field name="age_category"/>
               <field name="hydraulicsector_id"/>
               <field name="controlperiod_id"/>
               <filter string="Active Agricultural Season" name="agriculturalseasonactive"
@@ -180,7 +182,7 @@
                    context="{'group_by':'age_category'}"/>
                   <filter string="Soil Type"
                    name="soiltype"
-                   context="{'group_by':'soil_type'}"/>
+                   context="{'group_by':'soiltype_id'}"/>
                   <filter string="Hydraulic Sector"
                    name="hydraulicsector"
                    context="{'group_by':'hydraulicsector_id'}"/>

@@ -199,6 +199,26 @@ class WuaCultivation(models.Model):
             }
         return act_window
 
+    def get_wua_cultivation_irrigationdose_action(self):
+        current_cultivation_id = self.env.context.get('active_id')
+        condition = [('cultivation_id', '=', current_cultivation_id)]
+        id_tree_view = \
+            self.env.ref(
+                'base_wua_pressurized_irrigation_monitoring.'
+                'wua_irrigationdose_view_tree').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Irrigation Dose'),
+            'res_model': 'wua.irrigationdose',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree')],
+            'domain': condition,
+            'target': 'current',
+            'context': {'default_cultivation_id': current_cultivation_id},
+            }
+        return act_window
+
     @api.multi
     def action_get_cultivation_kc(self):
         self.ensure_one()

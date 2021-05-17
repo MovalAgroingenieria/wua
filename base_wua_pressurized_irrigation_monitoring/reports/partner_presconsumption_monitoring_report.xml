@@ -320,7 +320,8 @@
                                         <th width="22%" class="text-center">Subparcel</th>
                                         <th class="text-center">Waterconnection</th>
                                         <th>Cultivation</th>
-                                        <th width="14%">Variety</th>
+                                        <th width="7%">N. irrigations</th>
+                                        <th width="7%">Irrigation duration</th>
                                         <th class="text-right">
                                             Surface (<span t-esc="measurement_unit"/>)
                                          </th>
@@ -626,7 +627,14 @@
                                                 <t t-set="plantation_year" t-value="str(s.plantation_year)"/>
                                                 <span t-esc="plantation_year"/>
                                              </td>
-                                            <td><span t-field="s.soil_type"/></td>
+                                            <td>
+                                                <t t-if="s.soiltype_id">
+                                                    <span t-field="s.soiltype_id.name"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span></span>
+                                                </t>
+                                            </td>
                                             <td class="text-right"><span t-field="s.drippers_number"/></td>
                                             <td class="text-center">
                                                 <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>

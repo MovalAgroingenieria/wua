@@ -240,6 +240,7 @@ class WuaControlperiod(models.Model):
                     'productionmethod_id': subparcel.productionmethod_id.id,
                     'shaded_percentage': subparcel.shaded_percentage,
                     'soil_type': subparcel.soil_type,
+                    'soiltype_id': subparcel.soiltype_id.id,
                     'organic_material_percentage':
                         subparcel.organic_material_percentage,
                     'orientation': subparcel.orientation,
@@ -413,6 +414,7 @@ class WuaControlperiod(models.Model):
                 'productionmethod_id': subparcel.productionmethod_id.id,
                 'shaded_percentage': subparcel.shaded_percentage,
                 'soil_type': subparcel.soil_type,
+                'soiltype_id': subparcel.soiltype_id.id,
                 'organic_material_percentage':
                     subparcel.organic_material_percentage,
                 'orientation': subparcel.orientation,

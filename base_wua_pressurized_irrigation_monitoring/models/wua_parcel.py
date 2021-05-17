@@ -69,6 +69,31 @@ class WuaParcelSubparcel(models.Model):
         string='Soil Type',
     )
 
+    soiltype_id = fields.Many2one(
+        comodel_name='wua.soiltype',
+        string='Soil Type',
+        index=True,
+    )
+
+    minimum_irrigation_dose = fields.Float(
+        string='Minimum Irrigation Dose (m³)',
+        digits=(32, 4),
+        compute='_compute_minimum_irrigation_dose',
+    )
+
+    irrigation_flow = fields.Float(
+        string='Irrigation Flow (m³/h)',
+        digits=(32, 4),
+        compute='_compute_irrigation_flow',
+    )
+
+    irrigation_flow_manual = fields.Float(
+        string='Manual Irrigation Flow (m³/h)',
+        digits=(32, 4),
+        required=True,
+        default=0,
+    )
+
     organic_material_percentage = fields.Float(
         string='Organic Material %',
         digits=(32, 2)
@@ -253,6 +278,9 @@ class WuaParcelSubparcel(models.Model):
         ('valid_row_distance',
          'CHECK (row_distance >= 0)',
          'The distance between rows cannot be a negative value.'),
+        ('valid_irrigation_flow_manual',
+         'CHECK (irrigation_flow_manual >= 0)',
+         'The manual irrigation flow cannot be a negative value.'),
         ]
 
     @api.multi
@@ -281,6 +309,51 @@ class WuaParcelSubparcel(models.Model):
                         if cultivation_age > upper_age_middle:
                             age_category = 'b'
             record.age_category = age_category
+
+    @api.multi
+    def _compute_minimum_irrigation_dose(self):
+        model_values = self.env['ir.values'].sudo()
+        model_irrigationdose = self.env['wua.irrigationdose'].sudo()
+        factor = 1
+        area_measurement_type = model_values.get_default(
+            'wua.configuration', 'area_measurement_type')
+        if (area_measurement_type == 1):
+            area_measurement_equivalence = model_values.get_default(
+                'wua.configuration', 'area_measurement_equivalence')
+            if (area_measurement_equivalence > 0):
+                factor = area_measurement_equivalence
+        for record in self:
+            minimum_irrigation_dose_of_subparcel = 0
+            minimum_irrigation_dose_of_cultivation = 0
+            cultivation = record.cultivation_id
+            soiltype = record.soiltype_id
+            age_category = record.age_category
+            if (cultivation and soiltype and age_category):
+                record_of_mid_of_cultivation = model_irrigationdose.search(
+                    [('cultivation_id', '=', cultivation.id),
+                     ('soiltype_id', '=', soiltype.id),
+                     ('age_category', '=', age_category)]
+                )
+                if (record_of_mid_of_cultivation):
+                    minimum_irrigation_dose_of_cultivation = \
+                        record_of_mid_of_cultivation[0].minimum_irrigation_dose
+            if (minimum_irrigation_dose_of_cultivation > 0):
+                minimum_irrigation_dose_of_subparcel = \
+                    minimum_irrigation_dose_of_cultivation * 10 * \
+                    record.area_official * factor
+            record.minimum_irrigation_dose = \
+                minimum_irrigation_dose_of_subparcel
+
+    @api.multi
+    def _compute_irrigation_flow(self):
+        for record in self:
+            irrigation_flow = 0.0
+            if record.irrigation_flow_manual > 0:
+                irrigation_flow = record.irrigation_flow_manual
+            elif (record.drippers_nominal_flow and record.drippers_number):
+                irrigation_flow = (record.drippers_nominal_flow / 1000) * \
+                    record.drippers_number
+            record.irrigation_flow = irrigation_flow
 
     @api.depends('area_official_hec', 'tree_distance', 'row_distance')
     def _compute_number_of_trees(self):
@@ -523,68 +596,6 @@ class WuaParcelSubparcel(models.Model):
             if subparcel_modified:
                 vals['subparcel_modified'] = True
             resp = super(WuaParcelSubparcel, self).write(vals)
-            update_vals = {}
-            if 'partner_id' in vals:
-                update_vals['partner_id'] = vals['partner_id']
-            if 'parcel_id' in vals:
-                update_vals['parcel_id'] = vals['parcel_id']
-                update_vals['cadastral_reference'] = self.env['wua.parcel'].\
-                    browse(vals['parcel_id']).cadastral_reference
-            if 'hydraulicsector_id' in vals:
-                update_vals['hydraulicsector_id'] = vals['hydraulicsector_id']
-            if 'area_official' in vals:
-                update_vals['area_official'] = vals['area_official']
-            if 'cultivation_id' in vals:
-                update_vals['cultivation_id'] = vals['cultivation_id']
-            if 'cultivationvariety_id' in vals:
-                update_vals['cultivationvariety_id'] = \
-                    vals['cultivationvariety_id']
-            if 'productionmethod_id' in vals:
-                update_vals['productionmethod_id'] = \
-                    vals['productionmethod_id']
-            if 'shaded_percentage' in vals:
-                update_vals['shaded_percentage'] = vals['shaded_percentage']
-            if 'soil_type' in vals:
-                update_vals['soil_type'] = vals['soil_type']
-            if 'organic_material_percentage' in vals:
-                update_vals['organic_material_percentage'] = \
-                    vals['organic_material_percentage']
-            if 'orientation' in vals:
-                update_vals['orientation'] = vals['orientation']
-            if 'drippers_number' in vals:
-                update_vals['drippers_number'] = vals['drippers_number']
-            if 'drippers_nominal_flow' in vals:
-                update_vals['drippers_nominal_flow'] = \
-                    vals['drippers_nominal_flow']
-            if 'irrigationsystem_id' in vals:
-                update_vals['irrigationsystem_id'] = \
-                    vals['irrigationsystem_id']
-            if 'tree_distance' in vals:
-                update_vals['tree_distance'] = vals['tree_distance']
-            if 'tree_drippers_number' in vals:
-                update_vals['tree_drippers_number'] = \
-                    vals['tree_drippers_number']
-            if 'tree_lateral_number' in vals:
-                update_vals['tree_lateral_number'] = \
-                    vals['tree_lateral_number']
-            if 'row_distance' in vals:
-                update_vals['row_distance'] = vals['row_distance']
-            if 'area_perc' in vals:
-                update_vals['area_perc'] = vals['area_perc']
-            if 'number_of_trees' in vals:
-                update_vals['number_of_trees'] = vals['number_of_trees']
-            if 'plantation_density' in vals:
-                update_vals['plantation_density'] = vals['plantation_density']
-            if (update_vals):
-                if (self.subparcel_presconsumption_ids and
-                        len(self.subparcel_presconsumption_ids) > 0):
-                    presconsumptions = \
-                        self.subparcel_presconsumption_ids.filtered(
-                            lambda x: x.controlperiod_id.agriculturalseason_id.
-                            active_agriculturalseason)
-                    if (len(presconsumptions) > 0):
-                        for presconsumption in presconsumptions:
-                            presconsumption.write(update_vals)
         else:
             resp = super(WuaParcelSubparcel, self).write(vals)
         return resp
@@ -632,6 +643,7 @@ class WuaParcelSubparcel(models.Model):
                                 record.productionmethod_id.id,
                             'shaded_percentage': record.shaded_percentage,
                             'soil_type': record.soil_type,
+                            'soiltype_id': record.soiltype_id.id,
                             'organic_material_percentage':
                                 record.organic_material_percentage,
                             'orientation': record.orientation,
