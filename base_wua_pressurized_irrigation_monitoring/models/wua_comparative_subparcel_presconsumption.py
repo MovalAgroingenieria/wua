@@ -268,6 +268,11 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
         string='N. of drippers/tree',
     )
 
+    irrigation_flow = fields.Float(
+        string='Irrigation Flow (m³/h)',
+        digits=(32, 4),
+    )
+
     consumption_category = fields.Selection([
         ('A', 'A (correct irrigation)'),
         ('B', 'B (acceptable irrigation)'),

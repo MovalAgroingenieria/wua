@@ -249,6 +249,7 @@ class WuaControlperiod(models.Model):
                     'plantation_year': subparcel.plantation_year,
                     'number_of_trees': subparcel.number_of_trees,
                     'plantation_density': subparcel.plantation_density,
+                    'irrigation_flow': subparcel.irrigation_flow,
                     })
         return new_controlperiod
 
