@@ -143,20 +143,17 @@ class WuaWaterconnection(models.Model):
         if (self.last_waterflow > 0):
             info_color = 'blue'
         body = '<div style="display: flex; justify-content: space-around;">' +\
-            '<span>' + label_date + ': ' + last_data_time + '</span>' + \
-            '<span>' + label_total_volume + ': ' + \
-            str(last_total_volume) + u' (m³)' + '</span>' + \
-            '<span>' + label_waterflow + ': ' + \
+            '<span style="padding-right: 2px;">' + label_date + ': ' + \
+            last_data_time + '</span>' + \
+            '<span style="padding-right: 2px;">' + label_total_volume + \
+            ': ' + str(last_total_volume) + u' (m³)' + '</span>' + \
+            '<span style="padding-right: 2px;">' + label_waterflow + ': ' + \
             str(last_waterflow) + ' (l/s)' + '</span>' + \
-            '<span>' + label_valve_open + \
+            '<span style="padding-right: 2px;">' + label_valve_open + \
             '</span><span>' + label_valve_scheduled + \
             '</span>' + '</div>'
         resp = '<div class="panel-body text-left" ' + \
-               'style="background:#f4f6f6;border-radius:4px;' + \
-               'border-color:#696969;border-width:1px;' + \
-               'border-style:solid;padding-top:8px;' + \
-               'padding-bottom:8px;' + \
-               'margin-left:40px;margin-right:40px;' + \
+               'style="' + \
                'color: ' + info_color + ';">' + \
                body + '</div>'
         return resp

@@ -48,12 +48,7 @@ class WuaWaterconnection(models.Model):
                     'width="' + str(width) + '"' + \
                     '></iframe>'
                 record.html_readings_frame = \
-                    '<div class="panel-body text-center" ' + \
-                    'style="background:#f4f6f6;border-radius:4px;' + \
-                    'border-color:#696969;border-width:1px;' + \
-                    'border-style:solid;padding-top:15px;' + \
-                    'padding-bottom:10px;' + \
-                    'margin-left:40px;margin-right:40px">' + \
+                    '<div class="panel-body text-center">' + \
                     body + '</div>'
             else:
                 record.html_readings_frame = ''
@@ -71,7 +66,7 @@ class WuaWaterconnection(models.Model):
                     'clientidentify=' + clientidentify_param
                 record.html_consumptions_frame = \
                     '<p style="text-align:center;margin-top:2px;' + \
-                    'margin-left:1px;margin-right:1px;">' + \
+                    'margin-left:1px;margin-right:1px; overflow: auto;">' + \
                     '<iframe sandbox="allow-scripts allow-forms ' + \
                     'allow-pointer-lock allow-same-origin" ' + \
                     'id="iframe_consumptions" scrolling="no" ' + \
@@ -96,7 +91,7 @@ class WuaWaterconnection(models.Model):
                     'clientidentify=' + clientidentify_param
                 record.html_scheduling_frame = \
                     '<p style="text-align:center;margin-top:2px;' + \
-                    'margin-left:1px;margin-right:1px;">' + \
+                    'margin-left:1px;margin-right:1px; overflow: auto;">' + \
                     '<iframe sandbox="allow-scripts allow-forms ' + \
                     'allow-pointer-lock allow-same-origin ' + \
                     'allow-modals" ' + \

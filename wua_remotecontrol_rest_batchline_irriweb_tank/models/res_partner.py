@@ -30,7 +30,7 @@ class ResPartner(models.Model):
                     'clientidentify=' + clientidentify_param
                 record.html_scheduling_frame = \
                     '<p style="text-align:center;margin-top:2px;' + \
-                    'margin-left:1px;margin-right:1px;">' + \
+                    'margin-left:1px;margin-right:1px; overflow: auto;">' + \
                     '<iframe sandbox="allow-scripts allow-forms ' + \
                     'allow-pointer-lock allow-same-origin ' + \
                     'allow-modals" ' + \
