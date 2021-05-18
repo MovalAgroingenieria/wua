@@ -81,6 +81,13 @@ class WuaParcelSubparcel(models.Model):
         compute='_compute_minimum_irrigation_dose',
     )
 
+    minimum_irrigation_dose_manual = fields.Float(
+        string='Minimum Irrigation Dose Manual (m³)',
+        digits=(32, 4),
+        required=True,
+        default=0,
+    )
+
     irrigation_flow = fields.Float(
         string='Irrigation Flow (m³/h)',
         digits=(32, 4),
@@ -281,6 +288,9 @@ class WuaParcelSubparcel(models.Model):
         ('valid_irrigation_flow_manual',
          'CHECK (irrigation_flow_manual >= 0)',
          'The manual irrigation flow cannot be a negative value.'),
+        ('valid_minimum_irrigation_dose_manual',
+         'CHECK (minimum_irrigation_dose_manual >= 0)',
+         'The minimal irrigation dose cannot be a negative value.'),
         ]
 
     @api.multi
@@ -324,23 +334,28 @@ class WuaParcelSubparcel(models.Model):
                 factor = area_measurement_equivalence
         for record in self:
             minimum_irrigation_dose_of_subparcel = 0
-            minimum_irrigation_dose_of_cultivation = 0
-            cultivation = record.cultivation_id
-            soiltype = record.soiltype_id
-            age_category = record.age_category
-            if (cultivation and soiltype and age_category):
-                record_of_mid_of_cultivation = model_irrigationdose.search(
-                    [('cultivation_id', '=', cultivation.id),
-                     ('soiltype_id', '=', soiltype.id),
-                     ('age_category', '=', age_category)]
-                )
-                if (record_of_mid_of_cultivation):
-                    minimum_irrigation_dose_of_cultivation = \
-                        record_of_mid_of_cultivation[0].minimum_irrigation_dose
-            if (minimum_irrigation_dose_of_cultivation > 0):
-                minimum_irrigation_dose_of_subparcel = \
-                    minimum_irrigation_dose_of_cultivation * 10 * \
-                    record.area_official * factor
+            if (record.minimum_irrigation_dose_manual > 0):
+                minimum_irrigation_dose_of_subparcel = record.\
+                    minimum_irrigation_dose_manual
+            else:
+                minimum_irrigation_dose_of_cultivation = 0
+                cultivation = record.cultivation_id
+                soiltype = record.soiltype_id
+                age_category = record.age_category
+                if (cultivation and soiltype and age_category):
+                    record_of_mid_of_cultivation = model_irrigationdose.search(
+                        [('cultivation_id', '=', cultivation.id),
+                         ('soiltype_id', '=', soiltype.id),
+                         ('age_category', '=', age_category)]
+                    )
+                    if (record_of_mid_of_cultivation):
+                        minimum_irrigation_dose_of_cultivation = \
+                            record_of_mid_of_cultivation[0].\
+                            minimum_irrigation_dose
+                if (minimum_irrigation_dose_of_cultivation > 0):
+                    minimum_irrigation_dose_of_subparcel = \
+                        minimum_irrigation_dose_of_cultivation * 10 * \
+                        record.area_official * factor
             record.minimum_irrigation_dose = \
                 minimum_irrigation_dose_of_subparcel
 
@@ -653,6 +668,7 @@ class WuaParcelSubparcel(models.Model):
                             'plantation_year': record.plantation_year,
                             'number_of_trees': record.number_of_trees,
                             'plantation_density': record.plantation_density,
+                            'irrigation_flow': record.irrigation_flow
                             })
                     record.subparcel_modified = False
         return {
