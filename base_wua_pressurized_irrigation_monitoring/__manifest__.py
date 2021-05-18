@@ -7,7 +7,7 @@
             "irrigation",
     "summary": "In a water users association, added functionality to manage "
                "and compare estimated irrigation needs with real ones",
-    "version": '10.0.1.1.2',
+    "version": '10.0.1.1.3',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
