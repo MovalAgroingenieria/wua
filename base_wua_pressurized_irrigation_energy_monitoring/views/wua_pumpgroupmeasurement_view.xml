@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pumpgroupmeasurement_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup Measurement (form view)</field>
+        <field name="model">wua.pumpgroupmeasurement</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                </header>
+                <field name="id" invisible="1"/>
+                <field name="is_last_measurement" invisible="1"/>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <img src="/base_wua_pressurized_irrigation/static/image/img_last.png"
+                             hspace="2"
+                             attrs="{'invisible':[('is_last_measurement', '=', False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="pumpgroup_id" attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="measurement_time"/>
+                            <field name="instantaneous_flow"/>
+                            <field name="impulsion_pressure"/>
+                            <field name="suction_pressure"/>
+                            <!-- <field name="consumed_power"/> -->
+                            <field name="electrical_voltage"/>
+                            <field name="amperage"/>
+                            <field name="phi_cosine"/>
+                            <br/><br/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="agriculturalseason_id"/>
+                            <field name="specific_consumption"/>
+                            <br/><br/>
+                            <field name="manometric_height"/>
+                            <field name="supplied_power"/>
+                            <field name="consumed_power"/>
+                            <field name="energy_efficiency"/>
+                            <br/><br/>
+                            <field name="energy_efficiency_rating_with_desc" string="CATEGORY"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroupmeasurement_view_tree" model="ir.ui.view">
+        <field name="name">Pumpgroup Measurement (tree view)</field>
+        <field name="model">wua.pumpgroupmeasurement</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_energy_monitoring_wua_pumpgroupmeasurement_view_tree">
+                <field name="pumpgroup_id"/>
+                <field name="agriculturalseason_id"/>
+                <field name="measurement_time"/>
+                <field name="instantaneous_flow"/>
+                <field name="impulsion_pressure"/>
+                <field name="suction_pressure"/>
+                <field name="manometric_height"/>
+                <field name="supplied_power"/>
+                <field name="consumed_power"/>
+                <field name="energy_efficiency"/>
+                <field name="energy_efficiency_rating"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroupmeasurement_view_search" model="ir.ui.view">
+        <field name="name">Pumpgroup Measurement (search view)</field>
+        <field name="model">wua.pumpgroupmeasurement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="pumpgroup_id"/>
+                <filter string="Active agricultural season" name="of_active_agriculturalseason"
+                    domain="[('of_active_agriculturalseason','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Pump Group" name="pumpgroup_id"
+                        context="{'group_by':'pumpgroup_id'}"/>
+                    <filter string="Agricultural Season" name="agriculturalseason_id"
+                        context="{'group_by':'agriculturalseason_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_technical_assign_agseason_and_efrating_to_pumpgroupmeasurements_action" model="ir.actions.server">
+        <field name="name">Assign agseason and efrating to pumpgroupmeasurements</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation_energy_monitoring.model_wua_pumpgroupmeasurement"/>
+        <field name="code">
+            action = env["wua.pumpgroupmeasurement"].action_assign_agseason_and_efrating_to_pumpgroupmeasurements()
+        </field>
+    </record>
+
+    <menuitem id="wua_technical_assign_agseason_and_efrating_to_pumpgroupmeasurements"
+        name="Calculation: Energy monitoring measurements"
+        parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+        action="wua_technical_assign_agseason_and_efrating_to_pumpgroupmeasurements_action"
+        sequence="6"/>
+
+</odoo>

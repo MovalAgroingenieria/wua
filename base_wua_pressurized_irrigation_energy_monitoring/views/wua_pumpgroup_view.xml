@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pumpgroup_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup (form view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pump.wua_pumpgroup_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_pumpunits']" position="after">
+                <button name="action_show_pumpgroupmeasurements" type="object" class="oe_stat_button"
+                    icon="fa-moval-pumpgroup-measurement">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_measurements"/>
+                        </span>
+                        <span class="o_stat_text">Measurements</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <div name="lastmeasurement_title" colspan="2" style="margin: 10px 0px;" class="text-center">
+                    <span><b>LAST MEASUREMENT</b></span>
+                </div>
+                <field name="last_measurement_time"/>
+                <field name="last_measurement_supplied_power"/>
+                <field name="last_measurement_consumed_power"/>
+                <field name="last_measurement_energy_efficiency"/>
+                <br/><br/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroup_view_tree" model="ir.ui.view">
+        <field name="name">Pumpgroups (tree view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pump.wua_pumpgroup_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_pumpunits']" position="after">
+                <field name="last_measurement_time"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
