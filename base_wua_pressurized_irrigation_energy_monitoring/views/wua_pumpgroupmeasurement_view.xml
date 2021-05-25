@@ -92,10 +92,30 @@
         </field>
     </record>
 
+    <record id="wua_technical_show_pumpgroupmeasurements_action" model="ir.actions.act_window">
+        <field name="name">Pump group measurements</field>
+        <field name="res_model">wua.pumpgroupmeasurement</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_pumpgroupmeasurement_view_tree"/>
+        <field name="search_view_id" ref="wua_pumpgroupmeasurement_view_search"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Pump group measurement.
+            </p>
+        </field>
+    </record>
+
     <menuitem id="wua_technical_assign_agseason_and_efrating_to_pumpgroupmeasurements"
         name="Calculation: Energy monitoring measurements"
         parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"
         action="wua_technical_assign_agseason_and_efrating_to_pumpgroupmeasurements_action"
         sequence="6"/>
+
+    <menuitem id="show_pumpgroupmeasurements"
+        name="Show energy monitoring measurements"
+        parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"
+        action="wua_technical_show_pumpgroupmeasurements_action"
+        sequence="7"/>
 
 </odoo>
