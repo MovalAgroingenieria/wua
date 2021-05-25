@@ -16,6 +16,7 @@ class WuaPumpgroupmeasurement(models.Model):
         comodel_name="wua.pumpgroup",
         required=True,
         index=True,
+        readonly=True,
         ondelete='restrict')
 
     measurement_time = fields.Datetime(
@@ -55,6 +56,10 @@ class WuaPumpgroupmeasurement(models.Model):
         digits=(32, 2),
         default=0,
         help="Consumed electrical power, in kW.")
+
+    calculated_consumed_power = fields.Float(
+        string="Consumed Power (kW)",
+        compute="_compute_calculated_consumed_power")
 
     agriculturalseason_id = fields.Many2one(
         string="Agricultural Season",
@@ -142,6 +147,9 @@ class WuaPumpgroupmeasurement(models.Model):
         ('valid_amperage',
          'CHECK (amperage >= 0)',
          'The amperage must be a value zero or positive.'),
+        ('valid_electrical_voltage',
+         'CHECK (electrical_voltage >= 0)',
+         'The electrical voltage must be a value zero or positive.'),
         ('valid_phi_cosine',
          'CHECK (phi_cosine >= -1 and phi_cosine <= 1)',
          'The phi_cosine must be between -1 and 1.'),
@@ -156,6 +164,11 @@ class WuaPumpgroupmeasurement(models.Model):
                 pumpgroup_code = \
                     str(record.pumpgroup_id.pumpgroup_code).zfill(6)
                 record.name = pumpgroup_code + ' - ' + record.measurement_time
+
+    @api.depends('consumed_power')
+    def _compute_calculated_consumed_power(self):
+        for record in self:
+            record.calculated_consumed_power = record.consumed_power
 
     @api.depends('measurement_time')
     def _compute_agriculturalseason_id(self):
@@ -303,6 +316,26 @@ class WuaPumpgroupmeasurement(models.Model):
         super(WuaPumpgroupmeasurement, self).write(vals)
         return True
 
+    @api.model
+    def read_group(self, domain, fields, groupby,
+                   offset=0, limit=None, orderby=False, lazy=True):
+        if 'instantaneous_flow' in fields:
+            fields.remove('instantaneous_flow')
+        if 'impulsion_pressure' in fields:
+            fields.remove('impulsion_pressure')
+        if 'suction_pressure' in fields:
+            fields.remove('suction_pressure')
+        if 'manometric_height' in fields:
+            fields.remove('manometric_height')
+        if 'supplied_power' in fields:
+            fields.remove('supplied_power')
+        if 'consumed_power' in fields:
+            fields.remove('consumed_power')
+        if 'energy_efficiency' in fields:
+            fields.remove('energy_efficiency')
+        return super(WuaPumpgroupmeasurement, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
+
     def _process_vals(self, vals):
         model_values = self.env['ir.values'].sudo()
         threshold_pump_flow = 0
@@ -323,9 +356,10 @@ class WuaPumpgroupmeasurement(models.Model):
         if 'instantaneous_flow' in vals and \
                 vals['instantaneous_flow'] < threshold_pump_flow:
             vals.update({'instantaneous_flow': 0})
-        if 'suction_pressure' in vals and \
-                vals['suction_pressure'] < threshold_pump_pressure:
-            vals.update({'suction_pressure': 0})
+        if 'suction_pressure' in vals:
+            suction_pressure_abs_value = abs(vals['suction_pressure'])
+            if suction_pressure_abs_value < threshold_pump_pressure:
+                vals.update({'suction_pressure': 0})
         if 'impulsion_pressure' in vals and \
                 vals['impulsion_pressure'] < threshold_pump_pressure:
             vals.update({'impulsion_pressure': 0})

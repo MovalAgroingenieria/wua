@@ -18,12 +18,12 @@
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
-                            <field name="pumpgroup_id" attrs="{'readonly': [('id', '>', 0)]}"/>
+                            <field name="pumpgroup_id"/>
                             <field name="measurement_time"/>
                             <field name="instantaneous_flow"/>
                             <field name="impulsion_pressure"/>
                             <field name="suction_pressure"/>
-                            <!-- <field name="consumed_power"/> -->
+                            <field name="consumed_power"/>
                             <field name="electrical_voltage"/>
                             <field name="amperage"/>
                             <field name="phi_cosine"/>
@@ -35,7 +35,7 @@
                             <br/><br/>
                             <field name="manometric_height"/>
                             <field name="supplied_power"/>
-                            <field name="consumed_power"/>
+                            <field name="calculated_consumed_power"/>
                             <field name="energy_efficiency"/>
                             <br/><br/>
                             <field name="energy_efficiency_rating_with_desc" string="CATEGORY"/>
@@ -94,7 +94,7 @@
 
     <menuitem id="wua_technical_assign_agseason_and_efrating_to_pumpgroupmeasurements"
         name="Calculation: Energy monitoring measurements"
-        parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+        parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"
         action="wua_technical_assign_agseason_and_efrating_to_pumpgroupmeasurements_action"
         sequence="6"/>
 

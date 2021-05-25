@@ -17,7 +17,7 @@ class WuaAgriculturalseason(models.Model):
         string='N. of measurements',
         compute='_compute_number_of_measurements')
 
-    @api.depends('pumpgroupmeasurement_ids')
+    @api.multi
     def _compute_number_of_measurements(self):
         for record in self:
             record.number_of_measurements = \
