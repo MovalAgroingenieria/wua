@@ -740,6 +740,22 @@
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_regenerate_aerial_img_individual'))"/>
     </record>
 
+    <record id="wua_see_gis_viewer_multiple" model="ir.actions.server">
+        <field name="name">View on GIS</field>
+        <field name="model_id" ref="base_wua.model_wua_parcel"/>
+        <field name="code">
+            action =  env['wua.parcel'].browse(context['active_ids']).action_see_gis_viewer_multiple()
+        </field>
+    </record>
+
+    <record id="wua_action_see_gis_viewer_multiple" model="ir.values">
+        <field name="name">View on GIS</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_see_gis_viewer_multiple'))"/>
+    </record>
+
     <menuitem id="base_wua_technical_menu"
               name="Technical"
               parent="base_wua_census_menu"

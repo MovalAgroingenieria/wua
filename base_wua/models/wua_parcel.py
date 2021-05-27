@@ -918,6 +918,49 @@ class WuaParcel(models.Model):
             }
 
     @api.multi
+    def action_see_gis_viewer_multiple(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        parcel_param = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_parcel_param')
+        if (url and parcel_param):
+            parcels_str = ','.join(self.mapped(lambda x: x.name))
+            credentials = ''
+            if (username and password and not self.env.user.has_group(
+                    'base_wua.group_wua_portal_user')):
+                credentials = username + "-" + password
+                credentials = credentials.ljust(32)
+                current_datetime = pytz.utc.localize(datetime.datetime.now())
+                current_datetime = current_datetime.astimezone(
+                    pytz.timezone('Europe/Madrid'))
+                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+                minimum = int(current_datetime[14:])
+                if minimum < 30:
+                    minimum = '00'
+                else:
+                    minimum = '30'
+                iv = current_datetime[:14] + minimum
+                aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+                cipher_text = aes_encryptor.encrypt(credentials)
+                cipher_text = cipher_text.encode('base64')
+                credentials = cipher_text
+            if (credentials):
+                url = url + '?arg=' + credentials + '&' + parcel_param + \
+                    '=' + parcels_str
+            else:
+                url = url + '?' + parcel_param + '=' + parcels_str
+            # Convert array to string
+            return {
+                'type': 'ir.actions.act_url',
+                'url': url,
+                'target': 'new',
+            }
+
+    @api.multi
     def action_see_street_view(self):
         self.ensure_one()
         if self.street_view_link:
