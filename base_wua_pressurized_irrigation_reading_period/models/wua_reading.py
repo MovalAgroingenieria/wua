@@ -33,6 +33,11 @@ class WuaReading(models.Model):
         readonly=True,
         ondelete='restrict')
 
+    reading_img = fields.Binary(
+        string="Reading Image",
+        readonly=True,
+        attachment=True)
+
     @api.depends('readingperiod_id')
     def _compute_is_field_reading(self):
         for record in self:
@@ -60,12 +65,15 @@ class WuaReading(models.Model):
 
     @api.model
     def create_field_reading(self, watermeter_id, volume, readingperiod_id,
-                             watermeter_reader_id, notes=''):
+                             watermeter_reader_id, notes='', picture=''):
         rp = self.env['wua.readingperiod'].search([('state', '=', 'open')])
         if (not rp):
             raise exceptions.UserError(_(
                 'There is no open readingperiod.'))
         vals = {}
+        reading_img = None
+        if (picture):
+            reading_img = picture
         vals['watermeter_id'] = watermeter_id
         vals['volume'] = volume
         vals['readingperiod_id'] = rp.id
@@ -75,6 +83,7 @@ class WuaReading(models.Model):
             '%Y-%m-%d %H:%M:%S')
         vals['validated'] = False
         vals['initialization_reading'] = False
+        vals['reading_img'] = reading_img
         old_readings = self.sudo().env['wua.reading'].search(
             ['&', ('watermeter_id', '=', watermeter_id),
                 ('readingperiod_id', '=', rp.id)])
