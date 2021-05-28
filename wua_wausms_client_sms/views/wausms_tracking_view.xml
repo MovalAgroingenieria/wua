@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="wausms_tracking_view_tree" model="ir.ui.view">
+        <field name="name">WauSMS Tracking Tree</field>
+        <field name="model">wausms.tracking</field>
+        <field name="inherit_id" ref="wausms_client_sms.wausms_tracking_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_id']" position="after">
+                <field name="parcel_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wausms_tracking_view_tree_partner" model="ir.ui.view">
+        <field name="name">WauSMS Tracking Tree</field>
+        <field name="model">wausms.tracking</field>
+        <field name="inherit_id" ref="wausms_client_sms.wausms_tracking_view_tree_partner"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_id']" position="after">
+                <field name="parcel_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wausms_tracking_view_tree_invoice" model="ir.ui.view">
+        <field name="name">WauSMS Tracking Tree</field>
+        <field name="model">wausms.tracking</field>
+        <field name="inherit_id" ref="wausms_client_sms.wausms_tracking_view_tree_invoice"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="parcel_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Tree view parcel -->
+    <record id="wausms_tracking_view_tree_parcel" model="ir.ui.view">
+        <field name="name">WauSMS Tracking Tree Parcel</field>
+        <field name="model">wausms.tracking</field>
+        <field name="arch" type="xml">
+           <tree string="SMS" default_order='sms_time_data desc'
+                create="false" duplicate="false" class="o_wausms_tracking_view_tree"
+                colors="green:response_code=='202'; orange:response_code=='207';
+                    red:response_code=='400'; red:response_code=='401';
+                    red:response_code=='402'; red:response_code=='500';">
+                <field name="response_code" invisible="1"/>
+                <field name="sms_time_data"/>
+                <field name="sender"/>
+                <field name="partner_id" string="To"/>
+                <field name="invoice_id"/>
+                <field name="subject"/>
+                <field name="sms_confirmation"/>
+                <field name="sms_message"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wausms_tracking_view_form" model="ir.ui.view">
+        <field name="name">WauSMS Tracking Form</field>
+        <field name="model">wausms.tracking</field>
+        <field name="inherit_id" ref="wausms_client_sms.wausms_tracking_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_id']" position="after">
+                <field name="parcel_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wausms_tracking_view_search" model="ir.ui.view">
+        <field name="name">WauSMS Tracking Search</field>
+        <field name="model">wausms.tracking</field>
+        <field name="inherit_id" ref="wausms_client_sms.wausms_tracking_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_id']" position="after">
+                <field name="parcel_id"/>
+            </xpath>
+           <xpath expr="//filter[@name='invoice_filter']" position="after">
+                <filter string="Parcel" name="parcel_filter"
+                        context="{'group_by':'parcel_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
