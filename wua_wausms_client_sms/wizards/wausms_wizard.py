@@ -2,7 +2,7 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, api, _
+from odoo import models, api, fields, _
 from odoo.exceptions import ValidationError
 import requests
 import json
@@ -26,17 +26,15 @@ class WauSMSWizard(models.Model):
                 'wausms.configuration', 'default_invoice_template_id')
         if context.get("mode") == 'parcel':
             default_template_id = self.env['ir.values'].get_default(
-                'wausms.configuration', 'default_invoice_template_id')
+                'wausms.configuration', 'default_parcel_template_id')
         return default_template_id
 
-    def _compute_sms_template(self, context):
-        if context.get("mode") != 'parcel':
-            return super(WauSMSWizard, self)._compute_sms_template()
-        else:
-            parcel_template = self.env['ir.values'].get_default(
-                'wausms.configuration', 'default_parcel_template')
-            for record in self:
-                record.sms_message = parcel_template
+    # Overwrite parent field
+    template_id = fields.Many2one(
+        comodel_name='wausms.template',
+        string='Template',
+        default=_get_default_template_id,
+        ondelete="set null")
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
@@ -101,8 +99,12 @@ class WauSMSWizard(models.Model):
             parcel_ids = context.get('active_ids')
             for parcel_id in parcel_ids:
                 parcel = self.env['wua.parcel'].browse(parcel_id)
-                partner_active_ids.append(parcel.partner_id.id)
-                partner_parcel_list.append([parcel.partner_id.id, parcel_id])
+                # Send to all partnerlinks of parcel
+                partnerlinks = parcel.partnerlink_ids
+                for partnerlink in partnerlinks:
+                    partner_active_ids.append(partnerlink.partner_id.id)
+                    partner_parcel_list.append(
+                        [partnerlink.partner_id.id, parcel_id])
             # Set active_ids as list of list [[partner_id, parcel_id],)
             active_ids = partner_parcel_list
 
