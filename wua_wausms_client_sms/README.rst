@@ -8,6 +8,7 @@ WUA WauSMS client SMS
 
 Description
 ===========
+
 This module extends parent module functionality allowing send SMS's from parcel
 views (tree and form), create parcel's templates and track SMS sent to specific
 parcels.
