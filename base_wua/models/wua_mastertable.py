@@ -52,7 +52,7 @@ class WuaMastertable(models.Model):
         if self.__class__._numeric_name:
             try:
                 proposed_numeric_code = int(name_no_blanks)
-            except:
+            except Exception:
                 proposed_numeric_code = 0
             if proposed_numeric_code <= 0:
                 raise exceptions.ValidationError(_('The field must be '

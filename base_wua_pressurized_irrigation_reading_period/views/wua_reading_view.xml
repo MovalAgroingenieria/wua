@@ -11,6 +11,13 @@
                 <field name="readingperiod_id" attrs="{'invisible':[('is_field_reading','=',False)]}"/>
                 <field name="watermeter_reader_id" attrs="{'invisible':[('is_field_reading','=',False)]}"/>
             </xpath>
+            <xpath expr="//page[@name='notes_page']" position="after">
+                <page name="reading_img" string="Reading Image">
+                    <group name="reading_img_group">
+                        <field name="reading_img" widget="image" class="oe_img_259_160"/>
+                    </group>
+                </page>
+            </xpath>
         </field>
     </record>
 
