@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_config_settings_view_form"
+            model="ir.ui.view">
+        <field name="name">Parameters (Energy Monitoring)</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[last()]" position="before">
+                <group name="energymonitoring_api" string="Monitoring API">
+                    <field name="enable_energymonitoring"
+                           string="Enabled"/>
+                    <field name="url_energymonitoring_rest"
+                           string="API REST URL"
+                           attrs="{'invisible':[('enable_energymonitoring','=',False)],
+                                   'required': [('enable_energymonitoring', '=', True)]}"/>
+                    <field name="url_energymonitoring_rest_username"
+                           string="User Name"
+                           attrs="{'invisible':[('enable_energymonitoring','=',False)],
+                                   'required': [('enable_energymonitoring', '=', True)]}"/>
+                    <field name="url_energymonitoring_rest_password"
+                           string="Password"
+                           attrs="{'invisible':[('enable_energymonitoring','=',False)],
+                                   'required': [('enable_energymonitoring', '=', True)]}"/>
+                    <field name="url_energymonitoring_application"
+                           string="Application URL"
+                           attrs="{'invisible':[('enable_energymonitoring','=',False)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_energymonitoring_application_action"
+            model="ir.actions.server">
+        <field name="name">Native Energy Monitoring Application</field>
+        <field name="model_id" ref="model_wua_infrastructure_configuration"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.infrastructure.configuration'].run_energymonitoring_application_url()
+        </field>
+    </record>
+
+    <menuitem id="wua_energymonitoring_application_menu"
+              name="Native Energy Monitoring"
+              parent="base_wua_infrastructure.base_wua_infrastructure_configuration_menu"
+              action="wua_energymonitoring_application_action"
+              sequence="2"/>
+
+</odoo>

@@ -2,7 +2,7 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, _
 
 
 class WuaPumpgroup(models.Model):
@@ -55,7 +55,7 @@ class WuaPumpgroup(models.Model):
                 measurements_of_record = \
                     self.env['wua.pumpgroupmeasurement'].search(
                         [('pumpgroup_id', '=', record.id)],
-                         limit=1, order='measurement_time desc')
+                        limit=1, order='measurement_time desc')
                 last_measurement_time = \
                     measurements_of_record[0].measurement_time
                 last_measurement_supplied_power = \
@@ -72,6 +72,7 @@ class WuaPumpgroup(models.Model):
             record.last_measurement_energy_efficiency = \
                 last_measurement_energy_efficiency
 
+    @api.multi
     def action_show_pumpgroupmeasurements(self):
         self.ensure_one()
         id_tree_view = self.env.ref(
@@ -94,6 +95,6 @@ class WuaPumpgroup(models.Model):
             'target': 'current',
             'domain': [('id', 'in', self.pumpgroupmeasurement_ids.ids)],
             'context': {'default_pumpgroup_id': self.id,
-                        'search_default_active_agriculturalseason': True, },
+                        'search_default_of_active_agriculturalseason': True, },
             }
         return act_window

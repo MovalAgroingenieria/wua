@@ -10,6 +10,7 @@ from odoo import models, fields, api, _
 class WuaPumpgroupmeasurement(models.Model):
     _name = 'wua.pumpgroupmeasurement'
     _description = 'Entity (pumpgroupmeasurement)'
+    _order = 'pumpgroup_code, measurement_time desc'
 
     pumpgroup_id = fields.Many2one(
         string="Pump Group",
@@ -22,6 +23,12 @@ class WuaPumpgroupmeasurement(models.Model):
     measurement_time = fields.Datetime(
         string="Time",
         required=True,
+        index=True)
+
+    pumpgroup_code = fields.Integer(
+        string='Code',
+        store=True,
+        compute='_compute_pumpgroup_code',
         index=True)
 
     name = fields.Char(
@@ -154,6 +161,14 @@ class WuaPumpgroupmeasurement(models.Model):
          'CHECK (phi_cosine >= -1 and phi_cosine <= 1)',
          'The phi_cosine must be between -1 and 1.'),
         ]
+
+    @api.depends('pumpgroup_id', 'pumpgroup_id.pumpgroup_code')
+    def _compute_pumpgroup_code(self):
+        for record in self:
+            pumpgroup_code = 0
+            if record.pumpgroup_id:
+                pumpgroup_code = record.pumpgroup_id.pumpgroup_code
+            record.pumpgroup_code = pumpgroup_code
 
     @api.depends('pumpgroup_id', 'pumpgroup_id.pumpgroup_code',
                  'measurement_time')

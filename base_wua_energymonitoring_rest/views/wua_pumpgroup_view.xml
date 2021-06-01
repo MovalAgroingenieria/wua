@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pumpgroup_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup (form view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_pump.wua_pumpgroup_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <field name="energymonitoring_enabled" invisible="1"/>
+                    <field name="connected_to_api" invisible="1"/>
+                    <button name="do_get_measurements_of_pumpgroup"
+                        type="object" string="Get measurements"
+                        icon="fa-rss"
+                        attrs="{'invisible':
+                                ['|', ('energymonitoring_enabled','=',False),
+                                      ('connected_to_api','=',False)]}"
+                        groups="base_wua.group_wua_manager"
+                        confirm="Import measurements?"/>                    
+                </header>
+            </xpath>
+            <xpath expr="//page[@name='notes_page']" position="before">
+                <page name="api_parameters_page"
+                      string="API Parameters"
+                      attrs="{'invisible':
+                              [('energymonitoring_enabled','=',False)]}">
+                    <group name="parameters">
+                        <group name="parameters_left">
+                            <div colspan="2"
+                                 style="margin-bottom: 10px;"
+                                 class="text-center">
+                            <span style="font-weight: bold;">
+                            IMPULSION PRESSURE</span>
+                            </div>
+                            <field name="impulsion_pressure_deviceid"
+                             string="Device"/>
+                            <div name="div_impulsion_pressure_devicedesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('impulsion_pressure_devicedesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="impulsion_pressure_devicedesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                            <field name="impulsion_pressure_measurementid"
+                             string="Measurement"/>
+                            <div name="div_impulsion_pressure_measurementdesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('impulsion_pressure_measurementdesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="impulsion_pressure_measurementdesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                            <div colspan="2"
+                                 style="margin-top: 10px;margin-bottom: 10px;"
+                                 class="text-center">
+                            <span style="font-weight: bold;">
+                            SUCTION PRESSURE</span>
+                            </div>
+                            <field name="suction_pressure_deviceid"
+                             string="Device"/>
+                            <div name="div_suction_pressure_devicedesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('suction_pressure_devicedesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="suction_pressure_devicedesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                            <field name="suction_pressure_measurementid"
+                             string="Measurement"/>
+                            <div name="div_suction_pressure_measurementdesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('suction_pressure_measurementdesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="suction_pressure_measurementdesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                            <div colspan="2"
+                                 style="margin-top: 10px;margin-bottom: 10px;"
+                                 class="text-center">
+                            <span style="font-weight: bold;">
+                            INSTANTANEOUS FLOW</span>
+                            </div>
+                            <field name="instantaneous_flow_deviceid"
+                             string="Device"/>
+                            <div name="div_instantaneous_flow_devicedesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('instantaneous_flow_devicedesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="instantaneous_flow_devicedesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                            <field name="instantaneous_flow_measurementid"
+                                   string="Measurement"/>
+                            <div name="div_instantaneous_flow_measurementdesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('instantaneous_flow_measurementdesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="instantaneous_flow_measurementdesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                            <div colspan="2"
+                                 style="margin-top: 10px;margin-bottom: 10px;"
+                                 class="text-center">
+                            <span style="font-weight: bold;">
+                            CONSUMED POWER</span>
+                            </div>
+                            <field name="consumed_power_deviceid"
+                             string="Device"/>
+                            <div name="div_consumed_power_devicedesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('consumed_power_devicedesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="consumed_power_devicedesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                            <field name="consumed_power_measurementid"
+                             string="Measurement"/>
+                            <div name="div_consumed_power_measurementdesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('consumed_power_measurementdesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="consumed_power_measurementdesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                        </group>
+                        <group name="parameters_right">
+                            <div colspan="2"
+                                 style="margin-bottom: 10px;"
+                                 class="text-center">
+                            <span style="font-weight: bold;">
+                            DEFAULT VALUES</span>
+                            </div>
+                            <field name="default_suction_pressure"
+                             string="Suction Pressure"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroup_view_tree" model="ir.ui.view">
+        <field name="name">Pumpgroups (tree view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_pump.wua_pumpgroup_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_pumpunits']"
+                   position="after">
+                <field name="connected_to_api"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroup_view_search" model="ir.ui.view">
+        <field name="name">Pumpgroups (search view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_pump.wua_pumpgroup_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='gispumpgroupno']"
+                   position="after">
+                <separator/>
+                <filter string="Connected to API: Yes" name="connectedtoapiyes"
+                        domain="[('connected_to_api','=',True)]"/>
+                <filter string="Connected to API: No" name="connectedtoapino"
+                        domain="[('connected_to_api','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="technical_import_measurements_global_action"
+            model="ir.actions.server">
+        <field name="name">Get measurements of all pumpgroups</field>
+        <field name="model_id"
+               ref="base_wua_pressurized_irrigation_energy_monitoring.model_wua_pumpgroupmeasurement"/>
+        <field name="code">
+               action = env["wua.pumpgroupmeasurement"].do_import_measurements_global(True)
+        </field>
+    </record>
+
+    <menuitem id="technical_import_measurements_global_menu"
+        name="Energy Monitoring: get measurements of all pumpgroups"
+        parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"
+        action="technical_import_measurements_global_action"
+        sequence="8"/>
+
+</odoo>
