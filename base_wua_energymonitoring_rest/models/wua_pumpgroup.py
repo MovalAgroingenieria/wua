@@ -262,18 +262,19 @@ class WuaPumpgroup(models.Model):
            pumpgroup.connected_to_api):
             number_of_measurements = \
                 self.env['wua.pumpgroupmeasurement'].do_import_measurements(
-                    pumpgroup.pumpgroup_code)
-        message_01_ok = _('Successful operation')
-        message_01_error = _('UNSUCCESSFUL operation')
+                    pumpgroup.pumpgroup_code, False)
+        message_01_ok = _('SUCCESFUL OPERATION')
+        message_01_error = _('UNSUCCESSFUL OPERATION')
         message_02_ok = _('Number of measurements')
         message_02_error = _('Error in')
         message = ''
         buttons = [{'type': 'ir.actions.act_window_close',
                     'name': _('Close')}]
         if number_of_measurements >= 0:
-            message = '<strong>' + message_01_ok + '</strong><br><br>' + \
+            message = '<center><b>' + message_01_ok + \
+                '</b></center><br><br>' + \
                 message_02_ok + ': ' + \
-                '<strong>' + str(number_of_measurements) + '</strong>'
+                '<b>' + str(number_of_measurements) + '</b>'
             if number_of_measurements > 0:
                 buttons.append({
                     'type': 'ir.actions.act_window',
@@ -288,8 +289,8 @@ class WuaPumpgroup(models.Model):
                                 True},
                     'classes': 'btn-primary'})
         else:
-            message = '<strong style="color:red;">' + \
-                message_01_error + '</strong><br><br>' + \
+            message = '<center><b style="color:red;">' + \
+                message_01_error + '</b></center><br><br>' + \
                 message_02_error + '...  ' + \
                 str(pumpgroup.pumpgroup_code) + \
                 ' (' + pumpgroup.name + ')'

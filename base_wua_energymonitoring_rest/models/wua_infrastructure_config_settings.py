@@ -29,9 +29,21 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         size=255,
         default='-')
 
+    delay_between_requests = fields.Integer(
+        string='Delay between two consecutive requests',
+        default=0,
+        help='Delay between two consecutive requests, in seconds')
+
     url_energymonitoring_application = fields.Char(
         string='URL of Application for Energy for Monitoring',
         size=255)
+
+    _sql_constraints = [
+        ('valid_delay_between_requests',
+         'CHECK (delay_between_requests >= 0)',
+         'The delay between two consecutive requests can not be a '
+         'negative value.'),
+        ]
 
     @api.multi
     def set_default_values(self):
@@ -49,6 +61,9 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'url_energymonitoring_rest_password',
                            self.url_energymonitoring_rest_password)
+        values.set_default('wua.infrastructure.configuration',
+                           'delay_between_requests',
+                           self.delay_between_requests)
         values.set_default('wua.infrastructure.configuration',
                            'url_energymonitoring_application',
                            self.url_energymonitoring_application)

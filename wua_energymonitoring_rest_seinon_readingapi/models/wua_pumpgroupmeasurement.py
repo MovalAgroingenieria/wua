@@ -7,8 +7,8 @@ import pytz
 import requests
 import json
 import logging
+import collections
 from odoo import models, api, _
-from collections import OrderedDict
 
 
 class WuaPumpgroupmeasurement(models.Model):
@@ -376,7 +376,7 @@ class WuaPumpgroupmeasurement(models.Model):
                     'consumed_power': measurement['consumed_power']
                     }
                 if not resp:
-                    resp = OrderedDict()
+                    resp = collections.OrderedDict()
                     resp[key] = value
                 else:
                     # The day of change of hour (winter to summer) can have

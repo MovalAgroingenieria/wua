@@ -2,6 +2,7 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import time
 from odoo import models, api, _
 
 
@@ -9,7 +10,7 @@ class WuaPumpgroupmeasurement(models.Model):
     _inherit = 'wua.pumpgroupmeasurement'
 
     @api.model
-    def do_import_measurements(self, pumpgroup_code):
+    def do_import_measurements(self, pumpgroup_code, delay=True):
         # if resp is equal to -1, then there is an error
         resp = 0
         if pumpgroup_code:
@@ -44,6 +45,8 @@ class WuaPumpgroupmeasurement(models.Model):
                                     resp = resp + 1
                     else:
                         resp = -1
+                    self._post_import_measurements(
+                        pumpgroup, measurements, resp, delay)
         return resp
 
     @api.model
@@ -74,3 +77,16 @@ class WuaPumpgroupmeasurement(models.Model):
     def _import_measurements(self, pumpgroup):
         # Dictionary with measurements and flag of error
         return None, False
+
+    # Hook
+    def _post_import_measurements(self, pumpgroup,
+                                  measurements, number_of_measurements,
+                                  delay=True):
+        # Actions after "_do_import_measurements"
+        if delay:
+            model_values = self.env['ir.values'].sudo()
+            delay_between_requests = model_values.get_default(
+                'wua.infrastructure.configuration',
+                'delay_between_requests')
+            if (delay_between_requests and delay_between_requests > 0):
+                time.sleep(delay_between_requests)
