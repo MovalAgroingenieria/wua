@@ -8,9 +8,13 @@
                ref="base_wua_infrastructure.wua_irrigationshed_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='waterconnections_page']" position="after">
-                <page name="consumptions_graph_page" string="Graph">
+
+                <page name="consumptions_graph_page" string="Graph"
+                    attrs="{'invisible':[('consumptions_graph_invisible','=',True)]}">
+                        <field name="consumptions_graph_invisible"
+                            invisible="1"/>
                         <field name="consumptions_graph"
-                               widget="bokeh_chart" nolabel="1"/>
+                            widget="bokeh_chart" nolabel="1"/>
                 </page>
             </xpath>
         </field>

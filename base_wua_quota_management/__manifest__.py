@@ -50,6 +50,7 @@
         "views/wua_gravconsumption_view.xml",
         "views/wua_irrigationreport_view.xml",
         "views/wua_parcel_view.xml",
+        "views/wua_infrastructure_config_settings_view.xml",
         "reports/wua_partner_quota_report.xml",
         "reports/wua_partner_quota_cession_report.xml",
         "reports/wua_partner_quota_individualinput_report.xml",

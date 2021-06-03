@@ -6,19 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-10 09:58+0000\n"
-"PO-Revision-Date: 2021-02-10 09:58+0000\n"
+"POT-Creation-Date: 2021-06-02 15:57+0000\n"
+"PO-Revision-Date: 2021-06-02 15:57+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-
-#. module: base_wua_quota_management
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_rules_count
-msgid "# Analytic Rules"
-msgstr "# Reglas Analíticas"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_product_variant_count
@@ -427,6 +422,12 @@ msgid "Agricultural Seasons"
 msgstr "Campañas"
 
 #. module: base_wua_quota_management
+#: model:product.template,name:base_wua_quota_management.superproduct_pressurized_irrigation_product_template
+#: model:wua.superproduct,name:base_wua_quota_management.superproduct_pressurized_irrigation
+msgid "Agua Trasvase"
+msgstr "Agua Trasvase"
+
+#. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "All quotas and hydric movements (including individual inputs and cessions) WILL BE DELETED. Are you sure you want to do this operation?"
 msgstr "Al cancelar un período de cupo todos sus cupos y movimientos hídricos (incluyendo las asignaciones individuales y las cesiones) SERÁN ELIMINADOS. ¿Confirma la cancelación del período de cupo?"
@@ -460,11 +461,6 @@ msgstr "¿Está seguro/a de querer revertir a este período de cupo los saldos a
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "Are you sure you want to transfer the positive balances to the next quota period?"
 msgstr "¿Está seguro/a de querer traspasar los saldos positivos de este período de cupo al siguiente?"
-
-#. module: base_wua_quota_management
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_asset_category_id
-msgid "Asset Type"
-msgstr "Tipo de activo"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_form
@@ -538,6 +534,12 @@ msgstr "Con saldos recibidos desde el período de cupo anterior"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_balances_to_next_quotaperiod
 msgid "Balances tranferred to next quota period"
 msgstr "Con saldos traspasados al siguiente período de cupo"
+
+#. module: base_wua_quota_management
+#: model:product.template,name:base_wua_quota_management.superproduct_gravity_irrigation_product_template
+#: model:wua.superproduct,name:base_wua_quota_management.superproduct_gravity_irrigation
+msgid "Barbo"
+msgstr "Barbo"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_barcode
@@ -627,7 +629,7 @@ msgstr "Cat. (asig. indv.)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_category_id
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_id_13015
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_id_12365
 msgid "Categ."
 msgstr "Categ."
 
@@ -718,10 +720,15 @@ msgid "Configuration"
 msgstr "Configuración"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:370
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:371
 #, python-format
 msgid "Configuration of Quota-Period Lines"
 msgstr "Configuración de períodos de cupo"
+
+#. module: base_wua_quota_management
+#: model:ir.model,name:base_wua_quota_management.model_wua_infrastructure_configuration
+msgid "Configuration of base_wua_infrastructure_primary module"
+msgstr "Configuración del módulo base_wua_infrastructure_primary"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_quotas_configuration
@@ -775,9 +782,24 @@ msgid "Consumptions Graph"
 msgstr "Gráfico de consumos"
 
 #. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_waterconnection_consumptions_graph_invisible
+msgid "Consumptions Graph Invisible"
+msgstr "Gráfico de consumos invisible"
+
+#. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_infrastructure_config_settings_view_form
+msgid "Consumptions graph"
+msgstr "Gráfico de consumos"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_infrastructure_configuration_consumptions_graph_invisible
+msgid "Consumptions graphs invisible"
+msgstr "Gráfico de consumos invisible"
+
+#. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_hydraulicsector.py:40
 #: code:addons/base_wua_quota_management/models/wua_irrigationshed.py:40
-#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:42
+#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:61
 #, python-format
 msgid "Consumptions of the active agricultural season"
 msgstr "Consumos de la campaña activa"
@@ -903,7 +925,7 @@ msgstr "Gráfico de consumos del tablero"
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_hydraulicsector.py:42
 #: code:addons/base_wua_quota_management/models/wua_irrigationshed.py:42
-#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:44
+#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:63
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_event_date
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_cession_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_cession_view_tree
@@ -935,11 +957,6 @@ msgstr "Unidad de medida por defecto utilizada para todas las operaciones de sto
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_uom_po_id
 msgid "Default Unit of Measure used for purchase orders. It must be in the same category than the default unit of measure."
 msgstr "Unidad de medida por defecto utilizada para los pedidos de compra. Debe estar en la misma categoría que la unidad de medida por defecto."
-
-#. module: base_wua_quota_management
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_deferred_revenue_category_id
-msgid "Deferred Revenue Type"
-msgstr "Tipo de ingreso diferido"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_route_ids
@@ -1079,11 +1096,6 @@ msgid "Entity (irrigation shed)"
 msgstr "Elemento (caseta)"
 
 #. module: base_wua_quota_management
-#: model:ir.model,name:base_wua_quota_management.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr "Elemento (parcela)"
-
-#. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_presconsumption
 msgid "Entity (pressure consumption)"
 msgstr "Elemento (consumo de presión)"
@@ -1110,13 +1122,13 @@ msgid "Error when updating records (\"of_active_agriculturalseason\" field)."
 msgstr "Error al actualizar la base de datos (campo \"of_active_agriculturalseason\")."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:592
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:612
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:786
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:813
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:843
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:939
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1242
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:593
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:613
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:787
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:814
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:844
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:940
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1243
 #, python-format
 msgid "Error when updating records."
 msgstr "Error al actualizar la base de datos."
@@ -1305,7 +1317,7 @@ msgstr "Movimiento hídrico"
 #: code:addons/base_wua_quota_management/models/wua_gravconsumption.py:164
 #: code:addons/base_wua_quota_management/models/wua_irrigationreport.py:116
 #: code:addons/base_wua_quota_management/models/wua_presconsumption.py:129
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:349
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:350
 #: code:addons/base_wua_quota_management/models/wua_superproduct.py:303
 #: model:ir.actions.act_window,name:base_wua_quota_management.technical_hydricmovements_action
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_hydricmovement_action
@@ -1683,20 +1695,20 @@ msgid "It is not possible to directly delete a hydric movement."
 msgstr "No está permitido borrar directamente un consumo hídrico."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:473
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:492
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:474
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:493
 #, python-format
 msgid "It is not possible to do this operation: the next quota period is closed, it is not generated or does not exist (the current quota period is the last one)."
 msgstr "No es posible mover los saldos: en esta campaña no hay ningún período posterior, o bien ese período de cupo está cerrado o no está en el estado generado."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:480
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:481
 #, python-format
 msgid "It is not possible to move any quotas: there are no positive balances or quotas do not exist in the destination quota period."
 msgstr "No es posible mover los saldos: no hay saldos positivos que traspasar, o bien no hay cupos en el período destinatario."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:499
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:500
 #, python-format
 msgid "It is not possible to move any quotas: there are no transferred balances or the balances are not correctly balanced."
 msgstr "No es posible mover los saldos: no hay saldos traspasados, o bien los saldos no están correctamente balanceados."
@@ -1814,7 +1826,7 @@ msgstr "Establecer la cantidad en el pedido de forma manual:  La factura se crea
 "Crear tarea y controlar horas: Crea una tarea a la hora de validar el pedido de venta y la factura se crea según las horas registradas en dicha tarea."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:509
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:510
 #, python-format
 msgid "Massive assignment of individual inputs"
 msgstr "Alta masiva de asignaciones individuales"
@@ -2013,7 +2025,7 @@ msgid "Operation not allowed: there is not an active agricultural season or the 
 msgstr "Operación no permitida: no se ha establecido la campaña activa, o bien la campaña activa no tiene ningún período de cupo en estado generado."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:411
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:412
 #, python-format
 msgid "Operation not allowed: this quota period has transferred balances and/or received balances. Before canceling, it is mandatory to reverse the transferred balances."
 msgstr "Operación no permitida: el período de cupo tiene saldos traspasados a otro período o saldos recibidos de otro período. Antes de cancelar este período de cupo, es obligatorio revertir esos movimientos de saldo."
@@ -2080,7 +2092,7 @@ msgstr "Parcela de línea de período de cupo"
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_quota.py:643
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1186
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1187
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_line_view_tree
 #, python-format
 msgid "Parcels"
@@ -2120,7 +2132,7 @@ msgstr "Cupos de socio"
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Socio"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_pos_superproduct
@@ -2494,7 +2506,7 @@ msgstr "Período de cupo/Supraproducto"
 #: code:addons/base_wua_quota_management/models/wua_cession.py:504
 #: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:434
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:495
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:320
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:321
 #: code:addons/base_wua_quota_management/models/wua_superproduct.py:274
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_quota_action
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_res_partner_quota_ids
@@ -2995,7 +3007,7 @@ msgstr "Tiempo"
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_area_total
 msgid "Total Area"
-msgstr "Total Area"
+msgstr "Área total"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_total_input
@@ -3245,24 +3257,6 @@ msgid "Water type"
 msgstr "Tipo de agua"
 
 #. module: base_wua_quota_management
-#: model:product.template,name:base_wua_quota_management.superproduct_gravity_irrigation_product_template
-#: model:wua.superproduct,name:base_wua_quota_management.superproduct_gravity_irrigation
-msgid "Waters of gravity irrigation"
-msgstr "Aguas para riego por gravedad"
-
-#. module: base_wua_quota_management
-#: model:product.template,name:base_wua_quota_management.superproduct_irrigation_reports_product_template
-#: model:wua.superproduct,name:base_wua_quota_management.superproduct_irrigation_reports
-msgid "Waters of irrigation reports"
-msgstr "Aguas para partes de riego"
-
-#. module: base_wua_quota_management
-#: model:product.template,name:base_wua_quota_management.superproduct_pressurized_irrigation_product_template
-#: model:wua.superproduct,name:base_wua_quota_management.superproduct_pressurized_irrigation
-msgid "Waters of pressurized irrigation"
-msgstr "Aguas para riego a presión"
-
-#. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_weight
 msgid "Weight"
 msgstr "Peso"
@@ -3276,6 +3270,11 @@ msgstr "Cuando se realiza una valoración de inventario en tiempo real, la contr
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_property_stock_account_output
 msgid "When doing real-time inventory valuation, counterpart journal items for all outgoing stock moves will be posted in this account, unless there is a specific valuation account set on the destination location. When not set on the product, the one from the product category is used."
 msgstr "Cuando se realiza una valoración de inventario en tiempo real, la contrapartida para todos los movimientos de salida serán imputados en esta cuenta, a menos que se haya establecido una cuenta de valoración específica en la ubicación destino. Cuando no se establece en el producto, se usa la establecida en la categoría."
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,help:base_wua_quota_management.field_wua_infrastructure_configuration_consumptions_graph_invisible
+msgid "Will set the consumptions graphs off or on"
+msgstr "Mostrará u ocultará los gráficos de consumo"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_with_irrigation_worker
@@ -3293,14 +3292,14 @@ msgid "With Watering Shift"
 msgstr "Entandable"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:300
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:301
 #, python-format
 msgid "You can only delete a quota period if it is in draft or configured state."
 msgstr "Sólo se permite eliminar un período de cupo si se encuentra en los estados borrador o configurado."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:59
-#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:68
+#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:78
+#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:87
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene permiso para ejecutar esta acción."
@@ -3316,7 +3315,7 @@ msgid "aux"
 msgstr "aux"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1146
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1147
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:69
 #: code:addons/base_wua_quota_management/wizard/wizard_provision_parcel.py:76
 #, python-format
@@ -3327,7 +3326,7 @@ msgstr "ha"
 #: code:addons/base_wua_quota_management/models/wua_hydraulicsector.py:43
 #: code:addons/base_wua_quota_management/models/wua_irrigationshed.py:43
 #: code:addons/base_wua_quota_management/models/wua_quota.py:514
-#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:45
+#: code:addons/base_wua_quota_management/models/wua_waterconnection.py:64
 #, python-format
 msgid "m3"
 msgstr "m3"
@@ -3354,8 +3353,7 @@ msgid "quotas"
 msgstr "cupos"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:391
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:392
 #, python-format
 msgid "there are not selected parcels or there are not water payers."
 msgstr "no se ha seleccionado ninguna parcela o no hay pagadores de agua."
-

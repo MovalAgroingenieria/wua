@@ -8,12 +8,16 @@
                ref="base_wua_invoicing_pressurized_irrigation.wua_waterconnection_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='product_id']" position="after">
-                <field name="fixed_water"/>                          
+                <field name="fixed_water"/>
             </xpath>
             <xpath expr="//page[@name='watermeters_page']" position="after">
-                <page name="consumptions_graph_page" string="Graph">
+
+                <page name="consumptions_graph_page" string="Graph"
+                    attrs="{'invisible':[('consumptions_graph_invisible','=',True)]}">
+                        <field name="consumptions_graph_invisible"
+                            invisible="1"/>
                         <field name="consumptions_graph"
-                               widget="bokeh_chart" nolabel="1"/>
+                            widget="bokeh_chart" nolabel="1"/>
                 </page>
             </xpath>
         </field>
@@ -35,7 +39,7 @@
         <field name="name">Water Connections (search view)</field>
         <field name="model">wua.waterconnection</field>
         <field name="inherit_id"
-               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_search"/>        
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='withoutwatermeter']" position="after">
                 <separator/>
@@ -56,7 +60,7 @@
                 action = env['wua.waterconnection'].with_fixed_water(context['active_ids'])
         </field>
     </record>
-    
+
     <record id="wua_action_with_fixed_water" model="ir.values">
         <field name="name">Put with fixed water</field>
         <field name="model">wua.waterconnection</field>
@@ -74,7 +78,7 @@
                 action = env['wua.waterconnection'].without_fixed_water(context['active_ids'])
         </field>
     </record>
-    
+
     <record id="wua_action_without_fixed_water" model="ir.values">
         <field name="name">Put without fixed water</field>
         <field name="model">wua.waterconnection</field>
