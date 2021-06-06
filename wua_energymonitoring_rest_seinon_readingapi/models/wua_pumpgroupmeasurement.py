@@ -43,8 +43,9 @@ class WuaPumpgroupmeasurement(models.Model):
            url_energymonitoring_rest_password):
             (impulsion_pressure_deviceid, suction_pressure_deviceid,
              instantaneous_flow_deviceid, consumed_power_deviceid,
-             impulsion_pressure_measurementid, suction_pressure_measurementid,
-             instantaneous_flow_measurementid, consumed_power_measurementid,
+             consumed_energy_deviceid, impulsion_pressure_measurementid,
+             suction_pressure_measurementid, instantaneous_flow_measurementid,
+             consumed_power_measurementid, consumed_energy_measurementid,
              default_suction_pressure) = self._get_devices_and_measurements(
                  pumpgroup)
             data_ok = (impulsion_pressure_deviceid and
@@ -92,6 +93,7 @@ class WuaPumpgroupmeasurement(models.Model):
                 outputrest_suction_pressure = None
                 outputrest_instantaneous_flow = None
                 outputrest_consumed_power = None
+                outputrest_consumed_energy = None
                 # Calls to API.
                 impulsion_pressure_ok = True
                 url_impulsion_pressure = url_energymonitoring_rest + '?Q=' + \
@@ -165,8 +167,29 @@ class WuaPumpgroupmeasurement(models.Model):
                             resprest_consumed_power.text)
                 else:
                     consumed_power_ok = False
+                consumed_energy_ok = True
+                url_consumed_energy = ''
+                if (consumed_energy_deviceid and
+                   consumed_energy_measurementid):
+                    url_consumed_energy = url_energymonitoring_rest + '?Q=' + \
+                        url_energymonitoring_rest_password + '&CP=' + \
+                        url_energymonitoring_rest_username + '&IDPTO=' + \
+                        consumed_energy_deviceid + '&M=' + \
+                        consumed_energy_measurementid + \
+                        '&FI=' + fi + '&FF=' + ff + '&OUT=DATA'
+                    resprest_consumed_energy = requests.get(
+                        url_consumed_energy)
+                    if resprest_consumed_energy.status_code == 200:
+                        if resprest_consumed_energy.text.find('ERROR') != -1:
+                            consumed_energy_ok = False
+                        else:
+                            outputrest_consumed_energy = json.loads(
+                                resprest_consumed_energy.text)
+                    else:
+                        consumed_energy_ok = False
                 all_ok = (impulsion_pressure_ok and suction_pressure_ok and
-                          instantaneous_flow_ok and consumed_power_ok)
+                          instantaneous_flow_ok and consumed_power_ok and
+                          consumed_energy_ok)
                 # API response processing.
                 if all_ok:
                     measurements = self._process_outputrest(
@@ -174,10 +197,12 @@ class WuaPumpgroupmeasurement(models.Model):
                         suction_pressure_measurementid,
                         instantaneous_flow_measurementid,
                         consumed_power_measurementid,
+                        consumed_energy_measurementid,
                         outputrest_impulsion_pressure,
                         outputrest_suction_pressure,
                         outputrest_instantaneous_flow,
                         outputrest_consumed_power,
+                        outputrest_consumed_energy,
                         default_suction_pressure)
                     measurements = \
                         self._convert_list_of_tuples_to_dict(measurements)
@@ -210,6 +235,9 @@ class WuaPumpgroupmeasurement(models.Model):
                     if not consumed_power_ok:
                         suffix_message_error = suffix_message_error + \
                             _('consumed power') + ', '
+                    if not consumed_energy_ok:
+                        suffix_message_error = suffix_message_error + \
+                            _('consumed energy') + ', '
                     suffix_message_error = suffix_message_error[:-2]
                     message = message + suffix_message_error
                 if not fixed_suction_pressure:
@@ -223,6 +251,8 @@ class WuaPumpgroupmeasurement(models.Model):
                         url_impulsion_pressure + ', ' + \
                         url_instantaneous_flow + ', ' + \
                         url_consumed_power
+                if url_consumed_energy:
+                    message = message + ', ' + url_consumed_energy
                 message = message + '.'
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info(message)
@@ -230,14 +260,16 @@ class WuaPumpgroupmeasurement(models.Model):
 
     def _process_outputrest(self, impulsion_pressure_key, suction_pressure_key,
                             instantaneous_flow_key, consumed_power_key,
-                            impulsion_pressure_dict, suction_pressure_dict,
-                            instantaneous_flow_dict, consumed_power_dict,
+                            consumed_energy_key, impulsion_pressure_dict,
+                            suction_pressure_dict, instantaneous_flow_dict,
+                            consumed_power_dict, consumed_energy_dict,
                             suction_pressure_default):
         # Get the dictionaries with measurement data.
         impulsion_pressure_values = None
         suction_pressure_values = None
         instantaneous_flow_values = None
         consumed_power_values = None
+        consumed_energy_values = None
         if impulsion_pressure_key in impulsion_pressure_dict:
             impulsion_pressure_values = \
                 impulsion_pressure_dict[impulsion_pressure_key]
@@ -251,6 +283,10 @@ class WuaPumpgroupmeasurement(models.Model):
         if consumed_power_key in consumed_power_dict:
             consumed_power_values = \
                 consumed_power_dict[consumed_power_key]
+        if (consumed_energy_dict and
+           consumed_energy_key in consumed_energy_dict):
+            consumed_energy_values = \
+                consumed_energy_dict[consumed_energy_key]
         if (not impulsion_pressure_values or
            not instantaneous_flow_values or
            not consumed_power_values):
@@ -272,6 +308,7 @@ class WuaPumpgroupmeasurement(models.Model):
                 'impulsion_pressure': 0.0,
                 'suction_pressure': 0.0,
                 'instantaneous_flow': 0.0,
+                'consumed_energy': 0.0,
                 'consumed_power': consumed_power,
                 }
             resp.append(new_measurement)
@@ -286,6 +323,10 @@ class WuaPumpgroupmeasurement(models.Model):
         dict_instantaneous_flow = {}
         for item in instantaneous_flow_values:
             dict_instantaneous_flow[item['moment']] = item['data']
+        dict_consumed_energy = {}
+        if consumed_energy_values:
+            for item in consumed_energy_values:
+                dict_consumed_energy[item['moment']] = item['data']
         for measurement in (resp or []):
             measurement_time = measurement['measurement_time']
             impulsion_pressure = \
@@ -312,15 +353,25 @@ class WuaPumpgroupmeasurement(models.Model):
             except:
                 instantaneous_flow = 0
             instantaneous_flow = instantaneous_flow * self.FACTOR_FLOW
+            consumed_energy = 0
+            if consumed_energy_values:
+                consumed_energy = \
+                    dict_consumed_energy.get(measurement_time, 0)
+                try:
+                    consumed_energy = float(consumed_energy)
+                except:
+                    consumed_energy = 0
             measurement['impulsion_pressure'] = impulsion_pressure
             measurement['suction_pressure'] = suction_pressure
             measurement['instantaneous_flow'] = instantaneous_flow
+            measurement['consumed_energy'] = consumed_energy
         # Provisional
         # resp.append({
         #     'measurement_time': '29/05/2021 08:45:00',
         #     'impulsion_pressure': 85.0,
         #     'suction_pressure': -1.00,
         #     'instantaneous_flow': 160.00,
+        #     'consumed_energy': 0.00,
         #     'consumed_power': 65,
         #     })
         return resp
@@ -373,6 +424,7 @@ class WuaPumpgroupmeasurement(models.Model):
                     'impulsion_pressure': measurement['impulsion_pressure'],
                     'suction_pressure': measurement['suction_pressure'],
                     'instantaneous_flow': measurement['instantaneous_flow'],
+                    'consumed_energy': measurement['consumed_energy'],
                     'consumed_power': measurement['consumed_power']
                     }
                 if not resp:
@@ -410,6 +462,8 @@ class WuaPumpgroupmeasurement(models.Model):
             pumpgroup.instantaneous_flow_deviceid
         consumed_power_deviceid = \
             pumpgroup.consumed_power_deviceid
+        consumed_energy_deviceid = \
+            pumpgroup.consumed_energy_deviceid
         impulsion_pressure_measurementid = \
             pumpgroup.impulsion_pressure_measurementid
         suction_pressure_measurementid = \
@@ -418,14 +472,18 @@ class WuaPumpgroupmeasurement(models.Model):
             pumpgroup.instantaneous_flow_measurementid
         consumed_power_measurementid = \
             pumpgroup.consumed_power_measurementid
+        consumed_energy_measurementid = \
+            pumpgroup.consumed_energy_measurementid
         default_suction_pressure = \
             pumpgroup.default_suction_pressure
         return (impulsion_pressure_deviceid,
                 suction_pressure_deviceid,
                 instantaneous_flow_deviceid,
                 consumed_power_deviceid,
+                consumed_energy_deviceid,
                 impulsion_pressure_measurementid,
                 suction_pressure_measurementid,
                 instantaneous_flow_measurementid,
                 consumed_power_measurementid,
+                consumed_energy_measurementid,
                 default_suction_pressure)

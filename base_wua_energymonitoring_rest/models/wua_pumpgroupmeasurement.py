@@ -39,6 +39,8 @@ class WuaPumpgroupmeasurement(models.Model):
                                         value['suction_pressure'],
                                         'instantaneous_flow':
                                         value['instantaneous_flow'],
+                                        'consumed_energy':
+                                        value['consumed_energy'],
                                         'consumed_power':
                                         value['consumed_power']
                                         })

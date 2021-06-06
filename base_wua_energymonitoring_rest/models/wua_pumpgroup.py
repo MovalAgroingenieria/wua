@@ -50,6 +50,16 @@ class WuaPumpgroup(models.Model):
         size=30
     )
 
+    consumed_energy_deviceid = fields.Char(
+        string='Device Identifier for consumed energy',
+        size=30
+    )
+
+    consumed_energy_measurementid = fields.Char(
+        string='Measurement Identifier for consumed energy',
+        size=30
+    )
+
     default_suction_pressure = fields.Float(
         string='Default Suction Pressure (mwc)',
         digits=(32, 2),
@@ -93,6 +103,16 @@ class WuaPumpgroup(models.Model):
 
     consumed_power_measurementdesc = fields.Char(
         string='Measurement Description for consumed power',
+        size=50,
+        readonly=True)
+
+    consumed_energy_devicedesc = fields.Char(
+        string='Device Description for consumed energy',
+        size=50,
+        readonly=True)
+
+    consumed_energy_measurementdesc = fields.Char(
+        string='Measurement Description for consumed energy',
         size=50,
         readonly=True)
 
@@ -153,7 +173,9 @@ class WuaPumpgroup(models.Model):
            ('instantaneous_flow_deviceid' in vals) or
            ('instantaneous_flow_measurementid' in vals) or
            ('consumed_power_deviceid' in vals) or
-           ('consumed_power_measurementid' in vals)):
+           ('consumed_power_measurementid' in vals) or
+           ('consumed_energy_deviceid' in vals) or
+           ('consumed_energy_measurementid' in vals)):
             impulsion_pressure_devicedesc = ''
             impulsion_pressure_measurementdesc = ''
             suction_pressure_devicedesc = ''
@@ -162,6 +184,8 @@ class WuaPumpgroup(models.Model):
             instantaneous_flow_measurementdesc = ''
             consumed_power_devicedesc = ''
             consumed_power_measurementdesc = ''
+            consumed_energy_devicedesc = ''
+            consumed_energy_measurementdesc = ''
             impulsion_pressure_deviceid = ''
             impulsion_pressure_measurementid = ''
             suction_pressure_deviceid = ''
@@ -170,6 +194,8 @@ class WuaPumpgroup(models.Model):
             instantaneous_flow_measurementid = ''
             consumed_power_deviceid = ''
             consumed_power_measurementid = ''
+            consumed_energy_deviceid = ''
+            consumed_energy_measurementid = ''
             if 'impulsion_pressure_deviceid' in vals:
                 impulsion_pressure_deviceid = \
                     vals['impulsion_pressure_deviceid']
@@ -182,6 +208,9 @@ class WuaPumpgroup(models.Model):
             if 'consumed_power_deviceid' in vals:
                 consumed_power_deviceid = \
                     vals['consumed_power_deviceid']
+            if 'consumed_energy_deviceid' in vals:
+                consumed_energy_deviceid = \
+                    vals['consumed_energy_deviceid']
             if 'impulsion_pressure_measurementid' in vals:
                 impulsion_pressure_measurementid = \
                     vals['impulsion_pressure_measurementid']
@@ -206,6 +235,12 @@ class WuaPumpgroup(models.Model):
                 if consumed_power_deviceid == '' and is_write:
                     consumed_power_deviceid = \
                         self.consumed_power_deviceid
+            if 'consumed_energy_measurementid' in vals:
+                consumed_energy_measurementid = \
+                    vals['consumed_energy_measurementid']
+                if consumed_energy_deviceid == '' and is_write:
+                    consumed_energy_deviceid = \
+                        self.consumed_energy_deviceid
             desc_of_measurements = self._get_desc_of_measurements(
                 [impulsion_pressure_deviceid,
                  impulsion_pressure_measurementid,
@@ -214,8 +249,10 @@ class WuaPumpgroup(models.Model):
                  instantaneous_flow_deviceid,
                  instantaneous_flow_measurementid,
                  consumed_power_deviceid,
-                 consumed_power_measurementid])
-            if (desc_of_measurements and len(desc_of_measurements) == 8):
+                 consumed_power_measurementid,
+                 consumed_energy_deviceid,
+                 consumed_energy_measurementid])
+            if (desc_of_measurements and len(desc_of_measurements) == 10):
                 impulsion_pressure_devicedesc = desc_of_measurements[0]
                 impulsion_pressure_measurementdesc = desc_of_measurements[1]
                 suction_pressure_devicedesc = desc_of_measurements[2]
@@ -224,6 +261,8 @@ class WuaPumpgroup(models.Model):
                 instantaneous_flow_measurementdesc = desc_of_measurements[5]
                 consumed_power_devicedesc = desc_of_measurements[6]
                 consumed_power_measurementdesc = desc_of_measurements[7]
+                consumed_energy_devicedesc = desc_of_measurements[8]
+                consumed_energy_measurementdesc = desc_of_measurements[9]
             if 'impulsion_pressure_deviceid' in vals:
                 vals['impulsion_pressure_devicedesc'] = \
                     impulsion_pressure_devicedesc
@@ -236,6 +275,9 @@ class WuaPumpgroup(models.Model):
             if 'consumed_power_deviceid' in vals:
                 vals['consumed_power_devicedesc'] = \
                     consumed_power_devicedesc
+            if 'consumed_energy_deviceid' in vals:
+                vals['consumed_energy_devicedesc'] = \
+                    consumed_energy_devicedesc
             if 'impulsion_pressure_measurementid' in vals:
                 vals['impulsion_pressure_measurementdesc'] = \
                     impulsion_pressure_measurementdesc
@@ -248,6 +290,9 @@ class WuaPumpgroup(models.Model):
             if 'consumed_power_measurementid' in vals:
                 vals['consumed_power_measurementdesc'] = \
                     consumed_power_measurementdesc
+            if 'consumed_energy_measurementid' in vals:
+                vals['consumed_energy_measurementdesc'] = \
+                    consumed_energy_measurementdesc
         return vals
 
     # Hook
@@ -276,17 +321,33 @@ class WuaPumpgroup(models.Model):
                 message_02_ok + ': ' + \
                 '<b>' + str(number_of_measurements) + '</b>'
             if number_of_measurements > 0:
+                id_tree_view = self.env.ref(
+                    'base_wua_pressurized_irrigation_energy_monitoring.'
+                    'wua_pumpgroupmeasurement_view_tree').id
+                id_form_view = self.env.ref(
+                    'base_wua_pressurized_irrigation_energy_monitoring.'
+                    'wua_pumpgroupmeasurement_view_form').id
+                id_graph_view = self.env.ref(
+                    'base_wua_pressurized_irrigation_energy_monitoring.'
+                    'wua_pumpgroupmeasurement_view_graph').id
+                id_pivot_view = self.env.ref(
+                    'base_wua_pressurized_irrigation_energy_monitoring.'
+                    'wua_pumpgroupmeasurement_view_pivot').id
                 buttons.append({
                     'type': 'ir.actions.act_window',
                     'name': _('Measurements'),
                     'res_model': 'wua.pumpgroupmeasurement',
                     'view_mode': 'form',
-                    'views': [[False, 'list'], [False, 'form']],
+                    'views': [[id_tree_view, 'list'],
+                              [id_form_view, 'form'],
+                              [id_graph_view, 'graph'],
+                              [id_pivot_view, 'pivot']],
                     'domain': [('id', 'in',
                                 pumpgroup.pumpgroupmeasurement_ids.ids)],
                     'context': {'default_pumpgroup_id': self.id,
                                 'search_default_of_active_agriculturalseason':
-                                True},
+                                True,
+                                'graph_mode': 'line'},
                     'classes': 'btn-primary'})
         else:
             message = '<center><b style="color:red;">' + \

@@ -13,7 +13,7 @@ class WuaPumpgroup(models.Model):
     # Specialization
     def _get_desc_of_measurements(self, identifier_list):
         resp = []
-        if (identifier_list and len(identifier_list) == 8):
+        if (identifier_list and len(identifier_list) == 10):
             impulsion_pressure_deviceid = identifier_list[0]
             impulsion_pressure_measurementid = identifier_list[1]
             suction_pressure_deviceid = identifier_list[2]
@@ -22,6 +22,8 @@ class WuaPumpgroup(models.Model):
             instantaneous_flow_measurementid = identifier_list[5]
             consumed_power_deviceid = identifier_list[6]
             consumed_power_measurementid = identifier_list[7]
+            consumed_energy_deviceid = identifier_list[8]
+            consumed_energy_measurementid = identifier_list[9]
             impulsion_pressure_devicedesc = ''
             impulsion_pressure_measurementdesc = ''
             suction_pressure_devicedesc = ''
@@ -30,6 +32,8 @@ class WuaPumpgroup(models.Model):
             instantaneous_flow_measurementdesc = ''
             consumed_power_devicedesc = ''
             consumed_power_measurementdesc = ''
+            consumed_energy_devicedesc = ''
+            consumed_energy_measurementdesc = ''
             (url_energymonitoring_rest, url_energymonitoring_rest_username,
              url_energymonitoring_rest_password) = \
                 self._get_general_parameters()
@@ -61,6 +65,10 @@ class WuaPumpgroup(models.Model):
                             if (idpto == consumed_power_deviceid and
                                consumed_power_deviceid):
                                 consumed_power_devicedesc = \
+                                    item['namepto']
+                            if (idpto == consumed_energy_deviceid and
+                               consumed_energy_deviceid):
+                                consumed_energy_devicedesc = \
                                     item['namepto']
                 # Measurement Descriptions
                 if (impulsion_pressure_deviceid and
@@ -127,6 +135,22 @@ class WuaPumpgroup(models.Model):
                                     consumed_power_measurementdesc = \
                                         item['namemag']
                                     break
+                if (consumed_energy_deviceid and
+                   consumed_energy_measurementid):
+                    url = url_energymonitoring_rest + '?Q=' + \
+                        url_energymonitoring_rest_password + '&CP=' + \
+                        url_energymonitoring_rest_username + '&IDPTO=' + \
+                        consumed_energy_deviceid + '&OUT=MAG'
+                    resprest = requests.get(url)
+                    if resprest.status_code == 200:
+                        outputrest = json.loads(resprest.text)
+                        if (resprest.text.find('\"MAG\":[') != -1):
+                            for item in outputrest['MAG']:
+                                idmag = item['idmag']
+                                if idmag == consumed_energy_measurementid:
+                                    consumed_energy_measurementdesc = \
+                                        item['namemag']
+                                    break
             resp = [impulsion_pressure_devicedesc,
                     impulsion_pressure_measurementdesc,
                     suction_pressure_devicedesc,
@@ -134,7 +158,9 @@ class WuaPumpgroup(models.Model):
                     instantaneous_flow_devicedesc,
                     instantaneous_flow_measurementdesc,
                     consumed_power_devicedesc,
-                    consumed_power_measurementdesc]
+                    consumed_power_measurementdesc,
+                    consumed_energy_devicedesc,
+                    consumed_energy_measurementdesc]
         return resp
 
     @api.model

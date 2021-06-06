@@ -24,6 +24,7 @@
                             <field name="impulsion_pressure"/>
                             <field name="suction_pressure"/>
                             <field name="consumed_power"/>
+                            <field name="consumed_energy"/>
                             <field name="electrical_voltage"/>
                             <field name="amperage"/>
                             <field name="phi_cosine"/>
@@ -62,6 +63,7 @@
                 <field name="consumed_power"/>
                 <field name="energy_efficiency"/>
                 <field name="energy_efficiency_rating"/>
+                <field name="consumed_energy"/>
             </tree>
         </field>
     </record>
@@ -83,6 +85,28 @@
                         context="{'group_by':'measurement_time'}"/>
                 </group>
             </search>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroupmeasurement_view_graph" model="ir.ui.view">
+        <field name="name">Pumpgroup Measurement (graph view)</field>
+        <field name="model">wua.pumpgroupmeasurement</field>
+        <field name="arch" type="xml">
+            <graph string="Consumed Energy">
+                <field name="measurement_time" type="row"/>
+                <field name="consumed_energy" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroupmeasurement_view_pivot" model="ir.ui.view">
+        <field name="name">Pumpgroup Measurement (pivot view)</field>
+        <field name="model">wua.pumpgroupmeasurement</field>
+        <field name="arch" type="xml">
+            <graph string="Consumed Energy">
+                <field name="measurement_time" type="row"/>
+                <field name="consumed_energy" type="measure"/>
+            </graph>
         </field>
     </record>
 

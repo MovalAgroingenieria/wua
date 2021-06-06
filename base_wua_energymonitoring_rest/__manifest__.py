@@ -17,6 +17,7 @@
         "base_wua_pressurized_irrigation_energy_monitoring", ],
     "data": [
         "data/wua_infrastructure_config_settings_data.xml",
+        "data/wua_pumpgroupmeasurement_cron.xml",
         "views/resources.xml",
         "views/wua_infrastructure_config_settings_view.xml",
         "views/wua_pumpgroup_view.xml", ],
