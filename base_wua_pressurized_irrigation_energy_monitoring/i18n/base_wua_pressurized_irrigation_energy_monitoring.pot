@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-25 11:28+0000\n"
-"PO-Revision-Date: 2021-05-25 11:28+0000\n"
+"POT-Creation-Date: 2021-06-06 11:02+0000\n"
+"PO-Revision-Date: 2021-06-06 11:02+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,7 +26,7 @@ msgid "<span style=\"font-weight: bold;\">LAST MEASUREMENT</span>"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
-#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:278
+#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:303
 #, python-format
 msgid "A (optimal)"
 msgstr ""
@@ -53,13 +53,13 @@ msgid "Assign agseason and efrating to pumpgroupmeasurements"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
-#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:276
+#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:301
 #, python-format
 msgid "B (good)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
-#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:274
+#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:299
 #, python-format
 msgid "C (normal)"
 msgstr ""
@@ -80,6 +80,11 @@ msgid "Click to add a new Pump group measurement."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_pumpgroupmeasurement_pumpgroup_code
+msgid "Code"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_energy_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_energy_monitoring.wua_pumpgroup_view_form
 msgid "Con. Power (kW)"
 msgstr ""
@@ -90,9 +95,25 @@ msgid "Configuration of base_wua_infrastructure_primary module"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_energy_monitoring.wua_pumpgroupmeasurement_view_graph
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_energy_monitoring.wua_pumpgroupmeasurement_view_pivot
+msgid "Consumed Energy"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_energy_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_pumpgroupmeasurement_consumed_energy
+msgid "Consumed Energy (kWh)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_energy_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_pumpgroupmeasurement_calculated_consumed_power
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_pumpgroupmeasurement_consumed_power
 msgid "Consumed Power (kW)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_energy_monitoring
+#: model:ir.model.fields,help:base_wua_pressurized_irrigation_energy_monitoring.field_wua_pumpgroupmeasurement_consumed_energy
+msgid "Consumed electrical energy, in kWh."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
@@ -111,7 +132,7 @@ msgid "Created on"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
-#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:272
+#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:297
 #, python-format
 msgid "D (acceptable)"
 msgstr ""
@@ -122,7 +143,7 @@ msgid "Display Name"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
-#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:270
+#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroupmeasurement.py:295
 #, python-format
 msgid "E (unnaceptable)"
 msgstr ""
@@ -265,7 +286,7 @@ msgid "Limit for optimal efficiency (A)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
-#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_infrastructure_config_settings.py:84
+#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_infrastructure_config_settings.py:93
 #, python-format
 msgid "Limits for efficiencies must meet the condition D < C < B < A.\n"
 "You have entered: D: %s, C: %s, B: %s, A: %s,"
@@ -282,7 +303,7 @@ msgid "Measurement"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
-#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroup.py:88
+#: code:addons/base_wua_pressurized_irrigation_energy_monitoring/models/wua_pumpgroup.py:95
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_agriculturalseason_pumpgroupmeasurement_ids
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_pumpgroup_pumpgroupmeasurement_ids
 #, python-format
@@ -292,6 +313,11 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_energy_monitoring
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation_energy_monitoring.field_wua_infrastructure_configuration_threshold_pump_power
 msgid "Minimum value that the consumed power must have."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_energy_monitoring
+#: model:ir.model.fields,help:base_wua_pressurized_irrigation_energy_monitoring.field_wua_infrastructure_configuration_threshold_pump_energy
+msgid "Minimum value that the energy must have."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
@@ -310,7 +336,6 @@ msgid "Monitoring Settings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_agriculturalseason_number_of_measurements
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_pumpgroup_number_of_measurements
 msgid "N. of measurements"
 msgstr ""
@@ -388,6 +413,11 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
 #: sql_constraint:wua.pumpgroupmeasurement:0
+msgid "The consumed energy must be a value zero or positive."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_energy_monitoring
+#: sql_constraint:wua.pumpgroupmeasurement:0
 msgid "The consumed power must be a value zero or positive."
 msgstr ""
 
@@ -433,6 +463,11 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
 #: sql_constraint:wua.infrastructure.configuration:0
+msgid "The threshold pump energy must be a value zero or positive."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_energy_monitoring
+#: sql_constraint:wua.infrastructure.configuration:0
 msgid "The threshold pump flow must be a value zero or positive."
 msgstr ""
 
@@ -444,6 +479,11 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_energy_monitoring
 #: sql_constraint:wua.infrastructure.configuration:0
 msgid "The threshold pump pressure must be a value zero or positive."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_energy_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_infrastructure_configuration_threshold_pump_energy
+msgid "Threshold for energy"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
@@ -463,6 +503,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_energy_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_energy_monitoring.field_wua_pumpgroupmeasurement_measurement_time
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_energy_monitoring.wua_pumpgroupmeasurement_view_search
 msgid "Time"
 msgstr ""
 

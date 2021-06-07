@@ -314,7 +314,7 @@ class WuaPumpgroup(models.Model):
         message_02_error = _('Error in')
         message = ''
         buttons = [{'type': 'ir.actions.act_window_close',
-                    'name': _('Close')}]
+                    'name': _('Close warning')}]
         if number_of_measurements >= 0:
             message = '<center><b>' + message_01_ok + \
                 '</b></center><br><br>' + \
