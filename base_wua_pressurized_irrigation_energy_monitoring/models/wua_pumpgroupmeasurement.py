@@ -10,6 +10,7 @@ from odoo import models, fields, api, _
 class WuaPumpgroupmeasurement(models.Model):
     _name = 'wua.pumpgroupmeasurement'
     _description = 'Entity (pumpgroupmeasurement)'
+    _order = 'pumpgroup_code, measurement_time desc'
 
     pumpgroup_id = fields.Many2one(
         string="Pump Group",
@@ -22,6 +23,12 @@ class WuaPumpgroupmeasurement(models.Model):
     measurement_time = fields.Datetime(
         string="Time",
         required=True,
+        index=True)
+
+    pumpgroup_code = fields.Integer(
+        string='Code',
+        store=True,
+        compute='_compute_pumpgroup_code',
         index=True)
 
     name = fields.Char(
@@ -60,6 +67,13 @@ class WuaPumpgroupmeasurement(models.Model):
     calculated_consumed_power = fields.Float(
         string="Consumed Power (kW)",
         compute="_compute_calculated_consumed_power")
+
+    consumed_energy = fields.Float(
+        string="Consumed Energy (kWh)",
+        required=True,
+        digits=(32, 2),
+        default=0,
+        help="Consumed electrical energy, in kWh.")
 
     agriculturalseason_id = fields.Many2one(
         string="Agricultural Season",
@@ -144,6 +158,9 @@ class WuaPumpgroupmeasurement(models.Model):
         ('valid_consumed_power',
          'CHECK (consumed_power >= 0)',
          'The consumed power must be a value zero or positive.'),
+        ('valid_consumed_energy',
+         'CHECK (consumed_energy >= 0)',
+         'The consumed energy must be a value zero or positive.'),
         ('valid_amperage',
          'CHECK (amperage >= 0)',
          'The amperage must be a value zero or positive.'),
@@ -154,6 +171,14 @@ class WuaPumpgroupmeasurement(models.Model):
          'CHECK (phi_cosine >= -1 and phi_cosine <= 1)',
          'The phi_cosine must be between -1 and 1.'),
         ]
+
+    @api.depends('pumpgroup_id', 'pumpgroup_id.pumpgroup_code')
+    def _compute_pumpgroup_code(self):
+        for record in self:
+            pumpgroup_code = 0
+            if record.pumpgroup_id:
+                pumpgroup_code = record.pumpgroup_id.pumpgroup_code
+            record.pumpgroup_code = pumpgroup_code
 
     @api.depends('pumpgroup_id', 'pumpgroup_id.pumpgroup_code',
                  'measurement_time')
@@ -341,18 +366,23 @@ class WuaPumpgroupmeasurement(models.Model):
         threshold_pump_flow = 0
         threshold_pump_pressure = 0
         threshold_pump_power = 0
+        threshold_pump_energy = 0
         threshold_pump_flow_in_values = model_values.get_default(
             'wua.infrastructure.configuration', 'threshold_pump_flow')
         threshold_pump_pressure_in_values = model_values.get_default(
             'wua.infrastructure.configuration', 'threshold_pump_pressure')
         threshold_pump_power_in_values = model_values.get_default(
             'wua.infrastructure.configuration', 'threshold_pump_power')
+        threshold_pump_energy_in_values = model_values.get_default(
+            'wua.infrastructure.configuration', 'threshold_pump_energy')
         if threshold_pump_flow_in_values:
             threshold_pump_flow = threshold_pump_flow_in_values
         if threshold_pump_pressure_in_values:
             threshold_pump_pressure = threshold_pump_pressure_in_values
         if threshold_pump_power_in_values:
             threshold_pump_power = threshold_pump_power_in_values
+        if threshold_pump_energy_in_values:
+            threshold_pump_energy = threshold_pump_energy_in_values
         if 'instantaneous_flow' in vals and \
                 vals['instantaneous_flow'] < threshold_pump_flow:
             vals.update({'instantaneous_flow': 0})
@@ -366,6 +396,9 @@ class WuaPumpgroupmeasurement(models.Model):
         if 'consumed_power' in vals and \
                 vals['consumed_power'] < threshold_pump_power:
             vals.update({'consumed_power': 0})
+        if 'consumed_energy' in vals and \
+                vals['consumed_energy'] < threshold_pump_energy:
+            vals.update({'consumed_energy': 0})
 
     def action_assign_agseason_and_efrating_to_pumpgroupmeasurements(self):
         all_measurements = self.env['wua.pumpgroupmeasurement'].search([])

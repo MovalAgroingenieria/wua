@@ -2,7 +2,7 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, _
 
 
 class WuaPumpgroup(models.Model):
@@ -55,7 +55,7 @@ class WuaPumpgroup(models.Model):
                 measurements_of_record = \
                     self.env['wua.pumpgroupmeasurement'].search(
                         [('pumpgroup_id', '=', record.id)],
-                         limit=1, order='measurement_time desc')
+                        limit=1, order='measurement_time desc')
                 last_measurement_time = \
                     measurements_of_record[0].measurement_time
                 last_measurement_supplied_power = \
@@ -72,6 +72,7 @@ class WuaPumpgroup(models.Model):
             record.last_measurement_energy_efficiency = \
                 last_measurement_energy_efficiency
 
+    @api.multi
     def action_show_pumpgroupmeasurements(self):
         self.ensure_one()
         id_tree_view = self.env.ref(
@@ -83,17 +84,25 @@ class WuaPumpgroup(models.Model):
         search_view = self.env.ref(
             'base_wua_pressurized_irrigation_energy_monitoring.'
             'wua_pumpgroupmeasurement_view_search')
+        id_graph_view = self.env.ref(
+            'base_wua_pressurized_irrigation_energy_monitoring.'
+            'wua_pumpgroupmeasurement_view_graph').id
+        id_pivot_view = self.env.ref(
+            'base_wua_pressurized_irrigation_energy_monitoring.'
+            'wua_pumpgroupmeasurement_view_pivot').id
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Measurements'),
             'res_model': 'wua.pumpgroupmeasurement',
             'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'view_mode': 'tree,graph,pivot',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form'),
+                      (id_graph_view, 'graph'), (id_pivot_view, 'pivot')],
             'search_view_id': (search_view.id, search_view.name),
             'target': 'current',
             'domain': [('id', 'in', self.pumpgroupmeasurement_ids.ids)],
             'context': {'default_pumpgroup_id': self.id,
-                        'search_default_active_agriculturalseason': True, },
+                        'search_default_of_active_agriculturalseason': True,
+                        "graph_mode": "line", },
             }
         return act_window

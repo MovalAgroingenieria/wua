@@ -26,6 +26,12 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         digits=(32, 4),
         help="Minimum value that the consumed power must have.")
 
+    threshold_pump_energy = fields.Float(
+        string="Threshold for energy",
+        required=True,
+        digits=(32, 4),
+        help="Minimum value that the energy must have.")
+
     limit_energy_efficiency_d = fields.Integer(
         string="Limit for acceptable efficiency (D)",
         requiered=True,
@@ -56,6 +62,9 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         ('valid_threshold_pump_power',
          'CHECK (threshold_pump_power >= 0)',
          'The threshold pump power must be a value zero or positive.'),
+        ('valid_threshold_pump_energy',
+         'CHECK (threshold_pump_energy >= 0)',
+         'The threshold pump energy must be a value zero or positive.'),
         ('valid_limit_energy_efficiency_d',
          'CHECK (limit_energy_efficiency_d >= 0 '
          'and limit_energy_efficiency_d <= 99)',
@@ -96,6 +105,8 @@ class WuaInfrastructureConfiguration(models.TransientModel):
                            self.threshold_pump_pressure)
         values.set_default('wua.infrastructure.configuration',
                            'threshold_pump_power', self.threshold_pump_power)
+        values.set_default('wua.infrastructure.configuration',
+                           'threshold_pump_energy', self.threshold_pump_energy)
         values.set_default('wua.infrastructure.configuration',
                            'limit_energy_efficiency_d',
                            self.limit_energy_efficiency_d)
