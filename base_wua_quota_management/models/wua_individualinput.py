@@ -481,7 +481,8 @@ class WuaIndividualinput(models.Model):
             else:
                 ids_of_quotas_to_delete.append(quota.id)
         if ids_of_quotas_to_delete:
-            self.env['wua.quota'].browse(ids_of_quotas_to_delete).unlink()
+            self.env['wua.quota'].browse(ids_of_quotas_to_delete).with_context(
+                force_unlink=True).unlink()
         return resp
 
     @api.multi

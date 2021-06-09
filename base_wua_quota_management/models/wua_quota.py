@@ -257,6 +257,14 @@ class WuaQuota(models.Model):
         return result
 
     @api.multi
+    def unlink(self):
+        if self.env.context.get('force_unlink', False):
+            return super(WuaQuota, self).unlink()
+        else:
+            raise exceptions.UserError(_(
+                'It is not possible to directly delete a quota.'))
+
+    @api.multi
     def action_open_individualinput_form(self):
         self.ensure_one()
         id_form_view = self.env.ref(

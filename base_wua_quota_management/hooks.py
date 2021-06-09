@@ -30,7 +30,7 @@ def uninstall_hook(cr, registry):
         cessions.unlink()
     quotas = env['wua.quota'].search([])
     if quotas:
-        quotas.unlink()
+        quotas.with_context(force_unlink=True).unlink()
     quotaperiods = env['wua.quotaperiod'].search([])
     if quotaperiods:
         quotaperiods.unlink()
