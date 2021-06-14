@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-18 13:19+0000\n"
-"PO-Revision-Date: 2021-05-18 13:19+0000\n"
+"POT-Creation-Date: 2021-06-11 12:47+0000\n"
+"PO-Revision-Date: 2021-06-11 12:47+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_deviation_percentage_num
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_deviation_percentage_num
 msgid "% Deviation"
 msgstr "% Desviación"
 
@@ -47,6 +48,10 @@ msgstr "(imagen de"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_agriculturalseason.py:172
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_comparative_cultivation_presconsumption_global.py:147
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_comparative_parcel_presconsumption_global.py:246
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_comparative_partner_presconsumption_global.py:201
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_comparative_subparcel_presconsumption_global.py:257
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:964
 #, python-format
 msgid "(m³/agriculturalseason)"
@@ -438,9 +443,13 @@ msgstr "<strong>Subparcela</strong>"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: selection:wua.comparative.cultivation.presconsumption,consumption_category:0
+#: selection:wua.comparative.cultivation.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.parcel.presconsumption,consumption_category:0
+#: selection:wua.comparative.parcel.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.partner.presconsumption,consumption_category:0
+#: selection:wua.comparative.partner.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.subparcel.presconsumption,consumption_category:0
+#: selection:wua.comparative.subparcel.presconsumption.global,consumption_category:0
 #: selection:wua.parcel.subparcel,consumption_category:0
 msgid "A (correct irrigation)"
 msgstr "A (riego adecuado)"
@@ -451,9 +460,13 @@ msgid "A - Correct irrigation"
 msgstr "A - Riego adecuado"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 msgid "Acceptable Irrigation"
 msgstr "B (riego aceptable)"
@@ -464,9 +477,13 @@ msgid "Accuracy (m/px)"
 msgstr "Resolución (m/px)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlperiod_view_search
 msgid "Active Agricultural Season"
@@ -527,6 +544,7 @@ msgid "Age Category: Middle"
 msgstr "Categoría de edad: Joven"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_pivot
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_pivot
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlpresconsumption_view_pivot
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_pivot
@@ -536,14 +554,23 @@ msgstr "Valores agregados"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wizard_generate_controlperiods_agriculturalseason_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlperiod_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_agriculturalseason_id
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.monitoring_comparative_consumption_agriculturalseason
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlperiod_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlpresconsumption_view_search
@@ -585,9 +612,13 @@ msgstr "Área ("
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: selection:wua.comparative.cultivation.presconsumption,consumption_category:0
+#: selection:wua.comparative.cultivation.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.parcel.presconsumption,consumption_category:0
+#: selection:wua.comparative.parcel.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.partner.presconsumption,consumption_category:0
+#: selection:wua.comparative.partner.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.subparcel.presconsumption,consumption_category:0
+#: selection:wua.comparative.subparcel.presconsumption.global,consumption_category:0
 #: selection:wua.parcel.subparcel,consumption_category:0
 msgid "B (acceptable irrigation)"
 msgstr "B (riego aceptable)"
@@ -609,9 +640,13 @@ msgstr "Quincenal"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: selection:wua.comparative.cultivation.presconsumption,consumption_category:0
+#: selection:wua.comparative.cultivation.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.parcel.presconsumption,consumption_category:0
+#: selection:wua.comparative.parcel.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.partner.presconsumption,consumption_category:0
+#: selection:wua.comparative.partner.presconsumption.global,consumption_category:0
 #: selection:wua.comparative.subparcel.presconsumption,consumption_category:0
+#: selection:wua.comparative.subparcel.presconsumption.global,consumption_category:0
 #: selection:wua.parcel.subparcel,consumption_category:0
 msgid "C (unsatisfactory irrigation)"
 msgstr "C (riego inadecuado)"
@@ -639,9 +674,13 @@ msgstr "Referencia catastral"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_cadastral_reference_link
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_cadastral_reference_link
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_cadastral_reference_link
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_cadastral_reference_link
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_cadastral_reference_link
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_tree
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_tree
 msgid "Cadastral Report"
@@ -740,9 +779,19 @@ msgid "Comparative Cultivation Presconsumption"
 msgstr "Consumos comparativos de cultivo"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_comparative_cultivation_presconsumption_global
+msgid "Comparative Cultivation Presconsumption Global"
+msgstr "Comparative Cultivation Presconsumption Global"
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_comparative_parcel_presconsumption
 msgid "Comparative Parcel Presconsumption"
 msgstr "Consumos comparativos de parcela"
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_comparative_parcel_presconsumption_global
+msgid "Comparative Parcel Presconsumption Global"
+msgstr "Comparative Parcel Presconsumption Global"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_comparative_partner_presconsumption
@@ -750,11 +799,21 @@ msgid "Comparative Partner Presconsumption"
 msgstr "Consumos comparativos de socio"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_comparative_partner_presconsumption_global
+msgid "Comparative Partner Presconsumption Global"
+msgstr "Comparative Partner Presconsumption Global"
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_comparative_subparcel_presconsumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlperiod_subparcel_presconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_subparcel_presconsumption_ids
 msgid "Comparative Subparcel Presconsumption"
 msgstr "Consumos comparativos de subparcela"
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_comparative_subparcel_presconsumption_global
+msgid "Comparative Subparcel Presconsumption Global"
+msgstr "Comparative Subparcel Presconsumption Global"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.monitoring_configuration_menu
@@ -785,7 +844,7 @@ msgstr "Consumo real (m3)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlreading_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_negative_controlreading_view_tree
 msgid "Cons. Value (m3)"
-msgstr "Consumo bruto (m3)"
+msgstr "Consumo bruto (m³)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_controlpresconsumption_id
@@ -794,13 +853,21 @@ msgstr "Consumo"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_consumption_category
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_consumption_category
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_consumption_category
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_consumption_category
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_consumption_category
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_consumption_category
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_consumption_category
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_consumption_category
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_consumption_category
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 msgid "Consumption Category"
 msgstr "Categoría de consumo"
@@ -845,6 +912,7 @@ msgstr "Consumos de control"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlperiod_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_controlperiod_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_cultivation_kc_controlperiod_id
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.monitoring_comparative_consumption_controlperiod
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
@@ -878,9 +946,13 @@ msgid "Control-Periods Periodicity"
 msgstr "Periodicidad de los períodos de control"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 msgid "Correct Irrigation"
 msgstr "A (riego adecuado)"
@@ -927,11 +999,14 @@ msgstr "Lec. Ctrl."
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_cultivation_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_cultivation_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_cultivation_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_cultivation_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_cultivation_kc_cultivation_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_irrigationdose_cultivation_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_search
 msgid "Cultivation"
@@ -947,6 +1022,7 @@ msgstr "Edad"
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_cultivation.py:191
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_cultivation_comparative_presconsumption_action
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_cultivation
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_menu
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_menu
 #, python-format
 msgid "Cultivations"
@@ -954,6 +1030,7 @@ msgstr "Cultivos"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_action
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_action
 msgid "Cultivations (agregated comparative consumptions)"
 msgstr "Cultivos (consumos comparativos agregados)"
 
@@ -988,9 +1065,13 @@ msgstr "Densidad (árboles/ha)"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_cultivation.py:135
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_deviation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_deviation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_deviation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_deviation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_deviation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_deviation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_deviation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_deviation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_deviation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
 #, python-format
@@ -1012,9 +1093,13 @@ msgstr "Desviación"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_agriculturalseason_deviation_percentage
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_deviation_percentage
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_deviation_percentage
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_deviation_percentage
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_deviation_percentage
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_deviation_percentage
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_deviation_percentage
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_deviation_percentage
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_deviation_percentage
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlperiod_deviation_percentage
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_deviation_percentage
 msgid "Deviation Percentage"
@@ -1034,9 +1119,13 @@ msgstr "Cuadro de diálogo para generar periodos de control"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wizard_generate_controlperiods_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_display_name
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_display_name
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_display_name
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_display_name
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlperiod_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_display_name
@@ -1147,9 +1236,13 @@ msgstr "Estimado"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_estimated_consumption
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_estimated_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_estimated_consumption
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_estimated_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_estimated_consumption
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_estimated_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_estimated_consumption
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_estimated_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_estimated_consumption
 msgid "Estimated Consumption"
 msgstr "Consumo estimado"
@@ -1274,21 +1367,27 @@ msgstr "Configuración GIS"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_monitoring_gisviewer_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_gis_viewer_link
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_gis_viewer_link
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_gis_viewer_link
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_gis_viewer_link
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_form
 msgid "GIS Viewer"
 msgstr "Visor GIS"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_tree
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_tree
 msgid "GIS Viewer (zoom to parcel)"
 msgstr "Visor GIS (zoom a parcela)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_tree
 msgid "GIS Viewer (zoom to parcels)"
 msgstr "Visor GIS (zoom a parcelas)"
@@ -1332,9 +1431,13 @@ msgid "Gross Value (m3)"
 msgstr "Volumen bruto (m3)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlperiod_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlpresconsumption_view_search
@@ -1345,12 +1448,16 @@ msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_hydraulicsector_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_negative_controlreading_hydraulicsector_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlpresconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlreading_view_search
@@ -1367,9 +1474,13 @@ msgstr "Sector"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wizard_generate_controlperiods_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlperiod_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_id
@@ -1479,10 +1590,15 @@ msgid "Irrigation Flow (m³/h)"
 msgstr "Caudal aplicable (m³/h)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_partner_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_partner_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_partner_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_partner_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_partner_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_partner_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 msgid "Irrigation Partner"
 msgstr "Regante"
@@ -1557,9 +1673,13 @@ msgstr "Última lectura (m³)"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wizard_generate_controlperiods___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption___last_update
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption___last_update
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption___last_update
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption___last_update
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlperiod___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading___last_update
@@ -1885,8 +2005,11 @@ msgstr "OK"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_area_official
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_area_official
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_area_official
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_area_official
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_area_official
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_area_official
 msgid "Official Area"
 msgstr "Área declarada"
 
@@ -1919,7 +2042,9 @@ msgid "Param for subparcel"
 msgstr "Parámetro Subparcela"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_parcel_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_parcel_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_search
 msgid "Parcel"
@@ -1932,6 +2057,7 @@ msgid "Parcel %"
 msgstr "% parcela"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_parcel_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_parcel_id
 msgid "Parcel Code"
 msgstr "Código de parcela"
@@ -1939,6 +2065,7 @@ msgstr "Código de parcela"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:40
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_parcel_comparative_presconsumption_action
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_menu
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_menu
 #, python-format
 msgid "Parcels"
@@ -1946,6 +2073,7 @@ msgstr "Parcelas"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_action
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_action
 msgid "Parcels (agregated comparative consumptions)"
 msgstr "Parcelas (consumos comparativos agregados)"
 
@@ -1976,6 +2104,7 @@ msgstr "Partner of a WUA"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/res_partner.py:24
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_menu
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_menu
 #, python-format
 msgid "Partners"
@@ -1983,6 +2112,7 @@ msgstr "Socios"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_action
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_action
 msgid "Partners (agregated comparative consumptions)"
 msgstr "Socios (consumos comparativos agregados)"
 
@@ -2085,9 +2215,13 @@ msgid "Real"
 msgstr "Real"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_global_real_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_real_consumption
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_real_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_real_consumption
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_global_real_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_partner_presconsumption_real_consumption
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_real_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_real_consumption
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_real_consumption
 msgid "Real Consumption"
@@ -2257,6 +2391,7 @@ msgid "Subparcel"
 msgstr "Subparcela"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_subparcel_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_subparcel_id
 msgid "Subparcel Code"
 msgstr "Código de subparcela"
@@ -2272,6 +2407,7 @@ msgid "Subparcel Consumptions"
 msgstr "Consumos de subparcela"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_graphic
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_graphic
 msgid "Subparcel Presconsumptions"
 msgstr "Consumos de subparcela"
@@ -2288,8 +2424,10 @@ msgstr "Subparcela de una parcela"
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_soiltype.py:65
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_action
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.wua_subparcel_comparative_presconsumption_action
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_number_of_subparcels
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_number_of_subparcels
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_soiltype_subparcel_ids
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_menu
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_menu
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_menu
 #, python-format
@@ -2298,6 +2436,7 @@ msgstr "Subparcelas"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_action
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_action
 msgid "Subparcels (comparative consumptions)"
 msgstr "Subparcelas (consumos comparativos)"
 
@@ -2587,9 +2726,13 @@ msgid "Total deviation"
 msgstr "Desviación total"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_cultivation_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_parcel_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_partner_presconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 msgid "Unacceptable Irrigation"
 msgstr "Riego inaceptable"
@@ -2670,6 +2813,7 @@ msgstr "Valor entre 0 y 359º (0 hace referencia al norte geográfico)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_cultivationvariety_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_subparcel_presconsumption_global_cultivationvariety_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report_document
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report_document
 msgid "Variety"

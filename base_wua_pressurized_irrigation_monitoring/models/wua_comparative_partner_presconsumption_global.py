@@ -9,16 +9,11 @@ from Crypto.Cipher import AES
 from odoo import models, fields, tools, api, _
 
 
-class WuaComparativePartnerPresconsumption(models.Model):
-    _name = 'wua.comparative.partner.presconsumption'
-    _description = 'Comparative Partner Presconsumption'
+class WuaComparativePartnerPresconsumptionGlobal(models.Model):
+    _name = 'wua.comparative.partner.presconsumption.global'
+    _description = 'Comparative Partner Presconsumption Global'
     _auto = False
-    _order = 'agriculturalseason_id,controlperiod_id,partner_id'
-
-    controlperiod_id = fields.Many2one(
-        string='Control Period',
-        comodel_name='wua.controlperiod',
-    )
+    _order = 'agriculturalseason_id,partner_id'
 
     partner_id = fields.Many2one(
         string='Irrigation Partner',
@@ -69,11 +64,12 @@ class WuaComparativePartnerPresconsumption(models.Model):
     )
 
     def init(self):
-        tools.drop_view_if_exists(self.env.cr,
-                                  'wua_comparative_partner_presconsumption')
+        tools.drop_view_if_exists(
+            self.env.cr, 'wua_comparative_partner_presconsumption_global')
         self.env.cr.execute("""
-            CREATE OR REPLACE VIEW wua_comparative_partner_presconsumption AS (
-            SELECT row_number() OVER () AS id, wcsp1.controlperiod_id,
+            CREATE OR REPLACE VIEW
+            wua_comparative_partner_presconsumption_global AS (
+            SELECT row_number() OVER () AS id,
             wcsp1.partner_id, SUM(wcsp1.estimated_consumption) AS
             estimated_consumption, SUM(wcsp1.real_consumption) AS
             real_consumption, SUM(wcsp1.deviation) AS deviation,
@@ -110,7 +106,7 @@ class WuaComparativePartnerPresconsumption(models.Model):
             END AS consumption_category FROM
             wua_comparative_subparcel_presconsumption wcsp1 INNER JOIN
             res_partner rp1 ON rp1.id = wcsp1.partner_id GROUP BY
-            wcsp1.agriculturalseason_id, wcsp1.controlperiod_id,
+            wcsp1.agriculturalseason_id,
             wcsp1.partner_id)
             """)
 
@@ -194,23 +190,15 @@ class WuaComparativePartnerPresconsumption(models.Model):
     @api.model
     def fields_view_get(self, view_id=None, view_type='form',
                         toolbar=False, submenu=False):
-        res = super(WuaComparativePartnerPresconsumption, self).\
+        res = super(WuaComparativePartnerPresconsumptionGlobal, self).\
             fields_view_get(view_id=view_id, view_type=view_type,
                             toolbar=toolbar, submenu=submenu)
         if view_type == 'tree':
-            control_periodicity = control_periodicity_raw = \
-                area_measure_name = ""
+            control_periodicity = area_measure_name = ""
             doc = etree.XML(res['arch'])
-            control_periodicity_raw = self.env['ir.values'].get_default(
-                'wua.monitoring.configuration', 'control_periodicity')
             area_measure_name = \
                 self.env['wua.parcel'].sudo()._compute_area_measurement_name()
-            if control_periodicity_raw == 's':
-                control_periodicity = _('(m³/week)')
-            elif control_periodicity_raw == 'b':
-                control_periodicity = _('(m³/biweek)')
-            elif control_periodicity_raw == 'm':
-                control_periodicity = _('(m³/month)')
+            control_periodicity = _('(m³/agriculturalseason)')
             for node in doc.xpath("//field[@name='estimated_consumption']"):
                 original_label = self.env['wua.parcel'].sudo().\
                     get_value_from_translation(

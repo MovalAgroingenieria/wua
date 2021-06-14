@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <record id="wua_comparative_subparcel_presconsumption_global_view_tree" model="ir.ui.view">
+        <field name="name">Subparcels (tree view)</field>
+        <field name="model">wua.comparative.subparcel.presconsumption.global</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_monitoring_comparative_subparcel_presconsumption_global_view_tree"
+             create="false">
+             <field name="cadastral_reference_link" invisible="1"/>
+             <field name="gis_viewer_link" invisible="1"/>
+              <field name="agriculturalseason_id"/>
+              <field name="parcel_id"/>
+              <field name="subparcel_id"/>
+              <field name="hydraulicsector_id"/>
+              <field name="partner_id"/>
+              <field name="area_official"/>
+              <button name="action_see_gis_viewer"
+                      type="object" class="oe_stat_button"
+                      string="GIS Viewer (zoom to parcel)"
+                      icon="fa-map-marker"
+                      attrs="{'invisible':
+                              [('gis_viewer_link','=',False)]}"/>
+              <button name="action_see_cadastral_report"
+                      type="object" class="oe_stat_button"
+                      string="Cadastral Report"
+                      icon="fa-cubes"
+                      attrs="{'invisible': [('cadastral_reference_link','=','')]}"/>
+              <field name="cultivation_id"/>
+              <field name="cultivationvariety_id"/>
+              <field name="real_consumption"/>
+              <field name="estimated_consumption"/>
+              <field name="deviation"/>
+              <field name="deviation_percentage" string="(%)"/>
+              <field name="consumption_category" invisible="1" />
+              <button icon='fa-circle semaphore-green' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'A')]}"/>
+              <button icon='fa-circle semaphore-yellow' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'B')]}"/>
+              <button icon='fa-circle semaphore-red' readonly="1" attrs="{'invisible':[('consumption_category', '!=', 'C')]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_comparative_subparcel_presconsumption_global_view_search" model="ir.ui.view">
+        <field name="name">Subparcels (search view)</field>
+        <field name="model">wua.comparative.subparcel.presconsumption.global</field>
+        <field name="arch" type="xml">
+            <search>
+              <field name="parcel_id"/>
+              <field name="partner_id"/>
+              <field name="cultivation_id"/>
+              <field name="hydraulicsector_id"/>
+              <field name="agriculturalseason_id"/>
+              <filter string="Active Agricultural Season" name="agriculturalseasonactive"
+               domain="[('agriculturalseason_id.active_agriculturalseason','=',True)]"/>
+              <separator/>
+              <filter string="Correct Irrigation" name="category_a"
+               domain="[('consumption_category','=','a')]"/>
+              <filter string="Acceptable Irrigation" name="category_b"
+               domain="[('consumption_category','=','b')]"/>
+              <filter string="Unacceptable Irrigation" name="category_c"
+               domain="[('consumption_category','=','c')]"/>
+              <separator/>
+              <group expand="0" string="Group By">
+                  <filter string="Agricultural Season"
+                   name="agriculturalseason"
+                   context="{'group_by':'agriculturalseason_id'}"/>
+                  <filter string="Cultivation"
+                   name="cultivation"
+                   context="{'group_by':'cultivation_id'}"/>
+                  <filter string="Hydraulic Sector"
+                   name="hydraulicsector"
+                   context="{'group_by':'hydraulicsector_id'}"/>
+                  <filter string="Irrigation Partner"
+                   name="partner"
+                   context="{'group_by':'partner_id'}"/>
+                  <filter string="Parcel"
+                   name="parcel"
+                   context="{'group_by':'parcel_id'}"/>
+                  <filter string="Consumption Category"
+                   name="consumption_category"
+                   context="{'group_by':'consumption_category'}"/>
+              </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_comparative_subparcel_presconsumption_global_view_graphic" model="ir.ui.view">
+        <field name="name">Subparcels (graph view)</field>
+        <field name="model">wua.comparative.subparcel.presconsumption.global</field>
+        <field name="arch" type="xml">
+            <graph string="Subparcel Presconsumptions" type="pie">
+                <field name="cultivation_id"/>
+                <field name="real_consumption" type='measure'/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_comparative_subparcel_presconsumption_global_view_pivot" model="ir.ui.view">
+        <field name="name">Subparcels (pivot view)</field>
+        <field name="model">wua.comparative.subparcel.presconsumption.global</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+              <field name="cultivation_id"/>
+              <field name="real_consumption" type='measure'/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_comparative_subparcel_presconsumption_global_action" model="ir.actions.act_window">
+        <field name="name">Subparcels (comparative consumptions)</field>
+        <field name="res_model">wua.comparative.subparcel.presconsumption.global</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,graph,pivot</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_comparative_subparcel_presconsumption_global_view_tree')})]"/>
+        <field name="search_view_id" ref="wua_comparative_subparcel_presconsumption_global_view_search"/>
+        <field name="context">{'search_default_agriculturalseasonactive': True,
+                               'graph_mode':'pie'}</field>
+    </record>
+
+    <menuitem id="wua_comparative_subparcel_presconsumption_global_menu"
+              name="Subparcels"
+              parent="base_wua_pressurized_irrigation_monitoring.monitoring_comparative_consumption_agriculturalseason"
+              action="wua_comparative_subparcel_presconsumption_global_action"
+              sequence="4"
+              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
+
+</odoo>

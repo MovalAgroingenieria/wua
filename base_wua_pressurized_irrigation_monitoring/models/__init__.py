@@ -11,9 +11,13 @@ from . import wua_controlpresconsumption
 from . import wua_negative_controlreading
 from . import wua_watermeter
 from . import wua_comparative_subparcel_presconsumption
+from . import wua_comparative_subparcel_presconsumption_global
 from . import wua_comparative_parcel_presconsumption
+from . import wua_comparative_parcel_presconsumption_global
 from . import wua_comparative_partner_presconsumption
+from . import wua_comparative_partner_presconsumption_global
 from . import wua_comparative_cultivation_presconsumption
+from . import wua_comparative_cultivation_presconsumption_global
 from . import res_partner
 from . import wua_cultivation
 from . import wua_cultivation_kc

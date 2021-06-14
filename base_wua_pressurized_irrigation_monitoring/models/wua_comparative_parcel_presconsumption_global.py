@@ -9,15 +9,15 @@ from Crypto.Cipher import AES
 from odoo import models, fields, tools, api, _
 
 
-class WuaComparativePartnerPresconsumption(models.Model):
-    _name = 'wua.comparative.partner.presconsumption'
-    _description = 'Comparative Partner Presconsumption'
+class WuaComparativeParcelPresconsumptionGlobal(models.Model):
+    _name = 'wua.comparative.parcel.presconsumption.global'
+    _description = 'Comparative Parcel Presconsumption Global'
     _auto = False
-    _order = 'agriculturalseason_id,controlperiod_id,partner_id'
+    _order = 'agriculturalseason_id,parcel_id'
 
-    controlperiod_id = fields.Many2one(
-        string='Control Period',
-        comodel_name='wua.controlperiod',
+    parcel_id = fields.Many2one(
+        string='Parcel',
+        comodel_name='wua.parcel',
     )
 
     partner_id = fields.Many2one(
@@ -27,7 +27,13 @@ class WuaComparativePartnerPresconsumption(models.Model):
 
     area_official = fields.Float(
         string='Official Area',
-        digits=(32, 4)
+        digits=(32, 4),
+        compute='_compute_area_official',
+    )
+
+    hydraulicsector_id = fields.Many2one(
+        string='Hydraulic Sector',
+        comodel_name='wua.hydraulicsector',
     )
 
     agriculturalseason_id = fields.Many2one(
@@ -55,6 +61,15 @@ class WuaComparativePartnerPresconsumption(models.Model):
         compute='_compute_deviation_percentage',
     )
 
+    cadastral_reference_link = fields.Char(
+        string='Cadastral Report',
+        compute='_compute_cadastral_reference_link',
+    )
+
+    number_of_subparcels = fields.Integer(
+        string='Subparcels',
+        compute='_compute_number_of_subparcels')
+
     gis_viewer_link = fields.Char(
         string='GIS Viewer',
         compute='_compute_gis_viewer_link'
@@ -69,16 +84,17 @@ class WuaComparativePartnerPresconsumption(models.Model):
     )
 
     def init(self):
-        tools.drop_view_if_exists(self.env.cr,
-                                  'wua_comparative_partner_presconsumption')
+        tools.drop_view_if_exists(
+            self.env.cr, 'wua_comparative_parcel_presconsumption_global')
         self.env.cr.execute("""
-            CREATE OR REPLACE VIEW wua_comparative_partner_presconsumption AS (
-            SELECT row_number() OVER () AS id, wcsp1.controlperiod_id,
-            wcsp1.partner_id, SUM(wcsp1.estimated_consumption) AS
+            CREATE OR REPLACE VIEW
+            wua_comparative_parcel_presconsumption_global AS (
+            SELECT row_number() OVER () AS id,
+            wcsp1.parcel_id, SUM(wcsp1.estimated_consumption) AS
             estimated_consumption, SUM(wcsp1.real_consumption) AS
             real_consumption, SUM(wcsp1.deviation) AS deviation,
-            SUM(wcsp1.area_official) AS area_official,
-            wcsp1.agriculturalseason_id,
+            wcsp1.agriculturalseason_id, wcsp1.partner_id,
+            wp1.hydraulicsector_id,
             CASE
              WHEN (
                     (SUM(wcsp1.real_consumption) = 0) AND
@@ -109,10 +125,21 @@ class WuaComparativePartnerPresconsumption(models.Model):
              ELSE  'C'
             END AS consumption_category FROM
             wua_comparative_subparcel_presconsumption wcsp1 INNER JOIN
-            res_partner rp1 ON rp1.id = wcsp1.partner_id GROUP BY
-            wcsp1.agriculturalseason_id, wcsp1.controlperiod_id,
-            wcsp1.partner_id)
+            wua_parcel wp1 ON wp1.id = wcsp1.parcel_id GROUP BY
+            wcsp1.agriculturalseason_id,
+            wcsp1.parcel_id, wcsp1.partner_id, wp1.hydraulicsector_id)
             """)
+
+    @api.multi
+    def _compute_area_official(self):
+        for record in self:
+            record.area_official = record.parcel_id.area_official
+
+    @api.multi
+    def _compute_cadastral_reference_link(self):
+        for record in self:
+            record.cadastral_reference_link = \
+                record.parcel_id.cadastral_reference_link
 
     @api.multi
     def _compute_deviation_percentage(self):
@@ -136,6 +163,11 @@ class WuaComparativePartnerPresconsumption(models.Model):
                     '{:.2f}'.format(deviation_percentage) + '%'
 
     @api.multi
+    def _compute_number_of_subparcels(self):
+        for record in self:
+            record.number_of_subparcels = len(record.parcel_id.subparcel_ids)
+
+    @api.multi
     def _compute_gis_viewer_link(self):
         url = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer')
@@ -143,18 +175,17 @@ class WuaComparativePartnerPresconsumption(models.Model):
             'wua.configuration', 'url_gis_viewer_username')
         password = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_password')
-        partner_param = self.env['ir.values'].get_default(
-            'wua.configuration', 'url_gis_viewer_partner_param')
+        parcel_param = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_parcel_param')
         for record in self:
             url_for_record = url
             if url_for_record:
-                if partner_param:
+                if parcel_param:
                     sep_char = '?'
                     if url_for_record.find('?') != -1:
                         sep_char = '&'
                     url_for_record = url_for_record + sep_char + \
-                        partner_param + '=' + \
-                        str(record.partner_id.partner_code)
+                        parcel_param + '=' + str(record.parcel_id.name)
             if (url_for_record and username and password and (not
                self.env.user.has_group('base_wua.group_wua_portal_user'))):
                 credentials = username + "-" + password
@@ -191,26 +222,28 @@ class WuaComparativePartnerPresconsumption(models.Model):
                 'target': 'new',
             }
 
+    @api.multi
+    def action_see_cadastral_report(self):
+        self.ensure_one()
+        if self.cadastral_reference_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.cadastral_reference_link,
+                'target': 'new',
+            }
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form',
                         toolbar=False, submenu=False):
-        res = super(WuaComparativePartnerPresconsumption, self).\
+        res = super(WuaComparativeParcelPresconsumptionGlobal, self).\
             fields_view_get(view_id=view_id, view_type=view_type,
                             toolbar=toolbar, submenu=submenu)
         if view_type == 'tree':
-            control_periodicity = control_periodicity_raw = \
-                area_measure_name = ""
+            control_periodicity = area_measure_name = ""
             doc = etree.XML(res['arch'])
-            control_periodicity_raw = self.env['ir.values'].get_default(
-                'wua.monitoring.configuration', 'control_periodicity')
             area_measure_name = \
                 self.env['wua.parcel'].sudo()._compute_area_measurement_name()
-            if control_periodicity_raw == 's':
-                control_periodicity = _('(m³/week)')
-            elif control_periodicity_raw == 'b':
-                control_periodicity = _('(m³/biweek)')
-            elif control_periodicity_raw == 'm':
-                control_periodicity = _('(m³/month)')
+            control_periodicity = _('(m³/agriculturalseason)')
             for node in doc.xpath("//field[@name='estimated_consumption']"):
                 original_label = self.env['wua.parcel'].sudo().\
                     get_value_from_translation(
