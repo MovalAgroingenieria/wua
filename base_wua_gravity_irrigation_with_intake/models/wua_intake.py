@@ -6,7 +6,7 @@ from odoo import models, fields
 
 
 class WuaIntake(models.Model):
-    _inherit = 'wua.irrigationditch'
+    _inherit = 'wua.intake'
 
     irrigationditch_ids = fields.One2many(
         string='Irrigationditches',
