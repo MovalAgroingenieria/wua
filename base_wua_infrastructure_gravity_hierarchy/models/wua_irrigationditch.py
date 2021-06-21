@@ -64,6 +64,16 @@ class WuaIrrigationditch(models.Model):
         inverse_name='irrigationditch_05_id',
         string="Parcels at level 5 ditch")
 
+    parcel_06_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_06_id',
+        string="Parcels at level 6 ditch")
+
+    parcel_07_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_07_id',
+        string="Parcels at level 7 ditch")
+
     @api.depends('irrigationditch_id', 'name')
     def _compute_level_n_path(self):
         for record in self:
@@ -82,47 +92,48 @@ class WuaIrrigationditch(models.Model):
 
     @api.depends('parcel_01_ids', 'parcel_02_ids',
                  'parcel_03_ids', 'parcel_04_ids',
-                 'parcel_05_ids')
+                 'parcel_05_ids', 'parcel_06_ids',
+                 'parcel_07_ids')
     def _compute_number_of_parcels(self):
+        max_level = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'max_levels_gravity_irrigation')
         for record in self:
-            number_of_parcels = ""
-            if record.parcel_05_ids:
-                number_of_parcels = len(record.parcel_05_ids)
-            elif record.parcel_04_ids:
-                number_of_parcels = len(record.parcel_04_ids)
-            elif record.parcel_03_ids:
-                number_of_parcels = len(record.parcel_03_ids)
-            elif record.parcel_02_ids:
-                number_of_parcels = len(record.parcel_02_ids)
-            elif record.parcel_01_ids:
-                number_of_parcels = len(record.parcel_01_ids)
+            number_of_parcels = 0
+            level = max_level
+            while (number_of_parcels <= 0 and level > 0):
+                if record['parcel_' + str(level).zfill(2) + '_ids']:
+                    number_of_parcels = len(
+                        record['parcel_' + str(level).zfill(2) + '_ids'])
+                level -= 1
             record.number_of_parcels = number_of_parcels
 
     @api.depends('parcel_01_ids', 'parcel_02_ids',
                  'parcel_03_ids', 'parcel_04_ids',
-                 'parcel_05_ids', 'parcel_01_ids.area_official',
+                 'parcel_05_ids', 'parcel_06_ids',
+                 'parcel_07_ids',
+                 'parcel_01_ids.area_official',
                  'parcel_02_ids.area_official',
                  'parcel_03_ids.area_official',
                  'parcel_04_ids.area_official',
-                 'parcel_05_ids.area_official')
+                 'parcel_05_ids.area_official',
+                 'parcel_06_ids.area_official',
+                 'parcel_07_ids.area_official')
     def _compute_total_affected_area_official(self):
+        max_level = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'max_levels_gravity_irrigation')
         for record in self:
             total_affected_area_official = 0.0
-            if record.parcel_05_ids:
-                for parcel in record.parcel_05_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_04_ids:
-                for parcel in record.parcel_04_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_03_ids:
-                for parcel in record.parcel_03_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_02_ids:
-                for parcel in record.parcel_02_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_01_ids:
-                for parcel in record.parcel_01_ids:
-                    total_affected_area_official += parcel.area_official
+            level = max_level
+            some_level = False
+            while (not some_level and level > 0):
+                if record['parcel_' + str(level).zfill(2) + '_ids']:
+                    some_level = True
+                    for parcel in \
+                            record['parcel_' + str(level).zfill(2) + '_ids']:
+                        total_affected_area_official += parcel.area_official
+                level -= 1
             record.total_affected_area_official = total_affected_area_official
 
     @api.constrains('is_main', 'irrigationditch_id')
@@ -201,17 +212,18 @@ class WuaIrrigationditch(models.Model):
         current_irrigationditch_id = self.env.context.get('active_id')
         current_irrigationditch = self.browse(current_irrigationditch_id)
         if current_irrigationditch:
-            condition = ['|', '|', '|', '|',
-                         ('id', 'in',
-                          current_irrigationditch.parcel_01_ids.ids),
-                         ('id', 'in',
-                          current_irrigationditch.parcel_02_ids.ids),
-                         ('id', 'in',
-                          current_irrigationditch.parcel_03_ids.ids),
-                         ('id', 'in',
-                          current_irrigationditch.parcel_04_ids.ids),
-                         ('id', 'in',
-                          current_irrigationditch.parcel_05_ids.ids)]
+            condition = []
+            max_level = self.env['ir.values'].get_default(
+                'wua.infrastructure.configuration',
+                'max_levels_gravity_irrigation')
+            #  Add operator, '|'
+            condition.extend(['|'] * (max_level - 1))
+            for i in range(1, max_level + 1):
+                # Add possible ids
+                condition.append(
+                    ('id', 'in',
+                     current_irrigationditch['parcel_' + str(i).zfill(2) +
+                                             '_ids'].ids))
             id_tree_view = \
                 self.env.ref('base_wua.'
                              'wua_parcel_view_tree').id

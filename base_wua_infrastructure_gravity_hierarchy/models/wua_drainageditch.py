@@ -114,6 +114,16 @@ class WuaDrainageditch(models.Model):
         inverse_name='drainageditch_05_id',
         string="Parcels at level 5 drainage ditch")
 
+    parcel_06_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_06_id',
+        string="Parcels at level 6 drainage ditch")
+
+    parcel_07_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_07_id',
+        string="Parcels at level 7 drainage ditch")
+
     number_of_parcels = fields.Integer(
         string='Cumulative number of parcels',
         store=True,
@@ -140,20 +150,20 @@ class WuaDrainageditch(models.Model):
 
     @api.depends('parcel_01_ids', 'parcel_02_ids',
                  'parcel_03_ids', 'parcel_04_ids',
-                 'parcel_05_ids')
+                 'parcel_05_ids', 'parcel_06_ids',
+                 'parcel_07_ids')
     def _compute_number_of_parcels(self):
+        max_level = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'max_levels_gravity_drainage')
         for record in self:
-            number_of_parcels = ""
-            if record.parcel_05_ids:
-                number_of_parcels = len(record.parcel_05_ids)
-            elif record.parcel_04_ids:
-                number_of_parcels = len(record.parcel_04_ids)
-            elif record.parcel_03_ids:
-                number_of_parcels = len(record.parcel_03_ids)
-            elif record.parcel_02_ids:
-                number_of_parcels = len(record.parcel_02_ids)
-            elif record.parcel_01_ids:
-                number_of_parcels = len(record.parcel_01_ids)
+            number_of_parcels = 0
+            level = max_level
+            while (number_of_parcels <= 0 and level > 0):
+                if record['parcel_' + str(level).zfill(2) + '_ids']:
+                    number_of_parcels = len(
+                        record['parcel_' + str(level).zfill(2) + '_ids'])
+                level -= 1
             record.number_of_parcels = number_of_parcels
 
     @api.multi
@@ -227,7 +237,7 @@ class WuaDrainageditch(models.Model):
     def _check_level(self):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
-            'max_levels_gravity_irrigation')
+            'max_levels_gravity_drainage')
         if self.level > max_level:
             raise exceptions.ValidationError(_('You cannot create a drainage '
                                                'ditch that depends on a ditch '
@@ -350,17 +360,17 @@ class WuaDrainageditch(models.Model):
         current_drainageditch_id = self.env.context.get('active_id')
         current_drainageditch = self.browse(current_drainageditch_id)
         if current_drainageditch:
-            condition = ['|', '|', '|', '|',
-                         ('id', 'in',
-                          current_drainageditch.parcel_01_ids.ids),
-                         ('id', 'in',
-                          current_drainageditch.parcel_02_ids.ids),
-                         ('id', 'in',
-                          current_drainageditch.parcel_03_ids.ids),
-                         ('id', 'in',
-                          current_drainageditch.parcel_04_ids.ids),
-                         ('id', 'in',
-                          current_drainageditch.parcel_05_ids.ids)]
+            condition = []
+            max_level = self.env['ir.values'].get_default(
+                'wua.infrastructure.configuration',
+                'max_levels_gravity_drainage')
+            condition.extend(['|'] * (max_level - 1))
+            for i in range(1, max_level + 1):
+                # Add possible ids
+                condition.append(
+                    ('id', 'in',
+                     current_drainageditch['parcel_' + str(i).zfill(2) +
+                                           '_ids'].ids))
             id_tree_view = \
                 self.env.ref('base_wua.'
                              'wua_parcel_view_tree').id

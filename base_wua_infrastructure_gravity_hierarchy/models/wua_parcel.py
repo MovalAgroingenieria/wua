@@ -71,6 +71,20 @@ class WuaParcel(models.Model):
         store=True,
         compute="_compute_irrigationditch_id_05")
 
+    irrigationditch_06_id = fields.Many2one(
+        string="Level 6 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_06")
+
+    irrigationditch_07_id = fields.Many2one(
+        string="Level 7 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_07")
+
     drainageditch_01_id = fields.Many2one(
         string="Level 1 Drainage Ditch",
         comodel_name='wua.drainageditch',
@@ -105,6 +119,20 @@ class WuaParcel(models.Model):
         index=True,
         store=True,
         compute="_compute_drainageditch_id_05")
+
+    drainageditch_06_id = fields.Many2one(
+        string="Level 6 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_06")
+
+    drainageditch_07_id = fields.Many2one(
+        string="Level 7 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_07")
 
     @api.depends('irrigationditch_id', 'irrigationditch_id.path')
     def _compute_path(self):
@@ -158,6 +186,18 @@ class WuaParcel(models.Model):
             record.irrigationditch_05_id = \
                 self.get_irrigationditch(record, 5)
 
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_06(self):
+        for record in self:
+            record.irrigationditch_06_id = \
+                self.get_irrigationditch(record, 6)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_07(self):
+        for record in self:
+            record.irrigationditch_07_id = \
+                self.get_irrigationditch(record, 7)
+
     @api.depends('drainageditch_id', 'drainageditch_id.level')
     def _compute_drainageditch_id_01(self):
         for record in self:
@@ -187,6 +227,18 @@ class WuaParcel(models.Model):
         for record in self:
             record.drainageditch_05_id = \
                 self.get_drainageditch(record, 5)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_06(self):
+        for record in self:
+            record.drainageditch_06_id = \
+                self.get_drainageditch(record, 6)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_07(self):
+        for record in self:
+            record.drainageditch_07_id = \
+                self.get_drainageditch(record, 7)
 
     @api.depends('irrigationpoint_ids', 'irrigationditch_id')
     def _compute_hydraulic_infrastructure_type(self):

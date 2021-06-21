@@ -26,12 +26,12 @@ class WuaInfrastructureConfiguration(models.TransientModel):
     _sql_constraints = [
         ('valid_max_levels_gravity_irrigation',
          'CHECK (max_levels_gravity_irrigation >= 1 '
-         'and max_levels_gravity_irrigation <= 5)',
-         'The "Max. Levels" value has to be between 1 and 5.'),
+         'and max_levels_gravity_irrigation <= 7)',
+         'The "Max. Levels" value has to be between 1 and 7.'),
         ('valid_max_levels_gravity_drainage',
          'CHECK (max_levels_gravity_drainage >= 1 '
-         'and max_levels_gravity_drainage <= 5)',
-         'The "Max. Levels drainage" value has to be between 1 and 5.')
+         'and max_levels_gravity_drainage <= 7)',
+         'The "Max. Levels drainage" value has to be between 1 and 7.')
         ]
 
     @api.multi
