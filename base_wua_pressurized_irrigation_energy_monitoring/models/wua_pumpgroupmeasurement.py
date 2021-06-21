@@ -239,8 +239,9 @@ class WuaPumpgroupmeasurement(models.Model):
     @api.depends('impulsion_pressure', 'suction_pressure')
     def _compute_manometric_height(self):
         for record in self:
+            # Check no negative value
             record.manometric_height = \
-                record.impulsion_pressure - record.suction_pressure
+                max(record.impulsion_pressure - record.suction_pressure, 0.00)
 
     @api.depends('instantaneous_flow', 'manometric_height')
     def _compute_supplied_power(self):

@@ -6,7 +6,7 @@
     "name": "Water Users Association: Module to monitoring pressurized "
             "irrigation energy",
     "summary": "Measuring the energy used in pressurized irrigation (pumping)",
-    "version": '10.0.1.1.3',
+    "version": '10.0.1.1.0',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
