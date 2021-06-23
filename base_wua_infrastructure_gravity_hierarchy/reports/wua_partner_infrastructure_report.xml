@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua partner infrastrucure report (continuation of wua partner report) -->
+    <template id="wua_partner_infrastructure_report_document" inherit_id="base_wua_infrastructure.wua_partner_infrastructure_report_document">
+        <xpath expr="//div[@name='wua_irrigationpoint_ids']" position="after">
+            <div name="wua_gravity_hierarchy_ids" style="margin-top: 20px;">
+
+                <!-- Determine if some irrigation and drainage -->
+                <t t-set="some_gravity" t-value="0"/>
+                <t t-set="gravity_hierarchy_data" t-value="[]"/>
+                <t t-if="o.partnerlink_ids">
+                    <t t-set="gravity_hierarchy_data" t-value="
+                        o.partnerlink_ids.filtered(lambda x: x.parcel_id.drainageditch_id or x.parcel_id.irrigationditch_id)"/>
+                    <t t-set="some_gravity" t-value="len(gravity_hierarchy_data)"/>
+                </t>
+                <!-- Show Pressure irrigation points if any -->
+                <t t-if="some_gravity != 0">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                                <div style="float: left; display: inline;"><strong>Gravity Irrigation</strong></div>
+                           </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                                <div style="float: left; display: inline;"><strong>Gravity Irrigation</strong></div>
+                            </div>
+                        </t>
+                    </div>
+                    <table class="table table-striped" style="margin-top: 2px;">
+                        <thead>
+                            <tr>
+                                <th width="20%" class="text-center" name="gravity_parcel_hierarchy">Parcel</th>
+                                <th class="text-center" name="gravity_irrigationditch_hierarchy">Irrigationditch</th>
+                                <th class="text-center" name="gravity_drainageditch_hierarchy">Drainageditch</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="gravity_hierarchy_data" t-as="g">
+                                <tr>
+                                    <td class="text-center" name="td_gravity_parcel_hierarchy">
+                                        <span t-field="g.parcel_id.name"/>
+                                    </td>
+                                    <td class="text-center" name="td_gravity_irrigationditch_hierarchy">
+                                        <span t-field="g.parcel_id.irrigationditch_id"/>
+                                    </td>
+                                    <td class="text-center" name="td_gravity_drainageditch_hierarchy">
+                                        <span t-field="g.parcel_id.drainageditch_id"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
