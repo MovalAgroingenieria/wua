@@ -13,6 +13,11 @@
                     <div name="buttons" class="oe_button_box">
                         <field name="gis_viewer_link" invisible="1"/>
                         <field name="with_gis_waterpipe" invisible="1"/>
+                        <button name="toggle_active" type="object" class="oe_stat_button"
+                            icon="fa-archive" groups="base_wua.group_wua_user">
+                            <field name="active" widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
                         <button name="action_get_irrigationsheds" type="object"
                                 string="Irrigationsheds" class="oe_stat_button"
                                 icon="fa-moval-valve-shed"/>

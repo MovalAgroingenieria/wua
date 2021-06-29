@@ -154,6 +154,12 @@ class WuaWaterpipe(models.Model):
     with_gis_waterpipe = fields.Boolean(
         string='GIS Waterpipe',)
 
+    active = fields.Boolean(
+        default=True,
+        help='If the active field is set to False, it will allow you to ' +
+        'hide the register without removing it. For see archived register, ' +
+        'go to "Search-Filters" in tree view')
+
     _sql_constraints = [
         ('unique_code', 'UNIQUE (waterpipe_code)', 'Existing Code.'),
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
