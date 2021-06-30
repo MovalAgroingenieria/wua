@@ -373,7 +373,7 @@ class ResPartner(models.Model):
                                 get_default('wua.configuration',
                                             'polling_system_rounding_type')
                             calc_votes =\
-                                area_for_votes / polling_system_interval
+                                area_for_votes / float(polling_system_interval)
                             if polling_system_rounding_type == 0:
                                 votes = ceil(calc_votes)
                             else:
@@ -697,6 +697,9 @@ class ResPartner(models.Model):
                     base_for_area = int(limits[1])
                     area_for_votes = area - base_for_area
                     if area_for_votes >= 0:
-                        calc_votes = area_for_votes / polling_system_interval
+                        # Area can be a integer and int / int = int (Python2)
+                        # So ceil not working
+                        calc_votes = area_for_votes / float(
+                            polling_system_interval)
                         resp = int(ceil(calc_votes)) + base_for_votes
         return resp
