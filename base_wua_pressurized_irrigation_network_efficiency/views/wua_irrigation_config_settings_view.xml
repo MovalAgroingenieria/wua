@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id" ref="wua_structure_irrigation.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_presconsumptions_for_average']" position="after">
+                <field name="error_margin_for_sync_consumptions"></field>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
