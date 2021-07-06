@@ -10,8 +10,8 @@ class WuaAgriculturalseason(models.Model):
 
     @api.multi
     def refresh_hydric_efficiency(self):
-        wp_consumptions = self.env['wua.waterpipeconsumption'].search(
-            [('agriculturalseason_id', '=', self.id)])
-        if wp_consumptions:
-            for record in wp_consumptions:
-                record.refresh_hydric_efficiency()
+        wp_consumptions_ids = self.env['wua.waterpipeconsumption'].search(
+            [('agriculturalseason_id', '=', self.id)]).ids
+        if wp_consumptions_ids:
+            self.env['wua.waterpipeconsumption'
+                     ].refresh_hydric_efficiency_multi(wp_consumptions_ids)
