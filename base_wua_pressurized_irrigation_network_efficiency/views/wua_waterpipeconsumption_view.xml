@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterpipeconsumption_view_form" model="ir.ui.view">
+        <field name="name">Waterpipe Consumption (form view)</field>
+        <field name="model">wua.waterpipeconsumption</field>
+        <field name="inherit_id" ref="base_wua_waterpipe_measurement.wua_waterpipeconsumption_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="refresh_hydric_efficiency" type="object" class="oe_highlight"
+                        string="Refresh hydric efficiency" groups="base_wua.group_wua_manager"/>
+                </header>
+            </xpath>
+            <xpath expr="//group[@name='master_data']" position="before">
+                <div name="buttons" class="oe_button_box">
+                    <field name="id" invisible="1"/>
+                    <button name="action_see_wp_presconsumptions"
+                        type="object" class="oe_stat_button" icon="fa-moval-intake-ground-drop"
+                        groups="base_wua.group_wua_user" attrs="{'invisible':[('id', '=', False)]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value"><field name="number_of_presconsumptions"/></span>
+                            <span class="o_stat_text">Pres. Cons</span>
+                        </div>
+                    </button>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='waterpipeflowreading_id']" position="after">
+                <field name="network_efficiency"/>
+            </xpath>
+      </field>
+  </record>
+
+    <record id="wua_waterpipeconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Waterpipe Consumption (tree view)</field>
+        <field name="model">wua.waterpipeconsumption</field>
+        <field name="inherit_id" ref="base_wua_waterpipe_measurement.wua_waterpipeconsumption_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='volume_real']" position="after">
+                <field name="number_of_presconsumptions" string="Num. Pres. Cons"/>
+                <field name="network_efficiency" string="Network Ef. (%)"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_refresh_hydric_efficiency" model="ir.actions.server">
+        <field name="name">Refresh hydric efficiency</field>
+        <field name="model_id" ref="model_wua_waterpipeconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.waterpipeconsumption'].refresh_hydric_efficiency_multi(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_refresh_hydric_efficiency" model="ir.values">
+        <field name="name">Refresh hydric efficiency</field>
+        <field name="model">wua.waterpipeconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_refresh_hydric_efficiency'))"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_agriculturalseason_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="refresh_hydric_efficiency" type="object" class="oe_highlight"
+                        string="Refresh hydric efficiency" groups="base_wua.group_wua_manager"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
