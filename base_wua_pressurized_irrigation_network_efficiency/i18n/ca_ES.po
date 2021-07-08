@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-06 16:46+0000\n"
-"PO-Revision-Date: 2021-07-06 16:46+0000\n"
+"POT-Creation-Date: 2021-07-08 08:29+0000\n"
+"PO-Revision-Date: 2021-07-08 08:29+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -24,6 +24,11 @@ msgstr "<span class=\"o_stat_text\">Cons. de toma</span>"
 #: model:ir.model,name:base_wua_pressurized_irrigation_network_efficiency.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
 msgstr "Configuració de reg amb tipus d'aigua"
+
+#. module: base_wua_pressurized_irrigation_network_efficiency
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_network_efficiency.field_wua_waterpipeconsumption_vols_difference
+msgid "Difference (m³)"
+msgstr "Diferència (m³)"
 
 #. module: base_wua_pressurized_irrigation_network_efficiency
 #: model:ir.model,name:base_wua_pressurized_irrigation_network_efficiency.model_wua_agriculturalseason
@@ -43,9 +48,7 @@ msgstr "Marge d'error per a sincronització de consums (min)"
 #. module: base_wua_pressurized_irrigation_network_efficiency
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation_network_efficiency.field_wua_irrigation_configuration_error_margin_for_sync_consumptions
 msgid "Maximun error margin for synchronization of water-pipe consumptions and water-connection consumptions (min)"
-msgstr "Màxim marge d'error per assumir una sincronització automàtica entre els instants d'inici d'un consum de presa i el seu consum de ramal, i"
-" entre els instants de finalització d'un consum de presa i el seu consum de ramal (min)."
-
+msgstr "Màxim marge d'error per assumir una sincronització automàtica entre els instants d'inici d'un consum de presa i el seu consum de ramal, i entre els instants de finalització d'un consum de presa i el seu consum de ramal (min)."
 
 #. module: base_wua_pressurized_irrigation_network_efficiency
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_network_efficiency.wua_waterpipeconsumption_view_tree
@@ -80,7 +83,12 @@ msgid "The error margin must be a positive value."
 msgstr "El marge d'error ha de ser un valor positiu."
 
 #. module: base_wua_pressurized_irrigation_network_efficiency
-#: code:addons/base_wua_pressurized_irrigation_network_efficiency/models/wua_waterpipeconsumption.py:45
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_network_efficiency.field_wua_waterpipeconsumption_presconsumptions_total_vol_real
+msgid "Vol. total prescons (m³)"
+msgstr "V. total tomas (m³)"
+
+#. module: base_wua_pressurized_irrigation_network_efficiency
+#: code:addons/base_wua_pressurized_irrigation_network_efficiency/models/wua_waterpipeconsumption.py:55
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_network_efficiency.field_wua_waterpipeconsumption_presconsumption_ids
 #, python-format
 msgid "Water-pipe Consumptions"

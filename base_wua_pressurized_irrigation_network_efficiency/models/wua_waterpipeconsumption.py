@@ -25,6 +25,16 @@ class WuaWaterpipeconsumption(models.Model):
         string='Number of pressure consumptions',
         compute='_compute_number_of_presconsumptions')
 
+    presconsumptions_total_vol_real = fields.Float(
+        string='Vol. total prescons (m³)',
+        digits=(32, 4),
+        readonly=True)
+
+    vols_difference = fields.Float(
+        string='Difference (m³)',
+        digits=(32, 4),
+        readonly=True)
+
     @api.depends('presconsumption_ids')
     def _compute_number_of_presconsumptions(self):
         for record in self:
@@ -80,10 +90,11 @@ class WuaWaterpipeconsumption(models.Model):
                 input_volume = wpconsumption.volume_real
                 output_volume = 0
                 for presconsumption in wpconsumption.presconsumption_ids:
-                    output_volume = output_volume + \
-                        presconsumption.volume_real
+                    output_volume = output_volume + presconsumption.volume_real
                 network_efficiency = output_volume / input_volume
             wpconsumption.network_efficiency = network_efficiency * 100
+            wpconsumption.presconsumptions_total_vol_real = output_volume
+            wpconsumption.vols_difference = input_volume - output_volume
 
     @api.model
     def _regenerate_presconsumption_ids(
