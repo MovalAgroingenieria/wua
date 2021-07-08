@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_readingperiod_view_form" model="ir.ui.view">
+        <field name="name">Reading Period (form view)</field>
+        <field name="model">wua.readingperiod</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_cancel_readingperiod']" position="after">
+                <button name="action_get_flowmeters"
+                    string="Get flowmeters"
+                    type="object"
+                    class="oe_read_only"
+                    style="width:150px;"
+                    attrs="{'invisible':
+                            ['&amp;', ('state','!=','draft'), ('state','!=','configured')]}"
+                    groups="base_wua.group_wua_manager"/>
+            </xpath>
+            <xpath expr="//button[@name='action_get_reading_ids']" position="after">
+                <button name="action_get_flowreading_ids"
+                        type="object" class="oe_stat_button"
+                        icon="fa-list-ol"
+                        attrs="{'invisible':[('id','&lt;=',0)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Intake</span>
+                        <span class="o_stat_text">Readings</span>
+                    </div>
+                </button>
+                <button name="action_get_waterpipeflowreading_ids"
+                        type="object" class="oe_stat_button"
+                        icon="fa-list-ol"
+                        attrs="{'invisible':[('id','&lt;=',0)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Water-Pipe</span>
+                        <span class="o_stat_text">Readings</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='number_of_readings']" position="after">
+                <field name="number_of_flowreadings"
+                    attrs="{'invisible':[('number_of_flowreadings','=',0)]}"/>
+                <field name="number_of_waterpipeflowreadings"
+                    attrs="{'invisible':[('number_of_waterpipeflowreadings','=',0)]}"/>
+            </xpath>
+            <xpath expr="//page[@name='notes_page']" position="before">
+                <page name="flowmeters_page" string="Flow-Meters">
+                    <field name="readingperiodflowmeterline_ids"
+                        attrs="{'readonly': ['|', ('state','=','open'),
+                                                    ('state','=','closed')]}"
+                        context="{'tree_view_ref':
+                            'base_wua_pressurized_irrigation_flowmeter_reading_period.
+                                wua_readingperiod_flowmeterline_view_tree'}"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="wua_readingperiod_view_tree" model="ir.ui.view">
+        <field name="name">Reading Period (tree view)</field>
+        <field name="model">wua.readingperiod</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_waterconnections']" position="after">
+                <field name="number_of_flowmeters"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_readingperiod_flowmeterline_view_tree" model="ir.ui.view">
+        <field name="name">Flowmetereading Periods-Line (tree view)</field>
+        <field name="model">wua.readingperiod.flowmeterline</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "base_wua_pressurized_irrigation_flowmeter_reading_period_flowmeterline_view_tree"
+                  editable="bottom"
+                  colors="orangered:is_visited==False;green:is_visited==True">
+              <field name='flowmeter_id' widget="many2one_unclickable"
+                     options="{'no_quick_create':True,
+                               'no_create_edit':True}"/>
+              <field name='intake_id'/>
+              <field name='waterpipe_id'/>
+              <field name='is_visited'/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>

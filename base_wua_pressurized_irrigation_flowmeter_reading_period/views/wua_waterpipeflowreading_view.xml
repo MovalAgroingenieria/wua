@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterpipewaterpipeflowreading_view_form" model="ir.ui.view">
+        <field name="name">Waterpipeflowreadings (form view)</field>
+        <field name="model">wua.waterpipeflowreading</field>
+        <field name="inherit_id" ref="base_wua_waterpipe_measurement.wua_waterpipeflowreading_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='waterpipeconsumption_id']" position="after">
+                <field name="is_field_reading" invisible="1"/>
+                <field name="readingperiod_id" attrs="{'invisible':[('is_field_reading','=',False)]}"/>
+                <field name="watermeter_reader_id" attrs="{'invisible':[('is_field_reading','=',False)]}"/>
+            </xpath>
+            <xpath expr="//page[@name='notes_page']" position="after">
+                <page name="reading_img" string="Reading Image">
+                    <group name="reading_img_group">
+                        <field name="reading_img" widget="image" class="oe_img_259_160"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterpipeflowreading_view_search" model="ir.ui.view">
+        <field name="name">Waterpipeflowreadings (search view)</field>
+        <field name="model">wua.waterpipeflowreading</field>
+        <field name="inherit_id" ref="base_wua_waterpipe_measurement.wua_waterpipeflowreading_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='waterpipe_id']" position="after">
+                <field name="readingperiod_id"/>
+                <field name="watermeter_reader_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='waterpipe']" position="after">
+                <filter string="Reading Period"
+                 name="readingperiod"
+                 context="{'group_by':'readingperiod_id'}"/>
+                <filter string="Watermeter Reader"
+                 name="watermeterreaderid"
+                 context="{'group_by':'watermeter_reader_id'}"/>
+            </xpath>
+            <xpath expr="//filter[@name='readingwaterpipeno']" position="after">
+                <separator/>
+                  <filter string="Is Field Reading: Yes" name="isfieldreadingyes"
+                   domain="[('is_field_reading','=',True)]"/>
+                  <filter string="Is Field Reading: No" name="isfieldreadingno"
+                   domain="[('is_field_reading','=',False)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
