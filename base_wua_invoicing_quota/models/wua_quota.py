@@ -28,7 +28,8 @@ class WuaQuota(models.Model):
     invoiced = fields.Boolean(
         string='Invoiced',
         store=True,
-        compute='_compute_invoiced')
+        compute='_compute_invoiced',
+        default=False,)
 
     @api.depends('invoiceline_ids',
                  'invoiceline_ids.price_subtotal')

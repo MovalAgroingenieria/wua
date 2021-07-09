@@ -165,7 +165,7 @@ class WuaInvoicesetLine(models.Model):
                 %s,%s,now(),now(),%s,wq1.id, NOT wq1.invoiced,
                 wq1.quotaperiod_id, wq1.superproduct_id, wq1.partner_id,
                 wq1.accumulated_input, wq1.accumulated_consumption,
-                wq1.balance, wq1.invoiced
+                wq1.balance, COALESCE(wq1.invoiced, FALSE)
                 FROM wua_quota wq1 INNER JOIN wua_agriculturalseason wa1
                 ON wq1.agriculturalseason_id = wa1.id WHERE
                 wa1.active_agriculturalseason AND ((wq1.balance > 0 AND NOT %s)
