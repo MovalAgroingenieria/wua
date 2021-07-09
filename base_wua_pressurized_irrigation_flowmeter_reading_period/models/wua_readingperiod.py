@@ -197,12 +197,14 @@ class WuaReadingperiodFlowmeterLine(models.Model):
     intake_id = fields.Many2one(
         string='Intake',
         comodel_name='wua.intake',
-        compute='_compute_intake_id')
+        compute='_compute_intake_id',
+        store=True,)
 
     waterpipe_id = fields.Many2one(
         string='Water Pipe',
         comodel_name='wua.waterpipe',
-        compute='_compute_waterpipe_id')
+        compute='_compute_waterpipe_id',
+        store=True,)
 
     flowreading_id = fields.Many2one(
         string='Intake Reading',
