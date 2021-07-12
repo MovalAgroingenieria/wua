@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_photovoltaicplant_view_form" model="ir.ui.view">
+        <field name="name">Photovoltaicplant (form view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_pump.wua_photovoltaicplant_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <field name="photovoltaicmonitoring_enabled" invisible="1"/>
+                    <field name="connected_to_api" invisible="1"/>
+                    <button name="do_get_measurements_of_photovoltaicplant"
+                        type="object" string="Get measurements"
+                        icon="fa-rss"
+                        attrs="{'invisible':
+                                ['|', ('photovoltaicmonitoring_enabled','=',False),
+                                      ('connected_to_api','=',False)]}"
+                        groups="base_wua.group_wua_manager"
+                        confirm="Import measurements?"/>
+                </header>
+            </xpath>
+            <xpath expr="//page[@name='notes_page']" position="before">
+                <page name="api_parameters_page"
+                      string="API Parameters"
+                      attrs="{'invisible':
+                              [('photovoltaicmonitoring_enabled','=',False)]}">
+                    <group name="parameters">
+                        <group name="parameters_left">
+                            <div colspan="2"
+                                 style="margin-top: 10px;margin-bottom: 10px;"
+                                 class="text-center">
+                            <span style="font-weight: bold;">
+                            GENERATED POWER</span>
+                            </div>
+                            <field name="generated_power_deviceid"
+                             string="Device"/>
+                            <div name="div_generated_power_devicedesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('generated_power_devicedesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="generated_power_devicedesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                            <field name="generated_power_measurementid"
+                             string="Measurement"/>
+                            <div name="div_generated_power_measurementdesc"
+                                 colspan="2"
+                                 attrs="{'invisible':
+                                          [('generated_power_measurementdesc','=',False)]}">
+                                <span>(</span>&#x2063;
+                                <field name="generated_power_measurementdesc"
+                                       nolabel="1"/>
+                                &#x2063;<span>)</span>
+                            </div>
+                        </group>
+                        <group name="parameters_right">
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicplant_view_tree" model="ir.ui.view">
+        <field name="name">Photovoltaicplants (tree view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_pump.wua_photovoltaicplant_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number_of_pumpgroups']"
+                   position="after">
+                <field name="connected_to_api"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicplant_view_search" model="ir.ui.view">
+        <field name="name">Photovoltaicplants (search view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure_pump.wua_photovoltaicplant_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='gisphotovoltaicplantno']"
+                   position="after">
+                <separator/>
+                <filter string="Connected to API: Yes" name="connectedtoapiyes"
+                        domain="[('connected_to_api','=',True)]"/>
+                <filter string="Connected to API: No" name="connectedtoapino"
+                        domain="[('connected_to_api','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="technical_import_measurements_global_action"
+            model="ir.actions.server">
+        <field name="name">Get measurements of all photovoltaicplants</field>
+        <field name="model_id"
+               ref="base_wua_pressurized_irrigation_photovoltaic_monitoring.model_wua_photovoltaicmeasurement"/>
+        <field name="code">
+               action = env["wua.photovoltaicmeasurement"].do_import_measurements_global(True)
+        </field>
+    </record>
+
+    <menuitem id="technical_import_measurements_global_menu"
+        name="Energy Monitoring: get measurements of all photovoltaicplants"
+        parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"
+        action="technical_import_measurements_global_action"
+        sequence="8"/>
+
+</odoo>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_config_settings_view_form"
+            model="ir.ui.view">
+        <field name="name">Parameters (Photovoltaic Monitoring)</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='gis_settings_group']" position="before">
+                <group name="photovoltaicmonitoring_api" string="Photovoltaic Monitoring API">
+                    <field name="enable_photovoltaicmonitoring"
+                           string="Enabled"/>
+                    <field name="url_photovoltaicmonitoring_rest"
+                           string="API REST URL"
+                           attrs="{'invisible':[('enable_photovoltaicmonitoring','=',False)],
+                                   'required': [('enable_photovoltaicmonitoring', '=', True)]}"/>
+                    <field name="url_photovoltaicmonitoring_rest_username"
+                           string="User Name"
+                           attrs="{'invisible':[('enable_photovoltaicmonitoring','=',False)],
+                                   'required': [('enable_photovoltaicmonitoring', '=', True)]}"/>
+                    <field name="url_photovoltaicmonitoring_rest_password"
+                           string="Password"
+                           attrs="{'invisible':[('enable_photovoltaicmonitoring','=',False)],
+                                   'required': [('enable_photovoltaicmonitoring', '=', True)]}"/>
+                    <field name="delay_between_requests"
+                           string="Seconds between requests"
+                           attrs="{'invisible':[('enable_photovoltaicmonitoring','=',False)],
+                                   'required': [('enable_photovoltaicmonitoring', '=', True)]}"/>
+                    <field name="url_photovoltaicmonitoring_application"
+                           string="Application URL"
+                           attrs="{'invisible':[('enable_photovoltaicmonitoring','=',False)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicmonitoring_application_action"
+            model="ir.actions.server">
+        <field name="name">Native Photovoltaic Monitoring Application</field>
+        <field name="model_id" ref="model_wua_infrastructure_configuration"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.infrastructure.configuration'].run_photovoltaicmonitoring_application_url()
+        </field>
+    </record>
+
+    <menuitem id="wua_photovoltaicmonitoring_application_menu"
+              name="Native Photovoltaic Monitoring"
+              parent="base_wua_infrastructure.base_wua_infrastructure_configuration_menu"
+              action="wua_photovoltaicmonitoring_application_action"
+              sequence="2"/>
+
+</odoo>
