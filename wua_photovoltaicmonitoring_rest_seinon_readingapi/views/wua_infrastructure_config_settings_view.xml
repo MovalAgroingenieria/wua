@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_config_settings_view_form"
+            model="ir.ui.view">
+        <field name="name">Parameters (Photovoltaic Monitoring)</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_photovoltaicmonitoring_rest.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='url_photovoltaicmonitoring_rest_username']"
+                   position="attributes">
+                <attribute name="string">Installation Code</attribute>
+            </xpath>
+            <xpath expr="//field[@name='url_photovoltaicmonitoring_rest_password']"
+                   position="attributes">
+                <attribute name="string">Client Key</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
