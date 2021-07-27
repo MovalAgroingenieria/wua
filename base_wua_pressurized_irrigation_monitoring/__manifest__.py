@@ -49,6 +49,7 @@
         "views/wua_soiltype_view.xml",
         "views/wua_irrigationdose_view.xml",
         "reports/partner_presconsumption_monitoring_report.xml",
+        "reports/partner_presconsumption_global_monitoring_report.xml",
         "reports/partner_presconsumption_estimated_report.xml",
         "data/mail_template_data.xml",
         ],

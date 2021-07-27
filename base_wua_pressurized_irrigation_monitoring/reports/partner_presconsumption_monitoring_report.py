@@ -110,7 +110,7 @@ class WuaComparativePartnerPresconsumption(models.Model):
     @api.multi
     def get_previous_period_precipitations(self):
         area_measurement_type = self.env['ir.values'].get_default(
-                'wua.configuration', 'area_measurement_type')
+            'wua.configuration', 'area_measurement_type')
         if area_measurement_type:
             conversion_factor = self.env['ir.values'].get_default(
                 'wua.configuration', 'area_measurement_equivalence')

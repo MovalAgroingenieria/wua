@@ -6,6 +6,7 @@ import numpy
 from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models.formatters import DatetimeTickFormatter
+from lxml import etree
 from odoo import models, fields, api, _
 
 
@@ -41,6 +42,12 @@ class WuaCultivation(models.Model):
         string='Percentage-Deviation Graph',
         compute='_compute_deviation_percentage_graph')
 
+    costs_per_areaunit = fields.Float(
+        string="Costs per area unit (€/U)",
+        digits=(32, 4),
+        default=0.0,
+    )
+
     _sql_constraints = [
         ('valid_lower_age_middle',
          'CHECK (lower_age_middle >= 0)',
@@ -50,6 +57,10 @@ class WuaCultivation(models.Model):
          'CHECK (upper_age_middle >= lower_age_middle)',
          'The \"upper limit for middle cultivation\" must be '
          'equal to or grater than lower limit.'),
+        ('valid_costs_per_areaunit',
+         'CHECK (costs_per_areaunit >= 0)',
+         'The \"costs per area unit\" must be '
+         'a value zero or positive.'),
         ]
 
     @api.multi
@@ -241,3 +252,26 @@ class WuaCultivation(models.Model):
                 'domain': [('id', 'in', self.kc_ids.ids)]
                 }
             return act_window
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(WuaCultivation, self).\
+            fields_view_get(view_id=view_id, view_type=view_type,
+                            toolbar=toolbar, submenu=submenu)
+        if view_type == 'form' or view_type == 'tree':
+            doc = etree.XML(res['arch'])
+            area_measure_name = u' (€/' + \
+                self.env['wua.parcel'].sudo().\
+                _compute_area_measurement_name() + ')'
+            for node in doc.xpath("//field[@name='costs_per_areaunit']"):
+                original_label = \
+                    self.env['wua.parcel'].sudo().get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.costs_per_areaunit.string)
+                posBracket = original_label.find(' (')
+                if posBracket != -1:
+                    original_label = original_label[:posBracket]
+                node.set('string', original_label + area_measure_name)
+            res['arch'] = etree.tostring(doc)
+        return res

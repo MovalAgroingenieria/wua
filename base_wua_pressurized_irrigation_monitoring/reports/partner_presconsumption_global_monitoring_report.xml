@@ -1,0 +1,856 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+        id="partner_presconsumption_global_monitoring_report"
+        string="Partner Global monitoring report"
+        model="wua.comparative.partner.presconsumption.global"
+        report_type="qweb-pdf"
+        file="base_wua_pressurized_irrigation_monitoring.partner_presconsumption_global_monitoring_report_document"
+        name="base_wua_pressurized_irrigation_monitoring.partner_presconsumption_global_monitoring_report_document"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <template id="partner_presconsumption_global_monitoring_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+
+                        <!-- Vars -->
+                        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="percentage_categ_01"
+                            t-value="o.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_01')"/>
+                        <t t-set="percentage_categ_02"
+                            t-value="o.env['ir.values'].get_default('wua.monitoring.configuration', 'max_deviation_categ_02')"/>
+                        <t t-set="partner_subparcels_global" t-value="o.get_partner_subparcels_global()"/>
+                        <t t-set="num_monitored_subparcels" t-value="len(partner_subparcels_global)"/>
+                        <t t-set="cultivations" t-value="[]"/>
+                        <t t-foreach="partner_subparcels_global" t-as="s">
+                            <t t-set="cultivations" t-value="cultivations + [s.cultivation_id]"/>
+                        </t>
+                        <t t-set="cultivation_var_data" t-value="o.get_cultivation_var_data()"/>
+                        <t t-set="waterconnections_data" t-value="o.get_consumptions_by_waterconnection()"/>
+                        <t t-set="cultivation_performances" t-value="o.get_cultivation_performances()"/>
+                        <t t-set="cultivation_analysis" t-value="o.get_cultivation_analysis()"/>
+                        <t t-set="measurement_unit"
+                            t-value="partner_subparcels_global[0].subparcel_id.parcel_id._compute_area_measurement_name()"/>
+                        <t t-set="agriculturalseason_precipitations" t-value="o.get_agriculturalseason_precipitations()"/>
+
+                        <!-- Partner data -->
+                        <div name="wua_partner_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                        <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                        <div style="float: left; display: inline;"><strong>Partner</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="width: 50%; display: table-cell;">
+                                        <t t-if="o.partner_id.name">
+                                            <strong><span t-field="o.partner_id.name"/></strong>
+                                            <t t-if="o.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="o.partner_id.vat"/>)</span></t>
+                                        <br/>
+                                        </t>
+                                        <t t-if="o.partner_id.street_type_show or o.partner_id.street or o.partner_id.street_num or o.partner_id.street2">
+                                            <t t-if="o.partner_id.street_type_show"><span t-field="o.partner_id.street_type_show"/></t>
+                                            <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t>
+                                            <t t-if="o.partner_id.street_num"><span t-field="o.partner_id.street_num"/></t>
+                                            <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.partner_id.city or o.partner_id.zip">
+                                            <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
+                                            <t t-if="o.partner_id.zip"><span>-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.partner_id.state_id or o.partner_id.country_id">
+                                            <t t-if="o.partner_id.state_id"><span t-field="o.partner_id.state_id"/></t>
+                                            <t t-if="o.partner_id.country_id"><span>-&amp;nbsp;</span><span t-field="o.partner_id.country_id"></span></t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.partner_id.phones or o.partner_id.phone or o.partner_id.mobile">
+                                            <t t-if="o.partner_id.phones"><span t-field="o.partner_id.phones"/></t>
+                                            <t t-else="">
+                                                <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                                                <t t-if="o.partner_id.mobile"><span t-field="o.partner_id.mobile"/></t>
+                                            </t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/><br/></t>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 32px;">
+                                        <div>&amp;nbsp;</div>
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                                <tr>
+                                                    <td><span>Wua partner code:</span></td>
+                                                    <td class="text-right"><span t-field="o.partner_id.partner_code"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Number of monitored subparcels:</span></td>
+                                                    <td class="text-right"><span t-esc="num_monitored_subparcels"/></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Total monitored area:</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.area_official"/>
+                                                        <span t-esc="measurement_unit"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Involved cultivations:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-set="counter" t-value="0"/>
+                                                        <t t-set="num_of_cul" t-value="len(set(cultivations))"/>
+                                                        <t t-foreach="set(cultivations)" t-as="c">
+                                                            <t t-set="counter" t-value="counter + 1"/>
+                                                            <t t-if="counter &lt; num_of_cul">
+                                                                <span t-field="c.name"/>,
+                                                            </t>
+                                                            <t t-else="">
+                                                                <span t-field="c.name"/>
+                                                            </t>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Irrigation analysis by agriculturalseason data -->
+                        <div name="analysis_by_agriculturalseason" style="margin-top: 20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-monitoring-monitor"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>
+                                                <span>Irrigation&amp;nbsp;analysis&amp;nbsp;·&amp;nbsp;Agriculturalseason&amp;nbsp;</span>
+                                                <span t-field="o.agriculturalseason_id.description"/>
+                                                <span>(</span>
+                                                <span t-field="o.agriculturalseason_id.initial_date"/>
+                                                <span>to</span>
+                                                <span t-field="o.agriculturalseason_id.end_date"/>
+                                                <span>)</span>
+                                            </strong>
+                                        </div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-monitoring-monitor"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>
+                                                <span>Irrigation&amp;nbsp;analysis&amp;nbsp;·&amp;nbsp;Agriculturalseason&amp;nbsp;</span>
+                                                <span t-field="o.agriculturalseason_id.description"/>
+                                                <span>(</span>
+                                                <span t-field="o.agriculturalseason_id.initial_date"/>
+                                                <span>to</span>
+                                                <span t-field="o.agriculturalseason_id.end_date"/>
+                                                <span>)</span>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div name="precipitations">
+                                <t t-if="agriculturalseason_precipitations">
+                                    <table name="precipitations_table" class="table table-striped" style="margin-bottom:12px;width:40%;">
+                                        <caption>
+                                            <span class="fa fa-moval-drop-water"/>
+                                            <span>PRECIPITATIONS</span>
+                                        </caption>
+                                        <thead>
+                                            <tr>
+                                                <th class="text-right">mm</th>
+                                                <th class="text-right">m³/ha</th>
+                                                <th class="text-right">m³/<span t-esc="measurement_unit"/></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                               <td class="text-right">
+                                                   <span t-esc="o.env['wua.parcel'].transform_float_to_locale(agriculturalseason_precipitations[0],2)"/>
+                                               </td>
+                                               <td class="text-right">
+                                                   <span t-esc="o.env['wua.parcel'].transform_float_to_locale(agriculturalseason_precipitations[1],2)"/>
+                                               </td>
+                                               <td class="text-right">
+                                                   <span t-esc="o.env['wua.parcel'].transform_float_to_locale(agriculturalseason_precipitations[2],2)"/>
+                                               </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </t>
+                            </div>
+                            <caption>
+                                <span class="fa fa-eye" style="color: #777777;"/>
+                                <span style="color: #777777;">ANALYSIS OBSERVATIONS</span>
+                            </caption>
+                            <div name="intro_legend" style="font-size: 10px;">
+                                <div class="row" style="margin-top: 4px;">
+                                    <div class="col-xs-12" style="display: table;">
+                                        <div style="width: 66%; display: table-cell;">
+                                            <span>- The volume measurements are referred to the agriculturalseason </span>
+                                            <br/>
+                                            <span>- Totals are calculated using the four decimal places of the variable, so the sum of the data displayed may differ.</span>
+                                            <br/>
+                                            <span>- In the legend you can see the limit percentages configured for each category.</span>
+                                        </div>
+                                        <div>
+                                            <table style="width: 100%; border: solid lightgrey 1px;">
+                                                <thead>
+                                                    <th style="padding-top:6px; padding-bottom:2px;padding-left:8px;">Category</th>
+                                                    <th class="text-right" style="padding-right:6px;">Max. Deviation</th>
+                                                    <th class="text-center" style="padding-right:8px;">Symbol</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td style="padding-left:8px;">A - Correct irrigation</td>
+                                                        <td class="text-right" style="padding-right:6px;">
+                                                            <span>± <span t-esc="o.env['wua.parcel'].transform_float_to_locale(percentage_categ_01,0)"/> %</span>
+                                                        </td>
+                                                        <td class="text-center"><span class="fa-circle" style="color: green;"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding-left:8px;">B - Acceptable irrigation</td>
+                                                        <td class="text-right" style="padding-right:6px;">
+                                                            <span>± <span t-esc="o.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
+                                                        </td>
+                                                        <td class="text-center"><span class="fa-circle" style="color: orange;"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding-left:8px;padding-bottom:4px">C - Unsatisfactory irrigation</td>
+                                                        <td class="text-right" style="padding-right:6px;">
+                                                            <span>
+                                                                <span>&gt; &lt; </span>
+                                                                <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(percentage_categ_02,0)"/> %</span>
+                                                            </span>
+                                                        </td>
+                                                        <td class="text-center"><span class="fa-circle" style="color: red;"/></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Partner -->
+                            <table name="by_parnert" class="table table-striped" style="margin-top: 2px; width:80%;">
+                                <caption>
+                                    <span class="fa fa-user"/>
+                                    <span>ANALYSIS BY PARTNER</span>
+                                </caption>
+                                <thead>
+                                    <tr>
+                                        <th class="text-right">
+                                            Area (<span t-esc="measurement_unit"/>)
+                                        </th>
+                                        <th class="text-right">Real consumption (m³)</th>
+                                        <th class="text-right">Estimated consumption (m³)</th>
+                                        <th class="text-right">Deviation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-right"><span t-field="o.area_official"/></td>
+                                        <td class="text-right"><span t-field="o.real_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
+                                        <td class="text-right"><span t-field="o.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
+                                        <td>
+                                            <div style="float:right;">
+                                                <t t-if="o.consumption_category">
+                                                    <t t-set="category" t-value="o.consumption_category[:1]"/>
+                                                    <t t-if="category == 'A'">
+                                                        <span class="fa-circle" style="color: green;"/>
+                                                    </t>
+                                                    <t t-if="category == 'B'">
+                                                        <span class="fa-circle" style="color: orange;"/>
+                                                    </t>
+                                                    <t t-if="category == 'C'">
+                                                        <span class="fa-circle" style="color: red;"/>
+                                                    </t>
+                                                </t>
+                                                <t t-else="">
+                                                   <span>-</span>
+                                                </t>
+                                            </div>
+                                            <div style="float:right;margin-right:14px;">
+                                                <t t-set="partner_deviation_percentage" t-value="float(o.deviation_percentage.replace('%', ''))"/>
+                                                <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(partner_deviation_percentage, 0)"/> %</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Subparcel -->
+                            <table name="by_subparcel" class="table table-striped" style="margin-top: 2px; width:100%;">
+                                <caption>
+                                    <span class="fa fa-moval-subparcel"/>
+                                    <span>ANALYSIS BY SUBPARCEL</span>
+                                </caption>
+                                <col/><col/><col/><col/><col/><colgroup span="2"/><col/>
+                                <thead>
+                                    <tr>
+                                        <th style="border: none;"/>
+                                        <th style="border: none;"/>
+                                        <th style="border: none;"/>
+                                        <th style="border: none;"/>
+                                        <th style="border: none;"/>
+                                        <th style="border: none; background: #F9F9F9;" colspan="2" scope="colgroup" class="text-right">Consumptions (m³)</th>
+                                        <th style="border: none;"/>
+                                    </tr>
+                                    <tr>
+                                        <th width="22%" class="text-center">Subparcel</th>
+                                        <th class="text-center">Waterconnection</th>
+                                        <th>Cultivation</th>
+                                        <th width="14%">Variety</th>
+                                        <th class="text-right">
+                                            Surface (<span t-esc="measurement_unit"/>)
+                                         </th>
+                                        <th scope="col" class="text-right" style="background: #F9F9F9;">Real</th>
+                                        <th scope="col" class="text-right" style="background: #F9F9F9;">Estimated</th>
+                                        <th class="text-right">Deviation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="partner_subparcels_global">
+                                        <t t-set="total_area_subparcels" t-value="0.0"/>
+                                        <t t-set="total_estimated_consumption_subparcels" t-value="0.0"/>
+                                        <t t-set="total_real_consumption_subparcels" t-value="0.0"/>
+                                        <tr t-foreach="partner_subparcels_global" t-as="s" style="page-break-inside: avoid;">
+                                            <t t-set="total_area_subparcels" t-value="total_area_subparcels + s.area_official"/>
+                                            <t t-set="total_estimated_consumption_subparcels"
+                                                t-value="total_estimated_consumption_subparcels + s.estimated_consumption"/>
+                                            <t t-set="total_real_consumption_subparcels"
+                                                t-value="total_real_consumption_subparcels + s.real_consumption"/>
+                                            <td class="text-center"><span t-field="s.subparcel_id"/></td>
+                                            <td class="text-center">
+                                                <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>
+                                                <span t-esc="waterconnection.waterconnection_id.name"/>
+                                            </td>
+                                            <td><span t-field="s.cultivation_id"/></td>
+                                            <td><span t-field="s.cultivationvariety_id"/></td>
+                                            <td class="text-right"><span t-field="s.area_official"/></td>
+                                            <td class="text-right"><span t-field="s.real_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
+                                            <td class="text-right"><span t-field="s.estimated_consumption" t-options='{"widget": "float", "precision": 1}'/></td>
+                                            <td>
+                                                <div style="float:right;">
+                                                    <t t-if="s.consumption_category">
+                                                        <t t-set="category" t-value="s.consumption_category[:1]"/>
+                                                        <t t-if="category == 'A'">
+                                                            <span class="fa-circle" style="color: green;"/>
+                                                        </t>
+                                                        <t t-if="category == 'B'">
+                                                            <span class="fa-circle" style="color: orange;"/>
+                                                        </t>
+                                                        <t t-if="category == 'C'">
+                                                            <span class="fa-circle" style="color: red;"/>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span>-</span>
+                                                    </t>
+                                                </div>
+                                                <div style="float:right;margin-right:14px;">
+                                                    <t t-set="deviation_percentage" t-value="float(s.deviation_percentage.replace('%', ''))"/>
+                                                    <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(deviation_percentage, 0)"/> %</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr name="totals_subparcels">
+                                            <td></td><td></td><td></td>
+                                            <td class="text-right"><b>TOTAL:</b></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area_subparcels,4)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_real_consumption_subparcels,1)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_subparcels,1)"/></td>
+                                            <td>
+                                                <t t-set="total_deviation_subparcels"
+                                                    t-value="o.compute_deviation_percentage(total_estimated_consumption_subparcels, total_real_consumption_subparcels)"/>
+                                                <t t-set="total_consumption_category_subparcels"
+                                                    t-value="o.compute_consumption_category(total_deviation_subparcels)"/>
+                                                <div style="float:right;">
+                                                    <t t-if="total_consumption_category_subparcels">
+                                                        <t t-if="total_consumption_category_subparcels == 'A'">
+                                                            <span class="fa-circle" style="color: green;"/>
+                                                        </t>
+                                                        <t t-if="total_consumption_category_subparcels == 'B'">
+                                                            <span class="fa-circle" style="color: orange;"/>
+                                                        </t>
+                                                        <t t-if="total_consumption_category_subparcels == 'C'">
+                                                            <span class="fa-circle" style="color: red;"/>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span>-</span>
+                                                    </t>
+                                                </div>
+                                                <div style="float:right;margin-right:14px;">
+                                                    <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_deviation_subparcels,0)"/> %</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <!-- Cultivation/Variety -->
+                            <table name="by_cultivation_var" class="table table-striped" style="margin-top:2px;width:90%;">
+                                <caption>
+                                    <span class="fa fa-moval-grape"/>
+                                    <span>ANALYSIS BY CULTIVATION</span>
+                                </caption>
+                                <thead>
+                                    <tr>
+                                        <th>Cultivation</th>
+                                        <th class="text-right">
+                                            <span>Real endowment (m³/<span t-esc="measurement_unit"/>)</span>
+                                        </th>
+                                        <th class="text-right">
+                                            <span>Estimated endowment (m³/<span t-esc="measurement_unit"/>)</span>
+                                        </th>
+                                        <th class="text-right">Deviation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="cultivation_var_data">
+                                        <tr t-foreach="cultivation_var_data" t-as="c" style="page-break-inside: avoid;">
+                                            <td>
+                                                <span t-esc="c.name"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[1], 1)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[0], 1)"/>
+                                            </td>
+                                            <td>
+                                                <t t-set="consumption_category_cult" t-value="o.compute_consumption_category(c_value[2])"/>
+                                                <div style="float:right;">
+                                                    <t t-if="consumption_category_cult">
+                                                        <t t-if="consumption_category_cult == 'A'">
+                                                            <span class="fa-circle" style="color: green;"/>
+                                                        </t>
+                                                        <t t-if="consumption_category_cult == 'B'">
+                                                            <span class="fa-circle" style="color: orange;"/>
+                                                        </t>
+                                                        <t t-if="consumption_category_cult == 'C'">
+                                                            <span class="fa-circle" style="color: red;"/>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span>-</span>
+                                                    </t>
+                                                </div>
+                                                <div style="float:right;margin-right:14px;">
+                                                    <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(c_value[2], 0)"/> %</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <!-- Waterconnection -->
+                            <table name="by_waterconnection" class="table table-striped" style="margin-top:2px;width:90%;">
+                                <caption>
+                                    <span class="fa fa-moval-infra"/>
+                                    <span>ANALYSIS BY WATERCONNECTION</span>
+                                </caption>
+                                <thead>
+                                    <tr>
+                                        <th>Hydraulic sector</th>
+                                        <th class="text-center">Waterconnection</th>
+                                        <th class="text-right">Real consumption (m³)</th>
+                                        <th class="text-right">Estimated consumption (m³)</th>
+                                        <th class="text-right">Deviation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="waterconnections_data">
+                                        <t t-set="total_estimated_consumption_wc" t-value="0.0"/>
+                                        <t t-set="total_real_consumption_wc" t-value="0.0"/>
+                                        <tr t-foreach="waterconnections_data" t-as="w" style="page-break-inside: avoid;">
+                                            <t t-set="total_estimated_consumption_wc" t-value="total_estimated_consumption_wc + w_value[0]"/>
+                                            <t t-set="total_real_consumption_wc" t-value="total_real_consumption_wc + w_value[1]"/>
+                                            <td><span t-field="w.hydraulicsector_id"/></td>
+                                            <td class="text-center"><span t-field="w.name"/></td>
+                                            <td class="text-right">
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[1], 1)"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[0], 1)"/>
+                                            </td>
+                                            <td>
+                                                <t t-set="consumption_category_wc" t-value="o.compute_consumption_category(w_value[2])"/>
+                                                <div style="float:right;">
+                                                    <t t-if="consumption_category_wc">
+                                                        <t t-if="consumption_category_wc == 'A'">
+                                                            <span class="fa-circle" style="color: green;"/>
+                                                        </t>
+                                                        <t t-if="consumption_category_wc == 'B'">
+                                                            <span class="fa-circle" style="color: orange;"/>
+                                                        </t>
+                                                        <t t-if="consumption_category_wc == 'C'">
+                                                            <span class="fa-circle" style="color: red;"/>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span>-</span>
+                                                    </t>
+                                                </div>
+                                                <div style="float:right;margin-right:14px;">
+                                                    <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(w_value[2], 0)"/> %</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr name="totals_waterconnections">
+                                            <td></td>
+                                            <td class="text-right"><b>TOTAL:</b></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_real_consumption_wc,1)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_estimated_consumption_wc,1)"/></td>
+                                            <td>
+                                                <t t-set="total_deviation_wc" t-value="o.compute_deviation_percentage(total_estimated_consumption_wc, total_real_consumption_wc)"/>
+                                                <t t-set="total_consumption_category_wc" t-value="o.compute_consumption_category(total_deviation_wc)"/>
+                                                <div style="float:right;">
+                                                    <t t-if="total_consumption_category_wc">
+                                                        <t t-if="total_consumption_category_wc == 'A'">
+                                                            <span class="fa-circle" style="color: green;"/>
+                                                        </t>
+                                                        <t t-if="total_consumption_category_wc == 'B'">
+                                                            <span class="fa-circle" style="color: orange;"/>
+                                                        </t>
+                                                        <t t-if="total_consumption_category_wc == 'C'">
+                                                            <span class="fa-circle" style="color: red;"/>
+                                                        </t>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span>-</span>
+                                                    </t>
+                                                </div>
+                                                <div style="float:right;margin-right:14px;">
+                                                    <span><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_deviation_wc,0)"/> %</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <!-- Productions and performances-->
+                        <div name="analysis_of_productions" style="margin-top: 20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-quality"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>
+                                                <span>Cultivation&amp;nbsp;productions&amp;nbsp;and&amp;nbsp;performances&amp;nbsp;·&amp;nbsp;Agriculturalseason&amp;nbsp;</span>
+                                                <span t-field="o.agriculturalseason_id.description"/>
+                                                <span>(</span>
+                                                <span t-field="o.agriculturalseason_id.initial_date"/>
+                                                <span>to</span>
+                                                <span t-field="o.agriculturalseason_id.end_date"/>
+                                                <span>)</span>
+                                            </strong>
+                                        </div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-quality"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>
+                                                <span>Cultivation&amp;nbsp;productions&amp;nbsp;and&amp;nbsp;performances&amp;nbsp;·&amp;nbsp;Agriculturalseason&amp;nbsp;</span>
+                                                <span t-field="o.agriculturalseason_id.description"/>
+                                                <span>(</span>
+                                                <span t-field="o.agriculturalseason_id.initial_date"/>
+                                                <span>to</span>
+                                                <span t-field="o.agriculturalseason_id.end_date"/>
+                                                <span>)</span>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <table t-foreach="cultivation_performances" t-as="cp" class="table table-striped" style="margin-top: 2px; width:100%;">
+                                <caption>
+                                    <span>Subparcels</span>
+                                    <span t-esc="cp[0]"/>
+                                </caption>
+                                <thead>
+                                    <tr>
+                                        <th width="23%" class="text-center">Subparcel</th>
+                                        <th class="text-right">
+                                            Surface (<span t-esc="measurement_unit"/>)
+                                        </th>
+                                        <th class="text-center" width="14%">Amount (kg/year)</th>
+                                        <th class="text-right">Average selling price (€/kg)</th>
+                                        <th class="text-right">Production Value (€/year)</th>
+                                        <th class="text-right">Performace Amount (kg/<span t-esc="measurement_unit"/>-year)</th>
+                                        <th class="text-right" width="10%" >Performace (€/<span t-esc="measurement_unit"/>-year)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="total_area" t-value="0.0"/>
+                                    <t t-set="total_amount_total" t-value="0.0"/>
+                                    <t t-set="total_production_value_total" t-value="0.0"/>
+                                    <tr t-foreach="cp[1]" t-as="perf">
+                                        <t t-set="total_area" t-value="total_area + perf.area_official"/>
+                                        <t t-set="total_amount_total" t-value="total_amount_total + perf.amount_total"/>
+                                        <t t-set="total_production_value_total" t-value="total_production_value_total + perf.production_value_total"/>
+                                        <td class="text-center"><span t-field="perf.subparcel_id"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.area_official,2)"/></td>
+                                        <td class="text-center"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.amount_total, 0)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.average_price, 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.production_value_total, 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.performance_amount, 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.performance_value, 2)"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center"><b>TOTAL:</b></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area, 2)"/></td>
+                                        <td class="text-center"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_amount_total, 0)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_production_value_total / total_amount_total, 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_production_value_total, 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_amount_total / total_area, 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_production_value_total / total_area, 2)"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <!-- Aggregated indicators -->
+                        <div name="aggregated_indicators" style="margin-top: 20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-efficiency-energy"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>
+                                                <span>Aggregated&amp;nbsp;indicators&amp;nbsp;of&amp;nbsp;water,&amp;nbsp;energy&amp;nbsp;and&amp;nbsp;economic&amp;nbsp;usage&amp;nbsp;·&amp;nbsp;Agriculturalseason&amp;nbsp;</span>
+                                                <span t-field="o.agriculturalseason_id.description"/>
+                                                <span>(</span>
+                                                <span t-field="o.agriculturalseason_id.initial_date"/>
+                                                <span>to</span>
+                                                <span t-field="o.agriculturalseason_id.end_date"/>
+                                                <span>)</span>
+                                            </strong>
+                                        </div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px; margin-top: 10px;"><span class="fa fa-moval-efficiency-energy"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>
+                                                <span>Aggregated&amp;nbsp;indicators&amp;nbsp;of&amp;nbsp;water,&amp;nbsp;energy&amp;nbsp;and&amp;nbsp;economic&amp;nbsp;usage&amp;nbsp;·&amp;nbsp;Agriculturalseason&amp;nbsp;</span>
+                                                <span t-field="o.agriculturalseason_id.description"/>
+                                                <br/>
+                                                <span>(</span>
+                                                <span t-field="o.agriculturalseason_id.initial_date"/>
+                                                <span>to</span>
+                                                <span t-field="o.agriculturalseason_id.end_date"/>
+                                                <span>)</span>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <t t-foreach="cultivation_analysis" t-as="ca">
+                                <table class="table table-striped" style="margin-top: 2px; width:100%;">
+                                    <caption>
+                                        <span>Analysis</span>
+                                        <span t-esc="ca[0]"/>
+                                    </caption>
+                                    <thead>
+                                        <tr>
+                                            <th width="50%" class="text-left">Indicator</th>
+                                            <th class="text-right">Real Value</th>
+                                            <th class="text-right">Mean Value</th>
+                                            <th class="text-right">Deviation (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-left">Annual Irrigation (m³/<span t-esc="measurement_unit"/>)</td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('annual_irrigation'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('annual_irrigation_global'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('annual_irrigation_deviation'), 2)"/>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Annual Production (kg/<span t-esc="measurement_unit"/>)</td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('annual_production'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('annual_production_global'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('annual_production_deviation'), 2)"/>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Irrigation Water Performance (kg/m³)</td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('irr_water_performance'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('irr_water_performance_global'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('irr_water_performance_deviation'), 2)"/>%</td>
+                                        </tr>
+                                        <tr>
+
+                                            <td class="text-left">Energy Consumption per Area Unit (kWh/<span t-esc="measurement_unit"/>)</td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('energy_per_area'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('energy_per_area_global'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('energy_per_area_deviation'), 2)"/>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Incomes (€/<span t-esc="measurement_unit"/>)</td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('income'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('income_global'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('income_deviation'), 2)"/>%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="text-left">Profitability (€/<span t-esc="measurement_unit"/>) <b>(*)</b></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('profitability'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('profitability_global'), 2)"/></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('profitability_deviation'), 2)"/>%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <b>(*)</b> Exploitation costs: <span t-esc="o.env['wua.parcel'].transform_float_to_locale(ca[1].get('costs_per_areaunit'), 2)"/> €/<span t-esc="measurement_unit"/>
+                            </t>
+                        </div>
+
+                        <!-- Subparcels info -->
+                        <div name="subparcels_location" style="margin-top: 20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;information&amp;nbsp;summary</span></strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                        <div style="float: left; display: inline;"><strong><span>Subparcels&amp;nbsp;information&amp;nbsp;summary</span></strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <span>Below you can find a summary with the main characteristics and the aerial image of each of the monitored subparcels.</span>
+                            <br/>
+
+                            <!-- Summary table -->
+                            <table name="subparcel_summary_table" class="table table-striped" style="margin-top: 2px; width:100%;">
+                                <thead>
+                                    <tr>
+                                        <th width="23%" class="text-center">Subparcel</th>
+                                        <th class="text-right">
+                                            Surface (<span t-esc="measurement_unit"/>)
+                                         </th>
+                                        <th>Cultivation</th>
+                                        <th width="14%">Variety</th>
+                                        <th class="text-center">Plantation Year</th>
+                                        <th>Soil Type</th>
+                                        <th class="text-right">N. drippers</th>
+                                        <th width="10%" class="text-center">Waterconnection</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="partner_subparcels_global">
+                                        <tr t-foreach="partner_subparcels_global" t-as="s" style="page-break-inside: avoid;">
+                                            <td class="text-center"><span t-field="s.subparcel_id"/></td>
+                                            <td class="text-right"><span t-field="s.area_official"/></td>
+                                            <td><span t-field="s.cultivation_id"/></td>
+                                            <td><span t-field="s.cultivationvariety_id"/></td>
+                                            <td class="text-center">
+                                                <t t-set="plantation_year" t-value="str(s.subparcel_id.plantation_year)"/>
+                                                <span t-esc="plantation_year"/>
+                                             </td>
+                                            <td>
+                                                <t t-if="s.subparcel_id.soiltype_id">
+                                                    <span t-field="s.subparcel_id.soiltype_id.name"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <span></span>
+                                                </t>
+                                            </td>
+                                            <td class="text-right"><span t-field="s.subparcel_id.drippers_number"/></td>
+                                            <td class="text-center">
+                                                <t t-set="waterconnection" t-value="s.subparcel_id.parcel_id.irrigationpointwc_ids[0]"/>
+                                                <span t-esc="waterconnection.waterconnection_id.name"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <!-- Aerial images (force new page) -->
+                            <p style="page-break-after:always;"/>
+                            <div name="subparcel_aerial_images">
+                                <t t-if="partner_subparcels_global">
+                                    <t t-foreach="partner_subparcels_global" t-as="s">
+                                        <div style="width: 48%; float: left; display: table; border: 1px solid black; margin: 1.5% 0.5%; page-break-inside: avoid;">
+                                            <div name="subparcel_data" style="border-bottom: 1px solid black; padding: 2%;">
+                                                <table style="width: 100%;">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Subparcel</strong>
+                                                                <t t-if="s.subparcel_id.aerial_img_date">
+                                                                    <span style="font-size:10px;">(image of <span t-field="s.subparcel_id.aerial_img_date" t-options="{'format': 'MMMM YYYY'}"></span>)</span>
+                                                                </t>
+                                                            </td>
+                                                            <td class="text-right"><span t-field="s.subparcel_id"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Cadastral reference</strong></td>
+                                                            <td class="text-right">
+                                                                <t t-set="cadastral_reference" t-value="s.subparcel_id.cadastral_reference.replace('\n','')"/>
+                                                                <span t-esc="cadastral_reference"/></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><strong>Area</strong></td>
+                                                            <td class="text-right">
+                                                                <span t-field="s.subparcel_id.area_official"/>
+                                                                <span t-esc="measurement_unit"/>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div name="subparcel_aerial_image" class="text-center">
+                                                <t t-if="s.subparcel_id.aerial_img">
+                                                    <img t-attf-src="data:image/png;base64, #{s.subparcel_id.aerial_img}" style="max-width: 408px; max-height: 408px;"/>
+                                                </t>
+                                                <t t-else="">
+                                                    <div class="text-center text-muted" style="width: 408px; height: 408px; padding-top: 40%;">
+                                                        Aerial image not found
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+
+
+                    </div><!-- end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

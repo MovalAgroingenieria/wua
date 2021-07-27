@@ -22,7 +22,7 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
 
     area_official = fields.Float(
         string='Official Area',
-        digits=(32, 4)
+        digits=(32, 4),
     )
 
     agriculturalseason_id = fields.Many2one(
@@ -73,7 +73,7 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
             wcsp1.partner_id, SUM(wcsp1.estimated_consumption) AS
             estimated_consumption, SUM(wcsp1.real_consumption) AS
             real_consumption, SUM(wcsp1.deviation) AS deviation,
-            SUM(wcsp1.area_official) AS area_official,
+            data_grouped.area_official AS area_official,
             wcsp1.agriculturalseason_id,
             CASE
              WHEN (
@@ -105,9 +105,25 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
              ELSE  'C'
             END AS consumption_category FROM
             wua_comparative_subparcel_presconsumption wcsp1 INNER JOIN
-            res_partner rp1 ON rp1.id = wcsp1.partner_id GROUP BY
-            wcsp1.agriculturalseason_id,
-            wcsp1.partner_id)
+            res_partner rp1 ON rp1.id = wcsp1.partner_id INNER JOIN
+            (
+                SELECT aux.area_official, aux.partner_id FROM (
+                    (SELECT min(wcsp1.controlperiod_id) as
+                     controlperiod_id FROM
+                     wua_comparative_subparcel_presconsumption wcsp1
+                     INNER JOIN res_partner rp1 ON rp1.id = wcsp1.partner_id
+                    ) AS first_controlperiod
+                    INNER JOIN
+                    (SELECT SUM(area_official) AS area_official, partner_id,
+                     controlperiod_id
+                     FROM wua_comparative_subparcel_presconsumption GROUP BY
+                     agriculturalseason_id, controlperiod_id, partner_id
+                    ) total_area ON first_controlperiod.controlperiod_id =
+                    total_area.controlperiod_id
+                ) AS aux
+            ) data_grouped ON data_grouped.partner_id = wcsp1.partner_id
+            GROUP BY wcsp1.agriculturalseason_id, wcsp1.partner_id,
+            data_grouped.area_official)
             """)
 
     @api.multi

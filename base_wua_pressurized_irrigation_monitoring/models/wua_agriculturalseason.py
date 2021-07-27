@@ -47,6 +47,29 @@ class WuaAgriculturalseason(models.Model):
         compute='_compute_deviation_percentage',
     )
 
+    specific_consumption_with_pumping = fields.Float(
+        string='Specific consumption with pumping (kWh/U)',
+        digits=(32, 4),
+        default=0.0,
+    )
+
+    specific_consumption_without_pumping = fields.Float(
+        string='Specific consumption without pumping (kWh/U)',
+        digits=(32, 4),
+        default=0.0,
+    )
+
+    _sql_constraints = [
+        ('valid_specific_consumption_with_pumping',
+         'CHECK (specific_consumption_with_pumping >= 0)',
+         'The \"specific consumption with pumping\" must be '
+         'a value zero or positive.'),
+        ('valid_specific_consumption_without_pumping',
+         'CHECK (specific_consumption_without_pumping >= 0)',
+         'The \"specific consumption without pumping\" must be '
+         'a value zero or positive.'),
+        ]
+
     @api.depends('controlperiod_ids')
     def _compute_number_of_controlperiods(self):
         for record in self:
@@ -169,6 +192,9 @@ class WuaAgriculturalseason(models.Model):
                             toolbar=toolbar, submenu=submenu)
         if view_type == 'form' or view_type == 'tree':
             doc = etree.XML(res['arch'])
+            area_measure_name = ' (kWh/' + \
+                self.env['wua.parcel'].sudo().\
+                _compute_area_measurement_name() + ')'
             unit = _('(m³/agriculturalseason)')
             for node in doc.xpath("//field[@name='estimated_consumption']"):
                 original_label = self.env['wua.parcel'].sudo().\
@@ -188,5 +214,27 @@ class WuaAgriculturalseason(models.Model):
                         'base_wua_pressurized_irrigation_monitoring',
                         self.__class__.deviation.string)
                 node.set('string', original_label + ' ' + unit)
+            for node in doc.xpath(
+                    "//field[@name='specific_consumption_with_pumping']"):
+                original_label = \
+                    self.env['wua.parcel'].sudo().get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.specific_consumption_with_pumping.
+                        string)
+                posBracket = original_label.find(' (')
+                if posBracket != -1:
+                    original_label = original_label[:posBracket]
+                node.set('string', original_label + area_measure_name)
+            for node in doc.xpath(
+                    "//field[@name='specific_consumption_without_pumping']"):
+                original_label = \
+                    self.env['wua.parcel'].sudo().get_value_from_translation(
+                        'base_wua_pressurized_irrigation_monitoring',
+                        self.__class__.specific_consumption_without_pumping.
+                        string)
+                posBracket = original_label.find(' (')
+                if posBracket != -1:
+                    original_label = original_label[:posBracket]
+                node.set('string', original_label + area_measure_name)
             res['arch'] = etree.tostring(doc)
         return res
