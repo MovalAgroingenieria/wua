@@ -23,7 +23,8 @@ class WuaQuota(models.Model):
         string='Invoicing Processes',
         store=True,
         index=True,
-        compute='_compute_number_of_invoicing_processes')
+        compute='_compute_number_of_invoicing_processes',
+        group_operator=False)
 
     invoiced = fields.Boolean(
         string='Invoiced',
@@ -78,12 +79,3 @@ class WuaQuota(models.Model):
             'target': 'current',
             }
         return act_window
-
-    # No summary for number_of_invoicing_processes field
-    @api.model
-    def read_group(self, domain, fields, groupby,
-                   offset=0, limit=None, orderby=False, lazy=True):
-        if 'number_of_invoicing_processes' in fields:
-            fields.remove('number_of_invoicing_processes')
-            return super(WuaQuota, self).read_group(
-                domain, fields, groupby, offset, limit, orderby, lazy)
