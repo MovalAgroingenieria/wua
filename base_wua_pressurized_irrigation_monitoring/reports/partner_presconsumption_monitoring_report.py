@@ -118,14 +118,17 @@ class WuaComparativePartnerPresconsumption(models.Model):
             conversion_factor = 1
         for record in self:
             precipitations = {}
-            previous_period = record.env['wua.controlperiod'].search([
-                ('is_the_previous_to_current', '=', True)])
+            previous_period = self.env['wua.controlperiod'].search(
+                [('agriculturalseason_id', '=',
+                  record.controlperiod_id.agriculturalseason_id.id),
+                 ('end_date', '<', record.controlperiod_id.initial_date)],
+                order='end_date desc')[0]
             if len(previous_period) == 1 and conversion_factor:
                 previous_period_id = previous_period.id
                 precipitations_mm = previous_period.pe_value
                 precipitations_ha = previous_period.pe_value * 10
                 precipitations_eq = \
-                    previous_period.pe_value / conversion_factor
+                    previous_period.pe_value * 10 * conversion_factor
                 precipitations[previous_period_id] = \
                     [precipitations_mm, precipitations_ha, precipitations_eq]
         return precipitations

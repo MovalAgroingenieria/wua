@@ -588,11 +588,12 @@
                                     </div>
                                 </t>
                             </div>
-
-                            <table t-foreach="cultivation_performances" t-as="cp" class="table table-striped" style="margin-top: 2px; width:100%;">
+                            <t t-set="cultivation_performances_keys" t-value="cultivation_performances.keys()"/>
+                            <t t-esc="cultivation_performances_keys.sort()"/>
+                            <table t-foreach="cultivation_performances_keys" t-as="cp" class="table table-striped" style="margin-top: 2px; width:100%;">
                                 <caption>
                                     <span>Subparcels</span>
-                                    <span t-esc="cp[0]"/>
+                                    <span t-esc="cp"/>
                                 </caption>
                                 <thead>
                                     <tr>
@@ -611,23 +612,23 @@
                                     <t t-set="total_area" t-value="0.0"/>
                                     <t t-set="total_amount_total" t-value="0.0"/>
                                     <t t-set="total_production_value_total" t-value="0.0"/>
-                                    <tr t-foreach="cp[1]" t-as="perf">
-                                        <t t-set="total_area" t-value="total_area + perf.area_official"/>
-                                        <t t-set="total_amount_total" t-value="total_amount_total + perf.amount_total"/>
-                                        <t t-set="total_production_value_total" t-value="total_production_value_total + perf.production_value_total"/>
-                                        <td class="text-center"><span t-field="perf.subparcel_id"/></td>
-                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.area_official,2)"/></td>
-                                        <td class="text-center"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.amount_total, 0)"/></td>
-                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.average_price, 2)"/></td>
-                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.production_value_total, 2)"/></td>
-                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.performance_amount, 2)"/></td>
-                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.performance_value, 2)"/></td>
+                                    <tr t-foreach="cultivation_performances.get(cp)" t-as="perf">
+                                        <t t-set="total_area" t-value="total_area + perf.get('area_official')"/>
+                                        <t t-set="total_amount_total" t-value="total_amount_total + perf.get('amount_total')"/>
+                                        <t t-set="total_production_value_total" t-value="total_production_value_total + perf.get('production_value_total')"/>
+                                        <td class="text-center"><span t-esc="perf.get('subparcel_id').name_get()[0][1]"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.get('area_official'),2)"/></td>
+                                        <td class="text-center"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.get('amount_total'), 0)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.get('average_price'), 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.get('production_value_total'), 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.get('performance_amount'), 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(perf.get('performance_value'), 2)"/></td>
                                     </tr>
                                     <tr>
                                         <td class="text-center"><b>TOTAL:</b></td>
                                         <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area, 2)"/></td>
                                         <td class="text-center"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_amount_total, 0)"/></td>
-                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_production_value_total / total_amount_total, 2)"/></td>
+                                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_production_value_total / total_amount_total if total_amount_total != 0 else 0.0, 2)"/></td>
                                         <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_production_value_total, 2)"/></td>
                                         <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_amount_total / total_area, 2)"/></td>
                                         <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_production_value_total / total_area, 2)"/></td>

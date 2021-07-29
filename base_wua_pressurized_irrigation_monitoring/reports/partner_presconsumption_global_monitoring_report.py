@@ -68,25 +68,43 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
         return data
 
     def get_cultivation_performances(self):
-        data = []
+        data = {}
+        subparcels = self.get_partner_subparcels_global()
+        performances = self.env['wua.weighing.enrolledsubparcel'].search([])
         # [[Cultivation names], [enrolledsubparcels of cultivation]]
-        performances = self.env['wua.weighing.enrolledsubparcel'].search(
-            [('agriculturalseason_id', '=',
-                self.agriculturalseason_id.id),
-                ('partner_id', '=', self.partner_id.id)])
-        cultivations = list(set(performances.mapped(
-            lambda x: x.cultivation_id.name)))
-        for cultivation in cultivations:
-            data_aux = [cultivation, []]
-            performance_of_cult = performances.search(
-                [('agriculturalseason_id', '=',
-                    self.agriculturalseason_id.id),
-                    ('partner_id', '=', self.partner_id.id),
-                    ('cultivation_id.name', '=', cultivation)],
-                order='subparcel_id desc')
-            for perf in performance_of_cult:
-                data_aux[1].append(perf)
-            data.append(data_aux)
+        for subparcel in subparcels:
+            subparcel_perf = performances.filtered(
+                lambda x: x.subparcel_id.id == subparcel.subparcel_id.id and
+                x.partner_id.id == self.partner_id.id and
+                x.agriculturalseason_id.id == self.agriculturalseason_id.id)
+            # Not any weighing set as 0's
+            if (not subparcel_perf):
+                perf = {
+                    'subparcel_id': subparcel.subparcel_id,
+                    'area_official': subparcel.subparcel_id.area_official,
+                    'amount_total': 0.0,
+                    'average_price': 0.0,
+                    'production_value_total': 0.0,
+                    'performance_amount': 0.0,
+                    'performance_value': 0.0,
+                }
+            else:
+                perf = {
+                    'subparcel_id': subparcel_perf.subparcel_id,
+                    'area_official': subparcel_perf.area_official,
+                    'amount_total': subparcel_perf.amount_total,
+                    'average_price': subparcel_perf.average_price,
+                    'production_value_total':
+                        subparcel_perf.production_value_total,
+                    'performance_amount': subparcel_perf.performance_amount,
+                    'performance_value': subparcel_perf.performance_value,
+                }
+            cultivation = \
+                subparcel.subparcel_id.cultivation_id.name
+            if cultivation not in data:
+                data[cultivation] = [perf]
+            else:
+                data[cultivation].append(perf)
         return data
 
     @api.multi
@@ -105,12 +123,14 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
             agriculturalseason_id.specific_consumption_with_pumping
         specific_consumption_without_pumping = self.\
             agriculturalseason_id.specific_consumption_without_pumping
+        all_performances = \
+            self.env['wua.weighing.enrolledsubparcel'].search([])
         for cultivation in cultivations:
             data_aux = [cultivation.name, []]
             all_presc_of_cult = cmp_sub_pres_model.search(
                 [('agriculturalseason_id', '=',
-                    self.agriculturalseason_id.id),
-                    ('cultivation_id.name', '=', cultivation.name)])
+                    self.agriculturalseason_id.id)]).filtered(
+                lambda x: x.cultivation_id.id == cultivation.id)
             all_presc_of_cult_pumping = all_presc_of_cult.filtered(
                 lambda x: x.parcel_id.with_pumping)
             all_presc_of_cult_no_pumping = all_presc_of_cult.filtered(
@@ -118,23 +138,20 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
             partner_presc_of_cult = cmp_sub_pres_model.search(
                 [('agriculturalseason_id', '=',
                     self.agriculturalseason_id.id),
-                    ('partner_id', '=', self.partner_id.id),
-                    ('cultivation_id.name', '=', cultivation.name)])
+                    ('partner_id', '=', self.partner_id.id)]).filtered(
+                lambda x: x.cultivation_id.id == cultivation.id)
             partner_presc_of_cult_pumping = partner_presc_of_cult.filtered(
                 lambda x: x.parcel_id.with_pumping)
             partner_presc_of_cult_no_pumping = partner_presc_of_cult.\
                 filtered(lambda x: not x.parcel_id.with_pumping)
-            performances_of_cult = self.env[
-                'wua.weighing.enrolledsubparcel'].search(
-                [('agriculturalseason_id', '=',
-                    self.agriculturalseason_id.id),
-                    ('partner_id', '=', self.partner_id.id),
-                    ('cultivation_id.name', '=', cultivation.name)])
-            all_performances_of_cult = self.env[
-                'wua.weighing.enrolledsubparcel'].search(
-                [('agriculturalseason_id', '=',
-                    self.agriculturalseason_id.id),
-                    ('cultivation_id.name', '=', cultivation.name)])
+            performances_of_cult = all_performances.filtered(
+                lambda x: x.agriculturalseason_id.id ==
+                self.agriculturalseason_id.id and x.partner_id.id ==
+                self.partner_id.id and x.cultivation_id.id == cultivation.id)
+            all_performances_of_cult = all_performances.filtered(
+                lambda x: x.agriculturalseason_id.id ==
+                self.agriculturalseason_id.id and x.cultivation_id.id ==
+                cultivation.id)
             cultivation_area = sum(partner_presc_of_cult.mapped(
                 lambda x: x.area_official))
             cultivation_area_with_pumping = sum(
@@ -175,28 +192,22 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
                 else 0.0
             annual_production = cultivation_weighing / cultivation_area \
                 if cultivation_area != 0 else 0.0
-            # E
             annual_production_global = cultivation_weighing_global / \
                 cultivation_area_global if cultivation_area_global != 0 \
                 else 0.0
-            # F
             annual_production_deviation = (
                 annual_production - annual_production_global) / \
                 annual_production_global if annual_production_global != 0 \
                 else 0.0
-            # G
             irr_water_performance = annual_production / annual_irrigation \
                 if annual_irrigation != 0 else 0.0
-            # H
             irr_water_performance_global = annual_production_global / \
                 annual_irrigation_global if annual_irrigation_global != 0 \
                 else 0.0
-            # I
             irr_water_performance_deviation = (
                 irr_water_performance - irr_water_performance_global) / \
                 irr_water_performance_global if \
                 irr_water_performance_global != 0 else 0.0
-            # J
             energy_per_area = \
                 ((cultivation_area_with_pumping *
                     specific_consumption_with_pumping) +
@@ -204,7 +215,6 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
                      specific_consumption_without_pumping)) / \
                 cultivation_area if cultivation_area != 0 \
                 else 0.0
-            # K
             energy_per_area_global = \
                 ((cultivation_area_with_pumping_global *
                     specific_consumption_with_pumping) +
@@ -212,28 +222,20 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
                      specific_consumption_without_pumping)) / \
                 cultivation_area_global if cultivation_area_global != 0 \
                 else 0.0
-            # L
             energy_per_area_deviation = \
                 (energy_per_area - energy_per_area_global) / \
                 energy_per_area_global if energy_per_area_global != 0 \
                 else 0.0
-            # M
             income = cultivation_production / cultivation_area if \
                 cultivation_area != 0 else 0.0
-            # N
             income_global = cultivation_production_global / \
                 cultivation_area_global if cultivation_area_global != 0 \
                 else 0.0
-            # O
             income_deviation = (income - income_global) / income_global \
                 if income_global != 0 else 0.0
-            # S
             costs_per_areaunit = cultivation.costs_per_areaunit
-            # P
             profitability = income - costs_per_areaunit
-            # Q
             profitability_global = income_global - costs_per_areaunit
-            # R
             profitability_deviation = \
                 (profitability - profitability_global) / \
                 profitability_global if profitability_global != 0 else 0.0
@@ -321,7 +323,7 @@ class WuaComparativePartnerPresconsumptionGlobal(models.Model):
             for period in all_periods:
                 precipitations_mm += period.pe_value
                 precipitations_ha += period.pe_value * 10
-                precipitations_eq += period.pe_value / conversion_factor
+                precipitations_eq += period.pe_value * 10 * conversion_factor
             precipitations = [precipitations_mm, precipitations_ha,
                               precipitations_eq]
         return precipitations
