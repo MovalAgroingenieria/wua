@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_certificate_view_form" model="ir.ui.view">
+        <field name="name">Certificates (form view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="document_name" invisible="1"/>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="reference_number"/>
+                            <field name="date_of_issue"/>
+                            <field name="partner_id"
+                                   domain="[('is_wua_partner', '=', True)]"/>
+                            <field name="certificatetype_id"
+                                   options="{'no_quick_create':True,'no_create_edit':True}"/>
+                            <field name="user_who_signs_id"/>
+                            <field name="state"
+                                   groups="base_wua.group_wua_manager"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="user_who_validates_id"/>
+                            <field name="document" filename="document_name"/>
+                            <field name="requested_from_portal"
+                                   readonly="1"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="main_page" string="Main Page">
+                                <field name="main_page"/>
+                            </page>
+                            <page name="parcels_page" string="Parcels">
+                                <field name="certificateparcel_ids"
+                                       context="{'tree_view_ref':
+                                       'base_wua_certificate.wua_certificate_parcel_view_tree'}"/>
+                            </page>
+                            <page name="notes_wua" string="WUA Notes"
+                                  groups="base_wua.group_wua_user">
+                                <field name="notes_wua"/>
+                            </page>
+                            <page name="notes_user" string="User Notes">
+                                <field name="notes_user"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"
+                           groups="base_wua.group_wua_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_certificate_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels of certificate (form view)</field>
+        <field name="model">wua.certificate.parcel</field>
+        <field name="arch" type="xml">
+            <form>
+                <group name="master_data">
+                    <group name="master_data_left">
+                        <field name="parcel_id"/>
+                        <field name="cadastral_reference"/>
+                        <field name="area_official"/>
+                    </group>
+                    <group name="master_data_right">
+                        <field name="ownership_percentage"/>
+                        <field name="water_costs_percentage"/>
+                        <field name="other_costs_percentage"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_certificate_parcel_view_tree" model="ir.ui.view">
+        <field name="name">Parcels of certificate (tree view)</field>
+        <field name="model">wua.certificate.parcel</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_certificate_certificate_parcel_view_tree"
+                  editable="bottom">
+                <field name="parcel_id"/>
+                <field name="cadastral_reference"/>
+                <field name="is_main"/>
+                <field name="area_official"/>
+                <field name="ownership_percentage"/>
+                <field name="water_costs_percentage"/>
+                <field name="other_costs_percentage"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_certificate_view_tree" model="ir.ui.view">
+        <field name="name">Certificates (tree view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_certificate_certificate_view_tree"
+                  decoration-bf="state=='01_draft'"
+                  colors="orangered:state=='01_draft'"
+                  create="false">
+                <field name="reference_number"
+                       string="Reference"/>
+                <field name="date_of_issue"
+                       string="Date"/>
+                <field name="partner_name"
+                       string="Applicant"/>
+                <field name="certificatetype_id"
+                       string="Type"
+                       widget="many2one_unclickable"/>
+                <field name="number_of_parcels"
+                       string="N. of parcels"/>
+                <field name="total_area_official"
+                       string="Total Area"/>
+                <field name="requested_from_portal"
+                       string="Elect. Office"/>
+                <field name="user_who_signs_id"
+                       string="Signer"
+                       widget="many2one_unclickable"/>
+                <field name="user_who_validates_id"
+                       string="Validator"
+                       widget="many2one_unclickable"/>
+                <field name="state"
+                       string="Processing Status"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_certificate_view_search" model="ir.ui.view">
+        <field name="name">Certificates (search view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"
+                       string="Applicant (name)"/>
+                <field name="partner_code"
+                       string="Applicant (code)"/>
+                <field name="reference_number"
+                       string="Reference"/>
+                <field name="certificatetype_id"
+                       string="Type"/>
+                <field name="date_of_issue"
+                       string="Date"/>
+                <filter string="From electronic office: Yes"
+                        name="requested_from_portal_yes"
+                        domain="[('requested_from_portal','=',True)]"/>
+                <filter string="From electronic office: No"
+                        name="requested_from_portal_no"
+                        domain="[('requested_from_portal','=',False)]"/>
+                <separator/>
+                <filter string="State: Draft"
+                        name="state_draft"
+                        domain="[('state','=','01_draft')]"/>
+                <filter string="State: Validated"
+                        name="state_validated"
+                        domain="[('state','=','02_validated')]"/>
+                <filter string="State: Sent"
+                        name="state_sent"
+                        domain="[('state','=','03_sent')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Date"
+                            name="grouped_date_of_issue"
+                     context="{'group_by':'date_of_issue'}"/>
+                    <filter string="Type"
+                            name="grouped_certificatetype_id"
+                     context="{'group_by':'certificatetype_id'}"/>
+                    <filter string="State"
+                            name="grouped_state"
+                     context="{'group_by':'state'}"/>
+                    <filter string="Signer"
+                            name="grouped_user_who_signs_id"
+                     context="{'group_by':'user_who_signs_id'}"/>
+                    <filter string="Validator"
+                            name="grouped_user_who_validates_id"
+                     context="{'group_by':'user_who_validates_id'}"/>
+                    <filter string="Applicant"
+                            name="grouped_partner_id"
+                     context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_certificate_one_partner_view_tree" model="ir.ui.view">
+        <field name="name">Certificates of a partner (tree view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_certificate_certificate_one_partner_view_tree"
+                  decoration-bf="state=='01_draft'"
+                  colors="orangered:state=='01_draft'"
+                  create="false">
+                <field name="reference_number"
+                       string="Reference"/>
+                <field name="date_of_issue"
+                       string="Date"/>
+                <field name="certificatetype_id"
+                       string="Type"
+                       widget="many2one_unclickable"/>
+                <field name="number_of_parcels"
+                       string="N. of parcels"/>
+                <field name="total_area_official"
+                       string="Total Area"/>
+                <field name="requested_from_portal"
+                       string="Elect. Office"/>
+                <field name="user_who_signs_id"
+                       string="Signer"
+                       widget="many2one_unclickable"/>
+                <field name="user_who_validates_id"
+                       string="Validator"
+                       widget="many2one_unclickable"
+                       groups="base_wua.group_wua_user"/>
+                <field name="state"
+                       string="Processing Status"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_certificate_one_partner_view_search" model="ir.ui.view">
+        <field name="name">Certificates or a partner (search view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reference_number"
+                       string="Reference"/>
+                <field name="certificatetype_id"
+                       string="Type"/>
+                <field name="date_of_issue"
+                       string="Date"/>
+                <filter string="From electronic office: Yes"
+                        name="requested_from_portal_yes"
+                        domain="[('requested_from_portal','=',True)]"/>
+                <filter string="From electronic office: No"
+                        name="requested_from_portal_no"
+                        domain="[('requested_from_portal','=',False)]"/>
+                <separator/>
+                <filter string="State: Draft"
+                        name="state_draft"
+                        domain="[('state','=','01_draft')]"/>
+                <filter string="State: Validated"
+                        name="state_validated"
+                        domain="[('state','=','02_validated')]"/>
+                <filter string="State: Sent"
+                        name="state_sent"
+                        domain="[('state','=','03_sent')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Date"
+                            name="grouped_date_of_issue"
+                            context="{'group_by':'date_of_issue'}"/>
+                    <filter string="Type"
+                            name="grouped_certificatetype_id"
+                            context="{'group_by':'certificatetype_id'}"/>
+                    <filter string="State"
+                            name="grouped_state"
+                            context="{'group_by':'state'}"/>
+                    <filter string="Signer"
+                            name="grouped_user_who_signs_id"
+                            context="{'group_by':'user_who_signs_id'}"/>
+                    <filter string="Validator"
+                            name="grouped_user_who_validates_id"
+                            context="{'group_by':'user_who_validates_id'}"
+                            groups="base_wua.group_wua_user"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_certificate_display_view_form" model="ir.ui.view">
+        <field name="name">Certificates (form view to display)</field>
+        <field name="model">wua.certificate</field>
+        <field name="arch" type="xml">
+            <form duplicate="0" create="0">
+                <field name="requested_from_portal" invisible="1"/>
+                <field name="document_name" invisible="1"/>
+                <field name="has_mailtemplate" invisible="1"/>
+                <header>
+                    <button name="action_preview_certificate"
+                            type="object" string="Preview"
+                            style="width: 105px;"
+                            class="oe_highlight"
+                            groups="base_wua.group_wua_user"/>
+                    <button name="action_validate_certificate"
+                            type="object" string="Validate"
+                            style="width: 105px;"
+                            class="oe_highlight"
+                            attrs="{'invisible':
+                                    [('state','!=','01_draft')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <button name="action_print_certificate"
+                            type="object" string="Print"
+                            style="width: 105px;"
+                            class="oe_highlight"
+                            attrs="{'invisible':
+                                    [('state','=','01_draft')]}"
+                            groups="base_wua.group_wua_user"/>
+                    <button name="action_send_certificate"
+                            type="object" string="Send"
+                            style="width: 105px;"
+                            class="oe_highlight"
+                            attrs="{'invisible':
+                                    ['|', ('state','!=','02_validated'),
+                                          ('has_mailtemplate','=',False)]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="action_cancel_certificate"
+                            type="object" string="Cancel"
+                            style="width: 105px;"
+                            attrs="{'invisible':
+                                    [('state','=','01_draft')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="01_draft,02_validated,03_sent"/>
+                </header>
+                <sheet>
+                    <group name="master_data_01">
+                        <group name="master_data_01_left" col="1">
+                            <div name="section_partner"
+                                 style="margin-top:-20px;">
+                                <field name="image" widget="image"
+                                       class="oe_avatar" options="{'size': [90, 90]}"/>
+                                <div name="section_partner_name" class="oe_title">
+                                    <h1>
+                                        <field name="partner_name" readonly="1"/>
+                                    </h1>                    
+                                </div>
+                                <div name="section_partner_code"
+                                     style="margin-top:10px;">
+                                    <span style="margin-left:12px;margin-right:10px;">Code :</span>
+                                    <field name="partner_id" readonly="1"/>
+                                </div>                                    
+                            </div>
+                        </group>
+                        <group name="master_data_01_right" col="1">
+                            <div name="section_certificate_title"
+                                 style="margin-top:-20px;">
+                                <field name="html_certificate_title" nolabel="1"/>
+                            </div>
+                        </group>
+                    </group>
+                    <group name="master_data_02">
+                        <group name="master_data_02_left">
+                            <field name="date_of_issue" readonly="1"/>
+                            <field name="certificatetype_id"
+                                   attrs="{'readonly':
+                                            [('state','!=','01_draft')]}"
+                                   groups="base_wua.group_wua_user"/>
+                        </group>
+                        <group name="master_data_02_right">
+                            <field name="user_who_signs_id"
+                                   string="Signer"
+                                   attrs="{'readonly':
+                                            [('state','!=','01_draft')]}"
+                                   groups="base_wua.group_wua_user"/>
+                            <field name="user_who_validates_id" readonly="1"
+                                   string="Validator"
+                                   groups="base_wua.group_wua_user"/>
+                        </group>
+                    </group>
+                    <group name="master_data_03">
+                        <group name="master_data_03_left">
+                            <field name="document" filename="document_name"
+                                   attrs="{'readonly':
+                                            [('state','!=','01_draft')],
+                                           'invisible':
+                                            [('state','=','01_draft')]}"/>                            
+                            <div name="section_pending_validation" colspan="2"
+                                 style="text-align:center;"
+                                 attrs="{'invisible': [('state','!=','01_draft')]}">
+                                <span class="blink_text" style="font-weight:bold;">
+                                ( CERTIFICATE PENDING VALIDATION )
+                                </span>
+                            </div>
+                        </group>
+                        <group name="master_data_03_right" col="1">
+                            <div name="section_requested_from_portal"
+                                 attrs="{'invisible': [('requested_from_portal','=',False)]}"
+                                 style="text-align:center;">
+                                <span style="font-weight:bold;">( REQUESTED FROM ELECTRONIC OFFICE )</span>
+                            </div>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="parcels_page" string="Parcels">
+                                <field name="certificateparcel_ids"
+                                       readonly="1"
+                                       context="{'tree_view_ref':
+                                       'base_wua_certificate.wua_certificate_parcel_view_tree'}"/>
+                            </page>
+                            <page name="main_page" string="Main Page"
+                                  groups="base_wua.group_wua_user">
+                                <field name="main_page"/>
+                            </page>
+                            <page name="notes_wua" string="WUA Notes"
+                                  groups="base_wua.group_wua_user">
+                                <field name="notes_wua"/>
+                            </page>
+                            <page name="notes_user" string="User Notes">
+                                <field name="notes_user"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"
+                           groups="base_wua.group_wua_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_certificate_action"
+            model="ir.actions.act_window">
+        <field name="name">Certificates</field>
+        <field name="res_model">wua.certificate</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_certificate_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_certificate_display_view_form')})]"/>
+        <field name="search_view_id" ref="wua_certificate_view_search"/>
+        <field name="context">
+          {'show_only_partner_code': True}
+        </field>
+    </record>
+
+    <menuitem id="certificate_menu"
+              name="Certificates"
+              parent="base_wua.base_wua_census_partners_menu"
+              sequence="20"
+              action="wua_certificate_action"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

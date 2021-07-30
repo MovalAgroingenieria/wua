@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_company_form" model="ir.ui.view">
+        <field name="name">Add PDF report certificates list (with signer)</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="report_qweb_signer.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='pdf_sign_certificate']"
+                   position="replace"/>
+            <xpath expr="//page[1]" position="after">
+                <page name="certificates_page" string="Certificates">
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="employee_as_secretary_id"
+                                   string="Authorized Signer (for census certificates)"
+                                   options="{'no_quick_create':True,'no_create_edit':True}"/>
+                        </group>
+                        <group name="master_data_right">
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <field name="report_certificate_ids"
+                               context="{'default_company_id': active_id}"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

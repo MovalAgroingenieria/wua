@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_create_certificate_view_form" model="ir.ui.view">
+        <field name="name">Wizard to create a certificate</field>
+        <field name="model">wizard.create.certificate</field>
+        <field name="arch" type="xml">
+            <form string="Request a certificate">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '490px'});
+                    });
+                </script>
+                <field name="can_choose_certificatetype" invisible="1"/>
+                <field name="requested_from_portal" invisible="1"/>
+                <group name="body">
+                    <field name="partner_id"
+                           string="Applicant"/>
+                    <field name="date_of_issue"
+                           string="Date"/>
+                    <div colspan="2" style="margin-bottom:15px"
+                         attrs="{'invisible': [('requested_from_portal','=',True)]}">
+                        <hr style="margin-right:15px"/>
+                    </div>
+                    <field name="certificatetype_id"
+                           string="Type"
+                           style="width:275px"
+                           options="{'no_quick_create':True,
+                                     'no_create_edit':True,
+                                     'no_open':True}"
+                           attrs="{'readonly': [('can_choose_certificatetype','=',False)]}"/>
+                    <field name="user_who_signs_id"
+                           string="Signer"
+                           attrs="{'invisible': [('requested_from_portal','=',True)]}"/>
+                    <field name="notes"
+                           string="Notes"/>
+                    <field name="only_parcels_as_main"
+                           attrs="{'invisible': [('requested_from_portal','=',True)]}"/>
+                </group>
+                <footer>
+                    <button name="create_certificate"
+                            type="object"
+                            string="Apply"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+</odoo>
