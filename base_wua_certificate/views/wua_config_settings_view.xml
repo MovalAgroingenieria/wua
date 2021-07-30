@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.configuration</field>
+        <field name="inherit_id" ref="base_wua.wua_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='polling_system_group']" position="after">
+                <group name="certificate_parameters"
+                       string="Certificate Management">
+                    <field name="sequence_certificate_code_id"
+                           string="Sequence for code"
+                           options="{'no_quick_create':True,'no_create_edit':True}"
+                           style="width:300px"/>
+                    <field name="only_parcels_as_main"
+                           string="Only parcels as main"/>
+                    <field name="default_certificatetype_id"
+                           string="Default certificate"
+                           options="{'no_quick_create':True,'no_create_edit':True}"
+                           style="width:300px"/>
+                    <field name="allowed_request_for_portal_user"
+                           string="Portal User"/>
+                    <field name="portaluser_certificatetype_id"
+                           string="Cert. for portal user"
+                           options="{'no_quick_create':True,'no_create_edit':True}"
+                           style="width:300px"
+                           attrs="{'invisible':[('allowed_request_for_portal_user','=',False)]}"/>
+                    <field name="max_pending_certificates"
+                           string="Max. pending"
+                           style="width:100px"
+                           attrs="{'invisible':[('allowed_request_for_portal_user','=',False)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

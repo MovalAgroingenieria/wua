@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="paperformat_portrait_standard_certificate"
+            model="report.paperformat">
+        <field name="name">European A4 Portrait Certificate</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">33</field>
+        <field name="margin_bottom">20</field>
+        <field name="margin_left">9</field>
+        <field name="margin_right">9</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">22</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <report id="action_wua_certificate_report"
+            string="Certificate"
+            model="wua.certificate"
+            report_type="qweb-pdf"
+            name="base_wua_certificate.report_wua_certificate"
+            paperformat="paperformat_portrait_standard_certificate"
+            menu="False"
+            groups="base_wua.group_wua_user"/>
+
+    <template id="report_wua_certificate">
+        <t t-call="report.html_container">
+            <t t-call="base_wua_certificate.report_wua_certificate_external_layout">
+                <div class="page">
+                    <t t-foreach="docs" t-as="o">
+                        <t t-call="base_wua_certificate.report_wua_certificate_document"/>
+                        <p style="page-break-after:always;"></p>
+                    </t>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_certificate_document">
+        <div style="font-family: dejavusansmono;font-size: 9;">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            @font-face {
+                font-family: 'dejavusansmono';
+                src: local('DejaVu Sans Mono');
+            }
+            ]]>
+            </style>
+            <div class="row" name="section_master">
+                <div class="col-xs-12 text-justify" style="font-family: verdana;font-size: 12;margin-top: 10px;margin-bottom: 80px;">
+                    <span t-field="o.html_certificate_title"/>
+                </div>
+                <t t-if="o.state == '01_draft'">
+                    <div class="col-xs-12 text-center" style="font-family: dejavusansmono;font-size: 18;margin-bottom: 20px;">
+                        <span>( D R A F T )</span>
+                    </div>
+                </t>
+                <div class="col-xs-12 text-justify" style="font-family: verdana;font-size: 18;padding-left: 40px;padding-right: 40px;">
+                    <span t-field="o.sudo().rendered_main_page"/>
+                </div>
+            </div>
+            <p style="page-break-after:always;"></p>
+            <div class="row" name="section_detail" style="font-family: dejavusansmono;font-size: 12;padding-left: 40px;padding-right: 40px;">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr style="background-color: #e9e9e9">
+                            <th class="text-left">Land Parcel</th>
+                            <th class="text-center">Cadastral Reference</th>
+                            <th class="text-right">Area</th>
+                            <th class="text-right">Ownership %</th>
+                            <th class="text-right">Water Costs %</th>
+                            <th class="text-right">Other Costs %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="o.certificateparcel_ids" t-as="l">
+                            <td align="left"><span t-field="l.parcel_id"/></td>
+                            <td align="center"><span t-field="l.cadastral_reference"/></td>
+                            <td align="right"><span t-field="l.area_official"/></td>
+                            <td align="right"><span t-field="l.ownership_percentage"/></td>
+                            <td align="right"><span t-field="l.water_costs_percentage"/></td>
+                            <td align="right"><span t-field="l.other_costs_percentage"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_wua_certificate_external_layout">
+        <!-- Multicompany -->
+        <t t-if="not o and doc">
+            <t t-set="o" t-value="doc"/>
+        </t>
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"></t>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"></t>
+        </t>
+        <t t-call="base_wua_certificate.report_wua_certificate_external_layout_header"/>
+        <t t-raw="0"/>
+        <t t-call="base_wua_certificate.report_wua_certificate_external_layout_footer"/>
+    </template>
+
+    <template id="report_wua_certificate_external_layout_header">
+        <div class="header" name="header_content" style="font-family: verdana;font-size: 12;">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            ]]>
+            </style>
+            <div name="logo_title_header" class="row">
+                <t t-if="company.logo">
+                    <div class="col-xs-1">
+                        <img t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 50px;"/>
+                    </div>
+                    <div class="col-xs-7" style="margin-top:30px;">
+                        <span t-field="company.name"/>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="col-xs-8" style="margin-top:30px;">
+                        <span t-field="company.name"/>
+                    </div>
+                </t>
+                <div class="col-xs-4 text-right" style="margin-top:30px;">
+                    <span>CERTIFICATE REPORT</span>
+                </div>
+            </div>
+            <div class="row zero_min_height">
+                <div class="col-xs-12">
+                    <div style="border-bottom: 1px solid black;"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_wua_certificate_external_layout_footer">
+        <div class="footer" name="footer_content" style="font-family: verdana;font-size: 10;">
+            <style type="text/css">
+            <![CDATA[
+            @font-face {
+                font-family: 'verdana';
+                src: local('Verdana');
+            }
+            ]]>
+            </style>
+            <div class="row" name="pagination">
+                <div class="col-xs-12 text-center" name="pages" style="margin-top:15px;">
+                    <span class="page"/> / <span class="topage"/>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']"
+                   position="before">
+                <button name="action_get_certificates"
+                        type="object" class="oe_stat_button"
+                        icon="fa-certificate"
+                        attrs="{'invisible': [('number_of_certificates','=',0)]}"
+                        groups="base_wua.group_wua_user,base_wua.group_wua_portal_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_certificates"/>
+                        </span>
+                        <span class="o_stat_text">Certificates</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='apply_second_partner_coding']"
+                   position="after">
+                <field name="can_request_certificate" invisible="1"/>
+                <div name="button_certificate" colspan="2" class="text-center" style="margin-top: 12px;">
+                    <button name="action_create_certificate"
+                            type="object" string="Request a certificate"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('can_request_certificate','=',False)]}"
+                            groups="base_wua.group_wua_manager,base_wua.group_wua_portal_user"/>
+                </div>                
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
