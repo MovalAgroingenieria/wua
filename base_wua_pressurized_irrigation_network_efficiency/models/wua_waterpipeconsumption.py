@@ -85,10 +85,11 @@ class WuaWaterpipeconsumption(models.Model):
             self._regenerate_presconsumption_ids(
                 wpconsumption, error_margin_for_sync_consumptions)
             network_efficiency = 0
+            output_volume = 0
+            input_volume = 0
             if wpconsumption.volume_real > 0 and \
                     wpconsumption.presconsumption_ids:
                 input_volume = wpconsumption.volume_real
-                output_volume = 0
                 for presconsumption in wpconsumption.presconsumption_ids:
                     output_volume = output_volume + presconsumption.volume_real
                 network_efficiency = output_volume / input_volume
