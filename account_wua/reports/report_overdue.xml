@@ -159,7 +159,7 @@
                             <thead>
                                 <tr>
                                     <th>Reference</th>
-                                    <th class="text-center">Date</th>
+                                    <th class="text-center" style="width:11%;">Date</th>
                                     <th class="text-center">Due Date</th>
                                     <th>Communication</th>
                                     <th class="text-right">Due</th>
@@ -189,7 +189,7 @@
                             </tr>
                             <tr>
                                 <td colspan="3"></td>
-                                <td><strong>Subtotal :</strong></td>
+                                <td><strong>Subtotal:</strong></td>
                                 <td class="text-right"><span t-esc="Totals[o.id][currency]['due']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
                                 <td class="text-right"><span t-esc="Totals[o.id][currency]['paid']" t-options="{'widget': 'monetary', 'display_currency': currency}"/></td>
                                 <td></td>
@@ -200,6 +200,7 @@
                                 <td class="text-right">
                                     <span t-esc="Totals[o.id][currency]['due'] - Totals[o.id][currency]['paid']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
                                 </td>
+                                <td></td>
                             </tr>
                         </table>
                     </div>
