@@ -6,6 +6,7 @@
         <field name="model">wua.quota</field>
         <field name="arch" type="xml">
             <form create="false" duplicate="0">
+                <field name="is_current_quotaperiod" invisible="1"/>
                 <header>
                     <button name="action_open_individualinput_form"
                             type="object" string="Assign"
@@ -19,7 +20,7 @@
                             class="oe_read_only"
                             style="width: 105px;"
                             attrs="{'invisible': [('balance', '&lt;=', 0)]}"
-                            groups="base_wua_quota_management.group_wua_quota_manager"/>                            
+                            groups="base_wua_quota_management.group_wua_quota_manager"/>
                 </header>
                 <sheet>
                     <group name="master_data" col="6">
@@ -39,6 +40,19 @@
                              attrs="{'invisible':[('balance','&lt;',0)]}"/>
                             <field name="negative_balance" style="color:red"
                              attrs="{'invisible':[('balance','>=',0)]}"/>
+                            <field name="available_quota_percentage_with_suffix"
+                                   string="Available Quota"/>
+                            <field name="average_daily_consumption"
+                                   string="Cons./Day"/>
+                            <field name="number_of_days_elapsed_and_pending"
+                                   string="Elapsed-Pending"
+                                   attrs="{'invisible':[('is_current_quotaperiod','=',False)]}"/>
+                            <field name="estimated_consumption"
+                                   string="Estim. Cons."
+                                   attrs="{'invisible':[('is_current_quotaperiod','=',False)]}"/>
+                            <field name="estimated_balance"
+                                   string="Estim. Ending Bal."
+                                   attrs="{'invisible':[('is_current_quotaperiod','=',False)]}"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -78,6 +92,9 @@
                 <field name="accumulated_input"/>
                 <field name="accumulated_consumption"/>
                 <field name="balance"/>
+                <field name="available_quota_percentage"/>
+                <field name="estimated_balance"
+                       string="Estim. Ending Balance"/>
             </tree>
         </field>
     </record>
@@ -111,7 +128,7 @@
                      context="{'group_by':'superproduct_id'}"/>
                     <filter string="Partner"
                             name="grouped_partner"
-                     context="{'group_by':'partner_id'}"/>                     
+                     context="{'group_by':'partner_id'}"/>
                 </group>
             </search>
         </field>

@@ -4,6 +4,7 @@
 
 import datetime
 import locale
+from babel.numbers import format_decimal
 from odoo import models, fields, api, exceptions, _
 
 
@@ -111,6 +112,51 @@ class WuaQuota(models.Model):
         digits=(32, 2),
         compute='_compute_negative_balance')
 
+    available_quota_percentage = fields.Float(
+        string='% Avail. Quota',
+        digits=(32, 2),
+        store=True,
+        compute='_compute_available_quota_percentage')
+
+    available_quota_percentage_with_suffix = fields.Char(
+        string='% Avail. Quota (with suffix)',
+        compute='_compute_available_quota_percentage_with_suffix')
+
+    average_daily_consumption = fields.Float(
+        string='Average Daily Consumption',
+        digits=(32, 2),
+        compute='_compute_average_daily_consumption')
+
+    number_of_days = fields.Integer(
+        string='Number of days',
+        related='quotaperiod_id.number_of_days')
+
+    number_of_days_pending = fields.Integer(
+        string='Number of days pending',
+        related='quotaperiod_id.number_of_days_pending')
+
+    number_of_days_elapsed = fields.Integer(
+        string='Number of days elapsed',
+        related='quotaperiod_id.number_of_days_elapsed')
+
+    is_current_quotaperiod = fields.Boolean(
+        string='Current quota period',
+        related='quotaperiod_id.is_current_quotaperiod')
+
+    number_of_days_elapsed_and_pending = fields.Char(
+        string='Number of days elapsed and pending',
+        compute='_compute_number_of_days_elapsed_and_pending')
+
+    estimated_consumption = fields.Float(
+        string='Estimated Consumptions',
+        digits=(32, 2),
+        compute='_compute_estimated_consumption')
+
+    estimated_balance = fields.Float(
+        string='Estimated Balance',
+        digits=(32, 2),
+        compute='_compute_estimated_balance')
+
     hydricmovement_ids = fields.One2many(
         string='Hydric Movements',
         comodel_name='wua.hydricmovement',
@@ -214,18 +260,72 @@ class WuaQuota(models.Model):
             balance = record.accumulated_input - record.accumulated_consumption
             record.balance = balance
 
+    @api.multi
+    def _compute_negative_balance(self):
+        # Auxiliary field for negative balances in red (form view).
+        for record in self:
+            record.negative_balance = record.balance
+
+    @api.depends('accumulated_input', 'accumulated_consumption')
+    def _compute_available_quota_percentage(self):
+        for record in self:
+            available_quota_percentage = 0
+            accumulated_input = record.accumulated_input
+            accumulated_consumption = record.accumulated_consumption
+            if (accumulated_input > 0 and
+               accumulated_consumption < accumulated_input):
+                available_quota_percentage = \
+                    100 - ((accumulated_consumption / accumulated_input) * 100)
+            record.available_quota_percentage = available_quota_percentage
+
+    @api.multi
+    def _compute_available_quota_percentage_with_suffix(self):
+        for record in self:
+            record.available_quota_percentage_with_suffix = \
+                format_decimal(record.available_quota_percentage,
+                               format='0.00',
+                               locale=self.env.context['lang']) + ' %'
+
+    @api.multi
+    def _compute_average_daily_consumption(self):
+        for record in self:
+            average_daily_consumption = 0
+            quotaperiod = record.quotaperiod_id
+            accumulated_consumption = record.accumulated_consumption
+            if (accumulated_consumption > 0 and
+               quotaperiod.state == 'generated' and
+               quotaperiod.number_of_days_elapsed > 0):
+                average_daily_consumption = \
+                    (accumulated_consumption /
+                     quotaperiod.number_of_days_elapsed)
+            record.average_daily_consumption = average_daily_consumption
+
+    @api.multi
+    def _compute_number_of_days_elapsed_and_pending(self):
+        for record in self:
+            record.number_of_days_elapsed_and_pending = \
+                str(record.number_of_days_elapsed) + ' - ' + \
+                str(record.number_of_days_pending) + ' ' + _('days')
+
+    @api.multi
+    def _compute_estimated_consumption(self):
+        for record in self:
+            record.estimated_consumption = \
+                (record.average_daily_consumption *
+                 record.number_of_days_pending)
+
+    @api.multi
+    def _compute_estimated_balance(self):
+        for record in self:
+            record.estimated_balance = \
+                (record.balance - record.estimated_consumption)
+
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         args = args or []
         quotas = self.search(
             [('partner_id.name', 'ilike', name)] + args, limit=limit)
         return quotas.name_get()
-
-    @api.multi
-    def _compute_negative_balance(self):
-        # Auxiliary field for negative balances in red (form view).
-        for record in self:
-            record.negative_balance = record.balance
 
     @api.multi
     def name_get(self):

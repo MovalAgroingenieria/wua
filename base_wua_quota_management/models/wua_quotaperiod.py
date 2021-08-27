@@ -130,6 +130,22 @@ class WuaQuotaperiod(models.Model):
         string='Balances received from previous quota period',
         compute='_compute_balances_from_prev_quotaperiod')
 
+    number_of_days = fields.Integer(
+        string='Number of days',
+        compute='_compute_number_of_days')
+
+    number_of_days_pending = fields.Integer(
+        string='Number of days pending',
+        compute='_compute_number_of_days_pending')
+
+    number_of_days_elapsed = fields.Integer(
+        string='Number of days elapsed',
+        compute='_compute_number_of_days_elapsed')
+
+    is_current_quotaperiod = fields.Boolean(
+        string='Current quota period',
+        compute='_compute_is_current_quotaperiod')
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
@@ -244,6 +260,75 @@ class WuaQuotaperiod(models.Model):
                     balances_from_prev_quotaperiod = True
             record.balances_from_prev_quotaperiod = \
                 balances_from_prev_quotaperiod
+
+    @api.multi
+    def _compute_number_of_days(self):
+        for record in self:
+            number_of_days = 0
+            if (record.initial_date and record.end_date and
+               record.initial_date < record.end_date):
+                initial_date = datetime.datetime.strptime(
+                    record.initial_date, '%Y-%m-%d').date()
+                end_date = datetime.datetime.strptime(
+                    record.end_date, '%Y-%m-%d').date()
+                number_of_days = (end_date - initial_date).days + 1
+            record.number_of_days = number_of_days
+
+    @api.multi
+    def _compute_number_of_days_pending(self):
+        for record in self:
+            number_of_days_pending = 0
+            if (record.initial_date and record.end_date and
+               record.initial_date < record.end_date):
+                initial_date = datetime.datetime.strptime(
+                    record.initial_date, '%Y-%m-%d').date()
+                end_date = datetime.datetime.strptime(
+                    record.end_date, '%Y-%m-%d').date()
+                today = datetime.date.today()
+                if today < end_date:
+                    if today < initial_date:
+                        number_of_days_pending = \
+                            (end_date - initial_date).days + 1
+                    else:
+                        number_of_days_pending = \
+                            (end_date - today).days
+            record.number_of_days_pending = number_of_days_pending
+
+    @api.multi
+    def _compute_number_of_days_elapsed(self):
+        for record in self:
+            number_of_days_elapsed = 0
+            if (record.initial_date and record.end_date and
+               record.initial_date < record.end_date):
+                initial_date = datetime.datetime.strptime(
+                    record.initial_date, '%Y-%m-%d').date()
+                end_date = datetime.datetime.strptime(
+                    record.end_date, '%Y-%m-%d').date()
+                today = datetime.date.today()
+                if today > initial_date:
+                    if today > end_date:
+                        number_of_days_elapsed = \
+                            (end_date - initial_date).days + 1
+                    else:
+                        number_of_days_elapsed = \
+                            (today - initial_date).days + 1
+            record.number_of_days_elapsed = number_of_days_elapsed
+
+    @api.multi
+    def _compute_is_current_quotaperiod(self):
+        for record in self:
+            is_current_quotaperiod = False
+            if (record.initial_date and record.end_date and
+               record.initial_date < record.end_date and
+               record.state == 'generated'):
+                initial_date = datetime.datetime.strptime(
+                    record.initial_date, '%Y-%m-%d').date()
+                end_date = datetime.datetime.strptime(
+                    record.end_date, '%Y-%m-%d').date()
+                today = datetime.date.today()
+                if today >= initial_date and today <= end_date:
+                    is_current_quotaperiod = True
+            record.is_current_quotaperiod = is_current_quotaperiod
 
     @api.constrains('initial_date', 'end_date')
     def _check_initial_end_dates(self):
@@ -788,6 +873,7 @@ class WuaQuotaperiod(models.Model):
                                                      'updating records.'))
                     if commit_ok:
                         added_quotas._compute_name()
+                        added_quotas._compute_available_quota_percentage()
                         added_hydricmovements._compute_description()
                         quotaperiod._compute_state()
             else:
