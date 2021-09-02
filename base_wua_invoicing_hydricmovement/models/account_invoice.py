@@ -87,7 +87,6 @@ class AccountInvoice(models.Model):
 #         return lines
 
 
-
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
 

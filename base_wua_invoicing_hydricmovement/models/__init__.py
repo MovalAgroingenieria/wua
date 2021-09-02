@@ -8,3 +8,4 @@ from . import wua_hydricmovement
 from . import wua_invoiceset
 from . import wua_presconsumption
 from . import wua_reading
+from . import wua_quotaperiod

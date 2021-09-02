@@ -673,7 +673,7 @@ class WuaQuotaperiod(models.Model):
                     DELETE FROM wua_cession
                     WHERE quotaperiod_id=""" + str(quotaperiod_id))
                 self.env.cr.commit()
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
@@ -693,7 +693,7 @@ class WuaQuotaperiod(models.Model):
                     DELETE FROM wua_quota
                     WHERE quotaperiod_id=""" + str(quotaperiod_id))
                 self.env.cr.commit()
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
@@ -866,7 +866,7 @@ class WuaQuotaperiod(models.Model):
                             self.env['wua.hydricmovement'].search(
                                 [('id', '>', last_id)])
                         self.env.cr.commit()
-                    except:
+                    except Exception:
                         commit_ok = False
                         self.env.cr.rollback()
                         raise exceptions.UserError(_('Error when '
@@ -894,7 +894,7 @@ class WuaQuotaperiod(models.Model):
                         DELETE FROM wua_quotaperiod_line_parcel WHERE
                         quotaperiodline_id=""" + str(quotaperiodline_id) + sf)
                     self.env.cr.commit()
-                except:
+                except Exception:
                     self.env.cr.rollback()
                     raise exceptions.UserError(
                         _('Error when updating records.'))
@@ -925,7 +925,7 @@ class WuaQuotaperiod(models.Model):
                     WHERE s.quotaperiodline_id=%s AND
                     SELECTED=TRUE)""", (dst_id, src_id))
                 self.env.cr.commit()
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 
@@ -1324,7 +1324,7 @@ class WuaQuotaperiodLine(models.Model):
                     ON l.parcel_id=r.parcel_id
                     WHERE l.quotaperiodline_id=""" + str(quotaperiodline_id))
                 self.env.cr.commit()
-            except:
+            except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
 

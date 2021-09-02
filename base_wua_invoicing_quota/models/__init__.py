@@ -5,5 +5,6 @@
 from . import account_invoice
 from . import product
 from . import wua_quota
+from . import wua_quotaperiod
 from . import wua_invoiceset
 from . import wua_invoicing_config_settings

@@ -215,7 +215,8 @@ class WuaInvoicesetLine(models.Model):
                 quotaperiod_id, superproduct_id, partner_id, category_id,
                 event_time, volume, description, type
                 FROM wua_hydricmovement WHERE of_active_agriculturalseason
-                AND superproduct_id = %s AND NOT invoiced_hydricmovement
+                AND superproduct_id = %s AND NOT COALESCE(
+                    invoiced_hydricmovement, FALSE)
                 AND CASE
                         WHEN type = 'grav_consumption' THEN gravconsumption_id
                             IN (SELECT id FROM wua_gravconsumption WHERE
