@@ -89,6 +89,10 @@ class WuaInvoiceset(models.Model):
             else:
                 key2 = 0
             quantity = hydricmovement.volume
+            # Check if quantity should be negative
+            if (hydricmovement.type == 'granted_cession' or
+                    hydricmovement.type == 'neg_indiv_assign'):
+                quantity = -quantity
             description = self.get_hydricmovement_description(hydricmovement)
             result = {
                 'partner_id': partner_id,
