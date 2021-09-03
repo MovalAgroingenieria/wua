@@ -56,6 +56,11 @@ class WuaWatering(models.Model):
             'default_distribute_extra_volume')
         return resp
 
+    def _default_watering_early_start(self):
+        resp = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'watering_allow_early_start')
+        return resp
+
     wateringperiod_id = fields.Many2one(
         string='Watering Period',
         comodel_name='wua.wateringperiod',
@@ -257,6 +262,13 @@ class WuaWatering(models.Model):
         string='Allow Selection',
         compute='_compute_allow_select',)
 
+    watering_early_start = fields.Integer(
+        string="Allowed early start days",
+        readonly=True,
+        default=_default_watering_early_start,
+        compute='_compute_watering_early_start',
+        help="The number of previous days allowed to start a watering.")
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Watering.'),
@@ -407,6 +419,13 @@ class WuaWatering(models.Model):
             'wua.irrigation.configuration', 'watering_allow_open_period')
         for record in self:
             record.allow_select = allow_select or not record.is_open
+
+    @api.multi
+    def _compute_watering_early_start(self):
+        allow_early_start = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'watering_allow_early_start')
+        for record in self:
+            record.watering_early_start = allow_early_start
 
     @api.depends('reservoir_volume', 'watering_volume')
     def _compute_extra_volume(self):
@@ -1091,6 +1110,7 @@ class WuaWatering(models.Model):
         is_ok = True
         wateringperiod = self.env['wua.wateringperiod'].browse(
             wateringperiod_id)
+        early_start_days = self._default_watering_early_start()
         if wateringperiod:
             watering_initial_time = fields.Datetime.from_string(initial_time)
             if self.env.user.tz:
@@ -1099,6 +1119,9 @@ class WuaWatering(models.Model):
                 watering_initial_time = watering_initial_time + offset
             wateringperiod_initial_time = fields.Datetime.from_string(
                 wateringperiod.initial_date)
+            if early_start_days > 0:
+                wateringperiod_initial_time = wateringperiod_initial_time - \
+                    timedelta(days=early_start_days)
             wateringperiod_end_time = fields.Datetime.from_string(
                 wateringperiod.end_date) + timedelta(days=1)
             is_ok = (watering_initial_time >= wateringperiod_initial_time and
