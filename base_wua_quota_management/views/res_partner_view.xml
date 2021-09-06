@@ -6,6 +6,12 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                    <button name="action_assign_provision_not_confirm"
+                        type="object" string="Provision"
+                        icon="fa-moval-quotas"
+                        groups="base_wua.group_wua_manager"/>
+            </xpath>
             <xpath expr="//button[@name='toggle_active']" position="after">
                 <button name="action_get_partner_quotas"
                         type="object" class="oe_stat_button"

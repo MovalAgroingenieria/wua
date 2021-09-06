@@ -638,6 +638,18 @@ class WuaQuotaperiod(models.Model):
                     resp = True
         return resp
 
+    def exists_partner_in_quotaperiod(
+            self, quotaperiod, superproduct, partner):
+        resp = False
+        if quotaperiod and superproduct and partner:
+            quota = self.env['wua.quota'].search(
+                [('quotaperiod_id', '=', quotaperiod.id),
+                 ('superproduct_id', '=', superproduct.id),
+                 ('partner_id', '=', partner.id)])
+            if quota and quota[0]:
+                resp = True
+        return resp
+
     def _populate_pos_in_quotaperiodlines(self, vals):
         if vals and 'quotaperiodline_ids' in vals:
             last_pos = 0

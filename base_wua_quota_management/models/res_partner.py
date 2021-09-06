@@ -18,6 +18,16 @@ class ResPartner(models.Model):
         comodel_name='wua.hydricmovement',
         inverse_name='partner_id')
 
+    def _get_current_quotaperiod(self):
+        current_quotaperiod = None
+        quotaperiods = self.env['wua.quotaperiod'].search(
+            [('of_active_agriculturalseason', '=', True)])
+        for quotaperiod in (quotaperiods or []):
+            if quotaperiod.is_current_quotaperiod:
+                current_quotaperiod = quotaperiod
+                break
+        return current_quotaperiod
+
     @api.multi
     def action_get_partner_quotas(self):
         self.ensure_one()
@@ -75,3 +85,16 @@ class ResPartner(models.Model):
                             'search_default_active_agriculturalseason': True}
                 }
             return act_window
+
+    @api.multi
+    def action_assign_provision_not_confirm(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Initial provision for a partner'),
+            'res_model': 'wizard.provision.partner',
+            'src_model': 'res.partner',
+            'view_mode': 'form',
+            'target': 'new'
+            }
+        return act_window

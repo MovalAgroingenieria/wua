@@ -20,6 +20,10 @@
             <xpath expr="//form" position="attributes">
                 <attribute name="duplicate">0</attribute>
             </xpath>
+            <xpath expr="//sheet" position="before">
+                <header>
+                </header>
+            </xpath>
             <xpath expr="//button[@name='toggle_active']" position="attributes">
                 <attribute name="groups">base_wua.group_wua_user</attribute>
             </xpath>
@@ -72,7 +76,7 @@
             <xpath expr="//field[@name='category_id']" position="replace">
                 <field name="category_id" widget="many2many_tags"
                  placeholder="Tags..." options="{'no_create_edit': False}"/>
-            </xpath>            
+            </xpath>
             <xpath expr="//field[@name='function']" position="attributes">
                 <attribute name="attrs">
                     {'invisible':[('is_wua_partner','=',True)]}
@@ -85,13 +89,13 @@
             </xpath>
             <xpath expr="//field[@name='lang']" position="after">
                 <field name="gender"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>                                       
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="birthdate"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_owner" readonly="1"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_lessee" readonly="1"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>                 
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_payer" readonly="1"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <!-- <separator string="Provisional" colspan="2"/>
@@ -162,7 +166,7 @@
             </xpath>
             <xpath expr="//field[@name='email']" position="after">
                 <field name="vat"/>
-                <field name="gis_viewer_link" invisible="1"/>                
+                <field name="gis_viewer_link" invisible="1"/>
                 <field name="company_type" invisible="1"/>
                 <button name="action_see_gis_viewer"
                         type="object" class="oe_stat_button"
@@ -251,7 +255,7 @@
         <field name="res_model">wua.parcel.partnerlink</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="wua_parcel_partnerlink_view_tree"/>
-        <field name="search_view_id" ref="wua_parcel_partnerlink_view_search"/>        
+        <field name="search_view_id" ref="wua_parcel_partnerlink_view_search"/>
     </record>
 
     <record id="base.action_partner_customer_form" model="ir.actions.act_window">

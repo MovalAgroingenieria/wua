@@ -6,21 +6,21 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base_wua.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet" position="before">
+            <xpath expr="//header" position="before">
                 <field name="registered_cropplan" invisible="1"/>
                 <field name="exists_active_agriculturalseason" invisible="1"/>
-                <header>
-                    <div name="cropplanregistered"
-                         style="display: inline-block;color:black;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
-                         attrs="{'invisible':['|',('registered_cropplan','=',False),('exists_active_agriculturalseason','=',False)]}">
-                        ( CROP PLAN REGISTERED )
-                    </div>
-                    <div name="cropplannotregistered"
-                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
-                         attrs="{'invisible':['|',('registered_cropplan','=',True),('exists_active_agriculturalseason','=',False)]}">
-                        ( CROP PLAN NOT REGISTERED )
-                    </div>
-                </header>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <div name="cropplanregistered"
+                        style="display: inline-block;color:black;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                        attrs="{'invisible':['|',('registered_cropplan','=',False),('exists_active_agriculturalseason','=',False)]}">
+                    ( CROP PLAN REGISTERED )
+                </div>
+                <div name="cropplannotregistered"
+                        style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                        attrs="{'invisible':['|',('registered_cropplan','=',True),('exists_active_agriculturalseason','=',False)]}">
+                    ( CROP PLAN NOT REGISTERED )
+                </div>
             </xpath>
             <xpath expr="//button[@name='action_see_gis_viewer']"
                    position="before">
@@ -34,13 +34,13 @@
                     <div class="o_form_field o_stat_info">
                         <span class="o_stat_value">
                             <field name="number_of_enrolledsubparcels"/>
-                        </span>                    
+                        </span>
                         <span class="o_stat_text">
                             enrollments
                         </span>
                     </div>
                 </button>
-            </xpath>            
+            </xpath>
             <xpath expr="//field[@name='number_of_votes']" position="after">
                 <field name="cropplan_id"/>
             </xpath>
@@ -69,7 +69,7 @@
                  domain="[('registered_cropplan','=',True)]"/>
                 <filter string="Registered Crop Plan: No" name="registeredcropplanno"
                  domain="[('registered_cropplan','=',False)]"/>
-                <separator/>                 
+                <separator/>
             </xpath>
         </field>
     </record>
