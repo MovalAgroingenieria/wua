@@ -8,15 +8,17 @@
         <field name="arch" type="xml">
           <xpath expr="//field[@name='volume']" position="attributes">
               <attribute name="attrs">
-                  {'readonly':['|', '&amp;', ('id', '>', 0),
+                  {'readonly':['|', '|', '&amp;', ('id', '>', 0),
                    ('is_last_reading', '!=', True),
-                   ('invoiced_reading_quota','=',True)]}
+                   ('invoiced_reading_quota','=',True),
+                   ('invoiced_reading','=',True)]}
               </attribute>
           </xpath>
           <xpath expr="//field[@name='validated']"
                  position="attributes">
               <attribute name="attrs">
-                  {'readonly':[('invoiced_reading_quota','=',True)]}
+                  {'readonly':['|', ('invoiced_reading','=',True),
+                    ('invoiced_reading_quota','=',True)]}
               </attribute>
           </xpath>
           <xpath expr="//field[@name='volume']" position="before">

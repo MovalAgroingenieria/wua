@@ -18,6 +18,20 @@ class WuaQuotaperiod(models.Model):
                     UPDATE wua_hydricmovement
                     SET invoiced_hydricmovement = FALSE
                     WHERE invoiced_hydricmovement is NULL""")
+                self.env.cr.execute("""
+                    UPDATE wua_presconsumption
+                    SET invoiced_consumption_quota = TRUE WHERE id IN
+                    (SELECT DISTINCT(wp1.id) FROM wua_presconsumption wp1
+                     INNER JOIN wua_hydricmovement wh1 ON wp1.id =
+                     wh1.presconsumption_id WHERE
+                     wh1.invoiced_hydricmovement)""")
+                self.env.cr.execute("""
+                    UPDATE wua_reading
+                    SET invoiced_reading_quota = TRUE WHERE id IN
+                    (SELECT DISTINCT(wr1.id) FROM wua_reading wr1
+                     INNER JOIN wua_presconsumption wp1 ON wp1.id =
+                     wr1.presconsumption_id WHERE
+                     wp1.invoiced_consumption_quota)""")
             except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when '

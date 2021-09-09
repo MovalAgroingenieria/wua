@@ -8,7 +8,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='adjustement_volume']" position="attributes">
                 <attribute name="attrs">
-                    {'readonly':[('invoiced_consumption_quota','=',True)]}
+                    {'readonly':['|', ('invoiced_consumption_quota','=',True),
+                        ('invoiced_consumption', '=', True)]}
                 </attribute>
             </xpath>
             <xpath expr="//field[@name='reading_id']" position="after">

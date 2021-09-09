@@ -11,11 +11,11 @@ class WuaPresconsumption(models.Model):
     invoiced_consumption_quota = fields.Boolean(
         string='Invoiced by quota',
         store=True,
-        compute='_compute_invoiced_quota')
+        compute='_compute_invoiced_consumption_quota')
 
     @api.depends('hydricmovement_ids',
                  'hydricmovement_ids.invoiced_hydricmovement')
-    def _compute_invoiced_quota(self):
+    def _compute_invoiced_consumption_quota(self):
         result = False
         for record in self:
             for hydricmov in record.hydricmovement_ids:
