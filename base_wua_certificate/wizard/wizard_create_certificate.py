@@ -22,8 +22,7 @@ class WizardCreateCertificate(models.TransientModel):
 
     certificatetype_id = fields.Many2one(
         string='Certificate Type',
-        comodel_name='wua.certificate.type',
-        required=True)
+        comodel_name='wua.certificate.type')
 
     user_who_signs_id = fields.Many2one(
         string='User who signs',
@@ -133,18 +132,23 @@ class WizardCreateCertificate(models.TransientModel):
             }
 
     def _create_record(self):
-        resp = 0
         # Certificate
         main_page = self.certificatetype_id.main_page
+        final_paragraph = self.certificatetype_id.final_paragraph
         if self.partner_id.lang:
             main_page = self.with_context(
-                {'lang': self.partner_id.lang}).certificatetype_id.main_page
+                {'lang': self.partner_id.lang}).\
+                certificatetype_id.main_page
+            final_paragraph = self.with_context(
+                {'lang': self.partner_id.lang}).\
+                certificatetype_id.final_paragraph
         fields_of_new_certificate = {
             'partner_id': self.partner_id.id,
             'certificatetype_id': self.certificatetype_id.id,
             'requested_from_portal': self.requested_from_portal,
             'user_who_signs_id': self.user_who_signs_id.id,
             'main_page': main_page,
+            'final_paragraph': final_paragraph,
             }
         if self.notes:
             notes = '<p>' + self.notes + '<br></p>'

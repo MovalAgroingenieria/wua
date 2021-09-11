@@ -32,6 +32,9 @@
                             <page name="main_page" string="Main Page">
                                 <field name="main_page"/>
                             </page>
+                            <page name="final_paragraph" string="Final Paragraph">
+                                <field name="final_paragraph"/>
+                            </page>
                             <page name="parcels_page" string="Parcels">
                                 <field name="certificateparcel_ids"
                                        context="{'tree_view_ref':
@@ -396,7 +399,15 @@
                             </page>
                             <page name="main_page" string="Main Page"
                                   groups="base_wua.group_wua_user">
-                                <field name="main_page"/>
+                                <field name="main_page"
+                                       attrs="{'readonly':
+                                                [('state','!=','01_draft')]}"/>
+                            </page>
+                            <page name="final_paragraph" string="Final Paragraph"
+                                  groups="base_wua.group_wua_user">
+                                <field name="final_paragraph"
+                                       attrs="{'readonly':
+                                                [('state','!=','01_draft')]}"/>
                             </page>
                             <page name="notes_wua" string="WUA Notes"
                                   groups="base_wua.group_wua_user">

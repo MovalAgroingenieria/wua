@@ -65,6 +65,10 @@ class WuaCertificateType(models.Model):
         string='Certificate Template',
         translate=True)
 
+    final_paragraph = fields.Html(
+        string='Final Paragraph',
+        translate=True)
+
     _sql_constraints = [
         ('valid_certificatetype_code', 'CHECK (certificatetype_code > 0)',
          'The certificate type code must be a positive value.'),

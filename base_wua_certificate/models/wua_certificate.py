@@ -76,6 +76,10 @@ class WuaCertificate(models.Model):
     main_page = fields.Html(
         string='Main Page')
 
+    final_paragraph = fields.Html(
+        string='Final Paragraph',
+        translate=True)
+
     certificateparcel_ids = fields.One2many(
         string='Associated Parcels',
         comodel_name='wua.certificate.parcel',
@@ -152,6 +156,10 @@ class WuaCertificate(models.Model):
     rendered_main_page = fields.Html(
         string='Preview of certificate',
         compute='_compute_rendered_main_page')
+
+    rendered_final_paragraph = fields.Html(
+        string='Preview of certificate (final paragraph)',
+        compute='_compute_rendered_final_paragraph')
 
     has_mailtemplate = fields.Boolean(
         string='With mail template',
@@ -240,8 +248,18 @@ class WuaCertificate(models.Model):
         for record in self:
             rendered_main_page = ''
             if record.main_page:
-                rendered_main_page = record._get_rendered_text()
+                rendered_main_page = \
+                    record._get_rendered_text()
             record.rendered_main_page = rendered_main_page
+
+    @api.multi
+    def _compute_rendered_final_paragraph(self):
+        for record in self:
+            rendered_final_paragraph = ''
+            if record.final_paragraph:
+                rendered_final_paragraph = \
+                    record._get_rendered_text(is_main_page=False)
+            record.rendered_final_paragraph = rendered_final_paragraph
 
     @api.multi
     def _compute_has_mailtemplate(self):
@@ -296,6 +314,7 @@ class WuaCertificate(models.Model):
     @api.onchange('certificatetype_id')
     def _onchange_certificatetype_id(self):
         self.main_page = self.certificatetype_id.main_page
+        self.final_paragraph = self.certificatetype_id.final_paragraph
 
     @api.model
     def create(self, vals):
@@ -430,14 +449,17 @@ class WuaCertificate(models.Model):
             resp = filtered_translations[0].value
         return resp
 
-    def _get_rendered_text(self):
+    def _get_rendered_text(self, is_main_page=True):
         resp = ''
         lang = self.create_uid.lang
         if not lang:
             lang = 'en_US'
         today = date.today()
         try:
-            template = Template(self.main_page)
+            if is_main_page:
+                template = Template(self.main_page)
+            else:
+                template = Template(self.final_paragraph)
             resp = template.render(
                 partner=self.partner_id,
                 certificate=self,

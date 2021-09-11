@@ -22,6 +22,11 @@ class WizardPreviewCertificate(models.TransientModel):
             if main_page_preview:
                 main_page_preview = certificate.html_certificate_title + \
                     '<br><br>' + main_page_preview
+                final_paragraph_preview = certificate.rendered_final_paragraph
+                if final_paragraph_preview:
+                    main_page_preview = main_page_preview + \
+                        '<br><center>* * *</center><br>' + \
+                        final_paragraph_preview
         return {
             'main_page_preview': main_page_preview,
             }
