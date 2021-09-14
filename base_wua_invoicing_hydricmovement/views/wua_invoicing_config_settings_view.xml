@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoicing_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.invoicing.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing.wua_invoicing_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='alter_invoicing_behavior']/ancestor::group"
+                   position="before">
+                <group name="params_categ_14"
+                    string="Invoicing of Hydric Movements">
+                  <field name="invoicing_of_negative_hydricmovements_as_negative_values"
+                         widget="checkbox"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

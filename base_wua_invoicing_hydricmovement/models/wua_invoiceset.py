@@ -78,6 +78,10 @@ class WuaInvoiceset(models.Model):
                          self).calculate_invoice_details_others_categ(
                              product_id, categ_code, item_ids, partnerlinks)
         invoice_details_categ14 = []
+        invoicing_of_negative_hydricmovements_as_negative_values = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration',
+                'invoicing_of_negative_hydricmovements_as_negative_values')
         hydricmovements = self.env['wua.hydricmovement'].browse(item_ids)
         for hydricmovement in hydricmovements:
             partner_id = hydricmovement.partner_id.id
@@ -90,8 +94,9 @@ class WuaInvoiceset(models.Model):
                 key2 = 0
             quantity = hydricmovement.volume
             # Check if quantity should be negative
-            if (hydricmovement.type == 'granted_cession' or
-                    hydricmovement.type == 'neg_indiv_assign'):
+            if ((hydricmovement.type == 'granted_cession' or
+               hydricmovement.type == 'neg_indiv_assign') and
+               invoicing_of_negative_hydricmovements_as_negative_values):
                 quantity = -quantity
             description = self.get_hydricmovement_description(hydricmovement)
             result = {
