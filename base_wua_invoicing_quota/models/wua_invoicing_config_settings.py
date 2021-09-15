@@ -18,9 +18,17 @@ class WuaInvoicingConfiguration(models.TransientModel):
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
         values = self.env['ir.values'].sudo()
-        if (values.get_default('wua.invoicing.configuration',
-            'invoicing_of_negative_balance') !=
-                self.invoicing_of_negative_balance):
+        prior_invoicing_of_negative_balance = \
+            values.get_default('wua.invoicing.configuration',
+                               'invoicing_of_negative_balance')
+        current_invoicing_of_negative_balance = \
+            self.invoicing_of_negative_balance
+        if not prior_invoicing_of_negative_balance:
+            prior_invoicing_of_negative_balance = False
+        if not current_invoicing_of_negative_balance:
+            current_invoicing_of_negative_balance = False
+        if (prior_invoicing_of_negative_balance !=
+           current_invoicing_of_negative_balance):
             quotas_already_invoiced = self.env['wua.quota'].search(
                 ['&', ('of_active_agriculturalseason', '=', True), (
                     'invoiced', '=', True)])
