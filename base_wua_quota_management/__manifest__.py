@@ -30,6 +30,7 @@
         "wizard/wizard_massive_individualinputs_view.xml",
         "wizard/wizard_provision_parcel_view.xml",
         "wizard/wizard_provision_partner_view.xml",
+        "wizard/wizard_massive_compensatorytransfers_view.xml",
         "views/resources.xml",
         "views/base_wua_quota_management_menus.xml",
         "views/wua_quotas_config_settings_view.xml",

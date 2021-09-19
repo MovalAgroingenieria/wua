@@ -147,6 +147,19 @@
                                     ['|',('state','!=','generated'),
                                      ('of_active_agriculturalseason','=',False)]}"
                             groups="base_wua_quota_management.group_wua_quota_manager"/>
+                    <span style="display: inline-block;padding-left: 12px;"
+                            attrs="{'invisible':
+                                    ['|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"/>
+                    <button name="action_apply_massive_compensatorytransfers"
+                            type="object" string="Compensate"
+                            icon="fa-exchange"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            attrs="{'invisible':
+                                    ['|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"
+                            groups="base.group_system"/>                            
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,configured,generated"/>

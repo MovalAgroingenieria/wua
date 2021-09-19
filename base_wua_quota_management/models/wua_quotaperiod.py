@@ -600,6 +600,19 @@ class WuaQuotaperiod(models.Model):
             }
         return act_window
 
+    @api.multi
+    def action_apply_massive_compensatorytransfers(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Massive compensatory tranfers'),
+            'res_model': 'wizard.massive.compensatorytransfers',
+            'src_model': 'wua.quotaperiod',
+            'view_mode': 'form',
+            'target': 'new'
+            }
+        return act_window
+
     def get_provision(self, quotaperiod, superproduct):
         resp = 0
         if quotaperiod and superproduct:
