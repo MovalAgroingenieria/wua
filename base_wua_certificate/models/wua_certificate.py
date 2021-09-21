@@ -225,6 +225,8 @@ class WuaCertificate(models.Model):
 
     @api.multi
     def _compute_html_certificate_title(self):
+        settings = self.env['res.backend.settings'].search([])
+        report_color = str(settings[0].report_motive_color)
         for record in self:
             html_certificate_title = ''
             if record.name:
@@ -236,7 +238,7 @@ class WuaCertificate(models.Model):
                 html_certificate_title = \
                     '<div class="panel-body text-left" ' + \
                     'style="background:#f4f6f6;' + \
-                    'border-color:#696969;border-width:1px;' + \
+                    'border-color:' + report_color + '; border-width:1px;' + \
                     'border-style:solid;padding-top:8px;' + \
                     'padding-bottom:8px;' + \
                     'margin-left:0px;margin-right:0px">' + \

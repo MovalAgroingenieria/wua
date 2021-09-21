@@ -1,35 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="paperformat_portrait_standard_certificate"
-            model="report.paperformat">
-        <field name="name">European A4 Portrait Certificate</field>
-        <field name="default" eval="True"/>
-        <field name="format">A4</field>
-        <field name="page_height">0</field>
-        <field name="page_width">0</field>
-        <field name="orientation">Portrait</field>
-        <field name="margin_top">33</field>
-        <field name="margin_bottom">20</field>
-        <field name="margin_left">9</field>
-        <field name="margin_right">9</field>
-        <field name="header_line" eval="False"/>
-        <field name="header_spacing">22</field>
-        <field name="dpi">96</field>
-    </record>
-
     <report id="action_wua_certificate_report"
             string="Certificate"
             model="wua.certificate"
             report_type="qweb-pdf"
             name="base_wua_certificate.report_wua_certificate"
-            paperformat="paperformat_portrait_standard_certificate"
+            paperformat="base_wua_report.paperformat_wua_reports"
             menu="False"
             groups="base_wua.group_wua_user"/>
 
     <template id="report_wua_certificate">
         <t t-call="report.html_container">
-            <t t-call="base_wua_certificate.report_wua_certificate_external_layout">
+            <t t-call="base_wua_report.wua_external_layout">
                 <div class="page">
                     <t t-foreach="docs" t-as="o">
                         <t t-call="base_wua_certificate.report_wua_certificate_document"/>
@@ -41,132 +24,101 @@
     </template>
 
     <template id="report_wua_certificate_document">
-        <div style="font-family: dejavusansmono;font-size: 9;">
-            <style type="text/css">
-            <![CDATA[
-            @font-face {
-                font-family: 'verdana';
-                src: local('Verdana');
-            }
-            @font-face {
-                font-family: 'dejavusansmono';
-                src: local('DejaVu Sans Mono');
-            }
-            ]]>
-            </style>
+        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+        <div>
             <div class="row" name="section_master">
-                <div class="col-xs-12 text-justify" style="font-family: verdana;font-size: 12;margin-top: 10px;margin-bottom: 80px;">
+                <!-- Title -->
+                <div class="col-xs-12 text-justify" style="margin-top: 10px;margin-bottom: 40px;">
                     <span t-field="o.html_certificate_title"/>
                 </div>
                 <t t-if="o.state == '01_draft'">
-                    <div class="col-xs-12 text-center" style="font-family: dejavusansmono;font-size: 18;margin-bottom: 20px;">
+                    <div class="col-xs-12 text-center theme-report-color" style="margin-bottom: 20px;">
                         <span>( D R A F T )</span>
                     </div>
                 </t>
-                <div class="col-xs-12 text-justify" style="font-family: verdana;font-size: 18;padding-left: 40px;padding-right: 40px;">
-                    <span t-field="o.sudo().rendered_main_page"/>
-                </div>
             </div>
+            <!-- Text -->
+            <div class="row h4 mt28 mb4" name="section_detail" style="padding-bottom: 4px;">
+                <t t-if="report_style == 'light'">
+                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-certificate"/></div>
+                        <div style="float: left; display: inline;"><strong>Statement</strong></div>
+                        <div style="float: right;">
+                            <strong><span t-field="o.reference_number"/></strong>
+                        </div>
+                   </div>
+                </t>
+                <t t-else="">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-certificate"/></div>
+                        <div style="float: left; display: inline;"><strong>Statement</strong></div>
+                        <div style="float: right;">
+                            <strong><span t-field="o.reference_number"/></strong>
+                        </div>
+                    </div>
+                </t>
+            </div>
+            <div class="col-xs-12 text-justify">
+                <span t-field="o.sudo().rendered_main_page"/>
+            </div>
+
             <p style="page-break-after:always;"></p>
-            <div class="row" name="section_detail" style="font-family: dejavusansmono;font-size: 12;padding-left: 40px;padding-right: 40px;">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr style="background-color: #e9e9e9">
-                            <th class="text-left">Land Parcel</th>
-                            <th class="text-center">Cadastral Reference</th>
-                            <th class="text-right">Area</th>
-                            <th class="text-right">Ownership %</th>
-                            <th class="text-right">Water Costs %</th>
-                            <th class="text-right">Other Costs %</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr t-foreach="o.certificateparcel_ids" t-as="l">
-                            <td align="left"><span t-field="l.parcel_id"/></td>
-                            <td align="center"><span t-field="l.cadastral_reference"/></td>
-                            <td align="right"><span t-field="l.area_official"/></td>
-                            <td align="right"><span t-field="l.ownership_percentage"/></td>
-                            <td align="right"><span t-field="l.water_costs_percentage"/></td>
-                            <td align="right"><span t-field="l.other_costs_percentage"/></td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            <!-- Parcels -->
+            <div class="row h4 mt28 mb4" name="section_detail" style="padding-bottom: 4px;">
+                <t t-if="report_style == 'light'">
+                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                        <div style="float: left; display: inline;"><strong>Parcels</strong></div>
+                   </div>
+                </t>
+                <t t-else="">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                        <div style="float: left; display: inline;"><strong>Parcels</strong></div>
+                    </div>
+                </t>
             </div>
+            <t t-set="measurement_unit" t-value="o.certificateparcel_ids[0].parcel_id._compute_area_measurement_name()"/>
+            <table class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-left">Land Parcel</th>
+                        <th class="text-center">Cadastral Reference</th>
+                        <th class="text-right">Area (<span><t t-esc="measurement_unit"/></span>)</th>
+                        <th class="text-right">Ownership %</th>
+                        <th class="text-right">Water Costs %</th>
+                        <th class="text-right">Other Costs %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-set="total_area_official" t-value="0.0"/>
+                    <tr t-foreach="o.certificateparcel_ids" t-as="l">
+                        <td align="left"><span t-field="l.parcel_id"/></td>
+                        <td align="center"><span t-field="l.cadastral_reference"/></td>
+                        <td align="right">
+                            <span t-field="l.area_official"/>
+                            <t t-set="total_area_official" t-value="total_area_official + l.area_official"/>
+                         </td>
+                        <td align="right"><span t-field="l.ownership_percentage"/></td>
+                        <td align="right"><span t-field="l.water_costs_percentage"/></td>
+                        <td align="right"><span t-field="l.other_costs_percentage"/></td>
+                    </tr>
+                    <tr name="total_area">
+                        <td></td>
+                        <td><b>Total area:</b></td>
+                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area_official, 4)"/></td>
+                        <td></td><td></td><td></td>
+                    </tr>
+                </tbody>
+            </table>
+
             <t t-if="o.rendered_final_paragraph">
-                <div class="col-xs-12 text-justify" style="font-family: verdana;font-size: 18;padding-left: 40px;padding-right: 40px;padding-top: 40px">
+                <div class="col-xs-12 text-justify" style="padding-left: 40px;padding-right: 40px;padding-top: 40px">
                     <span t-field="o.sudo().rendered_final_paragraph"/>
                 </div>
             </t>
-        </div>
-    </template>
 
-    <template id="report_wua_certificate_external_layout">
-        <!-- Multicompany -->
-        <t t-if="not o and doc">
-            <t t-set="o" t-value="doc"/>
-        </t>
-        <t t-if="o and 'company_id' in o">
-            <t t-set="company" t-value="o.company_id"></t>
-        </t>
-        <t t-if="not o or not 'company_id' in o">
-            <t t-set="company" t-value="res_company"></t>
-        </t>
-        <t t-call="base_wua_certificate.report_wua_certificate_external_layout_header"/>
-        <t t-raw="0"/>
-        <t t-call="base_wua_certificate.report_wua_certificate_external_layout_footer"/>
-    </template>
-
-    <template id="report_wua_certificate_external_layout_header">
-        <div class="header" name="header_content" style="font-family: verdana;font-size: 12;">
-            <style type="text/css">
-            <![CDATA[
-            @font-face {
-                font-family: 'verdana';
-                src: local('Verdana');
-            }
-            ]]>
-            </style>
-            <div name="logo_title_header" class="row">
-                <t t-if="company.logo">
-                    <div class="col-xs-1">
-                        <img t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 50px;"/>
-                    </div>
-                    <div class="col-xs-7" style="margin-top:30px;">
-                        <span t-field="company.name"/>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-8" style="margin-top:30px;">
-                        <span t-field="company.name"/>
-                    </div>
-                </t>
-                <div class="col-xs-4 text-right" style="margin-top:30px;">
-                    <span>CERTIFICATE REPORT</span>
-                </div>
-            </div>
-            <div class="row zero_min_height">
-                <div class="col-xs-12">
-                    <div style="border-bottom: 1px solid black;"></div>
-                </div>
-            </div>
-        </div>
-    </template>
-
-    <template id="report_wua_certificate_external_layout_footer">
-        <div class="footer" name="footer_content" style="font-family: verdana;font-size: 10;">
-            <style type="text/css">
-            <![CDATA[
-            @font-face {
-                font-family: 'verdana';
-                src: local('Verdana');
-            }
-            ]]>
-            </style>
-            <div class="row" name="pagination">
-                <div class="col-xs-12 text-center" name="pages" style="margin-top:15px;">
-                    <span class="page"/> / <span class="topage"/>
-                </div>
-            </div>
         </div>
     </template>
 
