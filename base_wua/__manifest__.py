@@ -14,6 +14,7 @@
     "depends": [
         "base",
         "web",
+        "web_fix_chrome_web_client",
         "base_setup",
         "mail",
         "mass_mailing",
