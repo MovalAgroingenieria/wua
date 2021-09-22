@@ -71,8 +71,6 @@ def post_init_hook(cr, registry):
                          'page. These parcels are authorized for the use of '
                          'the water distributed by this corporation, for '
                          'agricultural irrigation.<br></p><p><br></p><p>'
-                         'Aerial photo of each plot is accompanied on the '
-                         'last page of this certificate.</p><p><br></p><p>'
                          'And as evidence thereof, I hereby issue this '
                          'certificate in {{ partner.company_id.city }} on '
                          '{{ current_month }} {{ current_day }}th, '
