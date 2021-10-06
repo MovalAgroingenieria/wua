@@ -1,0 +1,125 @@
+# -*- coding: utf-8 -*-
+# 2021 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+import pytz
+import datetime
+import requests
+import json
+from odoo import models
+
+
+class WuaWaterconnectionTelecontrol(models.Model):
+    _inherit = 'wua.waterconnection.telecontrol'
+
+    FACTOR_CONVERSION = 1.0
+
+    # Implemented hook
+    def populate_data_for_import_waterconnection_telecontrol_info(
+            self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
+        resp = True
+        return resp
+
+    # Hook
+    def import_waterconnection_telecontrol_info(
+            self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
+        wc_all_info = []
+        error_message = ''
+        jsessionid = self.open_connection(
+            url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password)
+        if jsessionid:
+            resp_rest = requests.request(
+                'POST', url_remotecontrol_rest + '/search',
+                headers={
+                    'Content-Type': 'application/json',
+                    'Cookie': 'JSESSIONID=' + jsessionid
+                    },
+                data=json.dumps({
+                    'type': ['hydrants'],
+                    'state': 'enabled'
+                    }))
+            installation_identifier = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'installation_identifier')
+            if resp_rest.status_code == 200 and installation_identifier:
+                hydrants = json.loads(resp_rest.text)
+                model_wua_watermeter = self.env['wua.watermeter']
+                for hydrant in hydrants:
+                    installationId = int(hydrant['installationId'])
+                    if installationId == installation_identifier:
+                        watermeter = \
+                            hydrant['counter']['code'].encode(
+                                'utf-8', 'ignore')
+                        current_watermeter = model_wua_watermeter.search(
+                            [('name', '=', watermeter)])
+                        if current_watermeter:
+                            current_watermeter = current_watermeter[0]
+                            if current_watermeter.waterconnection_id:
+                                waterconnection = \
+                                    current_watermeter.waterconnection_id.name
+                                total_volume = (
+                                    hydrant['counter']['counterGlobalValue']
+                                    / 1000)
+                                waterflow = (
+                                    hydrant['counter']['flow']
+                                    / self.FACTOR_CONVERSION)
+                                valve_open = \
+                                    hydrant['valve']['stateIsOpen']
+                                valve_scheduled = \
+                                    str(hydrant['valve']['modeIsProgram'])
+                                if valve_scheduled == '1':
+                                    valve_scheduled = True
+                                else:
+                                    valve_scheduled = False
+                                date = hydrant['counter']['lastStatusLocal']
+                                data_time = datetime.datetime.strptime(
+                                    date, '%d/%m/%Y %H:%M:%S')
+                                data_time = pytz.timezone('Europe/Madrid').\
+                                    localize(data_time)
+                                data_time = data_time.astimezone(
+                                    pytz.timezone('UTC')).\
+                                    strftime('%Y-%m-%d %H:%M:%S')
+                                wc_all_info.append({
+                                    'waterconnection': waterconnection,
+                                    'total_volume': total_volume,
+                                    'waterflow': waterflow,
+                                    'valve_open': valve_open,
+                                    'valve_scheduled': valve_scheduled,
+                                    'data_time': data_time,
+                                })
+            self.close_coonection(url_remotecontrol_rest, jsessionid)
+        return [wc_all_info, error_message]
+
+    def open_connection(self, url_remotecontrol_rest,
+                        url_remotecontrol_rest_username,
+                        url_remotecontrol_rest_password):
+        resp = ''
+        resp_rest = requests.request(
+            'POST', url_remotecontrol_rest + '/login',
+            headers={
+                'Content-Type': 'application/json'
+                },
+            data=json.dumps({
+                'username': url_remotecontrol_rest_username,
+                'password': url_remotecontrol_rest_password
+                }))
+        if resp_rest.status_code == 200:
+            headers = str(resp_rest.headers)
+            pos_jsessionid = headers.find('JSESSIONID')
+            if pos_jsessionid != -1:
+                jsessionid = headers[pos_jsessionid:]
+                pos_sep = jsessionid.find(';')
+                if pos_sep != -1:
+                    resp = jsessionid[11:pos_sep]
+        return resp
+
+    def close_coonection(self, url_remotecontrol_rest, jsessionid):
+        if jsessionid:
+            requests.request(
+                'POST', url_remotecontrol_rest + '/logout',
+                headers={
+                    'Cookie': 'JSESSIONID=' + jsessionid
+                    },
+                data={})

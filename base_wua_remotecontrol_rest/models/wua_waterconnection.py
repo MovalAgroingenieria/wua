@@ -142,7 +142,8 @@ class WuaWaterconnection(models.Model):
             last_data_time = '-'
         if (self.last_waterflow > 0):
             info_color = 'blue'
-        body = '<div style="display: flex; justify-content: space-around;">' +\
+        body = '<div style="display: flex; ' + \
+            'justify-content: space-around; padding-bottom: 4px;">' + \
             '<span style="padding-right: 2px;">' + label_date + ': ' + \
             last_data_time + '</span>' + \
             '<span style="padding-right: 2px;">' + label_total_volume + \
