@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="nrs_template_view_form" model="ir.ui.view">
+        <field name="name">NRS Template Form</field>
+        <field name="model">nrs.template</field>
+        <field name="inherit_id" ref="nrs_client_sms.nrs_template_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='help_invoice']/br" position="replace">
+                <div>
+                    The parcel object is also available. Note that this object has many
+                    attributes and they depend on the installed modules.
+                 </div>
+            </xpath>
+            <xpath expr="//tr[@name='invoice_surcharge']" position="after">
+                <tr name="invoiceset_description" attrs="{'invisible': [('type','!=','invoice')]}">
+                    <td>Invoice set description</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ invoice.invoiceset_id.description }}</td>
+                </tr>
+            </xpath>
+            <xpath expr="//tr[@name='invoice_date_due']" position="after">
+                <tr name="parcel_name" attrs="{'invisible': [('type','!=','parcel')]}">
+                    <td>Parcel name</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ parcel.name }}</td>
+                </tr>
+                <tr name="parcel_cadastral_reference" attrs="{'invisible': [('type','!=','parcel')]}">
+                    <td>Parcel cadastral reference</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ parcel.cadastral_reference }}</td>
+                </tr>
+                <tr name="parcel_area_official" attrs="{'invisible': [('type','!=','parcel')]}">
+                    <td>Parcel area official</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ parcel.area_official }}</td>
+                </tr>
+                <tr name="parcel_type" attrs="{'invisible': [('type','!=','parcel')]}">
+                    <td>Parcel type</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ parcel.type }}</td>
+                </tr>
+                <tr name="parcel_county_id" attrs="{'invisible': [('type','!=','parcel')]}">
+                    <td>Parcel county</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ parcel.county_id }}</td>
+                </tr>
+                <tr name="parcel_irrigationditch_id" attrs="{'invisible': [('type','!=','parcel')]}">
+                    <td>Parcel irrigation ditch</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ parcel.irrigationditch_id.name }}</td>
+                </tr>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
