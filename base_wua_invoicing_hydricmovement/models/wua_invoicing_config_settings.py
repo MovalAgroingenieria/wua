@@ -13,6 +13,10 @@ class WuaInvoicingConfiguration(models.TransientModel):
         'assignements as negative quantities',
         default=False)
 
+    allowed_multiple_invoicing_of_hydricmovement = fields.Boolean(
+        string='It is allowed to invoice a hydric movement several times',
+        default=False)
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -21,3 +25,7 @@ class WuaInvoicingConfiguration(models.TransientModel):
             'wua.invoicing.configuration',
             'invoicing_of_negative_hydricmovements_as_negative_values',
             self.invoicing_of_negative_hydricmovements_as_negative_values)
+        values.set_default(
+            'wua.invoicing.configuration',
+            'allowed_multiple_invoicing_of_hydricmovement',
+            self.allowed_multiple_invoicing_of_hydricmovement)

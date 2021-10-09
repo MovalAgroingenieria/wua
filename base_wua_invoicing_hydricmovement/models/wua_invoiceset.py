@@ -212,27 +212,57 @@ class WuaInvoicesetLine(models.Model):
             invoicesetline_id = self.id
             superproduct_id = self.product_id.related_product.\
                 superproduct_id.id
+            allowed_multiple_invoicing_of_hydricmovement = \
+                self.env['ir.values'].get_default(
+                    'wua.invoicing.configuration',
+                    'allowed_multiple_invoicing_of_hydricmovement')
             try:
                 self.env.cr.savepoint()
-                self.env.cr.execute("""
-                INSERT INTO wua_invoiceset_line_hydricmovement (id,
-                create_uid,write_uid,create_date,write_date,invoicesetline_id,
-                hydricmovement_id, selected, quotaperiod_id,superproduct_id,
-                partner_id,category_id,event_time, volume, description, type)
-                SELECT nextval('wua_invoiceset_line_hydricmovement_id_seq'),
-                %s,%s,now(),now(),%s, id, TRUE,
-                quotaperiod_id, superproduct_id, partner_id, category_id,
-                event_time, volume, description, type
-                FROM wua_hydricmovement WHERE of_active_agriculturalseason
-                AND superproduct_id = %s AND NOT COALESCE(
-                    invoiced_hydricmovement, FALSE)
-                AND CASE
-                        WHEN type = 'grav_consumption' THEN gravconsumption_id
-                            IN (SELECT id FROM wua_gravconsumption WHERE
-                                state = 'executed')
-                        ELSE TRUE
-                    END;
-                """, (user_id, user_id, invoicesetline_id, superproduct_id))
+                if allowed_multiple_invoicing_of_hydricmovement:
+                    self.env.cr.execute("""
+                    INSERT INTO wua_invoiceset_line_hydricmovement (id,
+                    create_uid, write_uid, create_date, write_date,
+                    invoicesetline_id, hydricmovement_id, selected,
+                    quotaperiod_id, superproduct_id, partner_id, category_id,
+                    event_time, volume, description, type)
+                    SELECT
+                    nextval('wua_invoiceset_line_hydricmovement_id_seq'),
+                    %s, %s, now(), now(), %s, id, TRUE,
+                    quotaperiod_id, superproduct_id, partner_id, category_id,
+                    event_time, volume, description, type
+                    FROM wua_hydricmovement WHERE of_active_agriculturalseason
+                    AND superproduct_id = %s
+                    AND CASE
+                            WHEN type = 'grav_consumption'
+                            THEN gravconsumption_id
+                                IN (SELECT id FROM wua_gravconsumption WHERE
+                                    state = 'executed')
+                            ELSE TRUE
+                        END;
+                    """, (user_id, user_id, invoicesetline_id, superproduct_id))
+                else:
+                    self.env.cr.execute("""
+                    INSERT INTO wua_invoiceset_line_hydricmovement (id,
+                    create_uid, write_uid, create_date, write_date,
+                    invoicesetline_id, hydricmovement_id, selected,
+                    quotaperiod_id, superproduct_id, partner_id, category_id,
+                    event_time, volume, description, type)
+                    SELECT
+                    nextval('wua_invoiceset_line_hydricmovement_id_seq'),
+                    %s, %s, now(), now(), %s, id, TRUE,
+                    quotaperiod_id, superproduct_id, partner_id, category_id,
+                    event_time, volume, description, type
+                    FROM wua_hydricmovement WHERE of_active_agriculturalseason
+                    AND superproduct_id = %s AND NOT COALESCE(
+                        invoiced_hydricmovement, FALSE)
+                    AND CASE
+                            WHEN type = 'grav_consumption'
+                            THEN gravconsumption_id
+                                IN (SELECT id FROM wua_gravconsumption WHERE
+                                    state = 'executed')
+                            ELSE TRUE
+                        END;
+                    """, (user_id, user_id, invoicesetline_id, superproduct_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 # self.env.cr.execute("""
@@ -249,6 +279,12 @@ class WuaInvoicesetLine(models.Model):
             except Exception:
                 self.env.cr.rollback()
                 raise ValidationError(_('Error when updating records.'))
+            # The "number_of_invoices" field is a non-persistent field in
+            # the wua.hydricmovement model, so that field cannot be in the
+            # SQL statement and needs to be processed.
+            for line in (self.line_hydricmovement_ids or []):
+                line.number_of_invoices = \
+                    line.hydricmovement_id.number_of_invoices
 
     @api.depends('line_hydricmovement_ids')
     def _compute_configured_line(self):
@@ -385,6 +421,10 @@ class WuaInvoicesetLineHydricmovement(models.Model):
         string='Type',
         required=True,
         readonly=True,)
+
+    number_of_invoices = fields.Integer(
+        string='Billings',
+        default=0)
 
     @api.multi
     def add_to_invoiceset(self):
