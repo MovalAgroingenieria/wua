@@ -20,7 +20,8 @@ class ResPartner(models.Model):
         resp = 0
         wua_in_context = self.env.context.get('wua')
         if wua_in_context == '1':
-            conditions = [('is_wua_partner', '=', True)]
+            conditions = ['|', ('active', '=', False), ('active', '=', True),
+                          ('is_wua_partner', '=', True)]
             second_initial_partner_code = self.env['ir.values'].get_default(
                 'wua.configuration', 'second_initial_partner_code')
             if second_initial_partner_code:
@@ -31,8 +32,11 @@ class ResPartner(models.Model):
             if len(partners) == 1:
                 resp = partners[0].partner_code + 1
                 if resp == second_initial_partner_code:
-                    partners = self.search([('is_wua_partner', '=', True)],
-                                           limit=1, order='partner_code desc')
+                    partners = self.search(
+                        ['|', ('active', '=', False),
+                         ('active', '=', True),
+                         ('is_wua_partner', '=', True)], limit=1,
+                        order='partner_code desc')
                     resp = partners[0].partner_code + 1
             else:
                 resp = 1
@@ -403,7 +407,8 @@ class ResPartner(models.Model):
             return None
         if self.apply_second_partner_coding:
             partners = self.search(
-                [('is_wua_partner', '=', True),
+                ['|', ('active', '=', False), ('active', '=', True),
+                 ('is_wua_partner', '=', True),
                  ('partner_code', '>', second_initial_partner_code)],
                 limit=1, order='partner_code desc')
             if len(partners) == 1:
@@ -629,7 +634,8 @@ class ResPartner(models.Model):
     def exists_partner_code(self, partner_code, excluded_id):
         resp = False
         if partner_code > 0:
-            partners = self.env['res.partner'].search([])
+            partners = self.env['res.partner'].search(
+                ['|', ('active', '=', False), ('active', '=', True)])
             for partner in partners:
                 if partner.partner_code == partner_code \
                    and excluded_id != partner.id:

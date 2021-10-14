@@ -8,8 +8,6 @@ from odoo import fields, models
 class AccountConfigSettings(models.TransientModel):
     _inherit = 'account.config.settings'
 
-
     overdue_msg = fields.Html(
         string='Overdue Payments Message *',
         related='company_id.overdue_msg')
-
