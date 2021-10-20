@@ -23,6 +23,7 @@
         "data/wua_controlperiod_cron.xml",
         "data/wua_soiltype_data.xml",
         "wizard/wizard_generate_controlperiods_view.xml",
+        "wizard/wizard_remove_controlreadings_view.xml",
         "views/resources.xml",
         "views/base_wua_pressurized_irrigation_monitoring_menus.xml",
         "views/wua_monitoring_config_settings_view.xml",
