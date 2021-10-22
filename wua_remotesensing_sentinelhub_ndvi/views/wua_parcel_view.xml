@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+               ref="base_wua.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']"
+                   position="after">
+                <button name="action_show_ndvi_values"
+                        type="object" class="oe_stat_button"
+                        icon="fa-pagelines"
+                        attrs="{'invisible':[('number_of_ndvi','=',0)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                        	<field name="number_of_ndvi"/>
+                        </span>
+                        <span class="o_stat_text"
+                              attrs="{'invisible':[('number_of_ndvi','=',1)]}">
+                            NDVI values
+                        </span>
+                        <span class="o_stat_text"
+                              attrs="{'invisible':[('number_of_ndvi','&gt;',1)]}">
+                            NDVI value
+                        </span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_ndvi_view_form" model="ir.ui.view" >
+        <field name="name">Parcels with NDVI values (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="priority" eval="100"/>
+        <field name="arch" type="xml">
+            <form string="Parcels (NDVI)"
+                  duplicate="false" create="false" edit="false" delete="false">
+                <div class="panel-body text-center" style="background:#ededed;border-color:#696969;border-width:1px;border-style:solid;padding-top:7px;padding-bottom:0px;margin-bottom:5px"><h4><span class="o_stat_text"><field name="parcel_title_ndvi"/></span></h4></div>
+                <group name="master_data">
+                    <group name="master_data_left">
+                        <div style="width: 90%; margin:0 auto;">
+                            <field name="ndvi_graph_maximum_range"
+                             widget="bokeh_chart" nolabel="1"/>
+                        </div>
+                    </group>
+                    <group name="master_data_right">
+                        <div style="width: 90%; margin:0 auto;">
+                            <field name="ndvi_graph_detail"
+                             widget="bokeh_chart" nolabel="1"/>
+                        </div>
+                	</group>
+                </group>
+                <div class="panel-body text-center" style="background:#ededed;border-color:#696969;border-width:1px;border-style:solid">
+                    <field name="active_agriculturalsason_ndvi_ids"
+                           context="{'tree_view_ref':'wua_remotesensing_sentinelhub_ndvi.wua_parcel_vegetationindex_ndvi_simple_view_tree'}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_get_ndvi_values" model="ir.actions.server">
+        <field name="name">Get NDVI values</field>
+        <field name="model_id" ref="model_wua_parcel"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.parcel'].get_ndvi_values(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_get_ndvi_values" model="ir.values">
+        <field name="name">Get NDVI values</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_get_ndvi_values'))"/>
+    </record>
+
+</odoo>

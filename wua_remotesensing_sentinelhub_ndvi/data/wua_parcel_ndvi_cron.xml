@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="wua_cron_get_all_ndvi_values" model="ir.cron">
+            <field name="name">Get NDVI-values Service</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">weeks</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">wua.parcel</field>
+            <field name="function">get_all_ndvi_values</field>
+            <field name="active" eval="False"/>
+    </record>
+
+    </data>
+
+</odoo>

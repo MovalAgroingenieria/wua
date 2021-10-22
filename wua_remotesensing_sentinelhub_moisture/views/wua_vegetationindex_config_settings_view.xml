@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_vegetationindex_config_settings_view_form"
+            model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.vegetationindex.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_remotesensing_sentinelhub.wua_vegetationindex_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='common_configuration_group']"
+                   position="after">
+                <group string="Moisture-Index Configuration"
+                       name="moisture_configuration_group"
+                       attrs="{'invisible':[('enable_remotesensing','=',False)]}">
+                    <field name="layer_moisture" style="width:150px"
+                           attrs="{'required':[('enable_remotesensing','=',True)]}"/>
+                    <field name="band_moisture" style="width:150px"
+                           attrs="{'required':[('enable_remotesensing','=',True)]}"/>
+                    <field name="max_cloud_cover_moisture" style="width:150px"
+                           attrs="{'required':[('enable_remotesensing','=',True)]}"/>
+                    <field name="resolution_moisture" style="width:150px"
+                           attrs="{'required':[('enable_remotesensing','=',True)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
