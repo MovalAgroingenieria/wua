@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_vegetationindex_ndvi_view_form" model="ir.ui.view">
+        <field name="name">NDVI values (form view)</field>
+        <field name="model">wua.parcel.vegetationindex.ndvi</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+            <sheet>
+                <div class="text-center"
+                     style="width:45%; display:inline-block">
+                    <field name="vegetationindex_img" widget="image" style="border-color:#696969;border-width:1px;border-style:solid"/>
+                </div>
+                <div class="text-center"
+                     style="width:10%; display:inline-block">
+                    <field name="vegetationindex_legend" widget="image" style="border-color:#696969;border-width:1px;border-style:solid"/>
+                </div>
+                <div class="text-center"
+                     style="width:45%; display:inline-block">
+                    <field name="pnoa_img" widget="image" style="border-color:#696969;border-width:1px;border-style:solid"/>
+                </div>
+                <div class="text-center"
+                     style="width:45%; display:inline-block">
+                    <span>NDVI</span>
+                </div>
+                <div class="text-center"
+                     style="width:10%; display:inline-block">
+                </div>
+                <div class="text-center"
+                     style="width:45%; display:inline-block">
+                    <span>PNOA</span>
+                </div>
+                <group name="master_data">
+                    <group name="master_data_left">
+                        <field name="parcel_id"
+                               string="Parcel (NDVI values)"
+                               context="{'form_view_ref':'wua_remotesensing_sentinelhub_ndvi.wua_parcel_ndvi_view_form'}"/>
+                        <field name="data_date"/>
+                        <field name="partner_id"
+                               style="margin-bottom:30px;"/>
+                        <field name="min_value"
+                               style="width:150px"/>
+                        <field name="mean_value"
+                               style="width:150px"/>
+                        <field name="max_value"
+                               style="width:150px;margin-bottom:30px;"/>
+                        <field name="stdev_value"
+                               style="width:150px"/>
+                    </group>
+                    <group name="master_data_right">
+                        <div name="section_notes" colspan="2"
+                            style="text-align:center;">
+                            <span style="font-weight:bold;">
+                            N O T E S
+                            </span>
+                        </div>
+                        <hr colspan="2"/>
+                        <field name="notes"
+                               nolabel="1" colspan="2"/>
+                    </group>
+                </group>
+            </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_parcel_vegetationindex_ndvi_view_tree" model="ir.ui.view">
+        <field name="name">NDVI values (tree view)</field>
+        <field name="model">wua.parcel.vegetationindex.ndvi</field>
+        <field name="arch" type="xml">
+            <tree default_order="data_date desc, masterrecord_name"
+                  class="o_wua_remotesensing_sentinelhub_ndvi_vegetationindex_view_tree"
+                  colors="orangered:with_notes==True">
+                <field name="data_date"/>
+                <field name="parcel_id"/>
+                <field name="partner_id" widget="many2one_unclickable"/>
+                <field name="min_value"/>
+                <field name="mean_value"/>
+                <field name="max_value"/>
+                <field name="stdev_value"/>
+                <field name="with_notes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_vegetationindex_ndvi_simple_view_tree" model="ir.ui.view">
+        <field name="name">NDVI values, without parcels (tree view)</field>
+        <field name="model">wua.parcel.vegetationindex.ndvi</field>
+        <field name="arch" type="xml">
+            <tree default_order="data_date desc, masterrecord_name"
+                  create="false" edit="false" delete="false"
+                  class="o_wua_remotesensing_sentinelhub_ndvi_vegetationindex_simple_view_tree"
+                  colors="orangered:with_notes==True">
+                <field name="with_notes" invisible="1"/>
+                <field name="data_date"/>
+                <field name="min_value"/>
+                <field name="mean_value"/>
+                <field name="max_value"/>
+                <field name="stdev_value"/>
+                <field name="notes_text" string="NOTES"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_vegetationindex_ndvi_view_search" model="ir.ui.view">
+        <field name="name">NDVI values (search view)</field>
+        <field name="model">wua.parcel.vegetationindex.ndvi</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="data_date"/>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <filter string="Active Agricultural Season"
+                        name="active_agriculturalseason"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <filter string="With notes: Yes"
+                        name="with_notes_yes"
+                        domain="[('with_notes','=',True)]"/>
+                <filter string="With notes: No"
+                        name="with_notes_no"
+                        domain="[('with_notes','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="grouped_agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Date"
+                            name="grouped_data_date"
+                     context="{'group_by':'data_date'}"/>
+                    <filter string="Partner"
+                            name="grouped_partner_id"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Parcel"
+                            name="grouped_parcel_id"
+                     context="{'group_by':'parcel_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_parcel_vegetationindex_ndvi_action"
+            model="ir.actions.act_window">
+        <field name="name">NDVI values</field>
+        <field name="res_model">wua.parcel.vegetationindex.ndvi</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_parcel_vegetationindex_ndvi_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_parcel_vegetationindex_ndvi_view_form')})]"/>
+        <field name="search_view_id" ref="wua_parcel_vegetationindex_ndvi_view_search"/>
+        <field name="context">
+          {'search_default_active_agriculturalseason': True}
+        </field>
+    </record>
+
+    <menuitem id="parcel_vegetationindex_ndvi_menu"
+              name="NDVI"
+              parent="base_wua_remotesensing_sentinelhub.vegetationindices_menu"
+              sequence="1"
+              action="wua_parcel_vegetationindex_ndvi_action"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

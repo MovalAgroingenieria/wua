@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_vegetationindex_config_settings_view_form"
+            model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.vegetationindex.configuration</field>
+        <field name="arch" type="xml">
+            <form string="Vegetation Indices Settings"
+                  class="oe_form_configuration">
+                <header>
+                    <button string="Apply" type="object" name="execute"
+                     class="oe_highlight"/>
+                    <button string="Cancel" type="object" name="cancel"
+                     class="oe_link"/>
+                </header>
+                <group string="Common Configuration"
+                       name="common_configuration_group">
+                    <field name="enable_remotesensing"/>
+                    <field name="remotesensing_key"
+                           attrs="{'invisible':[('enable_remotesensing','=',False)],
+                                   'required': [('enable_remotesensing', '=', True)]}"/>
+                    <field name="url_api_fis"
+                           attrs="{'invisible':[('enable_remotesensing','=',False)],
+                                   'required': [('enable_remotesensing', '=', True)]}"/>
+                    <field name="url_wms"
+                           attrs="{'invisible':[('enable_remotesensing','=',False)],
+                                   'required': [('enable_remotesensing', '=', True)]}"/>
+                    <field name="initial_date"
+                           attrs="{'invisible':[('enable_remotesensing','=',False)],
+                                   'required': [('enable_remotesensing', '=', True)]}"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_vegetationindex_configuration_action"
+            model="ir.actions.act_window">
+        <field name="name">Configure Remote Sensing</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wua.vegetationindex.configuration</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+    <menuitem id="parameters_menu"
+              name="Parameters"
+              parent="configuration_menu"
+              sequence="1"
+              action="wua_vegetationindex_configuration_action"
+              groups="base.group_system"/>
+
+</odoo>
