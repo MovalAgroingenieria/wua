@@ -108,7 +108,7 @@ class WuaParcel(models.Model):
                 y_values = []
                 y_values_previous = []
                 moisture_values_previous = \
-                    self._get_data_of_previous_agriculturalseason(
+                    self._get_moisture_data_of_prev_agriculturalseason(
                         record, moisture_values[0].agriculturalseason_id)
                 for moisture_value in moisture_values:
                     date_of_moisture = \
@@ -118,7 +118,7 @@ class WuaParcel(models.Model):
                     possible_value_previous = self.NO_DATA
                     if moisture_values_previous:
                         possible_value_previous = \
-                            self._get_closest_value_from_previous_year(
+                            self._get_closest_moisture_value_from_prev_year(
                                 moisture_value.data_date,
                                 moisture_values_previous)
                         if (possible_value_previous == self.NO_DATA and
@@ -162,7 +162,7 @@ class WuaParcel(models.Model):
                 y_values = []
                 y_values_previous = []
                 moisture_values_previous = \
-                    self._get_data_of_previous_agriculturalseason(
+                    self._get_moisture_data_of_prev_agriculturalseason(
                         record, moisture_values[0].agriculturalseason_id)
                 min_y = 1
                 max_y = -1
@@ -185,7 +185,7 @@ class WuaParcel(models.Model):
                     possible_value_previous = self.NO_DATA
                     if moisture_values_previous:
                         possible_value_previous = \
-                            self._get_closest_value_from_previous_year(
+                            self._get_closest_moisture_value_from_prev_year(
                                 moisture_value.data_date,
                                 moisture_values_previous)
                         if (possible_value_previous == self.NO_DATA and
@@ -352,8 +352,8 @@ class WuaParcel(models.Model):
             parcel_ids.sort()
             self.get_moisture_values(parcel_ids, show_dialog=False)
 
-    def _get_data_of_previous_agriculturalseason(self, parcel,
-                                                 current_agriculturalseason):
+    def _get_moisture_data_of_prev_agriculturalseason(
+            self, parcel, current_agriculturalseason):
         resp = None
         date_limit = current_agriculturalseason.initial_date
         prev_agriculturalseason = \
@@ -366,8 +366,8 @@ class WuaParcel(models.Model):
                  ('agriculturalseason_id', '=', prev_agriculturalseason.id)])
         return resp
 
-    def _get_closest_value_from_previous_year(self, reference_date,
-                                              moisture_values_previous):
+    def _get_closest_moisture_value_from_prev_year(
+            self, reference_date, moisture_values_previous):
         resp = self.NO_DATA
         difference_of_days = self.MAX_DAYS
         reference_date = \

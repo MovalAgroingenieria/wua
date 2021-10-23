@@ -106,7 +106,7 @@ class WuaParcel(models.Model):
                 y_values = []
                 y_values_previous = []
                 ndvi_values_previous = \
-                    self._get_data_of_previous_agriculturalseason(
+                    self._get_ndvi_data_of_prev_agriculturalseason(
                         record, ndvi_values[0].agriculturalseason_id)
                 for ndvi_value in ndvi_values:
                     date_of_ndvi = numpy.datetime64(ndvi_value.data_date)
@@ -115,7 +115,7 @@ class WuaParcel(models.Model):
                     possible_value_previous = self.NO_DATA
                     if ndvi_values_previous:
                         possible_value_previous = \
-                            self._get_closest_value_from_previous_year(
+                            self._get_closest_ndvi_value_from_prev_year(
                                 ndvi_value.data_date, ndvi_values_previous)
                         if (possible_value_previous == self.NO_DATA and
                            y_values_previous):
@@ -156,7 +156,7 @@ class WuaParcel(models.Model):
                 y_values = []
                 y_values_previous = []
                 ndvi_values_previous = \
-                    self._get_data_of_previous_agriculturalseason(
+                    self._get_ndvi_data_of_prev_agriculturalseason(
                         record, ndvi_values[0].agriculturalseason_id)
                 min_y = 1
                 max_y = -1
@@ -178,7 +178,7 @@ class WuaParcel(models.Model):
                     possible_value_previous = self.NO_DATA
                     if ndvi_values_previous:
                         possible_value_previous = \
-                            self._get_closest_value_from_previous_year(
+                            self._get_closest_ndvi_value_from_prev_year(
                                 ndvi_value.data_date, ndvi_values_previous)
                         if (possible_value_previous == self.NO_DATA and
                            y_values_previous):
@@ -341,8 +341,8 @@ class WuaParcel(models.Model):
             parcel_ids.sort()
             self.get_ndvi_values(parcel_ids, show_dialog=False)
 
-    def _get_data_of_previous_agriculturalseason(self, parcel,
-                                                 current_agriculturalseason):
+    def _get_ndvi_data_of_prev_agriculturalseason(
+            self, parcel, current_agriculturalseason):
         resp = None
         date_limit = current_agriculturalseason.initial_date
         prev_agriculturalseason = \
@@ -355,8 +355,8 @@ class WuaParcel(models.Model):
                  ('agriculturalseason_id', '=', prev_agriculturalseason.id)])
         return resp
 
-    def _get_closest_value_from_previous_year(self, reference_date,
-                                              ndvi_values_previous):
+    def _get_closest_ndvi_value_from_prev_year(
+            self, reference_date, ndvi_values_previous):
         resp = self.NO_DATA
         difference_of_days = self.MAX_DAYS
         reference_date = \

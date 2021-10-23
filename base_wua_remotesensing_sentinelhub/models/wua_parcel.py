@@ -75,14 +75,23 @@ class WuaParcel(models.Model):
                                     data_date = \
                                         measurement['date']
                                     min_value = \
-                                        measurement['basicStats']['min']
+                                        str(measurement['basicStats']['min'])
                                     mean_value = \
-                                        measurement['basicStats']['mean']
+                                        str(measurement['basicStats']['mean'])
                                     max_value = \
-                                        measurement['basicStats']['max']
+                                        str(measurement['basicStats']['max'])
                                     stdev_value = \
-                                        measurement['basicStats']['stDev']
+                                        str(measurement['basicStats']['stDev'])
+                                    if (min_value.lower() == 'nan' or
+                                       mean_value.lower() == 'nan' or
+                                       max_value.lower() == 'nan' or
+                                       stdev_value.lower() == 'nan'):
+                                        continue
                                     try:
+                                        min_value = float(min_value)
+                                        mean_value = float(mean_value)
+                                        max_value = float(max_value)
+                                        stdev_value = float(stdev_value)
                                         self._save_values(
                                             parcel, data_date, min_value,
                                             mean_value, max_value, stdev_value,
