@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-31 11:59+0000\n"
-"PO-Revision-Date: 2021-05-31 11:59+0000\n"
+"POT-Creation-Date: 2021-10-26 14:51+0000\n"
+"PO-Revision-Date: 2021-10-26 14:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,8 +21,15 @@ msgid "<span class=\"o_stat_text\" style=\"display:inline;\"> SMS's</span>"
 msgstr "<span class=\"o_stat_text\" style=\"display:inline;\"> SMS</span>"
 
 #. module: wua_wausms_client_sms
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:199
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:230
+#, python-format
+msgid "ERROR: no response"
+msgstr "ERROR: Sense resposta"
+
+#. module: wua_wausms_client_sms
 #: code:addons/wua_wausms_client_sms/models/wausms_template.py:44
-#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:160
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:162
 #, python-format
 msgid "Error resolving template: {}"
 msgstr "Error resolent la plantilla: {}"
@@ -39,12 +46,18 @@ msgid "No parcel found"
 msgstr "Parcel·la no trobada"
 
 #. module: wua_wausms_client_sms
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:204
+#, python-format
+msgid "No subject"
+msgstr "Sense assumpte"
+
+#. module: wua_wausms_client_sms
 #: model:ir.model.fields,field_description:wua_wausms_client_sms.field_wua_parcel_num_sms
 msgid "Number of SMS"
 msgstr "Nº de SMS"
 
 #. module: wua_wausms_client_sms
-#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:171
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:173
 #, python-format
 msgid "Number of characters must not exceed 160"
 msgstr "160 caràcters màxim"
@@ -89,10 +102,10 @@ msgstr "Tipus de parcel·la"
 #. module: wua_wausms_client_sms
 #: model:ir.model,name:wua_wausms_client_sms.model_wua_parcel
 msgid "Parcels (integrated GIS)"
-msgstr "Parcel·les (integrades GIS)"
+msgstr "Parcels (integrated GIS)"
 
 #. module: wua_wausms_client_sms
-#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:147
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:149
 #, python-format
 msgid "Partner %s does not have a mobile number"
 msgstr "El soci %s no té número de mòbil"
@@ -105,7 +118,7 @@ msgid "SMS"
 msgstr "SMS"
 
 #. module: wua_wausms_client_sms
-#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:253
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:273
 #, python-format
 msgid "SMS confirmation"
 msgstr "Confirmació"
@@ -138,7 +151,7 @@ msgstr "L'objecte parcel·la també està disponible. Observar que aquest object
 "                    atributs i són dependents dels mòduls instal·lats."
 
 #. module: wua_wausms_client_sms
-#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:142
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:144
 #, python-format
 msgid "The phone number for testing has not been set."
 msgstr "The mòbil de Test no ha estat establert."
@@ -150,7 +163,7 @@ msgid "The size of the SMS after solving the variables exceeds 160 characters. T
 msgstr "La mida de l'SMS després de resoldre les variables supera els 160 caràcters. Proveu establir una longitud fixa per a les variables {{ object.attribute[:10] }}"
 
 #. module: wua_wausms_client_sms
-#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:110
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:112
 #, python-format
 msgid "There are no items selected."
 msgstr "No hi ha elements seleccionats."
@@ -171,7 +184,7 @@ msgid "Wizard to send SMS through WauSMS service"
 msgstr "Assistent per enviar missatges a través de l'servei WauSMS"
 
 #. module: wua_wausms_client_sms
-#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:162
+#: code:addons/wua_wausms_client_sms/wizards/wausms_wizard.py:164
 #, python-format
 msgid "empty message"
 msgstr "missatge buit"
