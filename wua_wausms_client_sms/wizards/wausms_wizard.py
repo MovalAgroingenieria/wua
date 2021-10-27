@@ -183,14 +183,16 @@ class WauSMSWizard(models.Model):
             # Send and catch response
             response = ""
             connection_error = ""
+            connection_ok = False
             try:
                 response = requests.post(service_url, headers=headers,
                                          data=data)
+                connection_ok = True
             except requests.exceptions.RequestException as requests_error:
                 connection_error = requests_error.message.message + '\n'
 
             # Get confirmations messages based in response status code
-            if response:
+            if connection_ok:
                 sms_confirmation, sms_confirmation_info = \
                     self._get_confirmation_messages(response.status_code)
                 status_code = response.status_code
@@ -219,7 +221,7 @@ class WauSMSWizard(models.Model):
                     str(parcel.name) + " - " + partner.name + "]" + '\n'
 
             # Response message (only shown in debug mode)
-            if response:
+            if connection_ok:
                 response_message = json.dumps(response.json(), indent=4)
                 if 'error' in response.text:
                     response_message_data = json.loads(response.text)

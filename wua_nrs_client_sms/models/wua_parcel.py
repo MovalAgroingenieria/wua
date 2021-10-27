@@ -13,14 +13,14 @@ class WuaParcel(models.Model):
         comodel_name='nrs.tracking',
         inverse_name='parcel_id')
 
-    num_sms = fields.Integer(
+    num_sms_certified = fields.Integer(
         string="Number of SMS",
-        compute="_compute_num_sms")
+        compute="_compute_num_sms_certified")
 
     @api.multi
-    def _compute_num_sms(self):
+    def _compute_num_sms_certified(self):
         for record in self:
-            record.num_sms = len(record.nrs_ids)
+            record.num_sms_certified = len(record.nrs_ids)
 
     @api.multi
     def action_see_nrs_parcel(self):
