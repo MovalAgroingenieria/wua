@@ -14,6 +14,7 @@ class WuaInfrastructureConfiguration(models.TransientModel):
 
     @api.multi
     def set_default_values(self):
+        super(WuaInfrastructureConfiguration, self).set_default_values()
         values = self.env['ir.values'].sudo()
         values.set_default('wua.infrastructure.configuration',
                            'consumptions_graph_invisible',
