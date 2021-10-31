@@ -5,6 +5,7 @@
 import requests
 import io
 import base64
+from PIL import Image
 from odoo import models, fields, api
 
 
@@ -21,9 +22,13 @@ class WuaParcelVegetationindex(models.AbstractModel):
 
     # Layers of particular WMS service.
     _default_layers = 'pnoa,parcel_perimeter'
+    _default_layer_for_parcel_perimeter = 'parcel_perimeter'
 
-    # Format of WMS images.
-    _image_format = 'image/jpeg'
+    # Format of WMS image for vegetation index.
+    _image_format_vegetationindex = 'png'
+
+    # Format of WMS image for PNOA.
+    _image_format_pnoa = 'png'
 
     # Zoom for bounding box.
     _bounding_box_zoom = 1.5
@@ -71,6 +76,11 @@ class WuaParcelVegetationindex(models.AbstractModel):
         store=True,
         index=True,
         compute='_compute_partner_id')
+
+    area_official_hec = fields.Float(
+        string='Area (ha)',
+        digits=(32, 4),
+        compute='_compute_area_official_hec')
 
     vegetationindex_img = fields.Binary(
         string='Vegetation-index Image',
@@ -127,6 +137,14 @@ class WuaParcelVegetationindex(models.AbstractModel):
             record.partner_id = partner_id
 
     @api.multi
+    def _compute_area_official_hec(self):
+        for record in self:
+            area_official_hec = 0
+            if record.parcel_id:
+                area_official_hec = record.parcel_id.area_official_hec
+            record.area_official_hec = area_official_hec
+
+    @api.multi
     def _compute_vegetationindex_img(self):
         model_parcel = self.env['wua.parcel']
         model_ir_values = self.env['ir.values']
@@ -141,6 +159,17 @@ class WuaParcelVegetationindex(models.AbstractModel):
             if url_wms[-1] != '/':
                 url_wms = url_wms + '/'
             wms = url_wms + remotesensing_key
+        wms_for_parcel_perimeter = ''
+        layer_for_parcel_perimeter = ''
+        url_gis_viewer_wms = model_ir_values.get_default(
+            'wua.configuration', 'url_gis_viewer_wms')
+        if url_gis_viewer_wms:
+            if url_gis_viewer_wms[-1] == '/':
+                wms_for_parcel_perimeter = url_gis_viewer_wms[:-1]
+            else:
+                wms_for_parcel_perimeter = url_gis_viewer_wms
+            layer_for_parcel_perimeter = \
+                self._default_layer_for_parcel_perimeter
         for record in self:
             vegetationindex_img = None
             if data_ok:
@@ -191,12 +220,46 @@ class WuaParcelVegetationindex(models.AbstractModel):
                         '&height=' + str(image_height_pixels) + \
                         '&layers=' + layers + \
                         '&time=' + day + \
-                        '&format=' + self._image_format
-                    resp = requests.get(url, stream=True)
-                    if resp.status_code == 200:
+                        '&format=image/' + self._image_format_vegetationindex
+                    request_ok = True
+                    try:
+                        resp = requests.get(url, stream=True)
+                    except Exception:
+                        request_ok = False
+                    if request_ok and resp.status_code == 200:
                         image = io.BytesIO(resp.raw.read())
-                        vegetationindex_img = \
-                            base64.b64encode(image.getvalue())
+                        if wms_for_parcel_perimeter:
+                            url_for_parcel_perimeter = \
+                                wms_for_parcel_perimeter + \
+                                '?service=wms' + \
+                                '&version=1.3.0&request=getmap' + \
+                                '&crs=epsg:' + str(srid) + \
+                                '&bbox=' + str(minx) + ',' + \
+                                str(miny) + ',' + \
+                                str(maxx) + ',' + str(maxy) + \
+                                '&width=' + str(image_width_pixels) + \
+                                '&height=' + str(image_height_pixels) + \
+                                '&layers=' + layer_for_parcel_perimeter + \
+                                '&transparent=true' + \
+                                '&format=image/png'
+                            request_ok = True
+                            try:
+                                resp_for_parcel_perimeter = \
+                                    requests.get(url_for_parcel_perimeter,
+                                                 stream=True)
+                            except Exception:
+                                request_ok = False
+                            if (request_ok and
+                               resp_for_parcel_perimeter.status_code == 200):
+                                image_for_parcel_perimeter = \
+                                    io.BytesIO(
+                                        resp_for_parcel_perimeter.raw.read())
+                                image = self._merge_img(
+                                    image, image_for_parcel_perimeter,
+                                    self._image_format_vegetationindex)
+                        if image:
+                            vegetationindex_img = \
+                                base64.b64encode(image.getvalue())
             record.vegetationindex_img = vegetationindex_img
 
     @api.multi
@@ -219,8 +282,12 @@ class WuaParcelVegetationindex(models.AbstractModel):
                 '&version=1.3.0&request=getlegendgraphic' + \
                 '&layer=' + layer + \
                 '&style=default'
-            resp = requests.get(url, stream=True)
-            if resp.status_code == 200:
+            request_ok = True
+            try:
+                resp = requests.get(url, stream=True)
+            except Exception:
+                request_ok = False
+            if request_ok and resp.status_code == 200:
                 image = io.BytesIO(resp.raw.read())
                 vegetationindex_legend = \
                     base64.b64encode(image.getvalue())
@@ -285,9 +352,13 @@ class WuaParcelVegetationindex(models.AbstractModel):
                     '&width=' + str(image_width_pixels) + \
                     '&height=' + str(image_height_pixels) + \
                     '&layers=' + layers + \
-                    '&format=' + self._image_format
-                resp = requests.get(url, stream=True)
-                if resp.status_code == 200:
+                    '&format=image/' + self._image_format_pnoa
+                request_ok = True
+                try:
+                    resp = requests.get(url, stream=True)
+                except Exception:
+                    request_ok = False
+                if request_ok and resp.status_code == 200:
                     image = io.BytesIO(resp.raw.read())
                     pnoa_img = base64.b64encode(image.getvalue())
             record.pnoa_img = pnoa_img
@@ -337,3 +408,15 @@ class WuaParcelVegetationindex(models.AbstractModel):
     # Hook: Get layer of WMS service for view vegetation images.
     def _get_wms_layer(self):
         return ''
+
+    def _merge_img(self, background_img, foreground_png,
+                   format_output_img='png'):
+        resp = None
+        if background_img and foreground_png:
+            image_background = Image.open(background_img)
+            image_foreground = Image.open(foreground_png)
+            image_background.paste(image_foreground, (0, 0), image_foreground)
+            byte_array = io.BytesIO()
+            image_background.save(byte_array, format=format_output_img)
+            resp = byte_array
+        return resp

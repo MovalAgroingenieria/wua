@@ -6,6 +6,8 @@ import datetime
 import requests
 import json
 import logging
+import numpy
+from scipy.interpolate import CubicSpline
 from odoo import models, api, _
 
 
@@ -59,8 +61,12 @@ class WuaParcel(models.Model):
                         '&GEOMETRY=' + coordinates + \
                         '&RESOLUTION=' + str(resolution) + \
                         '&MAXCC=' + str(max_cloud_cover)
-                    resp = requests.get(url)
-                    if (resp.status_code == 200 and
+                    request_ok = True
+                    try:
+                        resp = requests.get(url)
+                    except Exception:
+                        request_ok = False
+                    if (request_ok and resp.status_code == 200 and
                        resp.text.find('Exception') == -1):
                         if resp.text != '{}':
                             request_ok = True
@@ -138,3 +144,37 @@ class WuaParcel(models.Model):
                      min_value, mean_value, max_value, stdev_value,
                      index_name):
         pass
+
+    # This method receives a list of dates (x_dates), such as
+    # "numpy.datetime64", and the corresponding values (y_values), and
+    # returns two equivalent lists after applying a cubic interpolation
+    # based on a new list of dates. This new date list is the set of days
+    # from the first date of x_dates to the last date of x_dates.
+    def get_interpolated_daily_values(self, x_dates, y_values):
+        final_x_dates = x_dates
+        final_y_values = y_values
+        if len(x_dates) > 2:
+            i = 1
+            x_dates_smooth = [x_dates[0]]
+            current_date = x_dates[0]
+            while (current_date < x_dates[-1]):
+                current_date = current_date + numpy.timedelta64(1, 'D')
+                x_dates_smooth.append(current_date)
+                i = i + 1
+            if (x_dates[0] == x_dates_smooth[0] and
+               x_dates[-1] == x_dates_smooth[-1]):
+                j = 0
+                k = 0
+                x_values_range = []
+                for x_date_smooth in x_dates_smooth:
+                    if x_date_smooth == x_dates[k]:
+                        x_values_range.append(j+1)
+                        k = k + 1
+                    j = j + 1
+                interpolation_function = CubicSpline(x_values_range, y_values)
+                x_values_range_smooth = \
+                    list(range(1, len(x_dates_smooth) + 1))
+                final_x_dates = x_dates_smooth
+                final_y_values = \
+                    interpolation_function(x_values_range_smooth)
+        return final_x_dates, final_y_values
