@@ -130,10 +130,16 @@ class WuaParcel(models.Model):
                            x_axis_type='datetime', toolbar_location=None,
                            y_range=(-1, 1))
                 if (self.NO_DATA not in y_values_previous):
-                    p.line(x_values, y_values_previous,
-                           color='mediumspringgreen',
+                    x_values_previous = x_values[:]
+                    x_values_previous, y_values_previous = \
+                        self.get_interpolated_daily_values(
+                            x_values_previous, y_values_previous)
+                    p.line(x_values_previous, y_values_previous,
+                           color='skyblue',
                            line_width=2, legend=_('Previous year'))
-                p.line(x_values, y_values, color='darkgreen',
+                x_values, y_values = \
+                    self.get_interpolated_daily_values(x_values, y_values)
+                p.line(x_values, y_values, color='navy',
                        line_width=2, legend=_('Active ag. season'))
                 p.xaxis.axis_label = _('Date of the value')
                 p.yaxis.axis_label = _('MOISTURE (maximum range)')
@@ -197,10 +203,16 @@ class WuaParcel(models.Model):
                            x_axis_type='datetime', toolbar_location=None,
                            y_range=(min_y, max_y))
                 if (self.NO_DATA not in y_values_previous):
-                    p.line(x_values, y_values_previous,
-                           color='mediumspringgreen',
+                    x_values_previous = x_values[:]
+                    x_values_previous, y_values_previous = \
+                        self.get_interpolated_daily_values(
+                            x_values_previous, y_values_previous)
+                    p.line(x_values_previous, y_values_previous,
+                           color='skyblue',
                            line_width=2, legend=_('Previous year'))
-                p.line(x_values, y_values, color='darkgreen',
+                x_values, y_values = \
+                    self.get_interpolated_daily_values(x_values, y_values)
+                p.line(x_values, y_values, color='navy',
                        line_width=2, legend=_('Active ag. season'))
                 p.xaxis.axis_label = _('Date of the value')
                 p.yaxis.axis_label = _('MOISTURE (detail)')
