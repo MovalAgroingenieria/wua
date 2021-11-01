@@ -68,6 +68,25 @@ class WuaParcel(models.Model):
                         request_ok = False
                     # If there are many vertices, then the FIS API is not
                     # working. The solution is to use a simplified geometry.
+                    # Test 1: with simplified geometry (coordinates as integer
+                    # values.
+                    if (request_ok and resp.status_code == 414):
+                        srid, coordinates = model_parcel.extract_coordinates(
+                            parcel.simplified_geom_ewkt)
+                        url = url_api_fis + '?' + \
+                            'LAYER=' + layer + \
+                            '&CRS=EPSG:' + srid + \
+                            '&TIME=' + initial_date + '/' + end_date + \
+                            '&GEOMETRY=' + coordinates + \
+                            '&RESOLUTION=' + str(resolution) + \
+                            '&MAXCC=' + str(max_cloud_cover)
+                        request_ok = True
+                        try:
+                            resp = requests.get(url)
+                        except Exception:
+                            request_ok = False
+                    # Test 2: with very simplified geometry (oriented
+                    # envelope).
                     if (request_ok and resp.status_code == 414):
                         srid, coordinates = model_parcel.extract_coordinates(
                             parcel.oriented_envelope_ewkt)
