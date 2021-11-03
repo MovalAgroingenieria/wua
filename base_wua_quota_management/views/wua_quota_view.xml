@@ -53,6 +53,11 @@
                             <field name="estimated_balance"
                                    string="Estim. Ending Bal."
                                    attrs="{'invisible':[('is_current_quotaperiod','=',False)]}"/>
+                            <field name="expected_date_for_zero_balance"
+                                   string="Exp. 0 balance date"
+                                   attrs="{'invisible':[('is_current_quotaperiod','=',False)]}"/>
+                            <field name="info_expected_date"
+                                   attrs="{'invisible':[('is_current_quotaperiod','=',False)]}"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -60,7 +65,7 @@
                             <page name="hydricmovements_page" string="Movements">
                                 <field name="hydricmovement_ids"
                                        context="{'tree_view_ref':
-                                                 'base_wua_quota_management.wua_hydricmovement_of_quota_view_tree'}"/>                        
+                                                 'base_wua_quota_management.wua_hydricmovement_of_quota_view_tree'}"/>
                             </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
@@ -95,6 +100,8 @@
                 <field name="available_quota_percentage"/>
                 <field name="estimated_balance"
                        string="Estim. Ending Balance"/>
+                <field name="expected_date_for_zero_balance"
+                       string="Exp. ending date"/>
             </tree>
         </field>
     </record>

@@ -24,6 +24,15 @@
             <xpath expr="//field[@name='negative_balance']" position="after">
                 <field name="negative_balance_vol_hours" style="color:red" attrs="{'invisible':[('balance','>=',0)]}"/>
             </xpath>
+            <xpath expr="//field[@name='average_daily_consumption']" position="replace">
+                <field name="average_daily_consumption_vol_hours"/>
+            </xpath>
+            <xpath expr="//field[@name='estimated_consumption']" position="replace">
+                <field name="estimated_consumption_vol_hours"/>
+            </xpath>
+            <xpath expr="//field[@name='estimated_balance']" position="replace">
+                <field name="estimated_balance_vol_hours"/>
+            </xpath>
         </field>
     </record>
 

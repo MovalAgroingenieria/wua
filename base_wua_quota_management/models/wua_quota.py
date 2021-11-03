@@ -157,6 +157,14 @@ class WuaQuota(models.Model):
         digits=(32, 2),
         compute='_compute_estimated_balance')
 
+    expected_date_for_zero_balance = fields.Date(
+        string='Expected 0 balance date',
+        compute='_compute_expected_date_for_zero_balance')
+
+    info_expected_date = fields.Char(
+        string='Expected date is',
+        compute='_compute_info_expected_date')
+
     hydricmovement_ids = fields.One2many(
         string='Hydric Movements',
         comodel_name='wua.hydricmovement',
@@ -319,6 +327,35 @@ class WuaQuota(models.Model):
         for record in self:
             record.estimated_balance = \
                 (record.balance - record.estimated_consumption)
+
+    @api.multi
+    def _compute_expected_date_for_zero_balance(self):
+        for record in self:
+            expected_date = ""
+            if record.is_current_quotaperiod and record.balance > 0 and \
+                record.average_daily_consumption > 0 and \
+                    record.number_of_days_pending > 0:
+                date_now = datetime.datetime.now()
+                days_until_end_balance = round(
+                    (record.balance / record.average_daily_consumption), 0)
+                if int(days_until_end_balance) > 0:
+                    expected_date = date_now + \
+                        datetime.timedelta(days=days_until_end_balance)
+            record.expected_date_for_zero_balance = expected_date
+
+    @api.multi
+    def _compute_info_expected_date(self):
+        for record in self:
+            info_msg = ""
+            if record.is_current_quotaperiod and record.quotaperiod_id and \
+                    record.expected_date_for_zero_balance:
+                quota_period_end_date = record.quotaperiod_id.end_date
+                expected_end_date = record.expected_date_for_zero_balance
+                if quota_period_end_date < expected_end_date:
+                    info_msg = _('Outside the quota period')
+                elif quota_period_end_date > expected_end_date:
+                    info_msg = _('Inside the quota period')
+            record.info_expected_date = info_msg
 
     @api.model
     def name_search(self, name='', args=None, operator='ilike', limit=100):

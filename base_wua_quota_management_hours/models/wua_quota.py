@@ -41,6 +41,30 @@ class WuaQuota(models.Model):
         string='Balance',
         compute='_compute_negative_balance_vol_hours')
 
+    average_daily_consumption_hours = fields.Char(
+        string='Average Daily Consumption (hours)',
+        compute='_compute_average_daily_consumption_hours')
+
+    average_daily_consumption_vol_hours = fields.Char(
+        string='Average Daily Consumption',
+        compute='_compute_average_daily_consumption_vol_hours')
+
+    estimated_consumption_hours = fields.Char(
+        string='Estimated Consumptions (hours)',
+        compute='_compute_estimated_consumption_hours')
+
+    estimated_consumption_vol_hours = fields.Char(
+        string='Estimated Consumptions',
+        compute='_compute_estimated_consumption_vol_hours')
+
+    estimated_balance_hours = fields.Char(
+        string='Estimated Balance (hours)',
+        compute='_compute_estimated_balance_hours')
+
+    estimated_balance_vol_hours = fields.Char(
+        string='Estimated Balance',
+        compute='_compute_estimated_balance_vol_hours')
+
     @api.depends('accumulated_input')
     def _compute_accumulated_input_hours(self):
         for record in self:
@@ -67,6 +91,27 @@ class WuaQuota(models.Model):
             record.negative_balance_hours = \
                 self.transform_to_quota_hours_format(
                     record.negative_balance)
+
+    @api.depends('average_daily_consumption')
+    def _compute_average_daily_consumption_hours(self):
+        for record in self:
+            record.average_daily_consumption_hours = \
+                self.transform_to_quota_hours_format(
+                    record.average_daily_consumption)
+
+    @api.depends('estimated_consumption')
+    def _compute_estimated_consumption_hours(self):
+        for record in self:
+            record.estimated_consumption_hours = \
+                self.transform_to_quota_hours_format(
+                    record.estimated_consumption)
+
+    @api.depends('estimated_balance')
+    def _compute_estimated_balance_hours(self):
+        for record in self:
+            record.estimated_balance_hours = \
+                self.transform_to_quota_hours_format(
+                    record.estimated_balance)
 
     @api.depends('accumulated_input', 'accumulated_input_hours')
     def _compute_accumulated_input_vol_hours(self):
@@ -102,6 +147,37 @@ class WuaQuota(models.Model):
                 self.transform_to_quota_hours_format_form_view(
                     record.negative_balance, record.negative_balance_hours)
             record.negative_balance_vol_hours = negative_balance_vol_hours
+
+    @api.depends('average_daily_consumption',
+                 'average_daily_consumption_hours')
+    def _compute_average_daily_consumption_vol_hours(self):
+        for record in self:
+            average_daily_consumption_vol_hours = \
+                self.transform_to_quota_hours_format_form_view(
+                    record.average_daily_consumption,
+                    record.average_daily_consumption_hours)
+            record.average_daily_consumption_vol_hours = \
+                average_daily_consumption_vol_hours
+
+    @api.depends('estimated_consumption', 'estimated_consumption_hours')
+    def _compute_estimated_consumption_vol_hours(self):
+        for record in self:
+            estimated_consumption_vol_hours = \
+                self.transform_to_quota_hours_format_form_view(
+                    record.estimated_consumption,
+                    record.estimated_consumption_hours)
+            record.estimated_consumption_vol_hours = \
+                estimated_consumption_vol_hours
+
+    @api.depends('estimated_balance', 'estimated_balance_hours')
+    def _compute_estimated_balance_vol_hours(self):
+        for record in self:
+            estimated_balance_vol_hours = \
+                self.transform_to_quota_hours_format_form_view(
+                    record.estimated_balance,
+                    record.estimated_balance_hours)
+            record.estimated_balance_vol_hours = \
+                estimated_balance_vol_hours
 
     def transform_to_quota_hours_format(self, value_m3):
         hours_as_hhmm = self.env['ir.values'].get_default(
