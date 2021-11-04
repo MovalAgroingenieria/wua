@@ -5,7 +5,7 @@
 import datetime
 import locale
 from babel.numbers import format_decimal
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, exceptions, _, tools
 
 
 class WuaQuota(models.Model):
@@ -1076,3 +1076,136 @@ class WuaQuota(models.Model):
             quota_ids = list(set(quota_ids))
             resp = self.env['wua.quota'].browse(quota_ids)
         return resp
+
+
+class WuaQuotaAggregatevalue(models.Model):
+    _name = 'wua.quota.aggregatevalue'
+    _auto = False
+
+    quotaperiod_id = fields.Many2one(
+        string='Quota Period',
+        comodel_name='wua.quotaperiod',
+        index=True)
+
+    partner_id = fields.Many2one(
+        string='Partner',
+        comodel_name='res.partner',
+        index=True)
+
+    accumulated_input = fields.Float(
+        string='Inputs',
+        digits=(32, 2))
+
+    accumulated_consumption = fields.Float(
+        string='Consumptions',
+        digits=(32, 2))
+
+    balance = fields.Float(
+        string='Balance',
+        digits=(32, 2))
+
+    average_daily_consumption = fields.Float(
+        string='Average Daily Consumption',
+        digits=(32, 2),
+        compute='_compute_average_daily_consumption')
+
+    number_of_days = fields.Integer(
+        string='Number of days',
+        related='quotaperiod_id.number_of_days')
+
+    number_of_days_pending = fields.Integer(
+        string='Number of days pending',
+        related='quotaperiod_id.number_of_days_pending')
+
+    number_of_days_elapsed = fields.Integer(
+        string='Number of days elapsed',
+        related='quotaperiod_id.number_of_days_elapsed')
+
+    estimated_consumption = fields.Float(
+        string='Estimated Consumptions',
+        digits=(32, 2),
+        compute='_compute_estimated_consumption')
+
+    available_quota_percentage = fields.Float(
+        string='% Avail. Quota',
+        digits=(32, 2),
+        compute='_compute_available_quota_percentage')
+
+    estimated_balance = fields.Float(
+        string='Estimated Balance',
+        digits=(32, 2),
+        compute='_compute_estimated_balance')
+
+    expected_date_for_zero_balance = fields.Date(
+        string='Expected 0 balance date',
+        compute='_compute_expected_date_for_zero_balance')
+
+    @api.depends('accumulated_input', 'accumulated_consumption')
+    def _compute_available_quota_percentage(self):
+        for record in self:
+            available_quota_percentage = 0
+            accumulated_input = record.accumulated_input
+            accumulated_consumption = record.accumulated_consumption
+            if (accumulated_input > 0 and
+               accumulated_consumption < accumulated_input):
+                available_quota_percentage = \
+                    100 - ((accumulated_consumption / accumulated_input) * 100)
+            record.available_quota_percentage = available_quota_percentage
+
+    @api.multi
+    def _compute_average_daily_consumption(self):
+        for record in self:
+            average_daily_consumption = 0
+            quotaperiod = record.quotaperiod_id
+            accumulated_consumption = record.accumulated_consumption
+            if (accumulated_consumption > 0 and
+               quotaperiod.state == 'generated' and
+               quotaperiod.number_of_days_elapsed > 0):
+                average_daily_consumption = \
+                    (accumulated_consumption /
+                     quotaperiod.number_of_days_elapsed)
+            record.average_daily_consumption = average_daily_consumption
+
+    @api.multi
+    def _compute_estimated_consumption(self):
+        for record in self:
+            record.estimated_consumption = \
+                (record.average_daily_consumption *
+                 record.number_of_days_pending)
+
+    @api.multi
+    def _compute_estimated_balance(self):
+        for record in self:
+            record.estimated_balance = \
+                (record.balance - record.estimated_consumption)
+
+    @api.multi
+    def _compute_expected_date_for_zero_balance(self):
+        for record in self:
+            expected_date = ""
+            if record.balance > 0 and  record.average_daily_consumption > 0 \
+                    and record.number_of_days_pending > 0 and \
+                    record.quotaperiod_id:
+                date_now = datetime.datetime.now()
+                days_until_end_balance = round(
+                    (record.balance / record.average_daily_consumption), 0)
+                if int(days_until_end_balance) > 0:
+                    expected_date = date_now + \
+                        datetime.timedelta(days=days_until_end_balance)
+                    quotaperiod_id_end_date = datetime.datetime.strptime(
+                        record.quotaperiod_id.end_date, '%Y-%m-%d')
+                    if quotaperiod_id_end_date < expected_date:
+                        expected_date = quotaperiod_id_end_date
+            record.expected_date_for_zero_balance = expected_date
+
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, 'wua_quota_aggregatevalue')
+        self.env.cr.execute("""
+            CREATE OR REPLACE VIEW wua_quota_aggregatevalue AS (
+            SELECT row_number() OVER() AS id, quotaperiod_id, partner_id,
+              SUM(accumulated_input) AS accumulated_input,
+              SUM(accumulated_consumption) AS accumulated_consumption,
+              SUM(accumulated_input) - SUM(accumulated_consumption) AS balance
+            FROM wua_quota
+           WHERE of_active_agriculturalseason
+           GROUP BY quotaperiod_id, partner_id)""")

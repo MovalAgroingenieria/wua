@@ -418,6 +418,29 @@ class WuaQuotaperiod(models.Model):
             return act_window
 
     @api.multi
+    def action_get_partner_aggregate_quotas(self):
+        self.ensure_one()
+        if self.quota_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_aggregatevalue_view_tree').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_aggregatevalue_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Aggregate quotas'),
+                'res_model': 'wua.quota.aggregatevalue',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('quotaperiod_id', '=', self.id)],
+                }
+            return act_window
+
+    @api.multi
     def action_get_hydric_movements(self):
         self.ensure_one()
         if self.hydricmovement_ids:

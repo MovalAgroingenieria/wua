@@ -161,6 +161,43 @@
         </field>
     </record>
 
+    <record id="wua_quota_aggregatevalue_view_tree" model="ir.ui.view">
+        <field name="name">Quotas Aggregate (tree view)</field>
+        <field name="model">wua.quota.aggregatevalue</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_quota_aggregatevalue_view_tree"
+                  colors="red:balance&lt;0" create="false">
+                <field name="partner_id"/>
+                <field name="quotaperiod_id" widget="many2one_unclickable"/>
+                <field name="accumulated_input"/>
+                <field name="accumulated_consumption"/>
+                <field name="balance"/>
+                <field name="available_quota_percentage"/>
+                <field name="estimated_balance"
+                       string="Estim. Ending Balance"/>
+                <field name="expected_date_for_zero_balance"
+                       string="Exp. ending date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_quota_aggregatevalue_view_search" model="ir.ui.view">
+        <field name="name">Quotas Aggregate (search view)</field>
+        <field name="model">wua.quota.aggregatevalue</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <separator/>
+                <filter string="Positive Quotas"
+                        name="positive_quotas"
+                        domain="[('balance','&gt;=',0)]"/>
+                <filter string="Negative Quotas"
+                        name="negative_quotas"
+                        domain="[('balance','&lt;',0)]"/>
+            </search>
+        </field>
+    </record>
+
     <record id="wua_quota_action"
             model="ir.actions.act_window">
         <field name="name">Quotas</field>
@@ -201,11 +238,29 @@
         </field>
     </record>
 
+    <record id="wua_quota_ggregatevalue_action" model="ir.actions.act_window">
+        <field name="name">Aggregated Quotas</field>
+        <field name="res_model">wua.quota.aggregatevalue</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_quota_aggregatevalue_view_tree')})]"/>
+        <field name="search_view_id" ref="wua_quota_aggregatevalue_view_search"/>
+    </record>
+
     <menuitem id="quota_menu"
               name="Partner Quotas"
               parent="management_menu"
               sequence="3"
               action="wua_quota_action"/>
+
+    <menuitem id="quota_aggregatevalue_menu"
+              name="Partner aggregated quotas"
+              parent="management_menu"
+              sequence="4"
+              action="wua_quota_ggregatevalue_action"/>
 
     <menuitem id="technical_calculation_quotas_menu"
               name="Calculation: quotas"

@@ -159,7 +159,7 @@
                             attrs="{'invisible':
                                     ['|',('state','!=','generated'),
                                      ('of_active_agriculturalseason','=',False)]}"
-                            groups="base.group_system"/>                            
+                            groups="base.group_system"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,configured,generated"/>
@@ -168,12 +168,12 @@
                     <div name="open_quotaperiod"
                          style="display: inline-block;"
                          attrs="{'invisible':[('is_closed','=',True)]}">
-                        <img src="/base_wua_quota_management/static/image/img_unlock.png"/>                         
+                        <img src="/base_wua_quota_management/static/image/img_unlock.png"/>
                     </div>
                     <div name="closed_quotaperiod"
                          style="display: inline-block;"
                          attrs="{'invisible':[('is_closed','=',False)]}">
-                        <img src="/base_wua_quota_management/static/image/img_lock.png"/>                         
+                        <img src="/base_wua_quota_management/static/image/img_lock.png"/>
                     </div>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_get_partner_quotas"
@@ -182,6 +182,14 @@
                             <div class="o_form_field o_stat_info">
                                 <span class="o_stat_text">Partner</span>
                                 <span class="o_stat_text">Quotas</span>
+                            </div>
+                        </button>
+                        <button name="action_get_partner_aggregate_quotas"
+                                type="object" class="oe_stat_button"
+                                icon="fa-moval-quotas-aggregate">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Partner quotas</span>
+                                <span class="o_stat_text">Aggregate</span>
                             </div>
                         </button>
                         <button name="action_get_hydric_movements"
