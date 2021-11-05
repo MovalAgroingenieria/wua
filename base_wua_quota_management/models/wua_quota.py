@@ -1082,6 +1082,18 @@ class WuaQuotaAggregatevalue(models.Model):
     _name = 'wua.quota.aggregatevalue'
     _auto = False
 
+    def init(self):
+        tools.drop_view_if_exists(self.env.cr, 'wua_quota_aggregatevalue')
+        self.env.cr.execute("""
+            CREATE OR REPLACE VIEW wua_quota_aggregatevalue AS (
+            SELECT row_number() OVER() AS id, quotaperiod_id, partner_id,
+              SUM(accumulated_input) AS accumulated_input,
+              SUM(accumulated_consumption) AS accumulated_consumption,
+              SUM(accumulated_input) - SUM(accumulated_consumption) AS balance
+            FROM wua_quota q INNER JOIN res_partner p ON q.partner_id = p.id
+           WHERE of_active_agriculturalseason
+           GROUP BY p.partner_code, quotaperiod_id, partner_id)""")
+
     quotaperiod_id = fields.Many2one(
         string='Quota Period',
         comodel_name='wua.quotaperiod',
@@ -1198,14 +1210,22 @@ class WuaQuotaAggregatevalue(models.Model):
                         expected_date = quotaperiod_id_end_date
             record.expected_date_for_zero_balance = expected_date
 
-    def init(self):
-        tools.drop_view_if_exists(self.env.cr, 'wua_quota_aggregatevalue')
-        self.env.cr.execute("""
-            CREATE OR REPLACE VIEW wua_quota_aggregatevalue AS (
-            SELECT row_number() OVER() AS id, quotaperiod_id, partner_id,
-              SUM(accumulated_input) AS accumulated_input,
-              SUM(accumulated_consumption) AS accumulated_consumption,
-              SUM(accumulated_input) - SUM(accumulated_consumption) AS balance
-            FROM wua_quota
-           WHERE of_active_agriculturalseason
-           GROUP BY quotaperiod_id, partner_id)""")
+    @api.multi
+    def name_get(self):
+        result = []
+        default_locale = locale.setlocale(locale.LC_TIME)
+        is_english = self.env.context['lang'] == 'en_US'
+        for record in self:
+            partner_name = record.partner_id.name + \
+                ' [' + str(record.partner_id.partner_code) + ']'
+            try:
+                if is_english:
+                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                initial_date_str = datetime.datetime.strptime(
+                    record.quotaperiod_id.initial_date,
+                    '%Y-%m-%d').strftime('%x')
+            finally:
+                locale.setlocale(locale.LC_TIME, default_locale)
+            name = initial_date_str + ' - ' + partner_name
+            result.append((record.id, name))
+        return result
