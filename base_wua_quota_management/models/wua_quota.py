@@ -1195,7 +1195,7 @@ class WuaQuotaAggregatevalue(models.Model):
     def _compute_expected_date_for_zero_balance(self):
         for record in self:
             expected_date = ""
-            if record.balance > 0 and  record.average_daily_consumption > 0 \
+            if record.balance > 0 and record.average_daily_consumption > 0 \
                     and record.number_of_days_pending > 0 and \
                     record.quotaperiod_id:
                 date_now = datetime.datetime.now()
