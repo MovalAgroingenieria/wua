@@ -134,6 +134,56 @@ class WuaWaterpipe(models.Model):
         inverse_name='waterpipe_10_id',
         string="Parcels at level 10 of water-pipe")
 
+    parcel_wp_11_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_11_id',
+        string="Parcels at level 11 of water-pipe")
+
+    parcel_wp_12_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_12_id',
+        string="Parcels at level 12 of water-pipe")
+
+    parcel_wp_13_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_13_id',
+        string="Parcels at level 13 of water-pipe")
+
+    parcel_wp_14_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_14_id',
+        string="Parcels at level 14 of water-pipe")
+
+    parcel_wp_15_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_15_id',
+        string="Parcels at level 15 of water-pipe")
+
+    parcel_wp_16_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_16_id',
+        string="Parcels at level 16 of water-pipe")
+
+    parcel_wp_17_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_17_id',
+        string="Parcels at level 17 of water-pipe")
+
+    parcel_wp_18_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_18_id',
+        string="Parcels at level 18 of water-pipe")
+
+    parcel_wp_19_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_19_id',
+        string="Parcels at level 19 of water-pipe")
+
+    parcel_wp_20_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_20_id',
+        string="Parcels at level 20 of water-pipe")
+
     number_of_parcels = fields.Integer(
         string='Parcels',
         store=True,
@@ -236,36 +286,32 @@ class WuaWaterpipe(models.Model):
     @api.depends('parcel_wp_01_ids', 'parcel_wp_02_ids', 'parcel_wp_03_ids',
                  'parcel_wp_04_ids', 'parcel_wp_05_ids', 'parcel_wp_06_ids',
                  'parcel_wp_07_ids', 'parcel_wp_08_ids', 'parcel_wp_09_ids',
-                 'parcel_wp_10_ids')
+                 'parcel_wp_10_ids', 'parcel_wp_11_ids', 'parcel_wp_12_ids',
+                 'parcel_wp_13_ids', 'parcel_wp_14_ids', 'parcel_wp_15_ids',
+                 'parcel_wp_16_ids', 'parcel_wp_17_ids', 'parcel_wp_18_ids',
+                 'parcel_wp_19_ids', 'parcel_wp_20_ids')
     def _compute_number_of_parcels(self):
+        max_level = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'max_levels_pressurized_irrigation')
         for record in self:
             number_of_parcels = 0
-            if record.parcel_wp_10_ids:
-                number_of_parcels = len(record.parcel_wp_10_ids)
-            elif record.parcel_wp_09_ids:
-                number_of_parcels = len(record.parcel_wp_09_ids)
-            elif record.parcel_wp_08_ids:
-                number_of_parcels = len(record.parcel_wp_08_ids)
-            elif record.parcel_wp_07_ids:
-                number_of_parcels = len(record.parcel_wp_07_ids)
-            elif record.parcel_wp_06_ids:
-                number_of_parcels = len(record.parcel_wp_06_ids)
-            elif record.parcel_wp_05_ids:
-                number_of_parcels = len(record.parcel_wp_05_ids)
-            elif record.parcel_wp_04_ids:
-                number_of_parcels = len(record.parcel_wp_04_ids)
-            elif record.parcel_wp_03_ids:
-                number_of_parcels = len(record.parcel_wp_03_ids)
-            elif record.parcel_wp_02_ids:
-                number_of_parcels = len(record.parcel_wp_02_ids)
-            elif record.parcel_wp_01_ids:
-                number_of_parcels = len(record.parcel_wp_01_ids)
+            level = max_level
+            while (number_of_parcels <= 0 and level > 0):
+                if record['parcel_wp_' + str(level).zfill(2) + '_ids']:
+                    number_of_parcels = len(
+                        record['parcel_wp_' + str(level).zfill(2) + '_ids'])
+                level -= 1
             record.number_of_parcels = number_of_parcels
 
     @api.depends('parcel_wp_01_ids', 'parcel_wp_02_ids', 'parcel_wp_03_ids',
                  'parcel_wp_04_ids', 'parcel_wp_05_ids', 'parcel_wp_06_ids',
                  'parcel_wp_07_ids', 'parcel_wp_08_ids', 'parcel_wp_09_ids',
-                 'parcel_wp_10_ids', 'parcel_wp_01_ids.area_official',
+                 'parcel_wp_10_ids', 'parcel_wp_11_ids', 'parcel_wp_12_ids',
+                 'parcel_wp_13_ids', 'parcel_wp_14_ids', 'parcel_wp_15_ids',
+                 'parcel_wp_16_ids', 'parcel_wp_17_ids', 'parcel_wp_18_ids',
+                 'parcel_wp_19_ids', 'parcel_wp_20_ids',
+                 'parcel_wp_01_ids.area_official',
                  'parcel_wp_02_ids.area_official',
                  'parcel_wp_03_ids.area_official',
                  'parcel_wp_04_ids.area_official',
@@ -274,40 +320,33 @@ class WuaWaterpipe(models.Model):
                  'parcel_wp_07_ids.area_official',
                  'parcel_wp_08_ids.area_official',
                  'parcel_wp_09_ids.area_official',
-                 'parcel_wp_10_ids.area_official',)
+                 'parcel_wp_10_ids.area_official',
+                 'parcel_wp_11_ids.area_official',
+                 'parcel_wp_12_ids.area_official',
+                 'parcel_wp_13_ids.area_official',
+                 'parcel_wp_14_ids.area_official',
+                 'parcel_wp_15_ids.area_official',
+                 'parcel_wp_16_ids.area_official',
+                 'parcel_wp_17_ids.area_official',
+                 'parcel_wp_18_ids.area_official',
+                 'parcel_wp_19_ids.area_official',
+                 'parcel_wp_20_ids.area_official')
     def _compute_total_affected_area_official(self):
+        max_level = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'max_levels_pressurized_irrigation')
         for record in self:
             total_affected_area_official = 0.0
-            if record.parcel_wp_10_ids:
-                for parcel in record.parcel_wp_10_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_09_ids:
-                for parcel in record.parcel_wp_09_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_08_ids:
-                for parcel in record.parcel_wp_08_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_07_ids:
-                for parcel in record.parcel_wp_07_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_06_ids:
-                for parcel in record.parcel_wp_06_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_05_ids:
-                for parcel in record.parcel_wp_05_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_04_ids:
-                for parcel in record.parcel_wp_04_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_03_ids:
-                for parcel in record.parcel_wp_03_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_02_ids:
-                for parcel in record.parcel_wp_02_ids:
-                    total_affected_area_official += parcel.area_official
-            elif record.parcel_wp_01_ids:
-                for parcel in record.parcel_wp_01_ids:
-                    total_affected_area_official += parcel.area_official
+            level = max_level
+            some_level = False
+            while (not some_level and level > 0):
+                if record['parcel_wp_' + str(level).zfill(2) + '_ids']:
+                    some_level = True
+                    for parcel in \
+                            record['parcel_wp_' + str(level).zfill(2) +
+                                   '_ids']:
+                        total_affected_area_official += parcel.area_official
+                level -= 1
             record.total_affected_area_official = total_affected_area_official
 
     @api.onchange('waterpipe_id')
@@ -469,27 +508,18 @@ class WuaWaterpipe(models.Model):
     def action_get_parcels(self):
         self.ensure_one()
         current_waterpipe = self
-        condition = ['|', '|', '|', '|', '|', '|', '|', '|', '|',
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_01_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_02_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_03_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_04_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_05_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_06_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_07_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_08_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_09_ids.ids),
-                     ('id', 'in',
-                      current_waterpipe.parcel_wp_10_ids.ids)]
+        condition = []
+        max_level = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'max_levels_gravity_irrigation')
+        #  Add operator, '|'
+        condition.extend(['|'] * (max_level - 1))
+        for i in range(1, max_level + 1):
+            # Add possible ids
+            condition.append(
+                ('id', 'in',
+                    current_waterpipe['parcel_wp_' + str(i).zfill(2) +
+                                      '_ids'].ids))
         id_tree_view = self.env.ref(
             'base_wua_infrastructure_pressurized_hierarchy.'
             'wua_parcel_of_waterpipe_view_tree').id

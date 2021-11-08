@@ -124,6 +124,71 @@ class WuaDrainageditch(models.Model):
         inverse_name='drainageditch_07_id',
         string="Parcels at level 7 drainage ditch")
 
+    parcel_08_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_08_id',
+        string="Parcels at level 8 drainage ditch")
+
+    parcel_09_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_09_id',
+        string="Parcels at level 9 drainage ditch")
+
+    parcel_10_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_10_id',
+        string="Parcels at level 10 drainage ditch")
+
+    parcel_11_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_11_id',
+        string="Parcels at level 11 drainage ditch")
+
+    parcel_12_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_12_id',
+        string="Parcels at level 12 drainage ditch")
+
+    parcel_13_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_13_id',
+        string="Parcels at level 13 drainage ditch")
+
+    parcel_14_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_14_id',
+        string="Parcels at level 14 drainage ditch")
+
+    parcel_15_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_15_id',
+        string="Parcels at level 15 drainage ditch")
+
+    parcel_16_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_16_id',
+        string="Parcels at level 16 drainage ditch")
+
+    parcel_17_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_17_id',
+        string="Parcels at level 17 drainage ditch")
+
+    parcel_18_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_18_id',
+        string="Parcels at level 18 drainage ditch")
+
+    parcel_19_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_19_id',
+        string="Parcels at level 19 drainage ditch")
+
+    parcel_20_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_20_id',
+        string="Parcels at level 20 drainage ditch")
+
     number_of_parcels = fields.Integer(
         string='Cumulative number of parcels',
         store=True,
@@ -151,7 +216,13 @@ class WuaDrainageditch(models.Model):
     @api.depends('parcel_01_ids', 'parcel_02_ids',
                  'parcel_03_ids', 'parcel_04_ids',
                  'parcel_05_ids', 'parcel_06_ids',
-                 'parcel_07_ids')
+                 'parcel_07_ids', 'parcel_08_ids',
+                 'parcel_09_ids', 'parcel_10_ids',
+                 'parcel_11_ids', 'parcel_12_ids',
+                 'parcel_13_ids', 'parcel_14_ids',
+                 'parcel_15_ids', 'parcel_16_ids',
+                 'parcel_17_ids', 'parcel_18_ids',
+                 'parcel_19_ids', 'parcel_20_ids')
     def _compute_number_of_parcels(self):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
