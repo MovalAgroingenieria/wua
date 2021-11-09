@@ -18,6 +18,11 @@ class ResPartner(models.Model):
         comodel_name='wua.hydricmovement',
         inverse_name='partner_id')
 
+    partner_aggregatequotas = fields.One2many(
+        string='Aggregate quotas',
+        comodel_name='wua.quota.aggregatevalue',
+        inverse_name='partner_id')
+
     def _get_current_quotaperiod(self):
         current_quotaperiod = None
         quotaperiods = self.env['wua.quotaperiod'].search(
@@ -54,29 +59,6 @@ class ResPartner(models.Model):
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
                             'search_default_active_agriculturalseason': True}
-                }
-            return act_window
-
-    @api.multi
-    def action_get_partner_aggregate_quotas(self):
-        self.ensure_one()
-        if self.quota_ids:
-            id_tree_view = self.env.ref(
-                'base_wua_quota_management.'
-                'wua_quota_aggregatevalue_view_tree').id
-            search_view = self.env.ref(
-                'base_wua_quota_management.'
-                'wua_quota_aggregatevalue_view_search')
-            act_window = {
-                'type': 'ir.actions.act_window',
-                'name': _('Aggregate quotas'),
-                'res_model': 'wua.quota.aggregatevalue',
-                'view_type': 'form',
-                'view_mode': 'tree',
-                'views': [(id_tree_view, 'tree')],
-                'search_view_id': (search_view.id, search_view.name),
-                'target': 'current',
-                'domain': [('partner_id', '=', self.id)],
                 }
             return act_window
 
@@ -120,4 +102,27 @@ class ResPartner(models.Model):
             'view_mode': 'form',
             'target': 'new'
             }
+        return act_window
+
+    @api.multi
+    def action_get_partner_aggregate_quotas(self):
+        self.ensure_one()
+        if self.partner_aggregatequotas:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_aggregatevalue_view_tree').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_aggregatevalue_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Partner aggregate quotas'),
+                'res_model': 'wua.quota.aggregatevalue',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree')],
+                'search_view_id': (search_view.id, search_view.name),
+                'domain': [('id', 'in', self.partner_aggregatequotas.ids)],
+                'target': 'current',
+                }
         return act_window

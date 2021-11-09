@@ -1092,7 +1092,7 @@ class WuaQuotaAggregatevalue(models.Model):
               SUM(accumulated_input) - SUM(accumulated_consumption) AS balance
             FROM wua_quota q INNER JOIN res_partner p ON q.partner_id = p.id
            WHERE of_active_agriculturalseason
-           GROUP BY p.partner_code, quotaperiod_id, partner_id)""")
+           GROUP BY quotaperiod_id, partner_id)""")
 
     quotaperiod_id = fields.Many2one(
         string='Quota Period',
@@ -1195,7 +1195,7 @@ class WuaQuotaAggregatevalue(models.Model):
     def _compute_expected_date_for_zero_balance(self):
         for record in self:
             expected_date = ""
-            if record.balance > 0 and  record.average_daily_consumption > 0 \
+            if record.balance > 0 and record.average_daily_consumption > 0 \
                     and record.number_of_days_pending > 0 and \
                     record.quotaperiod_id:
                 date_now = datetime.datetime.now()

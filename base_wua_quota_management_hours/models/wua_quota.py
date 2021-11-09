@@ -213,3 +213,51 @@ class WuaQuota(models.Model):
         vol_hours = str(self.env['wua.parcel'].transform_float_to_locale(
             value_m3, 2)) + _(' m³ ') + '(' + value_hours + _(' hours') + ')'
         return vol_hours
+
+
+class WuaQuotaAggregatevalue(models.Model):
+    _inherit = 'wua.quota.aggregatevalue'
+
+    accumulated_input_hours = fields.Char(
+        string='Inputs (hours)',
+        compute='_compute_accumulated_input_hours')
+
+    accumulated_consumption_hours = fields.Char(
+        string='Consumptions (hours)',
+        compute='_compute_accumulated_consumption_hours')
+
+    balance_hours = fields.Char(
+        string='Balance (hours)',
+        compute='_compute_balance_hours')
+
+    estimated_balance_hours = fields.Char(
+        string='Estimated balance (hours)',
+        compute='_compute_estimated_balance_hours')
+
+    @api.depends('accumulated_input')
+    def _compute_accumulated_input_hours(self):
+        for record in self:
+            record.accumulated_input_hours = \
+                self.env['wua.quota'].transform_to_quota_hours_format(
+                    float(record.accumulated_input))
+
+    @api.depends('accumulated_consumption')
+    def _compute_accumulated_consumption_hours(self):
+        for record in self:
+            record.accumulated_consumption_hours = \
+                self.env['wua.quota'].transform_to_quota_hours_format(
+                    record.accumulated_consumption)
+
+    @api.depends('balance')
+    def _compute_balance_hours(self):
+        for record in self:
+            record.balance_hours = \
+                self.env['wua.quota'].transform_to_quota_hours_format(
+                    record.balance)
+
+    @api.depends('estimated_balance')
+    def _compute_estimated_balance_hours(self):
+        for record in self:
+            record.estimated_balance_hours = \
+                self.env['wua.quota'].transform_to_quota_hours_format(
+                    record.estimated_balance)

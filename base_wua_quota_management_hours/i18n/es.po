@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-03 17:06+0000\n"
-"PO-Revision-Date: 2021-11-03 17:06+0000\n"
+"POT-Creation-Date: 2021-11-09 14:54+0000\n"
+"PO-Revision-Date: 2021-11-09 14:54+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -94,6 +94,7 @@ msgstr "Saldo pendiente"
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_hydricmovement_negative_balance_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_individualinput_quota_balance_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_individualinput_quota_negative_balance_hours
+#: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quota_aggregatevalue_balance_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quota_balance_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quota_negative_balance_hours
 #: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_partner_quota_report_document
@@ -101,6 +102,7 @@ msgid "Balance (hours)"
 msgstr "Saldo (horas)"
 
 #. module: base_wua_quota_management_hours
+#: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quota_aggregatevalue_view_tree
 #: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quota_view_tree
 msgid "Balance (m³)"
 msgstr "Saldo (m³)"
@@ -126,11 +128,13 @@ msgstr "Consumos"
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_cession_quota_accumulated_consumption_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_individualinput_quota_accumulated_consumption_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quota_accumulated_consumption_hours
+#: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quota_aggregatevalue_accumulated_consumption_hours
 #: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_partner_quota_report_document
 msgid "Consumptions (hours)"
 msgstr "Consumos (horas)"
 
 #. module: base_wua_quota_management_hours
+#: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quota_aggregatevalue_view_tree
 #: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quota_view_tree
 msgid "Consumptions (m³)"
 msgstr "Consumos (m³)"
@@ -166,6 +170,16 @@ msgid "Estimated Consumptions (hours)"
 msgstr "Consumos estimados (horas)"
 
 #. module: base_wua_quota_management_hours
+#: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quota_aggregatevalue_estimated_balance_hours
+msgid "Estimated balance (hours)"
+msgstr "Saldo estimado (horas)"
+
+#. module: base_wua_quota_management_hours
+#: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quota_aggregatevalue_view_tree
+msgid "Estimated balance (m³)"
+msgstr "Saldo estimado (m³)"
+
+#. module: base_wua_quota_management_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quotas_configuration_hours_as_hhmm
 msgid "Format HH:MM"
 msgstr "Formato HH:MM"
@@ -196,11 +210,13 @@ msgstr "Insumos"
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_cession_quota_accumulated_input_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_individualinput_quota_accumulated_input_hours
 #: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quota_accumulated_input_hours
+#: model:ir.model.fields,field_description:base_wua_quota_management_hours.field_wua_quota_aggregatevalue_accumulated_input_hours
 #: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_partner_quota_report_document
 msgid "Inputs (hours)"
 msgstr "Insumos (horas)"
 
 #. module: base_wua_quota_management_hours
+#: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quota_aggregatevalue_view_tree
 #: model:ir.ui.view,arch_db:base_wua_quota_management_hours.wua_quota_view_tree
 msgid "Inputs (m³)"
 msgstr "Insumos (m³)"
@@ -244,4 +260,9 @@ msgid "Volume, in m³, which is equal to one hour.\n"
 "The configuration of this parameter is done in Census/Configuration/Parameters"
 msgstr "Volumen en m³ igual a 1 hora.\n"
 "La configuración de este parámetro se realiza en Censo/Configuración/Parámetros"
+
+#. module: base_wua_quota_management_hours
+#: model:ir.model,name:base_wua_quota_management_hours.model_wua_quota_aggregatevalue
+msgid "wua.quota.aggregatevalue"
+msgstr "wua.quota.aggregatevalue"
 

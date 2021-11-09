@@ -113,7 +113,7 @@
                                     ['|',('is_closed','=',True),
                                      '|',('balances_to_next_quotaperiod','=',True),
                                      '|',('state','!=','generated'),
-                                     ('of_active_agriculturalseason','=',False)]}"                            
+                                     ('of_active_agriculturalseason','=',False)]}"
                             groups="base_wua_quota_management.group_wua_quota_manager"
                             confirm="Are you sure you want to transfer the positive balances to the next quota period?"/>
                     <span style="display: inline-block;padding-left: 12px;"
@@ -131,7 +131,7 @@
                                     ['|',('is_closed','=',True),
                                      '|',('balances_to_next_quotaperiod','=',False),
                                      '|',('state','!=','generated'),
-                                     ('of_active_agriculturalseason','=',False)]}"                            
+                                     ('of_active_agriculturalseason','=',False)]}"
                             groups="base_wua_quota_management.group_wua_quota_manager"
                             confirm="Are you sure you want to revert the balances given for the next quota period?"/>
                     <span style="display: inline-block;padding-left: 12px;"
@@ -184,7 +184,7 @@
                                 <span class="o_stat_text">Quotas</span>
                             </div>
                         </button>
-                        <button name="action_get_partner_aggregate_quotas"
+                        <button name="action_get_quotaperiod_aggregate_quotas"
                                 type="object" class="oe_stat_button"
                                 icon="fa-moval-quotas-aggregate">
                             <div class="o_form_field o_stat_info">
@@ -231,7 +231,7 @@
                                 <field name="quotaperiodline_ids"
                                        attrs="{'readonly': [('state','=','generated')]}"
                                        context="{'tree_view_ref':
-                                       'base_wua_quota_management.wua_quotaperiod_line_view_tree'}"/>                            
+                                       'base_wua_quota_management.wua_quotaperiod_line_view_tree'}"/>
                             </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
