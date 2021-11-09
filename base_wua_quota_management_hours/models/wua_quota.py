@@ -224,7 +224,7 @@ class WuaQuotaAggregatevalue(models.Model):
 
     accumulated_consumption_hours = fields.Char(
         string='Consumptions (hours)',
-        compute='_compute_accumulated_input_hours')
+        compute='_compute_accumulated_consumption_hours')
 
     balance_hours = fields.Char(
         string='Balance (hours)',

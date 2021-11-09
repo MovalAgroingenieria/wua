@@ -15,9 +15,11 @@
                 <span t-field="q.provisional_balance_hours"/>
             </td>
         </xpath>
-        <xpath expr="//t[@ t-set='total_balance_hours']" position="after">
+        <xpath expr="//t[@t-set='total_balance_hours']" position="after">
             <t t-set="total_provisional_extra_consumption_hours" t-value="o.recalcule_quota_total_hours(total_extra_consumption)"/>
             <t t-set="total_provisional_balance_hours" t-value="o.recalcule_quota_total_hours(total_balance)"/>
+        </xpath>
+        <xpath expr="//td[@name='td_total_consumption_hours']" position="after">
             <td name="td_total_provisional_extra_consumption_hours" class="text-right">
                 <strong><t t-esc="total_provisional_extra_consumption_hours"/></strong>
             </td>

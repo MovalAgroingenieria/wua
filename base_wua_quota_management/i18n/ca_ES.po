@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-04 15:22+0000\n"
-"PO-Revision-Date: 2021-11-04 15:22+0000\n"
+"POT-Creation-Date: 2021-11-09 14:46+0000\n"
+"PO-Revision-Date: 2021-11-09 14:46+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -423,11 +423,13 @@ msgid "Add to quota period"
 msgstr "Afegir a el període de quota"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/res_partner.py:72
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:432
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:633
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_res_partner_partner_aggregatequotas
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_res_users_partner_aggregatequotas
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_quotaperiod_aggregatequotas
 #, python-format
 msgid "Aggregate quotas"
-msgstr "Quotes agregats"
+msgstr "Aggregate quotas"
 
 #. module: base_wua_quota_management
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_quota_ggregatevalue_action
@@ -785,7 +787,7 @@ msgid "Configuration"
 msgstr "Configuració"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:478
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:461
 #, python-format
 msgid "Configuration of Quota-Period Lines"
 msgstr "Configuració de períodes de quota"
@@ -1235,13 +1237,13 @@ msgid "Error when updating records (\"of_active_agriculturalseason\" field)."
 msgstr "Error a l'actualitzar la base de dades (camp \"of_active_agriculturalseason\")."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:725
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:745
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:919
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:947
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:977
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1073
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1376
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:731
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:751
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:925
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:953
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:983
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1079
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1382
 #, python-format
 msgid "Error when updating records."
 msgstr "Error a l'actualitzar la base de dades."
@@ -1470,12 +1472,12 @@ msgid "Hydric Movement"
 msgstr "Moviment hídric"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/res_partner.py:98
+#: code:addons/base_wua_quota_management/models/res_partner.py:80
 #: code:addons/base_wua_quota_management/models/wua_agriculturalseason.py:208
 #: code:addons/base_wua_quota_management/models/wua_gravconsumption.py:164
 #: code:addons/base_wua_quota_management/models/wua_irrigationreport.py:116
 #: code:addons/base_wua_quota_management/models/wua_presconsumption.py:129
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:457
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:440
 #: code:addons/base_wua_quota_management/models/wua_superproduct.py:303
 #: model:ir.actions.act_window,name:base_wua_quota_management.technical_hydricmovements_action
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_hydricmovement_action
@@ -1690,7 +1692,7 @@ msgid "Initial provision for a parcel"
 msgstr "Assignació inicial per a una parcela"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/res_partner.py:117
+#: code:addons/base_wua_quota_management/models/res_partner.py:99
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_provision_partner_view_form
 #, python-format
 msgid "Initial provision for a partner"
@@ -1870,20 +1872,20 @@ msgid "It is not possible to directly delete a quota."
 msgstr "No està permès esborrar directament una quota."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:581
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:600
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:564
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:583
 #, python-format
 msgid "It is not possible to do this operation: the next quota period is closed, it is not generated or does not exist (the current quota period is the last one)."
 msgstr "No és possible moure els balanços: en aquesta campanya no hi ha cap període posterior, o bé aquest període de quota està tancat o no està en l'estat generat."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:588
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:571
 #, python-format
 msgid "It is not possible to move any quotas: there are no positive balances or quotas do not exist in the destination quota period."
 msgstr "No és possible moure els balanços: no hi ha balanços positius de traspassar, o bé no hi ha quotes en el període destinatari."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:607
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:590
 #, python-format
 msgid "It is not possible to move any quotas: there are no transferred balances or the balances are not correctly balanced."
 msgstr "No és possible moure els balanços: no hi ha balanços traspassats, o bé els balanços no estan correctament balancejats."
@@ -2008,7 +2010,7 @@ msgstr "Estableixi manualment les quantitats en la comanda: Factura basada en la
 "Crear tasca i controlar hores: Crear una tasca en la validació de l'ordre de venda i realitzar un seguiment de les hores treballades."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:617
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:600
 #, python-format
 msgid "Massive assignment of individual inputs"
 msgstr "Alta massiva d'assignacions individuals"
@@ -2019,7 +2021,7 @@ msgid "Massive assignment of individual inputs for the current quota period"
 msgstr "Alta massiva d'assignacions individuals per al període de quota actual"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:630
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:613
 #, python-format
 msgid "Massive compensatory tranfers"
 msgstr "Compensació global de saldos"
@@ -2245,7 +2247,7 @@ msgid "Operation not allowed: there is not an active agricultural season or the 
 msgstr "Operació no permesa: no s'ha establert la campanya activa, o bé la campanya activa no té cap període de quota en estat generat."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:519
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:502
 #, python-format
 msgid "Operation not allowed: this quota period has transferred balances and/or received balances. Before canceling, it is mandatory to reverse the transferred balances."
 msgstr "Operació no permesa: el període de quota té balanços traspassats a un altre període o balanços rebuts d'un altre període. Abans de cancel·lar aquest període de quota, és obligatori revertir aquests moviments de balanç."
@@ -2312,7 +2314,7 @@ msgstr "Parcel·la de línia de període de quota"
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_quota.py:775
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1320
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1326
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_line_view_tree
 #, python-format
 msgid "Parcels"
@@ -2350,6 +2352,12 @@ msgstr "Codi Soci"
 #: model:ir.ui.menu,name:base_wua_quota_management.quota_menu
 msgid "Partner Quotas"
 msgstr "Quotas de soci"
+
+#. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/res_partner.py:119
+#, python-format
+msgid "Partner aggregate quotas"
+msgstr "Quotas de soci agregats"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.menu,name:base_wua_quota_management.quota_aggregatevalue_menu
@@ -2733,12 +2741,12 @@ msgid "Quota-Period/Superproduct"
 msgstr "Període de quota/Supraproducte"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/res_partner.py:46
+#: code:addons/base_wua_quota_management/models/res_partner.py:51
 #: code:addons/base_wua_quota_management/models/wua_agriculturalseason.py:180
 #: code:addons/base_wua_quota_management/models/wua_cession.py:505
 #: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:434
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:496
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:406
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:411
 #: code:addons/base_wua_quota_management/models/wua_superproduct.py:274
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_quota_action
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_res_partner_quota_ids
@@ -3127,7 +3135,7 @@ msgid "The quota period is not within the chosen agricultural season."
 msgstr "El període de quota no forma part de la campanya escollida."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:338
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:343
 #, python-format
 msgid "The quota period limits are outside the agricultural season."
 msgstr "Els límits de el període de quota estan fora de la campanya."
@@ -3553,7 +3561,7 @@ msgid "With Watering Shift"
 msgstr "Entandable"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:386
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:391
 #, python-format
 msgid "You can only delete a quota period if it is in draft or configured state."
 msgstr "Només es permet eliminar un període de quota si es troba en els estats esborrany o configurat."
@@ -3582,7 +3590,7 @@ msgid "days"
 msgstr "dies"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1280
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1286
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:69
 #: code:addons/base_wua_quota_management/wizard/wizard_provision_parcel.py:76
 #, python-format
@@ -3620,7 +3628,7 @@ msgid "quotas"
 msgstr "quotas"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:499
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:482
 #, python-format
 msgid "there are not selected parcels or there are not water payers."
 msgstr "no s'ha seleccionat cap parcel·la o no hi ha pagadors d'aigua."
