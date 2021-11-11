@@ -9,4 +9,3 @@ from . import wua_agriculturalseason
 from . import wua_subparceltype
 from . import wua_cropplan
 from . import wua_waterconnection
-from . import wua_invoiceset
