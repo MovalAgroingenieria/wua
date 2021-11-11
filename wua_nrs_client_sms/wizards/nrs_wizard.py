@@ -79,12 +79,12 @@ class NRSWizard(models.Model):
         num_of_sms = 0
 
         # Set active_ids
-        if context.get("mode") == 'test':
+        if self.wizard_mode == 'test':
             active_ids = (0,)
-        if context.get("mode") == 'partner':
+        if self.wizard_mode == 'partner':
             invoice_id = False
             active_ids = context.get('active_ids')
-        if context.get("mode") == 'invoice':
+        if self.wizard_mode == 'invoice':
             partner_active_ids = []
             partner_invoice_list = []
             invoice_ids = context.get('active_ids')
@@ -95,7 +95,7 @@ class NRSWizard(models.Model):
                                              invoice_id])
             # Set active_ids as list of list [[partner_id, invoice_id],)
             active_ids = partner_invoice_list
-        if context.get("mode") == 'parcel':
+        if self.wizard_mode == 'parcel':
             partner_active_ids = []
             partner_parcel_list = []
             parcel_ids = context.get('active_ids')
@@ -114,29 +114,32 @@ class NRSWizard(models.Model):
 
         for active_id in active_ids:
             # Set active partner and invoice (x_id is for tracking)
-            if context.get("mode") == 'test':
+            if self.wizard_mode == 'test':
                 partner = partner_id = ""
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
-            if context.get("mode") == 'partner':
+            if self.wizard_mode == 'partner':
                 partner = self.env['res.partner'].browse(active_id)
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
-            if context.get("mode") == 'invoice':
+            if self.wizard_mode == 'invoice':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
                 invoice = self.env['account.invoice'].browse(active_id[1])
                 invoice_id = invoice.id
+                invoice_link = ""
+                if self.send_invoice_link:
+                    invoice_link = self._generate_invoice_link(invoice_id)
                 parcel = parcel_id = ""
-            if context.get("mode") == 'parcel':
+            if self.wizard_mode == 'parcel':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 parcel = self.env['wua.parcel'].browse(active_id[1])
                 parcel_id = parcel.id
             # Set and check mobile number
-            if context.get("mode") == 'test':
+            if self.wizard_mode == 'test':
                 phone_number = self.env['ir.values'].get_default(
                     'nrs.configuration', 'test_phone_number')
                 if not phone_number:
@@ -162,6 +165,10 @@ class NRSWizard(models.Model):
                         _("Error resolving template: {}".format(err.message)))
             else:
                 sms_message = _('empty message')
+
+            # Add invoice link
+            if self.wizard_mode == 'invoice' and invoice_link:
+                raw_sms_message += ' ' + invoice_link
 
             # Eliminate json special characters
             if raw_sms_message:
