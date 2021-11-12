@@ -23,9 +23,11 @@
                         <span class="o_stat_text">Quotas</span>
                     </div>
                 </button>
+                <field name="show_aggregated_quotas" invisible="1"/>
                 <button name="action_get_partner_aggregate_quotas"
                         type="object" class="oe_stat_button"
                         icon="fa-moval-quotas-aggregate"
+                        attrs="{'invisible': [('show_aggregated_quotas','=',False)]}"
                         groups="base_wua.group_wua_user,
                                 base_wua.group_wua_portal_user">
                     <div class="o_form_field o_stat_info">

@@ -16,8 +16,24 @@ class WuaQuotasConfiguration(models.TransientModel):
         help='Apply superproduct sorting of quota periods to calculate '
              'the hydric consumptions')
 
+    show_aggregated_quotas = fields.Boolean(
+        string='Show aggregated quotas',
+        default=False,
+        help='If it is checked, it shows partner aggregated quotas.')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
         values.set_default('wua.quotas.configuration', 'sorted_quotas',
                            self.sorted_quotas)
+        values.set_default('wua.quotas.configuration',
+                           'show_aggregated_quotas',
+                           self.show_aggregated_quotas)
+        if self.show_aggregated_quotas:
+            active_menu = True
+        else:
+            active_menu = False
+        query = """UPDATE ir_ui_menu SET active = %s
+                   WHERE name = 'Partner aggregated quotas'""" % active_menu
+        self.env.cr.execute(query)
+        self.env.cr.commit()

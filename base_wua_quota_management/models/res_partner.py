@@ -23,6 +23,10 @@ class ResPartner(models.Model):
         comodel_name='wua.quota.aggregatevalue',
         inverse_name='partner_id')
 
+    show_aggregated_quotas = fields.Boolean(
+        string='Show aggregated quotas',
+        compute="_compute_show_aggregated_quotas")
+
     def _get_current_quotaperiod(self):
         current_quotaperiod = None
         quotaperiods = self.env['wua.quotaperiod'].search(
@@ -126,3 +130,10 @@ class ResPartner(models.Model):
                 'target': 'current',
                 }
         return act_window
+
+    @api.multi
+    def _compute_show_aggregated_quotas(self):
+        show_aggregated_quotas = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'show_aggregated_quotas')
+        for record in self:
+            record.show_aggregated_quotas = show_aggregated_quotas

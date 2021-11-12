@@ -15,6 +15,7 @@
                        invisible="1"/>
                 <field name='balances_to_next_quotaperiod' invisible="1"/>
                 <field name='balances_from_prev_quotaperiod' invisible="1"/>
+                <field name="show_aggregated_quotas" invisible="1"/>
                 <header>
                     <button name="action_configure_quotaperiod"
                             type="object" string="Configure"
@@ -186,7 +187,8 @@
                         </button>
                         <button name="action_get_quotaperiod_aggregate_quotas"
                                 type="object" class="oe_stat_button"
-                                icon="fa-moval-quotas-aggregate">
+                                icon="fa-moval-quotas-aggregate"
+                                 attrs="{'invisible': [('show_aggregated_quotas','=',False)]}">
                             <div class="o_form_field o_stat_info">
                                 <span class="o_stat_text">Partner quotas</span>
                                 <span class="o_stat_text">Aggregate</span>
