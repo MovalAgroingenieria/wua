@@ -2,7 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, exceptions
 
 
 class ResPartner(models.Model):
@@ -111,6 +111,9 @@ class ResPartner(models.Model):
     @api.multi
     def action_get_partner_aggregate_quotas(self):
         self.ensure_one()
+        if not self.partner_aggregatequotas:
+            raise exceptions.MissingError(
+                _('This partner has no aggregated quotas.'))
         if self.partner_aggregatequotas:
             id_tree_view = self.env.ref(
                 'base_wua_quota_management.'

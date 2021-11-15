@@ -625,6 +625,9 @@ class WuaQuotaperiod(models.Model):
     @api.multi
     def action_get_quotaperiod_aggregate_quotas(self):
         self.ensure_one()
+        if not self.quotaperiod_aggregatequotas:
+            raise exceptions.MissingError(
+                _('This period has no aggregated quotas.'))
         if self.quotaperiod_aggregatequotas:
             id_tree_view = self.env.ref(
                 'base_wua_quota_management.'
