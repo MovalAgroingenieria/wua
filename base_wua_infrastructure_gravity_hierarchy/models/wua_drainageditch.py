@@ -197,7 +197,7 @@ class WuaDrainageditch(models.Model):
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.')]
 
-    @api.depends('drainageditch_id', 'name')
+    @api.depends('drainageditch_id', 'drainageditch_id.path', 'name')
     def _compute_level_n_path(self):
         for record in self:
             path = ''
