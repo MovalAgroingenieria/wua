@@ -336,7 +336,7 @@ class WuaParcel(models.Model):
     def _compute_irrigationditch_id(self):
         for record in self:
             record.irrigationditch_id = \
-                self.irrigationditch_direct_id
+                record.irrigationditch_direct_id
 
     @api.depends('irrigationditch_id', 'irrigationditch_id.level')
     def _compute_irrigationditch_id_01(self):

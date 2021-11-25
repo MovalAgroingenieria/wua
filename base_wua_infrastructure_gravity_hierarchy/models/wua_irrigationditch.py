@@ -139,7 +139,7 @@ class WuaIrrigationditch(models.Model):
         inverse_name='irrigationditch_20_id',
         string="Parcels at level 20 ditch")
 
-    @api.depends('irrigationditch_id', 'name')
+    @api.depends('irrigationditch_id', 'name', 'irrigationditch_id.path')
     def _compute_level_n_path(self):
         for record in self:
             path = ''
