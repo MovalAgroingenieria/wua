@@ -70,6 +70,14 @@ class WuaInvoicingConfiguration(models.TransientModel):
              'irrigationditch name on line description for products of '
              'category 03')
 
+    show_owners = fields.Boolean(
+        string='Show all owners on invoices descriptions',
+        default=False,
+        required=True,
+        help='If it is marked, the invoices reports will show the '
+             'ownners names on line description for products of '
+             'category 03')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -100,3 +108,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'show_irrigationditch',
                            self.show_irrigationditch)
+        values.set_default('wua.invoicing.configuration',
+                           'show_owners',
+                           self.show_owners)

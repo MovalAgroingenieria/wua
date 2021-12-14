@@ -641,6 +641,8 @@ class WuaInvoiceset(models.Model):
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
         show_irrigationditch = self.get_invoicing_configuration_parameter(
             'show_irrigationditch')
+        show_owners = self.get_invoicing_configuration_parameter(
+            'show_owners')
         if alter_invoicing_behavior:
             area_invoicing_measurement_name = \
                 self.get_invoicing_area_measurement_name()
@@ -653,7 +655,12 @@ class WuaInvoiceset(models.Model):
             partnerlinks_of_parcel = partnerlinks.filtered(
                 lambda x: x.parcel_id.id == parcel.id and
                 x.other_costs_percentage > 0)
+            # Conditional irrigationditc content
             irrigationditch_content = ''
+            # Conditional Owners content
+            owners_of_parcel = partnerlinks.filtered(
+                lambda x: x.parcel_id.id == parcel.id and x.profile == 'O')
+            owners_content = ''
             if len(partnerlinks_of_parcel) > 0:
                 for partnerlink in partnerlinks_of_parcel:
                     partner_id = partnerlink.partner_id.id
@@ -716,6 +723,22 @@ class WuaInvoiceset(models.Model):
                             area_measurement_name + irrigationditch_content + \
                             '), ' + profile_name_label + ' (' + cost_label + \
                             ' ' + percentage_str + ' %)'
+                    # Add owners with ownership percentage list to the
+                    # description
+                    if (show_owners and profile != 'O'):
+                        default_owners_label = _('owners')
+                        owners_label = self.get_value_from_translation(
+                            'base_wua_invoicing', 'owners',
+                            partnerlink.partner_id.lang)
+                        if not owners_label:
+                            owners_label = default_owners_label
+                        description += ', ' + owners_label + ': '
+                        owners_descriptions = []
+                        for owner in owners_of_parcel:
+                            owners_descriptions.append(
+                                owner.partner_id.name + ' (' + '%.2f' %
+                                owner.ownership_percentage + ' %)')
+                        description += ', '.join(owners_descriptions)
                     result = {
                         'partner_id': partner_id,
                         'product_id': product_id,
