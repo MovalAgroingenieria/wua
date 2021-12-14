@@ -39,8 +39,8 @@ class AccountInvoice(models.Model):
             pres_consumptions = \
                 self.env['wua.presconsumption'].search(
                     [('id', 'in', pres_consumption_ids)],
-                    order='hydraulicsector_id asc, waterconnection_id asc,
-                          'reading_initial_time asc')
+                    order='hydraulicsector_id asc, waterconnection_id asc, '
+                    'reading_initial_time asc')
             for consumption in pres_consumptions:
                 item = {
                     'waterconnection': consumption.waterconnection_id.name,
