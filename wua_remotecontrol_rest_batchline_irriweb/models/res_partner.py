@@ -42,7 +42,7 @@ class ResPartner(models.Model):
             partner_code = vals['partner_code']
             is_company = self.get_val(vals, 'company_type') == 'company'
             if (is_company):
-                firstname = self.get_val(vals, 'name')
+                firstname = self.get_val(vals, 'lastname')
                 lastname = ''
                 lastname2 = ''
             else:
