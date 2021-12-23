@@ -11,7 +11,7 @@ import io
 import base64
 import locale
 from pyproj import Proj, transform
-from lxml import etree
+from lxml import etree, html
 from collections import OrderedDict
 from shapely import wkb
 from xml.etree import ElementTree
@@ -1191,9 +1191,9 @@ class WuaParcel(models.Model):
                         data_pnoa = wms_pnoa.getfeatureinfo(
                             layers=['OI.MosaicElement'],
                             srs=crs, bbox=bbox, size=(width, height),
-                            format='image/jpeg', info_format='text/xml',
+                            format='image/jpeg', info_format='text/html',
                             xy=(width/2, height/2))
-                        data_pnoa_parsed = ElementTree.fromstring(
+                        data_pnoa_parsed = html.fromstring(
                             data_pnoa.read())
                         data_pnoa_info_rows = data_pnoa_parsed.find('body').\
                             find('table').findall('tr')
