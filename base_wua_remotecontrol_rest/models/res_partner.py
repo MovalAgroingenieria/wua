@@ -425,6 +425,55 @@ class ResPartner(models.Model):
                     self.updated_in_remotecontrol = False
                     self.__class__._in_create_or_synchro = False
 
+    # If the user is a portal user, show the water connections if
+    # it is the water payer.
+    def get_res_partner_waterconnections_action(self):
+        act_window = \
+            super(ResPartner, self).get_res_partner_waterconnections_action()
+        if (act_window and 'domain' in act_window and act_window['domain'] and
+           self.env.user.has_group('base_wua.group_wua_portal_user')):
+            id_of_partner = 0
+            domain = act_window['domain']
+            initial_condition = domain[0]
+            if (initial_condition[0] == 'partner_id' and
+               initial_condition[1] == '='):
+                id_of_partner = initial_condition[2]
+            if id_of_partner:
+                waterconnection_ids = \
+                    self.sudo().get_waterconnections_of_partner_as_water_payer(
+                        id_of_partner)
+                domain = [('waterconnection_id', 'in', waterconnection_ids)]
+                act_window['domain'] = domain
+        return act_window
+
+    def get_waterconnections_of_partner_as_water_payer(self, id_of_partner):
+        resp = []
+        waterconnections_of_partner = \
+            self.env['res.partner.waterconnection'].search(
+                [('partner_id', '=', id_of_partner)])
+        if waterconnections_of_partner:
+            for wc_of_partner in waterconnections_of_partner:
+                parcel_ids = []
+                irrigationpoints = \
+                    wc_of_partner.waterconnection_id.irrigationpoint_ids
+                for irrigationpoint in (irrigationpoints or []):
+                    parcel_ids.append(irrigationpoint.parcel_id.id)
+                if parcel_ids:
+                    partner_pays_water = False
+                    for parcel_id in parcel_ids:
+                        partnerlink = \
+                            self.env['wua.parcel.partnerlink'].search(
+                                [('partner_id', '=', id_of_partner),
+                                 ('parcel_id', '=', parcel_id)])
+                        if partnerlink:
+                            partnerlink = partnerlink[0]
+                            if partnerlink.water_costs_percentage > 0:
+                                partner_pays_water = True
+                                break
+                    if partner_pays_water:
+                        resp.append(wc_of_partner.waterconnection_id.id)
+        return resp
+
 
 class ResPartnerWaterconnection(models.Model):
     _inherit = 'res.partner.waterconnection'
