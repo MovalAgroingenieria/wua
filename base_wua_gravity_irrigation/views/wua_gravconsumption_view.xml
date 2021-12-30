@@ -128,7 +128,9 @@
                 <field name="watering_id"/>
                 <field name="wateringperiod_id"/>
                 <field name="subparcel_id"/>
+                <field name="day_of_watering_initial_time" string=" "/>
                 <field name="watering_initial_time"/>
+                <field name="day_of_watering_end_time" string=" "/>
                 <field name="watering_end_time"/>
                 <field name="watering_duration"/>
                 <field name="area_official"/>
@@ -143,6 +145,7 @@
                         attrs="{'invisible':
                                 [('gravconsumption_type','=','distribution')],
                                 'readonly':'1'}"/>
+                <field name="notes_text" string="Notes" invisible="1"/>
             </tree>
         </field>
     </record>

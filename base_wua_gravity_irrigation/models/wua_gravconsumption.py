@@ -193,6 +193,16 @@ class WuaGravconsumption(models.Model):
     watering_end_time = fields.Datetime(
         string='End Time')
 
+    day_of_watering_initial_time = fields.Char(
+        string='Day of start time',
+        size=3,
+        compute='_compute_day_of_watering_initial_time')
+
+    day_of_watering_end_time = fields.Char(
+        string='Day of end time',
+        size=3,
+        compute='_compute_day_of_watering_end_time')
+
     flowdivider_opening_time = fields.Datetime(
         string='FD Opening')
 
@@ -214,6 +224,10 @@ class WuaGravconsumption(models.Model):
         compute='_compute_altered')
 
     notes = fields.Html(string='Notes')
+
+    notes_text = fields.Char(
+        string="Notes (as text)",
+        compute='_compute_notes_text')
 
     selected = fields.Boolean(
         string="Selected",
@@ -408,6 +422,34 @@ class WuaGravconsumption(models.Model):
             record.user_id = user_id
             record.is_portal_user = is_portal_user
 
+    @api.multi
+    def _compute_notes_text(self):
+        model_converter = self.env["ir.fields.converter"]
+        for record in self:
+            notes_text = ''
+            if record.notes:
+                notes_text = model_converter.text_from_html(
+                    record.notes, 200, 500)
+            record.notes_text = notes_text
+
+    @api.multi
+    def _compute_day_of_watering_initial_time(self):
+        for record in self:
+            day_of_watering_initial_time = ''
+            if record.watering_initial_time:
+                day_of_watering_initial_time = self._get_day_of_datetime(
+                    record.watering_initial_time)
+            record.day_of_watering_initial_time = day_of_watering_initial_time
+
+    @api.multi
+    def _compute_day_of_watering_end_time(self):
+        for record in self:
+            day_of_watering_end_time = ''
+            if record.watering_end_time:
+                day_of_watering_end_time = self._get_day_of_datetime(
+                    record.watering_end_time)
+            record.day_of_watering_end_time = day_of_watering_end_time
+
     @api.constrains('watering_duration')
     def _check_watering_duration(self):
         if self.gravconsumption_type == 'request':
@@ -582,3 +624,26 @@ class WuaGravconsumption(models.Model):
                 'url': self.gis_viewer_link,
                 'target': 'new',
             }
+
+    def _get_day_of_datetime(self, datetime_value):
+        resp = ''
+        if datetime_value:
+            datetime_value = datetime.datetime.strptime(
+                datetime_value, '%Y-%m-%d %H:%M:%S')
+            weekday = datetime_value.weekday()
+            if weekday >= 0 and weekday <= 6:
+                if weekday == 0:
+                    resp = _('Mo')
+                if weekday == 1:
+                    resp = _('Tu')
+                if weekday == 2:
+                    resp = _('We')
+                if weekday == 3:
+                    resp = _('Th')
+                if weekday == 4:
+                    resp = _('Fr')
+                if weekday == 5:
+                    resp = _('Sa')
+                if weekday == 6:
+                    resp = _('Su')
+        return resp
