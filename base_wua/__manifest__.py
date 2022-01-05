@@ -15,6 +15,7 @@
         "base",
         "web",
         "web_fix_chrome_web_client",
+        "web_fix_mobile_back_button",
         "base_setup",
         "mail",
         "mass_mailing",
