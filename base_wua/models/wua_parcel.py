@@ -507,7 +507,7 @@ class WuaParcel(models.Model):
                 else:
                     minimum = '30'
                 iv = current_datetime[:14] + minimum
-                aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
                 cipher_text = aes_encryptor.encrypt(credentials)
                 cipher_text = cipher_text.encode('base64')
                 sep_char = '?'
@@ -944,7 +944,7 @@ class WuaParcel(models.Model):
                 else:
                     minimum = '30'
                 iv = current_datetime[:14] + minimum
-                aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
                 cipher_text = aes_encryptor.encrypt(credentials)
                 cipher_text = cipher_text.encode('base64')
                 credentials = cipher_text
@@ -1863,7 +1863,7 @@ class WuaParcel(models.Model):
             else:
                 minimum = '30'
             iv = current_datetime[:14] + minimum
-            aes_encryptor = AES.new('hZj<?*aS9w.Rg)3"', AES.MODE_CBC, iv)
+            aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
             cipher_text = aes_encryptor.encrypt(credentials)
             cipher_text = cipher_text.encode('base64')
             url = url + '?' + 'arg=' + cipher_text
