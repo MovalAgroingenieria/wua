@@ -28,7 +28,7 @@ class WuaReading(models.Model):
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
-            resp_rest = requests.request(
+            resprest = requests.request(
                 'POST', url_remotecontrol_rest + '/search',
                 headers={
                     'Content-Type': 'application/json',
@@ -40,8 +40,8 @@ class WuaReading(models.Model):
                     }))
             installation_identifier = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'installation_identifier')
-            if resp_rest.status_code == 200 and installation_identifier:
-                hydrants = json.loads(resp_rest.text)
+            if resprest.status_code == 200 and installation_identifier:
+                hydrants = json.loads(resprest.text)
                 for hydrant in hydrants:
                     installationId = int(hydrant['installationId'])
                     if installationId == installation_identifier:
@@ -54,14 +54,14 @@ class WuaReading(models.Model):
                             'watermeter': watermeter,
                             'volume': volume,
                         })
-            self.close_coonection(url_remotecontrol_rest, jsessionid)
+            self.close_connection(url_remotecontrol_rest, jsessionid)
         return readings, error_message, error_watermeters
 
     def open_connection(self, url_remotecontrol_rest,
                         url_remotecontrol_rest_username,
                         url_remotecontrol_rest_password):
         resp = ''
-        resp_rest = requests.request(
+        resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',
             headers={
                 'Content-Type': 'application/json'
@@ -70,8 +70,8 @@ class WuaReading(models.Model):
                 'username': url_remotecontrol_rest_username,
                 'password': url_remotecontrol_rest_password
                 }))
-        if resp_rest.status_code == 200:
-            headers = str(resp_rest.headers)
+        if resprest.status_code == 200:
+            headers = str(resprest.headers)
             pos_jsessionid = headers.find('JSESSIONID')
             if pos_jsessionid != -1:
                 jsessionid = headers[pos_jsessionid:]
@@ -80,7 +80,7 @@ class WuaReading(models.Model):
                     resp = jsessionid[11:pos_sep]
         return resp
 
-    def close_coonection(self, url_remotecontrol_rest, jsessionid):
+    def close_connection(self, url_remotecontrol_rest, jsessionid):
         if jsessionid:
             requests.request(
                 'POST', url_remotecontrol_rest + '/logout',
