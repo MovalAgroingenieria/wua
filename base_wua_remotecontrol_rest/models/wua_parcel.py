@@ -297,7 +297,8 @@ class WuaParcel(models.Model):
                     list_of_data = []
                     for parcel in parcels:
                         data = self.populate_data_for_update_parcel(parcel)
-                        list_of_data.append(data)
+                        if data:
+                            list_of_data.append(data)
                     if list_of_data:
                         parcels_ok, parcels_not_ok = \
                             self.synchronize_parcels(
