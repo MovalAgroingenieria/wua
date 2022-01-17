@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_ndvi_view_form" model="ir.ui.view" >
+        <field name="name">Parcels with NDVI values (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+            ref="wua_remotesensing_sentinelhub_ndvi.wua_parcel_ndvi_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='master_data']" position="replace">
+                <div class="panel-body text-center">
+                    <field name="ndvi_grafana_frame" widget="html"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
