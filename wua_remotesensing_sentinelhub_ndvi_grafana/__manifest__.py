@@ -16,6 +16,7 @@
     ],
     "data": [
         "views/wua_parcel_view.xml",
+        "views/wua_vegetationindex_config_settings_view.xml",
     ],
     "installable": True,
     "application": False,

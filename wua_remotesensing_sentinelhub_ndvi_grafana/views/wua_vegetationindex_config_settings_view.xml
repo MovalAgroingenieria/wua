@@ -5,22 +5,19 @@
         <field name="name">Parameters</field>
         <field name="model">wua.vegetationindex.configuration</field>
         <field name="inherit_id"
-               ref="base_wua_remotesensing_sentinelhub.wua_vegetationindex_config_settings_view_form"/>
+            ref="wua_remotesensing_sentinelhub_ndvi.wua_vegetationindex_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='common_configuration_group']" position="after">
-                <group>
-                    <group string="NDVI Configuration"
-                        name="ndvi_configuration_group"
-                        attrs="{'invisible':[('enable_remotesensing','=',False)]}">
-                        <field name="layer_ndvi" style="width:150px"
+            <xpath expr="//group[@name='ndvi_configuration_group']" position="after">
+                <group string="Grafana NDVI configuration" name="grafana_ndvi_configuration_group"
+                       attrs="{'invisible':[('enable_remotesensing','=',False)]}">
+                    <field name="grafana_host" style="width:300px"
                            attrs="{'required':[('enable_remotesensing','=',True)]}"/>
-                        <field name="band_ndvi" style="width:150px"
+                    <field name="dashboard_id" style="width:300px"
                            attrs="{'required':[('enable_remotesensing','=',True)]}"/>
-                        <field name="max_cloud_cover_ndvi" style="width:150px"
+                    <field name="dashboard_url" style="width:300px"
                            attrs="{'required':[('enable_remotesensing','=',True)]}"/>
-                        <field name="resolution_ndvi" style="width:150px"
+                    <field name="panel_id" style="width:300px"
                            attrs="{'required':[('enable_remotesensing','=',True)]}"/>
-                    </group>
                 </group>
             </xpath>
         </field>
