@@ -44,3 +44,23 @@ class WuaParcel(models.Model):
             'target': 'current',
             }
         return act_window
+
+
+class WuaParcelPartnerlink(models.Model):
+    _inherit = 'wua.parcel.partnerlink'
+
+    overdue = fields.Boolean(
+        string='Overdue',
+        compute='_compute_overdue')
+
+    @api.multi
+    def _compute_overdue(self):
+        for record in self:
+            overdue = False
+            invoice_lines = self.env['account.invoice.line'].search(
+                [('parcel_id', '=', record.parcel_id.id)])
+            for invoice_line in invoice_lines:
+                if invoice_line.invoice_id.overdue:
+                    overdue = True
+                    break
+            record.overdue = overdue
