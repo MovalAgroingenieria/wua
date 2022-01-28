@@ -72,6 +72,11 @@ class WuaFlowreading(models.Model):
         string='Last Reading',
         compute='_compute_is_last_reading')
 
+    validated = fields.Boolean(
+        string='Validated Reading',
+        default=True,
+        required=True)
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
@@ -283,3 +288,31 @@ class WuaFlowreading(models.Model):
             'last_reading_value': new_last_reading_value, }
         flowmeter.write(vals_flowmeter)
         return resp
+
+    @api.multi
+    def validate_flowreading(self):
+        self.ensure_one()
+        self.validated = True
+
+    @api.multi
+    def cancel_flowreading(self):
+        self.ensure_one()
+        self.validated = False
+
+    def validate_flowreadings(self, active_flowreadings):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        flowreadings = self.env['wua.flowreading'].browse(active_flowreadings)
+        for flowreading in flowreadings:
+            if not flowreading.validated:
+                flowreading.validate_flowreading()
+
+    def cancel_flowreadings(self, active_flowreadings):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        flowreadings = self.env['wua.flowreading'].browse(active_flowreadings)
+        for flowreading in flowreadings:
+            if flowreading.validated:
+                flowreading.cancel_flowreading()

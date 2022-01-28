@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-06 12:06+0000\n"
-"PO-Revision-Date: 2021-10-06 12:06+0000\n"
+"POT-Creation-Date: 2022-01-28 11:52+0000\n"
+"PO-Revision-Date: 2022-01-28 11:52+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,14 +21,24 @@ msgid "Configuration of irrigation with type of water"
 msgstr "Configuration of irrigation with type of water"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_flowreading
+msgid "Entity (flow reading)"
+msgstr "Elemento (lectura caudalímetro)"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
 #: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_reading
 msgid "Entity (pressure reading)"
-msgstr "Entity (pressure reading)"
+msgstr "Elemento (lectura de presión)"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
 #: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_waterconnection_telecontrol
 msgid "Entity (waterconnection telecontrol)"
-msgstr "Entity (waterconnection telecontrol)"
+msgstr "Elemento (toma)"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_waterpipeflowreading
+msgid "Entity (waterpipe flow reading)"
+msgstr "Elemento (lectura en ramal)"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_installation_identifier
@@ -41,7 +51,40 @@ msgid "Installation Identifier"
 msgstr "Identificador de instalación"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_parcel
+msgid "Parcels (integrated GIS)"
+msgstr "Parcelas (con integración GIS)"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_res_partner
+msgid "Partner of a WUA"
+msgstr "Socio"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
 #: sql_constraint:wua.irrigation.configuration:0
 msgid "The installation identifier must be a value zero or positive."
 msgstr "El identificador de instalación no puede ser un número negativo."
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:106
+#, python-format
+msgid "The partner already exists"
+msgstr "El socio ya existe"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:211
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:265
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/wua_parcel.py:103
+#, python-format
+msgid "The partner does not exists"
+msgstr "El socio no existe"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:216
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:270
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:324
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/wua_parcel.py:69
+#, python-format
+msgid "There are several owners with the same code"
+msgstr "Hay varios abonados con el mismo código"
 

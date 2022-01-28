@@ -13,6 +13,7 @@
             <field name="instant_flow"/>
             <field name="is_last_reading"/>
             <field name="waterpipeconsumption_id"/>
+            <field name="validated" string="Validated Waterpipe R."/>
           </tree>
       </field>
   </record>
@@ -54,6 +55,7 @@
                     <group name="master_data_right">
                         <field name="waterpipe_id" attrs="{'invisible': [('reading_of_waterpipe', '=', False)]}"/>
                         <field name="waterpipeconsumption_id" attrs="{'invisible': [('reading_of_waterpipe', '=', False)]}"/>
+                        <field name="validated" readonly="1"/>
                     </group>
                 </group>
                 <group name="slave_data">
@@ -84,6 +86,11 @@
               domain="[('reading_of_waterpipe','=',True)]"/>
             <filter string="Reading of waterpipe: No" name="readingwaterpipeno"
               domain="[('reading_of_waterpipe','=',False)]"/>
+            <separator/>
+            <filter string="Validated Reading: Yes" name="isvalidatedyes"
+             domain="[('validated','=',True)]"/>
+            <filter string="Validated Reading: No" name="isvalidatedno"
+             domain="[('validated','=',False)]"/>
             <group expand="0" string="Group By">
                 <filter string="Flowmeter"
                   name="flowmeter"
@@ -94,6 +101,42 @@
               </group>
           </search>
       </field>
+  </record>
+
+  <record id="wua_validate_waterpipeflowreadings" model="ir.actions.server">
+      <field name="name">Validate</field>
+      <field name="model_id" ref="model_wua_waterpipeflowreading"/>
+      <field name="state">code</field>
+      <field name="code">
+          if context.get('active_ids'):
+              action = env['wua.waterpipeflowreading'].validate_waterpipeflowreadings(context['active_ids'])
+      </field>
+  </record>
+
+  <record id="wua_action_validate_waterpipeflowreadings" model="ir.values">
+      <field name="name">Validate</field>
+      <field name="model">wua.waterpipeflowreading</field>
+      <field name="key">action</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_waterpipeflowreadings'))"/>
+  </record>
+
+  <record id="wua_cancel_waterpipeflowreadings" model="ir.actions.server">
+      <field name="name">Cancel</field>
+      <field name="model_id" ref="model_wua_waterpipeflowreading"/>
+      <field name="state">code</field>
+      <field name="code">
+          if context.get('active_ids'):
+              action = env['wua.waterpipeflowreading'].cancel_waterpipeflowreadings(context['active_ids'])
+      </field>
+  </record>
+
+  <record id="wua_action_cancel_waterpipeflowreadings" model="ir.values">
+      <field name="name">Cancel</field>
+      <field name="model">wua.waterpipeflowreading</field>
+      <field name="key">action</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_waterpipeflowreadings'))"/>
   </record>
 
   <record id="wua_waterpipeflowreading_action" model="ir.actions.act_window">
@@ -111,6 +154,5 @@
       parent="base_wua_irrigation_measurement.base_wua_irrigation_measurement_menu"
       sequence="4"
       action="wua_waterpipeflowreading_action"/>
-
 
 </odoo>

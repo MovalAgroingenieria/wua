@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="wua_hydraulicsector_view_form" model="ir.ui.view">
-        <field name="name">Hydraulic Sectors (form view)</field>
-        <field name="model">wua.hydraulicsector</field>
+    <record id="wua_flowmeter_view_form" model="ir.ui.view">
+        <field name="name">Flowmeter (form view)</field>
+        <field name="model">wua.flowmeter</field>
         <field name="inherit_id"
-               ref="base_wua_infrastructure.wua_hydraulicsector_view_form"/>
+               ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
                 <field name="remotecontrol_enabled" invisible="1"/>
                 <field name="id" invisible="1"/>            
                 <header>
-                    <button name="do_import_readings_from_hydraulicsector"
+                    <button name="do_import_flowreadings_from_flowmeter"
                             type="object" string="Get readings"
                             icon="fa-rss"
                             attrs="{'invisible':
                                     ['|', ('remotecontrol_enabled','=',False),
                                           ('id', '=', 0)]}"
                             groups="base_wua.group_wua_manager"
-                            confirm="Import readings?"/>
+                            confirm="Import flow readings?"/>
                 </header>
-            </xpath>        
+            </xpath>
         </field>
     </record>
     
-    <record id="wua_import_readings_from_hydraulicsectors" model="ir.actions.server">
+    <record id="wua_import_flowreadings_from_flowmeters" model="ir.actions.server">
         <field name="name">Get readings</field>
-        <field name="model_id" ref="model_wua_hydraulicsector"/>
+        <field name="model_id" ref="model_wua_flowmeter"/>
         <field name="state">code</field>
         <field name="code">
             if context.get('active_ids'):
-                action = env['wua.hydraulicsector'].do_import_readings_from_hydraulicsectors(context['active_ids'])
+                action = env['wua.flowmeter'].do_import_flowreadings_from_flowmeters(context['active_ids'])
         </field>
     </record>
 
-    <record id="wua_action_import_readings_from_hydraulicsectors" model="ir.values">
+    <record id="wua_action_import_flowreadings_from_flowmeters" model="ir.values">
         <field name="name">Get readings</field>
-        <field name="model">wua.hydraulicsector</field>
+        <field name="model">wua.flowmeter</field>
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server,' + str(ref('wua_import_readings_from_hydraulicsectors'))"/>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_import_flowreadings_from_flowmeters'))"/>
     </record>
 
 </odoo>

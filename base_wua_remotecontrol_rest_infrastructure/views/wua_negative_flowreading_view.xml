@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_negative_flowreading_view_tree" model="ir.ui.view">
+        <field name="name">Negative Flow-Readings (tree view)</field>
+        <field name="model">wua.negative.flowreading</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_remotecontrol_rest_infrastructure_negative_flowreadings_view_tree">
+                <field name="flowmeter_id"/>
+                <field name="intake_id"/>
+                <field name="waterpipe_id"/>
+                <field name="reading_time"/>
+                <field name="volume"/>
+                <field name="instant_flow"/>
+                <field name="consumption_volume" string="Cons. Value (m3)"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_negative_flowreading_view_search" model="ir.ui.view">
+        <field name="name">Negative Flow-Readings (search view)</field>
+        <field name="model">wua.negative.flowreading</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="flowmeter_id"/>
+                <field name="intake_id"/>
+                <field name="waterpipe_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Intake"
+                     name="intake"
+                     context="{'group_by':'intake_id'}"/>
+                    <filter string="Water Pipe"
+                     name="waterpipe"
+                     context="{'group_by':'waterpipe_id'}"/>
+                    <filter string="Flow Meter"
+                     name="flowmeter"
+                     context="{'group_by':'flowmeter_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_negative_intake_reading_action" model="ir.actions.act_window">
+        <field name="name">Negative Intake Readings</field>
+        <field name="res_model">wua.negative.flowreading</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_negative_flowreading_view_tree"/>
+        <field name="search_view_id" ref="wua_negative_flowreading_view_search"/>
+        <field name="domain">[("intake_id", "!=", False)]</field>
+    </record>
+
+    <record id="wua_negative_waterpipe_reading_action" model="ir.actions.act_window">
+        <field name="name">Negative Waterpipe Readings</field>
+        <field name="res_model">wua.negative.flowreading</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_negative_flowreading_view_tree"/>
+        <field name="search_view_id" ref="wua_negative_flowreading_view_search"/>
+        <field name="domain">[("waterpipe_id", "!=", False)]</field>
+    </record>
+
+    <menuitem id="wua_negative_intake_reading_menu"
+              name="Negative Intake Readings"
+              parent="base_wua_irrigation_measurement.base_wua_irrigation_measurement_menu"
+              action="wua_negative_intake_reading_action"
+              sequence="98"
+              groups="base_wua.group_wua_user"/>
+
+    <menuitem id="wua_negative_waterpipe_reading_menu"
+              name="Negative Waterpipe Readings"
+              parent="base_wua_irrigation_measurement.base_wua_irrigation_measurement_menu"
+              action="wua_negative_waterpipe_reading_action"
+              sequence="99"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

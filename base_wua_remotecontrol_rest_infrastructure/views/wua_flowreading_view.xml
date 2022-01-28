@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowreading_view_tree" model="ir.ui.view">
+        <field name="name">Flowreading (tree view)</field>
+        <field name="model">wua.flowreading</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_flowreading_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='validated']" position="before">
+                <field name="from_import" string="Man."/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_flowreading_view_search" model="ir.ui.view">
+        <field name="name">Flowreadings (search view)</field>
+        <field name="model">wua.flowreading</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_flowreading_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='initreadingno']" position="after">
+                <separator/>
+                <filter string="Manual Introduction: Yes"
+                 name="fromimportyes"
+                 domain="[('from_import','=',True)]"/>
+                <filter string="Manual Introduction: No (from remote control)"
+                 name="fromimportno"
+                 domain="[('from_import','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
