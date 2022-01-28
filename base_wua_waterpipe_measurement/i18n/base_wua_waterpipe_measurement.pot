@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-17 22:12+0000\n"
-"PO-Revision-Date: 2021-02-17 22:12+0000\n"
+"POT-Creation-Date: 2022-01-28 12:15+0000\n"
+"PO-Revision-Date: 2022-01-28 12:15+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -54,6 +54,7 @@ msgid "Calculation: waterpipe consumptions"
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
+#: model:ir.actions.server,name:base_wua_waterpipe_measurement.wua_cancel_waterpipeflowreadings
 #: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wizard_remove_waterpipe_flowmeter_readings_view_form
 msgid "Cancel"
 msgstr ""
@@ -233,7 +234,7 @@ msgid "Flowmeter already on waterpipe."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:153
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:158
 #, python-format
 msgid "Flowmeter not associated with any waterpipe."
 msgstr ""
@@ -468,26 +469,26 @@ msgid "The reading end time can't be lower than the reading start time."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:168
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:188
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:173
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:193
 #, python-format
 msgid "The reading time is minor than the time of the previous reading."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:253
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:258
 #, python-format
 msgid "There are different flow meters."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:255
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:260
 #, python-format
 msgid "There can be no final readings without eliminating."
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:269
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:274
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr ""
@@ -533,6 +534,51 @@ msgid "Undefined"
 msgstr ""
 
 #. module: base_wua_waterpipe_measurement
+#: model:ir.actions.server,name:base_wua_waterpipe_measurement.wua_validate_waterpipeflowreadings
+msgid "Validate"
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wua_waterpipeconsumption_view_tree
+msgid "Validated Cons."
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_waterpipeconsumption_validated
+msgid "Validated Consumption"
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wua_waterpipeconsumption_view_search
+msgid "Validated Consumption: No"
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wua_waterpipeconsumption_view_search
+msgid "Validated Consumption: Yes"
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_waterpipeflowreading_validated
+msgid "Validated Reading"
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wua_waterpipeflowreading_view_search
+msgid "Validated Reading: No"
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wua_waterpipeflowreading_view_search
+msgid "Validated Reading: Yes"
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: model:ir.ui.view,arch_db:base_wua_waterpipe_measurement.wua_waterpipeflowreading_view_tree
+msgid "Validated Waterpipe R."
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_waterpipeflowreading_volume
 msgid "Value (m3)"
 msgstr ""
@@ -566,7 +612,7 @@ msgstr ""
 
 #. module: base_wua_waterpipe_measurement
 #: code:addons/base_wua_waterpipe_measurement/models/wua_agriculturalseason.py:61
-#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeconsumption.py:212
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeconsumption.py:226
 #: model:ir.actions.act_window,name:base_wua_waterpipe_measurement.wua_waterpipeconsumption_action
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_agriculturalseason_waterpipeconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_waterpipe_measurement.field_wua_flowmeter_waterpipeconsumption_ids
@@ -621,5 +667,12 @@ msgstr ""
 #. module: base_wua_waterpipe_measurement
 #: selection:wua.wp.fm,flowmeter_type:0
 msgid "Woltmann"
+msgstr ""
+
+#. module: base_wua_waterpipe_measurement
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:303
+#: code:addons/base_wua_waterpipe_measurement/models/wua_waterpipeflowreading.py:313
+#, python-format
+msgid "You do not have permission to execute this action."
 msgstr ""
 

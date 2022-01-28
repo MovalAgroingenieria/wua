@@ -72,6 +72,11 @@ class WuaWaterpipeflowreading(models.Model):
         string='Last Reading',
         compute='_compute_is_last_reading')
 
+    validated = fields.Boolean(
+        string='Validated Reading',
+        default=True,
+        required=True)
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
@@ -282,3 +287,33 @@ class WuaWaterpipeflowreading(models.Model):
             'last_waterpipeflowreading_value': new_last_reading_value, }
         flowmeter.write(vals_flowmeter)
         return resp
+
+    @api.multi
+    def validate_waterpipeflowreading(self):
+        self.ensure_one()
+        self.validated = True
+
+    @api.multi
+    def cancel_waterpipeflowreading(self):
+        self.ensure_one()
+        self.validated = False
+
+    def validate_waterpipeflowreadings(self, active_waterpipeflowreadings):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        waterpipeflowreadings = self.env['wua.waterpipeflowreading'].browse(
+            active_waterpipeflowreadings)
+        for waterpipeflowreading in waterpipeflowreadings:
+            if not waterpipeflowreading.validated:
+                waterpipeflowreading.validate_waterpipeflowreading()
+
+    def cancel_waterpipeflowreadings(self, active_waterpipeflowreadings):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        waterpipeflowreadings = self.env['wua.waterpipeflowreading'].browse(
+            active_waterpipeflowreadings)
+        for waterpipeflowreading in waterpipeflowreadings:
+            if waterpipeflowreading.validated:
+                waterpipeflowreading.cancel_waterpipeflowreading()

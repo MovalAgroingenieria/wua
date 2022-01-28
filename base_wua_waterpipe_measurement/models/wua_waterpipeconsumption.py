@@ -102,6 +102,11 @@ class WuaWaterpipeconsumption(models.Model):
         string="Notes",
         help="Notes about waterpipe consumption")
 
+    validated = fields.Boolean(
+        string='Validated Consumption',
+        store=True,
+        compute='_compute_validated')
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
@@ -160,6 +165,15 @@ class WuaWaterpipeconsumption(models.Model):
                     + str(record.waterpipe_id.waterpipe_code)
                 name = name_first_part + ' - ' + record.reading_end_time
             record.name = name
+
+    @api.depends('waterpipeflowreading_id', 'waterpipeflowreading_id.validated')
+    def _compute_validated(self):
+        for record in self:
+            validated = False
+            if (record.waterpipeflowreading_id and
+               record.waterpipeflowreading_id.validated):
+                validated = True
+            record.validated = validated
 
     @api.multi
     def name_get(self):

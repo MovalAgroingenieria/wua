@@ -21,6 +21,7 @@
                           <field name="flowmeter_id"/>
                           <field name="intake_id"/>
                           <field name="flowreading_id"/>
+                          <field name="validated"/>
                       </group>
                   </group>
                   <group name="slave_data">
@@ -48,6 +49,7 @@
               <field name="adjustement_volume"/>
               <field name="volume_real"/>
               <field name="flowreading_id"/>
+              <field name="validated" string="Validated Cons."/>
             </tree>
         </field>
     </record>
@@ -63,6 +65,11 @@
                domain="[('adjustement_volume','!=',0)]"/>
               <filter string="Without adjustement" name="withoutadjustement"
                domain="[('adjustement_volume','=',0)]"/>
+              <separator/>
+              <filter string="Validated Consumption: Yes" name="isvalidatedyes"
+               domain="[('validated','=',True)]"/>
+              <filter string="Validated Consumption: No" name="isvalidatedno"
+               domain="[('validated','=',False)]"/>
               <group expand="0" string="Group By">
                   <filter string="Agricultural Season"
                     name="agriculturalseason"

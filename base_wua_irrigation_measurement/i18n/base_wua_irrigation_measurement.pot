@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-17 22:22+0000\n"
-"PO-Revision-Date: 2021-02-17 22:22+0000\n"
+"POT-Creation-Date: 2022-01-28 12:04+0000\n"
+"PO-Revision-Date: 2022-01-28 12:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -61,6 +61,7 @@ msgid "Calculation: intake consumptions"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.actions.server,name:base_wua_irrigation_measurement.wua_cancel_flowreadings
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wizard_remove_flowmeter_readings_view_form
 msgid "Cancel"
 msgstr ""
@@ -240,7 +241,7 @@ msgid "Flowmeter Readings"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:152
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:157
 #, python-format
 msgid "Flowmeter not associated with any intake."
 msgstr ""
@@ -334,7 +335,7 @@ msgid "Intake Consumption"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_intakeconsumption.py:209
+#: code:addons/base_wua_irrigation_measurement/models/wua_intakeconsumption.py:222
 #: model:ir.actions.act_window,name:base_wua_irrigation_measurement.wua_intakeconsumption_action
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_agriculturalseason_intakeconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_intakeconsumption_ids
@@ -513,26 +514,26 @@ msgid "The reading end time can't be lower than the reading start time."
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:168
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:190
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:173
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:195
 #, python-format
 msgid "The reading time is minor than the time of the previous reading."
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:254
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:259
 #, python-format
 msgid "There are different flow meters."
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:256
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:261
 #, python-format
 msgid "There can be no final readings without eliminating."
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:270
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:275
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr ""
@@ -560,7 +561,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_agriculturalseason_total_volume
-msgid "Total volume"
+msgid "Total Volume (m3)"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -582,6 +583,51 @@ msgstr ""
 #. module: base_wua_irrigation_measurement
 #: selection:wua.in.fm,flowmeter_type:0
 msgid "Undefined"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.actions.server,name:base_wua_irrigation_measurement.wua_validate_flowreadings
+msgid "Validate"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_tree
+msgid "Validated Cons."
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_validated
+msgid "Validated Consumption"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_search
+msgid "Validated Consumption: No"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_search
+msgid "Validated Consumption: Yes"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_tree
+msgid "Validated Flow R."
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_validated
+msgid "Validated Reading"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_search
+msgid "Validated Reading: No"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_search
+msgid "Validated Reading: Yes"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -613,5 +659,12 @@ msgstr ""
 #. module: base_wua_irrigation_measurement
 #: selection:wua.in.fm,flowmeter_type:0
 msgid "Woltmann"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:304
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:313
+#, python-format
+msgid "You do not have permission to execute this action."
 msgstr ""
 

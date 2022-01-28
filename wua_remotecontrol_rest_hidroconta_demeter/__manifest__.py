@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2021 Moval Agroingeniería
+# 2022 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
@@ -12,7 +12,8 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_remotecontrol_rest", ],
+        "base_wua_remotecontrol_rest",
+        "base_wua_remotecontrol_rest_infrastructure", ],
     "data": [
         "data/wua_irrigation_config_settings_data.xml", 
         "views/wua_irrigation_config_settings_view.xml", ],

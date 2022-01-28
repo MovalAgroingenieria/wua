@@ -1,0 +1,167 @@
+# -*- coding: utf-8 -*-
+# 2022 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+import datetime
+import logging
+from odoo import models, fields, api, exceptions, _
+
+
+class WuaWaterpipeflowreading(models.Model):
+    _inherit = 'wua.waterpipeflowreading'
+
+    from_import = fields.Boolean(
+        string='Manual Introduction',
+        default=True,
+        required=True)
+
+    @api.model
+    def do_import_waterpipeflowreadings(self, save_data=True,
+                                        show_message=True):
+        # for resp: item 1: list of flow-readings, item 2: number of
+        # flow-readings, item 3: possible error message, item 4: list of
+        # problematic flow meters, item 5: number of negative flow-readings.
+        resp = [None, 0, '', None, 0]
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        import_from_waterpipe_readings = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'import_from_waterpipe_readings')
+        if (enable_remotecontrol and import_from_waterpipe_readings):
+            url_remotecontrol_rest = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+            url_remotecontrol_rest_username = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_username')
+            url_remotecontrol_rest_password = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_password')
+            if (url_remotecontrol_rest and url_remotecontrol_rest_username and
+               url_remotecontrol_rest_password):
+                data = self.populate_data_for_import_waterpipeflowreadings(
+                    url_remotecontrol_rest,
+                    url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                if data:
+                    waterpipeflowreadings, error_message, error_flowmeters = \
+                        self.import_waterpipeflowreadings(
+                            url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password, data)
+                    waterpipeflowreadings = self.refine_waterpipeflowreadings(
+                        waterpipeflowreadings)
+                    if waterpipeflowreadings:
+                        resp[0] = waterpipeflowreadings
+                        resp[1] = len(waterpipeflowreadings)
+                        resp[2] = error_message
+                        resp[3] = error_flowmeters
+                        if save_data:
+                            number_of_negative_waterpipeflowreadings = \
+                                self.save_waterpipeflowreadings(
+                                    waterpipeflowreadings)
+                            resp[4] = number_of_negative_waterpipeflowreadings
+                        prefix_message_01 = _('Remote Control: '
+                                              'Getting water-pipe readings')
+                        suffix_message_01 = str(resp[1])
+                        _logger = logging.getLogger(self.__class__.__name__)
+                        _logger.info(prefix_message_01 + '... ' +
+                                     suffix_message_01)
+                        if error_message:
+                            prefix_message_02 = _('Remote Control: Error '
+                                                  'getting water-pipe readings')
+                            suffix_message_02 = error_message
+                            _logger = logging.getLogger(
+                                self.__class__.__name__)
+                            _logger.info(prefix_message_02 + '... ' +
+                                         suffix_message_02)
+        else:
+            if show_message:
+                raise exceptions.UserError(_('The communication with '
+                                             'the remote control is not '
+                                             'enabled.'))
+        return resp
+
+    # Hook
+    def populate_data_for_import_waterpipeflowreadings(
+            self, url_remotecontrol_rest,
+            url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
+        return None
+
+    # Hook
+    def import_waterpipeflowreadings(
+            self, url_remotecontrol_rest,
+            url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
+        return None, '', None
+
+    def refine_waterpipeflowreadings(self, waterpipeflowreadings):
+        resp = []
+        flowmeters = self.env['wua.flowmeter']
+        for waterpipeflowreading in waterpipeflowreadings:
+            filtered_flowmeter = flowmeters.search(
+                [('name', '=', waterpipeflowreading['flowmeter']),
+                 ('waterpipe_id', '!=', False)])
+            if filtered_flowmeter:
+                flowmeter = filtered_flowmeter[0]
+                if flowmeter.state == 'active':
+                    refined_waterpipeflowreading = {
+                        'flowmeter_id': flowmeter.id,
+                        'volume': waterpipeflowreading['volume'],
+                        'instant_flow': waterpipeflowreading['instant_flow'],
+                        }
+                    resp.append(refined_waterpipeflowreading)
+        return resp
+
+    def save_waterpipeflowreadings(self, waterpipeflowreadings,
+                                   update_log=True):
+        number_of_waterpipeflowreadings = len(waterpipeflowreadings)
+        number_of_negative_waterpipeflowreadings = 0
+        if number_of_waterpipeflowreadings > 0:
+            reading_time = datetime.datetime.now().strftime(
+                '%Y-%m-%d %H:%M:%S'),
+            for waterpipeflowreading in waterpipeflowreadings:
+                is_negative, negative_volume = \
+                    self.is_negative_waterpipeflowreading(waterpipeflowreading)
+                if is_negative:
+                    self.env['wua.negative.flowreading'].create({
+                        'flowmeter_id': waterpipeflowreading['flowmeter_id'],
+                        'reading_time': reading_time,
+                        'volume': waterpipeflowreading['volume'],
+                        'instant_flow': waterpipeflowreading['instant_flow'],
+                        'consumption_volume': negative_volume,
+                        })
+                    number_of_negative_waterpipeflowreadings = \
+                        number_of_negative_waterpipeflowreadings + 1
+                else:
+                    self.create({
+                        'flowmeter_id': waterpipeflowreading['flowmeter_id'],
+                        'reading_time': reading_time,
+                        'volume': waterpipeflowreading['volume'],
+                        'instant_flow': waterpipeflowreading['instant_flow'],
+                        'initialization_reading': False,
+                        'from_import': False,
+                        'validated': False,
+                        })
+            if update_log:
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info(_('Remote Control: Saved water-pipe readings') +
+                             '... ' + str(number_of_waterpipeflowreadings))
+        return number_of_negative_waterpipeflowreadings
+
+    def is_negative_waterpipeflowreading(self, waterpipeflowreading):
+        is_negative = False
+        negative_volume = 0
+        current_volume = waterpipeflowreading['volume']
+        current_reading_time = datetime.datetime.now().strftime(
+            '%Y-%m-%d %H:%M:%S')
+        previous_waterpipeflowreading = \
+            self.env['wua.waterpipeflowreading'].search(
+                [('flowmeter_id', '=', waterpipeflowreading['flowmeter_id']),
+                 ('reading_time', '<', current_reading_time)],
+                limit=1, order='reading_time desc')
+        if previous_waterpipeflowreading:
+            previous_volume = previous_waterpipeflowreading[0].volume
+            if previous_volume > current_volume:
+                is_negative = True
+                negative_volume = current_volume - previous_volume
+        return is_negative, negative_volume
