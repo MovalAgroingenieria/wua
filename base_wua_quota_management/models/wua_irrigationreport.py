@@ -59,7 +59,8 @@ class WuaIrrigationReport(models.Model):
             if (self.is_valid_irrigationreport(updated_irrigationreport) and
                (not delete_hydricmovements) and (not create_hydricmovements)):
                 if ('initial_volume' in vals or 'end_volume' in vals or
-                   'hours' in vals or 'adjustement_volume' in vals):
+                   'hours' in vals or 'adjustement_volume' in vals or
+                   'product_id' in vals):
                     delete_hydricmovements = True
                     create_hydricmovements = True
             if delete_hydricmovements or create_hydricmovements:
