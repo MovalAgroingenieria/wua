@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationreport_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Reports (form view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="is_field_irrigationreport" invisible="1"/>
+                <field name="is_field_irrigationreport"
+                    attrs="{'invisible':[('is_field_irrigationreport','=', False)]}"/>
+                <field name="irrigationreport_writer_id"
+                    attrs="{'invisible':[('is_field_irrigationreport','=', False)]}"/>
+                <field name="irrigationshed_id"
+                    attrs="{'invisible':[('is_field_irrigationreport','=', False)]}"/>
+            </xpath>
+            <xpath expr="//page[@name='signature_page']" position="after">
+                <page name="irrigationreport_img" string="Irrigationreport Image">
+                    <group name="irrigationreport_img_group">
+                        <field name="irrigationreport_img" widget="image" class="oe_img_259_160"/>
+                    </group>
+                </page>
+            </xpath>
+            <xpath expr="//field[@name='intake_id']" position="attributes">
+                <attribute name="attrs">{'readonly': ['|', ('state', '=', 'validated'), '&amp;', ('id', '>', 0), ('irrigationshed_id', '=', None)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Reports (search view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='state']" position="before">
+                <filter name="is_field_irrigationreport_true" string="Is field irrigationreport: Yes"
+                        domain="[('is_field_irrigationreport','=',True)]"/>
+                <filter name="is_field_irrigationreport_false" string="Is field irrigationreport: No"
+                        domain="[('is_field_irrigationreport','=',False)]"/>
+                <separator/>
+            </xpath>
+            <xpath expr="//filter[@name='employee_id']" position="after">
+                <filter name="irrigationshed_id"
+                        string="Irrigationshed"
+                        context="{'group_by':'irrigationshed_id'}"/>
+                <filter name="irrigationreport_writer_id"
+                        string="Irrigationreport Writer"
+                        context="{'group_by':'irrigationreport_writer_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

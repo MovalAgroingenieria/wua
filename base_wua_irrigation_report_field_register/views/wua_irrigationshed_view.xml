@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationshed_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (form view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id"
+               ref="base_wua_infrastructure.wua_irrigationshed_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='elevation']" position="after">
+                <field name="can_register_irrigationreport"/>
+            </xpath>
+        </field>
+    </record>
+
+     <record id="wua_irrigationshed_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (search view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='pumping_no']" position="after">
+                <separator/>
+                <filter string="Register irrigationreport: Yes" name="register_irrigationreport_yes" domain="[('can_register_irrigationreport','=',True)]"/>
+                <filter string="Register irrigationreport: No" name="register_irrigationreport_no" domain="[('can_register_irrigationreport','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
