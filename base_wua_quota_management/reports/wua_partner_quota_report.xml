@@ -16,23 +16,19 @@
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
-                    <!-- Set variables -->
-                    <t t-set="quotas" t-value="o.get_partner_active_agriculturalseason_quotas()"/>
-                    <t t-if="len(quotas) > 0">
-                        <t t-set="agriculturalseason" t-value="quotas[0].agriculturalseason_id.description"/>
-                    </t>
-                    <t t-else="">
-                        <t t-set="agriculturalseason" t-value="str(not found)"/>
-                    </t>
+
+                    <!-- Set global variables -->
+                    <t t-set="agriculturalseason" t-value="o.get_agriculturalseason_id()"/>
                     <t t-set="hydricmovements" t-value="o.get_partner_active_agriculturalseason_hydricmovements()"/>
                     <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
                     <div class="page">
+
                         <!-- Report title -->
                         <div name="title" class="text-center" style="font-size: 16px;">
                             <strong>Quota report</strong>
                             <span>&amp;nbsp; [</span>
-                            <t t-esc="agriculturalseason"/>
+                            <t t-esc="agriculturalseason.description"/>
                             <span>]</span>
                         </div>
 
@@ -136,61 +132,62 @@
                                     </div>
                                 </t>
                             </div>
-                            <!-- Group by quotaperiod_id -->
-                            <t t-set="quota_periodes" t-value="[]"/>
-                            <t t-foreach="quotas" t-as="q">
-                                <t t-set="quota_periodes" t-value="quota_periodes+[q.quotaperiod_id]"/>
-                            </t>
-                           <t t-foreach="set(quota_periodes)" t-as="p">
+                            <!-- Get quota periods -->
+                            <t t-set="quota_periodes" t-value="o.get_quotaperiod_of_agriculturalseason(agriculturalseason.id)"/>
+                            <t t-foreach="quota_periodes" t-as="p">
                                 <div name="period_title" class="text-center" style="margin-top:10px;">
                                     <strong>Period </strong>
                                     <strong t-field="p.display_name"/>
                                     <hr style="margin: 0px 0px;"/>
                                 </div>
-                                <table class="table table-striped" style="width:100%;">
-                                    <thead>
-                                        <th name="th_superproduct">Water type</th>
-                                        <th name="th_input" class="text-right">Input (m<sup>3</sup>)</th>
-                                        <th name="th_consumption" class="text-right">Consumption (m<sup>3</sup>)</th>
-                                        <th name="th_balance" class="text-right">Balance (m<sup>3</sup>)</th>
-                                    </thead>
-                                    <tbody>
-                                        <t t-set="total_input" t-value="0.0"/>
-                                        <t t-set="total_consumption" t-value="0.0"/>
-                                        <t t-set="total_balance" t-value="0.0"/>
-                                        <t t-foreach="quotas" t-as="q" style="page-break-inside: avoid;">
+                                <t t-set="quotas" t-value="o.get_partner_active_agriculturalseason_quotas(p.id)"/>
+                                <t t-if="not len(quotas) > 0"><div class="text-center">(There are no quotas in this period)</div></t>
+                                <t t-else="">
+                                    <table class="table table-striped" style="width:100%;">
+                                        <thead>
+                                            <th name="th_superproduct">Water type</th>
+                                            <th name="th_input" class="text-right">Input (m<sup>3</sup>)</th>
+                                            <th name="th_consumption" class="text-right">Consumption (m<sup>3</sup>)</th>
+                                            <th name="th_balance" class="text-right">Balance (m<sup>3</sup>)</th>
+                                        </thead>
+                                        <tbody>
+                                            <t t-set="total_input" t-value="0.0"/>
+                                            <t t-set="total_consumption" t-value="0.0"/>
+                                            <t t-set="total_balance" t-value="0.0"/>
+                                            <t t-foreach="quotas" t-as="q" style="page-break-inside: avoid;">
+                                                <tr>
+                                                   <td name="td_superproduct">
+                                                       <span t-field="q.superproduct_id"/>
+                                                   </td>
+                                                   <td name="td_input" class="text-right">
+                                                       <span t-field="q.accumulated_input"/>
+                                                       <t t-set="total_input" t-value="total_input + q.accumulated_input"/>
+                                                   </td>
+                                                   <td name="td_consumption" class="text-right">
+                                                        <span t-field="q.accumulated_consumption"/>
+                                                        <t t-set="total_consumption" t-value="total_consumption + q.accumulated_consumption"/>
+                                                   </td>
+                                                   <td name="td_balance" class="text-right">
+                                                       <span t-field="q.balance"></span>
+                                                       <t t-set="total_balance" t-value="total_balance + q.balance"/>
+                                                   </td>
+                                                </tr>
+                                            </t>
                                             <tr>
-                                               <td name="td_superproduct">
-                                                   <span t-field="q.superproduct_id"/>
+                                               <td></td>
+                                               <td name="td_total_input" class="text-right">
+                                                  <strong><t t-esc="total_input" t-options='{"widget": "float", "precision": 2}'/></strong>
                                                </td>
-                                               <td name="td_input" class="text-right">
-                                                   <span t-field="q.accumulated_input"/>
-                                                   <t t-set="total_input" t-value="total_input + q.accumulated_input"/>
+                                               <td name="td_total_consumption" class="text-right">
+                                                  <strong><t t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}'/></strong>
                                                </td>
-                                               <td name="td_consumption" class="text-right">
-                                                    <span t-field="q.accumulated_consumption"/>
-                                                    <t t-set="total_consumption" t-value="total_consumption + q.accumulated_consumption"/>
-                                               </td>
-                                               <td name="td_balance" class="text-right">
-                                                   <span t-field="q.balance"></span>
-                                                   <t t-set="total_balance" t-value="total_balance + q.balance"/>
+                                               <td name="td_total_balance" class="text-right">
+                                                   <strong><t t-esc="total_balance" t-options='{"widget": "float", "precision": 2}'/></strong>
                                                </td>
                                             </tr>
-                                        </t>
-                                        <tr>
-                                           <td></td>
-                                           <td name="td_total_input" class="text-right">
-                                              <strong><t t-esc="total_input" t-options='{"widget": "float", "precision": 2}'/></strong>
-                                           </td>
-                                           <td name="td_total_consumption" class="text-right">
-                                              <strong><t t-esc="total_consumption" t-options='{"widget": "float", "precision": 2}'/></strong>
-                                           </td>
-                                           <td name="td_total_balance" class="text-right">
-                                               <strong><t t-esc="total_balance" t-options='{"widget": "float", "precision": 2}'/></strong>
-                                           </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </t>
                             </t>
                         </div>
 
