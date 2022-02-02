@@ -15,19 +15,22 @@ class WuaParcel(models.Model):
 
     def _compute_ndvi_grafana_frame(self):
         # Get config params
-        dashboard_url = self.env['ir.values'].get_default(
-            'wua.vegetationindex.configuration', 'dashboard_url')
+        grafana_org_id = self.env['ir.values'].get_default(
+            'board.grafana.configuration', 'grafana_org_id')
+        dashboard_path = self.env['ir.values'].get_default(
+            'wua.vegetationindex.configuration', 'dashboard_path')
         panel_id = self.env['ir.values'].get_default(
             'wua.vegetationindex.configuration', 'panel_id')
-        panel = "panelId=" + str(panel_id)
-        if not dashboard_url or not panel_id:
+        if not dashboard_path or not panel_id or not grafana_org_id:
             raise exceptions.ValidationError(
-                _('The grafana configuration parameters have not been set.'))
+                _('The NDVI Grafana config settings have not been set.'))
         # Get data
+        org_id = '?orgId=' + str(grafana_org_id)
+        dashboard_path = dashboard_path + org_id
+        panel = "panelId=" + str(panel_id)
         db_name = self.env.cr.dbname
         datasource = "var-Datasource=" + db_name
         parcel = "var-parcel=" + self.name
-        # Get date range
         ndvi_values = self.env['wua.parcel.vegetationindex.ndvi'].search(
                 [('parcel_id', '=', self.id),
                  ('of_active_agriculturalseason', '=', True)],
@@ -36,11 +39,12 @@ class WuaParcel(models.Model):
             ndvi_values[0].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
         epoch_to = "to=" + str(int(datetime.datetime.strptime(
             ndvi_values[-1].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
-        # Contruct URL
-        grafana_frame = dashboard_url + '&amp;' + datasource + '&amp;' + \
-            parcel + '&amp;' + epoch_from + '&amp;' + epoch_to + '&amp;' + \
-            'theme=light' + '&amp;' + panel + '&kiosk' + " "
-        body = "<iframe src=" + grafana_frame
-        body += 'width="100%" height="400" frameborder="0"'
+        # Construct frame src
+        frame_src = dashboard_path + '&' + datasource + '&' + parcel + '&' + \
+            epoch_from + '&' + epoch_to + '&' + panel
+        frame_params = 'width="100%" height="400"'
+        # Get frame
+        grafana_frame = self.env['board.grafana'].create_grafana_frame(
+            frame_src, frame_params)
         for record in self:
-            record.ndvi_grafana_frame = body
+            record.ndvi_grafana_frame = grafana_frame

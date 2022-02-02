@@ -12,6 +12,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
+        "board_grafana_integration",
         "wua_remotesensing_sentinelhub_ndvi",
     ],
     "data": [
