@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_report_certificate_form" model="ir.ui.view">
+        <field name="name">report.certificate.form</field>
+        <field name="model">report.certificate</field>
+        <field name="inherit_id" ref="report_qweb_signer.view_report_certificate_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='model_id']"
+                   position="after">
+                <field name="user_id" string="Signer"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_report_certificate_tree" model="ir.ui.view">
+        <field name="name">report.certificate.tree</field>
+        <field name="model">report.certificate</field>
+        <field name="inherit_id" ref="report_qweb_signer.view_report_certificate_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='model_id']"
+                   position="after">
+                <field name="user_id" string="Signer"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

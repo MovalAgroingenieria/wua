@@ -156,7 +156,7 @@ class WizardCreateCertificate(models.TransientModel):
                 fields_of_new_certificate['notes_user'] = notes
             else:
                 fields_of_new_certificate['notes_wua'] = notes
-        new_certificate = self.env['wua.certificate'].create(
+        new_certificate = self.env['wua.certificate'].sudo().create(
             fields_of_new_certificate)
         resp = new_certificate.id
         # Parcels of certificate

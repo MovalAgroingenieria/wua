@@ -100,6 +100,11 @@ class WuaCertificate(models.Model):
         string='Requested from the portal',
         default=_default_requested_from_portal)
 
+    current_user_id = fields.Many2one(
+        string='Current User',
+        comodel_name='res.users',
+        compute='_compute_current_user_id')
+
     user_who_validates_id = fields.Many2one(
         string='User who validates',
         comodel_name='res.users',
@@ -193,6 +198,14 @@ class WuaCertificate(models.Model):
             record.partner_code = partner_code
 
     @api.multi
+    def _compute_current_user_id(self):
+        for record in self:
+            current_user_id = None
+            if self.env.user:
+                current_user_id = self.env.user
+            record.current_user_id = current_user_id
+
+    @api.multi
     def _compute_name_of_signer(self):
         for record in self:
             name_of_signer = ''
@@ -228,7 +241,7 @@ class WuaCertificate(models.Model):
         try:
             settings = self.env['res.backend.settings'].search([])
             report_color = str(settings[0].report_motive_color)
-        except:
+        except Exception:
             report_color = '#696969'
         for record in self:
             html_certificate_title = ''
@@ -456,7 +469,7 @@ class WuaCertificate(models.Model):
 
     def _get_rendered_text(self, is_main_page=True):
         resp = ''
-        lang = self.create_uid.lang
+        lang = self.partner_id.lang
         if not lang:
             lang = 'en_US'
         today = date.today()
@@ -498,11 +511,12 @@ class WuaCertificate(models.Model):
         pdf = self.env['report'].with_context(
             {'lang': self.partner_id.lang}).get_pdf(
                 [self.id], 'base_wua_certificate.report_wua_certificate')
-        self.write({
-            'user_who_validates_id': self.env.user.id,
-            'document': encodestring(pdf),
-            'document_name': self.name + '.pdf'
-            })
+        if pdf:
+            self.write({
+                'user_who_validates_id': self.env.user.id,
+                'document': encodestring(pdf),
+                'document_name': self.name + '.pdf'
+                })
 
     @api.multi
     def action_print_certificate(self):

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_certificate_view_tree" model="ir.ui.view">
+        <field name="name">Certificates (tree view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="inherit_id" ref="base_wua_certificate.wua_certificate_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_who_signs_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_who_validates_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='requested_from_portal']"
+                   position="after">
+                <field name="signers"
+                       string="Designated Signers"/>
+                <field name="number_of_confirmed_signatures_as_char"
+                       string="Confirmed Signatures"/>
+            </xpath>            
+        </field>
+    </record>
+
+    <record id="wua_certificate_view_search" model="ir.ui.view">
+        <field name="name">Certificates (search view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="inherit_id" ref="base_wua_certificate.wua_certificate_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='grouped_user_who_signs_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='grouped_user_who_validates_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_certificate_one_partner_view_tree" model="ir.ui.view">
+        <field name="name">Certificates (tree view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="inherit_id" ref="base_wua_certificate.wua_certificate_one_partner_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_who_signs_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_who_validates_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='requested_from_portal']"
+                   position="after">
+                <field name="signers"
+                       string="Designated Signers"/>
+                <field name="number_of_confirmed_signatures_as_char"
+                       string="Confirmed Signatures"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_certificate_one_partner_view_search" model="ir.ui.view">
+        <field name="name">Certificates (search view)</field>
+        <field name="model">wua.certificate</field>
+        <field name="inherit_id" ref="base_wua_certificate.wua_certificate_one_partner_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='grouped_user_who_signs_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='grouped_user_who_validates_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_certificate_display_view_form" model="ir.ui.view">
+        <field name="name">Certificates (form view to display)</field>
+        <field name="model">wua.certificate</field>
+        <field name="inherit_id" ref="base_wua_certificate.wua_certificate_display_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='has_mailtemplate']"
+                   position="after">
+                <field name="current_user_can_sign" invisible="1"/>
+                <field name="current_user_can_revoke" invisible="1"/>
+            </xpath>
+            <xpath expr="//button[@name='action_validate_certificate']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_validate_certificate']"
+                   position="after">
+                <button name="action_sign_certificate"
+                        type="object" string="Sign"
+                        style="width: 105px;"
+                        class="oe_highlight"
+                        attrs="{'invisible':
+                                ['|', ('state','!=','01_draft'),
+                                      ('current_user_can_sign','!=',True)]}"
+                        groups="base_wua.group_wua_user"
+                        confirm="Are you sure you want to sign this certificate?"/>
+                <button name="action_revoke_sign_certificate"
+                        type="object" string="Revoke"
+                        style="width: 105px;"
+                        class="oe_highlight"
+                        attrs="{'invisible':
+                                ['|', ('state','!=','01_draft'),
+                                      ('current_user_can_revoke','!=',True)]}"
+                        groups="base_wua.group_wua_user"
+                        confirm="Are you sure you want to revoke this signature?"/>
+            </xpath>
+            <xpath expr="//field[@name='user_who_signs_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_who_validates_id']"
+                   position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='master_data_02_right']"
+                   position="attributes">
+                <attribute name="col">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='master_data_03_left']"
+                   position="replace">
+            </xpath>
+            <xpath expr="//group[@name='master_data_03_right']"
+                   position="replace">
+            </xpath>
+            <xpath expr="//field[@name='certificatetype_id']"
+                   position="after">
+                <field name="document" filename="document_name"
+                       attrs="{'readonly':
+                                [('state','!=','01_draft')],
+                               'invisible':
+                                [('state','=','01_draft')]}"/>
+                <div name="section_pending_validation" colspan="2"
+                     style="text-align:center;margin-top:20px;"
+                     attrs="{'invisible': [('state','!=','01_draft')]}">
+                    <span class="blink_text" style="font-weight:bold;">
+                    ( CERTIFICATE PENDING VALIDATION )
+                    </span>
+                </div>
+                <div name="section_requested_from_portal" colspan="2"
+                     style="text-align:center;margin-top:20px;"
+                     attrs="{'invisible': [('requested_from_portal','=',False)]}">
+                    <span style="font-weight:bold;">
+                    ( REQUESTED FROM ELECTRONIC OFFICE )
+                    </span>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='user_who_signs_id']"
+                   position="before">
+                <div name="section_signers"
+                     class="panel-body" style="background:#ededed;border-color:#cccccc;border-width:1px;border-style:solid">
+                    <field name="certificateuser_ids" nolabel="1" readonly="1">
+                        <tree editable="bottom" limit="4"
+                              class="o_base_wua_certificate_multiple_signature_certificateuser_ids_view_tree">
+                            <field name="signed" invisible="1"/>
+                            <button type="object" class="oe_stat_button"
+                                    icon="fa-check"
+                                    attrs="{'invisible':
+                                            [('signed','=',False)],
+                                            'readonly':'1'}"/>
+                            <field name="user_id"
+                                   string="SIGNATURES"
+                                   widget="many2one_unclickable"/>
+                            <field name="signature_time"
+                                   string="(signed on...)"/>
+                        </tree>
+                    </field>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
