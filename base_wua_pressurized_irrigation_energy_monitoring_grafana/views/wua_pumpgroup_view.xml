@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pumpgroup_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup (form view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pump.wua_pumpgroup_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <button name="action_see_graphs" type="object"
+                    class="oe_stat_button" icon="fa-board-grafana-integration-logo">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Graphs</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroup_graphs_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup Graphs (form view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="arch" type="xml">
+            <form string="Graphs Grafana" duplicate="false" create="false" edit="false" delete="false">
+                <field name="pumpgroup_energy_efficiency_grafana_frame" widget="html"/>
+            </form>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters (Monitoring Infrastucture)</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id"
+            ref="base_wua_pressurized_irrigation_energy_monitoring.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='monitoring_settings']" position="after">
+                <group string="Grafana" style="width:40%;">
+                    <group>
+                        <field name="dashboard_id" style="width:300px"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
