@@ -40,8 +40,14 @@ class WuaPumpgroup(models.Model):
     def _compute_number_of_measurements(self):
         for record in self:
             number_of_measurements = 0
-            if record.pumpgroupmeasurement_ids:
-                number_of_measurements = len(record.pumpgroupmeasurement_ids)
+            self.env.cr.execute("""
+                SELECT count(*) FROM wua_pumpgroupmeasurement
+                WHERE pumpgroup_id=""" + str(record.id) + """""")
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+               query_results[0].get('count') is not None):
+                number_of_measurements = \
+                    query_results[0].get('count')
             record.number_of_measurements = number_of_measurements
 
     @api.multi
@@ -51,19 +57,23 @@ class WuaPumpgroup(models.Model):
             last_measurement_supplied_power = 0
             last_measurement_consumed_power = 0
             last_measurement_energy_efficiency = 0
-            if record.pumpgroupmeasurement_ids:
-                measurements_of_record = \
-                    self.env['wua.pumpgroupmeasurement'].search(
-                        [('pumpgroup_id', '=', record.id)],
-                        limit=1, order='measurement_time desc')
+            self.env.cr.execute("""
+                SELECT measurement_time, supplied_power, consumed_power,
+                energy_efficiency FROM wua_pumpgroupmeasurement
+                WHERE pumpgroup_id=""" + str(record.id) + """
+                ORDER BY measurement_time DESC
+                LIMIT 1""")
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+               query_results[0].get('measurement_time') is not None):
                 last_measurement_time = \
-                    measurements_of_record[0].measurement_time
+                    query_results[0].get('measurement_time')
                 last_measurement_supplied_power = \
-                    measurements_of_record[0].supplied_power
+                    query_results[0].get('supplied_power')
                 last_measurement_consumed_power = \
-                    measurements_of_record[0].consumed_power
+                    query_results[0].get('consumed_power')
                 last_measurement_energy_efficiency = \
-                    measurements_of_record[0].energy_efficiency
+                    query_results[0].get('energy_efficiency')
             record.last_measurement_time = last_measurement_time
             record.last_measurement_supplied_power = \
                 last_measurement_supplied_power

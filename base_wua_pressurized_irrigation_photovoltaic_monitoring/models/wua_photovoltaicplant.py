@@ -44,9 +44,14 @@ class WuaPhotovoltaicplant(models.Model):
     def _compute_number_of_measurements(self):
         for record in self:
             number_of_measurements = 0
-            if record.photovoltaicmeasurement_ids:
-                number_of_measurements = len(
-                    record.photovoltaicmeasurement_ids)
+            self.env.cr.execute("""
+                SELECT count(*) FROM wua_photovoltaicmeasurement
+                WHERE photovoltaicplant_id=""" + str(record.id) + """""")
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+               query_results[0].get('count') is not None):
+                number_of_measurements = \
+                    query_results[0].get('count')
             record.number_of_measurements = number_of_measurements
 
     @api.multi
@@ -54,15 +59,19 @@ class WuaPhotovoltaicplant(models.Model):
         for record in self:
             last_measurement_time = None
             last_measurement_generated_power = 0
-            if record.photovoltaicmeasurement_ids:
-                measurements_of_record = \
-                    self.env['wua.photovoltaicmeasurement'].search(
-                        [('photovoltaicplant_id', '=', record.id)],
-                        limit=1, order='measurement_time desc')
+            self.env.cr.execute("""
+                SELECT measurement_time, generated_power
+                FROM wua_photovoltaicmeasurement
+                WHERE photovoltaicplant_id=""" + str(record.id) + """
+                ORDER BY measurement_time DESC
+                LIMIT 1""")
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+               query_results[0].get('measurement_time') is not None):
                 last_measurement_time = \
-                    measurements_of_record[0].measurement_time
+                    query_results[0].get('measurement_time')
                 last_measurement_generated_power = \
-                    measurements_of_record[0].generated_power
+                    query_results[0].get('generated_power')
             record.last_measurement_time = last_measurement_time
             record.last_measurement_generated_power = \
                 last_measurement_generated_power
