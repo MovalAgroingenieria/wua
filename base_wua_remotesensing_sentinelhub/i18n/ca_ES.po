@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-31 16:08+0000\n"
-"PO-Revision-Date: 2021-10-31 16:08+0000\n"
+"POT-Creation-Date: 2022-02-15 13:54+0000\n"
+"PO-Revision-Date: 2022-02-15 13:54+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,6 +28,11 @@ msgid "ATTENTION: it is not possible to install this module, because the table \
 msgstr "ATENCIÓ: no es pot instal·lar el mòdul, a causa de que la taula \"wua_gis_parcel\" no existeix (les parcel·les no tenen vincles GIS)."
 
 #. module: base_wua_remotesensing_sentinelhub
+#: model:ir.ui.view,arch_db:base_wua_remotesensing_sentinelhub.wua_agriculturalseason_view_form
+msgid "Activate"
+msgstr "Activar"
+
+#. module: base_wua_remotesensing_sentinelhub
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_moisture_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_ndvi_agriculturalseason_id
@@ -40,6 +45,11 @@ msgid "Apply"
 msgstr "Aplicar"
 
 #. module: base_wua_remotesensing_sentinelhub
+#: model:ir.ui.view,arch_db:base_wua_remotesensing_sentinelhub.wua_agriculturalseason_view_form
+msgid "Are you sure you want to activate this agricultural season?"
+msgstr "Esteu segur de voler activar aquesta campanya?"
+
+#. module: base_wua_remotesensing_sentinelhub
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_area_official_hec
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_moisture_area_official_hec
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_ndvi_area_official_hec
@@ -47,16 +57,21 @@ msgid "Area (ha)"
 msgstr "Àrea  (ha)"
 
 #. module: base_wua_remotesensing_sentinelhub
-#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:120
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:156
 #, python-format
 msgid "Band:"
 msgstr "Banda:"
 
 #. module: base_wua_remotesensing_sentinelhub
-#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:126
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:162
 #, python-format
 msgid "CALL ERROR (see the next line)..."
 msgstr "CALL ERROR (see the next line)..."
+
+#. module: base_wua_remotesensing_sentinelhub
+#: model:ir.ui.menu,name:base_wua_remotesensing_sentinelhub.technical_global_assignment_menu
+msgid "Calculation: vegetation indices"
+msgstr "Càlcul: índexs de vegetació"
 
 #. module: base_wua_remotesensing_sentinelhub
 #: model:ir.ui.view,arch_db:base_wua_remotesensing_sentinelhub.wua_vegetationindex_config_settings_view_form
@@ -105,7 +120,7 @@ msgid "Display Name"
 msgstr "Mostrar Nom"
 
 #. module: base_wua_remotesensing_sentinelhub
-#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:110
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:146
 #, python-format
 msgid "ERROR..."
 msgstr "ERROR..."
@@ -116,9 +131,25 @@ msgid "Enabled Remote-Sensing"
 msgstr "Connexió habilitada"
 
 #. module: base_wua_remotesensing_sentinelhub
+#: model:ir.model,name:base_wua_remotesensing_sentinelhub.model_wua_agriculturalseason
+msgid "Entity (agricultural season)"
+msgstr "Element (campanya)"
+
+#. module: base_wua_remotesensing_sentinelhub
 #: model:ir.model,name:base_wua_remotesensing_sentinelhub.model_wua_parcel
 msgid "Entity (parcel)"
 msgstr "Element (parcel·la)"
+
+#. module: base_wua_remotesensing_sentinelhub
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_agriculturalseason.py:27
+#, python-format
+msgid "Error when updating records (\"of_active_agriculturalseason\" field)."
+msgstr "Error en actualitzar els registres (\"of_active_agriculturalseason\" camp)."
+
+#. module: base_wua_remotesensing_sentinelhub
+#: model:ir.actions.server,name:base_wua_remotesensing_sentinelhub.technical_global_assignment_action
+msgid "Global assignment of agricultural season"
+msgstr "Assignació global de campanya"
 
 #. module: base_wua_remotesensing_sentinelhub
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_id
@@ -173,13 +204,13 @@ msgid "Notes (as text)"
 msgstr "Notes (com a text)"
 
 #. module: base_wua_remotesensing_sentinelhub
-#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:130
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:166
 #, python-format
 msgid "Number of correct records:"
 msgstr "Number of correct records:"
 
 #. module: base_wua_remotesensing_sentinelhub
-#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:132
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:168
 #, python-format
 msgid "Number of errors:"
 msgstr "Number of errors:"
@@ -211,6 +242,12 @@ msgid "Parcel"
 msgstr "Parcel·la"
 
 #. module: base_wua_remotesensing_sentinelhub
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_agriculturalseason.py:43
+#, python-format
+msgid "Parcels"
+msgstr "Parcel·les"
+
+#. module: base_wua_remotesensing_sentinelhub
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_moisture_partner_id
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_ndvi_partner_id
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_partner_id
@@ -234,7 +271,12 @@ msgid "Secret key of the Sentinel-Hub account"
 msgstr "Identificador del compte de Sentinel-Hub que es va a utilitzar"
 
 #. module: base_wua_remotesensing_sentinelhub
-#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:119
+#: model:ir.ui.menu,name:base_wua_remotesensing_sentinelhub.technical_menu
+msgid "Technical"
+msgstr "Tècnic"
+
+#. module: base_wua_remotesensing_sentinelhub
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:155
 #, python-format
 msgid "The chosen band is not correct."
 msgstr "The chosen band is not correct."
@@ -274,7 +316,7 @@ msgstr "Imatge de l'índex de vegetació"
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_ndvi_vegetationindex_legend
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_parcel_vegetationindex_vegetationindex_legend
 msgid "Vegetation-index Legend"
-msgstr "Vegetation-index Legend"
+msgstr "Llegenda de l'índex de vegetació"
 
 #. module: base_wua_remotesensing_sentinelhub
 #: model:ir.model.fields,field_description:base_wua_remotesensing_sentinelhub.field_wua_vegetationindex_configuration_url_wms
@@ -289,7 +331,7 @@ msgid "With notes"
 msgstr "Amb notes"
 
 #. module: base_wua_remotesensing_sentinelhub
-#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:129
+#: code:addons/base_wua_remotesensing_sentinelhub/models/wua_parcel.py:165
 #, python-format
 msgid "end of operation."
 msgstr "end of operation."

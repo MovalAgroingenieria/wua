@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_agriculturalseason_view_form" model="ir.ui.view">
+        <field name="name">Agricultural Seasons (form view)</field>
+        <field name="model">wua.agriculturalseason</field>
+        <field name="inherit_id"
+            ref="base_wua_pressurized_irrigation.wua_agriculturalseason_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <field name="active_agriculturalseason" invisible="1"/>
+                <header>
+                    <button name="action_activate_agriculturalseason"
+                            type="object" string="Activate"
+                            attrs="{'invisible': [('active_agriculturalseason','=',True)]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to activate this agricultural season?"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -23,6 +23,8 @@
         "data/wua_vegetationindex_config_settings_data.xml",
         "views/base_wua_remotesensing_sentinelhub_menus.xml",
         "views/wua_vegetationindex_config_settings_view.xml",
+        "views/wua_agriculturalseason_view.xml",
+        "views/wua_parcel_vegetationindex_view.xml",
     ],
     "installable": True,
     "pre_init_hook": "pre_init_hook",

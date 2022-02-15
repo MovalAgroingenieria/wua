@@ -5,3 +5,4 @@
 from . import wua_vegetationindex_config_settings
 from . import wua_parcel
 from . import wua_parcel_vegetationindex
+from . import wua_agriculturalseason

@@ -41,3 +41,16 @@ class WuaAgriculturalseason(models.Model):
                 raise exceptions.UserError(_(
                     'Error when updating records '
                     '(\"of_active_agriculturalseason\" field).'))
+
+    def do_global_assignment(self):
+        super(WuaAgriculturalseason, self).do_global_assignment()
+        model_agriculturalseason = self.env['wua.agriculturalseason']
+        measurements = self.env['wua.parcel.vegetationindex.moisture'].search([])
+        for measurement in (measurements or []):
+            agriculturalseasons = model_agriculturalseason.search(
+                [('initial_date', '<=', measurement.data_date),
+                 ('end_date', '>=', measurement.data_date)])
+            if len(agriculturalseasons) == 1:
+                measurement.agriculturalseason_id = agriculturalseasons[0].id
+            else:
+                measurement.agriculturalseason_id = None
