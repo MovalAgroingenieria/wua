@@ -35,16 +35,20 @@ class WuaParcel(models.Model):
                 [('parcel_id', '=', self.id),
                  ('of_active_agriculturalseason', '=', True)],
                 order='data_date')
-        epoch_from = "from=" + str(int(datetime.datetime.strptime(
-            ndvi_values[0].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
-        epoch_to = "to=" + str(int(datetime.datetime.strptime(
-            ndvi_values[-1].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
-        # Construct frame src
-        frame_src = dashboard_path + '&' + datasource + '&' + parcel + '&' + \
-            epoch_from + '&' + epoch_to + '&' + panel
-        frame_params = 'width="100%" height="400"'
-        # Get frame
-        grafana_frame = self.env['board.grafana'].create_grafana_frame(
-            frame_src, frame_params)
+        if ndvi_values:
+            epoch_from = "from=" + str(int(datetime.datetime.strptime(
+                ndvi_values[0].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
+            epoch_to = "to=" + str(int(datetime.datetime.strptime(
+                ndvi_values[-1].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
+            # Construct frame src
+            frame_src = dashboard_path + '&' + datasource + '&' + parcel + \
+                '&' + epoch_from + '&' + epoch_to + '&' + panel
+            frame_params = 'width="100%" height="400"'
+            frame_id = 'ndvi_grafana'
+            # Get frame
+            grafana_frame = self.env['board.grafana'].create_grafana_frame(
+                frame_src, frame_id, frame_params)
+        else:
+            grafana_frame = _("Data not found")
         for record in self:
             record.ndvi_grafana_frame = grafana_frame
