@@ -139,6 +139,56 @@ class WuaIrrigationditch(models.Model):
         inverse_name='irrigationditch_20_id',
         string="Parcels at level 20 ditch")
 
+    parcel_21_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_21_id',
+        string="Parcels at level 21 ditch")
+
+    parcel_22_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_22_id',
+        string="Parcels at level 22 ditch")
+
+    parcel_23_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_23_id',
+        string="Parcels at level 23 ditch")
+
+    parcel_24_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_24_id',
+        string="Parcels at level 24 ditch")
+
+    parcel_25_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_25_id',
+        string="Parcels at level 25 ditch")
+
+    parcel_26_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_26_id',
+        string="Parcels at level 26 ditch")
+
+    parcel_27_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_27_id',
+        string="Parcels at level 27 ditch")
+
+    parcel_28_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_28_id',
+        string="Parcels at level 28 ditch")
+
+    parcel_29_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_29_id',
+        string="Parcels at level 29 ditch")
+
+    parcel_30_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='irrigationditch_30_id',
+        string="Parcels at level 30 ditch")
+
     @api.depends('irrigationditch_id', 'name', 'irrigationditch_id.path')
     def _compute_level_n_path(self):
         for record in self:
@@ -164,7 +214,12 @@ class WuaIrrigationditch(models.Model):
                  'parcel_13_ids', 'parcel_14_ids',
                  'parcel_15_ids', 'parcel_16_ids',
                  'parcel_17_ids', 'parcel_18_ids',
-                 'parcel_19_ids', 'parcel_20_ids')
+                 'parcel_19_ids', 'parcel_20_ids',
+                 'parcel_21_ids', 'parcel_22_ids',
+                 'parcel_23_ids', 'parcel_24_ids',
+                 'parcel_25_ids', 'parcel_26_ids',
+                 'parcel_27_ids', 'parcel_28_ids',
+                 'parcel_29_ids', 'parcel_30_ids')
     def _compute_number_of_parcels(self):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
@@ -189,6 +244,11 @@ class WuaIrrigationditch(models.Model):
                  'parcel_15_ids', 'parcel_16_ids',
                  'parcel_17_ids', 'parcel_18_ids',
                  'parcel_19_ids', 'parcel_20_ids',
+                 'parcel_21_ids', 'parcel_22_ids',
+                 'parcel_23_ids', 'parcel_24_ids',
+                 'parcel_25_ids', 'parcel_26_ids',
+                 'parcel_27_ids', 'parcel_28_ids',
+                 'parcel_29_ids', 'parcel_30_ids',
                  'parcel_01_ids.area_official',
                  'parcel_02_ids.area_official',
                  'parcel_03_ids.area_official',
@@ -208,7 +268,17 @@ class WuaIrrigationditch(models.Model):
                  'parcel_17_ids.area_official',
                  'parcel_18_ids.area_official',
                  'parcel_19_ids.area_official',
-                 'parcel_20_ids.area_official')
+                 'parcel_20_ids.area_official',
+                 'parcel_21_ids.area_official',
+                 'parcel_22_ids.area_official',
+                 'parcel_23_ids.area_official',
+                 'parcel_24_ids.area_official',
+                 'parcel_25_ids.area_official',
+                 'parcel_26_ids.area_official',
+                 'parcel_27_ids.area_official',
+                 'parcel_28_ids.area_official',
+                 'parcel_29_ids.area_official',
+                 'parcel_30_ids.area_official')
     def _compute_total_affected_area_official(self):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',

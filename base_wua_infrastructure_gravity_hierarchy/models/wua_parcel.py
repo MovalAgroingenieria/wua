@@ -176,6 +176,76 @@ class WuaParcel(models.Model):
         store=True,
         compute="_compute_irrigationditch_id_20")
 
+    irrigationditch_21_id = fields.Many2one(
+        string="Level 21 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_21")
+
+    irrigationditch_22_id = fields.Many2one(
+        string="Level 22 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_22")
+
+    irrigationditch_23_id = fields.Many2one(
+        string="Level 23 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_23")
+
+    irrigationditch_24_id = fields.Many2one(
+        string="Level 24 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_24")
+
+    irrigationditch_25_id = fields.Many2one(
+        string="Level 25 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_25")
+
+    irrigationditch_26_id = fields.Many2one(
+        string="Level 26 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_26")
+
+    irrigationditch_27_id = fields.Many2one(
+        string="Level 27 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_27")
+
+    irrigationditch_28_id = fields.Many2one(
+        string="Level 28 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_28")
+
+    irrigationditch_29_id = fields.Many2one(
+        string="Level 29 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_29")
+
+    irrigationditch_30_id = fields.Many2one(
+        string="Level 30 Irrigation Ditch",
+        comodel_name='wua.irrigationditch',
+        index=True,
+        store=True,
+        compute="_compute_irrigationditch_id_30")
+
     drainageditch_01_id = fields.Many2one(
         string="Level 1 Drainage Ditch",
         comodel_name='wua.drainageditch',
@@ -315,6 +385,76 @@ class WuaParcel(models.Model):
         index=True,
         store=True,
         compute="_compute_drainageditch_id_20")
+
+    drainageditch_21_id = fields.Many2one(
+        string="Level 21 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_21")
+
+    drainageditch_22_id = fields.Many2one(
+        string="Level 22 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_22")
+
+    drainageditch_23_id = fields.Many2one(
+        string="Level 23 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_23")
+
+    drainageditch_24_id = fields.Many2one(
+        string="Level 24 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_24")
+
+    drainageditch_25_id = fields.Many2one(
+        string="Level 25 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_25")
+
+    drainageditch_26_id = fields.Many2one(
+        string="Level 26 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_26")
+
+    drainageditch_27_id = fields.Many2one(
+        string="Level 27 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_27")
+
+    drainageditch_28_id = fields.Many2one(
+        string="Level 28 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_28")
+
+    drainageditch_29_id = fields.Many2one(
+        string="Level 29 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_29")
+
+    drainageditch_30_id = fields.Many2one(
+        string="Level 30 Drainage Ditch",
+        comodel_name='wua.drainageditch',
+        index=True,
+        store=True,
+        compute="_compute_drainageditch_id_30")
 
     @api.depends('irrigationditch_id', 'irrigationditch_id.path')
     def _compute_path(self):
@@ -458,6 +598,66 @@ class WuaParcel(models.Model):
             record.irrigationditch_20_id = \
                 self.get_irrigationditch(record, 20)
 
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_21(self):
+        for record in self:
+            record.irrigationditch_21_id = \
+                self.get_irrigationditch(record, 21)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_22(self):
+        for record in self:
+            record.irrigationditch_22_id = \
+                self.get_irrigationditch(record, 22)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_23(self):
+        for record in self:
+            record.irrigationditch_23_id = \
+                self.get_irrigationditch(record, 23)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_24(self):
+        for record in self:
+            record.irrigationditch_24_id = \
+                self.get_irrigationditch(record, 24)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_25(self):
+        for record in self:
+            record.irrigationditch_25_id = \
+                self.get_irrigationditch(record, 25)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_26(self):
+        for record in self:
+            record.irrigationditch_26_id = \
+                self.get_irrigationditch(record, 26)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_27(self):
+        for record in self:
+            record.irrigationditch_27_id = \
+                self.get_irrigationditch(record, 27)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_28(self):
+        for record in self:
+            record.irrigationditch_28_id = \
+                self.get_irrigationditch(record, 28)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_29(self):
+        for record in self:
+            record.irrigationditch_29_id = \
+                self.get_irrigationditch(record, 29)
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.level')
+    def _compute_irrigationditch_id_30(self):
+        for record in self:
+            record.irrigationditch_30_id = \
+                self.get_irrigationditch(record, 30)
+
     @api.depends('drainageditch_id', 'drainageditch_id.level')
     def _compute_drainageditch_id_01(self):
         for record in self:
@@ -577,6 +777,66 @@ class WuaParcel(models.Model):
         for record in self:
             record.drainageditch_20_id = \
                 self.get_drainageditch(record, 20)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_21(self):
+        for record in self:
+            record.drainageditch_21_id = \
+                self.get_drainageditch(record, 21)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_22(self):
+        for record in self:
+            record.drainageditch_22_id = \
+                self.get_drainageditch(record, 22)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_23(self):
+        for record in self:
+            record.drainageditch_23_id = \
+                self.get_drainageditch(record, 23)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_24(self):
+        for record in self:
+            record.drainageditch_24_id = \
+                self.get_drainageditch(record, 24)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_25(self):
+        for record in self:
+            record.drainageditch_25_id = \
+                self.get_drainageditch(record, 25)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_26(self):
+        for record in self:
+            record.drainageditch_26_id = \
+                self.get_drainageditch(record, 26)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_27(self):
+        for record in self:
+            record.drainageditch_27_id = \
+                self.get_drainageditch(record, 27)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_28(self):
+        for record in self:
+            record.drainageditch_28_id = \
+                self.get_drainageditch(record, 28)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_29(self):
+        for record in self:
+            record.drainageditch_29_id = \
+                self.get_drainageditch(record, 29)
+
+    @api.depends('drainageditch_id', 'drainageditch_id.level')
+    def _compute_drainageditch_id_30(self):
+        for record in self:
+            record.drainageditch_30_id = \
+                self.get_drainageditch(record, 30)
 
     @api.depends('irrigationpoint_ids', 'irrigationditch_id')
     def _compute_hydraulic_infrastructure_type(self):

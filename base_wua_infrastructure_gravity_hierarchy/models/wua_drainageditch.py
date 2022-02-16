@@ -189,6 +189,56 @@ class WuaDrainageditch(models.Model):
         inverse_name='drainageditch_20_id',
         string="Parcels at level 20 drainage ditch")
 
+    parcel_21_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_21_id',
+        string="Parcels at level 21 drainage ditch")
+
+    parcel_22_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_22_id',
+        string="Parcels at level 22 drainage ditch")
+
+    parcel_23_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_23_id',
+        string="Parcels at level 23 drainage ditch")
+
+    parcel_24_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_24_id',
+        string="Parcels at level 24 drainage ditch")
+
+    parcel_25_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_25_id',
+        string="Parcels at level 25 drainage ditch")
+
+    parcel_26_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_26_id',
+        string="Parcels at level 26 drainage ditch")
+
+    parcel_27_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_27_id',
+        string="Parcels at level 27 drainage ditch")
+
+    parcel_28_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_28_id',
+        string="Parcels at level 28 drainage ditch")
+
+    parcel_29_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_29_id',
+        string="Parcels at level 29 drainage ditch")
+
+    parcel_30_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='drainageditch_30_id',
+        string="Parcels at level 30 drainage ditch")
+
     number_of_parcels = fields.Integer(
         string='Cumulative number of parcels',
         store=True,
@@ -222,7 +272,12 @@ class WuaDrainageditch(models.Model):
                  'parcel_13_ids', 'parcel_14_ids',
                  'parcel_15_ids', 'parcel_16_ids',
                  'parcel_17_ids', 'parcel_18_ids',
-                 'parcel_19_ids', 'parcel_20_ids')
+                 'parcel_19_ids', 'parcel_20_ids',
+                 'parcel_21_ids', 'parcel_22_ids',
+                 'parcel_23_ids', 'parcel_24_ids',
+                 'parcel_25_ids', 'parcel_26_ids',
+                 'parcel_27_ids', 'parcel_28_ids',
+                 'parcel_29_ids', 'parcel_30_ids')
     def _compute_number_of_parcels(self):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
