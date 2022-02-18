@@ -1882,13 +1882,14 @@ class WuaParcel(models.Model):
     @api.model
     def transform_float_to_locale(self, float_number, precision):
         precision = '%.' + str(precision) + 'f'
-        try:
-            locale.setlocale(locale.LC_NUMERIC,
-                             str(self.env.context['lang'] + '.utf8'))
-        except Exception:
-            locale.setlocale(locale.LC_NUMERIC, 'es_ES.utf8')
-        formated_float_number = locale.format(precision, float_number, True)
-        locale.resetlocale(locale.LC_NUMERIC)
+        lang = 'es_ES'
+        if (self.env.context['lang']):
+            lang = self.env.context['lang']
+        lang_model = self.env['res.lang'].search([('code', '=', lang)])
+        formated_float_number = str(float_number)
+        if (lang_model):
+            formated_float_number = \
+                lang_model.format(precision, float_number, True)
         return formated_float_number
 
 
