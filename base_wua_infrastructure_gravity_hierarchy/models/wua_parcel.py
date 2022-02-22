@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api
-import logging
 
 
 class WuaParcel(models.Model):
@@ -905,33 +904,23 @@ class WuaParcel(models.Model):
             """)
         if self.env.cr.fetchone()[0]:
             gis_drainageditch_ok = True
+
         if gis_drainageditch_ok:
-            self.env.cr.execute("""
-                SELECT code, geom FROM public.wua_gis_drainageditch
-                """)
-            gis_drainageditchs = self.env.cr.fetchall()
-            if gis_drainageditchs:
-                drainageditchs = self.env['wua.drainageditch'].search([])
-                number_of_gis_drainageditchs = len(gis_drainageditchs)
-                number_of_drainageditchs = len(drainageditchs)
+            try:
+                self.env.cr.savepoint()
                 self.env.cr.execute("""
                     UPDATE public.wua_drainageditch
                     SET with_gis_drainageditch = FALSE
-                    """)
-                for gis_drainageditch in gis_drainageditchs:
-                    code = gis_drainageditch[0]
-                    filtered_drainageditchs = \
-                        drainageditchs.filtered(
-                            lambda x: x.drainageditch_code == code)
-                    if len(filtered_drainageditchs) == 1:
-                        drainageditch = filtered_drainageditchs[0]
-                        drainageditch.write({
-                            'with_gis_drainageditch': True
-                        })
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info('Matching GIS info...')
-                _logger.info('Number of Odoo-Drainageditchs: ' +
-                             str(number_of_drainageditchs))
-                _logger.info('Number of GIS-Drainageditchs : ' +
-                             str(number_of_gis_drainageditchs))
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_drainageditch wd1
+                    SET with_gis_drainageditch = TRUE
+                    FROM public.wua_gis_drainageditch wgd1 WHERE
+                    wd1.drainageditch_code = wgd1.code;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_drainageditch_ok = False
         return gis_parcels_ok and gis_drainageditch_ok

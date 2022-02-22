@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api,  exceptions, _
-import logging
 
 
 class WuaParcel(models.Model):
@@ -329,34 +328,23 @@ class WuaParcel(models.Model):
         if self.env.cr.fetchone()[0]:
             gis_waterpipe_ok = True
         if gis_waterpipe_ok:
-            self.env.cr.execute("""
-                SELECT code, geom FROM public.wua_gis_waterpipe
-                """)
-            gis_waterpipes = self.env.cr.fetchall()
-            if gis_waterpipes:
-                waterpipes = self.env['wua.waterpipe'].search([])
-                number_of_gis_waterpipes = len(gis_waterpipes)
-                number_of_waterpipes = len(waterpipes)
+            try:
+                self.env.cr.savepoint()
                 self.env.cr.execute("""
                     UPDATE public.wua_waterpipe
                     SET with_gis_waterpipe = FALSE
-                    """)
-                for gis_waterpipe in gis_waterpipes:
-                    code = gis_waterpipe[0]
-                    filtered_waterpipes = \
-                        waterpipes.filtered(
-                            lambda x: x.waterpipe_code == code)
-                    if len(filtered_waterpipes) == 1:
-                        waterpipe = filtered_waterpipes[0]
-                        waterpipe.write({
-                            'with_gis_waterpipe': True
-                        })
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info('Matching GIS info...')
-                _logger.info('Number of Odoo-Waterpipes: ' +
-                             str(number_of_waterpipes))
-                _logger.info('Number of GIS-Waterpipes : ' +
-                             str(number_of_gis_waterpipes))
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_waterpipe ww1
+                    SET with_gis_waterpipe = TRUE
+                    FROM public.wua_gis_waterpipe wgw1 WHERE
+                    ww1.waterpipe_code = wgw1.code;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_waterpipe_ok = False
         return gis_parcels_ok and gis_waterpipe_ok
 
 

@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models
-import logging
 
 
 class WuaParcel(models.Model):
@@ -11,41 +10,30 @@ class WuaParcel(models.Model):
 
     def set_gis_fields_tank(self):
         gis_tank_ok = False
+        gis_tank_ok = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
             WHERE table_name='wua_gis_tank')
             """)
         if self.env.cr.fetchone()[0]:
             gis_tank_ok = True
-        if gis_tank_ok:
-            self.env.cr.execute("""
-                SELECT name, geom FROM public.wua_gis_tank
-                """)
-            gis_tanks = self.env.cr.fetchall()
-            if gis_tanks:
-                tanks = self.env['wua.tank'].search([])
-                number_of_gis_tanks = len(gis_tanks)
-                number_of_tanks = len(tanks)
+        if (gis_tank_ok):
+            try:
+                self.env.cr.savepoint()
                 self.env.cr.execute("""
                     UPDATE public.wua_tank
                     SET with_gis_tank = FALSE
-                    """)
-                for gis_tank in gis_tanks:
-                    tank_code = gis_tank[0]
-                    filtered_tanks = \
-                        tanks.filtered(
-                            lambda x: x.name == tank_code)
-                    if len(filtered_tanks) == 1:
-                        tank = filtered_tanks[0]
-                        tank.write({
-                            'with_gis_tank': True
-                        })
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info('Matching GIS info...')
-                _logger.info('Number of Odoo-tanks: ' +
-                             str(number_of_tanks))
-                _logger.info('Number of GIS-tanks : ' +
-                             str(number_of_gis_tanks))
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_tank wt1
+                    SET with_gis_tank = TRUE
+                    FROM public.wua_gis_tank wgt1 WHERE wt1.name = wgt1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_tank_ok = False
         return gis_tank_ok
 
     def set_gis_fields(self):

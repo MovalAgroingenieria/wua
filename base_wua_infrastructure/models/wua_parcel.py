@@ -5,8 +5,6 @@
 from lxml import etree
 from pyproj import Proj, transform
 from odoo import models, fields, api,  exceptions, _
-import logging
-from shapely import wkb
 
 
 class WuaParcel(models.Model):
@@ -303,49 +301,35 @@ class WuaParcel(models.Model):
 
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
-        if (not gis_parcels_ok):
-            return False
-        gis_irrigationsheds_ok = False
+        # Irrigationshed GIS
+        gis_irrigationshed_ok = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
             WHERE table_name='wua_gis_irrigationshed')
             """)
         if self.env.cr.fetchone()[0]:
-            gis_irrigationsheds_ok = True
-        if gis_irrigationsheds_ok:
-            self.env.cr.execute("""
-                SELECT name, geom FROM public.wua_gis_irrigationshed
-                """)
-            gis_irrigationsheds = self.env.cr.fetchall()
-            if gis_irrigationsheds:
-                irrigationsheds = self.env['wua.irrigationshed'].search([])
-                number_of_gis_irrigationsheds = len(gis_irrigationsheds)
-                number_of_irrigationsheds = len(irrigationsheds)
+            gis_irrigationshed_ok = True
+        if (gis_irrigationshed_ok):
+            try:
+                self.env.cr.savepoint()
                 self.env.cr.execute("""
                     UPDATE public.wua_irrigationshed
                     SET with_gis_irrigationshed = FALSE
-                    """)
-                for gis_irrigationshed in gis_irrigationsheds:
-                    name = gis_irrigationshed[0]
-                    geom = gis_irrigationshed[1]
-                    if (geom):
-                        decoded_geom = wkb.loads(geom, True)
-                        point_gis = decoded_geom
-                        filtered_irrigationsheds = \
-                            irrigationsheds.filtered(lambda x: x.name == name)
-                        if len(filtered_irrigationsheds) == 1:
-                            irrigationshed = filtered_irrigationsheds[0]
-                            irrigationshed.write({
-                                'with_gis_irrigationshed': True,
-                                'gis_viewer_x': point_gis.x,
-                                'gis_viewer_y': point_gis.y
-                            })
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info('Matching GIS info...')
-                _logger.info('Number of Odoo-Irrigationsheds: ' +
-                             str(number_of_irrigationsheds))
-                _logger.info('Number of GIS-Irrigationsheds : ' +
-                             str(number_of_gis_irrigationsheds))
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_irrigationshed wi1
+                    SET with_gis_irrigationshed = TRUE,
+                        gis_viewer_x = postgis.ST_X(wgi1.geom),
+                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    FROM public.wua_gis_irrigationshed wgi1 WHERE
+                        wi1.name = wgi1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_irrigationshed_ok = False
+        # Irrigationditch GIS
         gis_irrigationditch_ok = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
@@ -354,35 +338,24 @@ class WuaParcel(models.Model):
         if self.env.cr.fetchone()[0]:
             gis_irrigationditch_ok = True
         if gis_irrigationditch_ok:
-            self.env.cr.execute("""
-                SELECT code, geom FROM public.wua_gis_irrigationditch
-                """)
-            gis_irrigationditchs = self.env.cr.fetchall()
-            if gis_irrigationditchs:
-                irrigationditchs = self.env['wua.irrigationditch'].search([])
-                number_of_gis_irrigationditchs = len(gis_irrigationditchs)
-                number_of_irrigationditchs = len(irrigationditchs)
+            try:
+                self.env.cr.savepoint()
                 self.env.cr.execute("""
                     UPDATE public.wua_irrigationditch
                     SET with_gis_irrigationditch = FALSE
-                    """)
-                for gis_irrigationditch in gis_irrigationditchs:
-                    code = gis_irrigationditch[0]
-                    filtered_irrigationditchs = \
-                        irrigationditchs.filtered(
-                            lambda x: x.irrigationditch_code == code)
-                    if len(filtered_irrigationditchs) == 1:
-                        irrigationditch = filtered_irrigationditchs[0]
-                        irrigationditch.write({
-                            'with_gis_irrigationditch': True
-                        })
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info('Matching GIS info...')
-                _logger.info('Number of Odoo-Irrigationditchs: ' +
-                             str(number_of_irrigationditchs))
-                _logger.info('Number of GIS-Irrigationditchs : ' +
-                             str(number_of_gis_irrigationditchs))
-        return gis_parcels_ok and gis_irrigationsheds_ok and \
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_irrigationditch wi1
+                    SET with_gis_irrigationditch = TRUE
+                    FROM public.wua_gis_irrigationditch wgi1 WHERE
+                        wi1.irrigationditch_code = wgi1.code;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_irrigationditch_ok = False
+        return gis_parcels_ok and gis_irrigationshed_ok and \
             gis_irrigationditch_ok
 
     def populate_irrigationgates_to_add(self, vals):

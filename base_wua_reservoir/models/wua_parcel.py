@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models
-import logging
 
 
 class WuaParcel(models.Model):
@@ -19,34 +18,23 @@ class WuaParcel(models.Model):
         if self.env.cr.fetchone()[0]:
             gis_reservoir_ok = True
         if gis_reservoir_ok:
-            self.env.cr.execute("""
-                SELECT code, geom FROM public.wua_gis_reservoir
-                """)
-            gis_reservoirs = self.env.cr.fetchall()
-            if gis_reservoirs:
-                reservoirs = self.env['wua.reservoir'].search([])
-                number_of_gis_reservoirs = len(gis_reservoirs)
-                number_of_reservoirs = len(reservoirs)
+            try:
+                self.env.cr.savepoint()
                 self.env.cr.execute("""
                     UPDATE public.wua_reservoir
                     SET with_gis_reservoir = FALSE
-                    """)
-                for gis_reservoir in gis_reservoirs:
-                    code = gis_reservoir[0]
-                    filtered_reservoirs = \
-                        reservoirs.filtered(
-                            lambda x: x.reservoir_code == code)
-                    if len(filtered_reservoirs) == 1:
-                        reservoir = filtered_reservoirs[0]
-                        reservoir.write({
-                            'with_gis_reservoir': True
-                        })
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info('Matching GIS info...')
-                _logger.info('Number of Odoo-reservoirs: ' +
-                             str(number_of_reservoirs))
-                _logger.info('Number of GIS-reservoirs : ' +
-                             str(number_of_gis_reservoirs))
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_reservoir wr1
+                    SET with_gis_reservoir = TRUE
+                    FROM public.wua_gis_reservoir wgr1 WHERE
+                    wr1.reservoir_code = wgr1.code;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_reservoir_ok = False
         return gis_reservoir_ok
 
     def set_gis_fields(self):
