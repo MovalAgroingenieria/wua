@@ -2,9 +2,8 @@
 # Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
-import re
+from odoo import models, fields, api
+
 
 class WuaConfiguration(models.TransientModel):
     _inherit = 'res.config.settings'
@@ -223,4 +222,3 @@ class WuaConfiguration(models.TransientModel):
                            self.reports_style)
         values.set_default('wua.configuration', 'reports_consent_clauses',
                            self.reports_consent_clauses)
-

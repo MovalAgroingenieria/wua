@@ -66,6 +66,7 @@ class WuaParcel(models.Model):
                         'ir_act_window_group_rel(act_id, gid) VALUES(' + \
                         str(action_id) + ', ' + str(group_user_id) + ')'
                     self.env.cr.execute(sql_insert_group_rel)
+        self.create_gis_data()
 
     name = fields.Char(
         string='Code',
@@ -1223,7 +1224,7 @@ class WuaParcel(models.Model):
                     except Exception:
                         pass
 
-    def check_gis(self):
+    def check_gis_parcel_created(self):
         resp = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
@@ -1232,6 +1233,174 @@ class WuaParcel(models.Model):
         if self.env.cr.fetchone()[0]:
             resp = True
         return resp
+
+    def check_gis(self):
+        return self.check_gis_parcel_created()
+
+    def check_extension_and_schema_postgis_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM pg_extension WHERE extname='postgis')
+            AND EXISTS(SELECT * FROM information_schema.schemata  WHERE
+                       schema_name='postgis')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_parcel_table(self):
+        # Check if wua gis table already exists
+        gis_parcel_table_created = self.check_gis_parcel_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis parcel don't
+        if (not gis_parcel_table_created and extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS public.wua_gis_parcel_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_parcel
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_parcel_gid_seq'::regclass),
+                        name character varying(254) NOT NULL
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(MultiPolygon,25830),
+                        UNIQUE(name),
+                        CHECK (name <> ''),
+                        CONSTRAINT wua_gis_parcel_pkey PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_parcel_idx ON public.wua_gis_parcel USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_parcel_triggers(self):
+        gis_parcel_table_created = self.check_gis_parcel_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_parcel_table_created and extension_schema_postgis_created):
+            # Function that will update the wua_parcel data when the
+            # wua_gis_parcel table has some change, (Create, Update or Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_parcel_update_on_wua_parcel() RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF OLD IS NOT NULL THEN
+                    UPDATE public.wua_parcel SET with_gis_parcel = False WHERE
+                        OLD.name = name;
+                    UPDATE public.wua_parcel SET area_gis = 0 WHERE OLD.name =
+                        name;
+                END IF;
+                IF NEW IS NOT NULL THEN
+                    UPDATE public.wua_parcel SET with_gis_parcel = True WHERE
+                        NEW.name = name;
+                    UPDATE public.wua_parcel SET area_gis =
+                        (postgis.ST_Area(NEW.geom) * 0.0001) / (
+                    CASE
+                        WHEN (SELECT substring(value from '[0-9]+')::INTEGER AS
+                            value FROM ir_values WHERE name LIKE
+                            'area_measurement_type') = 1
+                        THEN
+                            (SELECT substring(
+                                value from'[0-9]+\\.[0-9]+')::FLOAT
+                            AS value FROM ir_values WHERE name LIKE
+                            'area_measurement_equivalence')
+                        ELSE 1
+                    END
+                    )
+                    WHERE NEW.name = name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis parcel is unlinked and
+            # other when a gis parcel is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_parcel_write_trigger ON
+                    public.wua_gis_parcel;
+                DROP TRIGGER IF EXISTS wua_gis_parcel_create_unlink_trigger ON
+                    public.wua_gis_parcel;
+
+                CREATE TRIGGER wua_gis_parcel_write_trigger
+                AFTER UPDATE OF geom, name ON
+                public.wua_gis_parcel FOR EACH ROW WHEN
+                (OLD.geom IS DISTINCT FROM NEW.geom OR
+                OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE wua_gis_parcel_update_on_wua_parcel();
+
+                CREATE TRIGGER wua_gis_parcel_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_parcel FOR EACH ROW
+                EXECUTE PROCEDURE wua_gis_parcel_update_on_wua_parcel();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_parcel data when the
+            # wua_parcel table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION wua_parcel_update_on_wua_parcel()
+                RETURNS trigger AS
+                $BODY$
+                BEGIN
+                    NEW.with_gis_parcel := (SELECT NEW.name IN
+                        (SELECT name FROM wua_gis_parcel));
+                    NEW.area_gis := (SELECT postgis.ST_Area(geom) * 0.0001
+                        FROM wua_gis_parcel WHERE name = NEW.name LIMIT 1) /
+                        (
+                            CASE
+                                WHEN (SELECT substring(
+                                        value from '[0-9]+')::INTEGER AS value
+                                        FROM ir_values WHERE name LIKE
+                                        'area_measurement_type') = 1
+                                THEN (SELECT substring(
+                                        value from '[0-9]+\\.[0-9]+')::FLOAT AS
+                                        value FROM ir_values WHERE name LIKE
+                                        'area_measurement_equivalence')
+                                ELSE 1
+                            END
+                        );
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the parcel is created and
+            # other when a gis parcel is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_parcel_write_trigger ON
+                    public.wua_parcel;
+                DROP TRIGGER IF EXISTS wua_parcel_create_trigger ON
+                    public.wua_parcel;
+
+                CREATE TRIGGER wua_parcel_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_parcel FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE wua_parcel_update_on_wua_parcel();
+
+                CREATE TRIGGER wua_parcel_create_trigger
+                AFTER INSERT ON
+                public.wua_parcel FOR EACH ROW
+                EXECUTE PROCEDURE wua_parcel_update_on_wua_parcel();
+            """)
+            self.env.cr.commit()
+
+    def create_gis_data(self):
+        self.create_wua_gis_parcel_table()
+        self.create_parcel_triggers()
 
     def set_gis_fields(self):
         gis_parcels_ok = True
