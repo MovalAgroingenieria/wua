@@ -1323,7 +1323,8 @@ class WuaParcel(models.Model):
                 RETURN NULL;
                 END;
                 $BODY$
-                LANGUAGE plpgsql;
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
             """)
             self.env.cr.commit()
             # Two trigger will be used, one when the gis parcel is unlinked and
@@ -1337,7 +1338,7 @@ class WuaParcel(models.Model):
                 CREATE TRIGGER wua_gis_parcel_write_trigger
                 AFTER UPDATE OF geom, name ON
                 public.wua_gis_parcel FOR EACH ROW WHEN
-                (OLD.geom IS DISTINCT FROM NEW.geom OR
+                (OLD.geom::geometry IS DISTINCT FROM NEW.geom::geometry OR
                 OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE wua_gis_parcel_update_on_wua_parcel();
 
@@ -1374,7 +1375,8 @@ class WuaParcel(models.Model):
                 RETURN NULL;
                 END;
                 $BODY$
-                LANGUAGE plpgsql;
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
             """)
             self.env.cr.commit()
             # Two trigger will be used, one when the parcel is created and
