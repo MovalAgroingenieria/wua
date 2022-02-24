@@ -208,6 +208,14 @@
             </t>
         </xpath>
 
+        <!-- Order lines -->
+        <xpath expr="//tr[@t-foreach='doc.credit_control_line_ids']" position="before">
+            <t t-set="lines" t-value="doc._get_ordered_lines(doc.credit_control_line_ids.ids)"/>
+        </xpath>
+        <xpath expr="//tr[@t-foreach='doc.credit_control_line_ids']" position="attributes">
+            <attribute name="t-foreach">lines</attribute>
+        </xpath>
+
     </template>
 
     <!-- Add currency to dunning fees -->
