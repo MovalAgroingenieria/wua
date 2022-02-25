@@ -141,6 +141,27 @@ class WizardMassiveIndividualinputs(models.TransientModel):
                                 'volume': volume,
                                 'reason': self.reason,
                                 })
+                            area_measurement_name = _('ha')
+                            area_measurement_type = \
+                                self.env['ir.values'].get_default(
+                                    'wua.configuration',
+                                    'area_measurement_type')
+                            if area_measurement_type == 1:
+                                area_measurement_name = \
+                                    self.env['ir.values'].get_default(
+                                        'wua.configuration',
+                                        'area_measurement_name')
+                                area_measurement_name = \
+                                    area_measurement_name.decode('utf_8')
+                                suffix = 'm3/' + area_measurement_name.lower()
+                            message_body = _('Superproduct: ') + \
+                                self.superproduct_id.name + '<br/>' + \
+                                _('Category: ') + self.category_id.name + \
+                                '<br/>' + _('Event time: ') + \
+                                self.event_time + '<br/>' + _('Volume: ') + \
+                                str(volume) + ' ' + suffix + '<br/>' + \
+                                _('Reason: ') + self.reason
+                            quotaperiod.message_post(body=message_body)
 
     def _get_current_quotaperiod_data(self):
         quotaperiod = self.env['wua.quotaperiod'].browse(
