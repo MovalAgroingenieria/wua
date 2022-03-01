@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-31 10:20+0000\n"
-"PO-Revision-Date: 2022-01-31 10:20+0000\n"
+"POT-Creation-Date: 2022-03-01 11:30+0000\n"
+"PO-Revision-Date: 2022-03-01 11:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,6 +16,13 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_irrigation_report_field_register
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_irrigationreport_view_form
+msgid "<span>REPORT END DATE NOT SETTED</span>"
+msgstr "<span>FECHA/HORA FIN NO INDICADA</span>"
+
+#. module: base_wua_irrigation_report_field_register
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_flowdivider_can_register_irrigationreport
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigationgate_can_register_irrigationreport
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigationshed_can_register_irrigationreport
 msgid "Can register irrigation reports"
 msgstr "Puede registrar partes de riego"
@@ -23,12 +30,33 @@ msgstr "Puede registrar partes de riego"
 #. module: base_wua_irrigation_report_field_register
 #: model:ir.model,name:base_wua_irrigation_report_field_register.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuración de riego con tipo de agua"
+msgstr "Configuración del riego con tipo de agua"
+
+#. module: base_wua_irrigation_report_field_register
+#: code:addons/base_wua_irrigation_report_field_register/models/wua_irrigationreport.py:99
+#, python-format
+msgid "Could not validate, field irrigationreport don't have an end time."
+msgstr "Aún no es posible validar este parte, porque en campo todavía no se ha introducido la fecha/hora de finalización del riego."
 
 #. module: base_wua_irrigation_report_field_register
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigation_configuration_default_field_irrigationreport_intake_id
 msgid "Default intake for fields irrigationreport"
 msgstr "Captación por defecto para los partes de riego de campo"
+
+#. module: base_wua_irrigation_report_field_register
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigationreport_with_end_time
+msgid "End time entered by the irrigator"
+msgstr "Fecha de fin introducida por el registrador de partes"
+
+#. module: base_wua_irrigation_report_field_register
+#: model:ir.model,name:base_wua_irrigation_report_field_register.model_wua_flowdivider
+msgid "Entity (flow divider)"
+msgstr "Elemento (partidor)"
+
+#. module: base_wua_irrigation_report_field_register
+#: model:ir.model,name:base_wua_irrigation_report_field_register.model_wua_irrigationgate
+msgid "Entity (irrigation gate)"
+msgstr "Elemento (tablacho)"
 
 #. module: base_wua_irrigation_report_field_register
 #: model:ir.model,name:base_wua_irrigation_report_field_register.model_wua_irrigationshed
@@ -41,15 +69,27 @@ msgid "Field Irrigationreport"
 msgstr "Parte de riego de campo"
 
 #. module: base_wua_irrigation_report_field_register
-#: code:addons/base_wua_irrigation_report_field_register/models/wua_irrigationreport.py:41
+#: code:addons/base_wua_irrigation_report_field_register/models/wua_irrigationreport.py:65
 #, python-format
 msgid "Field irrigationreport must have an irrigationreport writer."
 msgstr "Un parte de riego de campo debe tener un registrador de partes de riego."
 
 #. module: base_wua_irrigation_report_field_register
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigationreport_flowdivider_id
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_irrigationreport_view_search
+msgid "Flowdivider"
+msgstr "Partidor"
+
+#. module: base_wua_irrigation_report_field_register
 #: model:res.groups,name:base_wua_irrigation_report_field_register.group_wua_irrigation_report_writer
 msgid "Irrigation report writer"
 msgstr "Registrador de partes de riego"
+
+#. module: base_wua_irrigation_report_field_register
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigationreport_irrigationgate_id
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_irrigationreport_view_search
+msgid "Irrigationgate"
+msgstr "Tablacho"
 
 #. module: base_wua_irrigation_report_field_register
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigationreport_irrigationreport_img
@@ -64,6 +104,8 @@ msgid "Irrigationreport Writer"
 msgstr "Registrador de partes de riego"
 
 #. module: base_wua_irrigation_report_field_register
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_flowdivider_irrigationreport_ids
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigationgate_irrigationreport_ids
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_field_register.field_wua_irrigationshed_irrigationreport_ids
 msgid "Irrigationreports"
 msgstr "Partes de riego"
@@ -85,17 +127,21 @@ msgid "Is field irrigationreport: Yes"
 msgstr "Parte de riego de campo: Sí"
 
 #. module: base_wua_irrigation_report_field_register
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_flowdivider_view_search
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_irrigationgate_view_search
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_irrigationshed_view_search
 msgid "Register irrigationreport: No"
 msgstr "Registra partes de riego: No"
 
 #. module: base_wua_irrigation_report_field_register
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_flowdivider_view_search
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_irrigationgate_view_search
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_field_register.wua_irrigationshed_view_search
 msgid "Register irrigationreport: Yes"
 msgstr "Registra partes de riego: Sí"
 
 #. module: base_wua_irrigation_report_field_register
-#: code:addons/base_wua_irrigation_report_field_register/models/wua_irrigationreport.py:51
+#: code:addons/base_wua_irrigation_report_field_register/models/wua_irrigationreport.py:75
 #, python-format
 msgid "This User don't belongs to irrigationreport writer group."
 msgstr "Este usuario no pertenece al grupo de registradores de partes de riego."
@@ -109,4 +155,10 @@ msgstr "Valor que se pondrá por defecto en los partes de riego creados en campo
 #: model:ir.model,name:base_wua_irrigation_report_field_register.model_wua_irrigationreport
 msgid "WUA Irrigation Report"
 msgstr "Parte de Riego WUA"
+
+#. module: base_wua_irrigation_report_field_register
+#: code:addons/base_wua_irrigation_report_field_register/models/wua_irrigationreport.py:107
+#, python-format
+msgid "You do not have permission to execute this action."
+msgstr "No tiene permisos para ejecutar esta acción."
 

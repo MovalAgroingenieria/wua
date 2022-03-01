@@ -8,12 +8,17 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='user_id']" position="after">
                 <field name="is_field_irrigationreport" invisible="1"/>
+                <field name="with_end_time" invisible="1"/>
                 <field name="is_field_irrigationreport"
                     attrs="{'invisible':[('is_field_irrigationreport','=', False)]}"/>
                 <field name="irrigationreport_writer_id"
                     attrs="{'invisible':[('is_field_irrigationreport','=', False)]}"/>
                 <field name="irrigationshed_id"
-                    attrs="{'invisible':[('is_field_irrigationreport','=', False)]}"/>
+                    attrs="{'invisible':['|', ('irrigationshed_id', '=', False), ('is_field_irrigationreport','=', False)]}"/>
+                <field name="flowdivider_id"
+                    attrs="{'invisible':['|', ('flowdivider_id', '=', False), ('is_field_irrigationreport','=', False)]}"/>
+                <field name="irrigationgate_id"
+                    attrs="{'invisible':['|', ('irrigationgate_id', '=', False), ('is_field_irrigationreport','=', False)]}"/>
             </xpath>
             <xpath expr="//page[@name='signature_page']" position="after">
                 <page name="irrigationreport_img" string="Irrigationreport Image">
@@ -22,8 +27,28 @@
                     </group>
                 </page>
             </xpath>
+            <xpath expr="//field[@name='report_initial_time']" position="after">
+                <div style="color: red;" attrs="{'invisible': [('with_end_time','=',True)]}" colspan="2">
+                    <span>REPORT END DATE NOT SETTED</span>
+                </div>
+            </xpath>
             <xpath expr="//field[@name='intake_id']" position="attributes">
-                <attribute name="attrs">{'readonly': ['|', ('state', '=', 'validated'), '&amp;', ('id', '>', 0), ('irrigationshed_id', '=', None)]}</attribute>
+                <attribute name="attrs">{'readonly': ['|', ('state', '=', 'validated'), '&amp;', ('id', '>', 0), ('is_field_irrigationreport', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='report_end_time']" position="attributes">
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='hours']" position="attributes">
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='volume']" position="attributes">
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='adjustement_volume']" position="attributes">
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='volume_real']" position="attributes">
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
             </xpath>
         </field>
     </record>
@@ -44,6 +69,12 @@
                 <filter name="irrigationshed_id"
                         string="Irrigationshed"
                         context="{'group_by':'irrigationshed_id'}"/>
+                <filter name="flowdivider_id"
+                        string="Flowdivider"
+                        context="{'group_by':'flowdivider_id'}"/>
+                <filter name="irrigationgate_id"
+                        string="Irrigationgate"
+                        context="{'group_by':'irrigationgate_id'}"/>
                 <filter name="irrigationreport_writer_id"
                         string="Irrigationreport Writer"
                         context="{'group_by':'irrigationreport_writer_id'}"/>

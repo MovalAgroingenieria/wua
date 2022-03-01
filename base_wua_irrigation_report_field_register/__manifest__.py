@@ -21,6 +21,8 @@
         "views/resources.xml",
         "views/wua_irrigationreport_view.xml",
         "views/wua_irrigationshed_view.xml",
+        "views/wua_irrigationgate_view.xml",
+        "views/wua_flowdivider_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
     ],
     "installable": True,

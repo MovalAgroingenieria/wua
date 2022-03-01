@@ -4,4 +4,6 @@
 
 from . import wua_irrigationreport
 from . import wua_irrigationshed
+from . import wua_flowdivider
+from . import wua_irrigationgate
 from . import wua_irrigation_config_settings
