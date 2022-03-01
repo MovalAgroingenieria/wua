@@ -51,7 +51,8 @@ class WuaIrrigationReport(models.Model):
 
     with_end_time = fields.Boolean(
         string='End time entered by the irrigator',
-        compute='_compute_with_end_time')
+        compute='_compute_with_end_time',
+        store=True)
 
     irrigationreport_img = fields.Binary(
         string="Irrigationreport Image",
@@ -83,7 +84,8 @@ class WuaIrrigationReport(models.Model):
                 is_field_irrigationreport = True
             record.is_field_irrigationreport = is_field_irrigationreport
 
-    @api.multi
+    @api.depends('is_field_irrigationreport', 'report_initial_time',
+                 'report_end_time')
     def _compute_with_end_time(self):
         for record in self:
             with_end_time = True
