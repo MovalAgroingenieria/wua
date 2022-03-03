@@ -1296,10 +1296,11 @@ class WuaParcel(models.Model):
                 $BODY$
                 BEGIN
                 IF OLD IS NOT NULL THEN
-                    UPDATE public.wua_parcel SET with_gis_parcel = False WHERE
+                    UPDATE public.wua_parcel SET
+                        with_gis_parcel = False,
+                        area_gis = 0
+                    WHERE
                         OLD.name = name;
-                    UPDATE public.wua_parcel SET area_gis = 0 WHERE OLD.name =
-                        name;
                 END IF;
                 IF NEW IS NOT NULL THEN
                     UPDATE public.wua_parcel SET with_gis_parcel = True WHERE
@@ -1338,7 +1339,7 @@ class WuaParcel(models.Model):
                 CREATE TRIGGER wua_gis_parcel_write_trigger
                 AFTER UPDATE OF geom, name ON
                 public.wua_gis_parcel FOR EACH ROW WHEN
-                (OLD.geom::geometry IS DISTINCT FROM NEW.geom::geometry OR
+                ((NOT postgis.ST_Equals(OLD.geom, NEW.geom)) OR
                 OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE wua_gis_parcel_update_on_wua_parcel();
 
@@ -1355,9 +1356,10 @@ class WuaParcel(models.Model):
                 RETURNS trigger AS
                 $BODY$
                 BEGIN
-                    NEW.with_gis_parcel := (SELECT NEW.name IN
-                        (SELECT name FROM wua_gis_parcel));
-                    NEW.area_gis := (SELECT postgis.ST_Area(geom) * 0.0001
+                    UPDATE wua_parcel SET
+                    with_gis_parcel = (SELECT NEW.name IN
+                        (SELECT name FROM wua_gis_parcel)),
+                    area_gis = (SELECT postgis.ST_Area(geom) * 0.0001
                         FROM wua_gis_parcel WHERE name = NEW.name LIMIT 1) /
                         (
                             CASE
@@ -1371,7 +1373,8 @@ class WuaParcel(models.Model):
                                         'area_measurement_equivalence')
                                 ELSE 1
                             END
-                        );
+                        )
+                    WHERE name = NEW.name;
                 RETURN NULL;
                 END;
                 $BODY$
