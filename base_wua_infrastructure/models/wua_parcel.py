@@ -299,16 +299,325 @@ class WuaParcel(models.Model):
                             waterconnection_id.id)
         return waterconnections_to_del
 
-    def set_gis_fields(self):
-        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
-        # Irrigationshed GIS
-        gis_irrigationshed_ok = False
+    def check_gis_irrigationshed_created(self):
+        resp = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
             WHERE table_name='wua_gis_irrigationshed')
             """)
         if self.env.cr.fetchone()[0]:
-            gis_irrigationshed_ok = True
+            resp = True
+        return resp
+
+    def create_wua_gis_irrigationshed_table(self):
+        # Check if wua gis table already exists
+        gis_irrigationshed_table_created = \
+            self.check_gis_irrigationshed_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis irrigationshed don't
+        if (not gis_irrigationshed_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_irrigationshed_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_irrigationshed
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_irrigationshed_gid_seq'::regclass),
+                        name character varying(254) NOT NULL
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_irrigationshed_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_irrigationshed_idx ON public.wua_gis_irrigationshed
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_irrigationshed_triggers(self):
+        gis_irrigationshed_table_created = \
+            self.check_gis_irrigationshed_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_irrigationshed_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_irrigationshed data when the
+            # wua_gis_irrigationshed table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_irrigationshed_update_on_wua_irrigationshed()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF OLD IS NOT NULL THEN
+                    UPDATE public.wua_irrigationshed SET
+                        with_gis_irrigationshed = False,
+                        gis_viewer_x = 0,
+                        gis_viewer_y = 0
+                    WHERE name = OLD.name;
+                END IF;
+                IF NEW IS NOT NULL THEN
+                    UPDATE public.wua_irrigationshed SET
+                        with_gis_irrigationshed = True,
+                        gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
+                        gis_viewer_y = postgis.ST_Y(NEW.geom)::INTEGER
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis irrigationshed is
+            # unlinked and other when a gis irrigationshed is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_irrigationshed_write_trigger ON
+                    public.wua_gis_irrigationshed;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_irrigationshed_create_unlink_trigger ON
+                    public.wua_gis_irrigationshed;
+
+                CREATE TRIGGER wua_gis_irrigationshed_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_irrigationshed FOR EACH ROW WHEN
+                ((NOT postgis.ST_Equals(OLD.geom, NEW.geom)) OR
+                 OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_irrigationshed_update_on_wua_irrigationshed();
+
+                CREATE TRIGGER wua_gis_irrigationshed_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_irrigationshed FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_irrigationshed_update_on_wua_irrigationshed();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_irrigationshed data when the
+            # wua_irrigationshed table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_irrigationshed_update_on_wua_irrigationshed() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_irrigationshed SET
+                        with_gis_irrigationshed = (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_irrigationshed)),
+                        gis_viewer_x = (SELECT postgis.ST_X(geom)::INTEGER FROM
+                            wua_gis_irrigationshed WHERE name = NEW.name
+                            LIMIT 1),
+                        gis_viewer_y = (SELECT postgis.ST_Y(geom)::INTEGER FROM
+                            wua_gis_irrigationshed WHERE name = NEW.name
+                            LIMIT 1)
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the irrigationshed is created
+            # and other when a gis irrigationshed is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_irrigationshed_write_trigger ON
+                    public.wua_irrigationshed;
+                DROP TRIGGER IF EXISTS wua_irrigationshed_create_trigger ON
+                    public.wua_irrigationshed;
+
+                CREATE TRIGGER wua_irrigationshed_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_irrigationshed FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_irrigationshed_update_on_wua_irrigationshed();
+
+                CREATE TRIGGER wua_irrigationshed_create_trigger
+                AFTER INSERT ON
+                public.wua_irrigationshed FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_irrigationshed_update_on_wua_irrigationshed();
+            """)
+            self.env.cr.commit()
+
+    def check_gis_irrigationditch_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_irrigationditch')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_irrigationditch_table(self):
+        # Check if wua gis table already exists
+        gis_irrigationditch_table_created = \
+            self.check_gis_irrigationditch_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis irrigationditch don't
+        if (not gis_irrigationditch_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_irrigationditch_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_irrigationditch
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_irrigationditch_gid_seq'::regclass),
+                        name character varying(254) NOT NULL
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(MultiLineString,25830),
+                        code bigint,
+                        level integer,
+                        UNIQUE(code),
+                        CONSTRAINT wua_gis_irrigationditch_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_irrigationditch_idx ON public.wua_gis_irrigationditch
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_irrigationditch_triggers(self):
+        gis_irrigationditch_table_created = \
+            self.check_gis_irrigationditch_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_irrigationditch_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_irrigationditch data when the
+            # wua_gis_irrigationditch table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_irrigationditch_update_on_wua_irrigationditch()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF OLD IS NOT NULL THEN
+                    UPDATE public.wua_irrigationditch SET
+                        with_gis_irrigationditch = False
+                    WHERE irrigationditch_code = OLD.code;
+                END IF;
+                IF NEW IS NOT NULL THEN
+                    UPDATE public.wua_irrigationditch SET
+                        with_gis_irrigationditch = True
+                    WHERE irrigationditch_code = NEW.code;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis irrigationditch is
+            # unlinked and other when a gis irrigationditch is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_irrigationditch_write_trigger ON
+                    public.wua_gis_irrigationditch;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_irrigationditch_create_unlink_trigger ON
+                    public.wua_gis_irrigationditch;
+
+                CREATE TRIGGER wua_gis_irrigationditch_write_trigger
+                AFTER UPDATE OF code ON
+                public.wua_gis_irrigationditch FOR EACH ROW WHEN
+                (OLD.code IS DISTINCT FROM NEW.code)
+                EXECUTE PROCEDURE
+                    wua_gis_irrigationditch_update_on_wua_irrigationditch();
+
+                CREATE TRIGGER wua_gis_irrigationditch_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_irrigationditch FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_irrigationditch_update_on_wua_irrigationditch();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_irrigationditch data when the
+            # wua_irrigationditch table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_irrigationditch_update_on_wua_irrigationditch() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE wua_irrigationditch SET with_gis_irrigationditch =
+                    (SELECT NEW.irrigationditch_code IN
+                        (SELECT code FROM wua_gis_irrigationditch))
+                    WHERE irrigationditch_code = NEW.irrigationditch_code;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the irrigationditch is created
+            # and other when a gis irrigationditch is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_irrigationditch_write_trigger ON
+                    public.wua_irrigationditch;
+                DROP TRIGGER IF EXISTS wua_irrigationditch_create_trigger ON
+                    public.wua_irrigationditch;
+
+                CREATE TRIGGER wua_irrigationditch_write_trigger
+                AFTER UPDATE OF irrigationditch_code ON
+                public.wua_irrigationditch FOR EACH ROW WHEN
+                (OLD.irrigationditch_code IS DISTINCT FROM
+                    NEW.irrigationditch_code)
+                EXECUTE PROCEDURE
+                    wua_irrigationditch_update_on_wua_irrigationditch();
+
+                CREATE TRIGGER wua_irrigationditch_create_trigger
+                AFTER INSERT ON
+                public.wua_irrigationditch FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_irrigationditch_update_on_wua_irrigationditch();
+            """)
+            self.env.cr.commit()
+
+    def create_gis_data(self):
+        super(WuaParcel, self).create_gis_data()
+        self.create_wua_gis_irrigationshed_table()
+        self.create_irrigationshed_triggers()
+        self.create_wua_gis_irrigationditch_table()
+        self.create_irrigationditch_triggers()
+
+    def set_gis_fields_irrigationshed(self):
+        gis_irrigationshed_ok = self.check_gis_irrigationshed_created()
         if (gis_irrigationshed_ok):
             try:
                 self.env.cr.savepoint()
@@ -329,7 +638,9 @@ class WuaParcel(models.Model):
             except Exception:
                 self.env.cr.rollback()
                 gis_irrigationshed_ok = False
-        # Irrigationditch GIS
+        return gis_irrigationshed_ok
+
+    def set_gis_fields_irrigationditch(self):
         gis_irrigationditch_ok = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
@@ -355,6 +666,14 @@ class WuaParcel(models.Model):
             except Exception:
                 self.env.cr.rollback()
                 gis_irrigationditch_ok = False
+        return gis_irrigationditch_ok
+
+    def set_gis_fields(self):
+        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
+        # Irrigationshed GIS
+        gis_irrigationshed_ok = self.set_gis_fields_irrigationshed()
+        # Irrigationditch GIS
+        gis_irrigationditch_ok = self.set_gis_fields_irrigationditch()
         return gis_parcels_ok and gis_irrigationshed_ok and \
             gis_irrigationditch_ok
 
