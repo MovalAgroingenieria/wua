@@ -84,6 +84,30 @@
                                             </t>
                                         </div>
                                     </t>
+                                     <t t-else="">
+                                        <div>
+                                            <t t-if="o.name"><strong><span t-field="o.name"/></strong></t><br/>
+                                            <t t-if="o.street_type_show"><span t-field="o.street_type_show"/></t>
+                                            <t t-if="o.street"><span t-field="o.street"/></t>
+                                            <t t-if="o.street_num"><span t-field="o.street_num"/></t>
+                                            <t t-if="o.street2"><span t-field="o.street2"/></t>
+                                            <br/>
+                                            <t t-if="o.city"><span t-field="o.city"/></t>
+                                            <t t-if="o.zip">
+                                                <span>&amp;nbsp;-&amp;nbsp;</span>
+                                                <span t-field="o.zip"/>
+                                            </t>
+                                            <t id="state_address" t-if="o.state_id">
+                                                <span t-tag="span">(</span><span t-field="o.state_id"/>
+                                                <t t-if="not o.country_id"><span>)</span></t>
+                                                <t t-else=""><span>-</span></t>
+                                            </t>
+                                            <t id="country_address" t-if="o.country_id">
+                                                <t t-if="not o.state_id"><span>(</span></t>
+                                                <span t-field="o.country_id"></span><span>)</span>
+                                            </t>
+                                        </div>
+                                    </t>
                                 </t>
                             </t>
                             <t t-else="">
@@ -158,7 +182,7 @@
                         <table class="table table-condensed" t-foreach="Lines[o.id]" t-as="currency">
                             <thead>
                                 <tr>
-                                    <th>Reference</th>
+                                    <th name="th_move_id">Reference</th>
                                     <th class="text-center" style="width:11%;">Date</th>
                                     <th class="text-center">Due Date</th>
                                     <th>Communication</th>
@@ -167,7 +191,7 @@
                                 </tr>
                             </thead>
                             <tr t-foreach="Lines[o.id][currency]" t-as="line">
-                                <td>
+                                <td name="td_move_id">
                                     <span t-esc="line['move_id']"/>
                                 </td>
                                 <td class="text-center">

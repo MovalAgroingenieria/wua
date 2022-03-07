@@ -10,7 +10,7 @@ class ReportOverdue(models.AbstractModel):
 
     def _get_account_move_lines(self, partner_ids):
         user_company_id = self.env.user.company_id.id
-        res = dict(map(lambda x:(x,[]), partner_ids))
+        res = dict(map(lambda x: (x, []), partner_ids))
         self.env.cr.execute(
             "SELECT m.name AS move_id, l.date, l.name, l.ref, "
             "l.date_maturity, l.partner_id, l.blocked, l.amount_currency, "
