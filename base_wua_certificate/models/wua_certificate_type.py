@@ -69,6 +69,24 @@ class WuaCertificateType(models.Model):
         string='Final Paragraph',
         translate=True)
 
+    include_parcel_if_owner = fields.Boolean(
+        string='Include parcel if partner is owner',
+        help='When creating a certificate, include parcel if partner '
+             'is owner (or co-owner)',
+        default=True)
+
+    include_parcel_if_lessee = fields.Boolean(
+        string='Include parcel if partner is lessee',
+        help='When creating a certificate, include parcel if partner '
+             'is lessee',
+        default=True)
+
+    include_parcel_if_payer = fields.Boolean(
+        string='Include parcel if partner is payer',
+        help='When creating a certificate, include parcel if partner '
+             'is payer',
+        default=True)
+
     _sql_constraints = [
         ('valid_certificatetype_code', 'CHECK (certificatetype_code > 0)',
          'The certificate type code must be a positive value.'),

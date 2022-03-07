@@ -446,11 +446,11 @@ class WuaDrainageditch(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            if record.drainageditch_code > 0:
-                name = record.name + ' ' + \
+            name = record.name
+            if ((not self.env.context.get('no_code_in_name', False)) and
+               record.drainageditch_code > 0):
+                name = name + ' ' + \
                     '[' + str(record.drainageditch_code) + ']'
-            else:
-                name = record.name
             result.append((record.id, name))
         return result
 

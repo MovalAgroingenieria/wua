@@ -167,17 +167,25 @@ class WizardCreateCertificate(models.TransientModel):
                 ('parcel_id.partner_id', '=', self.partner_id.id))
         partnerlinks = model_partnerlinks.search(conditions)
         for partnerlink in (partnerlinks or []):
-            fields_of_new_certificateparcel = {
-                'certificate_id': new_certificate.id,
-                'parcel_id': partnerlink.parcel_id.id,
-                'cadastral_reference':
-                    partnerlink.parcel_id.cadastral_reference,
-                'area_official': partnerlink.parcel_id.area_official,
-                'ownership_percentage': partnerlink.ownership_percentage,
-                'water_costs_percentage': partnerlink.water_costs_percentage,
-                'other_costs_percentage': partnerlink.other_costs_percentage,
-                'is_main': partnerlink.irrigation_partner,
-                }
-            self.env['wua.certificate.parcel'].create(
-                fields_of_new_certificateparcel)
+            add_parcel = \
+                ((self.certificatetype_id.include_parcel_if_owner and
+                 partnerlink.profile == 'O') or
+                 (self.certificatetype_id.include_parcel_if_lessee and
+                 partnerlink.profile == 'L') or
+                 (self.certificatetype_id.include_parcel_if_payer and
+                 partnerlink.profile == 'P'))
+            if add_parcel:
+                fields_of_new_certificateparcel = {
+                    'certificate_id': new_certificate.id,
+                    'parcel_id': partnerlink.parcel_id.id,
+                    'cadastral_reference':
+                        partnerlink.parcel_id.cadastral_reference,
+                    'area_official': partnerlink.parcel_id.area_official,
+                    'ownership_percentage': partnerlink.ownership_percentage,
+                    'water_costs_percentage': partnerlink.water_costs_percentage,
+                    'other_costs_percentage': partnerlink.other_costs_percentage,
+                    'is_main': partnerlink.irrigation_partner,
+                    }
+                self.env['wua.certificate.parcel'].create(
+                    fields_of_new_certificateparcel)
         return resp

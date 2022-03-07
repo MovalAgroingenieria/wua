@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <field name="id" invisible="1"/>
-                <field name='number_of_certificates' invisible="1"/>                
+                <field name='number_of_certificates' invisible="1"/>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_get_certificates"
@@ -35,12 +35,27 @@
                             <field name="certificatetype_code"
                                    style="width:100px"
                                    attrs="{'readonly': [('id','>',0)]}"/>
-                        </div>                                    
+                        </div>
                     </div>
                     <group name="master_data"
                            groups="base_wua.group_wua_user">
                         <group name="master_data_left">
                             <field name="mailtemplate_id"/>
+                            <div name="include_parcel"
+                                 style="margin-top:16px" colspan="2">
+                                <span style="font-weight:bold;">
+                                When creating the certificate, include a parcel if...
+                                </span><br/>
+                                <field name="include_parcel_if_owner"
+                                       nolabel="1" style="margin-top:10px"/>
+                                <span>The partner is owner</span><br/>
+                                <field name="include_parcel_if_lessee"
+                                       nolabel="1"/>
+                                <span>The partner is lessee</span><br/>
+                                <field name="include_parcel_if_payer"
+                                       nolabel="1"/>
+                                <span>The partner is payer</span>
+                            </div>
                         </group>
                         <group name="master_data_right">
                             <div name="section_notes" colspan="2"
@@ -74,7 +89,7 @@
                             <span style="font-weight:bold;">
                             P A R A G R A P H
                             </span>
-                        </div>                        
+                        </div>
                         <hr/>
                         <field name="final_paragraph" nolabel="1"/>
                     </div>

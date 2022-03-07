@@ -368,6 +368,18 @@ class WuaIrrigationditch(models.Model):
         else:
             return super(WuaIrrigationditch, self).write(vals)
 
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            name = record.name
+            if ((not self.env.context.get('no_code_in_name', False)) and
+               record.irrigationditch_code > 0):
+                name = name + ' ' + \
+                    '[' + str(record.irrigationditch_code) + ']'
+            result.append((record.id, name))
+        return result
+
     def get_wua_irrigationditch_parcels_action_gh(self):
         current_irrigationditch_id = self.env.context.get('active_id')
         current_irrigationditch = self.browse(current_irrigationditch_id)
