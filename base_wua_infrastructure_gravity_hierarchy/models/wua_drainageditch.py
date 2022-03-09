@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, exceptions, _
+from odoo.http import request
 from Crypto.Cipher import AES
 import datetime
 import pytz
@@ -445,9 +446,14 @@ class WuaDrainageditch(models.Model):
     @api.multi
     def name_get(self):
         result = []
+        from_parcel_form_view = False
+        if request.__dict__ and 'httprequest' in request.__dict__:
+            httprequest = str(request.__dict__['httprequest'])
+            if httprequest.find('call_kw/wua.parcel') != -1:
+                from_parcel_form_view = True
         for record in self:
             name = record.name
-            if ((not self.env.context.get('no_code_in_name', False)) and
+            if ((not from_parcel_form_view) and
                record.drainageditch_code > 0):
                 name = name + ' ' + \
                     '[' + str(record.drainageditch_code) + ']'
