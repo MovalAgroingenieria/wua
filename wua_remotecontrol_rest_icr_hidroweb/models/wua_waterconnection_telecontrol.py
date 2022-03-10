@@ -102,7 +102,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         irrigationshed = code_values[0][:-3]
                         position = self._get_position_from_code(
                             code_values, wc_per_group)
-                        flow_value = flow['value']
+                        flow_value = float(flow['value']) / 3.6
                         wc_name = irrigationshed + '-' + str(position).zfill(2)
                         if (wc_name in wc_dict):
                             wc = wc_dict[wc_name]

@@ -75,7 +75,7 @@ class WuaFlowreading(models.Model):
                     for flow in flows_response:
                         code_values = flow['name'].split('_')
                         flowmeter = code_values[0][:-3]
-                        flow_value = flow['value']
+                        flow_value = float(flow['value']) / 3.6
                         if (flowmeter in flowreadings_dict):
                             flowreadings_dict[flowmeter].update({
                                 'instant_flow': flow_value
