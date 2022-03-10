@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_remotecontrol_rest.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='url_remotecontrol_application']"
+                   position="after">
+                <field name="client_identifier" style="width:100px"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                <field name="installation_identifier" style="width:100px"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                <field name="wc_per_group" style="width:100px"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
