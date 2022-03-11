@@ -15,7 +15,7 @@ class WuaParcel(models.Model):
 
     def _get_api_wc_code(self, wc, wc_per_group):
         # Extension maximun == 2
-        extension = min(wc.position / wc_per_group, 2)
+        extension = min((wc.position - 1) / wc_per_group, 2)
         extension_code = ''
         if (extension == 0):
             extension_code = '0'
