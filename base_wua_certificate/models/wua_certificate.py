@@ -508,9 +508,12 @@ class WuaCertificate(models.Model):
     def action_validate_certificate(self):
         self.ensure_one()
         self.state = '02_validated'
+        report_name = 'base_wua_certificate.report_wua_certificate'
+        if self.certificatetype_id.iractreportxml_id:
+            report_name = self.certificatetype_id.iractreportxml_id.report_name
         pdf = self.env['report'].with_context(
             {'lang': self.partner_id.lang}).get_pdf(
-                [self.id], 'base_wua_certificate.report_wua_certificate')
+                [self.id], report_name)
         if pdf:
             self.write({
                 'user_who_validates_id': self.env.user.id,
@@ -521,9 +524,12 @@ class WuaCertificate(models.Model):
     @api.multi
     def action_print_certificate(self):
         self.ensure_one()
+        report_name = 'base_wua_certificate.report_wua_certificate'
+        if self.certificatetype_id.iractreportxml_id:
+            report_name = self.certificatetype_id.iractreportxml_id.report_name
         return self.env['report'].with_context(
             {'lang': self.partner_id.lang}).get_action(
-                self, 'base_wua_certificate.report_wua_certificate')
+                self, report_name)
 
     @api.multi
     def action_send_certificate(self):

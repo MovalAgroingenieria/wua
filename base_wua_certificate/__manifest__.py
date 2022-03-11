@@ -20,6 +20,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "reports/wua_certificate_report.xml",
+        "reports/wua_certificate_no_parcels_report.xml",
         "data/ir_sequence_data.xml",
         "data/wua_config_settings_data.xml",
         "data/mail_template_data.xml",

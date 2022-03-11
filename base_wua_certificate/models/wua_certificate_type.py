@@ -53,6 +53,14 @@ class WuaCertificateType(models.Model):
         string='Email Template',
         comodel_name='mail.template')
 
+    iractreportxml_id = fields.Many2one(
+        string='Report',
+        comodel_name='ir.actions.report.xml',
+        domain=[('model', '=', 'wua.certificate'),
+                ('report_type', '=', 'qweb-pdf')],
+        help='Report to use for this type of certificate (optional); '
+             'if not indicated, the standard certificate report will be used')
+
     notes = fields.Html(
         string='Notes',
         translate=True)

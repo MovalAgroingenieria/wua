@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="action_wua_certificate_no_parcels_report"
+            string="Certificate (no parcels)"
+            model="wua.certificate"
+            report_type="qweb-pdf"
+            name="base_wua_certificate.report_wua_certificate_no_parcels"
+            paperformat="base_wua_report.paperformat_wua_reports"
+            menu="False"
+            groups="base_wua.group_wua_user"/>
+
+    <template id="report_wua_certificate_no_parcels">
+        <t t-call="report.html_container">
+            <t t-call="base_wua_report.wua_external_layout">
+                <div class="page">
+                    <t t-foreach="docs" t-as="o">
+                        <t t-call="base_wua_certificate.report_wua_certificate_no_parcels_document"/>
+                        <p style="page-break-after:always;"></p>
+                    </t>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_certificate_no_parcels_document">
+        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+        <div>
+            <div class="row" name="section_master">
+                <!-- Title -->
+                <div class="col-xs-12 text-justify" style="margin-top: 10px;margin-bottom: 40px;">
+                    <span t-field="o.html_certificate_title"/>
+                </div>
+                <t t-if="o.state == '01_draft'">
+                    <div class="col-xs-12 text-center theme-report-color" style="margin-bottom: 20px;">
+                        <span>( D R A F T )</span>
+                    </div>
+                </t>
+            </div>
+            <!-- Text -->
+            <div class="row h4 mt28 mb4" name="section_detail" style="padding-bottom: 4px;">
+                <t t-if="report_style == 'light'">
+                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-certificate"/></div>
+                        <div style="float: left; display: inline;"><strong>Certificate</strong></div>
+                        <div style="float: right;">
+                            <strong><span t-field="o.reference_number"/></strong>
+                        </div>
+                   </div>
+                </t>
+                <t t-else="">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-certificate"/></div>
+                        <div style="float: left; display: inline;"><strong>Certificate</strong></div>
+                        <div style="float: right;">
+                            <strong><span t-field="o.reference_number"/></strong>
+                        </div>
+                    </div>
+                </t>
+            </div>
+            <div class="col-xs-12 text-justify" style="margin-top: 4px;">
+                <span t-field="o.sudo().rendered_main_page"/>
+            </div>
+
+            <t t-if="o.rendered_final_paragraph">
+                <div class="col-xs-12 text-justify" style="padding-left: 40px;padding-right: 40px;padding-top: 40px">
+                    <span t-field="o.sudo().rendered_final_paragraph"/>
+                </div>
+            </t>
+
+        </div>
+    </template>
+
+</odoo>
