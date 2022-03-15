@@ -1310,12 +1310,12 @@ class WuaParcel(models.Model):
                     CASE
                         WHEN (SELECT substring(value from '[0-9]+')::INTEGER AS
                             value FROM ir_values WHERE name LIKE
-                            'area_measurement_type') = 1
+                            'area_measurement_type' LIMIT 1) = 1
                         THEN
                             (SELECT substring(
                                 value from'[0-9]+\\.[0-9]+')::FLOAT
                             AS value FROM ir_values WHERE name LIKE
-                            'area_measurement_equivalence')
+                            'area_measurement_equivalence' LIMIT 1)
                         ELSE 1
                     END
                     )
@@ -1366,11 +1366,11 @@ class WuaParcel(models.Model):
                                 WHEN (SELECT substring(
                                         value from '[0-9]+')::INTEGER AS value
                                         FROM ir_values WHERE name LIKE
-                                        'area_measurement_type') = 1
+                                        'area_measurement_type' LIMIT 1) = 1
                                 THEN (SELECT substring(
                                         value from '[0-9]+\\.[0-9]+')::FLOAT AS
                                         value FROM ir_values WHERE name LIKE
-                                        'area_measurement_equivalence')
+                                        'area_measurement_equivalence' LIMIT 1)
                                 ELSE 1
                             END
                         )
