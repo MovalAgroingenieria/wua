@@ -15,18 +15,14 @@ class WuaParcel(models.Model):
 
     def _compute_ndvi_grafana_frame(self):
         # Get config params
-        grafana_org_id = self.env['ir.values'].get_default(
-            'board.grafana.configuration', 'grafana_org_id')
         dashboard_path = self.env['ir.values'].get_default(
             'wua.vegetationindex.configuration', 'dashboard_path')
         panel_id = self.env['ir.values'].get_default(
             'wua.vegetationindex.configuration', 'panel_id')
-        if not dashboard_path or not panel_id or not grafana_org_id:
+        if not dashboard_path or not panel_id:
             raise exceptions.ValidationError(
                 _('The NDVI Grafana config settings have not been set.'))
         # Get data
-        org_id = '?orgId=' + str(grafana_org_id)
-        dashboard_path = dashboard_path + org_id
         panel = "panelId=" + str(panel_id)
         db_name = self.env.cr.dbname
         datasource = "var-Datasource=" + db_name
@@ -41,7 +37,7 @@ class WuaParcel(models.Model):
             epoch_to = "to=" + str(int(datetime.datetime.strptime(
                 ndvi_values[-1].data_date, "%Y-%m-%d").strftime('%s')) * 1000)
             # Construct frame src
-            frame_src = dashboard_path + '&' + datasource + '&' + parcel + \
+            frame_src = dashboard_path + '?' + datasource + '&' + parcel + \
                 '&' + epoch_from + '&' + epoch_to + '&' + panel
             frame_params = 'width="100%" height="400"'
             frame_id = 'ndvi_grafana'

@@ -17,18 +17,13 @@ class WuaPumpgroup(models.Model):
     @api.multi
     def _compute_pumpgroup_energy_efficiency_grafana_frame(self):
         # Get config params
-        grafana_org_id = self.env['ir.values'].get_default(
-            'board.grafana.configuration', 'grafana_org_id')
         dashboard_path = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration', 'dashboard_path')
-        panel_id = self.env['ir.values'].get_default(
-            'wua.infrastructure.configuration', 'panel_id_energy_efficiency')
-        if not dashboard_path or not panel_id or not grafana_org_id:
+        if not dashboard_path:
             raise exceptions.ValidationError(
                 _('The Grafana config settings have not been set.'))
         # Get data
-        org_id = '?orgId=' + str(grafana_org_id)
-        dashboard_path = dashboard_path + org_id
+        dashboard_path = dashboard_path + '?kiosk'
         db_name = self.env.cr.dbname
         datasource = "var-Datasource=" + db_name
         pump_name = urllib.quote_plus(self.name.encode("UTF-8"))
