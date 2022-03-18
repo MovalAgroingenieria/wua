@@ -14,7 +14,8 @@
     "depends": [
         "base_wua",],
     "data": [
-        "views/wua_parcel_view.xml",],
+        "views/wua_parcel_view.xml",
+        "views/res_partner_view.xml",],
     "installable": True,
     "application": False,
 }
