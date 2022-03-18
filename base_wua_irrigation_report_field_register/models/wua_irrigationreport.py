@@ -164,6 +164,7 @@ class WuaIrrigationReport(models.Model):
             'end_time': epoch_end_time,
             'hours': irrigationreport.hours,
             'state': irrigationreport.state,
+            'conversion_factor': irrigationreport.conversion_factor,
             'sended': True,
             'notes':  irrigationreport.notes,
             'irrigationreport_img': irrigationreport_img,
@@ -173,7 +174,7 @@ class WuaIrrigationReport(models.Model):
     def create_field_irrigationreport(
             self, watering_element_type, watering_element_id,
             irrigationreport_writer_id,
-            initial_date, end_date, partner_id, notes='',
+            initial_date, end_date, conversion_factor, partner_id, notes='',
             partner_signature='', irrigationreport_img=''):
         vals = {}
         # Get the real type from
@@ -191,6 +192,7 @@ class WuaIrrigationReport(models.Model):
         end_date_str = end_date_formatted.strftime('%Y-%m-%d %H:%M:%S')
         vals['report_initial_time'] = initial_date_str
         vals['report_end_time'] = end_date_str
+        vals['conversion_factor'] = conversion_factor
         difference_time = end_date_formatted - initial_date_formatted
         # 3600.0 To getting a float result of hours
         vals['hours'] = difference_time.days * 24 + \
@@ -210,8 +212,8 @@ class WuaIrrigationReport(models.Model):
 
     @api.model
     def update_field_irrigationreport(
-        self, irrigationreport_id, end_date, hours, notes, partner_signature,
-            irrigationreport_img):
+        self, irrigationreport_id, end_date, conversion_factor, hours, notes,
+            partner_signature, irrigationreport_img):
         vals = {}
         irrigationreport = self.env['wua.irrigationreport'].browse(
             irrigationreport_id)
@@ -222,6 +224,7 @@ class WuaIrrigationReport(models.Model):
             vals['irrigationreport_img'] = irrigationreport_img
         if (irrigationreport.state == 'draft'):
             vals['hours'] = hours
+            vals['conversion_factor'] = conversion_factor
             end_date_formatted = datetime.datetime.fromtimestamp(
                 end_date, pytz.utc)
             end_date_str = end_date_formatted.strftime('%Y-%m-%d %H:%M:%S')

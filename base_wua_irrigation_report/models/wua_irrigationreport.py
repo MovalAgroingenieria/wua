@@ -85,6 +85,12 @@ class WuaIrrigationReport(models.Model):
         default=0,
         required=True)
 
+    conversion_factor = fields.Float(
+        string='Conversion Factor',
+        digits=(32, 4),
+        default=1,
+        required=True)
+
     volume = fields.Float(
         string='Gross Value (m3)',
         digits=(32, 4),
@@ -223,7 +229,7 @@ class WuaIrrigationReport(models.Model):
             record.irrigationreport_number = irrigationreport_number
             record.name = name
 
-    @api.depends('initial_volume', 'end_volume', 'hours')
+    @api.depends('initial_volume', 'end_volume', 'hours', 'conversion_factor')
     def _compute_volume(self):
         data_in_hours = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'data_in_hours')
@@ -235,7 +241,8 @@ class WuaIrrigationReport(models.Model):
                     record.agriculturalseason_id.id)
                 volume_time_equivalence = \
                     agriculturalseason[0].volume_time_equivalence
-                volume = record.hours * volume_time_equivalence
+                volume = record.hours * volume_time_equivalence * \
+                    record.conversion_factor
             else:
                 volume = record.end_volume - record.initial_volume
             if volume < 0:
@@ -318,6 +325,9 @@ class WuaIrrigationReport(models.Model):
                 for node in doc.xpath("//field[@name='hours']"):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"invisible": true}')
+                for node in doc.xpath("//field[@name='conversion_factor']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"invisible": true}')
             res['arch'] = etree.tostring(doc)
         if view_type == 'tree':
             doc = etree.XML(res['arch'])
@@ -327,6 +337,9 @@ class WuaIrrigationReport(models.Model):
                         node.set('widget', '')
             else:
                 for node in doc.xpath("//field[@name='hours']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
+                for node in doc.xpath("//field[@name='conversion_factor']"):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"tree_invisible": true}')
             res['arch'] = etree.tostring(doc)

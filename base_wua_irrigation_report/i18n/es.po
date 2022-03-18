@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-27 15:41+0000\n"
-"PO-Revision-Date: 2021-01-27 15:41+0000\n"
+"POT-Creation-Date: 2022-03-18 12:05+0000\n"
+"PO-Revision-Date: 2022-03-18 12:05+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -215,8 +215,13 @@ msgstr "Cancelar"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigation_configuration
-msgid "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
-msgstr "Configuración de los módulos base_wua_pressurized_irrigation y base_wua_gravity_irrigation"
+msgid "Configuration of irrigation with type of water"
+msgstr "Configuración de riego con tipo de agua"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_conversion_factor
+msgid "Conversion Factor"
+msgstr "Factor de conversión"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_create_uid
@@ -474,13 +479,13 @@ msgid "State"
 msgstr "Estado"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:349
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:362
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr "Las fechas del parte están fuera de la campaña activa."
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:192
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:198
 #: sql_constraint:wua.irrigationreport:0
 #, python-format
 msgid "The delivery note must be 0 or a greater number"
@@ -515,11 +520,6 @@ msgid "There are some validated irrigation reports for this agricultural season,
 msgstr "Hay partes de riego validados en esta campaña, y, por tanto, no es posible alterar el valor del campo \"Volumen por hora\".\n"
 "\n"
 "Antes sería necesario poner todos los partes de la campaña en estado \"borrador\"."
-
-#. module: base_wua_irrigation_report
-#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_total_volume
-msgid "Total Volume (m3)"
-msgstr "Volumen total (m³)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_user_id
@@ -579,8 +579,8 @@ msgid "Without Irrigation Worker"
 msgstr "Sin regador"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:393
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:403
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:406
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:416
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene suficientes permisos para ejecutar esta acción."
