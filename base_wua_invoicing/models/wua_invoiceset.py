@@ -659,8 +659,8 @@ class WuaInvoiceset(models.Model):
             irrigationditch_content = ''
             # Conditional Owners content
             owners_of_parcel = partnerlinks.filtered(
-                lambda x: x.parcel_id.id == parcel.id and x.profile == 'O')
-            owners_content = ''
+                lambda x: x.parcel_id.id == parcel.id and
+                x.ownership_percentage > 0.0)
             if len(partnerlinks_of_parcel) > 0:
                 for partnerlink in partnerlinks_of_parcel:
                     partner_id = partnerlink.partner_id.id
