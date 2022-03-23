@@ -310,23 +310,167 @@ class WuaParcel(models.Model):
             resp = waterpipe
         return resp
 
-    # Expand original method
-    def set_gis_fields(self):
-        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
-        # @INFO: The original method return False if gis_parcels_ok
-        #        or gis_irrigationsheds_ok or gis_irrigationditch_ok
-        #        fail. Only gis_parcels_ok is needed, but if any fail
-        #        the return is False.
-        # Temporally do not check the return
-        # if (not gis_parcels_ok):
-        #    return False
-        gis_waterpipe_ok = False
+    def check_gis_waterpipe_created(self):
+        resp = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
             WHERE table_name='wua_gis_waterpipe')
             """)
         if self.env.cr.fetchone()[0]:
-            gis_waterpipe_ok = True
+            resp = True
+        return resp
+
+    def create_wua_gis_waterpipe_table(self):
+        # Check if wua gis table already exists
+        gis_waterpipe_table_created = \
+            self.check_gis_waterpipe_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis waterpipe don't
+        if (not gis_waterpipe_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_waterpipe_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_waterpipe
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_waterpipe_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(MultiLineString,25830),
+                        code bigint,
+                        level integer,
+                        UNIQUE(code),
+                        CONSTRAINT wua_gis_waterpipe_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_waterpipe_idx ON public.wua_gis_waterpipe
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_waterpipe_triggers(self):
+        gis_waterpipe_table_created = \
+            self.check_gis_waterpipe_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_waterpipe_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_waterpipe data when the
+            # wua_gis_waterpipe table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_waterpipe_update_on_wua_waterpipe()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF OLD IS NOT NULL THEN
+                    UPDATE public.wua_waterpipe SET
+                        with_gis_waterpipe = False
+                    WHERE waterpipe_code = OLD.code;
+                END IF;
+                IF NEW IS NOT NULL THEN
+                    UPDATE public.wua_waterpipe SET
+                        with_gis_waterpipe = True
+                    WHERE waterpipe_code = NEW.code;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis waterpipe is
+            # unlinked and other when a gis waterpipe is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_waterpipe_write_trigger ON
+                    public.wua_gis_waterpipe;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_waterpipe_create_unlink_trigger ON
+                    public.wua_gis_waterpipe;
+
+                CREATE TRIGGER wua_gis_waterpipe_write_trigger
+                AFTER UPDATE OF code ON
+                public.wua_gis_waterpipe FOR EACH ROW WHEN
+                (OLD.code IS DISTINCT FROM NEW.code)
+                EXECUTE PROCEDURE
+                    wua_gis_waterpipe_update_on_wua_waterpipe();
+
+                CREATE TRIGGER wua_gis_waterpipe_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_waterpipe FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_waterpipe_update_on_wua_waterpipe();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_waterpipe data when the
+            # wua_waterpipe table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_waterpipe_update_on_wua_waterpipe() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE wua_waterpipe SET with_gis_waterpipe =
+                    (SELECT NEW.waterpipe_code IN
+                        (SELECT code FROM wua_gis_waterpipe))
+                    WHERE waterpipe_code = NEW.waterpipe_code;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the waterpipe is created
+            # and other when a gis waterpipe is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_waterpipe_write_trigger ON
+                    public.wua_waterpipe;
+                DROP TRIGGER IF EXISTS wua_waterpipe_create_trigger ON
+                    public.wua_waterpipe;
+
+                CREATE TRIGGER wua_waterpipe_write_trigger
+                AFTER UPDATE OF waterpipe_code ON
+                public.wua_waterpipe FOR EACH ROW WHEN
+                (OLD.waterpipe_code IS DISTINCT FROM
+                    NEW.waterpipe_code)
+                EXECUTE PROCEDURE
+                    wua_waterpipe_update_on_wua_waterpipe();
+
+                CREATE TRIGGER wua_waterpipe_create_trigger
+                AFTER INSERT ON
+                public.wua_waterpipe FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_waterpipe_update_on_wua_waterpipe();
+            """)
+            self.env.cr.commit()
+
+    def create_gis_data(self):
+        super(WuaParcel, self).create_gis_data()
+        try:
+            self.create_wua_gis_waterpipe_table()
+            self.create_waterpipe_triggers()
+        except Exception:
+            pass
+
+    def set_gis_fields_waterpipe(self):
+        gis_waterpipe_ok = self.check_gis_waterpipe_created()
         if gis_waterpipe_ok:
             try:
                 self.env.cr.savepoint()
@@ -345,6 +489,19 @@ class WuaParcel(models.Model):
             except Exception:
                 self.env.cr.rollback()
                 gis_waterpipe_ok = False
+        return gis_waterpipe_ok
+
+    # Expand original method
+    def set_gis_fields(self):
+        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
+        # @INFO: The original method return False if gis_parcels_ok
+        #        or gis_irrigationsheds_ok or gis_irrigationditch_ok
+        #        fail. Only gis_parcels_ok is needed, but if any fail
+        #        the return is False.
+        # Temporally do not check the return
+        # if (not gis_parcels_ok):
+        #    return False
+        gis_waterpipe_ok = self.set_gis_fields_waterpipe()
         return gis_parcels_ok and gis_waterpipe_ok
 
 
