@@ -8,15 +8,157 @@ from odoo import models
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
-    # Expand and split original method for flowmeters and intakes
-    def set_gis_fields_flowmeter(self):
-        gis_flowmeter_ok = False
+    def check_gis_flowmeter_created(self):
+        resp = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
             WHERE table_name='wua_gis_flowmeter')
             """)
         if self.env.cr.fetchone()[0]:
-            gis_flowmeter_ok = True
+            resp = True
+        return resp
+
+    def create_wua_gis_flowmeter_table(self):
+        # Check if wua gis table already exists
+        gis_flowmeter_table_created = \
+            self.check_gis_flowmeter_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis flowmeter don't
+        if (not gis_flowmeter_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_flowmeter_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_flowmeter
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_flowmeter_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_flowmeter_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_flowmeter_idx ON public.wua_gis_flowmeter
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_flowmeter_triggers(self):
+        gis_flowmeter_table_created = \
+            self.check_gis_flowmeter_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_flowmeter_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_flowmeter data when the
+            # wua_gis_flowmeter table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_flowmeter_update_on_wua_flowmeter()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF OLD IS NOT NULL THEN
+                    UPDATE public.wua_flowmeter SET
+                        with_gis_flowmeter = False
+                    WHERE name = OLD.name;
+                END IF;
+                IF NEW IS NOT NULL THEN
+                    UPDATE public.wua_flowmeter SET
+                        with_gis_flowmeter = True
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis flowmeter is
+            # unlinked and other when a gis flowmeter is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_flowmeter_write_trigger ON
+                    public.wua_gis_flowmeter;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_flowmeter_create_unlink_trigger ON
+                    public.wua_gis_flowmeter;
+
+                CREATE TRIGGER wua_gis_flowmeter_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_flowmeter FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_flowmeter_update_on_wua_flowmeter();
+
+                CREATE TRIGGER wua_gis_flowmeter_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_flowmeter FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_flowmeter_update_on_wua_flowmeter();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_flowmeter data when the
+            # wua_flowmeter table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_flowmeter_update_on_wua_flowmeter() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_flowmeter SET
+                        with_gis_flowmeter = (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_flowmeter))
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the flowmeter is created
+            # and other when a gis flowmeter is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_flowmeter_write_trigger ON
+                    public.wua_flowmeter;
+                DROP TRIGGER IF EXISTS wua_flowmeter_create_trigger ON
+                    public.wua_flowmeter;
+
+                CREATE TRIGGER wua_flowmeter_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_flowmeter FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_flowmeter_update_on_wua_flowmeter();
+
+                CREATE TRIGGER wua_flowmeter_create_trigger
+                AFTER INSERT ON
+                public.wua_flowmeter FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_flowmeter_update_on_wua_flowmeter();
+            """)
+            self.env.cr.commit()
+
+    # Expand and split original method for flowmeters and intakes
+    def set_gis_fields_flowmeter(self):
+        gis_flowmeter_ok = self.check_gis_flowmeter_created()
         if gis_flowmeter_ok:
             try:
                 self.env.cr.savepoint()
@@ -37,14 +179,157 @@ class WuaParcel(models.Model):
                 gis_flowmeter_ok = False
         return gis_flowmeter_ok
 
-    def set_gis_fields_intake(self):
-        gis_intake_ok = False
+    def check_gis_intake_created(self):
+        resp = False
         self.env.cr.execute("""
             SELECT EXISTS(SELECT * FROM information_schema.tables
             WHERE table_name='wua_gis_intake')
             """)
         if self.env.cr.fetchone()[0]:
-            gis_intake_ok = True
+            resp = True
+        return resp
+
+    def create_wua_gis_intake_table(self):
+        # Check if wua gis table already exists
+        gis_intake_table_created = \
+            self.check_gis_intake_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis intake don't
+        if (not gis_intake_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_intake_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_intake
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_intake_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        code bigint,
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(code),
+                        CONSTRAINT wua_gis_intake_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_intake_idx ON public.wua_gis_intake
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_intake_triggers(self):
+        gis_intake_table_created = \
+            self.check_gis_intake_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_intake_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_intake data when the
+            # wua_gis_intake table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_intake_update_on_wua_intake()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF OLD IS NOT NULL THEN
+                    UPDATE public.wua_intake SET
+                        with_gis_intake = False
+                    WHERE intake_code = OLD.code;
+                END IF;
+                IF NEW IS NOT NULL THEN
+                    UPDATE public.wua_intake SET
+                        with_gis_intake = True
+                    WHERE intake_code = NEW.code;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis intake is
+            # unlinked and other when a gis intake is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_intake_write_trigger ON
+                    public.wua_gis_intake;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_intake_create_unlink_trigger ON
+                    public.wua_gis_intake;
+
+                CREATE TRIGGER wua_gis_intake_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_intake FOR EACH ROW WHEN
+                (OLD.code IS DISTINCT FROM NEW.code)
+                EXECUTE PROCEDURE
+                    wua_gis_intake_update_on_wua_intake();
+
+                CREATE TRIGGER wua_gis_intake_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_intake FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_intake_update_on_wua_intake();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_intake data when the
+            # wua_intake table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_intake_update_on_wua_intake() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_intake SET
+                        with_gis_intake = (SELECT NEW.intake_code IN
+                            (SELECT code FROM wua_gis_intake))
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the intake is created
+            # and other when a gis intake is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_intake_write_trigger ON
+                    public.wua_intake;
+                DROP TRIGGER IF EXISTS wua_intake_create_trigger ON
+                    public.wua_intake;
+
+                CREATE TRIGGER wua_intake_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_intake FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_intake_update_on_wua_intake();
+
+                CREATE TRIGGER wua_intake_create_trigger
+                AFTER INSERT ON
+                public.wua_intake FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_intake_update_on_wua_intake();
+            """)
+            self.env.cr.commit()
+
+    def set_gis_fields_intake(self):
+        gis_intake_ok = self.check_gis_intake_created()
         if gis_intake_ok:
             try:
                 self.env.cr.savepoint()
@@ -64,6 +349,15 @@ class WuaParcel(models.Model):
                 self.env.cr.rollback()
                 gis_intake_ok = False
         return gis_intake_ok
+
+    def create_gis_data(self):
+        try:
+            self.create_wua_gis_flowmeter_table()
+            self.create_flowmeter_triggers()
+            self.create_wua_gis_intake_table()
+            self.create_intake_triggers()
+        except Exception:
+            pass
 
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
