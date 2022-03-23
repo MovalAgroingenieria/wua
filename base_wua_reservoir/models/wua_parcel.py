@@ -143,8 +143,11 @@ class WuaParcel(models.Model):
 
     def create_gis_data(self):
         super(WuaParcel, self).create_gis_data()
-        self.create_wua_gis_reservoir_table()
-        self.create_reservoir_triggers()
+        try:
+            self.create_wua_gis_reservoir_table()
+            self.create_reservoir_triggers()
+        except Exception:
+            pass
 
     # Expand and split original method for reservoirs
     def set_gis_fields_reservoir(self):

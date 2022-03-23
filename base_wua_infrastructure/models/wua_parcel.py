@@ -611,10 +611,13 @@ class WuaParcel(models.Model):
 
     def create_gis_data(self):
         super(WuaParcel, self).create_gis_data()
-        self.create_wua_gis_irrigationshed_table()
-        self.create_irrigationshed_triggers()
-        self.create_wua_gis_irrigationditch_table()
-        self.create_irrigationditch_triggers()
+        try:
+            self.create_wua_gis_irrigationshed_table()
+            self.create_irrigationshed_triggers()
+            self.create_wua_gis_irrigationditch_table()
+            self.create_irrigationditch_triggers()
+        except Exception:
+            pass
 
     def set_gis_fields_irrigationshed(self):
         gis_irrigationshed_ok = self.check_gis_irrigationshed_created()
@@ -641,13 +644,7 @@ class WuaParcel(models.Model):
         return gis_irrigationshed_ok
 
     def set_gis_fields_irrigationditch(self):
-        gis_irrigationditch_ok = False
-        self.env.cr.execute("""
-            SELECT EXISTS(SELECT * FROM information_schema.tables
-            WHERE table_name='wua_gis_irrigationditch')
-            """)
-        if self.env.cr.fetchone()[0]:
-            gis_irrigationditch_ok = True
+        gis_irrigationditch_ok = self.check_gis_irrigationditch_created()
         if gis_irrigationditch_ok:
             try:
                 self.env.cr.savepoint()

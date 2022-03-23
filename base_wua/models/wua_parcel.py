@@ -1404,8 +1404,11 @@ class WuaParcel(models.Model):
             self.env.cr.commit()
 
     def create_gis_data(self):
-        self.create_wua_gis_parcel_table()
-        self.create_parcel_triggers()
+        try:
+            self.create_wua_gis_parcel_table()
+            self.create_parcel_triggers()
+        except Exception:
+            pass
 
     def set_gis_fields(self):
         gis_parcels_ok = True
