@@ -333,7 +333,7 @@ class WuaParcel(models.Model):
                     (
                         gid integer NOT NULL DEFAULT nextval(
                             'wua_gis_irrigationshed_gid_seq'::regclass),
-                        name character varying(254) NOT NULL
+                        name character varying(254)
                             COLLATE pg_catalog."default",
                         geom postgis.geometry(Point,25830),
                         UNIQUE(name),
@@ -492,7 +492,7 @@ class WuaParcel(models.Model):
                     (
                         gid integer NOT NULL DEFAULT nextval(
                             'wua_gis_irrigationditch_gid_seq'::regclass),
-                        name character varying(254) NOT NULL
+                        name character varying(254)
                             COLLATE pg_catalog."default",
                         geom postgis.geometry(MultiLineString,25830),
                         code bigint,

@@ -887,6 +887,165 @@ class WuaParcel(models.Model):
             resp = drainageditch
         return resp
 
+    def check_gis_drainageditch_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_drainageditch')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_drainageditch_table(self):
+        # Check if wua gis table already exists
+        gis_drainageditch_table_created = \
+            self.check_gis_drainageditch_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis drainageditch don't
+        if (not gis_drainageditch_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_drainageditch_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_drainageditch
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_drainageditch_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(MultiLineString,25830),
+                        code bigint,
+                        level integer,
+                        UNIQUE(code),
+                        CONSTRAINT wua_gis_drainageditch_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_drainageditch_idx ON public.wua_gis_drainageditch
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_drainageditch_triggers(self):
+        gis_drainageditch_table_created = \
+            self.check_gis_drainageditch_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_drainageditch_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_drainageditch data when the
+            # wua_gis_drainageditch table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_drainageditch_update_on_wua_drainageditch()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF OLD IS NOT NULL THEN
+                    UPDATE public.wua_drainageditch SET
+                        with_gis_drainageditch = False
+                    WHERE drainageditch_code = OLD.code;
+                END IF;
+                IF NEW IS NOT NULL THEN
+                    UPDATE public.wua_drainageditch SET
+                        with_gis_drainageditch = True
+                    WHERE drainageditch_code = NEW.code;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis drainageditch is
+            # unlinked and other when a gis drainageditch is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_drainageditch_write_trigger ON
+                    public.wua_gis_drainageditch;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_drainageditch_create_unlink_trigger ON
+                    public.wua_gis_drainageditch;
+
+                CREATE TRIGGER wua_gis_drainageditch_write_trigger
+                AFTER UPDATE OF code ON
+                public.wua_gis_drainageditch FOR EACH ROW WHEN
+                (OLD.code IS DISTINCT FROM NEW.code)
+                EXECUTE PROCEDURE
+                    wua_gis_drainageditch_update_on_wua_drainageditch();
+
+                CREATE TRIGGER wua_gis_drainageditch_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_drainageditch FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_drainageditch_update_on_wua_drainageditch();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_drainageditch data when the
+            # wua_drainageditch table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_drainageditch_update_on_wua_drainageditch() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE wua_drainageditch SET with_gis_drainageditch =
+                    (SELECT NEW.drainageditch_code IN
+                        (SELECT code FROM wua_gis_drainageditch))
+                    WHERE drainageditch_code = NEW.drainageditch_code;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the drainageditch is created
+            # and other when a gis drainageditch is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_drainageditch_write_trigger ON
+                    public.wua_drainageditch;
+                DROP TRIGGER IF EXISTS wua_drainageditch_create_trigger ON
+                    public.wua_drainageditch;
+
+                CREATE TRIGGER wua_drainageditch_write_trigger
+                AFTER UPDATE OF drainageditch_code ON
+                public.wua_drainageditch FOR EACH ROW WHEN
+                (OLD.drainageditch_code IS DISTINCT FROM
+                    NEW.drainageditch_code)
+                EXECUTE PROCEDURE
+                    wua_drainageditch_update_on_wua_drainageditch();
+
+                CREATE TRIGGER wua_drainageditch_create_trigger
+                AFTER INSERT ON
+                public.wua_drainageditch FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_drainageditch_update_on_wua_drainageditch();
+            """)
+            self.env.cr.commit()
+
+    def create_gis_data(self):
+        super(WuaParcel, self).create_gis_data()
+        try:
+            self.create_wua_gis_drainageditch_table()
+            self.create_drainageditch_triggers()
+        except Exception:
+            pass
+
     # Expand original method
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
@@ -897,14 +1056,7 @@ class WuaParcel(models.Model):
         # Temporally do not check the return
         # if (not gis_parcels_ok):
         #    return False
-        gis_drainageditch_ok = False
-        self.env.cr.execute("""
-            SELECT EXISTS(SELECT * FROM information_schema.tables
-            WHERE table_name='wua_gis_drainageditch')
-            """)
-        if self.env.cr.fetchone()[0]:
-            gis_drainageditch_ok = True
-
+        gis_drainageditch_ok = self.check_gis_drainageditch_created()
         if gis_drainageditch_ok:
             try:
                 self.env.cr.savepoint()
