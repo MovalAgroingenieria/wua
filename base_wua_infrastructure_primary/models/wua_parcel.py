@@ -101,7 +101,7 @@ class WuaParcel(models.Model):
                     public.wua_gis_flowmeter;
 
                 CREATE TRIGGER wua_gis_flowmeter_write_trigger
-                AFTER UPDATE OF name, geom ON
+                AFTER UPDATE OF name ON
                 public.wua_gis_flowmeter FOR EACH ROW WHEN
                 (OLD.name IS DISTINCT FROM NEW.name)
                 EXECUTE PROCEDURE
@@ -273,7 +273,7 @@ class WuaParcel(models.Model):
                     public.wua_gis_intake;
 
                 CREATE TRIGGER wua_gis_intake_write_trigger
-                AFTER UPDATE OF name, geom ON
+                AFTER UPDATE OF code ON
                 public.wua_gis_intake FOR EACH ROW WHEN
                 (OLD.code IS DISTINCT FROM NEW.code)
                 EXECUTE PROCEDURE
@@ -297,7 +297,7 @@ class WuaParcel(models.Model):
                     UPDATE public.wua_intake SET
                         with_gis_intake = (SELECT NEW.intake_code IN
                             (SELECT code FROM wua_gis_intake))
-                    WHERE name = NEW.name;
+                    WHERE intake_code = NEW.intake_code;
                 RETURN NEW;
                 END;
                 $BODY$
@@ -314,9 +314,9 @@ class WuaParcel(models.Model):
                     public.wua_intake;
 
                 CREATE TRIGGER wua_intake_write_trigger
-                AFTER UPDATE OF name ON
+                AFTER UPDATE OF intake_code ON
                 public.wua_intake FOR EACH ROW WHEN
-                (OLD.name IS DISTINCT FROM NEW.name)
+                (OLD.intake_code IS DISTINCT FROM NEW.intake_code)
                 EXECUTE PROCEDURE
                     wua_intake_update_on_wua_intake();
 
