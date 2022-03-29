@@ -17,6 +17,7 @@
         "account_banking_sepa_direct_debit",
         "sale",
         "account_invoice_transmit_method",
+        "account_invoice_line_report",
         "account_due_list",
         "account_due_list_aging_comments",
         "account_due_list_days_overdue",
