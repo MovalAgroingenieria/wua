@@ -68,13 +68,13 @@ class WuaIrrigationReport(models.Model):
         readonly=True)
 
     initial_volume = fields.Float(
-        string='Initial Value (m3)',
+        string='Initial Value (m³)',
         digits=(32, 4),
         default=0,
         required=True)
 
     end_volume = fields.Float(
-        string='Final Value (m3)',
+        string='Final Value (m³)',
         digits=(32, 4),
         default=0,
         required=True)
@@ -92,19 +92,19 @@ class WuaIrrigationReport(models.Model):
         required=True)
 
     volume = fields.Float(
-        string='Gross Value (m3)',
+        string='Gross Value (m³)',
         digits=(32, 4),
         store=True,
         compute="_compute_volume")
 
     adjustement_volume = fields.Float(
-        string='Adjust. Value (m3)',
+        string='Adjust. Value (m³)',
         digits=(32, 4),
         required=True,
         default=0)
 
     volume_real = fields.Float(
-        string='Real Volume (m3)',
+        string='Real Volume (m³)',
         digits=(32, 4),
         store=True,
         compute="_compute_volume_real")

@@ -33,17 +33,17 @@ class WuaAgriculturalseason(models.Model):
         compute="_compute_num_irrigationreports_stat")
 
     total_volume = fields.Float(
-        string='Total Volume (m3)',
+        string='Total Volume (m³)',
         digits=(32, 4),
         store=True,
         compute="_compute_total_volume")
 
     volume_time_equivalence = fields.Float(
-        string='Volume per hour (m3)',
+        string='Volume per hour (m³)',
         digits=(32, 4),
         default=_default_volume_time_equivalence,
         required=True,
-        help='Volume, in m3, which is equal to one hour')
+        help='Volume, in m³, which is equal to one hour')
 
     @api.depends('irrigationreport_ids')
     def _compute_number_of_irrigationreports(self):
@@ -79,7 +79,7 @@ class WuaAgriculturalseason(models.Model):
                 'wua.irrigation.configuration', 'data_in_hours')
             if not data_in_hours:
                 for node in doc.xpath(
-                   "//field[@name='volume_time_equivalence']"):
+                        "//field[@name='volume_time_equivalence']"):
                     node.set('invisible', '1')
                     if view_type == 'tree':
                         node.set('modifiers', '{"tree_invisible": true}')
