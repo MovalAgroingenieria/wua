@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_wua_cropplan_document" inherit_id="base_wua_crop_planning.report_wua_cropplan_document">
+        <xpath expr="//th[@name='th_parcel']" position="after">
+            <th name="th_irrigation_ditch" class="text-left">Irrigation Ditch</th>
+        </xpath>
+        <xpath expr="//td[@name='td_parcel']" position="after">
+            <td name="td_irrigation_ditch" align="left"><span t-field="l.irrigationditch_id.name"/></td>
+        </xpath>
+    </template>
+
+</odoo>

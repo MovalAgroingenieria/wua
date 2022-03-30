@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_enrolledsubparcel_view_tree" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (tree view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="inherit_id" ref="base_wua_crop_planning.wua_enrolledsubparcel_view_tree"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='parcel_id']" position="after">
+              <field name="irrigationditch_id"/>
+          </xpath>
+        </field>
+    </record>
+
+    <record id="wua_edit_enrolledsubparcel_view_tree" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (edit tree view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="inherit_id" ref="base_wua_crop_planning.wua_edit_enrolledsubparcel_view_tree"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='parcel_id']" position="after">
+              <field name="irrigationditch_id"/>
+          </xpath>
+        </field>
+    </record>
+
+    <record id="wua_enrolledsubparcel_view_search" model="ir.ui.view">
+        <field name="name">Enrolled Subparcels (search view)</field>
+        <field name="model">wua.enrolledsubparcel</field>
+        <field name="inherit_id" ref="base_wua_crop_planning.wua_enrolledsubparcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']" position="after">
+              <field name="irrigationditch_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='parcel']" position="after">
+              <filter string="Irrigation Ditch" name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
