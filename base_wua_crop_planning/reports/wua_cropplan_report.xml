@@ -55,26 +55,26 @@
                 <table class="table table-condensed">
                     <thead>
                         <tr style="background-color: #e9e9e9">
-                            <th class="text-left">Parcel</th>
-                            <th class="text-center">Order</th>
-                            <th class="text-left">Type</th>
-                            <th class="text-left">Cultivation</th>
-                            <th class="text-left">Variety</th>
-                            <th class="text-left">Irrig. System</th>
-                            <th class="text-left">Prod. Method</th>
-                            <th class="text-right">Area</th>
+                            <th name="th_parcel" class="text-left">Parcel</th>
+                            <th name="th_order" class="text-center">Order</th>
+                            <th name="th_type" class="text-left">Type</th>
+                            <th name="th_cultivation" class="text-left">Cultivation</th>
+                            <th name="th_variety" class="text-left">Variety</th>
+                            <th name="th_irrig_system" class="text-left">Irrig. System</th>
+                            <th name="th_prod_method" class="text-left">Prod. Method</th>
+                            <th name="th_area" class="text-right">Area</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr t-foreach="o.enrolledsubparcel_ids" t-as="l">
-                            <td align="left"><span t-field="l.parcel_id"/></td>
-                            <td align="center"><span t-field="l.order"/></td>
-                            <td align="left"><span t-field="l.subparceltype_id"/></td>
-                            <td align="left"><span t-field="l.cultivation_id"/></td>
-                            <td align="left"><span t-field="l.cultivationvariety_id"/></td>
-                            <td align="left"><span t-field="l.irrigationsystem_id"/></td>
-                            <td align="left"><span t-field="l.productionmethod_id"/></td>
-                            <td align="right"><span t-field="l.area_official"/></td>
+                            <td name="td_parcel" align="left"><span t-field="l.parcel_id"/></td>
+                            <td name="td_order" align="center"><span t-field="l.order"/></td>
+                            <td name="td_subparceltype" align="left"><span t-field="l.subparceltype_id"/></td>
+                            <td name="td_cultivation" align="left"><span t-field="l.cultivation_id"/></td>
+                            <td name="td_cultivationvariety" align="left"><span t-field="l.cultivationvariety_id"/></td>
+                            <td name="td_irrigationsystem" align="left"><span t-field="l.irrigationsystem_id"/></td>
+                            <td name="td_productionmethod" align="left"><span t-field="l.productionmethod_id"/></td>
+                            <td name="td_area_official" align="right"><span t-field="l.area_official"/></td>
                         </tr>
                     </tbody>
                 </table>
