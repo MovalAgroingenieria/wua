@@ -137,7 +137,7 @@ class WuaCession(models.Model):
         index=True)
 
     volume = fields.Float(
-        string='Volume (m3)',
+        string='Volume (m³)',
         digits=(32, 2),
         default=0,
         required=True)

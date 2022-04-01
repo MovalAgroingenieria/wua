@@ -643,7 +643,7 @@ class WuaQuota(models.Model):
                             _('Exceeded quota. It is not possible '
                               'to create this watering request. '
                               'AVAILABLE QUOTA:')
-                        suffix_message = _('m3')
+                        suffix_message = _('m³')
                         error_message = prefix_message + ' ' + \
                             '{0:.2f}'.format(round(available_quota, 2)) + \
                             ' ' + suffix_message

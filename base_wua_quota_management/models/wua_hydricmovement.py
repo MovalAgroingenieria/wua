@@ -128,25 +128,25 @@ class WuaHydricmovement(models.Model):
         compute='_compute_is_consumption')
 
     volume = fields.Float(
-        string='Volume (m3)',
+        string='Volume (m³)',
         digits=(32, 2),
         default=0,
         required=True,
         readonly=True)
 
     accounting_volume = fields.Float(
-        string='Accounting Volume (m3)',
+        string='Accounting Volume (m³)',
         digits=(32, 2),
         store=True,
         compute='_compute_accounting_volume')
 
     balance = fields.Float(
-        string='Balance (m3)',
+        string='Balance (m³)',
         digits=(32, 2),
         compute='_compute_balance')
 
     negative_balance = fields.Float(
-        string='Balance (m3)',
+        string='Balance (m³)',
         digits=(32, 2),
         compute='_compute_negative_balance')
 

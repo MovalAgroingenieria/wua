@@ -58,7 +58,7 @@ class WuaHydraulicsector(models.Model):
                     p.title.text = _('Consumptions of the active '
                                      'agricultural season')
                     p.xaxis.axis_label = _('Date')
-                    p.yaxis.axis_label = _('m3')
+                    p.yaxis.axis_label = _('m³')
                     p.grid.grid_line_alpha = 0
                     p.ygrid.band_fill_color = "olive"
                     p.ygrid.band_fill_alpha = 0.2

@@ -147,13 +147,13 @@ class WuaIndividualinput(models.Model):
         index=True)
 
     volume = fields.Float(
-        string='Volume (m3)',
+        string='Volume (m³)',
         digits=(32, 2),
         default=0,
         required=True)
 
     effective_volume = fields.Float(
-        string='Effective Volume (m3)',
+        string='Effective Volume (m³)',
         digits=(32, 2),
         store=True,
         compute='_compute_effective_volume')

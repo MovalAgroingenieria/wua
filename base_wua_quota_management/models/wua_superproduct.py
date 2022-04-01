@@ -92,17 +92,17 @@ class WuaSuperproduct(models.Model):
         compute='_compute_number_of_hydricmovements')
 
     total_input = fields.Float(
-        string='Total Input, in m3 (active agricultural season)',
+        string='Total Input, in m³ (active agricultural season)',
         digits=(32, 2),
         compute='_compute_total_input')
 
     total_output = fields.Float(
-        string='Total Output, in m3 (active agricultural season)',
+        string='Total Output, in m³ (active agricultural season)',
         digits=(32, 2),
         compute='_compute_total_output')
 
     balance = fields.Float(
-        string='Balance, in m3 (active agricultural season)',
+        string='Balance, in m³ (active agricultural season)',
         digits=(32, 2),
         compute='_compute_balance')
 

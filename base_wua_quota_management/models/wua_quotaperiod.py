@@ -85,7 +85,7 @@ class WuaQuotaperiod(models.Model):
         default=_default_sorted_quotas)
 
     volume_total = fields.Float(
-        string='Total Volume (m3)',
+        string='Total Volume (m³)',
         digits=(32, 2),
         store=True,
         compute='_compute_volume_total')
@@ -1179,7 +1179,7 @@ class WuaQuotaperiodLine(models.Model):
         compute='_compute_area_total')
 
     volume_total = fields.Float(
-        string='Total Volume (m3)',
+        string='Total Volume (m³)',
         digits=(32, 2),
         store=True,
         compute='_compute_volume_total')
@@ -1305,7 +1305,7 @@ class WuaQuotaperiodLine(models.Model):
                     'wua.configuration', 'area_measurement_name')
                 area_measurement_name = area_measurement_name.decode('utf_8')
             suffix_area = ' (' + area_measurement_name.lower() + ')'
-            suffix_provision = ' (m3/' + area_measurement_name.lower() + ')'
+            suffix_provision = ' (m³/' + area_measurement_name.lower() + ')'
             for node in doc.xpath("//field[@name='area_total']"):
                 original_label = \
                     self._get_value_from_translation(
@@ -1445,7 +1445,7 @@ class WuaQuotaperiodLineParcel(models.Model):
         compute='_compute_provision')
 
     volume = fields.Float(
-        string='Volume (m3)',
+        string='Volume (m³)',
         digits=(32, 2),
         compute='_compute_volume')
 

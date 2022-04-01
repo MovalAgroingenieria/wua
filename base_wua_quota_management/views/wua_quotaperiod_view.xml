@@ -224,7 +224,7 @@
                             <field name="number_of_superproducts"
                                    string="N. superproducts"/>
                             <field name="volume_total"
-                                   string="Assigned Vol. (m3)"/>
+                                   string="Assigned Vol. (m³)"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -265,7 +265,7 @@
                 <field name="description"/>
                 <field name="number_of_superproducts"/>
                 <field name="sorted_quotas" string="Sorted"/>
-                <field name="volume_total" string="Initial Assignment (m3)"/>
+                <field name="volume_total" string="Initial Assignment (m³)"/>
                 <field name="state"/>
                 <button type="object" class="oe_stat_button"
                         icon="fa-unlock"
@@ -327,7 +327,7 @@
                 <div style="text-align:center">
                     <h1><span>Number of order: </span>
                     <field name="pos"/></h1>
-                </div>                
+                </div>
                 <group name="master_data">
                     <group name="master_data_left">
                         <field name="quotaperiod_id"/>
@@ -347,7 +347,7 @@
                     <field name="selected_quotaperiodlineparcel_ids"
                            context="{'tree_view_ref':
                                      'base_wua_quota_management.wua_quotaperiod_line_parcel_readonly_view_tree'}"/>
-                </div>                
+                </div>
             </form>
         </field>
     </record>
@@ -369,13 +369,13 @@
                         attrs="{'invisible':
                                 [('configured_line','=',False)],
                                 'readonly':
-                                [('configured_line','=',True)]}"/>                
+                                [('configured_line','=',True)]}"/>
                 <field name="provision"/>
                 <field name="number_of_parcels"
                        string="Parcels"/>
                 <field name="area_total"/>
                 <field name="volume_total"/>
-            </tree>        
+            </tree>
         </field>
     </record>
 
@@ -555,8 +555,8 @@
                     <filter string="Irrigation Ditch" name="irrigationditch"
                      context="{'group_by':'irrigationditch_id'}"/>
                     <filter string="Irrigation Worker" name="irrigationworker"
-                     context="{'group_by':'employee_id'}"/>                     
-                </group>                
+                     context="{'group_by':'employee_id'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -597,7 +597,7 @@
                 action = env['wua.quotaperiod.line.parcel'].browse(context['active_ids']).add_to_quotaperiod()
         </field>
     </record>
-    
+
     <record id="wua_action_add_parcel_to_quotaperiod" model="ir.values">
         <field name="name">Add parcel to quota period</field>
         <field name="model">wua.quotaperiod.line.parcel</field>
@@ -615,7 +615,7 @@
                 action = env['wua.quotaperiod.line.parcel'].browse(context['active_ids']).remove_from_quotaperiod()
         </field>
     </record>
-    
+
     <record id="wua_action_remove_parcel_to_quotaperiod" model="ir.values">
         <field name="name">Remove parcel from quota period</field>
         <field name="model">wua.quotaperiod.line.parcel</field>
