@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-27 09:36+0000\n"
-"PO-Revision-Date: 2021-04-27 09:36+0000\n"
+"POT-Creation-Date: 2022-04-04 10:18+0000\n"
+"PO-Revision-Date: 2022-04-04 10:18+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:363
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:390
 #, python-format
 msgid " is grather than the area of the parcel."
 msgstr ""
@@ -35,6 +35,11 @@ msgstr ""
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_form
 msgid "( ACTIVE AGRICULTURAL SEASON )"
+msgstr ""
+
+#. module: base_wua_crop_planning
+#: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_form
+msgid "( CREDIT OVERDUE )"
 msgstr ""
 
 #. module: base_wua_crop_planning
@@ -195,10 +200,14 @@ msgstr ""
 #: code:addons/base_wua_crop_planning/models/wua_agriculturalseason.py:225
 #: model:ir.actions.act_window,name:base_wua_crop_planning.wua_cropplan_action
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_agriculturalseason_cropplan_ids
-#: model:ir.ui.menu,name:base_wua_crop_planning.wua_cropplan_menu
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_tree
 #, python-format
 msgid "Crop Plans"
+msgstr ""
+
+#. module: base_wua_crop_planning
+#: model:ir.ui.menu,name:base_wua_crop_planning.wua_cropplan_menu
+msgid "Crop-Plans Management"
 msgstr ""
 
 #. module: base_wua_crop_planning
@@ -222,6 +231,11 @@ msgstr ""
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_cultivation
 msgid "Cultivations"
+msgstr ""
+
+#. module: base_wua_crop_planning
+#: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_currency_id
+msgid "Currency"
 msgstr ""
 
 #. module: base_wua_crop_planning
@@ -351,11 +365,6 @@ msgid "Incorrect enrollment dates."
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_agriculturalseason_initialized
-msgid "Initialized"
-msgstr ""
-
-#. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.report_wua_cropplan_document
 msgid "Irrig. System"
 msgstr ""
@@ -465,16 +474,29 @@ msgid "Out of time"
 msgstr ""
 
 #. module: base_wua_crop_planning
+#: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_overdue
+msgid "Overdue"
+msgstr ""
+
+#. module: base_wua_crop_planning
+#: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_credit_overdue
+msgid "Overdue Receivable"
+msgstr ""
+
+#. module: base_wua_crop_planning
+#: model:ir.model.fields,help:base_wua_crop_planning.field_wua_cropplan_credit_overdue
+msgid "Overdue amount this customer owes you."
+msgstr ""
+
+#. module: base_wua_crop_planning
 #: selection:wua.enrolledsubparcel,profile:0
 msgid "Owner"
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_invoiceset.py:94
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_parcel_id
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.report_wua_cropplan_document
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_enrolledsubparcel_view_search
-#, python-format
 msgid "Parcel"
 msgstr ""
 
@@ -489,7 +511,7 @@ msgid "Partner of a WUA"
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:725
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:752
 #, python-format
 msgid "Partners"
 msgstr ""
@@ -647,31 +669,31 @@ msgid "The area percentage must be a value from 0 to 100."
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:156
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:167
 #, python-format
 msgid "The crop plan must have one or more parcels."
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:248
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:275
 #, python-format
 msgid "The partner already has a previous crop plan. For each agricultural season, only one crop plan per partner is accepted."
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:361
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:388
 #, python-format
 msgid "The sum of the areas of the subparcels of parcel "
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:681
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:708
 #, python-format
 msgid "There is no active agricultural season."
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:259
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:286
 #, python-format
 msgid "There is some parcel with a different partner."
 msgstr ""
@@ -719,12 +741,6 @@ msgid "Variety"
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_invoiceset.py:93
-#, python-format
-msgid "Water Connection"
-msgstr ""
-
-#. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_waterconnection_working
 msgid "Working"
 msgstr ""
@@ -746,16 +762,16 @@ msgid "You cannot delete this subparcel type."
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:236
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:280
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:326
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:263
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:307
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:353
 #, python-format
 msgid "You do not have permission to edit data."
 msgstr ""
 
 #. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:773
-#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:782
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:800
+#: code:addons/base_wua_crop_planning/models/wua_cropplan.py:809
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr ""
@@ -764,29 +780,5 @@ msgstr ""
 #: code:addons/base_wua_crop_planning/models/wua_parcel.py:94
 #, python-format
 msgid "area:"
-msgstr ""
-
-#. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_invoiceset.py:98
-#, python-format
-msgid "of total consumption of water meter"
-msgstr ""
-
-#. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_invoiceset.py:100
-#, python-format
-msgid "of water payment for the parcel"
-msgstr ""
-
-#. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_invoiceset.py:95
-#, python-format
-msgid "profile"
-msgstr ""
-
-#. module: base_wua_crop_planning
-#: code:addons/base_wua_crop_planning/models/wua_invoiceset.py:96
-#, python-format
-msgid "total consumption"
 msgstr ""
 

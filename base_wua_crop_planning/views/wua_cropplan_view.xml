@@ -34,6 +34,12 @@
                          attrs="{'invisible':[('out_of_time','=',False)]}">
                         ( OUT OF TIME )
                     </div>
+                    <field name="credit_overdue" invisible="1"/>
+                    <div name="hascreditoverdue"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
+                        ( CREDIT OVERDUE )
+                    </div>
                    <field name="state" widget="statusbar"
                           statusbar_visible="draft,validated"/>
                 </header>
@@ -178,8 +184,11 @@
         <field name="name">Enrolled Subparcels (tree view)</field>
         <field name="model">wua.enrolledsubparcel</field>
         <field name="arch" type="xml">
-            <tree create="false" edit="false" delete="false"
+            <tree
+                colors="red:overdue==True"
+                create="false" edit="false" delete="false"
                 class="o_base_wua_crop_planning_enrolledsubparcel_view_tree">
+                <field name="overdue" invisible="1"/>
                 <field name="agriculturalseason_id"/>
                 <field name="parcel_id"/>
                 <field name="partner_id"/>
@@ -205,6 +214,7 @@
                 <attribute name="create">true</attribute>
                 <attribute name="edit">true</attribute>
                 <attribute name="delete">true</attribute>
+                <attribute name="colors">red:overdue==True</attribute>
             </xpath>
         </field>
     </record>
@@ -264,6 +274,7 @@
         <field name="model">wua.enrolledsubparcel</field>
         <field name="arch" type="xml">
             <tree editable="bottom"
+                colors="red:overdue==True"
                 class="o_base_wua_crop_planning_enrolledsubparcel_edit_view_tree">
                 <field name="is_cultivable" invisible="1"/>
                 <field name="parcel_id" context="{'in_combo': True}"
@@ -282,6 +293,7 @@
                        attrs="{'readonly':[('is_cultivable','=', False)]}"/>
                 <field name="productionmethod_id" widget="many2one_unclickable"
                        attrs="{'readonly':[('is_cultivable','=', False)]}"/>
+                <field name="overdue" invisible="1"/>
             </tree>
         </field>
     </record>

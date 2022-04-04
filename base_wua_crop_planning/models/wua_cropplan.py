@@ -110,6 +110,17 @@ class WuaCropplan(models.Model):
         compute='_compute_area_official',
         track_visibility='onchange')
 
+    # NEEDED FOR fields.Monetary
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Currency',
+        compute='_compute_currency_id')
+
+    credit_overdue = fields.Monetary(
+        compute='_compute_credit_overdue',
+        string='Overdue Receivable',
+        help="Overdue amount this customer owes you.")
+
     out_of_time = fields.Boolean(
         string='Out of time',
         store=True,
@@ -202,6 +213,22 @@ class WuaCropplan(models.Model):
                 area_official = sum(map(lambda x: x.area_official,
                                         record.enrolledsubparcel_ids))
             record.area_official = area_official
+
+    @api.depends('partner_id')
+    def _compute_currency_id(self):
+        for record in self:
+            currency_id = None
+            if (record.partner_id):
+                currency_id = record.partner_id.currency_id
+            record.currency_id = currency_id
+
+    @api.depends('partner_id', 'currency_id')
+    def _compute_credit_overdue(self):
+        for record in self:
+            credit_overdue = 0
+            if (record.partner_id and record.currency_id):
+                credit_overdue = record.partner_id.credit_overdue
+            record.credit_overdue = credit_overdue
 
     @api.depends('request_date',
                  'agriculturalseason_id.enrollment_initial_date',
@@ -860,6 +887,10 @@ class WuaEnrolledsubparcel(models.Model):
         required=True,
         default=0)
 
+    overdue = fields.Boolean(
+        string='Overdue',
+        compute='_compute_overdue')
+
     area_perc = fields.Float(
         string='%',
         digits=(5, 2),
@@ -980,6 +1011,14 @@ class WuaEnrolledsubparcel(models.Model):
     def _compute_is_cultivable(self):
         for record in self:
             record.is_cultivable = record.subparceltype_id.is_cultivable
+
+    @api.multi
+    def _compute_overdue(self):
+        for record in self:
+            overdue = False
+            if (record.parcel_id):
+                overdue = record.parcel_id.overdue
+            record.overdue = overdue
 
     @api.depends('parcel_id', 'parcel_id.hydraulicsector_id')
     def _compute_hydraulicsector_id(self):
