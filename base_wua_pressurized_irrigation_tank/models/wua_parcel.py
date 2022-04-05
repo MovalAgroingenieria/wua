@@ -73,12 +73,12 @@ class WuaParcel(models.Model):
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_tank SET
                         with_gis_tank = False
                     WHERE name = OLD.name;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_tank SET
                         with_gis_tank = True
                     WHERE name = NEW.name;

@@ -1295,14 +1295,14 @@ class WuaParcel(models.Model):
                     wua_gis_parcel_update_on_wua_parcel() RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_parcel SET
                         with_gis_parcel = False,
                         area_gis = 0
                     WHERE
                         OLD.name = name;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_parcel SET with_gis_parcel = True WHERE
                         NEW.name = name;
                     UPDATE public.wua_parcel SET area_gis =

@@ -364,14 +364,14 @@ class WuaParcel(models.Model):
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_irrigationshed SET
                         with_gis_irrigationshed = False,
                         gis_viewer_x = 0,
                         gis_viewer_y = 0
                     WHERE name = OLD.name;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_irrigationshed SET
                         with_gis_irrigationshed = True,
                         gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
@@ -525,12 +525,12 @@ class WuaParcel(models.Model):
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_irrigationditch SET
                         with_gis_irrigationditch = False
                     WHERE irrigationditch_code = OLD.code;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_irrigationditch SET
                         with_gis_irrigationditch = True
                     WHERE irrigationditch_code = NEW.code;

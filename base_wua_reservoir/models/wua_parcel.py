@@ -69,11 +69,11 @@ class WuaParcel(models.Model):
                 AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+               IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_reservoir SET with_gis_reservoir = False
                         WHERE reservoir_code = OLD.code;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_reservoir SET with_gis_reservoir = True
                         WHERE reservoir_code = NEW.code;
                 END IF;

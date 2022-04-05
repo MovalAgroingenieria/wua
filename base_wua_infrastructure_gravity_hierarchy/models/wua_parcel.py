@@ -954,12 +954,12 @@ class WuaParcel(models.Model):
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_drainageditch SET
                         with_gis_drainageditch = False
                     WHERE drainageditch_code = OLD.code;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_drainageditch SET
                         with_gis_drainageditch = True
                     WHERE drainageditch_code = NEW.code;

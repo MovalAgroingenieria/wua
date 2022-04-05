@@ -73,12 +73,12 @@ class WuaParcel(models.Model):
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_flowmeter SET
                         with_gis_flowmeter = False
                     WHERE name = OLD.name;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_flowmeter SET
                         with_gis_flowmeter = True
                     WHERE name = NEW.name;
@@ -245,12 +245,12 @@ class WuaParcel(models.Model):
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_intake SET
                         with_gis_intake = False
                     WHERE intake_code = OLD.code;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_intake SET
                         with_gis_intake = True
                     WHERE intake_code = NEW.code;

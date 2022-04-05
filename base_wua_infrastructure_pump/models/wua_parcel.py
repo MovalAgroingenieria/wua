@@ -74,12 +74,12 @@ class WuaParcel(models.Model):
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_pumpgroup SET
                         with_gis_pumpgroup = False
                     WHERE pumpgroup_code = OLD.code;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_pumpgroup SET
                         with_gis_pumpgroup = True
                     WHERE pumpgroup_code = NEW.code;
@@ -223,12 +223,12 @@ class WuaParcel(models.Model):
                     RETURNS trigger AS
                 $BODY$
                 BEGIN
-                IF OLD IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
                     UPDATE public.wua_photovoltaicplant SET
                         with_gis_photovoltaicplant = False
                     WHERE photovoltaicplant_code = OLD.code;
                 END IF;
-                IF NEW IS NOT NULL THEN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
                     UPDATE public.wua_photovoltaicplant SET
                         with_gis_photovoltaicplant = True
                     WHERE photovoltaicplant_code = NEW.code;
