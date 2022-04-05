@@ -21,6 +21,11 @@
                             <field name="state"/>
                             <field name="type"/>
                             <field name="nominal_water_flow"/>
+                            <field name="flow_direction"/>
+                            <field name="bidirectional_flow_1_def" attrs="{'invisible': [('flow_direction','!=', 'bidirectional')],
+                                                                           'required': [('flow_direction','=', 'bidirectional')]}"/>
+                            <field name="bidirectional_flow_2_def" attrs="{'invisible': [('flow_direction','!=', 'bidirectional')],
+                                                                           'required': [('flow_direction','=', 'bidirectional')]}"/>
                         </group>
                         <group name="master_data_right">
                             <field name="intake_id" attrs="{'invisible': [('connected_to_intake','!=', True)]}"/>
