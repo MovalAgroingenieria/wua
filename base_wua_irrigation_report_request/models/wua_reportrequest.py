@@ -339,7 +339,7 @@ class WuaReportrequest(models.Model):
         report_initial_time = datetime.datetime.today().strftime('%Y-%m-%d')
         notes = ""
         if request.notes:
-            notes = _('<b>Notes from report request:</b><br\>') + \
+            notes = _('<b>Notes from report request:</b><br\\>') + \
                 request.notes
         if request.intake_id:
             resp = self.env['wua.irrigationreport'].create({

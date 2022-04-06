@@ -40,7 +40,8 @@
                     <span t-field="o.agriculturalseason_id"/>
                 </div>
                 <div name="order_number" class="col-xs-7" style="font-family: verdana;font-size: 14;text-align: left;">
-                    <span t-esc="('Order Number: ' + o.order_number)"/>
+                    <span>Order Number: </span>
+                    <span t-field="o.order_number"/>
                 </div>
                 <t t-if="o.state == 'draft'">
                     <div name="state_draft" class="col-xs-5" style="font-family: verdana;font-size: 14;text-align: right;">
