@@ -37,7 +37,7 @@ class WuaIrrigationReport(models.Model):
         compute='_compute_sum_price_subtotal')
 
     price_unit = fields.Float(
-        string='Price (m3)',
+        string='Price (m³)',
         digits=(32, 4),
         compute='_compute_price_unit')
 

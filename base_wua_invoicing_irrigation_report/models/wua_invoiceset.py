@@ -196,7 +196,7 @@ class WuaInvoiceset(models.Model):
             volume = irrigationreport.volume_real
             reading_times_info = date_str + time_duration + \
                 consumption_label + ': ' + \
-                '{0:.0f}'.format(volume) + ' m3'
+                '{0:.0f}'.format(volume) + ' m³'
             description = intake_name + ', ' + water_type + ', ' + \
                 _('delivery note num. ') + str(delivery_note) + '. ' + \
                 reading_times_info + reading_details
@@ -380,7 +380,7 @@ class WuaInvoicesetLineIrrigationreport(models.Model):
         ondelete="restrict")
 
     volume_real = fields.Float(
-        string='Real Volume (m3)',
+        string='Real Volume (m³)',
         digits=(32, 4))
 
     @api.multi
