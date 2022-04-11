@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-12 17:21+0000\n"
-"PO-Revision-Date: 2019-11-12 17:21+0000\n"
+"POT-Creation-Date: 2022-04-11 07:24+0000\n"
+"PO-Revision-Date: 2022-04-11 07:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,12 @@ msgid "Active"
 msgstr ""
 
 #. module: base_wua_infrastructure_primary
-#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:160
+#: selection:wua.flowmeter,flow_direction:0
+msgid "Bidirectional"
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
+#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:177
 #, python-format
 msgid "Blanks are not allowed in the name of the flowmeter."
 msgstr ""
@@ -120,6 +125,21 @@ msgid "Flow Meter"
 msgstr ""
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_1_def
+msgid "Flow def. 1"
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_2_def
+msgid "Flow def. 2"
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_flow_direction
+msgid "Flow direction"
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_state
 msgid "Flow-Meter Status"
 msgstr ""
@@ -138,7 +158,7 @@ msgstr ""
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_with_gis_flowmeter
-msgid "GIS Flow-Meter"
+msgid "GIS Flowmeter"
 msgstr ""
 
 #. module: base_wua_infrastructure_primary
@@ -185,6 +205,16 @@ msgstr ""
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_connected_to_intake
 msgid "In intake"
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
+#: selection:wua.flowmeter,flow_direction:0
+msgid "Incoming flow"
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
+#: selection:wua.flowmeter,flow_direction:0
+msgid "Independent"
 msgstr ""
 
 #. module: base_wua_infrastructure_primary
@@ -279,7 +309,7 @@ msgid "Notes about intake"
 msgstr ""
 
 #. module: base_wua_infrastructure_primary
-#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:167
+#: code:addons/base_wua_infrastructure_primary/models/wua_intake.py:162
 #, python-format
 msgid "Only one intake per flowmeter is allowed."
 msgstr ""
@@ -287,6 +317,11 @@ msgstr ""
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
 msgid "Other"
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
+#: selection:wua.flowmeter,flow_direction:0
+msgid "Outgoing flow"
 msgstr ""
 
 #. module: base_wua_infrastructure_primary
@@ -319,6 +354,17 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
 #: selection:wua.flowmeter,state:0
 msgid "Stored"
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_1_def
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_2_def
+msgid "The definition of the flow as it appears in the irrigation remote control."
+msgstr ""
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_flow_direction
+msgid "The direction of the water flow."
 msgstr ""
 
 #. module: base_wua_infrastructure_primary

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-12 17:30+0000\n"
-"PO-Revision-Date: 2019-11-12 17:30+0000\n"
+"POT-Creation-Date: 2022-04-11 07:25+0000\n"
+"PO-Revision-Date: 2022-04-11 07:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,12 @@ msgid "Active"
 msgstr "Actiu"
 
 #. module: base_wua_infrastructure_primary
-#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:160
+#: selection:wua.flowmeter,flow_direction:0
+msgid "Bidirectional"
+msgstr "Bidireccional"
+
+#. module: base_wua_infrastructure_primary
+#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:177
 #, python-format
 msgid "Blanks are not allowed in the name of the flowmeter."
 msgstr "No es permeten els blancs al nom del cabalímetre."
@@ -41,7 +46,7 @@ msgstr "Codi"
 #. module: base_wua_infrastructure_primary
 #: model:ir.model,name:base_wua_infrastructure_primary.model_wua_infrastructure_configuration
 msgid "Configuration of base_wua_infrastructure_primary module"
-msgstr "Configuració del mòdul base_wua_infrastructure_primary"
+msgstr "Configuration of base_wua_infrastructure_primary module"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
@@ -75,7 +80,7 @@ msgstr "Descartat"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_display_name
 msgid "Display Name"
-msgstr "Veure el nom"
+msgstr "Mostrar Nom"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
@@ -120,6 +125,21 @@ msgid "Flow Meter"
 msgstr "Cabalímetre"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_1_def
+msgid "Flow def. 1"
+msgstr "Def. cabal 1"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_2_def
+msgid "Flow def. 2"
+msgstr "Def. cabal 1"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_flow_direction
+msgid "Flow direction"
+msgstr "Direcció cabal"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_state
 msgid "Flow-Meter Status"
 msgstr "Estat cabalímetre"
@@ -138,8 +158,8 @@ msgstr "Làmina lliure"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_with_gis_flowmeter
-msgid "GIS Flow-Meter"
-msgstr "cabalímetre GIS"
+msgid "GIS Flowmeter"
+msgstr "GIS Flowmeter"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_with_gis_intake
@@ -188,6 +208,16 @@ msgid "In intake"
 msgstr "En captació"
 
 #. module: base_wua_infrastructure_primary
+#: selection:wua.flowmeter,flow_direction:0
+msgid "Incoming flow"
+msgstr "Cabal entrant"
+
+#. module: base_wua_infrastructure_primary
+#: selection:wua.flowmeter,flow_direction:0
+msgid "Independent"
+msgstr "Independent"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_intake_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_name
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
@@ -225,7 +255,7 @@ msgstr "Captacions relacionades amb el cabalímetre"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake___last_update
 msgid "Last Modified on"
-msgstr "Darrera modificació el"
+msgstr "Última modificació el "
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_write_uid
@@ -279,15 +309,20 @@ msgid "Notes about intake"
 msgstr "Notes sobre la captació"
 
 #. module: base_wua_infrastructure_primary
-#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:167
+#: code:addons/base_wua_infrastructure_primary/models/wua_intake.py:162
 #, python-format
 msgid "Only one intake per flowmeter is allowed."
-msgstr "Només es permet una captació per cabalímetre."
+msgstr "Només es permet una presa per cabalímetre."
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
 msgid "Other"
 msgstr "Altres"
+
+#. module: base_wua_infrastructure_primary
+#: selection:wua.flowmeter,flow_direction:0
+msgid "Outgoing flow"
+msgstr "Cabal sortint"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_infrastructure_configuration_url_gis_viewer_flowmeter_param
@@ -302,7 +337,7 @@ msgstr "Paràmetre per captació"
 #. module: base_wua_infrastructure_primary
 #: model:ir.model,name:base_wua_infrastructure_primary.model_wua_parcel
 msgid "Parcels (integrated GIS)"
-msgstr "Parcel·les (integrades GIS)"
+msgstr "Parce·las (integrades GIS)"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_search
@@ -320,6 +355,17 @@ msgstr "Estat"
 #: selection:wua.flowmeter,state:0
 msgid "Stored"
 msgstr "Emmagatzemat"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_1_def
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_2_def
+msgid "The definition of the flow as it appears in the irrigation remote control."
+msgstr "La definició del cabal tal com apareix al telecontrol."
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_flow_direction
+msgid "The direction of the water flow."
+msgstr "La direcció del flux daigua."
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_name
@@ -367,12 +413,12 @@ msgstr "No definit"
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_tree
 msgid "Water (m3/hour)"
-msgstr "Aigua (m3 / hora)"
+msgstr "Aigua (m³/hora)"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_nominal_water_flow
 msgid "Water Flow (m3/hour)"
-msgstr "Cabal (m3 / hora)"
+msgstr "Cabal (m³/hora)"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_with_flowmeter

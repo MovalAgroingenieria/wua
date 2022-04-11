@@ -80,6 +80,26 @@ class WuaFlowmeter(models.Model):
         string="GIS Flowmeter",
         readonly=True)
 
+    flow_direction = fields.Selection([
+        ('incoming', 'Incoming flow'),
+        ('outgoing', 'Outgoing flow'),
+        ('bidirectional', 'Bidirectional'),
+        ('independent', 'Independent')],
+        string="Flow direction",
+        default='incoming',
+        required=True,
+        help='The direction of the water flow.')
+
+    bidirectional_flow_1_def = fields.Char(
+        string='Flow def. 1',
+        help="The definition of the flow as it appears in the irrigation "
+             "remote control.")
+
+    bidirectional_flow_2_def = fields.Char(
+        string='Flow def. 2',
+        help="The definition of the flow as it appears in the irrigation "
+             "remote control.")
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
