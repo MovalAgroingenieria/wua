@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationsrequest_view_form" model="ir.ui.view">
+        <field name="name">Irrigations Requests (form view)</field>
+        <field name="model">wua.irrigationsrequest</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <field name="cancelled" invisible="1"/>
+                <field name="is_portal_user" invisible="1"/>
+                <field name="credit_overdue" invisible="1"/>
+                <field name="mapped_to_irrigationreport" invisible="1"/>
+                <header>
+                    <button name="validate_irrigationsrequest" type="object" class="oe_highlight"
+                            string="Validate"
+                            attrs="{'invisible': ['|','|',('id','=',False),('state','=','validated'),('cancelled','=',True)]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="reset_irrigationsrequest" type="object" class="oe_highlight"
+                            string="To draft"
+                            attrs="{'invisible': ['|',('id','=',False),('state','=','draft')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="The reset will erase the Irrigation Reports. Are you sure you want to continue?"/>
+                    <button name="cancel_irrigationsrequest" type="object" class="oe_link"
+                            string="Cancel"
+                            attrs="{'invisible': ['|','|',('id','=',False),('state','=','validated'),('cancelled','=',True)]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to cancel this request?"/>
+                    <button name="reactivate_irrigationsrequest" type="object" class="oe_highlight"
+                            string="Reactivate"
+                            attrs="{'invisible': ['|',('state','=','validate'),('cancelled','=',False)]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <div name="irrigationsrequest_cancelled" style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('cancelled','=',False)]}">C A N C E L L E D
+                    </div>
+                    <div name="warning_signature" class="oe_edit_only" style="display: inline-block;color:red;padding-top:10px;"
+                         attrs="{'invisible':['|','|',('is_portal_user', '=', False),('signature_image', '!=', False),('state', '=', 'validated')]}">
+                         NOTICE: It will be necessary to sign
+                    </div>
+                    <div name="hascreditoverdue"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
+                        ( CREDIT OVERDUE )
+                    </div>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,validated"/>
+                </header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="state" invisible="1"/>
+                        <button name="action_see_irrigation_reports"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-moval-file-irrigation"
+                            groups="base_wua.group_wua_user,
+                                    base_wua.group_wua_portal_user"
+                            attrs="{'invisible':[('state','!=', 'validated')]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Irrigation Reports</span>
+                            </div>
+                        </button>
+                    </div>
+                     <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="partner_id"
+                                   options="{'no_quick_create':True,'no_create_edit':True}"
+                                   attrs="{'readonly': ['|','|',('id', '>', 0),('cancelled','=',True),('is_portal_user','=',True)]}"/>
+                            <field name="parcel_id"
+                                   options="{'no_quick_create':True,'no_create_edit':True}"
+                                   domain="[('partner_id', '=', partner_id)]"
+                                   attrs="{'readonly': ['|','|',('id', '>', 0),('state','=','validated'),('cancelled','=',True)]}"
+                                   context="{'show_parcel_and_area': True}"/>
+                            <field name="area_official" readonly="1"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="request_date" attrs="{'readonly': ['|','|',('id', '>', 0),('state','=','validated'),('cancelled','=',True)]}"/>
+                            <field name="agriculturalseason_id"/>
+                            <field name="product_id" domain="[('categ_id.productcategory_code','=',11)]"
+                                attrs="{'readonly': ['|',('state','=','validated'),('cancelled','=',True)]}"/>
+                            <field name="intake_id" domain="[('product_id','=', product_id)]"
+                                attrs="{'invisible': [('product_id','&lt;=', 0)],
+                                        'readonly': [('mapped_to_irrigationreport', '=', True)]
+                                       }"/>
+                            <field name="number_of_irrigations"
+                                attrs="{'readonly': ['|',('state','=','validated'),('cancelled','=',True)]}"/>
+                            <field name="volume" style="width:100px"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes" widget="html" attrs="{'readonly': [('cancelled','=',True)]}"/>
+                                <div class="oe_edit_only">
+                                    (*) The notes will be printed in Irrigations request and Irrigation reports
+                                </div>
+                            </page>
+                            <page name="signature_page" string="Signature">
+                                <field name="signature_image" widget="signature" attrs="{'readonly': [('cancelled','=',True)]}"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread" groups="base_wua.group_wua_user"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_irrigationsrequest_view_tree" model="ir.ui.view">
+        <field name="name">Irrigations Requests (tree view)</field>
+        <field name="model">wua.irrigationsrequest</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_irrigationsrequest_irrigationsrequest_view_tree" colors="silver:cancelled == True;">
+                <field name="cancelled" invisible="1"/>
+                <field name="agriculturalseason_id"/>
+                <field name="request_date"/>
+                <field name="partner_id"/>
+                <field name="parcel_id"/>
+                <field name="product_id"/>
+                <field name="number_of_irrigations"/>
+                <field name="volume"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_irrigationsrequest_view_search" model="ir.ui.view">
+        <field name="name">Irrigations Requests (search view)</field>
+        <field name="model">wua.irrigationsrequest</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="parcel_id"/>
+                <filter name="active_agriculturalseason" string="Active Agricultural Season"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <filter name="mapped_to_irrigation_report_true" string="Mapped to irrigation report: Yes"
+                        domain="[('mapped_to_irrigationreport','=',True)]"/>
+                <filter name="mapped_to_irrigation_report_false" string="Mapped to irrigation report: No"
+                        domain="[('mapped_to_irrigationreport','=',False)]"/>
+                <separator/>
+                <filter name="is_cancelled" string="Cancelled"
+                        domain="[('cancelled','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="product" string="Product"
+                            context="{'group_by':'product_id'}"/>
+                    <filter name="partner" string="Partner"
+                            context="{'group_by':'partner_id'}"/>
+                    <filter name="parcel" string="Parcel"
+                            context="{'group_by':'parcel_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="wua_irrigationsrequest_action" model="ir.actions.act_window">
+        <field name="name">Irrigations Requests</field>
+        <field name="res_model">wua.irrigationsrequest</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_irrigationsrequest_view_tree"/>
+        <field name="search_view_id" ref="wua_irrigationsrequest_view_search"/>
+        <field name="context">
+            {'search_default_active_agriculturalseason': 1}
+        </field>
+    </record>
+
+    <record id="wua_validate_irrigationsrequests" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_irrigationsrequest"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.irrigationsrequest'].validate_irrigationsrequests(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_validate_irrigationsrequests" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.irrigationsrequest</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_irrigationsrequests'))"/>
+    </record>
+
+    <record id="wua_reset_irrigationsrequests" model="ir.actions.server">
+        <field name="name">Reset</field>
+        <field name="model_id" ref="model_wua_irrigationsrequest"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.irrigationsrequest'].reset_irrigationsrequests(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_reset_irrigationsrequests" model="ir.values">
+        <field name="name">Reset</field>
+        <field name="model">wua.irrigationsrequest</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_reset_irrigationsrequests'))"/>
+    </record>
+
+    <record id="wua_cancel_irrigationsrequests" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_irrigationsrequest"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.irrigationsrequest'].cancel_irrigationsrequests(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_cancel_irrigationsrequests" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.irrigationsrequest</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_irrigationsrequests'))"/>
+    </record>
+
+    <record id="wua_reactivate_irrigationsrequests" model="ir.actions.server">
+        <field name="name">Reactivate</field>
+        <field name="model_id" ref="model_wua_irrigationsrequest"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.irrigationsrequest'].reactivate_irrigationsrequests(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_reactivate_irrigationsrequests" model="ir.values">
+        <field name="name">Reactivate</field>
+        <field name="model">wua.irrigationsrequest</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_reactivate_irrigationsrequests'))"/>
+    </record>
+
+    <!-- Menu entries -->
+    <!-- Overwrite original to change position -->
+    <menuitem name="Reports" id="base_wua_irrigation_report.base_wua_irrigationreport_menu"
+        parent="base_wua_irrigation_report.base_wua_irrigation_report_menu" sequence="3"
+        action="base_wua_irrigation_report.wua_irrigationreport_action"/>
+
+    <menuitem name="Irrigations Requests" id="irrigationsrequest_menu"
+        parent="base_wua_irrigation_report.base_wua_irrigation_report_menu" sequence="2"
+        action="wua_irrigationsrequest_action"/>
+
+</odoo>

@@ -55,7 +55,7 @@ class WuaRegion(models.Model):
             raise exceptions.ValidationError(_('Empty Code.'))
         try:
             proposed_code = int(code_no_blanks)
-        except:
+        except Exception:
             proposed_code = 0
         if proposed_code <= 0:
             raise exceptions.ValidationError(_('The code must be a ' +
@@ -139,7 +139,7 @@ class WuaRegionState(models.Model):
             raise exceptions.ValidationError(_('Empty Cadastral Code.'))
         try:
             proposed_cadastral_code = int(cadastral_code_no_blanks)
-        except:
+        except Exception:
             proposed_cadastral_code = 0
         if proposed_cadastral_code <= 0:
             raise exceptions.ValidationError(_('The code must be a ' +
@@ -225,7 +225,7 @@ class WuaRegionStateCounty(models.Model):
             raise exceptions.ValidationError(_('Empty Cadastral Code.'))
         try:
             proposed_cadastral_code = int(cadastral_code_no_blanks)
-        except:
+        except Exception:
             proposed_cadastral_code = 0
         if proposed_cadastral_code <= 0:
             raise exceptions.ValidationError(_('The code must be a ' +

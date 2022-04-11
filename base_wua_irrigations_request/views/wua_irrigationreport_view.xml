@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationreport_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Reports (form view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="id" invisible="1"/>
+                <field name="mapped_to_irrigationsrequest" invisible="1"/>
+                <field name="irrigationsrequest_id" attrs="{'invisible':[('mapped_to_irrigationsrequest','=', False)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='report_initial_time']" position="attributes">
+                <attribute name="attrs">{'readonly': [('id', '>', 0), ('mapped_to_irrigationsrequest', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='report_end_time']" position="attributes">
+                <attribute name="attrs">{'readonly': [('id', '>', 0), ('mapped_to_irrigationsrequest', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='intake_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('id', '>', 0), ('mapped_to_irrigationsrequest', '=', False)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Reports (search view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='state']" position="before">
+                <filter name="mapped_to_report_request_true" string="Mapped to request: Yes"
+                        domain="[('mapped_to_irrigationsrequest','=',True)]"/>
+                <filter name="mapped_to_report_request_false" string="Mapped to request: No"
+                        domain="[('mapped_to_irrigationsrequest','=',False)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
