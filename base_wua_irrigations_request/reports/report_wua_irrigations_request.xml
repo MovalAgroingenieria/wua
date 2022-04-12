@@ -163,6 +163,8 @@
                                 </strong>
                             <br/>
                             </t>
+                            <!--Removed partner phone, because not being used-->
+                            <!--
                             <t t-if="o.partner_id.phone and o.partner_id.mobile">
                                     <span t-field="o.partner_id.phone"/>
                                     <span>/</span>
@@ -173,6 +175,7 @@
                                 <t t-if="o.partner_id.mobile"><span t-field="o.partner_id.mobile"/></t>
                             </t>
                             <br/>
+                            -->
                             <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/><br/></t>
                         </div>
                         <div style="width: 40%; display: table-cell; padding: 0px 32px;">
@@ -245,14 +248,13 @@
                                         <t t-if="o.parcel_id">
                                             <td class="text-right">
                                                 <strong><span t-field="o.parcel_id"/></strong>
-                                            </td>
-                                        </t>
-                                    </tr>
-                                    <tr name="n_irrigations_1">
-                                        <td><span>Number of irrigations</span></td>
-                                        <t t-if="o.number_of_irrigations">
-                                            <td class="text-right">
-                                                <strong><span t-field="o.number_of_irrigations"/></strong>
+                                                <strong>
+                                                    <span>&amp;nbsp;-&amp;nbsp;</span>
+                                                    <span t-field="o.area_official"/>
+                                                    <span>&amp;nbsp;(</span>
+                                                    <span t-esc="o.get_area_measurement_name()"/>
+                                                    <span>)</span>
+                                                </strong>
                                             </td>
                                         </t>
                                     </tr>
@@ -278,16 +280,24 @@
                                             </td>
                                         </t>
                                     </tr>
-                                    <tr name="volume">
-                                            <td><span>Volume</span></td>
-                                            <t t-if="o.volume">
-                                                <td class="text-right">
-                                                    <strong>
-                                                        <span t-field="o.volume"/>
-                                                        <span name="volume_unit_1">(m³)</span>
-                                                    </strong>
-                                                </td>
-                                            </t>
+                                    <tr name="n_irrigations_1">
+                                        <td><span>Number of irrigations</span></td>
+                                        <t t-if="o.number_of_irrigations">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.number_of_irrigations"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <tr name="volume_1">
+                                        <td><span>Volume</span></td>
+                                        <t t-if="o.volume">
+                                            <td class="text-right">
+                                                <strong>
+                                                    <span t-field="o.volume"/>
+                                                    <span name="volume_unit_1">(m³)</span>
+                                                </strong>
+                                            </td>
+                                        </t>
                                     </tr>
                                  </tbody>
                             </table>
@@ -496,6 +506,8 @@
                                 </strong>
                             <br/>
                             </t>
+                            <!--Removed partner phone because not used -->
+                            <!--
                             <t t-if="o.partner_id.phone and o.partner_id.mobile">
                                     <span t-field="o.partner_id.phone"/>
                                     <span>/</span>
@@ -506,6 +518,7 @@
                                 <t t-if="o.partner_id.mobile"><span t-field="o.partner_id.mobile"/></t>
                             </t>
                             <br/>
+                            -->
                             <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/><br/></t>
                         </div>
                         <div style="width: 40%; display: table-cell; padding: 0px 32px;">
@@ -578,14 +591,13 @@
                                         <t t-if="o.parcel_id">
                                             <td class="text-right">
                                                 <strong><span t-field="o.parcel_id"/></strong>
-                                            </td>
-                                        </t>
-                                    </tr>
-                                    <tr name="n_irrigations_2">
-                                        <td><span>Number of irrigations</span></td>
-                                        <t t-if="o.number_of_irrigations">
-                                            <td class="text-right">
-                                                <strong><span t-field="o.number_of_irrigations"/></strong>
+                                                <strong>
+                                                    <span>&amp;nbsp;-&amp;nbsp;</span>
+                                                    <span t-field="o.area_official"/>
+                                                    <span>&amp;nbsp;(</span>
+                                                    <span t-esc="o.get_area_measurement_name()"/>
+                                                    <span>)</span>
+                                                </strong>
                                             </td>
                                         </t>
                                     </tr>
@@ -611,16 +623,24 @@
                                             </td>
                                         </t>
                                     </tr>
-                                    <tr name="volume">
-                                            <td><span>Volume</span></td>
-                                            <t t-if="o.volume">
-                                                <td class="text-right">
-                                                    <strong>
-                                                        <span t-field="o.volume"/>
-                                                        <span name="volume_unit_2">(m³)</span>
-                                                    </strong>
-                                                </td>
-                                            </t>
+                                    <tr name="n_irrigations_2">
+                                        <td><span>Number of irrigations</span></td>
+                                        <t t-if="o.number_of_irrigations">
+                                            <td class="text-right">
+                                                <strong><span t-field="o.number_of_irrigations"/></strong>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                    <tr name="volume_2">
+                                        <td><span>Volume</span></td>
+                                        <t t-if="o.volume">
+                                            <td class="text-right">
+                                                <strong>
+                                                    <span t-field="o.volume"/>
+                                                    <span name="volume_unit_2">(m³)</span>
+                                                </strong>
+                                            </td>
+                                        </t>
                                     </tr>
                                  </tbody>
                             </table>

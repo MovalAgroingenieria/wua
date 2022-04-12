@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Modification account wua report invoice -->
+    <template id="report_wua_irrigationreport_document" inherit_id="base_wua_irrigation_report.report_wua_irrigationreport_document">
+
+        <!-- Hide initial_volume and end_volume and sum_price_subtotal -->
+        <xpath expr="//tr[@name='initial_volume']" position="attributes">
+            <attribute name="class">hidden</attribute>
+        </xpath>
+        <xpath expr="//tr[@name='final_volume']" position="attributes">
+            <attribute name="class">hidden</attribute>
+        </xpath>
+
+
+    </template>
+
+</odoo>

@@ -398,6 +398,16 @@ class WuaIrrigationsrequest(models.Model):
                 }
             return act_window
 
+    def get_area_measurement_name(self):
+        area_measurement_name = _('ha')
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        if area_measurement_type == 1:
+            area_measurement_name = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_name')
+            area_measurement_name = area_measurement_name.decode('utf_8')
+        return area_measurement_name
+
     def _add_irrigation_reports_from_request(self, request):
         report_initial_time = datetime.datetime.today().strftime('%Y-%m-%d')
         notes = ""
