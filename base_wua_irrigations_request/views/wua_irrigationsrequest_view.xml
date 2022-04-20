@@ -113,6 +113,8 @@
         <field name="arch" type="xml">
             <tree class="o_base_wua_irrigationsrequest_irrigationsrequest_view_tree" colors="silver:cancelled == True;">
                 <field name="cancelled" invisible="1"/>
+                <field name="irrigationsrequest_code"/>
+                <field name="irrigationsrequest_number"/>
                 <field name="agriculturalseason_id"/>
                 <field name="request_date"/>
                 <field name="partner_id"/>
@@ -132,6 +134,8 @@
             <search>
                 <field name="partner_id"/>
                 <field name="parcel_id"/>
+                <field name="irrigationsrequest_code" invisible="1"/>
+                <field name="irrigationsrequest_number"/>
                 <filter name="active_agriculturalseason" string="Active Agricultural Season"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
                 <separator/>

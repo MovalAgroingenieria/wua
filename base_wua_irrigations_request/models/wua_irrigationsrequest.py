@@ -87,6 +87,18 @@ class WuaIrrigationsrequest(models.Model):
         index=True,
         ondelete='restrict')
 
+    irrigationsrequest_number = fields.Integer(
+        string="Irrigationsrequest Number",
+        store=True,
+        compute="_compute_irrigationsrequest_number_code")
+
+    irrigationsrequest_code = fields.Char(
+        string="Irrigations-Request Code",
+        size=28,
+        store=True,
+        index=True,
+        compute="_compute_irrigationsrequest_number_code")
+
     # Size = partner.zfill(6) + '-' + parcel (20) + '-' + date (10)
     name = fields.Char(
         string="Irrigations-Request Code",
@@ -188,6 +200,33 @@ class WuaIrrigationsrequest(models.Model):
         for record in self:
             record.of_active_agriculturalseason = \
                 record.agriculturalseason_id.active_agriculturalseason
+
+    @api.depends('agriculturalseason_id')
+    def _compute_irrigationsrequest_number_code(self):
+        for record in self:
+            irrigationsrequest_number = 1
+            irrigationsrequest_code = ''
+            if record.agriculturalseason_id:
+                initial_date = record.agriculturalseason_id.initial_date
+                end_date = record.agriculturalseason_id.end_date
+                agriculturalseason = record.agriculturalseason_id
+                if record.id:
+                    last_request = self.env['wua.irrigationsrequest'].search(
+                        [('agriculturalseason_id', '=', agriculturalseason.id),
+                         ('id', '!=', record.id)],
+                        order='irrigationsrequest_number desc', limit=1)
+                else:
+                    last_request = self.env['wua.irrigationsrequest'].search(
+                        [('agriculturalseason_id', '=', agriculturalseason.id),
+                         ],
+                        order='irrigationsrequest_number desc', limit=1)
+                if last_request:
+                    irrigationsrequest_number = \
+                        last_request[0].irrigationsrequest_number + 1
+                irrigationsrequest_code = initial_date + '/' + end_date + \
+                    '/' + str(irrigationsrequest_number).zfill(6)
+            record.irrigationsrequest_number = irrigationsrequest_number
+            record.irrigationsrequest_code = irrigationsrequest_code
 
     @api.depends('request_date', 'partner_id', 'parcel_id', 'parcel_id.name')
     def _compute_name(self):

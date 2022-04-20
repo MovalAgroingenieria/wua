@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-08 08:27+0000\n"
-"PO-Revision-Date: 2022-04-08 08:27+0000\n"
+"POT-Creation-Date: 2022-04-20 11:41+0000\n"
+"PO-Revision-Date: 2022-04-20 11:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,7 @@ msgid "(TIN:"
 msgstr "(NIF:"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:409
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:455
 #, python-format
 msgid "<b>Notes from irrigations request:</b><br\\>"
 msgstr "<b>Notas de petición de riegos:</b><br\\>"
@@ -57,6 +57,16 @@ msgstr "<span class=\"o_stat_text\">Partes de riego</span>"
 #: model:ir.ui.view,arch_db:base_wua_irrigations_request.view_partner_form
 msgid "<span class=\"o_stat_text\">Irrigations requests</span>"
 msgstr "<span class=\"o_stat_text\">Peticiones de riegos</span>"
+
+#. module: base_wua_irrigations_request
+#: model:ir.ui.view,arch_db:base_wua_irrigations_request.report_wua_irrigations_request_document
+msgid "<span>&amp;nbsp;(</span>"
+msgstr "<span>&amp;nbsp;(</span>"
+
+#. module: base_wua_irrigations_request
+#: model:ir.ui.view,arch_db:base_wua_irrigations_request.report_wua_irrigations_request_document
+msgid "<span>&amp;nbsp;-&amp;nbsp;</span>"
+msgstr "<span>&amp;nbsp;-&amp;nbsp;</span>"
 
 #. module: base_wua_irrigations_request
 #: model:ir.ui.view,arch_db:base_wua_irrigations_request.report_wua_irrigations_request_document
@@ -159,7 +169,7 @@ msgid "<strong>Partner</strong>"
 msgstr "<strong>Socio</strong>"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:373
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:409
 #, python-format
 msgid "A portal user cannot modify a validated irrigations request."
 msgstr "Un usuario de portal no puede modificar una petición de riegos validada."
@@ -278,7 +288,7 @@ msgid "Intake"
 msgstr "Captación"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:393
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:429
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_irrigationreport_ids
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_parcel_irrigationsrequest_ids
 #, python-format
@@ -304,12 +314,18 @@ msgid "Irrigations Requests"
 msgstr "Peticiones de riegos"
 
 #. module: base_wua_irrigations_request
+#: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_irrigationsrequest_code
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_name
 msgid "Irrigations-Request Code"
-msgstr "Código de petición de riegos"
+msgstr "Código"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:264
+#: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_irrigationsrequest_number
+msgid "Irrigationsrequest Number"
+msgstr "Nº petición"
+
+#. module: base_wua_irrigations_request
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:300
 #, python-format
 msgid "It is not possible to validate the request."
 msgstr "No se puede validar la petición."
@@ -451,7 +467,7 @@ msgid "Signature"
 msgstr "Firma"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:277
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:313
 #, python-format
 msgid "Some associated irrigation report is already validated. It is not possible to return the draft state."
 msgstr "Algún parte de riego ya está validado. No es posible volver al estado borrador."
@@ -472,7 +488,7 @@ msgid "The number of irrigations must be a value greater than zero."
 msgstr "El número de riegos debe ser mayor que 0."
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:313
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:349
 #, python-format
 msgid "The partner must be the irrigator of the parcel."
 msgstr "El socio debe ser el regante de la parcela."
@@ -534,23 +550,24 @@ msgid "Water Type"
 msgstr "Tipo de agua"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:359
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:368
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:395
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:404
 #, python-format
 msgid "You do not have permission to edit an irrigations request."
 msgstr "No tiene permisos para editar la petición de riegos."
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:431
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:441
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:451
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:461
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:477
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:487
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:497
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:507
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene permisos para ejecutar esta acción."
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:338
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:374
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:441
 #, python-format
 msgid "ha"
 msgstr "ha"
