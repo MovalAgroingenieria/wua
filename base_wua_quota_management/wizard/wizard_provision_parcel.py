@@ -80,7 +80,8 @@ class WizardProvisionParcel(models.TransientModel):
                 area_measurement_name = self.env['ir.values'].get_default(
                     'wua.configuration', 'area_measurement_name')
                 area_measurement_name = area_measurement_name.decode('utf_8')
-            suffix_provision = ' (m³/' + area_measurement_name.lower() + ')'
+            suffix_provision = ' (' + _('m³') + '/' + \
+                area_measurement_name.lower() + ')'
             for node in doc.xpath("//field[@name='provision']"):
                 original_label = \
                     self._get_value_from_translation(

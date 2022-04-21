@@ -1305,7 +1305,8 @@ class WuaQuotaperiodLine(models.Model):
                     'wua.configuration', 'area_measurement_name')
                 area_measurement_name = area_measurement_name.decode('utf_8')
             suffix_area = ' (' + area_measurement_name.lower() + ')'
-            suffix_provision = ' (m³/' + area_measurement_name.lower() + ')'
+            suffix_provision = ' (' + _('m³') + '/' + \
+                area_measurement_name.lower() + ')'
             for node in doc.xpath("//field[@name='area_total']"):
                 original_label = \
                     self._get_value_from_translation(
