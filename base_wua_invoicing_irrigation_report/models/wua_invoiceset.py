@@ -196,7 +196,7 @@ class WuaInvoiceset(models.Model):
             volume = irrigationreport.volume_real
             reading_times_info = date_str + time_duration + \
                 consumption_label + ': ' + \
-                '{0:.0f}'.format(volume) + ' m³'
+                '{0:.0f}'.format(volume) + _(' m³')
             description = intake_name + ', ' + water_type + ', ' + \
                 _('delivery note num. ') + str(delivery_note) + '. ' + \
                 reading_times_info + reading_details
