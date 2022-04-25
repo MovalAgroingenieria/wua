@@ -20,6 +20,13 @@ class WuaIrrigationReport(models.Model):
         store=True,
         compute='_compute_mapped_to_irrigationsrequest')
 
+    irrigationsrequest_code = fields.Char(
+        string="Irrigations-Request Code",
+        size=28,
+        store=True,
+        index=True,
+        related='irrigationsrequest_id.irrigationsrequest_code')
+
     @api.depends('irrigationsrequest_id')
     def _compute_mapped_to_irrigationsrequest(self):
         for record in self:

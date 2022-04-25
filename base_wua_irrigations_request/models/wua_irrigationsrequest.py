@@ -11,7 +11,7 @@ class WuaIrrigationsrequest(models.Model):
     _inherit = 'mail.thread'
     _name = 'wua.irrigationsrequest'
     _description = 'Entity (irrigations request)'
-    _order = 'name'
+    _order = 'irrigationsrequest_number,name'
 
     @api.model
     def default_get(self, fields):

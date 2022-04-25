@@ -42,6 +42,9 @@
         <field name="model">wua.irrigationreport</field>
         <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_search"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="irrigationsrequest_code"/>
+            </xpath>
             <xpath expr="//filter[@name='state']" position="before">
                 <filter name="mapped_to_report_request_true" string="Mapped to request: Yes"
                         domain="[('mapped_to_irrigationsrequest','=',True)]"/>
