@@ -5,12 +5,12 @@
         inherit_id="account_credit_control.report_credit_control_summary_document">
 
         <xpath expr="//th[@name='invoice_number']" position="after">
-            <th name="invoiceset_id">Invoiceset</th>
+            <th name="invoiceset_id_variable_fees_wua">Invoiceset</th>
         </xpath>
 
         <xpath expr="//t[@name='invoice_number_2']" position="after">
             <td>
-                <t t-if="l.invoiceset_id">
+                <t name="tif_linvoiceset" t-if="l.invoiceset_id">
                     <span t-field="l.invoiceset_id.description"/>
                 </t>
             </td>
