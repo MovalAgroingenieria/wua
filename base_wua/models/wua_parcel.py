@@ -2092,7 +2092,8 @@ class WuaParcelSubparcel(models.Model):
     pos = fields.Integer(
         string='Subparcel',
         required=True,
-        default=0)
+        default=0,
+        group_operator=False)
 
     subparceltype_id = fields.Many2one(
         string='Type',
