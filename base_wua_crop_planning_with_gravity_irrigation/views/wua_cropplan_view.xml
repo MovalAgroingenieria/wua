@@ -20,6 +20,12 @@
           <xpath expr="//field[@name='parcel_id']" position="after">
               <field name="irrigationditch_id"/>
           </xpath>
+          <xpath expr="//field[@name='parcel_id']" position="attributes">
+            <attribute name="domain">
+                    [('partner_id', '=', parent.partner_id),
+                     ('hydraulic_infrastructure_type', '=', 2)]
+                </attribute>
+          </xpath>
         </field>
     </record>
 
