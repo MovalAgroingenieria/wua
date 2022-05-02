@@ -11,10 +11,10 @@
                 <t t-set="gravity_type" t-value="0"/>
                 <t t-foreach="o.partnerlink_ids" t-as="p">
                     <t t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
-                        <t t-if="ip.type == 'WC' and p.irrigation_partner == True">
+                        <t t-if="ip.type == 'WC'">
                             <t t-set="pressure_type" t-value="pressure_type + 1"/>
                         </t>
-                        <t t-elif="ip.type == 'IG' and p.irrigation_partner == True">
+                        <t t-elif="ip.type == 'IG'">
                             <t t-set="gravity_type" t-value="gravity_type + 1"/>
                         </t>
                     </t>
@@ -48,7 +48,7 @@
                         <tbody>
                             <t t-foreach="o.partnerlink_ids" t-as="p">
                                 <tr t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
-                                    <t t-if="ip.type == 'WC' and p.irrigation_partner == True">
+                                    <t t-if="ip.type == 'WC'">
                                         <td name="pression_parcel"><span t-field="p.parcel_id"/></td>
                                         <td name="pression_intake"><span t-field="ip.waterconnection_id"/></td>
                                         <td name="pression_irrigation_shed"><span t-field="ip.irrigationshed_id"/></td>
@@ -87,7 +87,7 @@
                         <tbody>
                             <t t-foreach="o.partnerlink_ids" t-as="p">
                                 <tr t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
-                                    <t t-if="ip.type == 'IG' and p.irrigation_partner == True">
+                                    <t t-if="ip.type == 'IG'">
                                         <td name="gravity_parcel"><span t-field="p.parcel_id"/></td>
                                         <td name="gravity_irrigationgate"><span t-field="ip.irrigationgate_id"/></td>
                                         <td name="gravity_irrigationditch"><span t-field="ip.irrigationditch_id"/></td>
