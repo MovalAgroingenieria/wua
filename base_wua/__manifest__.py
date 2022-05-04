@@ -44,6 +44,7 @@
         "l10n_es_partner_address_street_type",
         "fontawesome_ext",
         "base_extra_attachment",
+        "base_import_default_enable_tracking",
     ],
     "data": [
         "security/security.xml",
