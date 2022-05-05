@@ -511,7 +511,7 @@ class WuaWaterpipe(models.Model):
         condition = []
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
-            'max_levels_gravity_irrigation')
+            'max_levels_pressurized_irrigation')
         #  Add operator, '|'
         condition.extend(['|'] * (max_level - 1))
         for i in range(1, max_level + 1):
