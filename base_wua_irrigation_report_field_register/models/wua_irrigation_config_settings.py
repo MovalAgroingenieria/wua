@@ -8,6 +8,10 @@ from odoo import models, fields, api
 class WuaIrrigationConfiguration(models.TransientModel):
     _inherit = 'wua.irrigation.configuration'
 
+    has_default_field_irrigationreport_intake_id = fields.Boolean(
+        string='Has default intake for fields irrigationreport',
+        help='If active you can choose a default intake.')
+
     default_field_irrigationreport_intake_id = fields.Many2one(
         comodel_name='wua.intake',
         string='Default intake for fields irrigationreport',
@@ -16,6 +20,9 @@ class WuaIrrigationConfiguration(models.TransientModel):
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
+        values.set_default('wua.irrigation.configuration',
+                           'has_default_field_irrigationreport_intake_id',
+                           self.has_default_field_irrigationreport_intake_id)
         values.set_default('wua.irrigation.configuration',
                            'default_field_irrigationreport_intake_id',
                            self.default_field_irrigationreport_intake_id.id)

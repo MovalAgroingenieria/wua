@@ -154,6 +154,8 @@ class WuaIrrigationReport(models.Model):
             'partner': irrigationreport.partner_id.id,
             'partner_name': irrigationreport.partner_id.name,
             'partner_signature': partner_signature,
+            'intake': irrigationreport.intake_id.id,
+            'intake_name': irrigationreport.intake_id.name,
             'watering_element_type': watering_element_type,
             'watering_element': watering_element.id,
             'watering_element_name': watering_element.name,
@@ -174,8 +176,8 @@ class WuaIrrigationReport(models.Model):
     def create_field_irrigationreport(
             self, watering_element_type, watering_element_id,
             irrigationreport_writer_id,
-            initial_date, end_date, conversion_factor, partner_id, notes='',
-            partner_signature='', irrigationreport_img=''):
+            initial_date, end_date, conversion_factor, partner_id, intake_id,
+            notes='', partner_signature='', irrigationreport_img=''):
         vals = {}
         # Get the real type from
         vals[self._possible_types_id[watering_element_type]] = \
@@ -202,9 +204,18 @@ class WuaIrrigationReport(models.Model):
             vals['partner_signature'] = partner_signature
         if (irrigationreport_img):
             vals['irrigationreport_img'] = irrigationreport_img
-        vals['intake_id'] = self.env['ir.values'].get_default(
+        has_default_intake = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
-            'default_field_irrigationreport_intake_id')
+            'has_default_field_irrigationreport_intake_id')
+        if (has_default_intake):
+            vals['intake_id'] = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration',
+                'default_field_irrigationreport_intake_id')
+        else:
+            vals['intake_id'] = intake_id
+        # Get default water from the default intake water
+        intake_obj = self.env['wua.intake'].browse(vals['intake_id'])
+        vals['product_id'] = intake_obj.product_id.id
         # Creation of new value
         new_irrigationreport = self.env['wua.irrigationreport'].create(vals)
         # If succesfull creation return the id, and volumnes
@@ -212,8 +223,8 @@ class WuaIrrigationReport(models.Model):
 
     @api.model
     def update_field_irrigationreport(
-        self, irrigationreport_id, end_date, conversion_factor, hours, notes,
-            partner_signature, irrigationreport_img):
+        self, irrigationreport_id, end_date, conversion_factor, hours,
+            intake_id, notes, partner_signature, irrigationreport_img):
         vals = {}
         irrigationreport = self.env['wua.irrigationreport'].browse(
             irrigationreport_id)
@@ -229,5 +240,13 @@ class WuaIrrigationReport(models.Model):
                 end_date, pytz.utc)
             end_date_str = end_date_formatted.strftime('%Y-%m-%d %H:%M:%S')
             vals['report_end_time'] = end_date_str
+            has_default_intake = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration',
+                'has_default_field_irrigationreport_intake_id')
+            if (not has_default_intake):
+                vals['intake_id'] = intake_id
+                # Get default water from the default intake water
+                intake_obj = self.env['wua.intake'].browse(vals['intake_id'])
+                vals['product_id'] = intake_obj.product_id.id
         irrigationreport.write(vals)
         return self.format_irrigationreport(irrigationreport)

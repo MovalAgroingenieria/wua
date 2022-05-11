@@ -8,7 +8,10 @@
                ref="base_wua_irrigation_report.wua_irrigation_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='hours_sexagesimal']" position="after">
-                <field name="default_field_irrigationreport_intake_id" style="width:200px"/>
+                <field name="has_default_field_irrigationreport_intake_id" style="width:200px"/>
+                <field name="default_field_irrigationreport_intake_id"
+                       attrs="{'invisible':[('has_default_field_irrigationreport_intake_id', '=', False)]}"
+                       style="width:200px"/>
             </xpath>
         </field>
     </record>
