@@ -3,20 +3,13 @@
    :alt: License: AGPL-3
 
 ==============================================================
-Pressurized Irrigation Management for Water Users Associations
+Pressurized Irrigation Management Added Water Type To readings
 ==============================================================
 
-This module allows you to manage the pressurized irrigation systems of water users associations.
+This module adds water type directly to the reading.
 
 Description
 ===========
-
-Pressurized irrigation management for a water users association.
-
-* Water Meters.
-* Water Connections.
-* Water Consumptions.
-* Etc.
 
 Credits
 =======
