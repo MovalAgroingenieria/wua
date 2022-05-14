@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cession_view_form" model="ir.ui.view">
+        <field name="name">Cessions (form view)</field>
+        <field name="model">wua.cession</field>
+        <field name="inherit_id" ref="base_wua_quota_management.wua_cession_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']"
+                   position="after">
+                <field name="parcel_id" colspan="4"
+                       string="Parcel"
+                       options="{'no_quick_create':True, 'no_create_edit':True}"
+                       attrs="{'readonly':[('id','>',0)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='receiver_partner_id']"
+                   position="after">
+                <field name="receiver_parcel_id" colspan="4"
+                       string="Parcel"
+                       options="{'no_quick_create':True, 'no_create_edit':True}"
+                       attrs="{'readonly':[('id','>',0)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

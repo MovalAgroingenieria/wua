@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_hydricmovement_parcel_view_form" model="ir.ui.view">
+        <field name="name">Hydric movements of parcel (form view)</field>
+        <field name="model">wua.hydricmovement.parcel</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false" duplicate="0">
+                <field name="type" invisible="1"/>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="agriculturalseason_id"/>
+                            <field name="quotaperiod_id"/>
+                            <field name="superproduct_id"/>
+                            <field name="parcel_id"/>
+                            <field name="hydricmovement_id"/>
+                            <field name="partner_id"/>
+                            <field name="quota_id"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="event_time"
+                                   string="Date" widget="date"/>
+                            <field name="description"/>
+                            <field name="accounting_volume"
+                                   string="Volume (m³)"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_hydricmovement_parcel_view_tree" model="ir.ui.view">
+        <field name="name">Hydric movements of parcel (tree view)</field>
+        <field name="model">wua.hydricmovement.parcel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_parcels_hydricmovement_parcel_view_tree"
+                  colors="orangered:is_consumption==True;royalblue:is_consumption==False"
+                  create="false">
+                <field name="is_consumption" invisible="1"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-arrow-right"
+                        attrs="{'invisible':
+                                [('is_consumption','=',True)],
+                                'readonly':'1'}"/>
+                <field name="parcel_id"/>
+                <field name="event_time"
+                       string="Date" widget="date"/>
+                <field name="superproduct_id"/>
+                <field name="partner_id"/>
+                <field name="description"/>
+                <field name="accounting_volume"
+                       string="Value (m³)"/>
+                <field name="balance"
+                       string="Balance (m³)"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-arrow-right"
+                        attrs="{'invisible':
+                                [('is_consumption','=',False)],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_hydricmovement_parcel_view_search" model="ir.ui.view">
+        <field name="name">Hydric movements of parcel (search view)</field>
+        <field name="model">wua.hydricmovement.parcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <filter string="Active Agricultural Season"
+                        name="active_agriculturalseason"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <filter string="Hydric Inputs"
+                        name="hydric_inputs"
+                        domain="[('is_consumption','=',False)]"/>
+                <filter string="Hydric Outputs"
+                        name="hydric_outputs"
+                        domain="[('is_consumption','=',True)]"/>
+                <separator/>
+                <filter string="Type: (+) Multiple Assignment"
+                        name="type_multiple_assignment"
+                        domain="[('type','=','multiple_assign')]"/>
+                <filter string="Type: (+) Individual Assignment"
+                        name="type_pos_indiv_assign"
+                        domain="[('type','=','pos_indiv_assign')]"/>
+                <filter string="Type: (+) Received Cession"
+                        name="type_received_cession"
+                        domain="[('type','=','received_cession')]"/>
+                <filter string="Type: (+) Input from previous quota"
+                        name="type_input_prev_quota"
+                        domain="[('type','=','input_prev_quota')]"/>
+                <filter string="Type: (-) Pressurized Consumption"
+                        name="type_pres_consumption"
+                        domain="[('type','=','pres_consumption')]"/>
+                <filter string="Type: (-) Gravity Consumption"
+                        name="type_grav_consumption"
+                        domain="[('type','=','grav_consumption')]"/>
+                <filter string="Type: (-) Irrigation Report"
+                        name="type_irrig_report"
+                        domain="[('type','=','irrig_report')]"/>
+                <filter string="Type: (-) Negative Individual Assignment"
+                        name="type_neg_indiv_assign"
+                        domain="[('type','=','neg_indiv_assign')]"/>
+                <filter string="Type: (-) Granted Cession"
+                        name="type_granted_cession"
+                        domain="[('type','=','granted_cession')]"/>
+                <filter string="Type: (-) Output to next quota"
+                        name="type_output_next_quota"
+                        domain="[('type','=','output_next_quota')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                            name="grouped_agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Quota Period"
+                            name="grouped_quotaperiod"
+                     context="{'group_by':'quotaperiod_id'}"/>
+                    <filter string="Date"
+                            name="grouped_event_time"
+                     context="{'group_by':'event_time'}"/>
+                    <filter string="Superproduct"
+                            name="grouped_superproduct"
+                     context="{'group_by':'superproduct_id'}"/>
+                    <filter string="Type"
+                            name="grouped_type"
+                     context="{'group_by':'type'}"/>
+                    <filter string="Partner"
+                            name="grouped_partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Parcel"
+                             name="grouped_parcel"
+                     context="{'group_by':'parcel_id'}"/>
+                    <filter string="Hydric Movement"
+                             name="grouped_hydricmovement"
+                     context="{'group_by':'hydricmovement_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydricmovement_parcel_view_pivot" model="ir.ui.view">
+        <field name="name">Hydric movements of parcel (pivot view)</field>
+        <field name="model">wua.hydricmovement.parcel</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="true">
+                <field name="type"/>
+                <field name="accounting_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_hydricmovement_parcel_action"
+            model="ir.actions.act_window">
+        <field name="name">Hydric movements of parcel</field>
+        <field name="res_model">wua.hydricmovement.parcel</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,pivot</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_hydricmovement_parcel_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_hydricmovement_parcel_view_form')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_hydricmovement_parcel_view_pivot')})]"/>
+        <field name="search_view_id" ref="wua_hydricmovement_parcel_view_search"/>
+        <field name="context">
+          {'compressed_agriculturalseason': True,
+           'compressed_quotaperiod': True,
+           'search_default_active_agriculturalseason': True}
+        </field>
+    </record>
+
+    <menuitem id="hydricmovement_parcel_menu"
+              name="Hydric movements of parcel"
+              parent="base_wua_quota_management.management_menu"
+              sequence="8"
+              action="wua_hydricmovement_parcel_action"/>
+
+</odoo>

@@ -15,7 +15,9 @@ class ResPartner(models.Model):
                 ('partner_id.id', '=', record.id),
                 ('agriculturalseason_id.active_agriculturalseason',
                  '=', 'true')], limit=1)
-            agriculturalseason_id = quota[0].agriculturalseason_id
+            agriculturalseason_id = None
+            if quota:
+                agriculturalseason_id = quota[0].agriculturalseason_id
         return agriculturalseason_id
 
     @api.multi

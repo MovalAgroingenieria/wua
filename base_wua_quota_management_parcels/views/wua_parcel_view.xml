@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view">
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id"
+               ref="base_wua_quota_management.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_get_quota_data']"
+                   position="after">
+                <button name="action_get_hydric_movements_of_parcel"
+                        type="object" class="oe_stat_button"
+                        icon="fa-list-ol">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Hydric</span>
+                        <span class="o_stat_text">Movements</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
