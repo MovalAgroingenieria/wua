@@ -65,7 +65,8 @@ class WuaReading(models.Model):
 
     @api.model
     def create_field_reading(self, watermeter_id, volume, readingperiod_id,
-                             watermeter_reader_id, notes='', picture=''):
+                             watermeter_reader_id, product_id, notes='',
+                             picture=''):
         rp = self.env['wua.readingperiod'].search([('state', '=', 'open')])
         if (not rp):
             raise exceptions.UserError(_(
@@ -84,6 +85,8 @@ class WuaReading(models.Model):
         vals['validated'] = False
         vals['initialization_reading'] = False
         vals['reading_img'] = reading_img
+        if (product_id > 0):
+            vals['product_id'] = product_id
         old_readings = self.sudo().env['wua.reading'].search(
             ['&', ('watermeter_id', '=', watermeter_id),
                 ('readingperiod_id', '=', rp.id)])
