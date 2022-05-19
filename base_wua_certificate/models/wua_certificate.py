@@ -616,7 +616,7 @@ class WuaCertificate(models.Model):
             return False
         if vat:
             if len(vat) > 2:
-                if vat[0].isdigit():
+                if (vat[0:1].isdigit() or vat[1:2].isdigit()):
                     vat = 'ES' + vat
             else:
                 return False
