@@ -168,6 +168,16 @@ class WuaCertificate(models.Model):
                     record.certificateuser_ids.ids)
                 certificateusers.write({'signed': init_value})
 
+    # Implemented hook.
+    def _allowed_signature(self, certificate):
+        resp = False
+        if (certificate.certificateuser_ids and
+           certificate.state == '01_draft'):
+            for certificateuser in certificate.certificateuser_ids:
+                certificateuser.sudo().signed = True
+            resp = True
+        return resp
+
 
 class WuaCertificateUser(models.Model):
     _name = 'wua.certificate.user'
