@@ -125,6 +125,15 @@ class WuaWateringrequest(models.Model):
          'Existing Watering Request.'),
         ]
 
+    @api.constrains('gravconsumption_ids')
+    def _check_gravconsumption_ids(self):
+        if (len(self) == 1 and self.gravconsumption_ids and
+                len(self.gravconsumption_ids) > 0):
+            for gc in self.gravconsumption_ids:
+                if (gc.watering_duration <= 0.0):
+                    raise exceptions.ValidationError(_(
+                        'Total watering duration must be grater than 0.'))
+
     @api.depends('wateringperiod_id', 'partner_id')
     def _compute_name(self):
         for record in self:

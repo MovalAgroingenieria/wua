@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-30 17:55+0000\n"
-"PO-Revision-Date: 2021-12-30 17:55+0000\n"
+"POT-Creation-Date: 2022-05-23 07:10+0000\n"
+"PO-Revision-Date: 2022-05-23 07:10+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -389,7 +389,7 @@ msgstr "Cerrado"
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuration of irrigation with type of water"
+msgstr "Configuración de riego con tipo de agua"
 
 #. module: base_wua_gravity_irrigation
 #: selection:wua.watering,calculation_model:0
@@ -596,11 +596,6 @@ msgstr "Elemento (acequia)"
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_irrigationgate
 msgid "Entity (irrigation gate)"
 msgstr "Elemento (tablacho)"
-
-#. module: base_wua_gravity_irrigation
-#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_parcel
-msgid "Entity (parcel)"
-msgstr "Elemento (parcela)"
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_wua_wateringperiod
@@ -1089,6 +1084,11 @@ msgid "Parcel"
 msgstr "Parcela"
 
 #. module: base_wua_gravity_irrigation
+#: model:ir.model,name:base_wua_gravity_irrigation.model_wua_parcel
+msgid "Parcels (integrated GIS)"
+msgstr "Parcels (integrated GIS)"
+
+#. module: base_wua_gravity_irrigation
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_gravconsumption_one_employee_view_search
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_gravconsumption_one_parcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_gravconsumption_one_watering_view_search
@@ -1100,7 +1100,7 @@ msgstr "Socio"
 #. module: base_wua_gravity_irrigation
 #: model:ir.model,name:base_wua_gravity_irrigation.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Socio"
 
 #. module: base_wua_gravity_irrigation
 #: model:ir.ui.view,arch_db:base_wua_gravity_irrigation.wua_wateringrequest_partner_view_search
@@ -1402,6 +1402,12 @@ msgid "Total Wat. Vol. (m3)"
 msgstr "Vol. Riego Total (m3)"
 
 #. module: base_wua_gravity_irrigation
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:137
+#, python-format
+msgid "Total watering duration must be grater than 0."
+msgstr "La duración del riego deber ser mayor a 0."
+
+#. module: base_wua_gravity_irrigation
 #: code:addons/base_wua_gravity_irrigation/models/wua_gravconsumption.py:638
 #, python-format
 msgid "Tu"
@@ -1563,13 +1569,13 @@ msgid "Year"
 msgstr "Año"
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:262
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:274
 #, python-format
 msgid "You cannot delete a closed watering request."
 msgstr "No se permite eliminar una solicitud de riego cerrada."
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:265
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:277
 #, python-format
 msgid "You cannot delete a executed watering request."
 msgstr "No se permite eliminar una solicitud de riego ejecutada."
@@ -1587,9 +1593,9 @@ msgid "You cannot delete a watering if there are executed consumptions."
 msgstr "No es posible eliminar un entande si tiene asociados consumos ejecutados."
 
 #. module: base_wua_gravity_irrigation
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:218
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:233
-#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:270
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:230
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:245
+#: code:addons/base_wua_gravity_irrigation/models/wua_wateringrequest.py:282
 #, python-format
 msgid "You do not have permission to edit data."
 msgstr "No tiene permiso para añadir, actualizar o eliminar datos."
