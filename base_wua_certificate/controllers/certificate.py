@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html)
 
 import logging
+from base64 import encodestring
 from odoo import http
 from odoo.http import request
 
@@ -15,8 +16,9 @@ class CertificateController(http.Controller):
         partner = kwargs.get('partner', False)
         type_of_certificate = kwargs.get('type', 1)
         portal_user = kwargs.get('portal', 0)
+        in_base64 = kwargs.get('base64', 0)
         pdf_in_server = kwargs.get('pdf', '')
-        resp = ''
+        resp = '{"certificate":""}'
         if partner:
             if pdf_in_server:
                 pdf_in_server = '/tmp/' + pdf_in_server
@@ -31,7 +33,15 @@ class CertificateController(http.Controller):
             _logger.info('Certificate create from http-get, '
                          'NO credentials. Client IP '
                          'Address: ' + ip_remote_addr)
-        return '{"certificate":"' + resp + '"}'
+            print in_base64
+            if in_base64 == '1':
+                print "aquíiiiii"
+                resp = '{"certificate":"' + encodestring(resp) + '"}'
+            else:
+                pdfhttpheaders = [('Content-Type', 'application/pdf'),
+                                  ('Content-Length', len(resp))]
+                resp = request.make_response(resp, headers=pdfhttpheaders)
+        return resp
 
     @http.route('/pricert', type='http', auth='user', methods=['GET'],
                 csrf=False, website=True)

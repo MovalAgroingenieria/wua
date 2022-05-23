@@ -696,10 +696,10 @@ class WuaCertificate(models.Model):
                 {'lang': partner.lang}).get_pdf(
                     [new_certificate.id], report_name)
             if pdf:
-                resp = encodestring(pdf)
+                resp = pdf
                 new_certificate.write({
                     'user_who_validates_id': self.env.user.id,
-                    'document': resp,
+                    'document': encodestring(pdf),
                     'document_name': new_certificate.name + '.pdf'
                     })
                 if pdf_file:
