@@ -37,7 +37,7 @@ class CertificateController(http.Controller):
                     partner, type_of_certificate, portal_user, pdf_in_server)
                 if certificate:
                     _logger = logging.getLogger(name_certificate_model)
-                    _logger.info('Certificate create from http-get, '
+                    _logger.info('Certificate requested from http-get, '
                                  'NO credentials. Partner: ' + partner +
                                  '. Client IP Address: ' + ip_remote_addr)
                     if in_base64 == 1:
@@ -87,7 +87,7 @@ class CertificateController(http.Controller):
                             partner, type_of_certificate, True, '')
                     if certificate:
                         _logger = logging.getLogger(name_certificate_model)
-                        _logger.info('Certificate create from http-get, '
+                        _logger.info('Certificate requested from http-get, '
                                      'normal authentication. Partner: ' +
                                      partner +
                                      '. Client IP Address: ' + ip_remote_addr)
