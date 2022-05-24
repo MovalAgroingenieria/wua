@@ -600,7 +600,7 @@ class WuaCertificate(models.Model):
 
     @api.model
     def get_validated_certificate(self, identification, cert_type=1,
-                                  is_portal_user=False, pdf_file=''):
+                                  is_portal_user=True, pdf_file=''):
         resp = False
         # Initial control.
         partner_code = 0

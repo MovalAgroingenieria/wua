@@ -42,6 +42,13 @@ class WuaConfiguration(models.TransientModel):
         default=1,
         help='For portal users, maximun number of not-validated certificates')
 
+    ip_remote_address = fields.Char(
+        string='Allowed remote IP for public HTTP-GET',
+        size=30,
+        default='127.0.0.1',
+        help='For public creation of certificates based on HTTP-GET '
+             'requests, restriction to clientes from a IP address')
+
     @api.multi
     def set_default_values(self):
         super(WuaConfiguration, self).set_default_values()
@@ -64,3 +71,6 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration',
                            'max_pending_certificates',
                            self.max_pending_certificates)
+        values.set_default('wua.configuration',
+                           'ip_remote_address',
+                           self.ip_remote_address)

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 18:49+0000\n"
-"PO-Revision-Date: 2022-03-11 18:49+0000\n"
+"POT-Creation-Date: 2022-05-24 17:34+0000\n"
+"PO-Revision-Date: 2022-05-24 17:34+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -208,6 +208,16 @@ msgid "Aerial photo of each plot is accompanied on the last page of this certifi
 msgstr "S'acompanya foto aèria de cada parcel·la en l'última pàgina d'aquest certificat."
 
 #. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
+msgid "Allowed remote IP"
+msgstr "IP client permesa"
+
+#. module: base_wua_certificate
+#: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_ip_remote_address
+msgid "Allowed remote IP for public HTTP-GET"
+msgstr "IP client permesa per a peticions HTTP-GET anònimes"
+
+#. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_allowed_request_for_portal_user
 msgid "Allowed request for portal user"
 msgstr "Sol·licituds de certificat permeses per als usuaris de portal"
@@ -215,7 +225,7 @@ msgstr "Sol·licituds de certificat permeses per als usuaris de portal"
 #. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
 msgid "And as evidence thereof, I hereby issue this certificate in {{ partner.company_id.city }} on {{ current_month }} {{ current_day }}th, {{ current_year }}.<br>"
-msgstr "I perquè consti, a petició de l'interessat, expedeixo el present, a {{ partner.company_id.city }}, a {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
+msgstr "I perquè consti, a petició de l'interesat, expedeixo el present, a {{ partner.company_id.city }}, a {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_partner_id
@@ -548,6 +558,11 @@ msgid "For portal users, restrict the certificate type"
 msgstr "Per a usuaris de portal, tipus de certificat que poden sol·licitar des de l'oficina electrònica"
 
 #. module: base_wua_certificate
+#: model:ir.model.fields,help:base_wua_certificate.field_wua_configuration_ip_remote_address
+msgid "For public creation of certificates based on HTTP-GET requests, restriction to clientes from a IP address"
+msgstr "En cas de fer peticions de certificat sense contrasenya via HTTP-GET, restricció perquè aquestes peticions hagin d'arribar des d'una IP determinada"
+
+#. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_one_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_search
 msgid "From electronic office: No"
@@ -728,6 +743,12 @@ msgid "New certificate. Reference:"
 msgstr "Now certificat. Referència:"
 
 #. module: base_wua_certificate
+#: code:addons/base_wua_certificate/controllers/certificate.py:56
+#, python-format
+msgid "No certificate: The user must be a portal user, or it is not possible to obtain certificates outside of the main program."
+msgstr "Sense certificat: L'usuari ha de ser usuari del portal, o bé no està habilitada la creació de certificats des de fora del programa principal."
+
+#. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_notes
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_notes
 #: model:ir.ui.view,arch_db:base_wua_certificate.wizard_create_certificate_view_form
@@ -814,7 +835,7 @@ msgstr "Parcel·les"
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_partner_name
 msgid "Partner Name"
-msgstr "Nom del soci"
+msgstr "Nom de l'empresa"
 
 #. module: base_wua_certificate
 #: model:ir.model,name:base_wua_certificate.model_res_partner
@@ -883,7 +904,7 @@ msgstr "Número de referència"
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_iractreportxml_id
 msgid "Report"
-msgstr "Informe"
+msgstr "Declaración"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,help:base_wua_certificate.field_wua_certificate_type_iractreportxml_id
@@ -1102,7 +1123,7 @@ msgstr "per al soci"
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/wua_certificate.py:365
-#: code:addons/base_wua_certificate/models/wua_certificate.py:714
+#: code:addons/base_wua_certificate/models/wua_certificate.py:831
 #, python-format
 msgid "ha"
 msgstr "ha"
