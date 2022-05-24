@@ -2039,7 +2039,7 @@ class WuaParcel(models.Model):
     def transform_float_to_locale(self, float_number, precision):
         precision = '%.' + str(precision) + 'f'
         lang = 'es_ES'
-        if (self.env.context['lang']):
+        if ('lang' in self.env.context and self.env.context['lang']):
             lang = self.env.context['lang']
         lang_model = self.env['res.lang'].search([('code', '=', lang)])
         formated_float_number = str(float_number)

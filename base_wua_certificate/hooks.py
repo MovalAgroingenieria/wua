@@ -13,7 +13,7 @@ def post_init_hook(cr, registry):
     try:
         sequence_certificate_code_id = env.ref(
             'base_wua_certificate.sequence_certificate_code').id
-    except:
+    except Exception:
         sequence_certificate_code_id = 0
     if sequence_certificate_code_id > 0:
         values.set_default('wua.configuration',
@@ -24,7 +24,7 @@ def post_init_hook(cr, registry):
     try:
         default_certificatetype_id = env.ref(
             'base_wua_certificate.certificatetype_no_variation').id
-    except:
+    except Exception:
         default_certificatetype_id = 0
     if default_certificatetype_id > 0:
         values.set_default('wua.configuration',
@@ -35,7 +35,7 @@ def post_init_hook(cr, registry):
     try:
         portaluser_certificatetype_id = env.ref(
             'base_wua_certificate.certificatetype_no_variation').id
-    except:
+    except Exception:
         portaluser_certificatetype_id = 0
     if portaluser_certificatetype_id > 0:
         values.set_default('wua.configuration',
@@ -46,7 +46,7 @@ def post_init_hook(cr, registry):
     try:
         standard_certificatetype = env.ref(
             'base_wua_certificate.certificatetype_no_variation')
-    except:
+    except Exception:
         standard_certificatetype = None
     if standard_certificatetype:
         standard_certificatetype.write({
@@ -90,7 +90,8 @@ def uninstall_hook(cr, registry):
             name='default_certificatetype_id' OR
             name='allowed_request_for_portal_user' OR
             name='portaluser_certificatetype_id' OR
-            name='max_pending_certificates')""")
+            name='max_pending_certificates' OR
+            name='ip_remote_address')""")
         env.cr.commit()
     except Exception:
         env.cr.rollback()
