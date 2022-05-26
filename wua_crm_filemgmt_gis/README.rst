@@ -2,13 +2,12 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-===========================================
-File Management for Water Users Association
-===========================================
+======================================================
+File Management for Water Users Association - With GIS
+======================================================
 
 Customization for Water Users Associations of the File Management module.
-This extension allows parcels to be associated with Files (tracked by
-parent module).
+This extension add GIS functionality to files with parcels related.
 
 
 Credits
