@@ -598,6 +598,123 @@ class WuaCertificate(models.Model):
                 _logger.info(preffix_message + suffix_message)
         return resp
 
+    @api.model
+    def get_validated_certificate(self, identification, cert_type=1,
+                                  is_portal_user=True, pdf_file=''):
+        resp = False
+        # Initial control.
+        partner_code = 0
+        vat = ''
+        if identification.isdigit():
+            partner_code = identification
+        else:
+            vat = identification
+        if not cert_type:
+            cert_type = 1
+        # Get the partner and the certificate type.
+        if not partner_code and not vat:
+            return False
+        if vat:
+            if len(vat) > 2:
+                if (vat[0:1].isdigit() or vat[1:2].isdigit()):
+                    vat = 'ES' + vat
+            else:
+                return False
+        model_res_partner = self.env['res.partner']
+        model_certificate_type = self.env['wua.certificate.type']
+        model_wua_certificate = self.env['wua.certificate'].sudo()
+        model_partnerlinks = self.env['wua.parcel.partnerlink'].sudo()
+        model_wua_certificate_parcel = self.env['wua.certificate.parcel']
+        model_report = self.env['report']
+        certificatetype = model_certificate_type.search(
+            [('certificatetype_code', '=', cert_type)])
+        if certificatetype:
+            certificatetype = certificatetype[0]
+        partner = None
+        if partner_code:
+            partner = model_res_partner.search(
+                [('partner_code', '=', partner_code)])
+        else:
+            partner = model_res_partner.search(
+                [('vat', '=', vat), ('is_wua_partner', '=', True)])
+        if partner:
+            partner = partner[0]
+        if (not partner or not certificatetype):
+            return False
+        # Create the certificate.
+        main_page = certificatetype.with_context(
+            {'lang': partner.lang}).main_page
+        final_paragraph = certificatetype.with_context(
+            {'lang': partner.lang}).final_paragraph
+        fields_of_new_certificate = {
+            'partner_id': partner.id,
+            'certificatetype_id': certificatetype.id,
+            'requested_from_portal': is_portal_user,
+            'main_page': main_page,
+            'final_paragraph': final_paragraph,
+            }
+        user_who_signs = self.env.user.company_id.employee_as_secretary_id
+        if user_who_signs:
+            user_who_signs_id = user_who_signs.id
+            fields_of_new_certificate.update(
+                {'user_who_signs_id': user_who_signs_id})
+        new_certificate = model_wua_certificate.create(
+            fields_of_new_certificate)
+        partnerlinks = model_partnerlinks.search(
+            [('partner_id', '=', partner.id)])
+        for partnerlink in (partnerlinks or []):
+            add_parcel = \
+                ((certificatetype.include_parcel_if_owner and
+                 partnerlink.profile == 'O') or
+                 (certificatetype.include_parcel_if_lessee and
+                 partnerlink.profile == 'L') or
+                 (certificatetype.include_parcel_if_payer and
+                 partnerlink.profile == 'P'))
+            if add_parcel:
+                fields_of_new_certificateparcel = {
+                    'certificate_id': new_certificate.id,
+                    'parcel_id': partnerlink.parcel_id.id,
+                    'cadastral_reference':
+                        partnerlink.parcel_id.cadastral_reference,
+                    'area_official': partnerlink.parcel_id.area_official,
+                    'ownership_percentage': partnerlink.ownership_percentage,
+                    'water_costs_percentage':
+                        partnerlink.water_costs_percentage,
+                    'other_costs_percentage':
+                        partnerlink.other_costs_percentage,
+                    'is_main': partnerlink.irrigation_partner,
+                    }
+                model_wua_certificate_parcel.create(
+                    fields_of_new_certificateparcel)
+        # Get the PDF.
+        if self._allowed_signature(new_certificate):
+            new_certificate.state = '02_validated'
+            report_name = 'base_wua_certificate.report_wua_certificate'
+            if certificatetype.iractreportxml_id:
+                report_name = certificatetype.iractreportxml_id.report_name
+            pdf = model_report.with_context(
+                {'lang': partner.lang}).get_pdf(
+                    [new_certificate.id], report_name)
+            if pdf:
+                resp = pdf
+                new_certificate.write({
+                    'user_who_validates_id': self.env.user.id,
+                    'document': encodestring(pdf),
+                    'document_name': new_certificate.name + '.pdf'
+                    })
+                if pdf_file:
+                    try:
+                        f = open(pdf_file, 'wb')
+                        f.write(pdf)
+                        f.close()
+                    except Exception:
+                        pass
+        return resp
+
+    # Hook
+    def _allowed_signature(self, certificate):
+        return True
+
 
 class WuaCertificateParcel(models.Model):
     _name = 'wua.certificate.parcel'

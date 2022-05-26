@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-11 18:50+0000\n"
-"PO-Revision-Date: 2022-03-11 18:50+0000\n"
+"POT-Creation-Date: 2022-05-24 17:34+0000\n"
+"PO-Revision-Date: 2022-05-24 17:34+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -184,7 +184,7 @@ msgstr "<strong>Parcelas</strong>"
 #. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
 msgid "<u><b><font style=\"font-size: 18px;\">CERTIFY:</font></b></u>"
-msgstr "<u><b><font style=\"font-size: 18px;\">CERTIFICO:</font></b></u>"
+msgstr "<u><b><font style=\"font-size: 18px;\">CERTICO:</font></b></u>"
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/wua_certificate.py:540
@@ -206,6 +206,16 @@ msgstr "Incluir en el certificado sólo aquellas parcelas de las que se sea rega
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
 msgid "Aerial photo of each plot is accompanied on the last page of this certificate."
 msgstr "Se acompaña foto aérea de cada parcela en la última página de este certificado."
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
+msgid "Allowed remote IP"
+msgstr "IP cliente permitida"
+
+#. module: base_wua_certificate
+#: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_ip_remote_address
+msgid "Allowed remote IP for public HTTP-GET"
+msgstr "IP cliente permitida para peticiones HTTP-GET anónimas"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_allowed_request_for_portal_user
@@ -548,6 +558,11 @@ msgid "For portal users, restrict the certificate type"
 msgstr "Para usuarios de portal, tipo de certificado que pueden solicitar desde la oficina electrónica"
 
 #. module: base_wua_certificate
+#: model:ir.model.fields,help:base_wua_certificate.field_wua_configuration_ip_remote_address
+msgid "For public creation of certificates based on HTTP-GET requests, restriction to clientes from a IP address"
+msgstr "En caso de realizar peticiones de certificado sin contraseña vía HTTP-GET, restricción para que esas peticiones tengan que llegar desde una IP determinada"
+
+#. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_one_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_search
 msgid "From electronic office: No"
@@ -728,6 +743,12 @@ msgid "New certificate. Reference:"
 msgstr "Nuevo certificado. Referencia:"
 
 #. module: base_wua_certificate
+#: code:addons/base_wua_certificate/controllers/certificate.py:56
+#, python-format
+msgid "No certificate: The user must be a portal user, or it is not possible to obtain certificates outside of the main program."
+msgstr "Sin certificado: El usuario debe ser usuario de portal, o bien no está habilitada la creación de certificados desde fuera del programa principal."
+
+#. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_notes
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_notes
 #: model:ir.ui.view,arch_db:base_wua_certificate.wizard_create_certificate_view_form
@@ -814,7 +835,7 @@ msgstr "Parcelas"
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_partner_name
 msgid "Partner Name"
-msgstr "Nombre del socio"
+msgstr "Nombre de la empresa"
 
 #. module: base_wua_certificate
 #: model:ir.model,name:base_wua_certificate.model_res_partner
@@ -1102,7 +1123,7 @@ msgstr "para el socio"
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/wua_certificate.py:365
-#: code:addons/base_wua_certificate/models/wua_certificate.py:714
+#: code:addons/base_wua_certificate/models/wua_certificate.py:831
 #, python-format
 msgid "ha"
 msgstr "ha"
