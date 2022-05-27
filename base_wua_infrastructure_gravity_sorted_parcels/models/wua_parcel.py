@@ -2,8 +2,7 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
-import logging
+from odoo import models, fields
 
 
 class WuaParcel(models.Model):
@@ -15,6 +14,6 @@ class WuaParcel(models.Model):
 
     _sql_constraints = [
         ('valid_hydraulic_order',
-         'CHECK (hydraulic_order > 0)',
+         'CHECK (hydraulic_order >= 0)',
          'The hydraulic order must be a positive value.'),
     ]
