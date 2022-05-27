@@ -170,6 +170,10 @@ class WuaCertificate(models.Model):
         string='With mail template',
         compute='_compute_has_mailtemplate')
 
+    map_type_in_report = fields.Selection(
+        string='Map type in report',
+        related='certificatetype_id.map_type_in_report')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing reference number.'),
