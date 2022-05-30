@@ -119,6 +119,137 @@
                 </div>
             </t>
 
+            <!-- Force new page -->
+            <p style="page-break-after:always;"></p>
+
+            <!-- Aerial images -->
+            <t t-if="o.map_type_in_report == '01_one'">
+                <div name="wua_parcel_aerial_images_01">
+                    <t t-if="o.partner_id.partnerlink_ids">
+                        <t t-foreach="o.partner_id.partnerlink_ids" t-as="p">
+                            <t t-if="p.parcel_id.aerial_img">
+                                <div name="aerial_image" class="text-center" style="border: 1px solid black; padding: 1% 0%;">
+                                    <img t-attf-src="data:image/png;base64, #{p.parcel_id.aerial_img}" style="max-width: 824px; max-height: 824px;"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div name="aerial_image" class="text-center text-muted"
+                                    style="border: 1px solid black; padding: 1% 0%; width: 100%; height: 824px; padding-top: 40%;">
+                                    Aerial image not found
+                                </div>
+                            </t>
+                            <div style="display: table; border: 1px solid black; border-top:0px; width:100%;">
+                                <div class="text-center" style="padding: 1%; border-right: 1px solid black; width: 20%; display: table-cell;">
+                                    <img src="/web/binary/company_logo" style="max-height: 100px; max-width: 100px;"/>
+                                </div>
+                                <div style="border-right: 1px solid black; width: 40%; display: table-cell; vertical-align: top; padding: 1%;">
+                                    <table style="width: 100%;">
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Parcel</strong></td>
+                                                <td class="text-right"><span t-field="p.parcel_id.name"/></td>
+                                            </tr>
+                                            <tr style="border-top: 1pt solid lightgrey;margin-top: 2%;"><td>&amp;nbsp;</td><td>&amp;nbsp;</td></tr>
+                                            <tr>
+                                                <td><strong>Cadastral reference</strong></td>
+                                                <td class="text-right"><span t-field="p.parcel_id.cadastral_reference"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>County</strong></td>
+                                                <td class="text-right"><span t-field="p.parcel_id.county_id"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Area</strong></td>
+                                                <td class="text-right">
+                                                    <span t-field="p.area_official"/>
+                                                    <span><t t-esc="measurement_unit"/></span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="width: 40%; display: table-cell; vertical-align: top; padding: 1%;">
+                                    <t t-set="scale_aprox" t-value="int(round(p.parcel_id.aerial_img_scale / 0.801, 0))"/>
+                                    <table style="width: 100%; padding:1%;">
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Printed</strong></td>
+                                                <td class="text-right"><span t-field="p.parcel_id.date_now" t-options="{'format': 'dd MMMM YYYY'}"/></td>
+                                            </tr>
+                                            <tr style="border-top: 1pt solid lightgrey;margin-top: 2%;"><td>&amp;nbsp;</td><td>&amp;nbsp;</td></tr>
+                                            <tr>
+                                                <td>
+                                                    <strong>Scale</strong>
+                                                </td>
+                                                <td class="text-right"><span>~ 1:<span t-esc="scale_aprox"/></span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Image date</strong></td>
+                                                <td class="text-right"><span t-field="p.parcel_id.aerial_img_date"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Accuracy (m/px)</strong></td>
+                                                <td class="text-right"><span t-field="p.parcel_id.aerial_img_accuracy"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <p style="page-break-after:always;"></p>
+                        </t>
+                    </t>
+                </div>
+            </t>
+
+            <t t-if="o.map_type_in_report == '02_four'">
+                <div name="wua_parcel_aerial_images_02">
+                    <t t-if="o.partner_id.partnerlink_ids">
+                        <t t-foreach="o.partner_id.partnerlink_ids" t-as="p">
+                            <div style="width: 48%; float: left; display: table; border: 1px solid black; margin: 1.5% 0.5%; page-break-inside: avoid;">
+                                <div name="parcel_data" style="border-bottom: 1px solid black; padding: 2%;">
+                                    <table style="width: 100%;">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <strong>Parcel</strong>
+                                                    <t t-if="p.parcel_id.aerial_img_date">
+                                                        <span>(image of <span t-field="p.parcel_id.aerial_img_date" t-options="{'format': 'MMMM YYYY'}"></span>)</span>
+                                                    </t>
+                                                </td>
+                                                <td class="text-right"><span t-field="p.parcel_id"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Cadastral reference</strong></td>
+                                                <td class="text-right"><span t-field="p.cadastral_reference"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Area</strong></td>
+                                                <td class="text-right">
+                                                    <span t-field="p.area_official"/>
+                                                    <span><t t-esc="measurement_unit"/></span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div name="parcel_aerial_image" class="text-center">
+                                    <t t-if="p.parcel_id.aerial_img">
+                                        <img t-attf-src="data:image/png;base64, #{p.parcel_id.aerial_img}" style="max-width: 408px; max-height: 408px;"/>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="text-center text-muted" style="width: 408px; height: 408px; padding-top: 40%;">
+                                            Aerial image not found
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </t>
+
+            <t t-else=""></t>
+
         </div>
     </template>
 

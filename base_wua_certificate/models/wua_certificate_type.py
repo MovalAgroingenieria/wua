@@ -95,6 +95,15 @@ class WuaCertificateType(models.Model):
              'is payer',
         default=True)
 
+    map_type_in_report = fields.Selection(
+        selection=[
+            ('00_none', 'No map'),
+            ('01_one', '1 map per page'),
+            ('02_four', '4 maps per page')],
+        string='Map type in report',
+        default='00_none',
+        help="Determines the number of aerial images per page.")
+
     _sql_constraints = [
         ('valid_certificatetype_code', 'CHECK (certificatetype_code > 0)',
          'The certificate type code must be a positive value.'),

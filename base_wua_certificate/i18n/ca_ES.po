@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-24 17:34+0000\n"
-"PO-Revision-Date: 2022-05-24 17:34+0000\n"
+"POT-Creation-Date: 2022-05-30 09:32+0000\n"
+"PO-Revision-Date: 2022-05-30 09:32+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,10 +21,20 @@ msgid "${object.name}"
 msgstr "${object.name}"
 
 #. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "&amp;nbsp;"
+msgstr "&amp;nbsp;"
+
+#. module: base_wua_certificate
 #: code:addons/base_wua_certificate/wizard/wizard_create_certificate.py:58
 #, python-format
 msgid "(click on \"See certificate\" for more details)"
 msgstr "(feu clic sobre \"Veure certificat\" per veure els detalls)"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "(image of"
+msgstr "(imatge de"
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/wizard/wizard_create_certificate.py:64
@@ -39,20 +49,25 @@ msgid "(provisional certificate, the request will be accepted to get a valid cer
 msgstr "(certificat provisional, la sol·licitud ha de ser acceptada per obtenir un certificat vàlid)"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:442
+#: code:addons/base_wua_certificate/models/wua_certificate.py:446
 #, python-format
 msgid "(requested from electronic office)"
 msgstr "(sol·licitat des de l'oficina electrònica)"
 
 #. module: base_wua_certificate
+#: selection:wua.certificate.type,map_type_in_report:0
+msgid "1 map per page"
+msgstr "1 mapa per pàgina"
+
+#. module: base_wua_certificate
+#: selection:wua.certificate.type,map_type_in_report:0
+msgid "4 maps per page"
+msgstr "4 mapes per pàgina"
+
+#. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
 msgid "<b><font style=\"font-size: 14px;\">{{ certificate.name_of_signer.upper() }}, SECRETARY OF {{ partner.company_id.name.upper() }}</font></b>"
 msgstr "<b><font style=\"font-size: 14px;\">{{ certificate.name_of_signer.upper() }}, SECRETARI DE LA {{ partner.company_id.name.upper() }}</font></b>"
-
-#. module: base_wua_certificate
-#: model:wua.certificate.type,final_paragraph:base_wua_certificate.certificatetype_no_variation
-msgid "<b><u>ADVERTENCIA</u></b>"
-msgstr "<b><u>ADVERTENCIA</u></b>"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
@@ -172,9 +187,39 @@ msgstr "<span>El soci és pagador</span>"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "<strong>Accuracy (m/px)</strong>"
+msgstr "<strong>Resolució (m/px)</strong>"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "<strong>Area</strong>"
+msgstr "<strong>Àrea</strong>"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "<strong>Cadastral reference</strong>"
+msgstr "<strong>Referència cadastral</strong>"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
 #: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_no_parcels_document
 msgid "<strong>Certificate</strong>"
 msgstr "<strong>Certificat</strong>"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "<strong>County</strong>"
+msgstr "<strong>Municipi</strong>"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "<strong>Image date</strong>"
+msgstr "<strong>Data imatge</strong>"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "<strong>Parcel</strong>"
+msgstr "<strong>Parce·la</strong>"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
@@ -182,12 +227,22 @@ msgid "<strong>Parcels</strong>"
 msgstr "<strong>Parcel·les</strong>"
 
 #. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "<strong>Printed</strong>"
+msgstr "<strong>Imprès</strong>"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "<strong>Scale</strong>"
+msgstr "<strong>Escala</strong>"
+
+#. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
 msgid "<u><b><font style=\"font-size: 18px;\">CERTIFY:</font></b></u>"
 msgstr "<u><b><font style=\"font-size: 18px;\">CERTIFIQUE:</font></b></u>"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:540
+#: code:addons/base_wua_certificate/models/wua_certificate.py:544
 #, python-format
 msgid "ATTENTION: The mail could not be sent."
 msgstr "ATENCIÓ: No ha estat possible enviar el correu electrònic."
@@ -203,9 +258,9 @@ msgid "Add to the certificate the parcel only if the partner is the main partner
 msgstr "Incloure en el certificat només aquelles parcel·les de les que se sigui regant"
 
 #. module: base_wua_certificate
-#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "Aerial photo of each plot is accompanied on the last page of this certificate."
-msgstr "S'acompanya foto aèria de cada parcel·la en l'última pàgina d'aquest certificat."
+#: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
+msgid "Aerial image not found"
+msgstr "No s'ha trobat la imatge aèria"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
@@ -225,7 +280,7 @@ msgstr "Sol·licituds de certificat permeses per als usuaris de portal"
 #. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
 msgid "And as evidence thereof, I hereby issue this certificate in {{ partner.company_id.city }} on {{ current_month }} {{ current_day }}th, {{ current_year }}.<br>"
-msgstr "I perquè consti, a petició de l'interesat, expedeixo el present, a {{ partner.company_id.city }}, a {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
+msgstr "I perquè consti, a petició de l'interessat, expedeixo el present, a {{ partner.company_id.city }}, a {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_partner_id
@@ -248,7 +303,7 @@ msgid "Applicant (name)"
 msgstr "Sol·licitant (nom)"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:443
+#: code:addons/base_wua_certificate/models/wua_certificate.py:447
 #, python-format
 msgid "Applicant:"
 msgstr "Sol·licitant:"
@@ -284,7 +339,7 @@ msgid "Before creating a certificate, this is the type that the program will pro
 msgstr "Tipus de certificat que, per defecte, es proposarà en el moment d'expedir un nou certificat"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:249
+#: code:addons/base_wua_certificate/models/wua_certificate.py:253
 #, python-format
 msgid "C E R T I F I C A T E"
 msgstr "C E R T I F I C A T"
@@ -377,7 +432,7 @@ msgstr "Certificat: ${object.reference_number}, de ${object.partner_id.company_i
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/res_partner.py:70
-#: code:addons/base_wua_certificate/models/wua_certificate_type.py:157
+#: code:addons/base_wua_certificate/models/wua_certificate_type.py:166
 #: model:ir.actions.act_window,name:base_wua_certificate.wua_certificate_action
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_certificate_ids
 #: model:ir.ui.menu,name:base_wua_certificate.certificate_menu
@@ -468,6 +523,12 @@ msgid "Default certificate type"
 msgstr "Tipus de certificat per defecte"
 
 #. module: base_wua_certificate
+#: model:ir.model.fields,help:base_wua_certificate.field_wua_certificate_map_type_in_report
+#: model:ir.model.fields,help:base_wua_certificate.field_wua_certificate_type_map_type_in_report
+msgid "Determines the number of aerial images per page."
+msgstr "Determineu el nombre d'imatges aèries per pàgina."
+
+#. module: base_wua_certificate
 #: model:ir.model,name:base_wua_certificate.model_wizard_create_certificate
 msgid "Dialog box to create a certificate"
 msgstr "Diàleg per crear un certificat"
@@ -503,15 +564,10 @@ msgid "ERROR"
 msgstr "ERROR"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:490
+#: code:addons/base_wua_certificate/models/wua_certificate.py:494
 #, python-format
 msgid "ERROR IN TEMPLATE"
 msgstr "ERROR A LA PLANTILLA"
-
-#. module: base_wua_certificate
-#: model:wua.certificate.type,final_paragraph:base_wua_certificate.certificatetype_no_variation
-msgid "El certificado otorgado a <b>{{ partner.name }}</b> carecerá de validez jurídica si no está firmado digitalmente. Esta firma digital tiene que ser accesible desde cualquier visor PDF homologado.<br>"
-msgstr "El certificado otorgado a <b>{{ partner.name }}</b> carecerá de validez jurídica si no está firmado digitalmente. Esta firma digital tiene que ser accesible desde cualquier visor PDF homologado.<br>"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_one_partner_view_tree
@@ -615,19 +671,19 @@ msgid "It is mandatory to enter this parameter to activate the certificate manag
 msgstr "Cal introduir aquest paràmetre perquè quedi activada la gestió de certificats"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:420
+#: code:addons/base_wua_certificate/models/wua_certificate.py:424
 #, python-format
 msgid "It is not allowed to create certificates from the electronic office."
 msgstr "No està permès crear certificats des de l'oficina electrònica."
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:433
+#: code:addons/base_wua_certificate/models/wua_certificate.py:437
 #, python-format
 msgid "It is not allowed to modify certificates from the electronic office."
 msgstr "No està permès modificar certificats des de l'oficina electrònica."
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate_type.py:136
+#: code:addons/base_wua_certificate/models/wua_certificate_type.py:145
 #, python-format
 msgid "It is not possible to remove the 'STANDARD' certificate type."
 msgstr "No es permet eliminar el tipus de certificat 'ESTÀNDARD'."
@@ -676,7 +732,7 @@ msgid "Last Updated on"
 msgstr "Última actualització el"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:583
+#: code:addons/base_wua_certificate/models/wua_certificate.py:587
 #, python-format
 msgid "Mail with certificate"
 msgstr "Correu amb certificat"
@@ -684,7 +740,7 @@ msgstr "Correu amb certificat"
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_parcel_is_main
 msgid "Main"
-msgstr "Principal"
+msgstr "Regant"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_main_page
@@ -692,6 +748,12 @@ msgstr "Principal"
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_form
 msgid "Main Page"
 msgstr "Pàgina d'inici"
+
+#. module: base_wua_certificate
+#: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_map_type_in_report
+#: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_map_type_in_report
+msgid "Map type in report"
+msgstr "Nº mapes en informe"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
@@ -737,7 +799,7 @@ msgid "New certificate"
 msgstr "Now certificat"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:441
+#: code:addons/base_wua_certificate/models/wua_certificate.py:445
 #, python-format
 msgid "New certificate. Reference:"
 msgstr "Now certificat. Referència:"
@@ -747,6 +809,11 @@ msgstr "Now certificat. Referència:"
 #, python-format
 msgid "No certificate: The user must be a portal user, or it is not possible to obtain certificates outside of the main program."
 msgstr "Sense certificat: L'usuari ha de ser usuari del portal, o bé no està habilitada la creació de certificats des de fora del programa principal."
+
+#. module: base_wua_certificate
+#: selection:wua.certificate.type,map_type_in_report:0
+msgid "No map"
+msgstr "Sense mapes"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_notes
@@ -840,7 +907,7 @@ msgstr "Nom de l'empresa"
 #. module: base_wua_certificate
 #: model:ir.model,name:base_wua_certificate.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Soci"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
@@ -864,7 +931,7 @@ msgid "Preview of certificate (final paragraph)"
 msgstr "Previsualització de l'certificat (paràgraf final)"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:499
+#: code:addons/base_wua_certificate/models/wua_certificate.py:503
 #: model:ir.ui.view,arch_db:base_wua_certificate.wizard_preview_certificate_view_form
 #, python-format
 msgid "Preview the certificate"
@@ -1011,7 +1078,7 @@ msgid "The certificate type code must be a positive value."
 msgstr "El codi de l'tipus de certificat ha de ser un valor positiu."
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:330
+#: code:addons/base_wua_certificate/models/wua_certificate.py:334
 #, python-format
 msgid "The partner must be a WUA user."
 msgstr "El soci ha de ser un usuari de CR."
@@ -1116,26 +1183,26 @@ msgid "With mail template"
 msgstr "Amb plantilla de correu"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:585
+#: code:addons/base_wua_certificate/models/wua_certificate.py:589
 #, python-format
 msgid "for the partner"
 msgstr "per al soci"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:365
-#: code:addons/base_wua_certificate/models/wua_certificate.py:831
+#: code:addons/base_wua_certificate/models/wua_certificate.py:369
+#: code:addons/base_wua_certificate/models/wua_certificate.py:835
 #, python-format
 msgid "ha"
 msgstr "ha"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:597
+#: code:addons/base_wua_certificate/models/wua_certificate.py:601
 #, python-format
 msgid "send error"
 msgstr "Error en l'enviament"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:587
+#: code:addons/base_wua_certificate/models/wua_certificate.py:591
 #, python-format
 msgid "sent successfully"
 msgstr "Enviat correctament"
