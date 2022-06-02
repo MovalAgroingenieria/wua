@@ -106,26 +106,28 @@
                                         </div>
                                     </div>
                                     <div groups="sale.group_delivery_invoice_address">
-                                        <t t-if="doc.partner_shipping_id and doc.partner_shipping_id != doc.partner_id">
-                                            <t t-if="doc.partner_shipping_id.name"><strong><span t-field="doc.partner_shipping_id.name"/></strong></t><br/>
-                                            <t t-if="doc.partner_shipping_id.street_type_show"><span t-field="doc.partner_shipping_id.street_type_show"/></t>
-                                            <t t-if="doc.partner_shipping_id.street"><span t-field="doc.partner_shipping_id.street"/></t>
-                                            <t t-if="doc.partner_shipping_id.street_num"><span t-field="doc.partner_shipping_id.street_num"/></t>
-                                            <t t-if="doc.partner_shipping_id.street2"><span t-field="doc.partner_shipping_id.street2"/></t>
+                                        <t t-set="partner_delivery_address_id" t-value="doc.partner_id.address_get(['delivery']).get('delivery')"/>
+                                        <t t-set="partner_delivery_address" t-value="doc.env['res.partner'].browse(partner_delivery_address_id)"/>
+                                        <t t-if="partner_delivery_address.id != doc.partner_id.id">
+                                            <t t-if="partner_delivery_address.name"><strong><span t-field="partner_delivery_address.name"/></strong></t><br/>
+                                            <t t-if="partner_delivery_address.street_type_show"><span t-field="partner_delivery_address.street_type_show"/></t>
+                                            <t t-if="partner_delivery_address.street"><span t-field="partner_delivery_address.street"/></t>
+                                            <t t-if="partner_delivery_address.street_num"><span t-field="partner_delivery_address.street_num"/></t>
+                                            <t t-if="partner_delivery_address.street2"><span t-field="partner_delivery_address.street2"/></t>
                                             <br/>
-                                            <t t-if="doc.partner_shipping_id.city"><span t-field="doc.partner_shipping_id.city"/></t>
-                                            <t t-if="doc.partner_shipping_id.zip">
+                                            <t t-if="partner_delivery_address.city"><span t-field="partner_delivery_address.city"/></t>
+                                            <t t-if="partner_delivery_address.zip">
                                                 <span>&amp;nbsp;-&amp;nbsp;</span>
-                                                <span t-field="doc.partner_shipping_id.zip"/>
+                                                <span t-field="partner_delivery_address.zip"/>
                                             </t>
-                                            <t id="state_shipping_address" t-if="doc.partner_shipping_id.state_id">
-                                                <span t-tag="span">(</span><span t-field="doc.partner_shipping_id.state_id"/>
+                                            <t id="state_shipping_address" t-if="partner_delivery_address.state_id">
+                                                <span t-tag="span">(</span><span t-field="partner_delivery_address.state_id"/>
                                                 <t t-if="not doc.partner_id.country_id"><span>)</span></t>
                                                 <t t-else=""><span>-</span></t>
                                             </t>
-                                            <t id="country_shipping_address" t-if="doc.partner_shipping_id.country_id">
-                                                <t t-if="not doc.partner_shipping_id.state_id"><span>(</span></t>
-                                                <span t-field="doc.partner_shipping_id.country_id"></span><span>)</span>
+                                            <t id="country_shipping_address" t-if="partner_delivery_address.country_id">
+                                                <t t-if="not partner_delivery_address.state_id"><span>(</span></t>
+                                                <span t-field="partner_delivery_address.country_id"></span><span>)</span>
                                             </t>
                                         </t>
                                         <t t-else="">
