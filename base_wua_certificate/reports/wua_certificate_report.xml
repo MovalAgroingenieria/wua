@@ -79,40 +79,49 @@
                     </div>
                 </t>
             </div>
-            <t t-set="measurement_unit" t-value="o.certificateparcel_ids[0].parcel_id._compute_area_measurement_name()"/>
-            <table class="table table-condensed table-striped">
-                <thead>
-                    <tr>
-                        <th class="text-left">Land Parcel</th>
-                        <th class="text-center">Cadastral Reference</th>
-                        <th class="text-right">Area (<span><t t-esc="measurement_unit"/></span>)</th>
-                        <th class="text-right">Ownership %</th>
-                        <th class="text-right">Water Costs %</th>
-                        <th class="text-right">Other Costs %</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <t t-set="total_area_official" t-value="0.0"/>
-                    <tr t-foreach="o.certificateparcel_ids" t-as="l">
-                        <td align="left"><span t-field="l.parcel_id"/></td>
-                        <td align="center"><span t-field="l.cadastral_reference"/></td>
-                        <td align="right">
-                            <span t-field="l.area_official"/>
-                            <t t-set="total_area_official" t-value="total_area_official + l.area_official"/>
-                         </td>
-                        <td align="right"><span t-field="l.ownership_percentage"/></td>
-                        <td align="right"><span t-field="l.water_costs_percentage"/></td>
-                        <td align="right"><span t-field="l.other_costs_percentage"/></td>
-                    </tr>
-                    <tr name="total_area">
-                        <td></td>
-                        <td><b>Total area:</b></td>
-                        <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area_official, 4)"/></td>
-                        <td></td><td></td><td></td>
-                    </tr>
-                </tbody>
-            </table>
-
+            <t t-if="o.certificateparcel_ids">
+                <t t-set="measurement_unit" t-value="o.certificateparcel_ids[0].parcel_id._compute_area_measurement_name()"/>
+            </t>
+            <t t-else="">
+                <t t-set="measurement_unit" t-value="str('N/A')"/>
+            </t>
+            <t t-if="o.certificateparcel_ids">
+                <table class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Land Parcel</th>
+                            <th class="text-center">Cadastral Reference</th>
+                            <th class="text-right">Area (<span><t t-esc="measurement_unit"/></span>)</th>
+                            <th class="text-right">Ownership %</th>
+                            <th class="text-right">Water Costs %</th>
+                            <th class="text-right">Other Costs %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="total_area_official" t-value="0.0"/>
+                        <tr t-foreach="o.certificateparcel_ids" t-as="l">
+                            <td align="left"><span t-field="l.parcel_id"/></td>
+                            <td align="center"><span t-field="l.cadastral_reference"/></td>
+                            <td align="right">
+                                <span t-field="l.area_official"/>
+                                <t t-set="total_area_official" t-value="total_area_official + l.area_official"/>
+                             </td>
+                            <td align="right"><span t-field="l.ownership_percentage"/></td>
+                            <td align="right"><span t-field="l.water_costs_percentage"/></td>
+                            <td align="right"><span t-field="l.other_costs_percentage"/></td>
+                        </tr>
+                        <tr name="total_area">
+                            <td></td>
+                            <td><b>Total area:</b></td>
+                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area_official, 4)"/></td>
+                            <td></td><td></td><td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </t>
+            <t t-else="">
+                <span>No parcel found for this partner.</span>
+            </t>
             <t t-if="o.rendered_final_paragraph">
                 <div class="col-xs-12 text-justify" style="padding-left: 40px;padding-right: 40px;padding-top: 40px">
                     <span t-field="o.sudo().rendered_final_paragraph"/>
