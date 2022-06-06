@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api, exceptions, _
-
+from datetime import datetime
 
 class ResFile(models.Model):
     _inherit = 'res.file'
@@ -37,6 +37,21 @@ class ResFile(models.Model):
             unique_ids_of_parcel = list(set(unique_ids_of_parcel))
             if len(unique_ids_of_parcel) != len(file.parcellink_ids):
                 raise exceptions.UserError(_('There are repeated parcels.'))
+
+    @api.multi
+    def action_generate_parcels_shp(self):
+        for record in self:
+            parcels = record.parcellink_ids.mapped(lambda x: x.parcel_id)
+            result = parcels.generate_parcel_shp()
+            attachment_obj = self.env['ir.attachment']
+            parcel_label = _('Parcels')
+            current_date = datetime.now()
+            filename = parcel_label + '_' + current_date.strftime('%Y-%m-%d')
+            # create attachment, add timestamp or something here?
+            attachment_obj.create(
+                {'name': filename, 'datas_fname': 'parcels.zip',
+                 'datas': result, 'res_id': record.id, 'res_model': 'res.file'}
+            )
 
 
 class ResFileParcellink(models.Model):
