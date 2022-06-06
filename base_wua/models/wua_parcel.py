@@ -1064,6 +1064,53 @@ class WuaParcel(models.Model):
             [('with_gis_parcel', '=', True)])
         parcels.regenerate_aerial_img()
 
+    @api.multi
+    def generate_parcel_shp(self):
+        url_gis_viewer_wfs = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wfs')
+        if (not url_gis_viewer_wfs):
+            raise exceptions.UserError(_('The "URL GIS Viewer WFS" parameter '
+                                         'is not populated.'))
+        parcels = self.filtered(lambda x: x.with_gis_parcel)
+        if (len(parcels) <= 0):
+            raise exceptions.UserError(_('No parcel with gis relation.'))
+        # Filter condition with be all parcelsa that match (name1 or name2...)
+        wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
+        parcel_filter = '<Filter><or>'
+        parcel_filter += ''.join(parcels.mapped(
+            lambda x: '<PropertyIsEqualTo><ValueReference>name' +
+            '</ValueReference><Literal>' + x.name + '</Literal>' +
+            '</PropertyIsEqualTo>'))
+        parcel_filter += '</or></Filter>'
+        parcel_shape = wfs.getfeature(
+            typename='fes:parcel', filter=parcel_filter,
+            outputFormat='shapezip')
+        # encode
+        result = base64.b64encode(parcel_shape.read())
+        return result
+
+    @api.multi
+    def action_generate_parcel_shp(self):
+        result = self.generate_parcel_shp()
+        # get base url
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        attachment_obj = self.env['ir.attachment']
+        # Removed older shp
+        attachment_obj.search([('name', '=', 'parcels_shp_download')]).unlink()
+        # create attachment, add timestamp or something here?
+        attachment_id = attachment_obj.create(
+            {'name': 'parcels_shp_download', 'datas_fname': 'parcels.zip',
+             'datas': result})
+        # prepare download url
+        download_url = '/web/content/' + str(attachment_id.id) + \
+            '?download=true'
+        # download, should remove after?
+        return {
+            'type': 'ir.actions.act_url',
+            'url': str(base_url) + str(download_url),
+            'target': 'new',
+        }
+
     def get_sld_body(self):
         body = ''
         body = body + '<?xml version="1.0" encoding="UTF-8"?>' +\
