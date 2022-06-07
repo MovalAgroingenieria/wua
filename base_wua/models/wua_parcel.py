@@ -1076,15 +1076,20 @@ class WuaParcel(models.Model):
             raise exceptions.UserError(_('No parcel with gis relation.'))
         # Filter condition with be all parcelsa that match (name1 or name2...)
         wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
-        parcel_filter = '<Filter><or>'
+        parcel_filter = '<Filter>'
+        if (len(parcels) > 1):
+            parcel_filter += '<or>'
         parcel_filter += ''.join(parcels.mapped(
             lambda x: '<PropertyIsEqualTo><ValueReference>name' +
             '</ValueReference><Literal>' + x.name + '</Literal>' +
             '</PropertyIsEqualTo>'))
-        parcel_filter += '</or></Filter>'
+        if (len(parcels) > 1):
+            parcel_filter += '</or>'
+        parcel_filter += '</Filter>'
         parcel_shape = wfs.getfeature(
             typename='fes:parcel', filter=parcel_filter,
-            outputFormat='shapezip')
+            outputFormat='shapezip', propertyname=[
+                'name', 'area_gis', 'cadastral'])
         # encode
         result = base64.b64encode(parcel_shape.read())
         return result
