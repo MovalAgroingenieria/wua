@@ -12,3 +12,4 @@ from . import wua_waterconnection
 from . import wua_parcel
 from . import res_partner
 from . import hr
+from . import wua_zone

@@ -80,6 +80,12 @@ class WuaHydraulicsector(models.Model):
         store=True,
         compute='_compute_total_affected_area_official_hec')
 
+    zone_id = fields.Many2one(
+        string='Zone',
+        comodel_name='wua.zone',
+        index=True,
+        ondelete='restrict')
+
     @api.depends('irrigationshed_ids')
     def _compute_number_of_irrigationsheds(self):
         for record in self:

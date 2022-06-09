@@ -31,6 +31,7 @@
         "views/wua_parcel_view.xml",
         "views/res_partner_view.xml",
         "views/hr_views.xml",
+        "views/wua_zone_view.xml",
         "reports/wua_partner_infrastructure_report.xml",
         "reports/wua_parcel_report.xml",
     ],
