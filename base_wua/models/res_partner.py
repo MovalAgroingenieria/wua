@@ -544,6 +544,30 @@ class ResPartner(models.Model):
                 'target': 'new',
             }
 
+    @api.multi
+    def action_generate_parcel_shp(self):
+        parcels_of_partner = self.partnerlink_ids.mapped(lambda x: x.parcel_id)
+        result = parcels_of_partner.generate_parcel_shp()
+        # get base url
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        attachment_obj = self.env['ir.attachment']
+        # Removed older shp
+        attachment_obj.search([('name', '=',
+                                'partner_parcels_shp_download')]).unlink()
+        # create attachment, add timestamp or something here?
+        attachment_id = attachment_obj.create(
+            {'name': 'partner_parcels_shp_download',
+             'datas_fname': 'parcels.zip', 'datas': result})
+        # prepare download url
+        download_url = '/web/content/' + str(attachment_id.id) + \
+            '?download=true'
+        # download, should remove after?
+        return {
+            'type': 'ir.actions.act_url',
+            'url': str(base_url) + str(download_url),
+            'target': 'new',
+        }
+
     def change_tree_fields_view_get(self, view_type, doc,
                                     area_measurement_name):
         if area_measurement_name != '':
