@@ -8,6 +8,7 @@ import pytz
 import subprocess
 import io
 import base64
+import requests
 from pyproj import Proj, transform
 from lxml import etree, html
 from collections import OrderedDict
@@ -1074,8 +1075,11 @@ class WuaParcel(models.Model):
         parcels = self.filtered(lambda x: x.with_gis_parcel)
         if (len(parcels) <= 0):
             raise exceptions.UserError(_('No parcel with gis relation.'))
-        # Filter condition with be all parcelsa that match (name1 or name2...)
-        wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
+        # Filter condition with be all parcels that match (name1 or name2...)
+        wfs_request_headers = {"Content-Type": "text/plain;charset=UTF-8"}
+        wfs_request_content = '<GetFeature service="WFS" version="2.0.0" ' + \
+            'outputFormat="shapezip"><Query typeName="parcel" ' + \
+            'propertyname="name,area_gis,cadastral">'
         parcel_filter = '<Filter>'
         if (len(parcels) > 1):
             parcel_filter += '<or>'
@@ -1086,12 +1090,13 @@ class WuaParcel(models.Model):
         if (len(parcels) > 1):
             parcel_filter += '</or>'
         parcel_filter += '</Filter>'
-        parcel_shape = wfs.getfeature(
-            typename='fes:parcel', filter=parcel_filter,
-            outputFormat='shapezip', propertyname=[
-                'name', 'area_gis', 'cadastral'])
-        # encode
-        result = base64.b64encode(parcel_shape.read())
+        wfs_request_content += parcel_filter
+        wfs_request_content += '</Query></GetFeature>'
+        parcel_shp_response = requests.post(
+            url_gis_viewer_wfs, headers=wfs_request_headers,
+            data=wfs_request_content)
+        parcel_shp = io.BytesIO(parcel_shp_response.content)
+        result = base64.b64encode(parcel_shp.getvalue())
         return result
 
     @api.multi
