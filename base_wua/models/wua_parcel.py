@@ -1104,13 +1104,13 @@ class WuaParcel(models.Model):
         result = self.generate_parcel_shp()
         # get base url
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
-        attachment_obj = self.env['ir.attachment']
+        attachment_obj = self.sudo().env['ir.attachment']
         # Removed older shp
         attachment_obj.search([('name', '=', 'parcels_shp_download')]).unlink()
         # create attachment, add timestamp or something here?
         attachment_id = attachment_obj.create(
             {'name': 'parcels_shp_download', 'datas_fname': 'parcels.zip',
-             'datas': result})
+             'datas': result, 'res_model': 'wua.parcel'})
         # prepare download url
         download_url = '/web/content/' + str(attachment_id.id) + \
             '?download=true'

@@ -44,7 +44,7 @@ class ResFile(models.Model):
         for record in self:
             parcels = record.parcellink_ids.mapped(lambda x: x.parcel_id)
             result = parcels.generate_parcel_shp()
-            attachment_obj = self.env['ir.attachment']
+            attachment_obj = self.sudo().env['ir.attachment']
             parcel_label = _('Parcels')
             current_date = datetime.now()
             filename = parcel_label + '_' + current_date.strftime('%Y-%m-%d')

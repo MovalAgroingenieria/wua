@@ -152,6 +152,13 @@ class WuaConfiguration(models.TransientModel):
         string="Consent clauses",
         help="They will be printed in the consent section of the reports.")
 
+    ip_remote_address_for_shp = fields.Char(
+        string='Allowed remote IP for public HTTP-GET of SHP Parcels',
+        size=30,
+        default='127.0.0.1',
+        help='For public creation of SHP Parcels based on HTTP-GET '
+             'requests, restriction to clientes from a IP address')
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
@@ -222,3 +229,5 @@ class WuaConfiguration(models.TransientModel):
                            self.reports_style)
         values.set_default('wua.configuration', 'reports_consent_clauses',
                            self.reports_consent_clauses)
+        values.set_default('wua.configuration', 'ip_remote_address_for_shp',
+                           self.ip_remote_address_for_shp)
