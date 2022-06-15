@@ -1106,10 +1106,16 @@ class WuaParcel(models.Model):
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
         attachment_obj = self.sudo().env['ir.attachment']
         # Removed older shp
-        attachment_obj.search([('name', '=', 'parcels_shp_download')]).unlink()
+        attachment_obj.search([('name', '=',
+                                'parcels_shp_download')]).unlink()
         # create attachment, add timestamp or something here?
+        parcel_label = _('Parcels')
+        current_date = datetime.datetime.now()
+        filename = parcel_label + '_' + current_date.strftime('%Y-%m-%d') + \
+            '.zip'
         attachment_id = attachment_obj.create(
-            {'name': 'parcels_shp_download', 'datas_fname': 'parcels.zip',
+            {'name': 'parcels_shp_download',
+             'datas_fname': filename,
              'datas': result, 'res_model': 'wua.parcel'})
         # prepare download url
         download_url = '/web/content/' + str(attachment_id.id) + \

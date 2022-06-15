@@ -552,18 +552,19 @@ class ResPartner(models.Model):
         # get base url
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
         attachment_obj = self.sudo().env['ir.attachment']
+        parcel_label = _('Parcels')
+        current_date = datetime.datetime.now()
+        filename = parcel_label + '_' + current_date.strftime('%Y-%m-%d') + \
+            '.zip'
         # Removed older shp
         attachment_obj.search([
-            ('name', '=', 'partner_parcels_shp_download'),
+            ('name', '=', filename),
             ('res_model', '=', 'res.partner'),
             ('res_id', '=', self.id)]).unlink()
         # create attachment, add timestamp or something here?
-        parcel_label = _('Parcels')
-        current_date = datetime.now()
-        filename = parcel_label + '_' + current_date.strftime('%Y-%m-%d')
         attachment_id = attachment_obj.create(
-            {'name': 'partner_parcels_shp_download', 'res_name': filename,
-             'datas_fname': 'parcels.zip', 'datas': result,
+            {'name': filename,
+             'datas_fname': filename, 'datas': result,
              'res_model': 'res.partner', 'res_id': self.id})
         # prepare download url
         download_url = '/web/content/' + str(attachment_id.id) + \

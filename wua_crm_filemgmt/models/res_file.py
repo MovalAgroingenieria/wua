@@ -50,7 +50,7 @@ class ResFile(models.Model):
             filename = parcel_label + '_' + current_date.strftime('%Y-%m-%d')
             # create attachment, add timestamp or something here?
             attachment_obj.create(
-                {'name': filename, 'datas_fname': 'parcels.zip',
+                {'name': filename, 'datas_fname': filename,
                  'datas': result, 'res_id': record.id, 'res_model': 'res.file'}
             )
 
