@@ -189,11 +189,11 @@
                 <!-- Details by document -->
                <div class="text-right" name="details_by_document">
                    <!-- Details according document type -->
-                   <t t-if="docs and docs[0]._name == 'account.invoice' and o.number">
+                   <t t-if="docs and docs[0]._name == 'account.invoice' and o.number" name="invoice_details">
                        <span t-field="o.number" style="font-size: 8px;"/>
                        <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
                    </t>
-                   <t t-if="docs and docs[0]._name == 'credit.control.communication' and doc.partner_id.name">
+                   <t t-if="docs and docs[0]._name == 'credit.control.communication' and doc.partner_id.name" name="credit_control_details">
                        <span t-field="doc.partner_id.name" style="font-size: 8px;"/>
                        <t t-if="doc.partner_id.partner_code">
                             <t t-set="partner_code" t-value="str(doc.partner_id.partner_code)"/>
@@ -201,7 +201,7 @@
                        </t>
                        <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
                    </t>
-                   <t t-if="docs and docs[0]._name == 'wua.certificate' and docs[0].reference_number">
+                   <t t-if="docs and docs[0]._name == 'wua.certificate' and docs[0].reference_number" name="certificate_details">
                        <span t-field="docs[0].reference_number" style="font-size: 8px;"/>
                        <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
                    </t>
