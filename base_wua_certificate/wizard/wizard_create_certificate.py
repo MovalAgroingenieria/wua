@@ -182,8 +182,10 @@ class WizardCreateCertificate(models.TransientModel):
                         partnerlink.parcel_id.cadastral_reference,
                     'area_official': partnerlink.parcel_id.area_official,
                     'ownership_percentage': partnerlink.ownership_percentage,
-                    'water_costs_percentage': partnerlink.water_costs_percentage,
-                    'other_costs_percentage': partnerlink.other_costs_percentage,
+                    'water_costs_percentage':
+                        partnerlink.water_costs_percentage,
+                    'other_costs_percentage':
+                        partnerlink.other_costs_percentage,
                     'is_main': partnerlink.irrigation_partner,
                     }
                 self.env['wua.certificate.parcel'].create(

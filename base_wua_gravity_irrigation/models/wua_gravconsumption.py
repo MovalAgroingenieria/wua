@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import pytz
 from odoo import models, fields, api, exceptions, _
 
 
@@ -630,6 +631,10 @@ class WuaGravconsumption(models.Model):
         if datetime_value:
             datetime_value = datetime.datetime.strptime(
                 datetime_value, '%Y-%m-%d %H:%M:%S')
+            if self.env.user.tz:
+                local_timezone = pytz.timezone(self.env.user.tz)
+                datetime_with_tz = local_timezone.localize(datetime_value)
+                datetime_value += datetime_with_tz.utcoffset()
             weekday = datetime_value.weekday()
             if weekday >= 0 and weekday <= 6:
                 if weekday == 0:
