@@ -527,8 +527,11 @@ class ResPartner(models.Model):
         result = []
         for partner in self:
             if partner.partner_code > 0:
-                name = partner.name + ' ' + \
-                    '[' + str(partner.partner_code) + ']'
+                if partner.name:
+                    name = partner.name + ' ' + \
+                        '[' + str(partner.partner_code) + ']'
+                else:
+                    name = '[' + str(partner.partner_code) + ']'
             else:
                 name = partner.name
             result.append((partner.id, name))
