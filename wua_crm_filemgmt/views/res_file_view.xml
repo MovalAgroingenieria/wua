@@ -8,9 +8,17 @@
         <field name="arch" type="xml">
             <xpath expr="//page[@name='attachments']" position="before">
                 <page name="parcellink_page" string="Parcel Links">
-                    <field name="parcellink_ids"
-                        attrs="{'readonly':['|',('state','=','closed'),('is_blocked','=',True)]}"
-                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"/>
+                    <header>
+                        <button name="action_get_partner_parcels" type="object" class="btn btn-link"
+                            attrs="{'invisible': ['|',('state','=','03_closed'),('is_blocked','=',True)]}"
+                            string="Get parcels" icon="fa-moval-parcel" style="margin-top:2px; margin-bottom:2px;"
+                            groups="crm_filemgmt.group_file_manager"/>
+                    </header>
+                    <sheet>
+                        <field name="parcellink_ids"
+                            attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"
+                            context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"/>
+                    </sheet>
                 </page>
             </xpath>
         </field>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-15 08:50+0000\n"
-"PO-Revision-Date: 2021-02-15 08:50+0000\n"
+"POT-Creation-Date: 2022-06-20 09:47+0000\n"
+"PO-Revision-Date: 2022-06-20 09:47+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,8 +22,8 @@ msgid "<span class=\"o_stat_text\">\n"
 "                            <span attrs=\"{'invisible': [('number_of_file_registers','=', 1)]}\"> file registers</span>\n"
 "                        </span>"
 msgstr "<span class=\"o_stat_text\">\n"
-"                            <span attrs=\"{'invisible': [('number_of_file_registers','&gt;', 1)]}\"> registre</span>\n"
-"                            <span attrs=\"{'invisible': [('number_of_file_registers','=', 1)]}\"> registres</span>\n"
+"                            <span attrs=\"{'invisible': [('number_of_file_registers','&gt;', 1)]}\"> registre expedient</span>\n"
+"                            <span attrs=\"{'invisible': [('number_of_file_registers','=', 1)]}\"> registres expedient</span>\n"
 "                        </span>"
 
 #. module: wua_crm_filemgmt
@@ -71,7 +71,7 @@ msgstr "Mostrar Nom"
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_file_id
 msgid "File"
-msgstr "Expedient"
+msgstr "Fitxer"
 
 #. module: wua_crm_filemgmt
 #: code:addons/wua_crm_filemgmt/models/wua_parcel.py:53
@@ -101,6 +101,16 @@ msgid "GIS Viewer (zoom to parcel)"
 msgstr "Visor GIS (zoom parcel·la)"
 
 #. module: wua_crm_filemgmt
+#: model:ir.actions.server,name:wua_crm_filemgmt.wua_generate_files_parcel_shp
+msgid "Generate Parcel SHP"
+msgstr "Generar SHP de parcel·la"
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.res_file_view_form
+msgid "Get parcels"
+msgstr "Obtenir parcel·les"
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_has_parcellinks
 msgid "Has parcellinks"
 msgstr "Té parcel·les"
@@ -111,9 +121,15 @@ msgid "ID"
 msgstr "ID"
 
 #. module: wua_crm_filemgmt
+#: code:addons/wua_crm_filemgmt/models/res_file.py:63
+#, python-format
+msgid "If a file already has parcels, this operation is not possible."
+msgstr "Si un expedient ja té parcel·les, aquesta operació no és possible."
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_partner_id
 msgid "Irrigation Partner"
-msgstr "Soci de reg"
+msgstr "Regant"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink___last_update
@@ -141,6 +157,12 @@ msgid "Log of Files Movements"
 msgstr "Bloc de moviments d'expedients"
 
 #. module: wua_crm_filemgmt
+#: code:addons/wua_crm_filemgmt/models/res_file.py:60
+#, python-format
+msgid "No main partner has been selected for this file."
+msgstr "No heu seleccionat un soci principal per a aquest expedient."
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wua_parcel_number_of_file_registers
 msgid "Num. file registers"
 msgstr "Nº registres expedient"
@@ -166,7 +188,9 @@ msgid "Parcel Links"
 msgstr "Parcel·les"
 
 #. module: wua_crm_filemgmt
+#: code:addons/wua_crm_filemgmt/models/res_file.py:48
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_ids
+#, python-format
 msgid "Parcels"
 msgstr "Parcel·les"
 
@@ -181,7 +205,7 @@ msgid "Subject"
 msgstr "Assumpte"
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:39
+#: code:addons/wua_crm_filemgmt/models/res_file.py:40
 #, python-format
 msgid "There are repeated parcels."
 msgstr "Hi ha parcel·les repetides."

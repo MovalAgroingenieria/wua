@@ -54,6 +54,30 @@ class ResFile(models.Model):
                  'datas': result, 'res_id': record.id, 'res_model': 'res.file'}
             )
 
+    @api.multi
+    def action_get_partner_parcels(self):
+        if not self.partner_id:
+            raise exceptions.UserError(_(
+                'No main partner has been selected for this file.'))
+        if self.parcellink_ids:
+            raise exceptions.UserError(_(
+                'If a file already has parcels, this operation is not '
+                'possible.'))
+        parcels = self.env['wua.parcel'].search(
+            [('partner_id', '=', self.partner_id.id)])
+        for parcel in parcels:
+            self.env['res.file.parcellink'].create({
+                'file_id': self.id,
+                'parcel_gis_viewer_link': parcel.gis_viewer_link,
+                'parcel_cadastral_reference_link':
+                    parcel.cadastral_reference_link,
+                'parcel_id': parcel.id,
+                'parcel_area_official': parcel.area_official,
+                'parcel_rural_location_county': parcel.rural_location_county,
+                'parcel_cadastral_reference': parcel.cadastral_reference,
+                'parcel_partner_id': parcel.partner_id.id,
+            })
+
 
 class ResFileParcellink(models.Model):
     _name = 'res.file.parcellink'
