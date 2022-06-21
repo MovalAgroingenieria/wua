@@ -8,8 +8,10 @@ import pytz
 import subprocess
 import io
 import base64
+import logging
 import requests
 from pyproj import Proj, transform
+from PIL import Image, ImageDraw, ImageFont
 from lxml import etree, html
 from collections import OrderedDict
 from xml.etree import ElementTree
@@ -33,6 +35,17 @@ class WuaParcel(models.Model):
     SIZE_SUBPARCEL_SUFFIX = 2
     SIZE_PARTNERLINK_SUFFIX = 2
     SIZE_TRACK = 510
+
+    # Aerial IMG
+    _aerial_img_layers = ['pnoa', 'parcel', 'parcel_perimeter', 'n_arrow']
+    _aerial_img_layers_styles = ['default', 'default', 'default', 'default']
+    _aerial_image_width = 824
+    _aerial_image_height = 824
+
+    # Aerial IMG GRID
+    _img_step_x = 7
+    _img_step_y = 9
+    _grid_font = "DejaVuSans-Bold.ttf"
 
     _changed_partners = []
 
@@ -369,10 +382,37 @@ class WuaParcel(models.Model):
     aerial_img_date = fields.Date(
         string='Date of aerial image')
 
+    aerial_img_bbox = fields.Char(
+        string='BBOX of aerial image')
+
     aerial_img_accuracy = fields.Float(
         string='Accuracy (m/px)',
         digits=(32, 2),
         default=0)
+
+    aerial_img_current = fields.Binary(
+        string="Aerial Image",
+        compute='_compute_aerial_img_current')
+
+    aerial_img_with_grid_current = fields.Binary(
+        string="Aerial Image with grid Overlay",
+        compute='_compute_aerial_img_with_grid_current')
+
+    aerial_img_scale_current = fields.Integer(
+        string='Scale',
+        compute='_compute_aerial_img_current')
+
+    aerial_img_date_current = fields.Date(
+        string='Date of aerial image',
+        compute='_compute_aerial_img_current')
+
+    aerial_img_bbox_current = fields.Char(
+        string='BBOX of aerial image')
+
+    aerial_img_accuracy_current = fields.Float(
+        string='Accuracy (m/px)',
+        digits=(32, 2),
+        compute='_compute_aerial_img_current')
 
     date_now = fields.Datetime(
         default=datetime.datetime.now(),
@@ -532,6 +572,203 @@ class WuaParcel(models.Model):
     def _compute_number_of_partnerlinks(self):
         for record in self:
             record.number_of_partnerlinks = len(record.partnerlink_ids)
+
+    def _add_text_with_rec(self, draw, font, text, offsetx, offsety):
+        # Size of the text with this font
+        w, h = font.getsize(text)
+        # Rectangle on
+        draw.rectangle((offsetx, offsety, offsetx + w, offsety + h),
+                       fill='white')
+        draw.text((offsetx, offsety), text=text, fill='#000000',
+                  font=font, stroke_width=2, stroke_fill="black")
+
+    def _add_coordinate_grid_to_img(self, image, bbox):
+        # PILLOW ADD GRID
+        image_pillow = Image.open(image)
+        draw = ImageDraw.Draw(image_pillow)
+        # Better text?
+        draw.fontmode = 'L'
+        # Font for intermediate symbols
+        symbol_font = ImageFont.truetype(self._grid_font, 20)
+        # Font for lower corner coordinates
+        label_font = ImageFont.truetype(self._grid_font, 11)
+        # Font for coordinates
+        step_font = ImageFont.truetype(self._grid_font, 10)
+        # Image info
+        height = image_pillow.height
+        width = image_pillow.width
+        # Size on pixels for every step for label
+        step_x_size = int(width / self._img_step_x)
+        step_y_size = int(height / self._img_step_y)
+        # Total height abd width meters on real world
+        height_meters = bbox[3] - bbox[1]
+        width_meters = bbox[2] - bbox[0]
+        # Size on meters for every step for label
+        step_y_meters = int(height_meters / self._img_step_y)
+        step_x_meters = int(width_meters / self._img_step_x)
+        for y in range(0, self._img_step_y + 1):
+            for x in range(0, self._img_step_x + 1):
+                margin_x = -2
+                margin_y = -7
+                symbol = '+'
+                if (x == 0):
+                    symbol = '-'
+                    if (y == 0):
+                        margin_y = -12.5
+                    # Add Label on Y axis with the Y coordinate
+                    y_step_label = str(int(bbox[3] - y * step_y_meters))
+                    margin_label_x = 10
+                    margin_label_y = 30
+                    self._add_text_with_rec(
+                        draw, step_font, y_step_label, margin_label_x,
+                        y * step_y_size + margin_y - 8 + margin_label_y)
+                elif (y == 0 or y == self._img_step_y):
+                    symbol = '|'
+                    margin_x = 2.8
+                    if (y == self._img_step_y):
+                        # Add Label on X axis with the X coordinate
+                        x_step_label = str(int(bbox[0] + x * step_x_meters))
+                        margin_label_x = 18
+                        margin_label_y = -21
+                        self._add_text_with_rec(
+                            draw, step_font, x_step_label, x * step_x_size +
+                            margin_x - 8 + margin_label_x,
+                            height + margin_label_y)
+                # Add SYMBOL
+                draw.text((x * step_x_size + margin_x,
+                           y * step_y_size + margin_y),
+                          text=symbol, fill='#000000',
+                          font=symbol_font)
+        # Add lower corner coordinates label
+        lower_x_y_text = '(' + str(int(bbox[0])) + ',' + str(int(bbox[1])) + \
+            ')'
+        self._add_text_with_rec(draw, label_font, lower_x_y_text, 2,
+                                height - 20)
+        # Return new image with grid
+        byte_array = io.BytesIO()
+        image_pillow.save(byte_array, format='jpeg')
+        resp = byte_array.getvalue()
+        return resp
+
+    @api.multi
+    def _compute_aerial_img_current(self):
+        url_gis_viewer_wms = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wms')
+        url_gis_viewer_wfs = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wfs')
+        if (not url_gis_viewer_wms or not url_gis_viewer_wfs):
+            raise exceptions.UserError(_('The "URL GIS Viewer WMS" parameter '
+                                         'or "URL GIS Viewer WFS" are not '
+                                         'populated.'))
+        else:
+            mapserver_dpi = 90
+            wms = WebMapService(url=url_gis_viewer_wms, version='1.1.1')
+            wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
+            wms_pnoa = WebMapService(url='http://www.ign.es/wms-inspire/'
+                                         'pnoa-ma', version='1.1.1')
+            for record in self:
+                if record.with_gis_parcel:
+                    filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
+                        '>name</ValueReference><Literal>' + record.name +\
+                        '</Literal></PropertyIsEqualTo></Filter>'
+                    sld_body = record.get_sld_body()
+                    try:
+                        response = wfs.getfeature(typename='fes:parcel',
+                                                  filter=filterxml)
+                        parsed_response = ElementTree.fromstring(
+                            response.getvalue())
+                        ns = parsed_response[0].tag.split('}')[0] + '}'
+                        parcel_member = parsed_response.find(ns +
+                                                             'featureMember')
+                        parcel_envelop = parcel_member[0][0][0]
+                        crs = parcel_envelop.attrib['srsName']
+                        lowerCorner = [float(n) for n in (parcel_envelop.find(
+                            ns + 'lowerCorner').text).split(' ')]
+                        upperCorner = [float(n) for n in (parcel_envelop.find(
+                            ns + 'upperCorner').text).split(' ')]
+                        width = int(upperCorner[0] - lowerCorner[0])
+                        height = int(upperCorner[1] - lowerCorner[1])
+                        max_width = record._aerial_image_width
+                        max_height = record._aerial_image_height
+                        if (width > max_width or height > max_height):
+                            increment = (int(self.getClosestMul(
+                                max_width, max(height, width))))
+                            incrementX = (increment - width)/2
+                            incrementY = (increment - height)/2
+                            lowerCorner[0] = int(lowerCorner[0] - incrementX)
+                            upperCorner[0] = int(round(
+                                upperCorner[0] + incrementX))
+                            lowerCorner[1] = int(
+                                round(lowerCorner[1] - incrementY))
+                            upperCorner[1] = int(upperCorner[1] + incrementY)
+                        elif (width < max_width or height < max_height):
+                            increment = int(self.getClosestDiv(
+                                max_width, max(height, width)))
+                            incrementX = (increment - width)/2
+                            incrementY = (increment - height)/2
+                            lowerCorner[0] = int(lowerCorner[0] - incrementX)
+                            upperCorner[0] = int(round(
+                                upperCorner[0] + incrementX))
+                            lowerCorner[1] = int(
+                                round(lowerCorner[1] - incrementY))
+                            upperCorner[1] = int(upperCorner[1] + incrementY)
+                        width = max_width
+                        height = max_height
+                        bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
+                                (int(upperCorner[0])), (int(upperCorner[1])))
+                        data_pnoa = wms_pnoa.getfeatureinfo(
+                            layers=['OI.MosaicElement'],
+                            srs=crs, bbox=bbox, size=(width, height),
+                            format='image/jpeg', info_format='text/html',
+                            xy=(width/2, height/2))
+                        data_pnoa_parsed = html.fromstring(
+                            data_pnoa.read())
+                        data_pnoa_info_rows = data_pnoa_parsed.find('body').\
+                            find('table').findall('tr')
+                        date = data_pnoa_info_rows[0].findall('td')[1].text
+                        date = datetime.datetime.strptime(date, '%Y-%m')
+                        resolution = data_pnoa_info_rows[1].findall('td')[1].\
+                            text
+                        img = wms.getmap(
+                            layers=record._aerial_img_layers,
+                            styles=record._aerial_img_layers_styles,
+                            srs=crs, bbox=bbox, size=(width, height),
+                            format='image/jpeg', transparent=True,
+                            SLD_BODY=sld_body)
+                        image = io.BytesIO(img.read())
+                        base64_img = base64.b64encode(image.getvalue())
+                        # GET SCALE:
+                        # With BBOX get meters in the real world
+                        width_in_real_meters = bbox[2] - bbox[0]
+                        # With pixels Width and dpi get the size of the image
+                        width_in_image_meters = (width / mapserver_dpi) * \
+                            0.0254
+                        aerial_img_scale = width_in_real_meters /\
+                            width_in_image_meters
+                        # Not stores, so doesn't matter
+                        record.aerial_img_current = base64_img
+                        record.aerial_img_scale_current = aerial_img_scale
+                        record.aerial_img_accuracy_current = resolution
+                        record.aerial_img_date_current = date
+                        record.aerial_img_bbox_current = \
+                            ','.join(map(str, list(bbox)))
+                    except Exception:
+                        _logger = logging.getLogger(self.__class__.__name__)
+                        _logger.exception('Aerial IMG')
+                        pass
+
+    @api.multi
+    def _compute_aerial_img_with_grid_current(self):
+        for record in self:
+            aerial_img_with_grid_current = None
+            if (record.aerial_img_current and record.aerial_img_bbox_current):
+                aerial_img = io.BytesIO(base64.b64decode(
+                    record.aerial_img_current))
+                aerial_grid = record._add_coordinate_grid_to_img(
+                    aerial_img, map(
+                        int, record.aerial_img_bbox_current.split(',')))
+                aerial_img_with_grid_current = base64.b64encode(aerial_grid)
+            record.aerial_img_with_grid_current = aerial_img_with_grid_current
 
     @api.depends('rurallocation_id', 'county_id')
     def _compute_rural_location_county(self):
@@ -1225,26 +1462,30 @@ class WuaParcel(models.Model):
                             ns + 'upperCorner').text).split(' ')]
                         width = int(upperCorner[0] - lowerCorner[0])
                         height = int(upperCorner[1] - lowerCorner[1])
-                        max_width = 824
-                        max_height = 824
+                        max_width = record._aerial_image_width
+                        max_height = record._aerial_image_height
                         if (width > max_width or height > max_height):
                             increment = (int(self.getClosestMul(
                                 max_width, max(height, width))))
                             incrementX = (increment - width)/2
                             incrementY = (increment - height)/2
-                            lowerCorner[0] = lowerCorner[0] - incrementX
-                            upperCorner[0] = upperCorner[0] + incrementX
-                            lowerCorner[1] = lowerCorner[1] - incrementY
-                            upperCorner[1] = upperCorner[1] + incrementY
+                            lowerCorner[0] = int(lowerCorner[0] - incrementX)
+                            upperCorner[0] = int(round(
+                                upperCorner[0] + incrementX))
+                            lowerCorner[1] = int(
+                                round(lowerCorner[1] - incrementY))
+                            upperCorner[1] = int(upperCorner[1] + incrementY)
                         elif (width < max_width or height < max_height):
                             increment = int(self.getClosestDiv(
                                 max_width, max(height, width)))
                             incrementX = (increment - width)/2
                             incrementY = (increment - height)/2
-                            lowerCorner[0] = lowerCorner[0] - incrementX
-                            upperCorner[0] = upperCorner[0] + incrementX
-                            lowerCorner[1] = lowerCorner[1] - incrementY
-                            upperCorner[1] = upperCorner[1] + incrementY
+                            lowerCorner[0] = int(lowerCorner[0] - incrementX)
+                            upperCorner[0] = int(round(
+                                upperCorner[0] + incrementX))
+                            lowerCorner[1] = int(
+                                round(lowerCorner[1] - incrementY))
+                            upperCorner[1] = int(upperCorner[1] + incrementY)
                         width = max_width
                         height = max_height
                         bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
@@ -1262,14 +1503,12 @@ class WuaParcel(models.Model):
                         date = datetime.datetime.strptime(date, '%Y-%m')
                         resolution = data_pnoa_info_rows[1].findall('td')[1].\
                             text
-                        img = wms.getmap(layers=['pnoa', 'parcel',
-                                                 'parcel_perimeter',
-                                                 'n_arrow'],
-                                         styles=['default', 'default',
-                                                 'default', 'default'],
-                                         srs=crs, bbox=bbox, size=(width,
-                                         height), format='image/jpeg',
-                                         transparent=True, SLD_BODY=sld_body)
+                        img = wms.getmap(
+                            layers=record._aerial_img_layers,
+                            styles=record._aerial_img_layers_styles,
+                            srs=crs, bbox=bbox, size=(width, height),
+                            format='image/jpeg', transparent=True,
+                            SLD_BODY=sld_body)
                         image = io.BytesIO(img.read())
                         base64_img = base64.b64encode(image.getvalue())
                         # GET SCALE:
@@ -1283,8 +1522,12 @@ class WuaParcel(models.Model):
                         record.write({'aerial_img': base64_img,
                                       'aerial_img_scale': aerial_img_scale,
                                       'aerial_img_accuracy': resolution,
-                                      'aerial_img_date': date})
+                                      'aerial_img_date': date,
+                                      'aerial_img_bbox':
+                                      ','.join(map(str, list(bbox)))})
                     except Exception:
+                        _logger = logging.getLogger(self.__class__.__name__)
+                        _logger.exception('Aerial IMG Regeneration')
                         pass
 
     def check_gis_parcel_created(self):
