@@ -331,13 +331,13 @@
                                 <div name="section_partner_name" class="oe_title">
                                     <h1>
                                         <field name="partner_name" readonly="1"/>
-                                    </h1>                    
+                                    </h1>
                                 </div>
                                 <div name="section_partner_code"
                                      style="margin-top:10px;">
                                     <span style="margin-left:12px;margin-right:10px;">Code :</span>
                                     <field name="partner_id" readonly="1"/>
-                                </div>                                    
+                                </div>
                             </div>
                         </group>
                         <group name="master_data_01_right" col="1">
@@ -372,7 +372,7 @@
                                    attrs="{'readonly':
                                             [('state','!=','01_draft')],
                                            'invisible':
-                                            [('state','=','01_draft')]}"/>                            
+                                            [('state','=','01_draft')]}"/>
                             <div name="section_pending_validation" colspan="2"
                                  style="text-align:center;"
                                  attrs="{'invisible': [('state','!=','01_draft')]}">
@@ -444,6 +444,22 @@
         <field name="context">
           {'show_only_partner_code': True}
         </field>
+    </record>
+
+    <record id="wua_generate_certificate_parcel_shp" model="ir.actions.server">
+        <field name="name">Generate Parcel SHP</field>
+        <field name="model_id" ref="base_wua_certificate.model_wua_certificate"/>
+        <field name="code">
+            action =  env['wua.certificate'].browse(context['active_ids']).action_generate_parcel_shp()
+        </field>
+    </record>
+
+    <record id="wua_action_generate_certificate_parcel_shp" model="ir.values">
+        <field name="name">Generate Parcel SHP</field>
+        <field name="model">wua.certificate</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_generate_certificate_parcel_shp'))"/>
     </record>
 
     <menuitem id="certificate_menu"

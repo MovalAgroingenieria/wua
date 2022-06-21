@@ -2,6 +2,9 @@
 # Copyright 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import io
+import zipfile
+import base64
 from lxml import etree
 from jinja2 import Template, TemplateError
 from datetime import date
@@ -554,6 +557,52 @@ class WuaCertificate(models.Model):
             'document': None,
             'document_name': None
             })
+
+    @api.multi
+    def action_generate_parcel_shp(self):
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        zip_buffer = io.BytesIO()
+        result = ''
+        filename = ''
+        # More than one certificate (Tree view multiple selection)
+        if (len(self) > 1):
+            with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_STORED, False) \
+                    as zip_file:
+                for record in self:
+                    parcels_of_certificate = record.certificateparcel_ids.\
+                        mapped(lambda x: x.parcel_id)
+                    result = parcels_of_certificate.generate_parcel_shp()
+                    zip_file.writestr(
+                        record.name.replace('/', '-') + '.zip',
+                        base64.b64decode(result))
+            result = base64.b64encode(zip_buffer.getvalue())
+            certificates_label = _('Certificates')
+            filename = certificates_label + '.zip'
+        # Just one certificate (Form or tree view with one selected)
+        else:
+            parcels_of_certificate = self.certificateparcel_ids.mapped(
+                lambda x: x.parcel_id)
+            result = parcels_of_certificate.generate_parcel_shp()
+            filename = self.name.replace('/', '-') + '.zip'
+        attachment_obj = self.sudo().env['ir.attachment']
+        # Removed older shp
+        attachment_obj.search([('name', '=',
+                                'certificates_shp_download')]).unlink()
+        # create attachment, add timestamp or something here?
+        attachment_id = attachment_obj.create(
+            {'name': 'certificates_shp_download',
+             'datas_fname': filename,
+             'datas': result,
+             'res_model': 'wua.certificate'})
+        # prepare download url
+        download_url = '/web/content/' + str(attachment_id.id) + \
+            '?download=true'
+        # download, should remove after?
+        return {
+            'type': 'ir.actions.act_url',
+            'url': str(base_url) + str(download_url),
+            'target': 'new',
+        }
 
     @api.multi
     def _delete_attachment(self):
