@@ -95,6 +95,10 @@ class WuaCertificateType(models.Model):
              'is payer',
         default=True)
 
+    parcel_img_coordinate_grid = fields.Boolean(
+        string='Include coordinate GRID in aerial images of parcel',
+        default=False)
+
     map_type_in_report = fields.Selection(
         selection=[
             ('00_none', 'No map'),

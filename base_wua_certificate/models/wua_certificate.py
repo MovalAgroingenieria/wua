@@ -177,6 +177,10 @@ class WuaCertificate(models.Model):
         string='Map type in report',
         related='certificatetype_id.map_type_in_report')
 
+    parcel_img_coordinate_grid = fields.Boolean(
+        string='Include coordinate GRID in aerial images of parcel',
+        related='certificatetype_id.parcel_img_coordinate_grid')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing reference number.'),

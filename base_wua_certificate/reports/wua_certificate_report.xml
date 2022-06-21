@@ -136,9 +136,13 @@
                 <div name="wua_parcel_aerial_images_01">
                     <t t-if="o.partner_id.partnerlink_ids">
                         <t t-foreach="o.partner_id.partnerlink_ids" t-as="p">
-                            <t t-if="p.parcel_id.aerial_img">
+                            <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_current"/>
+                            <t t-if="o.parcel_img_coordinate_grid">
+                                <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_with_grid_current"/>
+                            </t>
+                            <t t-if="parcel_img_to_use">
                                 <div name="aerial_image" class="text-center" style="border: 1px solid black; padding: 1% 0%;">
-                                    <img t-attf-src="data:image/png;base64, #{p.parcel_id.aerial_img}" style="max-width: 824px; max-height: 824px;"/>
+                                    <img t-attf-src="data:image/png;base64, #{parcel_img_to_use}" style="max-width: 824px; max-height: 824px;"/>
                                 </div>
                             </t>
                             <t t-else="">
@@ -178,7 +182,7 @@
                                     </table>
                                 </div>
                                 <div style="width: 40%; display: table-cell; vertical-align: top; padding: 1%;">
-                                    <t t-set="scale_aprox" t-value="int(round(p.parcel_id.aerial_img_scale / 0.801, 0))"/>
+                                    <t t-set="scale_aprox" t-value="int(round(p.parcel_id.aerial_img_scale_current / 0.801, 0))"/>
                                     <table style="width: 100%; padding:1%;">
                                         <tbody>
                                             <tr>
@@ -194,11 +198,11 @@
                                             </tr>
                                             <tr>
                                                 <td><strong>Image date</strong></td>
-                                                <td class="text-right"><span t-field="p.parcel_id.aerial_img_date"/></td>
+                                                <td class="text-right"><span t-field="p.parcel_id.aerial_img_date_current"/></td>
                                             </tr>
                                             <tr>
                                                 <td><strong>Accuracy (m/px)</strong></td>
-                                                <td class="text-right"><span t-field="p.parcel_id.aerial_img_accuracy"/></td>
+                                                <td class="text-right"><span t-field="p.parcel_id.aerial_img_accuracy_current"/></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -214,6 +218,10 @@
                 <div name="wua_parcel_aerial_images_02">
                     <t t-if="o.partner_id.partnerlink_ids">
                         <t t-foreach="o.partner_id.partnerlink_ids" t-as="p">
+                        <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_current"/>
+                        <t t-if="o.parcel_img_coordinate_grid">
+                            <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_with_grid_current"/>
+                        </t>
                             <div style="width: 48%; float: left; display: table; border: 1px solid black; margin: 1.5% 0.5%; page-break-inside: avoid;">
                                 <div name="parcel_data" style="border-bottom: 1px solid black; padding: 2%;">
                                     <table style="width: 100%;">
@@ -221,8 +229,8 @@
                                             <tr>
                                                 <td>
                                                     <strong>Parcel</strong>
-                                                    <t t-if="p.parcel_id.aerial_img_date">
-                                                        <span>(image of <span t-field="p.parcel_id.aerial_img_date" t-options="{'format': 'MMMM YYYY'}"></span>)</span>
+                                                    <t t-if="p.parcel_id.aerial_img_date_current">
+                                                        <span>(image of <span t-field="p.parcel_id.aerial_img_date_current" t-options="{'format': 'MMMM YYYY'}"></span>)</span>
                                                     </t>
                                                 </td>
                                                 <td class="text-right"><span t-field="p.parcel_id"/></td>
@@ -242,8 +250,8 @@
                                     </table>
                                 </div>
                                 <div name="parcel_aerial_image" class="text-center">
-                                    <t t-if="p.parcel_id.aerial_img">
-                                        <img t-attf-src="data:image/png;base64, #{p.parcel_id.aerial_img}" style="max-width: 408px; max-height: 408px;"/>
+                                    <t t-if="parcel_img_to_use">
+                                        <img t-attf-src="data:image/png;base64, #{parcel_img_to_use}" style="max-width: 408px; max-height: 408px;"/>
                                     </t>
                                     <t t-else="">
                                         <div class="text-center text-muted" style="width: 408px; height: 408px; padding-top: 40%;">
