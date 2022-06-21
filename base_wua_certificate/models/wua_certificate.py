@@ -589,15 +589,30 @@ class WuaCertificate(models.Model):
             result = parcels_of_certificate.generate_parcel_shp()
             filename = self.name.replace('/', '-') + '.zip'
         attachment_obj = self.sudo().env['ir.attachment']
-        # Removed older shp
-        attachment_obj.search([('name', '=',
-                                'certificates_shp_download')]).unlink()
+        # Attachment info to create
+        attachment_info = {
+            'name': 'certificates_shp_download',
+            'datas_fname': filename,
+            'datas': result,
+            'res_model': 'wua.certificate'
+        }
+        # Info of the attachment that will be deleted
+        attachment_to_delete_domain = [
+            ('name', '=', 'certificates_shp_download'),
+            ('res.model', '=', 'wua.certificate')]
+        if (self.env.user and self.env.user.is_wua_portal_user):
+            attachment_to_delete_domain.append(
+                ('res_model', '=', 'res.partner'))
+            attachment_to_delete_domain.append(
+                ('res_id', '=', self.env.user.partner_id.id))
+            attachment_info.update({
+                'res_model': 'res.partner',
+                'res_id': self.env.user.partner_id.id
+            })
+            # Removed older shp
+        attachment_obj.search(attachment_to_delete_domain).unlink()
         # create attachment, add timestamp or something here?
-        attachment_id = attachment_obj.create(
-            {'name': 'certificates_shp_download',
-             'datas_fname': filename,
-             'datas': result,
-             'res_model': 'wua.certificate'})
+        attachment_id = attachment_obj.create(attachment_info)
         # prepare download url
         download_url = '/web/content/' + str(attachment_id.id) + \
             '?download=true'
