@@ -9,4 +9,3 @@ from . import wua_parcel
 from . import product
 from . import wua_agriculturalseason
 from . import wua_irrigationreport
-
