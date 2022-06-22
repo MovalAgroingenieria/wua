@@ -29,6 +29,7 @@
         "views/res_partner_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "reports/report_wua_irrigationreport.xml",
+        "views/wua_parcel_view.xml",
     ],
     "installable": True,
     "application": True,

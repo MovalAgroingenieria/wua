@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-27 16:10+0000\n"
-"PO-Revision-Date: 2021-01-27 16:10+0000\n"
+"POT-Creation-Date: 2022-06-22 11:04+0000\n"
+"PO-Revision-Date: 2022-06-22 11:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -49,6 +49,15 @@ msgstr "<span class=\"fa fa-cut\"/>\n"
 "                <span style=\"color: lightgrey;\">--------------------------------------------------------------------- còpia per al regant -------------------------------------------------------------------</span>"
 
 #. module: base_wua_irrigation_report_request
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_parcel_view_form
+msgid "<span class=\"o_stat_text\">\n"
+"                            Report requests\n"
+"                        </span>"
+msgstr "<span class=\"o_stat_text\">\n"
+"                            Peticions\n"
+"                        </span>"
+
+#. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.view_partner_form
 msgid "<span class=\"o_stat_text\">Report requests</span>"
 msgstr "<span class=\"o_stat_text\">Peticions</span>"
@@ -76,12 +85,12 @@ msgstr "<span>(Per ser signada per l'usuari de la C.R.)</span>"
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.report_wua_irrigationreport_request_document
 msgid "<span>Associated report</span>"
-msgstr "<span>Part associat</span>"
+msgstr "<span>Part associat:</span>"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.report_wua_irrigationreport_request_document
 msgid "<span>Date</span>"
-msgstr "<span>Data</span>"
+msgstr "<span>Data:</span>"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.report_wua_irrigationreport_request_document
@@ -91,7 +100,7 @@ msgstr "<span>Des </span>"
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.report_wua_irrigationreport_request_document
 msgid "<span>Hours</span>"
-msgstr "<span>Hores</span>"
+msgstr "<span>Hores:</span>"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.report_wua_irrigationreport_request_document
@@ -126,7 +135,7 @@ msgstr "<span>Signatura usuari</span>"
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.report_wua_irrigationreport_request_document
 msgid "<span>Volume</span>"
-msgstr "<span>Volum</span>"
+msgstr "<span>Volum:</span>"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.report_wua_irrigationreport_request_document
@@ -188,7 +197,7 @@ msgstr "C A N C E L · L A T"
 #: model:ir.actions.server,name:base_wua_irrigation_report_request.wua_cancel_reportrequests
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_form
 msgid "Cancel"
-msgstr "Cancel·la"
+msgstr "Treure validació"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_cancelled
@@ -199,7 +208,7 @@ msgstr "Cancel·lat"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model,name:base_wua_irrigation_report_request.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuració de l'reg amb gestió de l'tipus d'aigua"
+msgstr "Configuration of irrigation with type of water"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_create_uid
@@ -347,6 +356,11 @@ msgid "Mapped to request: Yes"
 msgstr "Associat a una petició: Sí"
 
 #. module: base_wua_irrigation_report_request
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_parcel_number_of_reportrequests
+msgid "N. of Report requests"
+msgstr "Nº de peticions"
+
+#. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_res_partner_number_of_reportrequest
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_res_users_number_of_reportrequest
 msgid "N. of Reports Requests"
@@ -398,7 +412,7 @@ msgstr "Soci"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model,name:base_wua_irrigation_report_request.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Soci CR"
+msgstr "Soci"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_search
@@ -418,6 +432,7 @@ msgstr "Petició de part"
 
 #. module: base_wua_irrigation_report_request
 #: code:addons/base_wua_irrigation_report_request/models/res_partner.py:43
+#: code:addons/base_wua_irrigation_report_request/models/wua_parcel.py:45
 #: model:ir.actions.act_window,name:base_wua_irrigation_report_request.wua_reportrequest_action
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_irrigationreport_reportrequest_ids
 #: model:ir.ui.menu,name:base_wua_irrigation_report_request.reportrequest_menu

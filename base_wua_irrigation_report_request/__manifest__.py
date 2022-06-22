@@ -25,6 +25,7 @@
         "views/wua_irrigationreport_view.xml",
         "reports/report_wua_irrigationreport_request.xml",
         "data/wua_irrigation_report_request_config_settings_data.xml",
+        "views/wua_parcel_view.xml",
     ],
     "installable": True,
     "application": False,

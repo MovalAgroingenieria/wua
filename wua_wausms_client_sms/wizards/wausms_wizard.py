@@ -270,6 +270,7 @@ class WauSMSWizard(models.Model):
                 "sms_confirmation_info": sms_confirmation_info,
                 "response_message": response_message, }
             self.env['wausms.tracking'].create(tracking_data)
+            self.env.cr.commit()
 
         return {
             'name': _("SMS confirmation"),
