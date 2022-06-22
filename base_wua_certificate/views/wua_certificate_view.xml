@@ -86,14 +86,17 @@
         <field name="arch" type="xml">
             <tree class=
                   "o_base_wua_certificate_certificate_parcel_view_tree"
-                  editable="bottom">
-                <field name="parcel_id"/>
-                <field name="cadastral_reference"/>
-                <field name="is_main"/>
-                <field name="area_official"/>
-                <field name="ownership_percentage"/>
-                <field name="water_costs_percentage"/>
-                <field name="other_costs_percentage"/>
+                  editable="bottom"
+                  create="false"
+                  delete="false">
+                <field name="parcel_id" readonly="1"/>
+                <field name="cadastral_reference" readonly="1"/>
+                <field name="is_main" readonly="1"/>
+                <field name="area_official" readonly="1"/>
+                <field name="ownership_percentage" readonly="1"/>
+                <field name="water_costs_percentage" readonly="1"/>
+                <field name="other_costs_percentage" readonly="1"/>
+                <field name="included_in_certificate"/>
             </tree>
         </field>
     </record>
@@ -393,7 +396,8 @@
                         <notebook name="slave_data_notebook">
                             <page name="parcels_page" string="Parcels">
                                 <field name="certificateparcel_ids"
-                                       readonly="1"
+                                       attrs="{'readonly':
+                                                [('state','!=','01_draft')]}"
                                        context="{'tree_view_ref':
                                        'base_wua_certificate.wua_certificate_parcel_view_tree'}"/>
                             </page>

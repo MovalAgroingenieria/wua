@@ -79,13 +79,14 @@
                     </div>
                 </t>
             </div>
-            <t t-if="o.certificateparcel_ids">
-                <t t-set="measurement_unit" t-value="o.certificateparcel_ids[0].parcel_id._compute_area_measurement_name()"/>
+            <t t-set="certificateparcel_ids" t-value="o.certificateparcel_ids.filtered(lambda x: x.included_in_certificate)"/>
+            <t t-if="certificateparcel_ids">
+                <t t-set="measurement_unit" t-value="certificateparcel_ids[0].parcel_id._compute_area_measurement_name()"/>
             </t>
             <t t-else="">
                 <t t-set="measurement_unit" t-value="str('N/A')"/>
             </t>
-            <t t-if="o.certificateparcel_ids" name="parcels_table">
+            <t t-if="certificateparcel_ids" name="parcels_table">
                 <table class="table table-condensed table-striped">
                     <thead>
                         <tr>
@@ -99,7 +100,7 @@
                     </thead>
                     <tbody>
                         <t t-set="total_area_official" t-value="0.0"/>
-                        <tr t-foreach="o.certificateparcel_ids" t-as="l">
+                        <tr t-foreach="certificateparcel_ids" t-as="l">
                             <td align="left"><span t-field="l.parcel_id"/></td>
                             <td align="center"><span t-field="l.cadastral_reference"/></td>
                             <td align="right">
@@ -134,8 +135,9 @@
             <!-- Aerial images -->
             <t t-if="o.map_type_in_report == '01_one'">
                 <div name="wua_parcel_aerial_images_01">
-                    <t t-if="o.partner_id.partnerlink_ids">
-                        <t t-foreach="o.partner_id.partnerlink_ids" t-as="p">
+                    <t t-set="parcels_show" t-value="o.certificateparcel_ids.filtered(lambda x: x.included_in_certificate)"/>
+                    <t t-if="parcels_show">
+                        <t t-foreach="parcels_show" t-as="p">
                             <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_current"/>
                             <t t-if="o.parcel_img_coordinate_grid">
                                 <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_with_grid_current"/>
@@ -216,8 +218,9 @@
 
             <t t-if="o.map_type_in_report == '02_four'">
                 <div name="wua_parcel_aerial_images_02">
-                    <t t-if="o.partner_id.partnerlink_ids">
-                        <t t-foreach="o.partner_id.partnerlink_ids" t-as="p">
+                    <t t-set="parcels_show" t-value="o.certificateparcel_ids.filtered(lambda x: x.included_in_certificate)"/>
+                    <t t-if="parcels_show">
+                        <t t-foreach="parcels_show" t-as="p">
                         <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_current"/>
                         <t t-if="o.parcel_img_coordinate_grid">
                             <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_with_grid_current"/>

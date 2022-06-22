@@ -599,7 +599,7 @@ class WuaCertificate(models.Model):
         # Info of the attachment that will be deleted
         attachment_to_delete_domain = [
             ('name', '=', 'certificates_shp_download'),
-            ('res.model', '=', 'wua.certificate')]
+            ('res_model', '=', 'wua.certificate')]
         if (self.env.user and self.env.user.is_wua_portal_user):
             attachment_to_delete_domain.append(
                 ('res_model', '=', 'res.partner'))
@@ -850,6 +850,10 @@ class WuaCertificateParcel(models.Model):
     is_main = fields.Boolean(
         string='Main',
         default=False)
+
+    included_in_certificate = fields.Boolean(
+        string='Included',
+        default=True)
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
