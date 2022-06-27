@@ -35,7 +35,7 @@ class WuaParcel(models.Model):
     SIZE_SUBPARCEL_SUFFIX = 2
     SIZE_PARTNERLINK_SUFFIX = 2
     SIZE_TRACK = 510
-
+    OWS_SERVICES_TIMEOUT = 5
     # Aerial IMG
     _aerial_img_layers = ['pnoa', 'parcel', 'parcel_perimeter', 'n_arrow']
     _aerial_img_layers_styles = ['default', 'default', 'default', 'default']
@@ -662,10 +662,15 @@ class WuaParcel(models.Model):
                                          'populated.'))
         else:
             mapserver_dpi = 90
-            wms = WebMapService(url=url_gis_viewer_wms, version='1.1.1')
-            wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
-            wms_pnoa = WebMapService(url='http://www.ign.es/wms-inspire/'
-                                         'pnoa-ma', version='1.1.1')
+            wms = WebMapService(
+                url=url_gis_viewer_wms, version='1.1.1',
+                timeout=self.OWS_SERVICES_TIMEOUT)
+            wfs = WebFeatureService(
+                url=url_gis_viewer_wfs, version='1.1.0',
+                timeout=self.OWS_SERVICES_TIMEOUT)
+            wms_pnoa = WebMapService(
+                url='http://www.ign.es/wms-inspire/pnoa-ma', version='1.1.1',
+                timeout=self.OWS_SERVICES_TIMEOUT)
             for record in self:
                 if record.with_gis_parcel:
                     filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
@@ -1436,10 +1441,15 @@ class WuaParcel(models.Model):
                                          'populated.'))
         else:
             mapserver_dpi = 90
-            wms = WebMapService(url=url_gis_viewer_wms, version='1.1.1')
-            wfs = WebFeatureService(url=url_gis_viewer_wfs, version='1.1.0')
-            wms_pnoa = WebMapService(url='http://www.ign.es/wms-inspire/'
-                                         'pnoa-ma', version='1.1.1')
+            wms = WebMapService(
+                url=url_gis_viewer_wms, version='1.1.1',
+                timeout=self.OWS_SERVICES_TIMEOUT)
+            wfs = WebFeatureService(
+                url=url_gis_viewer_wfs, version='1.1.0',
+                timeout=self.OWS_SERVICES_TIMEOUT)
+            wms_pnoa = WebMapService(
+                url='http://www.ign.es/wms-inspire/pnoa-ma', version='1.1.1',
+                timeout=self.OWS_SERVICES_TIMEOUT)
             for record in self:
                 if record.with_gis_parcel:
                     filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
