@@ -201,6 +201,7 @@
                 <field name="irrigationsystem_id"/>
                 <field name="productionmethod_id"/>
                 <field name="profile"/>
+                <field name="county_id" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -232,6 +233,7 @@
                 <field name="cultivationvariety_id"/>
                 <field name="irrigationsystem_id"/>
                 <field name="productionmethod_id"/>
+                <field name="county_id"/>
                 <field name="profile"/>
                 <filter string="Active Agricultural Season" name="active_agriculturalseason"
                  domain="[('agriculturalseason_id.is_the_active','=',True)]"/>
@@ -262,6 +264,8 @@
                      context="{'group_by':'irrigationsystem_id'}"/>
                     <filter string="Production Method" name="productionmethod"
                      context="{'group_by':'productionmethod_id'}"/>
+                    <filter string="County" name="county"
+                     context="{'group_by':'county_id'}"/>
                     <filter string="Profile" name="profile"
                      context="{'group_by':'profile'}"/>
                 </group>
@@ -294,6 +298,7 @@
                 <field name="productionmethod_id" widget="many2one_unclickable"
                        attrs="{'readonly':[('is_cultivable','=', False)]}"/>
                 <field name="overdue" invisible="1"/>
+                <field name="county_id" invisible="1"/>
             </tree>
         </field>
     </record>

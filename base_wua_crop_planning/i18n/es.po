@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-06 14:24+0000\n"
-"PO-Revision-Date: 2022-04-06 14:24+0000\n"
+"POT-Creation-Date: 2022-06-27 15:35+0000\n"
+"PO-Revision-Date: 2022-06-27 15:35+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -104,14 +104,14 @@ msgstr "<span>Nº Orden: </span>"
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_agriculturalseason_is_the_active
 msgid "Active"
-msgstr "Vigente"
+msgstr "Activo"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_search
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_search
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_enrolledsubparcel_view_search
 msgid "Active Agricultural Season"
-msgstr "Campaña vigente"
+msgstr "Campaña Activa"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_agriculturalseason_id
@@ -156,7 +156,7 @@ msgstr "Regable: Sí"
 #: model:ir.actions.server,name:base_wua_crop_planning.wua_cancel_cropplans
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_form
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Quitar validación"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_form
@@ -169,6 +169,12 @@ msgid "Closed Agricultural Seasons"
 msgstr "Campañas cerradas"
 
 #. module: base_wua_crop_planning
+#: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_county_id
+#: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_enrolledsubparcel_view_search
+msgid "County"
+msgstr "Municipio"
+
+#. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_create_uid
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_create_uid
 msgid "Created by"
@@ -177,23 +183,23 @@ msgstr "Creado por"
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_is_portal_user
 msgid "Created by the partner"
-msgstr "Creado por el regante"
+msgstr "Creada por el socio"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_search
 msgid "Created by the partner: No"
-msgstr "Creado por el regante: No"
+msgstr "Creada por el regante: No"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_search
 msgid "Created by the partner: Yes"
-msgstr "Creado por el regante: Sí"
+msgstr "Creada por el regante: Sí"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_create_date
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: base_wua_crop_planning
 #: model:ir.actions.report.xml,name:base_wua_crop_planning.action_wua_cropplan_report
@@ -211,11 +217,15 @@ msgstr "Plan de cultivo"
 #: code:addons/base_wua_crop_planning/models/wua_agriculturalseason.py:225
 #: model:ir.actions.act_window,name:base_wua_crop_planning.wua_cropplan_action
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_agriculturalseason_cropplan_ids
-#: model:ir.ui.menu,name:base_wua_crop_planning.wua_cropplan_menu
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_tree
 #, python-format
 msgid "Crop Plans"
 msgstr "Planes de cultivo"
+
+#. module: base_wua_crop_planning
+#: model:ir.ui.menu,name:base_wua_crop_planning.wua_cropplan_menu
+msgid "Crop-Plans Management"
+msgstr "Crop-Plans Management"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_is_cultivable
@@ -249,7 +259,7 @@ msgstr "Moneda"
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_display_name
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre mostrado"
 
 #. module: base_wua_crop_planning
 #: selection:wua.cropplan,state:0
@@ -313,7 +323,7 @@ msgstr "Elemento (campaña)"
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Elemento (lote de facturas)"
+msgstr "Entity (invoice set)"
 
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_waterconnection
@@ -399,7 +409,7 @@ msgstr "Punto de suministro de una parcela"
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan___last_update
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última modificación el"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_write_uid
@@ -411,7 +421,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_write_date
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_write_date
 msgid "Last Updated on"
-msgstr "Última actualización el"
+msgstr "Última actualización en"
 
 #. module: base_wua_crop_planning
 #: selection:wua.enrolledsubparcel,profile:0
@@ -461,7 +471,7 @@ msgstr "Área declarada"
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_form
 msgid "Open"
-msgstr "Abrir"
+msgstr "Abierto"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_order
@@ -515,7 +525,7 @@ msgstr "Parcels (integrated GIS)"
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Socio"
+msgstr "Partner of a WUA"
 
 #. module: base_wua_crop_planning
 #: code:addons/base_wua_crop_planning/models/wua_cropplan.py:752

@@ -948,6 +948,14 @@ class WuaEnrolledsubparcel(models.Model):
         ondelete='restrict',
         compute='_compute_hydraulicsector_id')
 
+    county_id = fields.Many2one(
+        string='County',
+        comodel_name='wua.region.state.county',
+        index=True,
+        store=True,
+        ondelete='restrict',
+        compute='_compute_county_id')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Enrolled Subparcel.'),
@@ -1024,6 +1032,11 @@ class WuaEnrolledsubparcel(models.Model):
     def _compute_hydraulicsector_id(self):
         for record in self:
             record.hydraulicsector_id = record.parcel_id.hydraulicsector_id
+
+    @api.depends('parcel_id', 'parcel_id.county_id')
+    def _compute_county_id(self):
+        for record in self:
+            record.county_id = record.parcel_id.county_id
 
     @api.onchange('parcel_id')
     def _onchange_parcel_id(self):

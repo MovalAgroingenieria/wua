@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-06 14:26+0000\n"
-"PO-Revision-Date: 2022-04-06 14:26+0000\n"
+"POT-Creation-Date: 2022-06-27 15:40+0000\n"
+"PO-Revision-Date: 2022-06-27 15:40+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -93,7 +93,7 @@ msgid "<span class=\"oe_edit_only\" style=\"color:Red;font-weight: bold;\" attrs
 "                                NOTICE: It will be necessary to sign\n"
 "                        </span>"
 msgstr "<span class=\"oe_edit_only\" style=\"color:Red;font-weight: bold;\" attrs=\"{'invisible':['|',('is_portal_user','=',False),('signature_image','!=',False)]}\">\n"
-"                                AVÍS: Ha de signar aquest document\n"
+"                                NOTICE: It will be necessary to sign\n"
 "                        </span>"
 
 #. module: base_wua_crop_planning
@@ -104,14 +104,14 @@ msgstr "<span>Nº comanda: </span>"
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_agriculturalseason_is_the_active
 msgid "Active"
-msgstr "Vigent"
+msgstr "Actiu"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_search
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_search
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_enrolledsubparcel_view_search
 msgid "Active Agricultural Season"
-msgstr "Campanya vigent"
+msgstr "Campanya activa"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_agriculturalseason_id
@@ -156,7 +156,7 @@ msgstr "Regable: Yes"
 #: model:ir.actions.server,name:base_wua_crop_planning.wua_cancel_cropplans
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_form
 msgid "Cancel"
-msgstr "Cancel·la"
+msgstr "Treure validació"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_form
@@ -169,6 +169,12 @@ msgid "Closed Agricultural Seasons"
 msgstr "Campanyes tancades"
 
 #. module: base_wua_crop_planning
+#: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_county_id
+#: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_enrolledsubparcel_view_search
+msgid "County"
+msgstr "Municipi"
+
+#. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_create_uid
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_create_uid
 msgid "Created by"
@@ -177,17 +183,17 @@ msgstr "Creat per"
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_is_portal_user
 msgid "Created by the partner"
-msgstr "Creat pel regant"
+msgstr "Creada pel regant"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_search
 msgid "Created by the partner: No"
-msgstr "Creat pel regant: No"
+msgstr "Creada pel regant: No"
 
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_cropplan_view_search
 msgid "Created by the partner: Yes"
-msgstr "Creat pel regant: Sí"
+msgstr "Creada pel regant: Sí"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_create_date
@@ -211,11 +217,15 @@ msgstr "Pla de cultiu"
 #: code:addons/base_wua_crop_planning/models/wua_agriculturalseason.py:225
 #: model:ir.actions.act_window,name:base_wua_crop_planning.wua_cropplan_action
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_agriculturalseason_cropplan_ids
-#: model:ir.ui.menu,name:base_wua_crop_planning.wua_cropplan_menu
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_tree
 #, python-format
 msgid "Crop Plans"
 msgstr "Plans de cultiu"
+
+#. module: base_wua_crop_planning
+#: model:ir.ui.menu,name:base_wua_crop_planning.wua_cropplan_menu
+msgid "Crop-Plans Management"
+msgstr "Crop-Plans Management"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_is_cultivable
@@ -249,7 +259,7 @@ msgstr "Moneda"
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_display_name
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_display_name
 msgid "Display Name"
-msgstr "Nom a mostrar"
+msgstr "Mostrar Nom"
 
 #. module: base_wua_crop_planning
 #: selection:wua.cropplan,state:0
@@ -313,7 +323,7 @@ msgstr "Element (campanya)"
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Element (lot de factures)"
+msgstr "Element (lot)"
 
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_waterconnection
@@ -399,19 +409,19 @@ msgstr "Punt de subministrament d'una parcel·la"
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan___last_update
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el"
+msgstr "Última modificació el "
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_write_uid
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_write_uid
 msgid "Last Updated by"
-msgstr "Darrera Actualització per"
+msgstr "Última actualització per"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_write_date
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_write_date
 msgid "Last Updated on"
-msgstr "Darrera Actualització el"
+msgstr "Última actualització el"
 
 #. module: base_wua_crop_planning
 #: selection:wua.enrolledsubparcel,profile:0
@@ -461,7 +471,7 @@ msgstr "Àrea declarada"
 #. module: base_wua_crop_planning
 #: model:ir.ui.view,arch_db:base_wua_crop_planning.wua_agriculturalseason_view_form
 msgid "Open"
-msgstr "Obrir"
+msgstr "Obert"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_enrolledsubparcel_order
@@ -510,12 +520,12 @@ msgstr "Parcel·la"
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_wua_parcel
 msgid "Parcels (integrated GIS)"
-msgstr "Parcel·les (SIG integrats)"
+msgstr "Parcel·les (integrades GIS)"
 
 #. module: base_wua_crop_planning
 #: model:ir.model,name:base_wua_crop_planning.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Soci"
+msgstr "Partner of a WUA"
 
 #. module: base_wua_crop_planning
 #: code:addons/base_wua_crop_planning/models/wua_cropplan.py:752
@@ -612,7 +622,7 @@ msgstr "Pla presentat"
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_request_date
 msgid "Request Date"
-msgstr "Data sol·licitud"
+msgstr "Data de sol·licitud"
 
 #. module: base_wua_crop_planning
 #: model:ir.model.fields,field_description:base_wua_crop_planning.field_wua_cropplan_signature_image
