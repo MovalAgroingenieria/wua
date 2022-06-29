@@ -375,6 +375,10 @@ class WuaParcel(models.Model):
         readonly=True,
         attachment=True)
 
+    aerial_img_with_grid = fields.Binary(
+        string="Aerial Image with grid Overlay",
+        compute='_compute_aerial_img_with_grid')
+
     aerial_img_scale = fields.Integer(
         string='Scale',
         readonly=True)
@@ -761,6 +765,19 @@ class WuaParcel(models.Model):
                         _logger = logging.getLogger(self.__class__.__name__)
                         _logger.exception('Aerial IMG')
                         pass
+
+    @api.multi
+    def _compute_aerial_img_with_grid(self):
+        for record in self:
+            aerial_img_with_grid = None
+            if (record.aerial_img and record.aerial_img_bbox):
+                aerial_img = io.BytesIO(base64.b64decode(
+                    record.aerial_img))
+                aerial_grid = record._add_coordinate_grid_to_img(
+                    aerial_img, map(
+                        int, record.aerial_img_bbox.split(',')))
+                aerial_img_with_grid = base64.b64encode(aerial_grid)
+            record.aerial_img_with_grid = aerial_img_with_grid
 
     @api.multi
     def _compute_aerial_img_with_grid_current(self):
