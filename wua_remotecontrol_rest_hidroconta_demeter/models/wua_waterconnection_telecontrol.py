@@ -43,6 +43,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     }))
             installation_identifier = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'installation_identifier')
+            flow_in_liters = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'flow_in_liters')
             if resp_rest.status_code == 200 and installation_identifier:
                 hydrants = json.loads(resp_rest.text)
                 model_wua_watermeter = self.env['wua.watermeter']
@@ -60,11 +62,14 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                 waterconnection = \
                                     current_watermeter.waterconnection_id.name
                                 total_volume = (
-                                    hydrant['counter']['counterGlobalValue']
-                                    / 1000)
+                                    hydrant['counter']['counterGlobalValue'] /
+                                    1000)
                                 waterflow = (
-                                    hydrant['counter']['flow']
-                                    / self.FACTOR_CONVERSION)
+                                    hydrant['counter']['flow'] /
+                                    self.FACTOR_CONVERSION)
+                                # flow in m³/h?
+                                if (not flow_in_liters):
+                                    waterflow = waterflow / 3.6
                                 valve_open = \
                                     hydrant['valve']['stateIsOpen']
                                 valve_scheduled = \

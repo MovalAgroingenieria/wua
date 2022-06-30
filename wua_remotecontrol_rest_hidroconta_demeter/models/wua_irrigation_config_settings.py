@@ -14,10 +14,16 @@ class WuaIrrigationConfiguration(models.TransientModel):
         required=True,
         help='Installation Identifier')
 
+    flow_in_liters = fields.Boolean(
+        string='API Flow on l/s.',
+        default=False,
+        required=True,
+        help='Flow value from API demeter in l/s')
+
     _sql_constraints = [
         ('valid_installation_identifier',
          'CHECK (installation_identifier >= 0)',
-         'The installation identifier must be a value zero or positive.')
+         'The installation identifier must be a value zero or positive.'),
         ]
 
     @api.multi
@@ -27,3 +33,6 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'installation_identifier',
                            self.installation_identifier)
+        values.set_default('wua.irrigation.configuration',
+                           'flow_in_liters',
+                           self.flow_in_liters)

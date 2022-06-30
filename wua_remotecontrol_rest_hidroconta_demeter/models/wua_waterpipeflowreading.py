@@ -42,6 +42,8 @@ class WuaWaterpipeflowreading(models.Model):
                     }))
             installation_identifier = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'installation_identifier')
+            flow_in_liters = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'flow_in_liters')
             if resprest.status_code == 200 and installation_identifier:
                 counters = json.loads(resprest.text)
                 for counter in counters:
@@ -51,6 +53,9 @@ class WuaWaterpipeflowreading(models.Model):
                             counter['code'].encode('utf-8', 'ignore')
                         volume = counter['counterGlobalValue'] / 1000
                         instant_flow = counter['flow']
+                        # Flow on l/s?
+                        if (flow_in_liters):
+                            instant_flow = instant_flow * 3.6
                         waterpipeflowreadings.append({
                             'flowmeter': flowmeter,
                             'volume': volume,
