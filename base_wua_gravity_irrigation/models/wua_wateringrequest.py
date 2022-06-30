@@ -134,7 +134,7 @@ class WuaWateringrequest(models.Model):
                     raise exceptions.ValidationError(_(
                         'Total watering duration must be grater than 0.'))
 
-    @api.depends('wateringperiod_id', 'partner_id')
+    @api.depends('wateringperiod_id', 'wateringperiod_id.name', 'partner_id')
     def _compute_name(self):
         for record in self:
             value = ''

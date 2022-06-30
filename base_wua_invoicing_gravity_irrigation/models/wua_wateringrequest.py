@@ -57,7 +57,8 @@ class WuaWateringrequest(models.Model):
         index=True,
         ondelete='restrict')
 
-    @api.depends('wateringperiod_id', 'partner_id', 'product_id')
+    @api.depends('wateringperiod_id', 'wateringperiod_id.name',
+                 'partner_id', 'product_id')
     def _compute_name(self):
         for record in self:
             name = ''
