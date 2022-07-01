@@ -26,7 +26,9 @@
             paperformat="base_wua_irrigations_request.paperformat_wua_irrigationsrequest_report"/>
 
     <template id="wua_irrigationsrequest_internal_layout" inherit_id="report.internal_layout">
-        <xpath expr="//div[@class='header']" position="replace"/>
+        <xpath expr="//div[@class='header']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
     </template>
 
     <template id="report_wua_irrigations_request">
