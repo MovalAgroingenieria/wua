@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowdata_view_tree" model="ir.ui.view">
+        <field name="name">Flowdata (tree view)</field>
+        <field name="model">wua.flowdata</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_flowdata_view_tree">
+              <field name="flowmeter_id"/>
+              <field name="time"/>
+              <field name="flow"/>
+            </tree>
+        </field>
+    </record>
+    
+    <record id="wua_flowdata_view_form" model="ir.ui.view">
+        <field name="name">Flowdata (form view)</field>
+        <field name="model">wua.flowdata</field>
+        <field name="arch" type="xml">
+          <form duplicate="0">
+              <field name="id" invisible="1"/>
+              <sheet>
+                  <div name="buttons" class="oe_button_box"/>
+                  <group name="master_data">
+                      <group name="master_data_left">
+                        <field name="flowmeter_id" attrs="{'readonly': [('id', '>', 0)]}"/>
+                        <field name="time" attrs="{'readonly': [('id', '>', 0)]}"/>
+                        <field name="flow" attrs="{'readonly': [('id', '>', 0)]}"/>
+                      </group>
+                  </group>
+              </sheet>
+          </form>
+        </field>
+    </record>
+    
+    <record id="wua_flowdata_view_search" model="ir.ui.view">
+        <field name="name">Flowreading (search view)</field>
+        <field name="model">wua.flowdata</field>
+        <field name="arch" type="xml">
+            <search>
+              <field string="Flowmeter" name="flowmeter_id"/>
+              <group expand="0" string="Group By">
+                  <filter string="Flowmeter" name="flowmeter"
+                    context="{'group_by':'flowmeter_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <record id="wua_flowdata_action" model="ir.actions.act_window">
+        <field name="name">Flow data</field>
+        <field name="res_model">wua.flowdata</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_flowdata_view_tree"/>
+        <field name="search_view_id" ref="wua_flowdata_view_search"/>
+    </record>
+
+    <menuitem id="wua_technical_flowdata_menu"
+        name="See: all flowdata"
+        parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+        action="wua_flowdata_action"
+        sequence="10"/>
+
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowmeter_view_form" model="ir.ui.view">
+        <field name="name">Flowmeter (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="before">
+                <button name="action_see_flowdata" type="object" class="oe_stat_button"
+                        icon="fa-moval-flowdata-show" groups="base_wua.group_wua_user"
+                        attrs="{'invisible': [('id', '=', False)]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Flow data</span>
+                        </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
