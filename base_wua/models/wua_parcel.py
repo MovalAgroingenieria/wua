@@ -36,7 +36,7 @@ class WuaParcel(models.Model):
     SIZE_SUBPARCEL_SUFFIX = 2
     SIZE_PARTNERLINK_SUFFIX = 2
     SIZE_TRACK = 510
-    OWS_SERVICES_TIMEOUT = 5
+    OWS_SERVICES_TIMEOUT = 15
     # Aerial IMG
     _aerial_img_layers = ['pnoa', 'parcel', 'parcel_perimeter', 'n_arrow']
     _aerial_img_layers_styles = ['default', 'default', 'default', 'default']
