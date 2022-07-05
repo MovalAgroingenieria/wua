@@ -10,9 +10,10 @@ import io
 import base64
 import logging
 import requests
+import json
 from pyproj import Proj, transform
 from PIL import Image, ImageDraw, ImageFont
-from lxml import etree, html
+from lxml import etree
 from collections import OrderedDict
 from xml.etree import ElementTree
 from owslib.wms import WebMapService
@@ -672,9 +673,6 @@ class WuaParcel(models.Model):
             wfs = WebFeatureService(
                 url=url_gis_viewer_wfs, version='1.1.0',
                 timeout=self.OWS_SERVICES_TIMEOUT)
-            wms_pnoa = WebMapService(
-                url='http://www.ign.es/wms-inspire/pnoa-ma', version='1.1.1',
-                timeout=self.OWS_SERVICES_TIMEOUT)
             for record in self:
                 if record.with_gis_parcel:
                     filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
@@ -725,19 +723,17 @@ class WuaParcel(models.Model):
                         height = max_height
                         bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
                                 (int(upperCorner[0])), (int(upperCorner[1])))
-                        data_pnoa = wms_pnoa.getfeatureinfo(
-                            layers=['OI.MosaicElement'],
+                        data_pnoa = wms.getfeatureinfo(
+                            layers=['pnoa_date'],
                             srs=crs, bbox=bbox, size=(width, height),
-                            format='image/jpeg', info_format='text/html',
-                            xy=(width/2, height/2))
-                        data_pnoa_parsed = html.fromstring(
-                            data_pnoa.read())
-                        data_pnoa_info_rows = data_pnoa_parsed.find('body').\
-                            find('table').findall('tr')
-                        date = data_pnoa_info_rows[0].findall('td')[1].text
+                            info_format='application/json',
+                            format='image/jpeg', xy=(width/2, height/2))
+                        data_pnoa_parsed = json.loads(data_pnoa.read())
+                        date = data_pnoa_parsed['features'][0][
+                            'properties']['FECHA']
                         date = datetime.datetime.strptime(date, '%Y-%m')
-                        resolution = data_pnoa_info_rows[1].findall('td')[1].\
-                            text
+                        resolution = data_pnoa_parsed['features'][0][
+                            'properties']['RESOLUCION']
                         img = wms.getmap(
                             layers=record._aerial_img_layers,
                             styles=record._aerial_img_layers_styles,
@@ -1464,9 +1460,6 @@ class WuaParcel(models.Model):
             wfs = WebFeatureService(
                 url=url_gis_viewer_wfs, version='1.1.0',
                 timeout=self.OWS_SERVICES_TIMEOUT)
-            wms_pnoa = WebMapService(
-                url='http://www.ign.es/wms-inspire/pnoa-ma', version='1.1.1',
-                timeout=self.OWS_SERVICES_TIMEOUT)
             for record in self:
                 if record.with_gis_parcel:
                     filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
@@ -1517,19 +1510,17 @@ class WuaParcel(models.Model):
                         height = max_height
                         bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
                                 (int(upperCorner[0])), (int(upperCorner[1])))
-                        data_pnoa = wms_pnoa.getfeatureinfo(
-                            layers=['OI.MosaicElement'],
+                        data_pnoa = wms.getfeatureinfo(
+                            layers=['pnoa_date'],
                             srs=crs, bbox=bbox, size=(width, height),
-                            format='image/jpeg', info_format='text/html',
-                            xy=(width/2, height/2))
-                        data_pnoa_parsed = html.fromstring(
-                            data_pnoa.read())
-                        data_pnoa_info_rows = data_pnoa_parsed.find('body').\
-                            find('table').findall('tr')
-                        date = data_pnoa_info_rows[0].findall('td')[1].text
+                            info_format='application/json',
+                            format='image/jpeg', xy=(width/2, height/2))
+                        data_pnoa_parsed = json.loads(data_pnoa.read())
+                        date = data_pnoa_parsed['features'][0][
+                            'properties']['FECHA']
                         date = datetime.datetime.strptime(date, '%Y-%m')
-                        resolution = data_pnoa_info_rows[1].findall('td')[1].\
-                            text
+                        resolution = data_pnoa_parsed['features'][0][
+                            'properties']['RESOLUCION']
                         img = wms.getmap(
                             layers=record._aerial_img_layers,
                             styles=record._aerial_img_layers_styles,
