@@ -16,6 +16,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/wua_infrastructure_config_settings_data.xml",
         "views/resources.xml",
         "views/wua_infrastructure_config_settings_view.xml",
         "views/wua_flowmeter_view.xml",
