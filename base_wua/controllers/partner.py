@@ -43,7 +43,7 @@ class PartnerShpController(http.Controller):
                         parcels_label = _('Parcels')
                         content = base64.b64decode(parcel_shp)
                         zip_httpheaders = [
-                            ('Content-Type', 'application/zip,'),
+                            ('Content-Type', 'application/zip'),
                             ('Content-Length', len(content)),
                             ('Content-Disposition',
                              'attachment; filename="' + parcels_label +
@@ -75,7 +75,7 @@ class PartnerShpController(http.Controller):
                 parcels_label = _('Parcels')
                 content = base64.b64decode(parcel_shp)
                 zip_httpheaders = [
-                    ('Content-Type', 'application/zip,'),
+                    ('Content-Type', 'application/zip'),
                     ('Content-Length', len(content)),
                     ('Content-Disposition',
                         'attachment; filename="' + parcels_label +
