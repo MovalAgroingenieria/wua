@@ -19,20 +19,25 @@ class WuaFlowData(models.Model):
             WHERE extname = 'timescaledb');""")
         timescaledb_is_installed = self.env.cr.fetchone()[0]
         if timescaledb_is_installed:
+            # Hypertable
             self.env.cr.execute("""
                 ALTER TABLE wua_flowdata
                 DROP CONSTRAINT IF EXISTS wua_flowdata_pkey;""")
             self.env.cr.commit()
             self.env.cr.execute("""
                 SELECT create_hypertable('wua_flowdata','time',
-                if_not_exists => TRUE);""")
+                if_not_exists => TRUE, migrate_data => TRUE);""")
             self.env.cr.commit()
+
+            # Indexes
             self.env.cr.execute("""
                 CREATE INDEX IF NOT EXISTS wua_flowdata_flowmeter_time_idx
                 ON wua_flowdata (flowmeter_id, time DESC);
                 CREATE INDEX IF NOT EXISTS wua_flowdata_id_time_idx
                 ON wua_flowdata (id, time DESC);""")
             self.env.cr.commit()
+
+            # Materialized views
             self.env.cr.execute("""
                 CREATE MATERIALIZED VIEW IF NOT EXISTS wua_flowdata_hourly
                 WITH (timescaledb.continuous) AS
@@ -41,8 +46,7 @@ class WuaFlowData(models.Model):
                     max(flow) AS max,
                     min(flow) AS min,
                     avg(flow) AS average
-                FROM wua_flowdata srt GROUP BY hour, flowmeter_id
-                WITH NO DATA;""")
+                FROM wua_flowdata srt GROUP BY hour, flowmeter_id;""")
             self.env.cr.commit()
             self.env.cr.execute("""
                 CREATE MATERIALIZED VIEW IF NOT EXISTS wua_flowdata_daily
@@ -52,9 +56,30 @@ class WuaFlowData(models.Model):
                     max(flow) AS max,
                     min(flow) AS min,
                     avg(flow) AS average
-                FROM wua_flowdata srt GROUP BY day, flowmeter_id
-                WITH NO DATA;""")
+                FROM wua_flowdata srt GROUP BY day, flowmeter_id;""")
             self.env.cr.commit()
+            self.env.cr.execute("""
+                CREATE MATERIALIZED VIEW IF NOT EXISTS wua_flowdata_weekly
+                WITH (timescaledb.continuous) AS
+                SELECT time_bucket('7 day', "time") AS week,
+                    flowmeter_id,
+                    max(flow) AS max,
+                    min(flow) AS min,
+                    avg(flow) AS average
+                FROM wua_flowdata srt GROUP BY week, flowmeter_id;""")
+            self.env.cr.commit()
+            self.env.cr.execute("""
+                CREATE MATERIALIZED VIEW IF NOT EXISTS wua_flowdata_monthly
+                WITH (timescaledb.continuous) AS
+                SELECT time_bucket('30 day', "time") AS month,
+                    flowmeter_id,
+                    max(flow) AS max,
+                    min(flow) AS min,
+                    avg(flow) AS average
+                FROM wua_flowdata srt GROUP BY month, flowmeter_id;""")
+            self.env.cr.commit()
+
+            # Aggregate policies
             self.env.cr.execute("""
                 SELECT add_continuous_aggregate_policy('wua_flowdata_hourly',
                   start_offset => INTERVAL '7 days',
@@ -69,6 +94,22 @@ class WuaFlowData(models.Model):
                   schedule_interval => INTERVAL '1 days',
                 if_not_exists => TRUE);""")
             self.env.cr.commit()
+            self.env.cr.execute("""
+                SELECT add_continuous_aggregate_policy('wua_flowdata_weekly',
+                  start_offset => INTERVAL '1 month',
+                  end_offset => INTERVAL '1 hour',
+                  schedule_interval => INTERVAL '1 week',
+                if_not_exists => TRUE);""")
+            self.env.cr.commit()
+            self.env.cr.execute("""
+                SELECT add_continuous_aggregate_policy('wua_flowdata_monthly',
+                  start_offset => INTERVAL '3 month',
+                  end_offset => INTERVAL '1 hour',
+                  schedule_interval => INTERVAL '1 month',
+                if_not_exists => TRUE);""")
+            self.env.cr.commit()
+
+            # Compression (Not used)
             # self.env.cr.execute("""
             #     ALTER TABLE wua_flowdata SET (
             #       timescaledb.compress,
