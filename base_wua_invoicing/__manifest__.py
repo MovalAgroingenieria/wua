@@ -14,7 +14,7 @@
     "depends": [
         "base_wua_infrastructure",
         "account_cancel",
-        "account_banking_sepa_direct_debit",
+        "account_banking_sepa_direct_debit_extended",
         "sale",
         "account_invoice_transmit_method",
         "account_invoice_line_report",
