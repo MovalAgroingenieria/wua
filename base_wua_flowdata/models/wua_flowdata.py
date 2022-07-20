@@ -46,7 +46,9 @@ class WuaFlowData(models.Model):
                     max(flow) AS max,
                     min(flow) AS min,
                     avg(flow) AS average
-                FROM wua_flowdata srt GROUP BY hour, flowmeter_id;""")
+                FROM wua_flowdata srt
+                GROUP BY hour, flowmeter_id
+                WITH NO DATA;;""")
             self.env.cr.commit()
             self.env.cr.execute("""
                 CREATE MATERIALIZED VIEW IF NOT EXISTS wua_flowdata_daily
@@ -56,7 +58,9 @@ class WuaFlowData(models.Model):
                     max(flow) AS max,
                     min(flow) AS min,
                     avg(flow) AS average
-                FROM wua_flowdata srt GROUP BY day, flowmeter_id;""")
+                FROM wua_flowdata srt
+                GROUP BY day, flowmeter_id
+                WITH NO DATA;;""")
             self.env.cr.commit()
             self.env.cr.execute("""
                 CREATE MATERIALIZED VIEW IF NOT EXISTS wua_flowdata_weekly
@@ -66,7 +70,9 @@ class WuaFlowData(models.Model):
                     max(flow) AS max,
                     min(flow) AS min,
                     avg(flow) AS average
-                FROM wua_flowdata srt GROUP BY week, flowmeter_id;""")
+                FROM wua_flowdata srt
+                GROUP BY week, flowmeter_id
+                WITH NO DATA;;""")
             self.env.cr.commit()
             self.env.cr.execute("""
                 CREATE MATERIALIZED VIEW IF NOT EXISTS wua_flowdata_monthly
@@ -76,7 +82,9 @@ class WuaFlowData(models.Model):
                     max(flow) AS max,
                     min(flow) AS min,
                     avg(flow) AS average
-                FROM wua_flowdata srt GROUP BY month, flowmeter_id;""")
+                FROM wua_flowdata srt
+                GROUP BY month, flowmeter_id
+                WITH NO DATA;;""")
             self.env.cr.commit()
 
             # Aggregate policies
