@@ -34,8 +34,9 @@ class WuaParcel(models.Model):
     def _compute_remotecontrol_enabled(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
-        can_be_sent_parcels_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_parcels_census')
+        can_be_sent_parcels_census = \
+            self.env['wua.irrigation.configuration'].\
+            can_be_sent_parcels_census_any()
         if enable_remotecontrol is None:
             enable_remotecontrol = False
         if can_be_sent_parcels_census is None:
@@ -44,32 +45,33 @@ class WuaParcel(models.Model):
             record.remotecontrol_enabled = \
                 enable_remotecontrol & can_be_sent_parcels_census
 
-    @api.model
-    def create(self, vals):
-        self.__class__._in_create_or_synchro = True
-        new_parcel = super(WuaParcel, self).create(vals)
-        enable_remotecontrol = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'enable_remotecontrol')
+    def send_parcel_on_creation(self, telecontrol, new_parcel, vals):
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_parcels_census')
+            'wua.irrigation.configuration',
+            'can_be_sent_parcels_census_' + telecontrol)
         automatic_census_synchronization = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'automatic_census_synchronization')
-        if (enable_remotecontrol and can_be_sent_parcels_census and
-           automatic_census_synchronization):
+            'wua.irrigation.configuration',
+            'automatic_census_synchronization_' + telecontrol)
+        if (can_be_sent_parcels_census and automatic_census_synchronization):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
-                data = self.populate_data_for_send_new_parcel(vals)
+                    url_remotecontrol_rest_password):
+                populate_function = getattr(
+                    self, 'populate_data_for_send_new_parcel_' + telecontrol)
+                data = populate_function(vals)
                 if data:
+                    send_function = getattr(
+                        self, 'send_new_parcel_' + telecontrol)
                     synchronized_remotecontrol, error_message = \
-                        self.send_new_parcel(
+                        send_function(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
@@ -89,49 +91,66 @@ class WuaParcel(models.Model):
                     _logger.info(prefix_message + ' ' +
                                  new_parcel.name + '... ' +
                                  suffix_message)
+
+    # Hook to use on every telecontrol
+    def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
+        pass
+
+    @api.model
+    def create(self, vals):
+        self.__class__._in_create_or_synchro = True
+        new_parcel = super(WuaParcel, self).create(vals)
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.send_parcel_on_creation_telecontrol(new_parcel, vals)
         self.__class__._in_create_or_synchro = False
         return new_parcel
 
-    @api.multi
-    def write(self, vals):
-        resp = super(WuaParcel, self).write(vals)
+    def send_parcel_on_write(self, telecontrol, vals):
         some_remotecontrol_key = False
         all_vals = vals.keys()
-        # Intersect the vals written and the possible keys taht will trigger
+        # Intersect the vals written and the possible keys that will trigger
         # the update (_remotecontrol_parcel_fields)
+        remotecontrol_parcel_fields = getattr(
+            self, '_remotecontrol_parcel_fields_' + telecontrol, [])
         some_remotecontrol_key = len(
-            list(set(all_vals) & set(self._remotecontrol_parcel_fields))) > 0
-        if (self.__class__._in_create_or_synchro or len(self) != 1 or not
-                some_remotecontrol_key):
-            return resp
-        enable_remotecontrol = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'enable_remotecontrol')
+            list(set(all_vals) & set(remotecontrol_parcel_fields))) > 0
+        if (not some_remotecontrol_key):
+            return
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_parcels_census')
+            'wua.irrigation.configuration',
+            'can_be_sent_parcels_census_' + telecontrol)
         automatic_census_synchronization = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'automatic_census_synchronization')
+            'wua.irrigation.configuration',
+            'automatic_census_synchronization_' + telecontrol)
         # If the parcel is archived / activated, then
         # automatic_census_synchronization = True (allways).
         active_in_vals = 'active' in vals
-        if (enable_remotecontrol and can_be_sent_parcels_census and
-           (automatic_census_synchronization or active_in_vals)):
+        if (can_be_sent_parcels_census and
+                (automatic_census_synchronization or active_in_vals)):
             record_archived = False
             if (active_in_vals and not vals['active']):
                 record_archived = True
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
-                data = self.populate_data_for_update_parcel(self)
+                    url_remotecontrol_rest_password):
+                populate_function = getattr(
+                    self, 'populate_data_for_update_parcel_' + telecontrol)
+                data = populate_function(self)
                 if data:
+                    update_function = getattr(
+                        self, 'update_parcel_' + telecontrol)
                     synchronized_remotecontrol, error_message = \
-                        self.update_parcel(
+                        update_function(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
@@ -148,33 +167,48 @@ class WuaParcel(models.Model):
                     _logger.info(prefix_message + ' ' +
                                  str(self.name) + '... ' +
                                  suffix_message)
-        return resp
+
+    # Hook to use on every telecontrol
+    def send_parcel_on_write_telecontrol(self, vals):
+        pass
 
     @api.multi
-    def unlink(self):
+    def write(self, vals):
+        resp = super(WuaParcel, self).write(vals)
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.send_parcel_on_write_telecontrol(vals)
+        return resp
+
+    def unlink_parcel_on_unlink(self, telecontrol):
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_parcels_census')
+            'wua.irrigation.configuration', 'can_be_sent_parcels_census_' +
+            telecontrol)
         automatic_census_synchronization = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'automatic_census_synchronization')
-        if (enable_remotecontrol and can_be_sent_parcels_census and
-           automatic_census_synchronization):
+            'wua.irrigation.configuration',
+            'automatic_census_synchronization_' + telecontrol)
+        if (can_be_sent_parcels_census and automatic_census_synchronization):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
+                    url_remotecontrol_rest_password):
                 for record in self:
-                    data = self.populate_data_for_delete_parcel(record)
+                    populate_function = getattr(
+                        self, 'populate_data_for_delete_parcel_' + telecontrol)
+                    data = populate_function(record)
                     if data:
+                        delete_function = getattr(
+                            self, 'delete_parcel_' + telecontrol)
                         synchronized_remotecontrol, error_message = \
-                            self.delete_parcel(
+                            delete_function(
                                 url_remotecontrol_rest,
                                 url_remotecontrol_rest_username,
                                 url_remotecontrol_rest_password,
@@ -191,62 +225,44 @@ class WuaParcel(models.Model):
                         _logger.info(prefix_message + ' ' +
                                      str(record.name) + '... ' +
                                      suffix_message)
-        return super(WuaParcel, self).unlink()
 
-    # Hook
-    def populate_data_for_send_new_parcel(self, vals):
-        return None
-
-    # Hook
-    def send_new_parcel(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, data):
-        return False, ''
-
-    # Hook
-    def populate_data_for_update_parcel(self, vals):
-        return None
-
-    # Hook
-    def update_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password,
-                      data, record_archived=False):
-        return False, ''
-
-    # Hook
-    def populate_data_for_delete_parcel(self, parcel):
-        return None
-
-    # Hook
-    def delete_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password, data):
-        return False, ''
+    # Hook to use on every telecontrol
+    def unlink_parcel_on_unlink_telecontrol(self):
+        pass
 
     @api.multi
-    def do_synchronization_parcel(self):
-        self.ensure_one()
+    def unlink(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.unlink_parcel_on_unlink_telecontrol()
+        return super(WuaParcel, self).unlink()
+
+    def create_parcel_on_syncrhonize(self, telecontrol):
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_parcels_census')
-        if (enable_remotecontrol and can_be_sent_parcels_census):
+            'wua.irrigation.configuration',
+            'can_be_sent_parcels_census_' + telecontrol)
+        if (can_be_sent_parcels_census):
             record_archived = not self.active
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
-                data = self.populate_data_for_update_parcel(self)
+                    url_remotecontrol_rest_password):
+                populate_function = getattr(
+                    self, 'populate_data_for_update_parcel_' + telecontrol)
+                data = populate_function(self)
                 if data:
+                    sync_function = getattr(
+                        self, 'synchronize_parcel_' + telecontrol)
                     synchronized_remotecontrol, error_message = \
-                        self.synchronize_parcel(
+                        sync_function(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
@@ -270,38 +286,51 @@ class WuaParcel(models.Model):
                     self.updated_in_remotecontrol = True
                     self.__class__._in_create_or_synchro = False
 
-    def do_synchronization_parcels(self, active_parcels,
-                                   show_message=False,
-                                   unconditional_syncrho=False):
-        if (not self.env.user.has_group('base_wua.group_wua_manager')):
-            raise exceptions.UserError(_(
-                'You do not have permission to execute this action.'))
+    # Hook to use on every telecontrol
+    def create_parcel_on_synchronize_telecontrol(self):
+        pass
+
+    @api.multi
+    def do_synchronization_parcel(self):
+        self.ensure_one()
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.create_parcel_on_synchronize_telecontrol()
+
+    def create_parcels_on_synchronize(
+            self, active_parcels, unconditional_syncrho, telecontrol):
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_parcels_census')
-        if (enable_remotecontrol and can_be_sent_parcels_census):
+            'wua.irrigation.configuration',
+            'can_be_sent_parcels_census_' + telecontrol)
+        if (can_be_sent_parcels_census):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration', 'url_remotecontrol_rest_' +
+                telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
+                    url_remotecontrol_rest_password):
                 parcels = self.env['wua.parcel'].with_context(
                     active_test=False).browse(active_parcels)
                 if parcels:
                     list_of_data = []
                     for parcel in parcels:
-                        data = self.populate_data_for_update_parcel(parcel)
+                        populate_function = getattr(
+                            self,
+                            'populate_data_for_update_parcel_' + telecontrol)
+                        data = populate_function(parcel)
                         if data:
                             list_of_data.append(data)
                     if list_of_data:
+                        sync_function = getattr(
+                            self, 'synchronize_parcels_' + telecontrol)
                         parcels_ok, parcels_not_ok = \
-                            self.synchronize_parcels(
+                            sync_function(
                                 url_remotecontrol_rest,
                                 url_remotecontrol_rest_username,
                                 url_remotecontrol_rest_password,
@@ -366,6 +395,23 @@ class WuaParcel(models.Model):
                                              parcels_not_ok_str + '... ' +
                                              suffix_message)
                             self.__class__._in_create_or_synchro = False
+
+    # Hook to use on every telecontrol
+    def create_parcels_on_synchronize_telecontrol(self, active_parcels,
+                                                  unconditional_syncrho):
+        pass
+
+    def do_synchronization_parcels(self, active_parcels,
+                                   show_message=False,
+                                   unconditional_syncrho=False):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.create_parcels_on_synchronize_telecontrol(
+                active_parcels, unconditional_syncrho)
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
@@ -380,41 +426,30 @@ class WuaParcel(models.Model):
         if not show_message:
             return True
 
-    # Hook
-    def synchronize_parcel(self, url_remotecontrol_rest,
-                           url_remotecontrol_rest_username,
-                           url_remotecontrol_rest_password,
-                           data, record_archived=False):
-        return False, ''
-
-    # Hook
-    def synchronize_parcels(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, list_of_data):
-        return None, None
-
-    @api.multi
-    def do_unsynchronization_parcel(self):
-        self.ensure_one()
-        enable_remotecontrol = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'enable_remotecontrol')
+    def unlink_parcel_on_unsyncrhonize(self, telecontrol):
         can_be_sent_parcels_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_parcels_census')
-        if (enable_remotecontrol and can_be_sent_parcels_census):
+            'wua.irrigation.configuration',
+            'can_be_sent_parcels_census_' + telecontrol)
+        if (can_be_sent_parcels_census):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
-                data = self.populate_data_for_delete_parcel(self)
+                    url_remotecontrol_rest_password):
+                populate_function = getattr(
+                    self, 'populate_data_for_delete_parcel_' + telecontrol)
+                data = populate_function(self)
                 if data:
+                    delete_function = getattr(
+                        self, 'delete_parcel_' + telecontrol)
                     synchronized_remotecontrol, error_message = \
-                        self.delete_parcel(
+                        delete_function(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
@@ -438,3 +473,15 @@ class WuaParcel(models.Model):
                     self.__class__._in_create_or_synchro = True
                     self.updated_in_remotecontrol = False
                     self.__class__._in_create_or_synchro = False
+
+    # Hook to use on every telecontrol
+    def unlink_parcel_on_unsynchronize_telecontrol(self):
+        pass
+
+    @api.multi
+    def do_unsynchronization_parcel(self):
+        self.ensure_one()
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.unlink_parcel_on_unsynchronize_telecontrol()

@@ -67,6 +67,12 @@ class WuaWaterconnectionTelecontrol(models.Model):
         })
         return telecontrol_info
 
+    # Hook that will be implemented on all telecontrols, appending info
+    def do_import_waterconnection_telecontrol_info_all(self):
+        wc_info = []
+        error_message = ''
+        return [wc_info, error_message]
+
     @api.model
     def do_import_waterconnection_telecontrol_info(
             self, save_data=True, show_message=True):
@@ -76,38 +82,18 @@ class WuaWaterconnectionTelecontrol(models.Model):
         if enable_remotecontrol is None:
             enable_remotecontrol = False
         if (enable_remotecontrol):
-            url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
-            url_remotecontrol_rest_username = self.env['ir.values'].\
-                get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
-            url_remotecontrol_rest_password = self.env['ir.values'].\
-                get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
-            if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
-                data = \
-                    self.\
-                    populate_data_for_import_waterconnection_telecontrol_info(
-                        url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password)
-                if data:
-                    wc_info, error_message = \
-                        self.import_waterconnection_telecontrol_info(
-                            url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, data)
-                    wc_info = self.refine_waterconnection_telecontrol_info(
-                        wc_info)
-                    if save_data:
-                        self.save_waterconnection_telecontrol_info(wc_info)
-                    if error_message:
-                        prefix_message = _('Remote Control: Error getting '
-                                           'waterconnection info')
-                        suffix_message = error_message
-                        _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.info(prefix_message + '... ' + suffix_message)
+            wc_info, error_message = \
+                self.do_import_waterconnection_telecontrol_info_all()
+            wc_info = self.refine_waterconnection_telecontrol_info(
+                wc_info)
+            if save_data:
+                self.save_waterconnection_telecontrol_info(wc_info)
+            if error_message:
+                prefix_message = _('Remote Control: Error getting '
+                                   'waterconnection info')
+                suffix_message = error_message
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info(prefix_message + '... ' + suffix_message)
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '

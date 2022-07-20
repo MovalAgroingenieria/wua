@@ -37,8 +37,9 @@ class ResPartner(models.Model):
     def _compute_remotecontrol_enabled(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
-        can_be_sent_partners_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_partners_census')
+        can_be_sent_partners_census = \
+            self.env['wua.irrigation.configuration'].\
+            can_be_sent_partners_census_any()
         if enable_remotecontrol is None:
             enable_remotecontrol = False
         if can_be_sent_partners_census is None:
@@ -47,6 +48,58 @@ class ResPartner(models.Model):
             record.remotecontrol_enabled = \
                 enable_remotecontrol & can_be_sent_partners_census
 
+    def send_partner_on_creation(self, telecontrol, new_partner, vals):
+        can_be_sent_partners_census = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'can_be_sent_partners_census_' +
+            telecontrol)
+        automatic_census_synchronization = \
+            self.env['ir.values'].get_default(
+                'wua.irrigation.configuration',
+                'automatic_census_synchronization_' + telecontrol)
+        if (can_be_sent_partners_census and automatic_census_synchronization):
+            url_remotecontrol_rest = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'url_remotecontrol_rest_' +
+                telecontrol)
+            url_remotecontrol_rest_username = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_username_' + telecontrol)
+            url_remotecontrol_rest_password = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_password_' + telecontrol)
+            if (url_remotecontrol_rest and url_remotecontrol_rest_username and
+                    url_remotecontrol_rest_password):
+                populate_function = getattr(
+                    self, 'populate_data_for_send_new_partner_' + telecontrol)
+                data = populate_function(vals)
+                if data:
+                    send_function = getattr(
+                        self, 'send_new_partner_' + telecontrol)
+                    synchronized_remotecontrol, error_message = \
+                        send_function(
+                            url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password,
+                            data)
+                    prefix_message = _('Remote Control: Updating remote '
+                                       'control for partner (new)')
+                    suffix_message = 'OK'
+                    if synchronized_remotecontrol:
+                        self.env['res.partner'].browse(new_partner.id).\
+                            updated_in_remotecontrol = True
+                    else:
+                        if not error_message:
+                            error_message = \
+                                _('Update error in remote control')
+                        suffix_message = error_message
+                    _logger = logging.getLogger(self.__class__.__name__)
+                    _logger.info(prefix_message + ' ' +
+                                 str(new_partner.partner_code) + '... ' +
+                                 suffix_message)
+
+    # Hook to use on every telecontrol
+    def send_partner_on_creation_telecontrol(self, new_partner, vals):
+        pass
+
     @api.model
     def create(self, vals):
         self.__class__._in_create_or_synchro = True
@@ -54,91 +107,55 @@ class ResPartner(models.Model):
         if 'is_wua_partner' in vals and vals['is_wua_partner']:
             enable_remotecontrol = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'enable_remotecontrol')
-            can_be_sent_partners_census = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'can_be_sent_partners_census')
-            automatic_census_synchronization = \
-                self.env['ir.values'].get_default(
-                    'wua.irrigation.configuration',
-                    'automatic_census_synchronization')
-            if (enable_remotecontrol and can_be_sent_partners_census and
-               automatic_census_synchronization):
-                url_remotecontrol_rest = self.env['ir.values'].get_default(
-                    'wua.irrigation.configuration', 'url_remotecontrol_rest')
-                url_remotecontrol_rest_username = self.env['ir.values'].\
-                    get_default('wua.irrigation.configuration',
-                                'url_remotecontrol_rest_username')
-                url_remotecontrol_rest_password = self.env['ir.values'].\
-                    get_default('wua.irrigation.configuration',
-                                'url_remotecontrol_rest_password')
-                if (url_remotecontrol_rest and
-                   url_remotecontrol_rest_username and
-                   url_remotecontrol_rest_password):
-                    data = self.populate_data_for_send_new_partner(vals)
-                    if data:
-                        synchronized_remotecontrol, error_message = \
-                            self.send_new_partner(
-                                url_remotecontrol_rest,
-                                url_remotecontrol_rest_username,
-                                url_remotecontrol_rest_password,
-                                data)
-                        prefix_message = _('Remote Control: Updating remote '
-                                           'control for partner (new)')
-                        suffix_message = 'OK'
-                        if synchronized_remotecontrol:
-                            self.env['res.partner'].browse(new_partner.id).\
-                                updated_in_remotecontrol = True
-                        else:
-                            if not error_message:
-                                error_message = \
-                                    _('Update error in remote control')
-                            suffix_message = error_message
-                        _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.info(prefix_message + ' ' +
-                                     str(new_partner.partner_code) + '... ' +
-                                     suffix_message)
+            if (enable_remotecontrol):
+                self.send_partner_on_creation_telecontrol(new_partner, vals)
         self.__class__._in_create_or_synchro = False
         return new_partner
 
-    @api.multi
-    def write(self, vals):
-        resp = super(ResPartner, self).write(vals)
+    def send_partner_on_write(self, telecontrol, vals):
         some_remotecontrol_key = False
         all_vals = vals.keys()
-        # Intersect the vals written and the possible keys taht will trigger
+        # Intersect the vals written and the possible keys that will trigger
         # the update (_remotecontrol_partner_fields)
+        remotecontrol_partner_fields = getattr(
+            self, '_remotecontrol_partner_fields_' + telecontrol, [])
         some_remotecontrol_key = len(
-            list(set(all_vals) & set(self._remotecontrol_partner_fields))) > 0
-        if (self.__class__._in_create_or_synchro or len(self) != 1 or
-           not self.is_wua_partner or not some_remotecontrol_key):
-            return resp
-        enable_remotecontrol = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'enable_remotecontrol')
+            list(set(all_vals) & set(remotecontrol_partner_fields))) > 0
+        if (not some_remotecontrol_key):
+            return
         can_be_sent_partners_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_partners_census')
+            'wua.irrigation.configuration',
+            'can_be_sent_partners_census_' + telecontrol)
         automatic_census_synchronization = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'automatic_census_synchronization')
+            'wua.irrigation.configuration',
+            'automatic_census_synchronization_' + telecontrol)
         # If the partner is archived / activated, then
-        # automatic_census_synchronization = True (allways).
+        # automatic_census_synchronization = True (always).
         active_in_vals = 'active' in vals
-        if (enable_remotecontrol and can_be_sent_partners_census and
-           (automatic_census_synchronization or active_in_vals)):
+        if (can_be_sent_partners_census and
+                (automatic_census_synchronization or active_in_vals)):
             record_archived = False
             if (active_in_vals and not vals['active']):
                 record_archived = True
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration', 'url_remotecontrol_rest_' +
+                telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
-                data = self.populate_data_for_update_partner(self)
+                populate_function = getattr(
+                    self, 'populate_data_for_update_partner_' + telecontrol)
+                data = populate_function(self)
                 if data:
+                    update_partner_function = getattr(
+                        self, 'update_partner_' + telecontrol)
                     synchronized_remotecontrol, error_message = \
-                        self.update_partner(
+                        update_partner_function(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
@@ -155,34 +172,57 @@ class ResPartner(models.Model):
                     _logger.info(prefix_message + ' ' +
                                  str(self.partner_code) + '... ' +
                                  suffix_message)
-        return resp
+
+    # Hook to use on every telecontrol
+    def send_partner_on_write_telecontrol(self, vals):
+        pass
 
     @api.multi
-    def unlink(self):
+    def write(self, vals):
+        resp = super(ResPartner, self).write(vals)
+        if (self.__class__._in_create_or_synchro or len(self) != 1 or
+           not self.is_wua_partner):
+            return resp
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.send_partner_on_write_telecontrol(vals)
+        return resp
+
+    def unlink_partner_on_unlink(self, telecontrol):
         can_be_sent_partners_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_partners_census')
+            'wua.irrigation.configuration',
+            'can_be_sent_partners_census_' + telecontrol)
         automatic_census_synchronization = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'automatic_census_synchronization')
-        if (enable_remotecontrol and can_be_sent_partners_census and
-           automatic_census_synchronization):
+            'wua.irrigation.configuration',
+            'automatic_census_synchronization_' + telecontrol)
+        if (can_be_sent_partners_census and automatic_census_synchronization):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
+                    url_remotecontrol_rest_password):
                 for record in self:
                     if record.is_wua_partner:
-                        data = self.populate_data_for_delete_partner(record)
+                        # Get populate data from the telecontrol being
+                        # processed
+                        # Do this outside the loop?
+                        populate_function = getattr(
+                            self, 'populate_data_for_delete_partner_' +
+                            telecontrol)
+                        data = populate_function(record)
                         if data:
+                            delete_function = getattr(
+                                self, 'delete_partner_' +
+                                telecontrol)
                             synchronized_remotecontrol, error_message = \
-                                self.delete_partner(
+                                delete_function(
                                     url_remotecontrol_rest,
                                     url_remotecontrol_rest_username,
                                     url_remotecontrol_rest_password,
@@ -200,62 +240,44 @@ class ResPartner(models.Model):
                             _logger.info(prefix_message + ' ' +
                                          str(record.partner_code) + '... ' +
                                          suffix_message)
-        return super(ResPartner, self).unlink()
 
-    # Hook
-    def populate_data_for_send_new_partner(self, vals):
-        return None
-
-    # Hook
-    def send_new_partner(self, url_remotecontrol_rest,
-                         url_remotecontrol_rest_username,
-                         url_remotecontrol_rest_password, data):
-        return False, ''
-
-    # Hook
-    def populate_data_for_update_partner(self, vals):
-        return None
-
-    # Hook
-    def update_partner(self, url_remotecontrol_rest,
-                       url_remotecontrol_rest_username,
-                       url_remotecontrol_rest_password,
-                       data, record_archived=False):
-        return False, ''
-
-    # Hook
-    def populate_data_for_delete_partner(self, partner):
-        return None
-
-    # Hook
-    def delete_partner(self, url_remotecontrol_rest,
-                       url_remotecontrol_rest_username,
-                       url_remotecontrol_rest_password, data):
-        return False, ''
+    # Hook to use on every telecontrol
+    def unlink_partner_on_unlink_telecontrol(self):
+        pass
 
     @api.multi
-    def do_synchronization_partner(self):
-        self.ensure_one()
+    def unlink(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.unlink_partner_on_unlink_telecontrol()
+        return super(ResPartner, self).unlink()
+
+    def create_partner_on_syncrhonize(self, telecontrol):
         can_be_sent_partners_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_partners_census')
-        if (enable_remotecontrol and can_be_sent_partners_census):
+            'wua.irrigation.configuration',
+            'can_be_sent_partners_census_' + telecontrol)
+        if (can_be_sent_partners_census):
             record_archived = not self.active
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
-                data = self.populate_data_for_update_partner(self)
+                populate_function = getattr(
+                    self, 'populate_data_for_update_partner_' + telecontrol)
+                data = populate_function(self)
                 if data:
+                    sync_function = getattr(
+                        self, 'synchronize_partner_' + telecontrol)
                     synchronized_remotecontrol, error_message = \
-                        self.synchronize_partner(
+                        sync_function(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
@@ -279,24 +301,32 @@ class ResPartner(models.Model):
                     self.updated_in_remotecontrol = True
                     self.__class__._in_create_or_synchro = False
 
-    def do_synchronization_partners(self, active_partners,
-                                    show_message=False):
-        if (not self.env.user.has_group('base_wua.group_wua_manager')):
-            raise exceptions.UserError(_(
-                'You do not have permission to execute this action.'))
+    # Hook to use on every telecontrol
+    def create_partner_on_synchronize_telecontrol(self):
+        pass
+
+    @api.multi
+    def do_synchronization_partner(self):
+        self.ensure_one()
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.create_partner_on_synchronize_telecontrol()
+
+    def create_partners_on_synchronize(self, active_partners, telecontrol):
         can_be_sent_partners_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_partners_census')
-        if (enable_remotecontrol and can_be_sent_partners_census):
+            'wua.irrigation.configuration',
+            'can_be_sent_partners_census_' + telecontrol)
+        if (can_be_sent_partners_census):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
                 partners = self.env['res.partner'].with_context(
@@ -304,11 +334,16 @@ class ResPartner(models.Model):
                 if partners:
                     list_of_data = []
                     for partner in partners:
-                        data = self.populate_data_for_update_partner(partner)
+                        populate_function = getattr(
+                            self, 'populate_data_for_update_partner_' +
+                            telecontrol)
+                        data = populate_function(partner)
                         list_of_data.append(data)
                     if list_of_data:
+                        sync_function = getattr(
+                            self, 'synchronize_partners_' + telecontrol)
                         partners_ok, partners_not_ok = \
-                            self.synchronize_partners(
+                            sync_function(
                                 url_remotecontrol_rest,
                                 url_remotecontrol_rest_username,
                                 url_remotecontrol_rest_password,
@@ -352,6 +387,20 @@ class ResPartner(models.Model):
                                              partners_not_ok_str + '... ' +
                                              suffix_message)
                             self.__class__._in_create_or_synchro = False
+
+    # Hook to use on every telecontrol
+    def create_partners_on_synchronize_telecontrol(self, active_partners):
+        pass
+
+    def do_synchronization_partners(self, active_partners,
+                                    show_message=False):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.create_partners_on_synchronize_telecontrol(active_partners)
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
@@ -366,41 +415,30 @@ class ResPartner(models.Model):
         if not show_message:
             return True
 
-    # Hook
-    def synchronize_partner(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password,
-                            data, record_archived=False):
-        return False, ''
-
-    # Hook
-    def synchronize_partners(self, url_remotecontrol_rest,
-                             url_remotecontrol_rest_username,
-                             url_remotecontrol_rest_password, list_of_data):
-        return None, None
-
-    @api.multi
-    def do_unsynchronization_partner(self):
-        self.ensure_one()
-        enable_remotecontrol = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'enable_remotecontrol')
+    def unlink_partner_on_unsyncrhonize(self, telecontrol):
         can_be_sent_partners_census = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'can_be_sent_partners_census')
-        if (enable_remotecontrol and can_be_sent_partners_census):
+            'wua.irrigation.configuration',
+            'can_be_sent_partners_census_' + telecontrol)
+        if (can_be_sent_partners_census):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_' + telecontrol)
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_' + telecontrol)
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_' + telecontrol)
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
-                data = self.populate_data_for_delete_partner(self)
+                    url_remotecontrol_rest_password):
+                populate_function = getattr(
+                    self, 'populate_data_for_delete_partner_' + telecontrol)
+                data = populate_function(self)
                 if data:
+                    delete_function = getattr(
+                        self, 'delete_partner_' + telecontrol)
                     synchronized_remotecontrol, error_message = \
-                        self.delete_partner(
+                        delete_function(
                             url_remotecontrol_rest,
                             url_remotecontrol_rest_username,
                             url_remotecontrol_rest_password,
@@ -424,6 +462,18 @@ class ResPartner(models.Model):
                     self.__class__._in_create_or_synchro = True
                     self.updated_in_remotecontrol = False
                     self.__class__._in_create_or_synchro = False
+
+    # Hook to use on every telecontrol
+    def unlink_partner_on_unsynchronize_telecontrol(self):
+        pass
+
+    @api.multi
+    def do_unsynchronization_partner(self):
+        self.ensure_one()
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        if (enable_remotecontrol):
+            self.unlink_partner_on_unsynchronize_telecontrol()
 
     # If the user is a portal user, show the water connections if
     # it is the water payer.

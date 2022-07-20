@@ -15,6 +15,11 @@ class WuaWaterconnection(models.Model):
         string='Remote Control enabled',
         compute='_compute_remotecontrol_enabled')
 
+    # Empty, inherit and added by Hook
+    telecontrol_associated = fields.Selection(
+        [],
+        string='Type of telecontrol associated')
+
     conversion_factor = fields.Integer(
         string="Conversion Factor",
         required=True,
@@ -55,8 +60,9 @@ class WuaWaterconnection(models.Model):
     def _compute_remotecontrol_enabled(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
-        import_from_waterconnection = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'import_from_waterconnection')
+        import_from_waterconnection = \
+            self.env['wua.irrigation.configuration'].\
+            import_from_waterconnection_any()
         if enable_remotecontrol is None:
             enable_remotecontrol = False
         if import_from_waterconnection is None:

@@ -20,8 +20,9 @@ class WuaIrrigationshed(models.Model):
     def _compute_remotecontrol_enabled(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
-        import_from_irrigationshed = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'import_from_irrigationshed')
+        import_from_irrigationshed = \
+            self.env['wua.irrigation.configuration'].\
+            import_from_irrigationshed_any()
         if enable_remotecontrol is None:
             enable_remotecontrol = False
         if import_from_irrigationshed is None:
