@@ -10,11 +10,11 @@ from odoo import models, api, _
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
-    _remotecontrol_parcel_fields = [
+    _remotecontrol_parcel_fields_hidroconta = [
         'partnerlink_ids', 'irrigationpointwc_ids']
 
     # Implemented hook
-    def populate_data_for_send_new_parcel(self, vals):
+    def populate_data_for_send_new_parcel_hidroconta(self, vals):
         resp = None
         if (vals and 'partnerlink_ids' in vals and
            'irrigationpointwc_ids' in vals):
@@ -42,9 +42,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def send_new_parcel(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, data):
+    def send_new_parcel_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         if (not data['partner_code'] or not data['waterconnection_codes']):
             return True, ''
         resp = False
@@ -105,49 +105,59 @@ class WuaParcel(models.Model):
                 url_remotecontrol_rest, jsessionid)
         return resp, error_message
 
+    def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
+        super(WuaParcel, self).send_parcel_on_creation_telecontrol(
+            new_parcel, vals
+        )
+        self.send_parcel_on_creation('hidroconta', new_parcel, vals)
+
     @api.multi
     def write(self, vals):
         # First: Reset the owner for all the water connections of the
         # irrigation points.
         all_vals = vals.keys()
         some_remotecontrol_key = len(
-            list(set(all_vals) & set(self._remotecontrol_parcel_fields))) > 0
+            list(set(all_vals) &
+                 set(self._remotecontrol_parcel_fields_hidroconta))) > 0
         if ((not self.__class__._in_create_or_synchro) and
            len(self) == 1 and some_remotecontrol_key):
             enable_remotecontrol = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'enable_remotecontrol')
             can_be_sent_parcels_census = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'can_be_sent_parcels_census')
+                'wua.irrigation.configuration',
+                'can_be_sent_parcels_census_hidroconta')
             automatic_census_synchronization = \
                 self.env['ir.values'].get_default(
                     'wua.irrigation.configuration',
-                    'automatic_census_synchronization')
+                    'automatic_census_synchronization_hidroconta')
             active_in_vals = 'active' in vals
             if (enable_remotecontrol and can_be_sent_parcels_census and
                (automatic_census_synchronization or active_in_vals)):
                 url_remotecontrol_rest = self.env['ir.values'].get_default(
-                    'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                    'wua.irrigation.configuration',
+                    'url_remotecontrol_rest_hidroconta')
                 url_remotecontrol_rest_username = self.env['ir.values'].\
                     get_default('wua.irrigation.configuration',
-                                'url_remotecontrol_rest_username')
+                                'url_remotecontrol_rest_username_hidroconta')
                 url_remotecontrol_rest_password = self.env['ir.values'].\
                     get_default('wua.irrigation.configuration',
-                                'url_remotecontrol_rest_password')
+                                'url_remotecontrol_rest_password_hidroconta')
                 if (url_remotecontrol_rest and
                    url_remotecontrol_rest_username and
                    url_remotecontrol_rest_password):
-                    data = self.populate_data_for_delete_parcel(self)
+                    data = self.populate_data_for_delete_parcel_hidroconta(
+                        self)
                     if data:
-                        self.delete_parcel(url_remotecontrol_rest,
-                                           url_remotecontrol_rest_username,
-                                           url_remotecontrol_rest_password,
-                                           data)
+                        self.delete_parcel_hidroconta(
+                            url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password, data)
         # Second: Inherited method call.
         resp = super(WuaParcel, self).write(vals)
         return resp
 
     # Implemented hook
-    def populate_data_for_update_parcel(self, parcel):
+    def populate_data_for_update_parcel_hidroconta(self, parcel):
         resp = None
         if parcel and parcel.partnerlink_ids and parcel.irrigationpointwc_ids:
             partner_code = 0
@@ -168,18 +178,21 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def update_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password,
-                      data, record_archived=False):
-        resp, error_message = self.send_new_parcel(
+    def update_parcel_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
+        resp, error_message = self.send_new_parcel_hidroconta(
             url_remotecontrol_rest,
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, data)
         return resp, error_message
 
+    def send_parcel_on_write_telecontrol(self, vals):
+        super(WuaParcel, self).send_parcel_on_write_telecontrol(vals)
+        self.send_parcel_on_write('hidroconta', vals)
+
     # Implemented hook
-    def populate_data_for_delete_parcel(self, parcel):
+    def populate_data_for_delete_parcel_hidroconta(self, parcel):
         resp = None
         if parcel.irrigationpointwc_ids:
             waterconnection_codes = []
@@ -192,9 +205,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def delete_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password, data):
+    def delete_parcel_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         if (not data['waterconnection_codes']):
             return True, ''
         resp = False
@@ -236,21 +249,28 @@ class WuaParcel(models.Model):
                 url_remotecontrol_rest, jsessionid)
         return resp, error_message
 
+    def unlink_parcel_on_unlink_telecontrol(self):
+        super(WuaParcel, self).unlink_parcel_on_unlink_telecontrol()
+        self.unlink_parcel_on_unlink('hidroconta')
+
     # Implemented hook
-    def synchronize_parcel(self, url_remotecontrol_rest,
-                           url_remotecontrol_rest_username,
-                           url_remotecontrol_rest_password,
-                           data, record_archived=False):
-        resp, error_message = self.send_new_parcel(
+    def synchronize_parcel_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
+        resp, error_message = self.send_new_parcel_hidroconta(
             url_remotecontrol_rest,
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, data)
         return resp, error_message
 
+    def create_parcel_on_synchronize_telecontrol(self):
+        super(WuaParcel, self).create_parcel_on_synchronize_telecontrol()
+        self.create_parcel_on_syncrhonize('hidroconta')
+
     # Implemented hook
-    def synchronize_parcels(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, list_of_data):
+    def synchronize_parcels_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         parcels_ok = []
         parcels_not_ok = []
         jsessionid = self.env['wua.reading'].open_connection(
@@ -313,3 +333,14 @@ class WuaParcel(models.Model):
             self.env['wua.reading'].close_connection(
                 url_remotecontrol_rest, jsessionid)
         return parcels_ok, parcels_not_ok
+
+    def create_parcels_on_synchronize_telecontrol(self, active_parcels,
+                                                  unconditional_syncrho):
+        super(WuaParcel, self).create_parcels_on_synchronize_telecontrol(
+            active_parcels, unconditional_syncrho)
+        self.create_parcels_on_synchronize(
+            active_parcels, unconditional_syncrho, 'hidroconta')
+
+    def unlink_parcel_on_unsynchronize_telecontrol(self):
+        super(WuaParcel, self).unlink_parcel_on_unsynchronize_telecontrol()
+        self.unlink_parcel_on_unsyncrhonize('hidroconta')

@@ -14,15 +14,44 @@ class WuaWaterconnectionTelecontrol(models.Model):
 
     FACTOR_CONVERSION = 1.0
 
+    # Hook Implemented
+    def do_import_waterconnection_telecontrol_info_all(self):
+        # Get waterconnection telecontrol info of others and then apply self
+        others_wc_info = \
+            list(super(WuaWaterconnectionTelecontrol, self).
+                 do_import_waterconnection_telecontrol_info_all())
+        url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_hidroconta')
+        url_remotecontrol_rest_username = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_username_hidroconta')
+        url_remotecontrol_rest_password = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_password_hidroconta')
+        if (url_remotecontrol_rest and url_remotecontrol_rest_username and
+                url_remotecontrol_rest_password):
+            wc_info, error_message = \
+                self.import_waterconnection_telecontrol_info_hidroconta(
+                    url_remotecontrol_rest,
+                    url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password, False)
+            # Update already existing wc telecontrol data
+            if (wc_info):
+                others_wc_info[0] += wc_info
+            if (error_message):
+                others_wc_info[1] += ' - ' + error_message
+        return others_wc_info
+
     # Implemented hook
-    def populate_data_for_import_waterconnection_telecontrol_info(
+    def populate_data_for_import_waterconnection_telecontrol_info_hidroconta(
             self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password):
         resp = True
         return resp
 
     # Hook
-    def import_waterconnection_telecontrol_info(
+    def import_waterconnection_telecontrol_info_hidroconta(
             self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, list_of_data):
         wc_all_info = []
@@ -94,7 +123,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     'valve_scheduled': valve_scheduled,
                                     'data_time': data_time,
                                 })
-            self.close_coonection(url_remotecontrol_rest, jsessionid)
+            self.close_connection(url_remotecontrol_rest, jsessionid)
         return [wc_all_info, error_message]
 
     def open_connection(self, url_remotecontrol_rest,
@@ -120,7 +149,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     resp = jsessionid[11:pos_sep]
         return resp
 
-    def close_coonection(self, url_remotecontrol_rest, jsessionid):
+    def close_connection(self, url_remotecontrol_rest, jsessionid):
         if jsessionid:
             requests.request(
                 'POST', url_remotecontrol_rest + '/logout',

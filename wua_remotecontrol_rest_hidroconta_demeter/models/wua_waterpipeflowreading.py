@@ -10,8 +10,53 @@ from odoo import models
 class WuaWaterpipeflowreading(models.Model):
     _inherit = 'wua.waterpipeflowreading'
 
+    # Hook that will be implemeneted on every telecontrol
+    def do_import_waterpipeflowreading_of_telecontrol(self):
+        # Get super data and then append here data
+        # Result in format [waterpipeflowreadings, error_message,
+        # [error_flowmeters]
+        others_readings_info = \
+            list(super(WuaWaterpipeflowreading, self).
+                 do_import_waterpipeflowreading_of_telecontrol())
+        url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_hidroconta')
+        url_remotecontrol_rest_username = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_username_hidroconta')
+        url_remotecontrol_rest_password = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_password_hidroconta')
+        import_from_waterpipeflowreadings = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_from_waterpipe_readings_hidroconta')
+        if (import_from_waterpipeflowreadings and url_remotecontrol_rest and
+                url_remotecontrol_rest_username and
+                url_remotecontrol_rest_password):
+            data = self.\
+                populate_data_for_import_waterpipeflowreadings_hidroconta(
+                    url_remotecontrol_rest,
+                    url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+            if data:
+                waterpipeflowreadings, error_message, error_flowmeters = \
+                    self.import_waterpipeflowreadings_hidroconta(
+                        url_remotecontrol_rest,
+                        url_remotecontrol_rest_username,
+                        url_remotecontrol_rest_password, data)
+                if (waterpipeflowreadings):
+                    # Merge arrays
+                    others_readings_info[0] += waterpipeflowreadings
+                if (error_message):
+                    # Merge Strings
+                    others_readings_info[1] += ' - ' + error_message
+                if (error_flowmeters):
+                    # Merge Strings
+                    others_readings_info[2] += error_flowmeters
+        return others_readings_info
+
     # Implemented hook
-    def populate_data_for_import_waterpipeflowreadings(
+    def populate_data_for_import_waterpipeflowreadings_hidroconta(
             self, url_remotecontrol_rest,
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password):
@@ -19,7 +64,7 @@ class WuaWaterpipeflowreading(models.Model):
         return resp
 
     # Implemented hook
-    def import_waterpipeflowreadings(
+    def import_waterpipeflowreadings_hidroconta(
             self, url_remotecontrol_rest,
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, list_of_data):

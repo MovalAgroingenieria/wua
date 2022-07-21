@@ -7,14 +7,47 @@
         <field name="inherit_id"
                ref="base_wua_remotecontrol_rest.wua_irrigation_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='url_remotecontrol_application']"
+            <xpath expr="//group[@name='remote_control']"
                    position="after">
-                <field name="installation_identifier" style="width:100px"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
-                <field name="flow_in_liters" style="width:100px"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                <group name="remote_control_hidroconta" string="Remote Control hidroconta"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                             'required': [('enable_remotecontrol', '=', True)]}">
+                    <field name="url_remotecontrol_rest_hidroconta"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_rest_username_hidroconta"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_rest_password_hidroconta"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="automatic_census_synchronization_hidroconta"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_application_hidroconta"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                    <field name="installation_identifier" style="width:100px"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                    <field name="flow_in_liters" style="width:100px"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                </group>
             </xpath>
         </field>
     </record>
+
+    <record id="wua_remotecontrol_application_hidroconta_action" model="ir.actions.server">
+        <field name="name">Native Remote Control Application of Hidroconta</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.reading'].run_remotecontrol_application_url_hidroconta()
+        </field>
+    </record>
+
+    <menuitem id="wua_remotecontrol_application_hidroconta_menu"
+              name="Native Remote Control Hidroconta"
+              parent="wua_structure_irrigation.base_wua_irrigation_configuration_menu"
+              action="wua_remotecontrol_application_hidroconta_action"
+              sequence="3"/>
 
 </odoo>

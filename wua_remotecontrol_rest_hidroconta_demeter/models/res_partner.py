@@ -9,14 +9,14 @@ from odoo import models, _
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
-    _remotecontrol_partner_fields = [
+    _remotecontrol_partner_fields_hidroconta = [
         'partner_code', 'firstname', 'lastname', 'lastname2', 'vat',
         'street', 'street_num', 'zip', 'city', 'state_id', 'country_id',
         'phone', 'mobile', 'email'
     ]
 
     # Implemented hook
-    def populate_data_for_send_new_partner(self, vals):
+    def populate_data_for_send_new_partner_hidroconta(self, vals):
         resp = None
         installation_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'installation_identifier')
@@ -85,9 +85,9 @@ class ResPartner(models.Model):
         return resp
 
     # Implemented hook
-    def send_new_partner(self, url_remotecontrol_rest,
-                         url_remotecontrol_rest_username,
-                         url_remotecontrol_rest_password, data):
+    def send_new_partner_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         jsessionid = self.env['wua.reading'].open_connection(
@@ -120,8 +120,14 @@ class ResPartner(models.Model):
                 url_remotecontrol_rest, jsessionid)
         return resp, error_message
 
+    def send_partner_on_creation_telecontrol(self, new_partner, vals):
+        super(ResPartner, self).send_partner_on_creation_telecontrol(
+            new_partner, vals
+        )
+        self.send_partner_on_creation('hidroconta', new_partner, vals)
+
     # Implemented hook
-    def populate_data_for_update_partner(self, partner):
+    def populate_data_for_update_partner_hidroconta(self, partner):
         resp = None
         installation_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'installation_identifier')
@@ -189,10 +195,9 @@ class ResPartner(models.Model):
         return resp
 
     # Implemented hook
-    def update_partner(self, url_remotecontrol_rest,
-                       url_remotecontrol_rest_username,
-                       url_remotecontrol_rest_password,
-                       data, record_archived=False):
+    def update_partner_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
         jsessionid = self.env['wua.reading'].open_connection(
@@ -233,8 +238,12 @@ class ResPartner(models.Model):
                 url_remotecontrol_rest, jsessionid)
         return resp, error_message
 
+    def send_partner_on_write_telecontrol(self, vals):
+        super(ResPartner, self).send_partner_on_write_telecontrol(vals)
+        self.send_partner_on_write('hidroconta', vals)
+
     # Implemented hook
-    def populate_data_for_delete_partner(self, partner):
+    def populate_data_for_delete_partner_hidroconta(self, partner):
         resp = None
         if partner:
             partner_code = partner.partner_code
@@ -244,9 +253,9 @@ class ResPartner(models.Model):
         return resp
 
     # Implemented hook
-    def delete_partner(self, url_remotecontrol_rest,
-                       url_remotecontrol_rest_username,
-                       url_remotecontrol_rest_password, data):
+    def delete_partner_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         jsessionid = self.env['wua.reading'].open_connection(
@@ -284,11 +293,15 @@ class ResPartner(models.Model):
                 url_remotecontrol_rest, jsessionid)
         return resp, error_message
 
+    def unlink_partner_on_unlink_telecontrol(self):
+        super(ResPartner, self).unlink_partner_on_unlink_telecontrol()
+        self.unlink_partner_on_unlink('hidroconta')
+
     # Implemented hook
-    def synchronize_partner(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password,
-                            data, record_archived=False):
+    def synchronize_partner_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+        url_remotecontrol_rest_password,
+            data, record_archived=False):
         resp = False
         error_message = ''
         jsessionid = self.env['wua.reading'].open_connection(
@@ -321,8 +334,8 @@ class ResPartner(models.Model):
                     ownerId = 0
                     owners = json.loads(resprest.text)
                     if len(owners) > 1:
-                        error_message = _('There are several owners with the ' +
-                                          'same code')
+                        error_message = _('There are several owners with the' +
+                                          ' same code')
                     else:
                         ownerId = owners[0]['ownerId']
                         data['ownerId'] = ownerId
@@ -341,10 +354,14 @@ class ResPartner(models.Model):
                 url_remotecontrol_rest, jsessionid)
         return resp, error_message
 
+    def create_partner_on_synchronize_telecontrol(self):
+        super(ResPartner, self).create_partner_on_synchronize_telecontrol()
+        self.create_partner_on_syncrhonize('hidroconta')
+
     # Implemented hook
-    def synchronize_partners(self, url_remotecontrol_rest,
-                             url_remotecontrol_rest_username,
-                             url_remotecontrol_rest_password, list_of_data):
+    def synchronize_partners_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         partners_ok = []
         partners_not_ok = []
         jsessionid = self.env['wua.reading'].open_connection(
@@ -396,6 +413,15 @@ class ResPartner(models.Model):
             self.env['wua.reading'].close_connection(
                 url_remotecontrol_rest, jsessionid)
         return partners_ok, partners_not_ok
+
+    def create_partners_on_synchronize_telecontrol(self, active_partners):
+        super(ResPartner, self).create_partners_on_synchronize_telecontrol(
+            active_partners)
+        self.create_partners_on_synchronize(active_partners, 'hidroconta')
+
+    def unlink_partner_on_unsynchronize_telecontrol(self):
+        super(ResPartner, self).unlink_partner_on_unsynchronize_telecontrol()
+        self.unlink_partner_on_unsyncrhonize('hidroconta')
 
     def get_phones(self, phone, mobile):
         resp = ''
