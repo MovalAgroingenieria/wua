@@ -7,51 +7,85 @@
         <field name="inherit_id"
                ref="base_wua_remotecontrol_rest.wua_irrigation_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='url_remotecontrol_application']"
+           <xpath expr="//group[@name='remote_control']"
                    position="after">
-                <field name="php_frame_enabled"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
-                <field name="php_frame_url"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_type_historico"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_type_historico_width"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_type_historico_height"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_type_consumo"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_type_consumo_width"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_type_consumo_height"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>                         
-                <field name="php_frame_type_programacion"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_type_programacion_width"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_type_programacion_height"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_client"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_accesskey"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
-                <field name="php_frame_secretkey"
-                 attrs="{'invisible':[('enable_remotecontrol','=',False)],
-                         'readonly':[('php_frame_enabled','=',False)]}"/>
+                <group name="remote_control_batchline" string="Remote Control Batchline"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                             'required': [('enable_remotecontrol', '=', True)]}">
+                        <field name="url_remotecontrol_rest_batchline"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}"/>
+                        <field name="url_remotecontrol_rest_username_batchline"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}"/>
+                        <field name="url_remotecontrol_rest_password_batchline"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}"/>
+                        <field name="automatic_census_synchronization_batchline"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}"/>
+                        <field name="url_remotecontrol_application_batchline"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                        <field name="php_frame_enabled"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                        <field name="php_frame_url"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_historico"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_historico_width"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_historico_height"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_consumo"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_consumo_width"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_consumo_height"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_programacion"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_programacion_width"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_type_programacion_height"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_client"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_accesskey"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                        <field name="php_frame_secretkey"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'readonly':[('php_frame_enabled','=',False)]}"/>
+                </group>
             </xpath>
         </field>
     </record>
+
+    <record id="wua_remotecontrol_application_batchline_action" model="ir.actions.server">
+        <field name="name">Native Remote Control Application of BATCHLINE</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.reading'].run_remotecontrol_application_url_batchline()
+        </field>
+    </record>
+
+    <menuitem id="wua_remotecontrol_application_batchline_menu"
+              name="Native Remote Control BATCHLINE"
+              parent="wua_structure_irrigation.base_wua_irrigation_configuration_menu"
+              action="wua_remotecontrol_application_batchline_action"
+              sequence="3"/>
+
 
 </odoo>

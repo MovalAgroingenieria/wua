@@ -36,15 +36,36 @@ class WuaWaterconnectionTelecontrol(models.Model):
             resp = outputrest['access_token']
         return resp, error_message
 
-    # Implemented hook
-    def populate_data_for_import_waterconnection_telecontrol_info(
-            self, url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password):
-        resp = True
-        return resp
+    # Hook Implemented
+    def do_import_waterconnection_telecontrol_info_all(self):
+        # Get waterconnection telecontrol info of others and then apply self
+        others_wc_info = \
+            list(super(WuaWaterconnectionTelecontrol, self).
+                 do_import_waterconnection_telecontrol_info_all())
+        url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'url_remotecontrol_rest_batchline')
+        url_remotecontrol_rest_username = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_username_batchline')
+        url_remotecontrol_rest_password = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_password_batchline')
+        if (url_remotecontrol_rest and url_remotecontrol_rest_username and
+                url_remotecontrol_rest_password):
+            wc_info, error_message = \
+                self.import_waterconnection_telecontrol_info_batchline(
+                    url_remotecontrol_rest,
+                    url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password, False)
+            # Update already existing wc telecontrol data
+            if (wc_info):
+                others_wc_info[0] += wc_info
+            if (error_message):
+                others_wc_info[1] += ' - ' + error_message
+        return others_wc_info
 
     # Hook
-    def import_waterconnection_telecontrol_info(
+    def import_waterconnection_telecontrol_info_batchline(
             self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, list_of_data):
         wc_all_info = []

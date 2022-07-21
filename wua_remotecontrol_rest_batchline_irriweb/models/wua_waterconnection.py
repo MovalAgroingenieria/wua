@@ -10,6 +10,9 @@ class WuaWaterconnection(models.Model):
 
     _in_create = False
 
+    telecontrol_associated = fields.Selection(
+        selection_add=[('batchline', 'Batchline')],)
+
     html_readings_frame = fields.Text(
         string='IrriWEB Readings',
         compute='_compute_html_readings_frame'
@@ -133,7 +136,8 @@ class WuaWaterconnection(models.Model):
         php_frame_url = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'php_frame_url')
         url_irriweb = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'url_remotecontrol_application')
+            'wua.irrigation.configuration',
+            'url_remotecontrol_application_batchline')
         url_ok = php_frame_enabled and php_frame_url and url_irriweb
         if url_ok:
             if type == 'historico':

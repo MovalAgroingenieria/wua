@@ -4,11 +4,28 @@
 
 import requests
 import json
-from odoo import models, _
+from odoo import models, _, api, exceptions
 
 
 class WuaReading(models.Model):
     _inherit = 'wua.reading'
+
+    @api.model
+    def run_remotecontrol_application_url_batchline(self):
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        if not enable_remotecontrol:
+            raise exceptions.UserError(_('The remote control is not enabled.'))
+        url_remotecontrol_application = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'url_remotecontrol_application_batchline')
+        if not url_remotecontrol_application:
+            raise exceptions.UserError(_('There is not a URL for the '
+                                         'remote control application.'))
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url_remotecontrol_application,
+            'target': 'new', }
 
     def get_token(self, url_remotecontrol_rest,
                   url_remotecontrol_rest_username,
@@ -33,16 +50,16 @@ class WuaReading(models.Model):
         return resp, error_message
 
     # Implemented hook
-    def populate_data_for_import_readings(self, url_remotecontrol_rest,
-                                          url_remotecontrol_rest_username,
-                                          url_remotecontrol_rest_password):
+    def populate_data_for_import_readings_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = True
         return resp
 
     # Implemented hook
-    def import_readings(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, list_of_data):
+    def import_readings_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         readings = []
         error_message = ''
         error_watermeters = []
@@ -70,3 +87,43 @@ class WuaReading(models.Model):
             else:
                 error_message = _(' It is not possible to get the readings. ')
         return [readings, error_message, error_watermeters]
+
+    # Hook that will be implemeneted on every telecontrol
+    def do_import_reading_of_telecontrol(self):
+        # Get super data and then append here data
+        # Result in format [readings, error_message, error_watermeters]
+        others_readings_info = \
+            list(super(WuaReading, self).do_import_reading_of_telecontrol())
+        url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'url_remotecontrol_rest_batchline')
+        url_remotecontrol_rest_username = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_username_batchline')
+        url_remotecontrol_rest_password = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_password_batchline')
+        import_from_readings = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'import_from_readings_batchline')
+        if (import_from_readings and url_remotecontrol_rest and
+                url_remotecontrol_rest_username and
+                url_remotecontrol_rest_password):
+            data = self.populate_data_for_import_readings_batchline(
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if data:
+                readings, error_message, error_watermeters = \
+                    self.import_readings_batchline(
+                        url_remotecontrol_rest,
+                        url_remotecontrol_rest_username,
+                        url_remotecontrol_rest_password, data)
+                if (readings):
+                    # Merge arrays
+                    others_readings_info[0] += readings
+                if (error_message):
+                    # Merge Strings
+                    others_readings_info[1] += ' - ' + error_message
+                if (error_watermeters):
+                    # Merge Strings
+                    others_readings_info[2] += error_watermeters
+        return others_readings_info

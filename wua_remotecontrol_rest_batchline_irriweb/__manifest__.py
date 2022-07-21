@@ -7,7 +7,7 @@
     "summary": "In a water users association, interface of Moval Regadio "
                "with the control remote BATCHLINE IRRIWEB, based on "
                "a REST API",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

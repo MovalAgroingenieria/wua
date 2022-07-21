@@ -10,7 +10,7 @@ from odoo import models
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
-    _remotecontrol_parcel_fields = [
+    _remotecontrol_parcel_fields_batchline = [
         'name', 'partnerlink_ids', 'rurallocation_id', 'irrigationpointwc_ids',
         'area_official']
 
@@ -37,7 +37,7 @@ class WuaParcel(models.Model):
         return resp, error_message
 
     # Implemented hook
-    def populate_data_for_send_new_parcel(self, vals):
+    def populate_data_for_send_new_parcel_batchline(self, vals):
         resp = None
         if vals and 'name' in vals:
             name = vals['name']
@@ -83,9 +83,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def send_new_parcel(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, data):
+    def send_new_parcel_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -118,8 +118,14 @@ class WuaParcel(models.Model):
                 error_message = resprest.text
         return resp, error_message
 
+    def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
+        super(WuaParcel, self).send_parcel_on_creation_telecontrol(
+            new_parcel, vals
+        )
+        self.send_parcel_on_creation('batchline', new_parcel, vals)
+
     # Implemented hook
-    def populate_data_for_update_parcel(self, parcel):
+    def populate_data_for_update_parcel_batchline(self, parcel):
         resp = None
         if parcel:
             name = parcel.name
@@ -162,10 +168,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def update_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password,
-                      data, record_archived=False):
+    def update_parcel_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -198,8 +203,12 @@ class WuaParcel(models.Model):
                 error_message = resprest.text
         return resp, error_message
 
+    def send_parcel_on_write_telecontrol(self, vals):
+        super(WuaParcel, self).send_parcel_on_write_telecontrol(vals)
+        self.send_parcel_on_write('batchline', vals)
+
     # Implemented hook
-    def populate_data_for_delete_parcel(self, parcel):
+    def populate_data_for_delete_parcel_batchline(self, parcel):
         resp = None
         if parcel:
             name = parcel.name
@@ -209,9 +218,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def delete_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password, data):
+    def delete_parcel_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -233,11 +242,14 @@ class WuaParcel(models.Model):
                 error_message = resprest.text
         return resp, error_message
 
+    def unlink_parcel_on_unlink_telecontrol(self):
+        super(WuaParcel, self).unlink_parcel_on_unlink_telecontrol()
+        self.unlink_parcel_on_unlink('batchline')
+
     # Implemented hook
-    def synchronize_parcel(self, url_remotecontrol_rest,
-                           url_remotecontrol_rest_username,
-                           url_remotecontrol_rest_password,
-                           data, record_archived=False):
+    def synchronize_parcel_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -270,10 +282,14 @@ class WuaParcel(models.Model):
                 error_message = resprest.text
         return resp, error_message
 
+    def create_parcel_on_synchronize_telecontrol(self):
+        super(WuaParcel, self).create_parcel_on_synchronize_telecontrol()
+        self.create_parcel_on_syncrhonize('batchline')
+
     # Implemented hook
-    def synchronize_parcels(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, list_of_data):
+    def synchronize_parcels_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         parcels_ok = []
         parcels_not_ok = []
         token, error_message = self.get_token(
@@ -306,6 +322,17 @@ class WuaParcel(models.Model):
                 else:
                     parcels_not_ok.append(data['name'])
         return parcels_ok, parcels_not_ok
+
+    def create_parcels_on_synchronize_telecontrol(self, active_parcels,
+                                                  unconditional_syncrho):
+        super(WuaParcel, self).create_parcels_on_synchronize_telecontrol(
+            active_parcels, unconditional_syncrho)
+        self.create_parcels_on_synchronize(
+            active_parcels, unconditional_syncrho,  'batchline')
+
+    def unlink_parcel_on_unsynchronize_telecontrol(self):
+        super(WuaParcel, self).unlink_parcel_on_unsynchronize_telecontrol()
+        self.unlink_parcel_on_unsyncrhonize('batchline')
 
     def get_watermeter_of_vals(self, irrigationpointwc_ids):
         resp = []

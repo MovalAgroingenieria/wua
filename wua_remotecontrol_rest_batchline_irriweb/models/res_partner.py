@@ -9,7 +9,7 @@ from odoo import models, _, fields, api
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
-    _remotecontrol_partner_fields = [
+    _remotecontrol_partner_fields_batchline = [
         'partner_code', 'firstname', 'lastname', 'lastname2', 'vat', 'email'
     ]
 
@@ -36,7 +36,7 @@ class ResPartner(models.Model):
         return resp, error_message
 
     # Implemented hook
-    def populate_data_for_send_new_partner(self, vals):
+    def populate_data_for_send_new_partner_batchline(self, vals):
         resp = None
         if vals and 'partner_code' in vals:
             partner_code = vals['partner_code']
@@ -66,9 +66,9 @@ class ResPartner(models.Model):
         return resp
 
     # Implemented hook
-    def send_new_partner(self, url_remotecontrol_rest,
-                         url_remotecontrol_rest_username,
-                         url_remotecontrol_rest_password, data):
+    def send_new_partner_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -106,8 +106,14 @@ class ResPartner(models.Model):
                 error_message = resprest.text
         return resp, error_message
 
+    def send_partner_on_creation_telecontrol(self, new_partner, vals):
+        super(ResPartner, self).send_partner_on_creation_telecontrol(
+            new_partner, vals
+        )
+        self.send_partner_on_creation('batchline', new_partner, vals)
+
     # Implemented hook
-    def populate_data_for_update_partner(self, partner):
+    def populate_data_for_update_partner_batchline(self, partner):
         resp = None
         if partner:
             partner_code = partner.partner_code
@@ -136,10 +142,9 @@ class ResPartner(models.Model):
         return resp
 
     # Implemented hook
-    def update_partner(self, url_remotecontrol_rest,
-                       url_remotecontrol_rest_username,
-                       url_remotecontrol_rest_password,
-                       data, record_archived=False):
+    def update_partner_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -172,8 +177,12 @@ class ResPartner(models.Model):
                 error_message = ''
         return resp, error_message
 
+    def send_partner_on_write_telecontrol(self, vals):
+        super(ResPartner, self).send_partner_on_write_telecontrol(vals)
+        self.send_partner_on_write('batchline', vals)
+
     # Implemented hook
-    def populate_data_for_delete_partner(self, partner):
+    def populate_data_for_delete_partner_batchline(self, partner):
         resp = None
         if partner:
             partner_code = partner.partner_code
@@ -183,9 +192,9 @@ class ResPartner(models.Model):
         return resp
 
     # Implemented hook
-    def delete_partner(self, url_remotecontrol_rest,
-                       url_remotecontrol_rest_username,
-                       url_remotecontrol_rest_password, data):
+    def delete_partner_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -209,11 +218,14 @@ class ResPartner(models.Model):
                 error_message = resprest.text
         return resp, error_message
 
+    def unlink_partner_on_unlink_telecontrol(self):
+        super(ResPartner, self).unlink_partner_on_unlink_telecontrol()
+        self.unlink_partner_on_unlink('batchline')
+
     # Implemented hook
-    def synchronize_partner(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password,
-                            data, record_archived=False):
+    def synchronize_partner_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         token, error_message = self.get_token(
             url_remotecontrol_rest,
@@ -248,10 +260,14 @@ class ResPartner(models.Model):
                 error_message = resprest.text
         return resp, error_message
 
+    def create_partner_on_synchronize_telecontrol(self):
+        super(ResPartner, self).create_partner_on_synchronize_telecontrol()
+        self.create_partner_on_syncrhonize('batchline')
+
     # Implemented hook
-    def synchronize_partners(self, url_remotecontrol_rest,
-                             url_remotecontrol_rest_username,
-                             url_remotecontrol_rest_password, list_of_data):
+    def synchronize_partners_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         partners_ok = []
         partners_not_ok = []
         token, error_message = self.get_token(
@@ -286,6 +302,15 @@ class ResPartner(models.Model):
                     partners_not_ok.append(data['partner_code'])
                 pass
         return partners_ok, partners_not_ok
+
+    def create_partners_on_synchronize_telecontrol(self, active_partners):
+        super(ResPartner, self).create_partners_on_synchronize_telecontrol(
+            active_partners)
+        self.create_partners_on_synchronize(active_partners, 'batchline')
+
+    def unlink_partner_on_unsynchronize_telecontrol(self):
+        super(ResPartner, self).unlink_partner_on_unsynchronize_telecontrol()
+        self.unlink_partner_on_unsyncrhonize('batchline')
 
     def get_val(self, vals, key):
         resp = ''
