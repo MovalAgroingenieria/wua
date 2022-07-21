@@ -16,22 +16,6 @@ class WuaReading(models.Model):
         default=True,
         required=True)
 
-    @api.model
-    def run_remotecontrol_application_url(self):
-        enable_remotecontrol = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'enable_remotecontrol')
-        if not enable_remotecontrol:
-            raise exceptions.UserError(_('The remote control is not enabled.'))
-        url_remotecontrol_application = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'url_remotecontrol_application')
-        if not url_remotecontrol_application:
-            raise exceptions.UserError(_('There is not a URL for the '
-                                         'remote control application.'))
-        return {
-            'type': 'ir.actions.act_url',
-            'url': url_remotecontrol_application,
-            'target': 'new', }
-
     # Hook that will be implemeneted on every telecontrol, appending the info
     def do_import_reading_of_telecontrol(self):
         readings = []
