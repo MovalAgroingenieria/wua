@@ -15,6 +15,13 @@ class WuaWaterpipeflowreading(models.Model):
         default=True,
         required=True)
 
+    # Hook that will be implemeneted on every telecontrol, appending the info
+    def do_import_waterpipeflowreading_of_telecontrol(self):
+        waterpipeflowreadings = []
+        error_message = ''
+        error_flowmeters = []
+        return waterpipeflowreadings, error_message, error_flowmeters
+
     @api.model
     def do_import_waterpipeflowreadings(self, save_data=True,
                                         show_message=True):
@@ -24,75 +31,40 @@ class WuaWaterpipeflowreading(models.Model):
         resp = [None, 0, '', None, 0]
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
-        import_from_waterpipe_readings = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'import_from_waterpipe_readings')
-        if (enable_remotecontrol and import_from_waterpipe_readings):
-            url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
-            url_remotecontrol_rest_username = self.env['ir.values'].\
-                get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
-            url_remotecontrol_rest_password = self.env['ir.values'].\
-                get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
-            if (url_remotecontrol_rest and url_remotecontrol_rest_username and
-               url_remotecontrol_rest_password):
-                data = self.populate_data_for_import_waterpipeflowreadings(
-                    url_remotecontrol_rest,
-                    url_remotecontrol_rest_username,
-                    url_remotecontrol_rest_password)
-                if data:
-                    waterpipeflowreadings, error_message, error_flowmeters = \
-                        self.import_waterpipeflowreadings(
-                            url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, data)
-                    waterpipeflowreadings = self.refine_waterpipeflowreadings(
-                        waterpipeflowreadings)
-                    if waterpipeflowreadings:
-                        resp[0] = waterpipeflowreadings
-                        resp[1] = len(waterpipeflowreadings)
-                        resp[2] = error_message
-                        resp[3] = error_flowmeters
-                        if save_data:
-                            number_of_negative_waterpipeflowreadings = \
-                                self.save_waterpipeflowreadings(
-                                    waterpipeflowreadings)
-                            resp[4] = number_of_negative_waterpipeflowreadings
-                        prefix_message_01 = _('Remote Control: '
-                                              'Getting water-pipe readings')
-                        suffix_message_01 = str(resp[1])
-                        _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.info(prefix_message_01 + '... ' +
-                                     suffix_message_01)
-                        if error_message:
-                            prefix_message_02 = _('Remote Control: Error '
-                                                  'getting water-pipe readings')
-                            suffix_message_02 = error_message
-                            _logger = logging.getLogger(
-                                self.__class__.__name__)
-                            _logger.info(prefix_message_02 + '... ' +
-                                         suffix_message_02)
+        if (enable_remotecontrol):
+            waterpipeflowreadings, error_message, error_flowmeters = \
+                self.do_import_waterpipeflowreading_of_telecontrol()
+            waterpipeflowreadings = self.refine_waterpipeflowreadings(
+                waterpipeflowreadings)
+            if waterpipeflowreadings:
+                resp[0] = waterpipeflowreadings
+                resp[1] = len(waterpipeflowreadings)
+                resp[2] = error_message
+                resp[3] = error_flowmeters
+                if save_data:
+                    number_of_negative_waterpipeflowreadings = \
+                        self.save_waterpipeflowreadings(
+                            waterpipeflowreadings)
+                    resp[4] = number_of_negative_waterpipeflowreadings
+                prefix_message_01 = _('Remote Control: '
+                                      'Getting water-pipe readings')
+                suffix_message_01 = str(resp[1])
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info(prefix_message_01 + '... ' + suffix_message_01)
+                if error_message:
+                    prefix_message_02 = _('Remote Control: Error '
+                                          'getting water-pipe readings')
+                    suffix_message_02 = error_message
+                    _logger = logging.getLogger(
+                        self.__class__.__name__)
+                    _logger.info(prefix_message_02 + '... ' +
+                                 suffix_message_02)
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
                                              'the remote control is not '
                                              'enabled.'))
         return resp
-
-    # Hook
-    def populate_data_for_import_waterpipeflowreadings(
-            self, url_remotecontrol_rest,
-            url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password):
-        return None
-
-    # Hook
-    def import_waterpipeflowreadings(
-            self, url_remotecontrol_rest,
-            url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password, list_of_data):
-        return None, '', None
 
     def refine_waterpipeflowreadings(self, waterpipeflowreadings):
         resp = []

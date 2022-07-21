@@ -17,8 +17,8 @@ class WuaFlowmeter(models.Model):
     def _compute_remotecontrol_enabled(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
-        import_from_flowmeter = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'import_from_flowmeter')
+        import_from_flowmeter = self.env['wua.irrigation.configuration'].\
+            import_from_flowmeter_any()
         if enable_remotecontrol is None:
             enable_remotecontrol = False
         if import_from_flowmeter is None:
