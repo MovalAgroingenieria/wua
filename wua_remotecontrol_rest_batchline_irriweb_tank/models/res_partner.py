@@ -9,7 +9,7 @@ from odoo import models, _, api, fields
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
-    _remotecontrol_partner_fields = [
+    _remotecontrol_partner_fields_batchline = [
         'partner_code', 'firstname', 'lastname', 'lastname2', 'vat', 'email',
         'tank_permission'
     ]
@@ -53,7 +53,8 @@ class ResPartner(models.Model):
         php_frame_url = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'php_frame_url')
         url_irriweb = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'url_remotecontrol_application')
+            'wua.irrigation.configuration',
+            'url_remotecontrol_application_batchline')
         url_ok = php_frame_enabled and php_frame_url and url_irriweb
         if url_ok:
             if type == 'solicitudcuba':
@@ -98,8 +99,9 @@ class ResPartner(models.Model):
         return act_window
 
     # Implemented hook
-    def populate_data_for_send_new_partner(self, vals):
-        resp = super(ResPartner, self).populate_data_for_send_new_partner(vals)
+    def populate_data_for_send_new_partner_batchline(self, vals):
+        resp = super(ResPartner, self).\
+            populate_data_for_send_new_partner_batchline(vals)
         if (resp):
             tank_permission = not not self.get_val(vals, 'tank_permission')
             resp.update({
@@ -108,9 +110,9 @@ class ResPartner(models.Model):
         return resp
 
     # Implemented hook
-    def send_new_partner(self, url_remotecontrol_rest,
-                         url_remotecontrol_rest_username,
-                         url_remotecontrol_rest_password, data):
+    def send_new_partner_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -150,9 +152,9 @@ class ResPartner(models.Model):
         return resp, error_message
 
     # Implemented hook
-    def populate_data_for_update_partner(self, partner):
-        resp = super(ResPartner, self).populate_data_for_update_partner(
-            partner)
+    def populate_data_for_update_partner_batchline(self, partner):
+        resp = super(ResPartner, self).\
+            populate_data_for_update_partner_batchline(partner)
         if resp and partner:
             tank_permission = not not self.refine_value(
                 partner.tank_permission)
@@ -162,10 +164,9 @@ class ResPartner(models.Model):
         return resp
 
     # Implemented hook
-    def update_partner(self, url_remotecontrol_rest,
-                       url_remotecontrol_rest_username,
-                       url_remotecontrol_rest_password,
-                       data, record_archived=False):
+    def update_partner_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
         token, error_message = self.get_token(
@@ -200,10 +201,9 @@ class ResPartner(models.Model):
         return resp, error_message
 
     # Implemented hook
-    def synchronize_partner(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password,
-                            data, record_archived=False):
+    def synchronize_partner_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         token, error_message = self.get_token(
             url_remotecontrol_rest,
@@ -240,9 +240,9 @@ class ResPartner(models.Model):
         return resp, error_message
 
     # Implemented hook
-    def synchronize_partners(self, url_remotecontrol_rest,
-                             url_remotecontrol_rest_username,
-                             url_remotecontrol_rest_password, list_of_data):
+    def synchronize_partners_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         partners_ok = []
         partners_not_ok = []
         token, error_message = self.get_token(

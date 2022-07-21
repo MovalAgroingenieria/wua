@@ -48,13 +48,14 @@ class WuaTankconsumption(models.Model):
             'wua.irrigation.configuration', 'import_from_tankconsumptions')
         if (enable_remotecontrol and import_from_tankconsumptions):
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_batchline')
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_batchline')
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_batchline')
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
                 data = self.populate_data_for_import_tankconsumptions(
