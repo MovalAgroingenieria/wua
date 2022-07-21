@@ -10,13 +10,13 @@ from odoo import models, _
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
-    _remotecontrol_parcel_fields = [
+    _remotecontrol_parcel_fields_inelcom = [
         'name', 'partnerlink_ids', 'rurallocation_id', 'irrigationpointwc_ids',
         'area_official', 'county_id', 'hydraulicsector_id', 'cadastral_parcel',
         'cadastral_polygon']
 
     # Implemented hook
-    def populate_data_for_send_new_parcel(self, vals):
+    def populate_data_for_send_new_parcel_inelcom(self, vals):
         resp = None
         if vals and 'name' in vals:
             name = vals['name']
@@ -61,9 +61,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def send_new_parcel(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, data):
+    def send_new_parcel_inelcom(
+            self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         url_open_session = url_remotecontrol_rest + '/sesiones'
@@ -107,8 +107,14 @@ class WuaParcel(models.Model):
             resprest = requests.delete(url_close_session)
         return resp, error_message
 
+    def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
+        super(WuaParcel, self).send_parcel_on_creation_telecontrol(
+            new_parcel, vals
+        )
+        self.send_parcel_on_creation('inelcom', new_parcel, vals)
+
     # Implemented hook
-    def populate_data_for_update_parcel(self, parcel):
+    def populate_data_for_update_parcel_inelcom(self, parcel):
         resp = None
         if parcel:
             name = parcel.name
@@ -147,10 +153,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def update_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password,
-                      data, record_archived=False):
+    def update_parcel_inelcom(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
         observ = _('Source: Moval Regadío')
@@ -198,8 +203,12 @@ class WuaParcel(models.Model):
             resprest = requests.delete(url_close_session)
         return resp, error_message
 
+    def send_parcel_on_write_telecontrol(self, vals):
+        super(WuaParcel, self).send_parcel_on_write_telecontrol(vals)
+        self.send_parcel_on_write('inelcom', vals)
+
     # Implemented hook
-    def populate_data_for_delete_parcel(self, parcel):
+    def populate_data_for_delete_parcel_inelcom(self, parcel):
         resp = None
         if parcel:
             name = parcel.name
@@ -209,9 +218,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def delete_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password, data):
+    def delete_parcel_inelcom(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
         url_open_session = url_remotecontrol_rest + '/sesiones'
@@ -242,11 +251,14 @@ class WuaParcel(models.Model):
             resprest = requests.delete(url_close_session)
         return resp, error_message
 
+    def unlink_parcel_on_unlink_telecontrol(self):
+        super(WuaParcel, self).unlink_parcel_on_unlink_telecontrol()
+        self.unlink_parcel_on_unlink('inelcom')
+
     # Implemented hook
-    def synchronize_parcel(self, url_remotecontrol_rest,
-                           url_remotecontrol_rest_username,
-                           url_remotecontrol_rest_password,
-                           data, record_archived=False):
+    def synchronize_parcel_inelcom(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
         observ = _('Source: Moval Regadío')
@@ -299,10 +311,14 @@ class WuaParcel(models.Model):
             resprest = requests.delete(url_close_session)
         return resp, error_message
 
+    def create_parcel_on_synchronize_telecontrol(self):
+        super(WuaParcel, self).create_parcel_on_synchronize_telecontrol()
+        self.create_parcel_on_syncrhonize('inelcom')
+
     # Implemented hook
-    def synchronize_parcels(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, list_of_data):
+    def synchronize_parcels_inelcom(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         parcels_ok = []
         parcels_not_ok = []
         url_open_session = url_remotecontrol_rest + '/sesiones'
@@ -361,6 +377,17 @@ class WuaParcel(models.Model):
                 '/sesiones/' + id_session
             resprest = requests.delete(url_close_session)
         return parcels_ok, parcels_not_ok
+
+    def create_parcels_on_synchronize_telecontrol(self, active_parcels,
+                                                  unconditional_syncrho):
+        super(WuaParcel, self).create_parcels_on_synchronize_telecontrol(
+            active_parcels, unconditional_syncrho)
+        self.create_parcels_on_synchronize(
+            active_parcels, unconditional_syncrho,  'inelcom')
+
+    def unlink_parcel_on_unsynchronize_telecontrol(self):
+        super(WuaParcel, self).unlink_parcel_on_unsynchronize_telecontrol()
+        self.unlink_parcel_on_unsyncrhonize('inelcom')
 
     def get_watermeters_of_vals(self, irrigationpointwc_ids):
         resp = []

@@ -6,7 +6,7 @@
     "name": "Water Users Association: Interface with INELCOM ISRL",
     "summary": "In a water users association, interface of Moval Regadio "
                "with the control remote INELCOM ISRL, based on a REST API",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -15,7 +15,8 @@
         "base_wua_remotecontrol_rest",
         "base_wua_invoicing", ],
     "data": [
-        "data/wua_irrigation_config_settings_data.xml", ],
+        "data/wua_irrigation_config_settings_data.xml",
+        "views/wua_irrigation_config_settings_view.xml", ],
     "installable": True,
     "application": False,
 }
