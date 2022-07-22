@@ -10,7 +10,7 @@ from odoo import models, api
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
-    _remotecontrol_parcel_fields = [
+    _remotecontrol_parcel_fields_icr = [
         'partnerlink_ids', 'irrigationpointwc_ids']
 
     def _get_api_wc_code(self, wc, wc_per_group):
@@ -37,11 +37,13 @@ class WuaParcel(models.Model):
         wc_per_group = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'wc_per_group')
         url_remotecontrol_rest = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'url_remotecontrol_rest')
+            'wua.irrigation.configuration', 'url_remotecontrol_rest_icr')
         url_remotecontrol_rest_username = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'url_remotecontrol_rest_username')
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_username_icr')
         url_remotecontrol_rest_password = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'url_remotecontrol_rest_password')
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_password_icr')
         if (installation_identifier and client_identifier and
                 url_remotecontrol_rest and url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
@@ -71,7 +73,7 @@ class WuaParcel(models.Model):
         return tag_id
 
     # Implemented hook
-    def populate_data_for_send_new_parcel(self, vals):
+    def populate_data_for_send_new_parcel_icr(self, vals):
         resp = None
         if (vals and 'partnerlink_ids' in vals and
            'irrigationpointwc_ids' in vals):
@@ -102,9 +104,9 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def send_new_parcel(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, data):
+    def send_new_parcel_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         if ('partner_name' not in data or not
                 data['waterconnection_tag_ids']):
             return True, ''
@@ -139,49 +141,58 @@ class WuaParcel(models.Model):
                         error_message = response.status_code
         return resp, error_message
 
+    def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
+        super(WuaParcel, self).send_parcel_on_creation_telecontrol(
+            new_parcel, vals
+        )
+        self.send_parcel_on_creation('icr', new_parcel, vals)
+
     @api.multi
     def write(self, vals):
         # First: Reset the owner for all the water connections of the
         # irrigation points.
         all_vals = vals.keys()
         some_remotecontrol_key = len(
-            list(set(all_vals) & set(self._remotecontrol_parcel_fields))) > 0
+            list(set(all_vals) &
+                 set(self._remotecontrol_parcel_fields_icr))) > 0
         if ((not self.__class__._in_create_or_synchro) and
            len(self) == 1 and some_remotecontrol_key):
             enable_remotecontrol = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'enable_remotecontrol')
             can_be_sent_parcels_census = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'can_be_sent_parcels_census')
+                'wua.irrigation.configuration',
+                'can_be_sent_parcels_census_icr')
             automatic_census_synchronization = \
                 self.env['ir.values'].get_default(
                     'wua.irrigation.configuration',
-                    'automatic_census_synchronization')
+                    'automatic_census_synchronization_icr')
             active_in_vals = 'active' in vals
             if (enable_remotecontrol and can_be_sent_parcels_census and
                (automatic_census_synchronization or active_in_vals)):
                 url_remotecontrol_rest = self.env['ir.values'].get_default(
-                    'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                    'wua.irrigation.configuration',
+                    'url_remotecontrol_rest_icr')
                 url_remotecontrol_rest_username = self.env['ir.values'].\
                     get_default('wua.irrigation.configuration',
-                                'url_remotecontrol_rest_username')
+                                'url_remotecontrol_rest_username_icr')
                 url_remotecontrol_rest_password = self.env['ir.values'].\
                     get_default('wua.irrigation.configuration',
-                                'url_remotecontrol_rest_password')
+                                'url_remotecontrol_rest_password_icr')
                 if (url_remotecontrol_rest and
                    url_remotecontrol_rest_username and
                    url_remotecontrol_rest_password):
-                    data = self.populate_data_for_delete_parcel(self)
+                    data = self.populate_data_for_delete_parcel_icr(self)
                     if data:
-                        self.delete_parcel(url_remotecontrol_rest,
-                                           url_remotecontrol_rest_username,
-                                           url_remotecontrol_rest_password,
-                                           data)
+                        self.delete_parcel_icr(
+                            url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password, data)
         # Second: Inherited method call.
         resp = super(WuaParcel, self).write(vals)
         return resp
 
     # Implemented hook
-    def populate_data_for_update_parcel(self, parcel):
+    def populate_data_for_update_parcel_icr(self, parcel):
         resp = None
         partner_name = ''
         for partnerlink in parcel.partnerlink_ids:
@@ -205,18 +216,21 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def update_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password,
-                      data, record_archived=False):
-        resp, error_message = self.send_new_parcel(
+    def update_parcel_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
+        resp, error_message = self.send_new_parcel_icr(
             url_remotecontrol_rest,
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, data)
         return resp, error_message
 
+    def send_parcel_on_write_telecontrol(self, vals):
+        super(WuaParcel, self).send_parcel_on_write_telecontrol(vals)
+        self.send_parcel_on_write('icr', vals)
+
     # Implemented hook
-    def populate_data_for_delete_parcel(self, parcel):
+    def populate_data_for_delete_parcel_icr(self, parcel):
         resp = None
         some_watercosts_partner = False
         for partnerlink in parcel.partnerlink_ids:
@@ -240,36 +254,43 @@ class WuaParcel(models.Model):
         return resp
 
     # Implemented hook
-    def delete_parcel(self, url_remotecontrol_rest,
-                      url_remotecontrol_rest_username,
-                      url_remotecontrol_rest_password, data):
+    def delete_parcel_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data):
         if (not data['waterconnection_tag_ids']):
             return True, ''
-        resp, error_message = self.send_new_parcel(
+        resp, error_message = self.send_new_parcel_icr(
             url_remotecontrol_rest,
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, data)
         return resp, error_message
 
+    def unlink_parcel_on_unlink_telecontrol(self):
+        super(WuaParcel, self).unlink_parcel_on_unlink_telecontrol()
+        self.unlink_parcel_on_unlink('icr')
+
     # Implemented hook
-    def synchronize_parcel(self, url_remotecontrol_rest,
-                           url_remotecontrol_rest_username,
-                           url_remotecontrol_rest_password,
-                           data, record_archived=False):
-        resp, error_message = self.send_new_parcel(
+    def synchronize_parcel_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, data, record_archived=False):
+        resp, error_message = self.send_new_parcel_icr(
             url_remotecontrol_rest,
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, data)
         return resp, error_message
 
+    def create_parcel_on_synchronize_telecontrol(self):
+        super(WuaParcel, self).create_parcel_on_synchronize_telecontrol()
+        self.create_parcel_on_syncrhonize('icr')
+
     # Implemented hook
-    def synchronize_parcels(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, list_of_data):
+    def synchronize_parcels_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         parcels_ok = []
         parcels_not_ok = []
         for data in list_of_data:
-            resp, error_message = self.send_new_parcel(
+            resp, error_message = self.send_new_parcel_icr(
                 url_remotecontrol_rest,
                 url_remotecontrol_rest_username,
                 url_remotecontrol_rest_password, data)
@@ -278,6 +299,17 @@ class WuaParcel(models.Model):
             else:
                 parcels_not_ok.append(data['parcel_code'])
         return parcels_ok, parcels_not_ok
+
+    def create_parcels_on_synchronize_telecontrol(self, active_parcels,
+                                                  unconditional_syncrho):
+        super(WuaParcel, self).create_parcels_on_synchronize_telecontrol(
+            active_parcels, unconditional_syncrho)
+        self.create_parcels_on_synchronize(
+            active_parcels, unconditional_syncrho, 'icr')
+
+    def unlink_parcel_on_unsynchronize_telecontrol(self):
+        super(WuaParcel, self).unlink_parcel_on_unsynchronize_telecontrol()
+        self.unlink_parcel_on_unsyncrhonize('icr')
 
     def open_connection(self, url_remotecontrol_rest,
                         url_remotecontrol_rest_username,

@@ -7,16 +7,49 @@
         <field name="inherit_id"
                ref="base_wua_remotecontrol_rest.wua_irrigation_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='url_remotecontrol_application']"
+            <xpath expr="//group[@name='remote_control']"
                    position="after">
-                <field name="client_identifier" style="width:100px"
-                    attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
-                <field name="installation_identifier" style="width:100px"
-                    attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
-                <field name="wc_per_group" style="width:100px"
-                    attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                <group name="remote_control_icr" string="Remote Control ICR"
+                            attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}">
+                    <field name="url_remotecontrol_rest_icr"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_rest_username_icr"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_rest_password_icr"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="automatic_census_synchronization_icr"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                                'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_application_icr"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                    <field name="client_identifier" style="width:100px"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                    <field name="installation_identifier" style="width:100px"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                    <field name="wc_per_group" style="width:100px"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                </group>
             </xpath>
         </field>
     </record>
+
+    <record id="wua_remotecontrol_application_icr_action" model="ir.actions.server">
+        <field name="name">Native Remote Control Application of ICR</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.reading'].run_remotecontrol_application_url_icr()
+        </field>
+    </record>
+
+    <menuitem id="wua_remotecontrol_application_icr_menu"
+              name="Native Remote Control ICR"
+              parent="wua_structure_irrigation.base_wua_irrigation_configuration_menu"
+              action="wua_remotecontrol_application_icr_action"
+              sequence="3"/>
 
 </odoo>

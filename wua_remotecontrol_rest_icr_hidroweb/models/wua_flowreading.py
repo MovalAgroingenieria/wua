@@ -11,16 +11,16 @@ class WuaFlowreading(models.Model):
     _inherit = 'wua.flowreading'
 
     # Implemented hook
-    def populate_data_for_import_flowreadings(self, url_remotecontrol_rest,
-                                              url_remotecontrol_rest_username,
-                                              url_remotecontrol_rest_password):
+    def populate_data_for_import_flowreadings_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = True
         return resp
 
     # Implemented hook
-    def import_flowreadings(self, url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, list_of_data):
+    def import_flowreadings_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         flowreadings = []
         flowreadings_dict = {}
         error_message = ''
@@ -82,6 +82,49 @@ class WuaFlowreading(models.Model):
                             })
                 flowreadings = flowreadings_dict.values()
         return flowreadings, error_message, error_flowmeters
+
+    # Hook that will be implemeneted on every telecontrol
+    def do_import_flowreading_of_telecontrol(self):
+        # Get super data and then append here data
+        # Result in format [flowreadings, error_message, error_flowmeters]
+        others_readings_info = \
+            list(super(
+                WuaFlowreading, self).do_import_flowreading_of_telecontrol())
+        url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_icr')
+        url_remotecontrol_rest_username = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_username_icr')
+        url_remotecontrol_rest_password = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_password_icr')
+        import_from_flowreadings = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_from_intake_readings_icr')
+        if (import_from_flowreadings and url_remotecontrol_rest and
+                url_remotecontrol_rest_username and
+                url_remotecontrol_rest_password):
+            data = self.populate_data_for_import_flowreadings_icr(
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if data:
+                flowreadings, error_message, error_flowmeters = \
+                    self.import_flowreadings_icr(
+                        url_remotecontrol_rest,
+                        url_remotecontrol_rest_username,
+                        url_remotecontrol_rest_password, data)
+                if (flowreadings):
+                    # Merge arrays
+                    others_readings_info[0] += flowreadings
+                if (error_message):
+                    # Merge Strings
+                    others_readings_info[1] += ' - ' + error_message
+                if (error_flowmeters):
+                    # Merge Strings
+                    others_readings_info[2] += error_flowmeters
+        return others_readings_info
 
     def open_connection(self, url_remotecontrol_rest,
                         url_remotecontrol_rest_username,
