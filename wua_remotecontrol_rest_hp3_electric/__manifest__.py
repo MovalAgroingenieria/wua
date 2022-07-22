@@ -15,7 +15,8 @@
         "base_wua_remotecontrol_rest",
         "base_wua_remotecontrol_rest_infrastructure", ],
     "data": [
-        "data/wua_irrigation_config_settings_data.xml", ],
+        "data/wua_irrigation_config_settings_data.xml",
+        "views/wua_irrigation_config_settings_view.xml", ],
     "installable": True,
     "application": False,
 }

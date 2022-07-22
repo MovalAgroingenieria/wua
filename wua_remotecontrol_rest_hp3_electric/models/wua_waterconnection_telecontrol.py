@@ -14,15 +14,44 @@ class WuaWaterconnectionTelecontrol(models.Model):
 
     FACTOR_CONVERSION = 1.0
 
+    # Hook Implemented
+    def do_import_waterconnection_telecontrol_info_all(self):
+        # Get waterconnection telecontrol info of others and then apply self
+        others_wc_info = \
+            list(super(WuaWaterconnectionTelecontrol, self).
+                 do_import_waterconnection_telecontrol_info_all())
+        url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_hp3')
+        url_remotecontrol_rest_username = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_username_hp3')
+        url_remotecontrol_rest_password = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_password_hp3')
+        if (url_remotecontrol_rest and url_remotecontrol_rest_username and
+                url_remotecontrol_rest_password):
+            wc_info, error_message = \
+                self.import_waterconnection_telecontrol_info_hp3(
+                    url_remotecontrol_rest,
+                    url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password, False)
+            # Update already existing wc telecontrol data
+            if (wc_info):
+                others_wc_info[0] += wc_info
+            if (error_message):
+                others_wc_info[1] += ' - ' + error_message
+        return others_wc_info
+
     # Implemented hook
-    def populate_data_for_import_waterconnection_telecontrol_info(
+    def populate_data_for_import_waterconnection_telecontrol_info_hp3(
             self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password):
         resp = True
         return resp
 
     # Hook
-    def import_waterconnection_telecontrol_info(
+    def import_waterconnection_telecontrol_info_hp3(
             self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, list_of_data):
         wc_all_info = []
@@ -31,44 +60,57 @@ class WuaWaterconnectionTelecontrol(models.Model):
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if token:
-            all_wm = self.env['wua.watermeter'].search([])
-            for wm in all_wm:
-                if (wm and wm.waterconnection_id):
-                    url_readings = url_remotecontrol_rest + '/api/' + \
-                        'estadovalvula'
-                    headers = {
-                        'Authorization': 'Bearer ' + token,
-                    }
-                    resprest_wm = requests.request(
-                        'POST', url_readings,
-                        headers=headers,
-                        data={
-                            "contador": wm.name
-                        }
-                    )
-                    if resprest_wm.ok:
-                        wm_response = json.loads(resprest_wm.text)
-                        volume = wm_response['lectura_cont']
-                        waterflow = wm_response['caudal']
-                        valve_open = wm_response['estado_real'] != 'cerrada'
-                        valve_scheduled = wm_response['estado_real'] != \
-                            wm_response['estado_debido']
-                        date_time_read = datetime.strptime(
-                            wm_response['f_ultima_comunicacion'],
-                            '%Y-%m-%dT%H:%M:%S')
-                        date_time_read = pytz.timezone('Europe/Madrid').\
-                            localize(date_time_read)
-                        date_time_read = date_time_read.astimezone(
-                            pytz.timezone('UTC'))
-                        wc_all_info.append({
-                            'waterconnection': wm.waterconnection_id.name,
-                            'total_volume': volume,
-                            'waterflow': waterflow,
-                            'valve_open': valve_open,
-                            'valve_scheduled': valve_scheduled,
-                            'data_time': date_time_read.strftime(
-                                '%Y-%m-%d %H:%M:%S'),
-                        })
+            # Dict with the key = watermeter.name of all
+            # watermeters
+            wm_dict = dict(
+                ('{watermeter_name}'.format(
+                    watermeter_name=wm.name
+                ), wm)
+                for wm in self.env['wua.watermeter'].search([])
+            )
+            url_readings = url_remotecontrol_rest + '/api/' + \
+                'estadotodoscontadores'
+            headers = {
+                'Authorization': 'Bearer ' + token,
+            }
+            resprest_wm = requests.request(
+                'POST', url_readings,
+                headers=headers,
+                data={}
+            )
+            if resprest_wm.ok:
+                wm_response = json.loads(resprest_wm.text)
+                if ('estadoContadores' in wm_response and
+                        len(wm_response['estadoContadores']) > 0):
+                    for wm in wm_response['estadoContadores']:
+                        watermeter = wm['contador']
+                        # Check if watermeter can be added
+                        # (Exists and have waterconnection_id)
+                        if (watermeter in wm_dict and
+                                wm_dict[watermeter].waterconnection_id):
+                            waterconnection = wm_dict[watermeter].\
+                                waterconnection_id
+                            volume = wm['lectura_cont']
+                            waterflow = wm['caudal']
+                            valve_open = wm['estado_real'] != 'cerrada'
+                            valve_scheduled = wm['estado_real'] != \
+                                wm['estado_debido']
+                            date_time_read = datetime.strptime(
+                                wm['f_ultima_comunicacion'],
+                                '%Y-%m-%dT%H:%M:%S')
+                            date_time_read = pytz.timezone('Europe/Madrid').\
+                                localize(date_time_read)
+                            date_time_read = date_time_read.astimezone(
+                                pytz.timezone('UTC'))
+                            wc_all_info.append({
+                                'waterconnection': waterconnection.name,
+                                'total_volume': volume,
+                                'waterflow': waterflow,
+                                'valve_open': valve_open,
+                                'valve_scheduled': valve_scheduled,
+                                'data_time': date_time_read.strftime(
+                                    '%Y-%m-%d %H:%M:%S'),
+                            })
         return [wc_all_info, error_message]
 
     def open_connection(self, url_remotecontrol_rest,

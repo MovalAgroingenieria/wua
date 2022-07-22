@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigation_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.irrigation.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_remotecontrol_rest.wua_irrigation_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='remote_control']"
+                   position="after">
+                <group name="remote_control_hp3" string="Remote Control hp3"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                             'required': [('enable_remotecontrol', '=', True)]}">
+                    <field name="url_remotecontrol_rest_hp3"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_rest_username_hp3"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_rest_password_hp3"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="automatic_census_synchronization_hp3"
+                    attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
+                    <field name="url_remotecontrol_application_hp3"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)]}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_remotecontrol_application_hp3_action" model="ir.actions.server">
+        <field name="name">Native Remote Control Application of hp3</field>
+        <field name="model_id" ref="model_wua_reading"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['wua.reading'].run_remotecontrol_application_url_hp3()
+        </field>
+    </record>
+
+    <menuitem id="wua_remotecontrol_application_hp3_menu"
+              name="Native Remote Control HP3"
+              parent="wua_structure_irrigation.base_wua_irrigation_configuration_menu"
+              action="wua_remotecontrol_application_hp3_action"
+              sequence="3"/>
+
+</odoo>

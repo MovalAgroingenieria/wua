@@ -4,55 +4,115 @@
 
 import requests
 import json
-from odoo import models
+from odoo import models, api, exceptions, _
 
 
 class WuaReading(models.Model):
     _inherit = 'wua.reading'
 
+    @api.model
+    def run_remotecontrol_application_url_hp3(self):
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        if not enable_remotecontrol:
+            raise exceptions.UserError(_('The remote control is not enabled.'))
+        url_remotecontrol_application = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'url_remotecontrol_application_hp3')
+        if not url_remotecontrol_application:
+            raise exceptions.UserError(_('There is not a URL for the '
+                                         'remote control application.'))
+        return {
+            'type': 'ir.actions.act_url',
+            'url': url_remotecontrol_application,
+            'target': 'new', }
+
     # Implemented hook
-    def populate_data_for_import_readings(self, url_remotecontrol_rest,
-                                          url_remotecontrol_rest_username,
-                                          url_remotecontrol_rest_password):
+    def populate_data_for_import_readings_hp3(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = True
         return resp
 
     # Implemented hook
-    def import_readings(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, list_of_data):
+    def import_readings_hp3(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
         readings = []
         error_message = ''
         error_watermeters = []
-        all_wm = self.env['wua.watermeter'].search([])
+        # all_wm = self.env['wua.watermeter'].search([])
         token = self.open_connection(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if token:
-            for wm in all_wm:
-                url_readings = url_remotecontrol_rest + '/api/estadovalvula'
-                headers = {
-                    'Authorization': 'Bearer ' + token,
-                }
-                resprest = requests.request(
-                    'POST', url_readings,
-                    headers=headers,
-                    data={
-                        "contador": wm.name
-                    }
-                )
-                if resprest.ok:
-                    wm_response = json.loads(resprest.text)
-                    volume = wm_response['lectura_cont']
-                    readings.append({
-                        'watermeter': wm.name,
-                        'volume': volume,
-                    })
+            url_readings = url_remotecontrol_rest + \
+                '/api/estadotodoscontadores'
+            headers = {
+                'Authorization': 'Bearer ' + token,
+            }
+            resprest = requests.request(
+                'POST', url_readings,
+                headers=headers,
+                data={}
+            )
+            if resprest.ok:
+                wm_response = json.loads(resprest.text)
+                if ('estadoContadores' in wm_response and
+                        len(wm_response['estadoContadores']) > 0):
+                    for wm in wm_response['estadoContadores']:
+                        volume = wm['lectura_cont']
+                        watermeter = wm['contador']
+                        readings.append({
+                            'watermeter': watermeter,
+                            'volume': volume,
+                        })
         return readings, error_message, error_watermeters
 
-    def open_connection(self, url_remotecontrol_rest,
+    # Hook that will be implemeneted on every telecontrol
+    def do_import_reading_of_telecontrol(self):
+        # Get super data and then append here data
+        # Result in format [readings, error_message, error_watermeters]
+        others_readings_info = \
+            list(super(WuaReading, self).do_import_reading_of_telecontrol())
+        url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_hp3')
+        url_remotecontrol_rest_username = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_username_hp3')
+        url_remotecontrol_rest_password = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_password_hp3')
+        import_from_readings = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'import_from_readings_hp3')
+        if (import_from_readings and url_remotecontrol_rest and
+                url_remotecontrol_rest_username and
+                url_remotecontrol_rest_password):
+            data = self.populate_data_for_import_readings_hp3(
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if data:
+                readings, error_message, error_watermeters = \
+                    self.import_readings_hp3(
+                        url_remotecontrol_rest,
                         url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password):
+                        url_remotecontrol_rest_password, data)
+                if (readings):
+                    # Merge arrays
+                    others_readings_info[0] += readings
+                if (error_message):
+                    # Merge Strings
+                    others_readings_info[1] += ' - ' + error_message
+                if (error_watermeters):
+                    # Merge Strings
+                    others_readings_info[2] += error_watermeters
+        return others_readings_info
+
+    def open_connection(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = ''
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/api/login/authenticate/',
