@@ -1,0 +1,128 @@
+# -*- coding: utf-8 -*-
+# 2022 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+import logging
+import hashlib
+import requests
+import json
+import datetime
+import pytz
+from odoo import models, fields, api, exceptions, _
+
+
+class WuaFlowmeter(models.Model):
+    _inherit = 'wua.flowmeter'
+
+    @api.multi
+    def action_get_flowdata_demeter(self):
+        url, username, passwd = self._connection_params()
+        demeter_flowmeters = self._get_demeter_flowmeters()
+        if demeter_flowmeters:
+            for demeter_flowmeter in (demeter_flowmeters or []):
+                data_found = False
+                if demeter_flowmeter.id == self.id:
+                    time, flow, data_found = self._get_telecontrol_data(
+                        url, username, passwd, demeter_flowmeter)
+                if data_found:
+                    self._create_record(demeter_flowmeter.id, time, flow)
+
+    @api.model
+    def action_get_flowdata_demeter_cron(self):
+        _logger = logging.getLogger(self.__class__.__name__)
+        url, username, passwd = self._connection_params()
+        demeter_flowmeters = self._get_demeter_flowmeters()
+        if demeter_flowmeters:
+            for demeter_flowmeter in (demeter_flowmeters or []):
+                _logger.info(_('Flowdata getting data from flowmeter %s') %
+                             demeter_flowmeter.name)
+                data_found = False
+                time, flow, data_found = self._get_telecontrol_data(
+                    url, username, passwd, demeter_flowmeter)
+                if data_found:
+                    self._create_record(demeter_flowmeter.id, time, flow)
+
+    def _connection_params(self):
+        enable_remotecontrol = url_remotecontrol_rest = \
+            url_remotecontrol_rest_username = \
+            url_remotecontrol_rest_password = False
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        if enable_remotecontrol:
+            url_remotecontrol_rest = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+            url_remotecontrol_rest_username = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_username')
+            url_remotecontrol_rest_password = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'url_remotecontrol_rest_password')
+            if not url_remotecontrol_rest or not \
+                url_remotecontrol_rest_username or not \
+                    url_remotecontrol_rest_password:
+                raise exceptions.ValidationError(
+                    _('The remote control connection parameters are not '
+                      'configured.'))
+        else:
+            raise exceptions.UserError(
+                _('The communication with the remote control is not enabled.'))
+        return (url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+
+    def _get_demeter_flowmeters(self):
+        demeter_flowmeters = []
+        # INFO: To be modified and get only demeter flowmeters
+        current_flowmeters = self.env['wua.flowmeter'].search(
+            [('state', '=', 'active')])
+        for flowmeter in current_flowmeters:
+            demeter_flowmeters.append(flowmeter)
+        return demeter_flowmeters
+
+    def _get_telecontrol_data(self, url, username, passwd, demeter_flowmeter):
+        _logger = logging.getLogger(self.__class__.__name__)
+        time = flow = False
+        jsessionid = self.env['wua.flowreading'].open_connection(
+            url, username, passwd)
+        if jsessionid:
+            resprest = requests.request(
+                'POST', url + '/search',
+                headers={
+                    'Content-Type': 'application/json',
+                    'Cookie': 'JSESSIONID=' + jsessionid},
+                data=json.dumps({
+                    'type': ['counters'],
+                    'state': 'enabled'}))
+            installation_identifier = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'installation_identifier')
+            if resprest.status_code == 200 and installation_identifier:
+                counters = json.loads(resprest.text)
+                flowmeter_name = demeter_flowmeter.name.encode('utf-8')
+                found_counters = []
+                data_found = False  # Flow can be zero
+                for counter in counters:
+                    counter_name = counter['code'].encode('utf-8')
+                    if counter_name == flowmeter_name:
+                        found_counters.append(counter)
+                for counter in found_counters:
+                    installationId = int(counter['installationId'])
+                    counter_name = counter['code'].encode('utf-8')
+                    if (installationId == installation_identifier and
+                            counter_name == flowmeter_name):
+                        flow = counter['flow'] * 3.6  # Flow in l/s
+                        time = datetime.datetime.now()
+                        time_log = datetime.datetime.strftime(
+                            time, "%Y-%m-%d %H:%M:%S")
+                        data_found = True
+                        log_msg = _('New flow data: time: %s, flow: %s') % \
+                            (time_log, str(flow))
+                        _logger.info(log_msg)
+            self.env['wua.flowreading'].close_connection(url, jsessionid)
+        return time, flow, data_found
+
+    def _create_record(self, flowmeter_id, time, flow):
+        flowdata = {
+            'flowmeter_id': flowmeter_id,
+            'time': time,
+            'flow': flow}
+        self.env['wua.flowdata'].create(flowdata)
+        self.env.cr.commit()

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="wua_cron_get_flowdata_demeter" model="ir.cron">
+            <field name="name">Get Flowdata Demeter</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">wua.flowmeter</field>
+            <field name="function">action_get_flowdata_demeter_cron</field>
+            <field name="active" eval="True"/>
+        </record>
+
+    </data>
+
+</odoo>
