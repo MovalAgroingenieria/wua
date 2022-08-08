@@ -108,7 +108,8 @@ class WuaFlowmeter(models.Model):
                     counter_name = counter['code'].encode('utf-8')
                     if (installationId == installation_identifier and
                             counter_name == flowmeter_name):
-                        flow = counter['flow'] * 3.6  # Flow in l/s
+                        # Flow is already in l/s
+                        flow = counter['flow']
                         time = datetime.datetime.now()
                         time_log = datetime.datetime.strftime(
                             time, "%Y-%m-%d %H:%M:%S")
