@@ -17,6 +17,7 @@
     ],
     "data": [
         "views/wua_reading_view.xml",
+        "views/wua_presconsumption_view.xml",
     ],
     "installable": True,
     "application": True,
