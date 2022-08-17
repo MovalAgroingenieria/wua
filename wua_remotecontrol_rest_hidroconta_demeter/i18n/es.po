@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-30 16:17+0000\n"
-"PO-Revision-Date: 2022-06-30 16:17+0000\n"
+"POT-Creation-Date: 2022-08-16 15:20+0000\n"
+"PO-Revision-Date: 2022-08-16 15:20+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,31 @@ msgstr ""
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_flow_in_liters
 msgid "API Flow on l/s."
 msgstr "Caudal API en l/s."
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_url_remotecontrol_rest_hidroconta
+msgid "API REST URL"
+msgstr "URL del API REST"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_url_remotecontrol_application_hidroconta
+msgid "Application URL"
+msgstr "URL de la aplicación"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_automatic_census_synchronization_hidroconta
+msgid "Automatic Synchcron."
+msgstr "Sinc. automática"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_can_be_sent_parcels_census_hidroconta
+msgid "Can be sent parcels census"
+msgstr "Censo de parcelas en telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_can_be_sent_partners_census_hidroconta
+msgid "Can be sent partner census"
+msgstr "Censo de socios en telecontrol"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
 #: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_irrigation_configuration
@@ -36,6 +61,11 @@ msgid "Entity (pressure reading)"
 msgstr "Elemento (lectura de presión)"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_waterconnection
+msgid "Entity (water connection)"
+msgstr "Elemento (toma)"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
 #: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_waterconnection_telecontrol
 msgid "Entity (waterconnection telecontrol)"
 msgstr "Elemento (toma)"
@@ -51,14 +81,49 @@ msgid "Flow value from API demeter in l/s"
 msgstr "Valor de Caudal recibido de la API en l/s"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
-#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_installation_identifier
-msgid "Installation Id."
-msgstr "Id. instalación"
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_import_from_flowmeter_hidroconta
+msgid "Import from flow meter"
+msgstr "Importación de lecturas de un caudalímetro en telecontrol"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
-#: model:ir.model.fields,help:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_installation_identifier
-msgid "Installation Identifier"
-msgstr "Identificador de instalación"
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_import_from_hydraulicsector_hidroconta
+msgid "Import from hydraulic sector"
+msgstr "Importación de lecturas de un sector hidráulico en telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_import_from_intake_readings_hidroconta
+msgid "Import from intake readings"
+msgstr "Importación global de lecturas de captación en telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_import_from_irrigationshed_hidroconta
+msgid "Import from irrigationshed"
+msgstr "Importación de lecturas de una caseta en telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_import_from_readings_hidroconta
+msgid "Import from readings"
+msgstr "Importación global de lecturas en telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_import_from_waterpipe_readings_hidroconta
+msgid "Import from water pipe readings"
+msgstr "Importación global de lecturas de ramal en telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_import_from_waterconnection_hidroconta
+msgid "Import from waterconnection"
+msgstr "Importación de lecturas de una toma en telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.actions.server,name:wua_remotecontrol_rest_hidroconta_demeter.wua_remotecontrol_application_hidroconta_action
+msgid "Native Remote Control Application of Hidroconta"
+msgstr "Telecontrol Hidroconta"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.ui.menu,name:wua_remotecontrol_rest_hidroconta_demeter.wua_remotecontrol_application_hidroconta_menu
+msgid "Native Remote Control Hidroconta"
+msgstr "Telecontrol Hidroconta"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
 #: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_wua_parcel
@@ -69,6 +134,21 @@ msgstr "Parcelas (con integración GIS)"
 #: model:ir.model,name:wua_remotecontrol_rest_hidroconta_demeter.model_res_partner
 msgid "Partner of a WUA"
 msgstr "Socio"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_url_remotecontrol_rest_password_hidroconta
+msgid "Password"
+msgstr "Contraseña"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,help:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_url_remotecontrol_rest_password_hidroconta
+msgid "Password for authentication in remote control"
+msgstr "Contraseña para la autenticación en el telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.ui.view,arch_db:wua_remotecontrol_rest_hidroconta_demeter.wua_irrigation_config_settings_view_form
+msgid "Remote Control hidroconta"
+msgstr "Telecontrol Hidroconta"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
 #: sql_constraint:wua.irrigation.configuration:0
@@ -82,19 +162,46 @@ msgid "The partner already exists"
 msgstr "El socio ya existe"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
-#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:211
-#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:265
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:216
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:274
 #: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/wua_parcel.py:103
 #, python-format
 msgid "The partner does not exists"
 msgstr "El socio no existe"
 
 #. module: wua_remotecontrol_rest_hidroconta_demeter
-#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:216
-#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:270
-#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:324
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/wua_reading.py:18
+#, python-format
+msgid "The remote control is not enabled."
+msgstr "El telecontrol no está activo."
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:221
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:279
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/res_partner.py:337
 #: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/wua_parcel.py:69
 #, python-format
 msgid "There are several owners with the same code"
 msgstr "Hay varios abonados con el mismo código"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: code:addons/wua_remotecontrol_rest_hidroconta_demeter/models/wua_reading.py:23
+#, python-format
+msgid "There is not a URL for the remote control application."
+msgstr "No existe URL para la aplicación de telecontrol."
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_url_remotecontrol_rest_username_hidroconta
+msgid "User Name"
+msgstr "Usuario"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,help:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_url_remotecontrol_rest_username_hidroconta
+msgid "User name for authentication in remote control"
+msgstr "Nombre de usuario para la autenticación en el telecontrol"
+
+#. module: wua_remotecontrol_rest_hidroconta_demeter
+#: model:ir.model.fields,help:wua_remotecontrol_rest_hidroconta_demeter.field_wua_irrigation_configuration_automatic_census_synchronization_hidroconta
+msgid "if it is marked, the changes in parcel/partner census will be automatically sent to the remote control"
+msgstr "Si se habilita la sincronización automática, los cambios que se realicen sobre parcelas y socios serán automáticamente enviados al telecontrol"
 
