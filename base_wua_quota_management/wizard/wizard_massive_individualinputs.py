@@ -104,6 +104,7 @@ class WizardMassiveIndividualinputs(models.TransientModel):
             area_measurement_name = _('ha')
             area_measurement_type = self.env['ir.values'].get_default(
                 'wua.configuration', 'area_measurement_type')
+            suffix = ''
             if area_measurement_type == 1:
                 area_measurement_name = self.env['ir.values'].get_default(
                     'wua.configuration', 'area_measurement_name')
