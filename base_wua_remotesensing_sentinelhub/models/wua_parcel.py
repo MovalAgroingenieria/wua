@@ -17,6 +17,12 @@ class WuaParcel(models.Model):
 
     _gis_table = 'wua_gis_parcel'
 
+    # Codes tha indicates the geometry is too complex
+    # And should retry with simpler geometry
+    # 414 URI TOO LARGE
+    # 431 Request Header Fields Too Large
+    _codes_geom_complicated = [431, 414]
+
     @api.multi
     def get_index_values(self, layer, band, max_cloud_cover=10, resolution=10,
                          index_name=''):
@@ -70,7 +76,8 @@ class WuaParcel(models.Model):
                     # working. The solution is to use a simplified geometry.
                     # Test 1: with simplified geometry (coordinates as integer
                     # values.
-                    if (request_ok and resp.status_code == 414):
+                    if (request_ok and resp.status_code in
+                            self._codes_geom_complicated):
                         srid, coordinates = model_parcel.extract_coordinates(
                             parcel.simplified_geom_ewkt)
                         url = url_api_fis + '?' + \
@@ -87,7 +94,8 @@ class WuaParcel(models.Model):
                             request_ok = False
                     # Test 2: with very simplified geometry (oriented
                     # envelope).
-                    if (request_ok and resp.status_code == 414):
+                    if (request_ok and resp.status_code in
+                            self._codes_geom_complicated):
                         srid, coordinates = model_parcel.extract_coordinates(
                             parcel.oriented_envelope_ewkt)
                         url = url_api_fis + '?' + \
