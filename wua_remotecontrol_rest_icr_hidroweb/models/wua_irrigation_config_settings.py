@@ -64,11 +64,11 @@ class WuaIrrigationConfiguration(models.TransientModel):
         required=True,
         help='Client Identifier')
 
-    installation_identifier = fields.Integer(
+    installation_identifier = fields.Char(
         string='Installation Id.',
-        default=0,
         required=True,
-        help='Installation Identifier')
+        help='Installation Identifier, (If more than 1 installation, '
+             'separate them by commas)')
 
     wc_per_group = fields.Integer(
         string='WC. Per group',
@@ -77,9 +77,6 @@ class WuaIrrigationConfiguration(models.TransientModel):
         help='Waterconnections per group')
 
     _sql_constraints = [
-        ('valid_installation_identifier',
-         'CHECK (installation_identifier >= 0)',
-         'The installation identifier must be a value zero or positive.'),
         ('valid_client_identifier',
          'CHECK (client_identifier >= 0)',
          'The client identifier must be a value zero or positive.'),

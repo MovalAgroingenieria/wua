@@ -41,60 +41,51 @@ class WuaReading(models.Model):
         readings = []
         error_message = ''
         error_watermeters = []
-        installation_identifier = self.env['ir.values'].get_default(
+        installation_identifiers = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'installation_identifier')
         client_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'client_identifier')
-        wc_per_group = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'wc_per_group')
-        # Dict with the key = irrigationshed-position.zfill(2) of all
-        # waterconnections
-        wc_dict = dict(
-            ('{irrigationshed_name}-{position}'.format(
-                irrigationshed_name=wc.irrigationshed_id.name,
-                position=str(wc.position).zfill(2)), wc)
-            for wc in self.env['wua.waterconnection'].search([])
-        )
-        if (installation_identifier and client_identifier):
+        # Check if exists, and in case, split value to get all the
+        # installations
+        if (installation_identifiers):
+            installation_identifiers = installation_identifiers.split(',')
+        if (installation_identifiers and client_identifier):
             jwt = self.open_connection(
                 url_remotecontrol_rest, url_remotecontrol_rest_username,
                 url_remotecontrol_rest_password)
             if jwt:
-                url_readings = url_remotecontrol_rest + '/clients/' + \
-                    str(client_identifier) + '/installations/' + \
-                    str(installation_identifier) + '/tags/?items_per_page=' + \
-                    '1000000&filter=name:\'_CONTADOR$\':contains'
-                headers = {
-                    'Authorization': 'Bearer ' + jwt,
-                }
-                resprest = requests.request(
-                    'GET', url_readings,
-                    headers=headers,
-                    data={}
-                )
-                if resprest.ok:
-                    readings_response = json.loads(resprest.text)['results']
-                    for reading in readings_response:
-                        code_values = reading['name'].split('_')
-                        irrigationshed = code_values[0][:-3]
-                        extension = int(code_values[0][-1])
-                        position = int(code_values[1][-1])
-                        if (extension == 0):
-                            extension = 0
-                        elif (extension == 7):
-                            extension = 1
-                        elif (extension == 6):
-                            extension = 2
-                        position = extension * wc_per_group + position
-                        wc_name = irrigationshed + '-' + str(position).zfill(2)
-                        if (wc_name in wc_dict):
-                            wc = wc_dict[wc_name]
-                            if (wc and wc.watermeter_id):
-                                volume = reading['value']
-                                readings.append({
-                                    'watermeter': wc.watermeter_id.name,
-                                    'volume': volume,
-                                })
+                readings_response = []
+                for installation_identifier in installation_identifiers:
+                    url_readings = url_remotecontrol_rest + '/clients/' + \
+                        str(client_identifier) + '/installations/' + \
+                        str(installation_identifier) + '/tags/?' + \
+                        'items_per_page=1000000&filter=name:' + \
+                        '\'_CONTADOR$\':contains'
+                    headers = {
+                        'Authorization': 'Bearer ' + jwt,
+                    }
+                    resprest = requests.request(
+                        'GET', url_readings,
+                        headers=headers,
+                        data={}
+                    )
+                    if resprest.ok:
+                        # Array of installation and readings
+                        readings_response += [(
+                            installation_identifier,
+                            json.loads(resprest.text)['results'])]
+                # Iterate the installation identifier and then all the readings
+                for installation_identifier, readings_res in readings_response:
+                    for reading in readings_res:
+                        volume = reading['value']
+                        if (volume > 0):
+                            code_values = reading['name'].split('_')
+                            wm_name = code_values[0] + '_' + code_values[1]
+                            volume = reading['value']
+                            readings.append({
+                                'watermeter': wm_name,
+                                'volume': volume,
+                            })
         return readings, error_message, error_watermeters
 
     # Hook that will be implemeneted on every telecontrol

@@ -13,29 +13,12 @@ class WuaParcel(models.Model):
     _remotecontrol_parcel_fields_icr = [
         'partnerlink_ids', 'irrigationpointwc_ids']
 
-    def _get_api_wc_code(self, wc, wc_per_group):
-        # Extension maximun == 2
-        extension = min((wc.position - 1) / wc_per_group, 2)
-        extension_code = ''
-        if (extension == 0):
-            extension_code = '0'
-        elif (extension == 1):
-            extension_code = '7'
-        else:
-            extension_code = '6'
-        position = wc.position - extension * wc_per_group
-        wc_code = wc.irrigationshed_id.name + 'EX' + extension_code + '_H' + \
-            str(position)
-        return wc_code
-
-    def _get_owner_tag_id(self, wc):
+    def _get_owner_tag_id(self, wm):
         tag_id = None
-        installation_identifier = self.env['ir.values'].get_default(
+        installations_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'installation_identifier')
         client_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'client_identifier')
-        wc_per_group = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'wc_per_group')
         url_remotecontrol_rest = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'url_remotecontrol_rest_icr')
         url_remotecontrol_rest_username = self.env['ir.values'].get_default(
@@ -44,7 +27,9 @@ class WuaParcel(models.Model):
         url_remotecontrol_rest_password = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'url_remotecontrol_rest_password_icr')
-        if (installation_identifier and client_identifier and
+        if (installations_identifier):
+            installations_identifier = installations_identifier.split(',')
+        if (installations_identifier and client_identifier and
                 url_remotecontrol_rest and url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
             jwt = self.open_connection(
@@ -52,24 +37,36 @@ class WuaParcel(models.Model):
                 url_remotecontrol_rest_password
             )
             if jwt:
-                wc_code = self._get_api_wc_code(wc, wc_per_group)
-                url_owners = url_remotecontrol_rest + '/clients/' + \
-                    str(client_identifier) + '/installations/' + \
-                    str(installation_identifier) + '/tags/?items_per_page=' + \
-                    '1000000&filter=name:\'' + wc_code + \
-                    '_PROPIETARIO$\':contains'
-                headers = {
-                    'Authorization': 'Bearer ' + jwt,
-                }
-                resprest = requests.request(
-                    'GET', url_owners,
-                    headers=headers,
-                    data={}
-                )
-                if resprest.ok and resprest.text:
-                    response = json.loads(resprest.text)['results']
-                    if response and response[0]:
-                        tag_id = str(response[0]['id'])
+                installation_index = 0
+                owner_found = False
+                # Get the owner id and the the installation associated
+                while (installation_index < len(installations_identifier) and
+                        not owner_found):
+                    # Check where the
+                    installation_identifier = \
+                        installations_identifier[installation_index]
+                    url_owners = url_remotecontrol_rest + '/clients/' + \
+                        str(client_identifier) + '/installations/' + \
+                        str(installation_identifier) + '/tags/?' + \
+                        'items_per_page=1000000&filter=name:\'' + wm + \
+                        '_PROPIETARIO$\':contains'
+                    headers = {
+                        'Authorization': 'Bearer ' + jwt,
+                    }
+                    resprest = requests.request(
+                        'GET', url_owners,
+                        headers=headers,
+                        data={}
+                    )
+                    if resprest.ok and resprest.text:
+                        response = json.loads(resprest.text)['results']
+                        if response and response[0]:
+                            # Set the ID and the client identifier found and
+                            # stop the search
+                            tag_id = (
+                                str(installation_identifier),
+                                str(response[0]['id']))
+                    installation_index += 1
         return tag_id
 
     # Implemented hook
@@ -93,7 +90,7 @@ class WuaParcel(models.Model):
                     data_of_irrigationpointwc['waterconnection_id'])
                 if waterconnection:
                     waterconnection_tag_id = self._get_owner_tag_id(
-                        waterconnection)
+                        waterconnection.watermeter_id.name)
                     if (waterconnection_tag_id):
                         waterconnection_tag_ids.append(waterconnection_tag_id)
             if partner_name and waterconnection_tag_ids:
@@ -112,11 +109,9 @@ class WuaParcel(models.Model):
             return True, ''
         resp = False
         error_message = ''
-        installation_identifier = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'installation_identifier')
         client_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'client_identifier')
-        if (installation_identifier and client_identifier):
+        if (client_identifier):
             jwt = self.open_connection(
                 url_remotecontrol_rest, url_remotecontrol_rest_username,
                 url_remotecontrol_rest_password
@@ -129,7 +124,8 @@ class WuaParcel(models.Model):
                 payload = json.dumps({
                     'value': data['partner_name']
                 })
-                for tag_id in data['waterconnection_tag_ids']:
+                for (installation_identifier, tag_id) in \
+                        data['waterconnection_tag_ids']:
                     url_update = url_remotecontrol_rest + '/clients/' + \
                         str(client_identifier) + '/installations/' + \
                         str(installation_identifier) + '/tags/' + tag_id + \
@@ -138,7 +134,7 @@ class WuaParcel(models.Model):
                                                 headers=headers, data=payload)
                     resp = response.ok
                     if (not resp):
-                        error_message = response.status_code
+                        error_message = str(response.status_code)
         return resp, error_message
 
     def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
@@ -204,7 +200,7 @@ class WuaParcel(models.Model):
         for irrigationpointwc in parcel.irrigationpointwc_ids:
             waterconnection = irrigationpointwc.waterconnection_id
             waterconnection_tag_id = self._get_owner_tag_id(
-                waterconnection)
+                waterconnection.watermeter_id.name)
             if (waterconnection_tag_id):
                 waterconnection_tag_ids.append(waterconnection_tag_id)
             if partner_name and waterconnection_tag_ids:
@@ -243,7 +239,7 @@ class WuaParcel(models.Model):
             for irrigationpointwc in parcel.irrigationpointwc_ids:
                 waterconnection = irrigationpointwc.waterconnection_id
                 waterconnection_tag_id = self._get_owner_tag_id(
-                    waterconnection)
+                    waterconnection.watermeter_id.name)
                 if (waterconnection_tag_id):
                     waterconnection_tag_ids.append(waterconnection_tag_id)
                 if waterconnection_tag_ids:
