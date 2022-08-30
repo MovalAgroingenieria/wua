@@ -21,7 +21,8 @@ class WuaParcel(models.Model):
     # And should retry with simpler geometry
     # 414 URI TOO LARGE
     # 431 Request Header Fields Too Large
-    _codes_geom_complicated = [431, 414]
+    # 400 ? Maybe false errors
+    _codes_geom_complicated = [431, 414, 400]
 
     @api.multi
     def get_index_values(self, layer, band, max_cloud_cover=10, resolution=10,
