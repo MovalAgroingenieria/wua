@@ -34,7 +34,7 @@ class WuaFlowreading(models.Model):
         if (installation_identifiers):
             installation_identifiers = installation_identifiers.split(',')
         if (installation_identifiers and client_identifier):
-            jwt = self.open_connection(
+            jwt = self.open_connection_icr(
                 url_remotecontrol_rest, url_remotecontrol_rest_username,
                 url_remotecontrol_rest_password)
             if jwt:
@@ -139,9 +139,9 @@ class WuaFlowreading(models.Model):
                     others_readings_info[2] += error_flowmeters
         return others_readings_info
 
-    def open_connection(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password):
+    def open_connection_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = ''
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',

@@ -42,7 +42,7 @@ class WuaReading(models.Model):
         error_message = ''
         error_watermeters = []
         # all_wm = self.env['wua.watermeter'].search([])
-        token = self.open_connection(
+        token = self.open_connection_hp3(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if token:
@@ -110,7 +110,7 @@ class WuaReading(models.Model):
                     others_readings_info[2] += error_watermeters
         return others_readings_info
 
-    def open_connection(
+    def open_connection_hp3(
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password):
         resp = ''

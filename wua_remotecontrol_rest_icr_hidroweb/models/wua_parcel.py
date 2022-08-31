@@ -32,7 +32,7 @@ class WuaParcel(models.Model):
         if (installations_identifier and client_identifier and
                 url_remotecontrol_rest and url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
-            jwt = self.open_connection(
+            jwt = self.open_connection_icr(
                 url_remotecontrol_rest, url_remotecontrol_rest_username,
                 url_remotecontrol_rest_password
             )
@@ -112,7 +112,7 @@ class WuaParcel(models.Model):
         client_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'client_identifier')
         if (client_identifier):
-            jwt = self.open_connection(
+            jwt = self.open_connection_icr(
                 url_remotecontrol_rest, url_remotecontrol_rest_username,
                 url_remotecontrol_rest_password
             )
@@ -307,9 +307,9 @@ class WuaParcel(models.Model):
         super(WuaParcel, self).unlink_parcel_on_unsynchronize_telecontrol()
         self.unlink_parcel_on_unsyncrhonize('icr')
 
-    def open_connection(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password):
+    def open_connection_icr(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = ''
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',

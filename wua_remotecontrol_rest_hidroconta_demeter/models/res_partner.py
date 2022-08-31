@@ -90,7 +90,7 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection(
+        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -200,7 +200,7 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection(
+        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -258,7 +258,7 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection(
+        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -304,7 +304,7 @@ class ResPartner(models.Model):
             data, record_archived=False):
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection(
+        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -364,7 +364,7 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, list_of_data):
         partners_ok = []
         partners_not_ok = []
-        jsessionid = self.env['wua.reading'].open_connection(
+        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:

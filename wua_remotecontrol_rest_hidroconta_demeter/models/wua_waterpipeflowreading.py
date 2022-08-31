@@ -71,7 +71,7 @@ class WuaWaterpipeflowreading(models.Model):
         waterpipeflowreadings = []
         error_message = ''
         error_flowmeters = []
-        jsessionid = self.open_connection(
+        jsessionid = self.open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -109,9 +109,9 @@ class WuaWaterpipeflowreading(models.Model):
             self.close_connection(url_remotecontrol_rest, jsessionid)
         return waterpipeflowreadings, error_message, error_flowmeters
 
-    def open_connection(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password):
+    def open_connection_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = ''
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',

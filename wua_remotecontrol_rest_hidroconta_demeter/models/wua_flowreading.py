@@ -24,7 +24,7 @@ class WuaFlowreading(models.Model):
         flowreadings = []
         error_message = ''
         error_flowmeters = []
-        jsessionid = self.open_connection(
+        jsessionid = self.open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -105,9 +105,9 @@ class WuaFlowreading(models.Model):
                     others_readings_info[2] += error_flowmeters
         return others_readings_info
 
-    def open_connection(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password):
+    def open_connection_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = ''
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',

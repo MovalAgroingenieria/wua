@@ -56,7 +56,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
             url_remotecontrol_rest_password, list_of_data):
         wc_all_info = []
         error_message = ''
-        jsessionid = self.open_connection(
+        jsessionid = self.open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -126,9 +126,9 @@ class WuaWaterconnectionTelecontrol(models.Model):
             self.close_connection(url_remotecontrol_rest, jsessionid)
         return [wc_all_info, error_message]
 
-    def open_connection(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password):
+    def open_connection_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = ''
         resp_rest = requests.request(
             'POST', url_remotecontrol_rest + '/login',

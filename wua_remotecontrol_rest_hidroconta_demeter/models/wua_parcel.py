@@ -49,7 +49,7 @@ class WuaParcel(models.Model):
             return True, ''
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection(
+        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -212,7 +212,7 @@ class WuaParcel(models.Model):
             return True, ''
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection(
+        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -273,7 +273,7 @@ class WuaParcel(models.Model):
             url_remotecontrol_rest_password, list_of_data):
         parcels_ok = []
         parcels_not_ok = []
-        jsessionid = self.env['wua.reading'].open_connection(
+        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:

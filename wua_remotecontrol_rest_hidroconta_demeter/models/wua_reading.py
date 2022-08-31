@@ -41,7 +41,7 @@ class WuaReading(models.Model):
         readings = []
         error_message = ''
         error_watermeters = []
-        jsessionid = self.open_connection(
+        jsessionid = self.open_connection_hidroconta(
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
@@ -115,9 +115,9 @@ class WuaReading(models.Model):
                     others_readings_info[2] += error_watermeters
         return others_readings_info
 
-    def open_connection(self, url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password):
+    def open_connection_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
         resp = ''
         resprest = requests.request(
             'POST', url_remotecontrol_rest + '/login',
