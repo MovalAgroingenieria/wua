@@ -78,14 +78,13 @@ class WuaReading(models.Model):
                 for installation_identifier, readings_res in readings_response:
                     for reading in readings_res:
                         volume = reading['value']
-                        if (volume > 0):
-                            code_values = reading['name'].split('_')
-                            wm_name = code_values[0] + '_' + code_values[1]
-                            volume = reading['value']
-                            readings.append({
-                                'watermeter': wm_name,
-                                'volume': volume,
-                            })
+                        code_values = reading['name'].split('_')
+                        wm_name = code_values[0] + '_' + code_values[1]
+                        volume = reading['value']
+                        readings.append({
+                            'watermeter': wm_name,
+                            'volume': volume,
+                        })
         return readings, error_message, error_watermeters
 
     # Hook that will be implemeneted on every telecontrol
