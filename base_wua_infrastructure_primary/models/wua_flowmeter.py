@@ -20,6 +20,10 @@ class WuaFlowmeter(models.Model):
         index=True,
         help='The name that identifies the flow-meter')
 
+    description = fields.Char(
+        string='Description',
+        index=True,)
+
     state = fields.Selection([
         ('active', 'Active'),
         ('stored', 'Stored'),
@@ -145,7 +149,7 @@ class WuaFlowmeter(models.Model):
                         sep_char = '&'
                     url_for_record = url_for_record + sep_char + \
                         flowmeter_param + '=' + \
-                        str(record.name)
+                        str(_(record.name))
             if url_for_record and username and password:
                 credentials = username + "-" + password
                 credentials = credentials.ljust(32)
