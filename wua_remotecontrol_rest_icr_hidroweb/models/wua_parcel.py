@@ -81,7 +81,8 @@ class WuaParcel(models.Model):
                     partner = self.env['res.partner'].browse(
                         data_of_partnerlink['partner_id'])
                     if partner:
-                        partner_name = partner.name
+                        partner_name = str(partner.partner_code) + ' - ' + \
+                            partner.name
                     break
             waterconnection_tag_ids = []
             for irrigationpointwc in vals['irrigationpointwc_ids']:
@@ -194,7 +195,8 @@ class WuaParcel(models.Model):
         for partnerlink in parcel.partnerlink_ids:
             if partnerlink.water_costs_percentage > 0:
                 if partnerlink.partner_id:
-                    partner_name = partnerlink.partner_id.name
+                    partner_name = str(partnerlink.partner_id.partner_code) + \
+                        ' - ' + partnerlink.partner_id.name
                 break
         waterconnection_tag_ids = []
         for irrigationpointwc in parcel.irrigationpointwc_ids:
