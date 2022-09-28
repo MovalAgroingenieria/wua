@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- VARIABLE SURCHARGE -->
+    <record id="wua_invoiceset_line_invoice_surcharge_variable_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for Invoices Variable Surcharge (tree view)</field>
+        <field name="model">wua.invoiceset.line.invoice.surcharge.variable</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="number"/>
+                <field name="partner_id"/>
+                <field name="invoiceset_id"/>
+                <field name="residual"/>
+                <field name="date_invoice"/>
+                <field name="date_due"/>
+                <field name="number_of_variable_surcharges"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_invoice_surcharge_variable_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for enrolled subparcels (search view)</field>
+        <field name="model">wua.invoiceset.line.invoice.surcharge.variable</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="number"/>
+                <field name="partner_id"/>
+                <field name="invoiceset_id"/>
+                <field name="residual"/>
+                <field name="date_due"/>
+                <field name="date_invoice"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner"
+                            name="partner_id"
+                            context="{'group_by':'partner_id'}"/>
+                    <filter string="Invoiceset"
+                            name="invoiceset_id"
+                            context="{'group_by':'invoiceset_id'}"/>
+                    <filter string="Date Invoice"
+                            name="date_invoice"
+                            context="{'group_by':'date_invoice'}"/>
+                    <filter string="Date Due"
+                            name="date_due"
+                            context="{'group_by':'date_due'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_invoice_surcharge_variable_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_invoice_surcharge_variable"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.invoice.surcharge.variable'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_invoice_surcharge_variable_to_invoiceset" model="ir.values">
+        <field name="name">Add invoice to invoice set</field>
+        <field name="model">wua.invoiceset.line.invoice.surcharge.variable</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_invoice_surcharge_variable_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_invoice_surcharge_variable_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_invoice_surcharge_variable"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.invoice.surcharge.variable'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_invoice_surcharge_variable_to_invoiceset" model="ir.values">
+        <field name="name">Remove invoice from invoice set</field>
+        <field name="model">wua.invoiceset.line.invoice.surcharge.variable</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_invoice_surcharge_variable_to_invoiceset'))"/>
+    </record>
+
+
+    <!-- FIXED SURCHARGE -->
+    <record id="wua_invoiceset_line_invoice_surcharge_fixed_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for Invoices Fixed Surcharge (tree view)</field>
+        <field name="model">wua.invoiceset.line.invoice.surcharge.fixed</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="number"/>
+                <field name="partner_id"/>
+                <field name="invoiceset_id"/>
+                <field name="residual"/>
+                <field name="date_invoice"/>
+                <field name="date_due"/>
+                <field name="number_of_fixed_surcharges"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_invoice_surcharge_fixed_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for enrolled subparcels (search view)</field>
+        <field name="model">wua.invoiceset.line.invoice.surcharge.fixed</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="number"/>
+                <field name="partner_id"/>
+                <field name="invoiceset_id"/>
+                <field name="residual"/>
+                <field name="date_due"/>
+                <field name="date_invoice"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner"
+                            name="partner_id"
+                            context="{'group_by':'partner_id'}"/>
+                    <filter string="Invoiceset"
+                            name="invoiceset_id"
+                            context="{'group_by':'invoiceset_id'}"/>
+                    <filter string="Date Invoice"
+                            name="date_invoice"
+                            context="{'group_by':'date_invoice'}"/>
+                    <filter string="Date Due"
+                            name="date_due"
+                            context="{'group_by':'date_due'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_invoice_surcharge_fixed_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_invoice_surcharge_fixed"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.invoice.surcharge.fixed'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_invoice_surcharge_fixed_to_invoiceset" model="ir.values">
+        <field name="name">Add invoice to invoice set</field>
+        <field name="model">wua.invoiceset.line.invoice.surcharge.fixed</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_invoice_surcharge_fixed_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_invoice_surcharge_fixed_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_invoice_surcharge_fixed"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.invoice.surcharge.fixed'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_invoice_surcharge_fixed_to_invoiceset" model="ir.values">
+        <field name="name">Remove invoice from invoice set</field>
+        <field name="model">wua.invoiceset.line.invoice.surcharge.fixed</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_invoice_surcharge_fixed_to_invoiceset'))"/>
+    </record>
+
+</odoo>

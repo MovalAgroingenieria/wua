@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+        <record id="categ_16" model="product.category">
+            <field name="name">Variable Surcharge for account invoices</field>
+            <field name="productcategory_code">16</field>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="categ_17" model="product.category">
+            <field name="name">Fixed Surcharge for account invoices</field>
+            <field name="productcategory_code">17</field>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="categ_16" model="product.category">
+            <field name="parent_id" ref="base_wua_invoicing.categ_00"/>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="categ_17" model="product.category">
+            <field name="parent_id" ref="base_wua_invoicing.categ_00"/>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="product_uom_invoices" model="product.uom">
+            <field name="name">Inv.</field>
+            <field name="category_id" ref="product.product_uom_categ_unit"/>
+            <field name="rounding">0.0001</field>
+        </record>
+
+        <record id="product_uom_residual" model="product.uom">
+            <field name="name">€</field>
+            <field name="category_id" ref="product.product_uom_categ_unit"/>
+            <field name="rounding">0.0001</field>
+        </record>
+
+    </data>
+
+    <data noupdate="1">
+
+        <record id="product_16" model="product.template">
+            <field name="name">Variable Surcharge</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">0.00</field>
+            <field name="categ_id" ref="categ_16"/>
+            <field name="uom_id" ref="product_uom_residual"/>
+            <field name="uom_po_id" ref="product_uom_residual"/>
+        </record>
+
+        <record id="product_17" model="product.template">
+            <field name="name">Fixed Surcharge</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">0.00</field>
+            <field name="categ_id" ref="categ_17"/>
+            <field name="uom_id" ref="product_uom_invoices"/>
+            <field name="uom_po_id" ref="product_uom_invoices"/>
+        </record>
+
+    </data>
+
+</odoo>
