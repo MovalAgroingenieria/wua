@@ -2372,6 +2372,19 @@ class WuaParcel(models.Model):
                 lang_model.format(precision, float_number, True)
         return formated_float_number
 
+    @api.model
+    def transform_date_to_locale(self, date, lang=False):
+        if (not lang):
+            lang = 'es_ES'
+            if ('lang' in self.env.context and self.env.context['lang']):
+                lang = self.env.context['lang']
+        lang_model = self.env['res.lang'].search([('code', '=', lang)])
+        date_parsed = datetime.datetime.strptime(date, '%Y-%M-%d')
+        formated_date_str = str(date_parsed)
+        if (lang_model):
+            formated_date_str = date_parsed.strftime(lang_model.date_format)
+        return formated_date_str
+
 
 class WuaParcelSubparcel(models.Model):
     _name = 'wua.parcel.subparcel'
