@@ -164,19 +164,25 @@ class WuaInvoiceset(models.Model):
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
         data['partner_id'] = invoice_data_line['key1']
-        if invoice_data_line['key2'] != 0:
+        if 'key2' in invoice_data_line and invoice_data_line['key2'] != 0:
             data['waterconnection_ids_str'] = invoice_data_line['key2']
-        if invoice_data_line['quota_day'] != 0:
+        if 'quota_day' in invoice_data_line and \
+                invoice_data_line['quota_day'] != 0:
             data['quota_day'] = invoice_data_line['quota_day']
-        if invoice_data_line['total_area'] != 0:
+        if 'total_area' in invoice_data_line and \
+                invoice_data_line['total_area'] != 0:
             data['total_area'] = invoice_data_line['total_area']
-        if invoice_data_line['days'] != 0:
+        if 'days' in invoice_data_line and \
+                invoice_data_line['days'] != 0:
             data['days'] = invoice_data_line['days']
-        if invoice_data_line['threshold'] != 0:
+        if 'threshold' in invoice_data_line and \
+                invoice_data_line['threshold'] != 0:
             data['threshold'] = invoice_data_line['threshold']
-        if invoice_data_line['total_consumption'] != 0:
+        if 'total_consumption' in invoice_data_line and \
+                invoice_data_line['total_consumption'] != 0:
             data['total_consumption'] = invoice_data_line['total_consumption']
-        if invoice_data_line['extra_consumption'] != 0:
+        if 'extra_consumption' in invoice_data_line and \
+                invoice_data_line['extra_consumption'] != 0:
             data['extra_consumption'] = invoice_data_line['extra_consumption']
         return data
 
