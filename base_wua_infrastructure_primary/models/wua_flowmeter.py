@@ -149,7 +149,7 @@ class WuaFlowmeter(models.Model):
                         sep_char = '&'
                     url_for_record = url_for_record + sep_char + \
                         flowmeter_param + '=' + \
-                        str(_(record.name))
+                        _(record.name)
             if url_for_record and username and password:
                 credentials = username + "-" + password
                 credentials = credentials.ljust(32)
