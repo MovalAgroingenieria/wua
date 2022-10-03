@@ -12,7 +12,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_remotecontrol_rest",
+        "base_wua_remotecontrol_rest_infrastructure",
         "base_wua_invoicing", ],
     "data": [
         "data/wua_irrigation_config_settings_data.xml",
