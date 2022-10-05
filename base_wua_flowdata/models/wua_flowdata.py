@@ -10,7 +10,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaFlowData(models.Model):
     _name = 'wua.flowdata'
     _description = 'Flow Data'
-    _order = 'time'
+    _order = 'time desc'
 
     @api.model_cr
     def init(self):

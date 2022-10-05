@@ -81,7 +81,7 @@ class WuaFlowmeter(models.Model):
     def _get_telecontrol_data(self, url, username, passwd, demeter_flowmeter):
         _logger = logging.getLogger(self.__class__.__name__)
         time = flow = False
-        jsessionid = self.env['wua.flowreading'].open_connection(
+        jsessionid = self.env['wua.flowreading'].open_connection_hidroconta(
             url, username, passwd)
         if jsessionid:
             resprest = requests.request(
@@ -101,6 +101,7 @@ class WuaFlowmeter(models.Model):
                 data_found = False  # Flow can be zero
                 for counter in counters:
                     counter_name = counter['code'].encode('utf-8')
+                    print counter_name
                     if counter_name == flowmeter_name:
                         found_counters.append(counter)
                 for counter in found_counters:
