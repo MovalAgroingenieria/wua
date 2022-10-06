@@ -90,7 +90,7 @@ class WuaFlowmeter(models.Model):
                     'Content-Type': 'application/json',
                     'Cookie': 'JSESSIONID=' + jsessionid},
                 data=json.dumps({
-                    'type': ['counters'],
+                    'type': ['analogInputs'],
                     'state': 'enabled'}))
             installation_identifier = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'installation_identifier')
@@ -101,7 +101,6 @@ class WuaFlowmeter(models.Model):
                 data_found = False  # Flow can be zero
                 for counter in counters:
                     counter_name = counter['code'].encode('utf-8')
-                    print counter_name
                     if counter_name == flowmeter_name:
                         found_counters.append(counter)
                 for counter in found_counters:
@@ -110,7 +109,7 @@ class WuaFlowmeter(models.Model):
                     if (installationId == installation_identifier and
                             counter_name == flowmeter_name):
                         # Flow is already in l/s
-                        flow = counter['flow']
+                        flow = counter['value']
                         time = datetime.datetime.now()
                         time_log = datetime.datetime.strftime(
                             time, "%Y-%m-%d %H:%M:%S")
