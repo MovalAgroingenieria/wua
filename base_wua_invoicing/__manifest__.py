@@ -23,6 +23,7 @@
         "account_due_list_days_overdue",
         "account_due_list_payment_mode",
         "account_credit_control_dunning_fees",
+        "account_analytic_default",
     ],
     "data": [
         "security/security.xml",

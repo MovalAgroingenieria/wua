@@ -1149,6 +1149,13 @@ class WuaInvoiceset(models.Model):
                         [(4, x) for x in price_account['tax_ids']],
                         'invoiceset_id': record.id,
                         }
+                    # Check if account analytic default exists for product
+                    # variant and in that case add the account_analytic
+                    analytic_default = self.env['account.analytic.default'].\
+                        search([('product_id', '=', product_id)])
+                    if (analytic_default and len(analytic_default) > 0):
+                        analytic_id = analytic_default[0].analytic_id.id
+                        data['account_analytic_id'] = analytic_id
                     categ_code = invoice_data_line['categ_code']
                     if categ_code == 1 or categ_code == 3 or categ_code == 4:
                         data = self.add_to_invoice_data_line_ref_to_parcel(
