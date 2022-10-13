@@ -82,7 +82,8 @@
         <field name="name">Cessions (tree view)</field>
         <field name="model">wua.cession</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_quota_management_cession_view_tree">
+            <tree class="o_base_wua_quota_management_cession_view_tree"
+                  default_order="event_time desc, name">
                 <field name="superproduct_id"/>
                 <field name="partner_id"/>
                 <field name="quotaperiod_id"
@@ -99,7 +100,7 @@
             </tree>
         </field>
     </record>
-    
+
     <record id="wua_cession_view_search" model="ir.ui.view">
         <field name="name">Cessions (search view)</field>
         <field name="model">wua.cession</field>
@@ -135,7 +136,7 @@
             </search>
         </field>
     </record>
-    
+
     <record id="wua_cession_action"
             model="ir.actions.act_window">
         <field name="name">Cessions</field>
@@ -161,5 +162,5 @@
               parent="management_menu"
               sequence="7"
               action="wua_cession_action"/>
-              
+
 </odoo>
