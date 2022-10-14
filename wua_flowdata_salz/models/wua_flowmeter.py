@@ -14,6 +14,9 @@ from odoo import models, fields, api, exceptions, _
 class WuaFlowmeter(models.Model):
     _inherit = 'wua.flowmeter'
 
+    telecontrol_associated = fields.Selection(
+        selection_add=[('salz', 'Salz')])
+
     @api.multi
     def action_get_flowdata_salz(self):
         url_salz, user_salz, passwd_salz = self._connection_params()

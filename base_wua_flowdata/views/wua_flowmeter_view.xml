@@ -7,13 +7,17 @@
         <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_see_gis_viewer']" position="before">
+                <field name="number_of_flowdata_ids" invisible="1"/>
                 <button name="action_see_flowdata" type="object" class="oe_stat_button"
                         icon="fa-moval-flowdata-show" groups="base_wua.group_wua_user"
-                        attrs="{'invisible': [('id', '=', False)]}">
+                        attrs="{'invisible': ['|', ('id', '=', False), ('number_of_flowdata_ids', '=', 0 )]}">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_text">Flow data</span>
                         </div>
                 </button>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="telecontrol_associated"/>
             </xpath>
         </field>
     </record>

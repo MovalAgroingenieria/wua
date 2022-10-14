@@ -9,12 +9,14 @@
             <xpath expr="//button[@name='action_see_flowdata']" position="before">
                 <button name="action_get_flowdata_demeter" type="object" class="oe_stat_button"
                         icon="fa-moval-flowdata-get" groups="base_wua.group_wua_user"
-                        attrs="{'invisible': [('id', '=', False)]}">
-                        <!-- attrs="{'invisible': ['|', ('id', '=', False), ('connected_to_waterpipe', '=', False)]}  -->
+                        attrs="{'invisible': [('flowmeter_analogic_name', '=', False)]}">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_text">Get flowdata</span>
                         </div>
                 </button>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="flowmeter_analogic_name"/>
             </xpath>
         </field>
     </record>

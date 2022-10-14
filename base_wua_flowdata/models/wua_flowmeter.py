@@ -8,10 +8,24 @@ from odoo import models, fields, api, exceptions, _
 class WuaFlowmeter(models.Model):
     _inherit = 'wua.flowmeter'
 
+    telecontrol_associated = fields.Selection(
+        [],
+        string='Type of telecontrol associated')
+
     flowdata_ids = fields.One2many(
         string='Flow measurements',
         comodel_name='wua.flowdata',
         inverse_name='flowmeter_id')
+
+    number_of_flowdata_ids = fields.Integer(
+        string="Num. flowdata",
+        compute="_compute_number_of_flowdata_ids")
+
+    @api.multi
+    def _compute_number_of_flowdata_ids(self):
+        for record in self:
+            number_of_flowdata_ids = len(record.flowdata_ids)
+            record.number_of_flowdata_ids = number_of_flowdata_ids
 
     @api.multi
     def action_see_flowdata(self):

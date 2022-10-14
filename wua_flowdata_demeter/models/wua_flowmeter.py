@@ -14,6 +14,13 @@ from odoo import models, fields, api, exceptions, _
 class WuaFlowmeter(models.Model):
     _inherit = 'wua.flowmeter'
 
+    telecontrol_associated = fields.Selection(
+        selection_add=[('demeter', 'Demeter')])
+
+    flowmeter_analogic_name = fields.Char(
+        string='Analogic name',
+        help="The name of the analog input of the flowmeter.")
+
     @api.multi
     def action_get_flowdata_demeter(self):
         url, username, passwd = self._connection_params()
@@ -71,9 +78,10 @@ class WuaFlowmeter(models.Model):
 
     def _get_demeter_flowmeters(self):
         demeter_flowmeters = []
-        # INFO: To be modified and get only demeter flowmeters
         current_flowmeters = self.env['wua.flowmeter'].search(
-            [('state', '=', 'active')])
+            [('telecontrol_associated', '=', 'demeter'),
+             ('flowmeter_analogic_name', '!=', False),
+             ('state', '=', 'active')])
         for flowmeter in current_flowmeters:
             demeter_flowmeters.append(flowmeter)
         return demeter_flowmeters
@@ -96,7 +104,8 @@ class WuaFlowmeter(models.Model):
                 'wua.irrigation.configuration', 'installation_identifier')
             if resprest.status_code == 200 and installation_identifier:
                 counters = json.loads(resprest.text)
-                flowmeter_name = demeter_flowmeter.name.encode('utf-8')
+                flowmeter_name = \
+                    demeter_flowmeter.flowmeter_analogic_name.encode('utf-8')
                 found_counters = []
                 data_found = False  # Flow can be zero
                 for counter in counters:
