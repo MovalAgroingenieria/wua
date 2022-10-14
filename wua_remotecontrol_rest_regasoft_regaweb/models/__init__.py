@@ -4,3 +4,4 @@
 
 from . import wua_irrigation_config_settings
 from . import wua_reading
+from . import wua_waterconnection
