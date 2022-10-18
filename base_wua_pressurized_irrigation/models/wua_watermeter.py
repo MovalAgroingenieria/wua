@@ -39,7 +39,7 @@ class WuaWatermeter(models.Model):
         default=0)
 
     nominal_water_flow = fields.Float(
-        string='Water Flow (m3/hour)',
+        string='Water Flow (m³/hour)',
         digits=(32, 2),
         required=True,
         default=0)
@@ -115,6 +115,18 @@ class WuaWatermeter(models.Model):
         digits=(32, 2),
         store=True,
         compute='_compute_average_consumption')
+
+    watermeter_brand = fields.Char(
+        string="Brand",
+        help="The brand of watermter.")
+
+    watermeter_model = fields.Char(
+        string="Model",
+        help="The model of watermter.")
+
+    installation_date = fields.Date(
+        string="Installation date",
+        help="The date the watermeter was installed.")
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),

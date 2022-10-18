@@ -22,7 +22,6 @@
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="name"/>
-                            <field name="serial_number"/>
                             <field name="state"/>
                             <field name="type"/>
                             <field name="nominal_diameter"/>
@@ -38,6 +37,12 @@
                             <field name="last_reading_value"
                                    attrs="{'readonly': [('id','>',0)]}"/>
                             <field name="average_consumption"/>
+                        </group>
+                        <group name="related_master_data_left">
+                            <field name="watermeter_brand" placeholder="Watermeter brand"/>
+                            <field name="watermeter_model" placeholder="Watermeter model"/>
+                            <field name="serial_number" placeholder="Watermeter serial number"/>
+                            <field name="installation_date" placeholder="Installation date"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -73,16 +78,18 @@
             <tree
              class="o_base_wua_pressurized_irrigation_watermeters_view_tree">
                 <field name="name"/>
+                <field name="watermeter_brand"/>
                 <field name="serial_number"/>
+                <field name="installation_date"/>
                 <field name="type"/>
                 <field name="waterconnection_id"/>
                 <field name="irrigationshed_id"/>
                 <field name="hydraulicsector_id"/>
                 <field name="nominal_diameter"/>
-                <field name="nominal_water_flow" string="W. Flow (m3/hour)"/>
+                <field name="nominal_water_flow" string="W. Flow (m³/hour)"/>
                 <field name="pressure"/>
                 <field name="last_reading_time" string="Last Reading (time)"/>
-                <field name="last_reading_value" string="Last Reading (value)"/>
+                <field name="last_reading_value" string="Last Reading (m³)"/>
                 <field name="average_consumption"/>
                 <field name="state"/>
             </tree>
