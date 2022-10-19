@@ -2699,6 +2699,11 @@ class WuaParcelPartnerlink(models.Model):
         required=True,
         default='O')
 
+    is_usufructuary = fields.Boolean(
+        string='Usufructuary',
+        default=False,
+        help='If marked, this partner will be the usufructuary of the parcel')
+
     ownership_percentage = fields.Float(
         string='Ownership %',
         digits=(5, 2),
@@ -2793,6 +2798,22 @@ class WuaParcelPartnerlink(models.Model):
          'CHECK (area_official_net_hec >= 0)',
          'The area must be a value zero or positive.'),
         ]
+
+    @api.constrains('is_usufructuary')
+    def _check_is_usufructuary(self):
+        # Only one usufrucutary per parcel and must be an
+        # Owner
+        if (self.is_usufructuary):
+            if (self.profile != 'O'):
+                raise exceptions.ValidationError(
+                    _('Only owners can be usufructuaries.'))
+            plinks = self.search(
+                [('parcel_id', '=', self.parcel_id.id),
+                 ('is_usufructuary', '=', True),
+                 ('id', '!=', self.id)])
+            if len(plinks) > 0:
+                raise exceptions.ValidationError(
+                    _('Only one usufructuary per parcel.'))
 
     @api.depends('area_official', 'ownership_percentage')
     def _compute_area_official_hec_net(self):
