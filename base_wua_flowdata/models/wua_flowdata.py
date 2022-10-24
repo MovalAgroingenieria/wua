@@ -4,7 +4,7 @@
 
 import datetime
 import pytz
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api
 
 
 class WuaFlowData(models.Model):

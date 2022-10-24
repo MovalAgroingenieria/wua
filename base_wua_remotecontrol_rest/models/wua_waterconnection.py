@@ -15,7 +15,7 @@ class WuaWaterconnection(models.Model):
         string='Remote Control enabled',
         compute='_compute_remotecontrol_enabled')
 
-    # Empty, inherit and added by Hook
+    # Empty, inherit
     telecontrol_associated = fields.Selection(
         [],
         string='Type of telecontrol associated')

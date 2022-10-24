@@ -3,11 +3,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
-import hashlib
 import requests
 import json
 import datetime
-import pytz
 from odoo import models, fields, api, exceptions, _
 
 

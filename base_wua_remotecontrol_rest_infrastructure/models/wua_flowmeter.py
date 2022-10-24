@@ -13,6 +13,11 @@ class WuaFlowmeter(models.Model):
         string='Remote Control enabled',
         compute='_compute_remotecontrol_enabled')
 
+    # Empty, inherit
+    telecontrol_rest_associated = fields.Selection(
+        [],
+        string='Type of telecontrol associated')
+
     conversion_factor = fields.Integer(
         string="Conversion Factor",
         required=True,
