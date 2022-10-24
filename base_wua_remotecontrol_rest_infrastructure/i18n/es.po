@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-28 11:49+0000\n"
-"PO-Revision-Date: 2022-01-28 11:49+0000\n"
+"POT-Creation-Date: 2022-10-24 11:17+0000\n"
+"PO-Revision-Date: 2022-10-24 11:17+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,7 +31,12 @@ msgstr "Configuration of irrigation with type of water"
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_negative_flowreading_view_tree
 msgid "Cons. Value (m3)"
-msgstr "Consumo bruto (m3)"
+msgstr "Consumo bruto (m³)"
+
+#. module: base_wua_remotecontrol_rest_infrastructure
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_flowmeter_conversion_factor
+msgid "Conversion Factor"
+msgstr "Factor de conversión"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_create_uid
@@ -87,7 +92,7 @@ msgstr "Caudalímetro"
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_name
 msgid "Flow-Meter Reading"
-msgstr "Lectura de caudalímetro"
+msgstr "Lectura de captación"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #. openerp-web
@@ -114,27 +119,17 @@ msgid "ID"
 msgstr "ID"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
+#: selection:wua.flowmeter,telecontrol_rest_associated:0
+msgid "INELCOM"
+msgstr "INELCOM"
+
+#. module: base_wua_remotecontrol_rest_infrastructure
 #. openerp-web
 #: code:addons/base_wua_remotecontrol_rest_infrastructure/static/src/js/button_import_flowreadings.js:18
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_flowmeter_view_form
 #, python-format
 msgid "Import flow readings?"
 msgstr "¿Importar lecturas de caudalímetro?"
-
-#. module: base_wua_remotecontrol_rest_infrastructure
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_irrigation_configuration_import_from_flowmeter
-msgid "Import from flow meter"
-msgstr "Importar desde caudalímetros"
-
-#. module: base_wua_remotecontrol_rest_infrastructure
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_irrigation_configuration_import_from_intake_readings
-msgid "Import from intake readings"
-msgstr "Importar desde lecturas de captación"
-
-#. module: base_wua_remotecontrol_rest_infrastructure
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_irrigation_configuration_import_from_waterpipe_readings
-msgid "Import from water pipe readings"
-msgstr "Importar desde lecturas de ramal"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #. openerp-web
@@ -152,7 +147,7 @@ msgstr "Captación"
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading___last_update
 msgid "Last Modified on"
-msgstr "Última modificación el"
+msgstr "Última modificación en"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_write_uid
@@ -162,7 +157,7 @@ msgstr "Última actualización por"
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_write_date
 msgid "Last Updated on"
-msgstr "Última actualización en"
+msgstr "Última actualización el"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_flowreading_view_tree
@@ -220,50 +215,50 @@ msgid "Remote Control enabled"
 msgstr "Telecontrol habilitado"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:66
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:53
 #, python-format
 msgid "Remote Control: Error getting flow-readings"
 msgstr "Remote Control: Error getting flow-readings"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:69
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:55
 #, python-format
 msgid "Remote Control: Error getting water-pipe readings"
 msgstr "Remote Control: Error getting water-pipe readings"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:59
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:46
 #, python-format
 msgid "Remote Control: Getting flow-readings"
 msgstr "Remote Control: Getting flow-readings"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:62
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:49
 #, python-format
 msgid "Remote Control: Getting water-pipe readings"
 msgstr "Remote Control: Getting water-pipe readings"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:141
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:116
 #, python-format
 msgid "Remote Control: Saved flow-readings"
 msgstr "Remote Control: Saved flow-readings"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:147
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:119
 #, python-format
 msgid "Remote Control: Saved water-pipe readings"
 msgstr "Remote Control: Saved water-pipe readings"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowmeter.py:37
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowmeter.py:47
 #, python-format
 msgid "Remote Control: Starting reading in flowmeter"
 msgstr "Remote Control: Starting reading in flowmeter"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:75
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:78
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:62
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:64
 #, python-format
 msgid "The communication with the remote control is not enabled."
 msgstr "La comunicación con el telecontrol no está habilitada."
@@ -272,6 +267,11 @@ msgstr "La comunicación con el telecontrol no está habilitada."
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_reading_time
 msgid "Time"
 msgstr "Instante"
+
+#. module: base_wua_remotecontrol_rest_infrastructure
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_flowmeter_telecontrol_rest_associated
+msgid "Type of telecontrol associated"
+msgstr "Tipo de telecontrol asociado"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_consumption_volume
@@ -294,7 +294,7 @@ msgid "Water Pipe"
 msgstr "Ramal"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowmeter.py:34
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowmeter.py:44
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene permiso para ejecutar esta acción."
