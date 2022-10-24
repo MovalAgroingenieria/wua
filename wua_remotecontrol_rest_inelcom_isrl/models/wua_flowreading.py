@@ -65,6 +65,15 @@ class WuaFlowreading(models.Model):
             'content-type': 'application/json',
             }
         tries = 0
+        # Dict with the key = flowmeter.onelcom_id of all
+        # flowmeters
+        fm_dict = dict(
+            ('{flowmeter_inelcom_id}'.format(
+                flowmeter_inelcom_id=fm.inelcom_id.encode('utf-8')
+            ), fm)
+            for fm in self.env['wua.flowmeter'].search([
+                ('telecontrol_rest_associated', '=', 'inelcom')])
+        )
         while (not flowreadings and tries < self.MAX_NUMBER_OF_RETRIES):
             if (tries > 0):
                 time.sleep(self.SECONDS_TO_SLEEP)
@@ -85,13 +94,16 @@ class WuaFlowreading(models.Model):
                         if resp_sector_ok:
                             for flowmeter_info in \
                                     outputrest['listaContadores']:
-                                flowmeter = flowmeter_info['nombreContador']
-                                volume = flowmeter_info['valor'] / 1000.0
-                                flowreadings.append({
-                                    'flowmeter': flowmeter,
-                                    'volume': volume,
-                                    'instant_flow': 0.0
-                                    })
+                                fm_id = flowmeter_info['nombreContador'].\
+                                    encode('utf-8')
+                                if (fm_id in fm_dict):
+                                    flowmeter = fm_dict[fm_id].name
+                                    volume = flowmeter_info['valor'] / 1000.0
+                                    flowreadings.append({
+                                        'flowmeter': flowmeter,
+                                        'volume': volume,
+                                        'instant_flow': 0.0
+                                        })
                         else:
                             error_message = error_message + '. ' + \
                                 outputrest['textoError']

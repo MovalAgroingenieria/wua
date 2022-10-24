@@ -5,8 +5,12 @@
 from odoo import models, fields
 
 
-class WuaWaterconnection(models.Model):
-    _inherit = 'wua.waterconnection'
+class WuaFlowmeter(models.Model):
+    _inherit = 'wua.flowmeter'
 
-    telecontrol_associated = fields.Selection(
+    telecontrol_rest_associated = fields.Selection(
         selection_add=[('inelcom', 'INELCOM')],)
+
+    inelcom_id = fields.Char(
+        string='Inelcom code',
+        size=254,)
