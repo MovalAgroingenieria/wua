@@ -167,6 +167,10 @@ class WuaIrrigationReport(models.Model):
             'hours': irrigationreport.hours,
             'state': irrigationreport.state,
             'conversion_factor': irrigationreport.conversion_factor,
+            'volume_time_equivalence':
+                irrigationreport.volume_time_equivalence,
+            'volume_time_equivalence_ls':
+                irrigationreport.volume_time_equivalence_ls,
             'sended': True,
             'notes':  irrigationreport.notes,
             'irrigationreport_img': irrigationreport_img,
@@ -176,8 +180,10 @@ class WuaIrrigationReport(models.Model):
     def create_field_irrigationreport(
             self, watering_element_type, watering_element_id,
             irrigationreport_writer_id,
-            initial_date, end_date, conversion_factor, partner_id, intake_id,
-            notes='', partner_signature='', irrigationreport_img=''):
+            initial_date, end_date, conversion_factor,
+            volume_time_equivalence, volume_time_equivalence_ls,
+            partner_id, intake_id, notes='', partner_signature='',
+            irrigationreport_img=''):
         vals = {}
         # Get the real type from
         vals[self._possible_types_id[watering_element_type]] = \
@@ -195,6 +201,8 @@ class WuaIrrigationReport(models.Model):
         vals['report_initial_time'] = initial_date_str
         vals['report_end_time'] = end_date_str
         vals['conversion_factor'] = conversion_factor
+        vals['volume_time_equivalence'] = volume_time_equivalence
+        vals['volume_time_equivalence_ls'] = volume_time_equivalence_ls
         difference_time = end_date_formatted - initial_date_formatted
         # 3600.0 To getting a float result of hours
         vals['hours'] = difference_time.days * 24 + \
@@ -223,7 +231,8 @@ class WuaIrrigationReport(models.Model):
 
     @api.model
     def update_field_irrigationreport(
-        self, irrigationreport_id, end_date, conversion_factor, hours,
+        self, irrigationreport_id, end_date, conversion_factor,
+            volume_time_equivalence, volume_time_equivalence_ls, hours,
             intake_id, notes, partner_signature, irrigationreport_img):
         vals = {}
         irrigationreport = self.env['wua.irrigationreport'].browse(
@@ -236,6 +245,8 @@ class WuaIrrigationReport(models.Model):
         if (irrigationreport.state == 'draft'):
             vals['hours'] = hours
             vals['conversion_factor'] = conversion_factor
+            vals['volume_time_equivalence'] = volume_time_equivalence
+            vals['volume_time_equivalence_ls'] = volume_time_equivalence_ls
             end_date_formatted = datetime.datetime.fromtimestamp(
                 end_date, pytz.utc)
             end_date_str = end_date_formatted.strftime('%Y-%m-%d %H:%M:%S')

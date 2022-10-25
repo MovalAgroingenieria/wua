@@ -12,6 +12,11 @@
                     <field name="data_in_hours"/>
                     <field name="hours_sexagesimal"
                      attrs="{'invisible': [('data_in_hours','=',False)]}"/>
+                    <field name="custom_irrigationreport_flow"
+                     attrs="{'invisible': [('data_in_hours','=',False)]}"/>
+                    <field name="custom_irrigationreport_flow_ls"
+                     attrs="{'invisible': ['|', ('data_in_hours','=',False),
+                                            ('custom_irrigationreport_flow', '!=', True)]}"/>
                 </group>
             </xpath>
         </field>

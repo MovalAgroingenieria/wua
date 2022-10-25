@@ -15,6 +15,17 @@ class WuaIrrigationConfiguration(models.TransientModel):
         help='Enter the water amount of a irrigation report as a '
              'hour-value (if not, as a m³-value)')
 
+    custom_irrigationreport_flow = fields.Boolean(
+        string='Custom irrigatinreport flow',
+        default=False,
+        help='Enable possibility to set a different volume time equivalence '
+             'on each irrigationreport')
+
+    custom_irrigationreport_flow_ls = fields.Boolean(
+        string='Custom irrigatinreport flow in l/s?',
+        default=False,
+        help='Custom irrigatinreport flow is setted in l/s instead of m³/h')
+
     hours_sexagesimal = fields.Boolean(
         string='Sexagesimal Hours',
         default=False,
@@ -42,6 +53,12 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'hours_sexagesimal',
                            self.hours_sexagesimal)
+        values.set_default('wua.irrigation.configuration',
+                           'custom_irrigationreport_flow',
+                           self.custom_irrigationreport_flow)
+        values.set_default('wua.irrigation.configuration',
+                           'custom_irrigationreport_flow_ls',
+                           self.custom_irrigationreport_flow_ls)
         if previous_data_in_hours != current_data_in_hours:
             irrigation_reports = self.env['wua.irrigationreport'].search([])
             if irrigation_reports:

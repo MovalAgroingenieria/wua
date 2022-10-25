@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-04 06:27+0000\n"
-"PO-Revision-Date: 2022-07-04 06:27+0000\n"
+"POT-Creation-Date: 2022-10-25 14:59+0000\n"
+"PO-Revision-Date: 2022-10-25 14:59+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -248,6 +248,21 @@ msgid "Currency"
 msgstr "Moneda"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigation_configuration_custom_irrigationreport_flow
+msgid "Custom irrigatinreport flow"
+msgstr "Cuadal específico en partes"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigation_configuration_custom_irrigationreport_flow_ls
+msgid "Custom irrigatinreport flow in l/s?"
+msgstr "¿Caudal específico de partes en l/s?"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigation_configuration_custom_irrigationreport_flow_ls
+msgid "Custom irrigatinreport flow is setted in l/s instead of m³/h"
+msgstr "El caudal específico en los partes de riego está establecido en l/s en lugar de en m³/h"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_delivery_note
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_delivery_note_str
 msgid "Delivery Note"
@@ -269,6 +284,11 @@ msgstr "Nombre a mostrar"
 #: selection:wua.irrigationreport,state:0
 msgid "Draft"
 msgstr "Borrador"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigation_configuration_custom_irrigationreport_flow
+msgid "Enable possibility to set a different volume time equivalence on each irrigationreport"
+msgstr "Habilitar la posibilidad de establecer una equivalencia volumen/tiempo en cada parte de riego"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_tree
@@ -496,13 +516,18 @@ msgid "State"
 msgstr "Estado"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:362
+#: sql_constraint:wua.irrigationreport:0
+msgid "The custom flow be 0 or a greater number"
+msgstr "El caudal específico deber ser mayor o igual a 0"
+
+#. module: base_wua_irrigation_report
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:478
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr "Las fechas del parte están fuera de la campaña activa."
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:198
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:235
 #: sql_constraint:wua.irrigationreport:0
 #, python-format
 msgid "The delivery note must be 0 or a greater number"
@@ -561,12 +586,28 @@ msgid "Values of hour in the HH:MM format (if not, as decimal format)"
 msgstr "Para indicar las horas en formato sexagesimal (la alternativa es utilizar el formato decimal)"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence_ls
+msgid "Volume (l/s)"
+msgstr "Volumen (l/s)"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence
+msgid "Volume (m³/h)"
+msgstr "Volumen (m³/h)"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_volume_time_equivalence
 msgid "Volume per hour (m³)"
 msgstr "Volumen por hora (m³)"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence_ls
+msgid "Volume, in liters, which is equal to one second"
+msgstr "Volumen, en litros, equivalente a un segundo"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_agriculturalseason_volume_time_equivalence
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence
 msgid "Volume, in m³, which is equal to one hour"
 msgstr "Volumen, en m³, equivalente a 1 hora"
 
@@ -596,8 +637,8 @@ msgid "Without Irrigation Worker"
 msgstr "Sin regador"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:406
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:416
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:606
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:616
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene suficientes permisos para ejecutar esta acción."

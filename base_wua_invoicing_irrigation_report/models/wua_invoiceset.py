@@ -173,15 +173,8 @@ class WuaInvoiceset(models.Model):
                     'Duration', language)
                 if (not duration_label):
                     duration_label = _('Duration')
-                conversion_factor_label = self.get_value_from_translation(
-                    'base_wua_invoicing_irrigation_report',
-                    'Conversion Factor', language)
-                if (not conversion_factor_label):
-                    conversion_factor_label = _('Conversion Factor')
-                conversion_factor = str(irrigationreport.conversion_factor)
                 volume_time_equivalence = str(
-                    irrigationreport.agriculturalseason_id.
-                    volume_time_equivalence)
+                    irrigationreport.volume_time_equivalence)
                 hours = ''
                 if (hours_in_sexagesimal):
                     hours_value = int(irrigationreport.hours)
@@ -190,8 +183,7 @@ class WuaInvoiceset(models.Model):
                 else:
                     hours = str(irrigationreport.hours)
                 time_duration = time_duration + duration_label + ': ' + \
-                    hours + ', ' + conversion_factor_label + ' ' + \
-                    conversion_factor + ' (' + volume_time_equivalence + \
+                    hours + ' (' + volume_time_equivalence + \
                     u' m³/h). '
             if (report_initial_time == report_end_time):
                 date_reading_label = _('Date')

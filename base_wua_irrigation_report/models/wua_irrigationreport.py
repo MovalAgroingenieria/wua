@@ -16,6 +16,23 @@ class WuaIrrigationReport(models.Model):
             [('active_agriculturalseason', '=', True)])
         return active_agricultural_season
 
+    def _default_volume_time_equivalence(self):
+        resp = 0.0
+        active_agricultural_season = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        if (active_agricultural_season):
+            resp = active_agricultural_season.volume_time_equivalence
+        else:
+            default_volume_time_equivalence = self.env['ir.values'].\
+                get_default('wua.configuration', 'volume_time_equivalence')
+            if default_volume_time_equivalence:
+                resp = default_volume_time_equivalence
+        return resp
+
+    def _default_volume_time_equivalence_ls(self):
+        resp = self._default_volume_time_equivalence() / 3.6
+        return resp
+
     report_initial_time = fields.Datetime(
         string='Start Time',
         required=True,
@@ -90,6 +107,20 @@ class WuaIrrigationReport(models.Model):
         digits=(32, 4),
         default=1,
         required=True)
+
+    volume_time_equivalence = fields.Float(
+        string='Volume (m³/h)',
+        digits=(32, 4),
+        default=_default_volume_time_equivalence,
+        required=True,
+        help='Volume, in m³, which is equal to one hour')
+
+    volume_time_equivalence_ls = fields.Float(
+        string='Volume (l/s)',
+        digits=(32, 4),
+        default=_default_volume_time_equivalence_ls,
+        required=True,
+        help='Volume, in liters, which is equal to one second')
 
     volume = fields.Float(
         string='Gross Value (m³)',
@@ -181,7 +212,13 @@ class WuaIrrigationReport(models.Model):
          'The number of hours can not be a negative value.'),
         ('valid_delivery_note',
          'CHECK (delivery_note >= 0)',
-         'The delivery note must be 0 or a greater number')
+         'The delivery note must be 0 or a greater number'),
+        ('valid_volume_time_equivalence',
+         'CHECK (volume_time_equivalence >= 0)',
+         'The custom flow be 0 or a greater number'),
+        ('valid_volume_time_equivalence_ls',
+         'CHECK (volume_time_equivalence_ls >= 0)',
+         'The custom flow be 0 or a greater number'),
         ]
 
     @api.constrains('delivery_note_str')
@@ -229,20 +266,27 @@ class WuaIrrigationReport(models.Model):
             record.irrigationreport_number = irrigationreport_number
             record.name = name
 
-    @api.depends('initial_volume', 'end_volume', 'hours', 'conversion_factor')
+    @api.depends(
+        'initial_volume', 'end_volume', 'hours', 'conversion_factor',
+        'volume_time_equivalence')
     def _compute_volume(self):
         data_in_hours = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'data_in_hours')
         agriculturalseasons = self.env['wua.agriculturalseason']
+        custom_irrigationreport_flow = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'custom_irrigationreport_flow')
         for record in self:
             volume = 0
-            if data_in_hours and record.agriculturalseason_id:
-                agriculturalseason = agriculturalseasons.browse(
-                    record.agriculturalseason_id.id)
-                volume_time_equivalence = \
-                    agriculturalseason[0].volume_time_equivalence
-                volume = record.hours * volume_time_equivalence * \
-                    record.conversion_factor
+            if data_in_hours:
+                if custom_irrigationreport_flow:
+                    volume_time_equivalence = record.volume_time_equivalence
+                else:
+                    agriculturalseason = agriculturalseasons.browse(
+                        record.agriculturalseason_id.id)
+                    volume_time_equivalence = \
+                        agriculturalseason[0].volume_time_equivalence * \
+                        record.conversion_factor
+                volume = record.hours * volume_time_equivalence
             else:
                 volume = record.end_volume - record.initial_volume
             if volume < 0:
@@ -309,6 +353,10 @@ class WuaIrrigationReport(models.Model):
             'wua.irrigation.configuration', 'data_in_hours')
         hours_sexagesimal = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'hours_sexagesimal')
+        custom_irrigationreport_flow = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'custom_irrigationreport_flow')
+        custom_irrigationreport_flow_ls = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'custom_irrigationreport_flow_ls')
         if view_type == 'form':
             doc = etree.XML(res['arch'])
             if data_in_hours:
@@ -321,11 +369,47 @@ class WuaIrrigationReport(models.Model):
                 if not hours_sexagesimal:
                     for node in doc.xpath("//field[@name='hours']"):
                         node.set('widget', '')
+                # Hide conversion factor
+                if (custom_irrigationreport_flow):
+                    for node in doc.xpath(
+                            "//field[@name='conversion_factor']"):
+                        node.set('invisible', '1')
+                        node.set('modifiers', '{"invisible": true}')
+                    # Hide m³ /h
+                    if (custom_irrigationreport_flow_ls):
+                        for node in doc.xpath(
+                                "//field[@name='volume_time_equivalence']"):
+                            node.set('invisible', '1')
+                            node.set('modifiers', '{"invisible": true}')
+                    # Hide l/s
+                    else:
+                        for node in doc.xpath(
+                                "//field[@name='volume_time_equivalence_ls']"):
+                            node.set('invisible', '1')
+                            node.set('modifiers', '{"invisible": true}')
+                # Hide volume time equivalences
+                else:
+                    for node in doc.xpath(
+                            "//field[@name='volume_time_equivalence']"):
+                        node.set('invisible', '1')
+                        node.set('modifiers', '{"invisible": true}')
+                    for node in doc.xpath(
+                            "//field[@name='volume_time_equivalence_ls']"):
+                        node.set('invisible', '1')
+                        node.set('modifiers', '{"invisible": true}')
             else:
                 for node in doc.xpath("//field[@name='hours']"):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"invisible": true}')
                 for node in doc.xpath("//field[@name='conversion_factor']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"invisible": true}')
+                for node in doc.xpath(
+                        "//field[@name='volume_time_equivalence']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"invisible": true}')
+                for node in doc.xpath(
+                        "//field[@name='volume_time_equivalence_ls']"):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"invisible": true}')
             res['arch'] = etree.tostring(doc)
@@ -335,11 +419,43 @@ class WuaIrrigationReport(models.Model):
                 if not hours_sexagesimal:
                     for node in doc.xpath("//field[@name='hours']"):
                         node.set('widget', '')
+                if (custom_irrigationreport_flow):
+                    for node in doc.xpath(
+                            "//field[@name='conversion_factor']"):
+                        node.set('invisible', '1')
+                        node.set('modifiers', '{"tree_invisible": true}')
+                    if (custom_irrigationreport_flow_ls):
+                        for node in doc.xpath(
+                                "//field[@name='volume_time_equivalence']"):
+                            node.set('invisible', '1')
+                            node.set('modifiers', '{"tree_invisible": true}')
+                    else:
+                        for node in doc.xpath(
+                                "//field[@name='volume_time_equivalence_ls']"):
+                            node.set('invisible', '1')
+                            node.set('modifiers', '{"tree_invisible": true}')
+                else:
+                    for node in doc.xpath(
+                            "//field[@name='volume_time_equivalence']"):
+                        node.set('invisible', '1')
+                        node.set('modifiers', '{"tree_invisible": true}')
+                    for node in doc.xpath(
+                            "//field[@name='volume_time_equivalence_ls']"):
+                        node.set('invisible', '1')
+                        node.set('modifiers', '{"tree_invisible": true}')
             else:
                 for node in doc.xpath("//field[@name='hours']"):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"tree_invisible": true}')
                 for node in doc.xpath("//field[@name='conversion_factor']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
+                for node in doc.xpath(
+                        "//field[@name='volume_time_equivalence']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
+                for node in doc.xpath(
+                        "//field[@name='volume_time_equivalence_ls']"):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"tree_invisible": true}')
             res['arch'] = etree.tostring(doc)
@@ -362,7 +478,91 @@ class WuaIrrigationReport(models.Model):
             raise exceptions.ValidationError(_('The dates of the report '
                                                'are out of the '
                                                'agricultural season.'))
+        # Add transformation between conversion factor and
+        # volume_time_equivalence
+        data_in_hours = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'data_in_hours')
+        if (data_in_hours):
+            custom_irrigationreport_flow = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'custom_irrigationreport_flow')
+            custom_irrigationreport_flow_ls = self.env['ir.values'].\
+                get_default('wua.irrigation.configuration',
+                            'custom_irrigationreport_flow_ls')
+            if (custom_irrigationreport_flow):
+                conversion_factor = 0
+                # Check if value is in /s or in m³/h
+                if (custom_irrigationreport_flow_ls):
+                    new_record.volume_time_equivalence = \
+                        new_record.volume_time_equivalence_ls * 3.6
+                else:
+                    new_record.volume_time_equivalence_ls = \
+                        new_record.volume_time_equivalence / 3.6
+                # Conversion factor Always relation with m³/h
+                if (agriculturalseason.volume_time_equivalence):
+                    conversion_factor = new_record.volume_time_equivalence / \
+                        agriculturalseason.volume_time_equivalence
+                new_record.conversion_factor = conversion_factor
+            else:
+                new_record.volume_time_equivalence = \
+                    new_record.conversion_factor * \
+                    agriculturalseason.volume_time_equivalence
+                # m³ /h -> l/s
+                new_record.volume_time_equivalence_ls = \
+                    new_record.volume_time_equivalence / 3.6
         return new_record
+
+    @api.multi
+    def write(self, vals):
+        if len(self) == 1:
+            data_in_hours = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'data_in_hours')
+            if (data_in_hours):
+                custom_irrigationreport_flow = self.env['ir.values'].\
+                    get_default('wua.irrigation.configuration',
+                                'custom_irrigationreport_flow')
+                custom_irrigationreport_flow_ls = self.env['ir.values'].\
+                    get_default('wua.irrigation.configuration',
+                                'custom_irrigationreport_flow_ls')
+                # If custom flow check if is in l/s or in m³/h
+                # Then transform to the other units and then the conversion
+                # factor
+                if (custom_irrigationreport_flow):
+                    if (custom_irrigationreport_flow_ls and
+                            'volume_time_equivalence_ls' in vals):
+                        volume_time_equivalence = \
+                            vals['volume_time_equivalence_ls'] * 3.6
+                        conversion_factor = volume_time_equivalence / \
+                            self.agriculturalseason_id.volume_time_equivalence
+                        vals.update({
+                            'conversion_factor': conversion_factor,
+                            'volume_time_equivalence': volume_time_equivalence,
+                        })
+                    elif (not custom_irrigationreport_flow_ls and
+                            'volume_time_equivalence' in vals):
+                        volume_time_equivalence_ls = \
+                            vals['volume_time_equivalence'] / 3.6
+                        conversion_factor = vals['volume_time_equivalence'] / \
+                            self.agriculturalseason_id.volume_time_equivalence
+                        vals.update({
+                            'conversion_factor': conversion_factor,
+                            'volume_time_equivalence_ls':
+                                volume_time_equivalence_ls,
+                        })
+                # Conversion factor -> volume_time_equivalence -> vte_ls
+                elif ('conversion_factor' in vals):
+                    volume_time_equivalence = \
+                        self.agriculturalseason_id.volume_time_equivalence * \
+                        vals['conversion_factor']
+                    volume_time_equivalence_ls = volume_time_equivalence / 3.6
+                    vals.update({
+                        'volume_time_equivalence': volume_time_equivalence,
+                        'volume_time_equivalence_ls':
+                            volume_time_equivalence_ls,
+                    })
+                super(WuaIrrigationReport, self).write(vals)
+        else:
+            super(WuaIrrigationReport, self).write(vals)
+        return True
 
     @api.model
     def read_group(self, domain, fields, groupby,
