@@ -109,18 +109,16 @@ class WuaIrrigationReport(models.Model):
         required=True)
 
     volume_time_equivalence = fields.Float(
-        string='Volume (m³/h)',
+        string='Flow (m³/h)',
         digits=(32, 4),
         default=_default_volume_time_equivalence,
-        required=True,
-        help='Volume, in m³, which is equal to one hour')
+        required=True,)
 
     volume_time_equivalence_ls = fields.Float(
-        string='Volume (l/s)',
+        string='Flow (l/s)',
         digits=(32, 4),
         default=_default_volume_time_equivalence_ls,
-        required=True,
-        help='Volume, in liters, which is equal to one second')
+        required=True,)
 
     volume = fields.Float(
         string='Gross Value (m³)',
