@@ -240,19 +240,23 @@ class WuaPresconsumption(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            waterconnection_name = record.waterconnection_id.name
-            reading_end_time = \
-                fields.Datetime.from_string(record.reading_end_time)
-            if self.env.user.tz:
-                local_timezone = pytz.timezone(self.env.user.tz)
-                offset = local_timezone.utcoffset(reading_end_time)
-                reading_end_time = reading_end_time + offset
-            reading_end_time_str = str(reading_end_time)
-            date_str = reading_end_time_str[:10]
-            hour_str = reading_end_time_str[-8:]
-            name = waterconnection_name + ' - ' + \
-                datetime.datetime.strptime(
-                    date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
+            name = ''
+            # waterconnection_id.name is FALSE when audit log is setted
+            if (record.waterconnection_id and record.waterconnection_id.name):
+                name += record.waterconnection_id.name
+            if (record.reading_end_time):
+                reading_end_time = \
+                    fields.Datetime.from_string(record.reading_end_time)
+                if self.env.user.tz:
+                    local_timezone = pytz.timezone(self.env.user.tz)
+                    offset = local_timezone.utcoffset(reading_end_time)
+                    reading_end_time = reading_end_time + offset
+                reading_end_time_str = str(reading_end_time)
+                date_str = reading_end_time_str[:10]
+                hour_str = reading_end_time_str[-8:]
+                name += ' - ' + \
+                    datetime.datetime.strptime(
+                        date_str, '%Y-%m-%d').strftime('%x') + ' ' + hour_str
             result.append((record.id, name))
         return result
 

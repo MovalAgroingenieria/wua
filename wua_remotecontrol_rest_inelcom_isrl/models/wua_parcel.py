@@ -81,7 +81,7 @@ class WuaParcel(models.Model):
             id_session = resprest.text
             url_send_new_parcel = url_remotecontrol_rest + \
                 '/parcelas/' + data['name'] + \
-                '?sesion=' + id_session + '&&uso=1'
+                '?sesion=' + id_session + '&uso=1'
             payload_data = {
                 'codigosContadores': data['watermeters'],
                 'localidad': data['county'],
