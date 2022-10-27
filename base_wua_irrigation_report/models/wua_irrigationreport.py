@@ -266,18 +266,26 @@ class WuaIrrigationReport(models.Model):
 
     @api.depends(
         'initial_volume', 'end_volume', 'hours', 'conversion_factor',
-        'volume_time_equivalence')
+        'volume_time_equivalence', 'volume_time_equivalence_ls')
     def _compute_volume(self):
         data_in_hours = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'data_in_hours')
         agriculturalseasons = self.env['wua.agriculturalseason']
         custom_irrigationreport_flow = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'custom_irrigationreport_flow')
+        custom_irrigationreport_flow_ls = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'custom_irrigationreport_flow_ls')
         for record in self:
             volume = 0
             if data_in_hours:
                 if custom_irrigationreport_flow:
-                    volume_time_equivalence = record.volume_time_equivalence
+                    if custom_irrigationreport_flow_ls:
+                        volume_time_equivalence = \
+                            record.volume_time_equivalence_ls * 3.6
+                    else:
+                        volume_time_equivalence = \
+                            record.volume_time_equivalence
                 else:
                     agriculturalseason = agriculturalseasons.browse(
                         record.agriculturalseason_id.id)
