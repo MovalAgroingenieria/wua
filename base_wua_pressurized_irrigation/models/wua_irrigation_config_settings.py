@@ -16,6 +16,10 @@ class WuaIrrigationConfiguration(models.TransientModel):
         string='Number of presconsumption for average',
         default=3)
 
+    threshold_pressure = fields.Float(
+        string='Pressure threshold for pressure sensors measurement',
+        default=0.0,)
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -28,6 +32,9 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'number_of_presconsumptions_for_average',
                            self.number_of_presconsumptions_for_average)
+        values.set_default('wua.irrigation.configuration',
+                           'threshold_pressure',
+                           self.threshold_pressure)
         if (old_number_of_presconsumptions_for_average !=
                 self.number_of_presconsumptions_for_average):
             self.recalculate_average_consumption_of_watermeters()

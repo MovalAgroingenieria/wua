@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pressuresensor_view_form" model="ir.ui.view">
+        <field name="name">Pressure Sensors (form view)</field>
+        <field name="model">wua.pressuresensor</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="action_show_pressuresensormeasurements"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-list"
+                                groups="base_wua.group_wua_user">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_text">Measurements</span>
+                                </div>
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name"/>
+                            <field name="description"/>
+                            <field name="irrigationshed_id"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="hydraulicsector_id"/>
+                            <div colspan="2" style="margin-top: 10px; margin-bottom: 10px;" class="text-center">
+                                <span style="font-weight: bold;">LAST MEASUREMENT</span>
+                            </div>
+                            <field name="last_measurement_time" string="Instant"/>
+                            <field name="last_measurement_pressure" string="Pressure (bar)"/>
+                            <br/><br/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensor_view_tree" model="ir.ui.view">
+        <field name="name">Pressure Sensors (tree view)</field>
+        <field name="model">wua.pressuresensor</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_pressuresensors_view_tree">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensor_view_search" model="ir.ui.view">
+        <field name="name">Pressure Sensors (search view)</field>
+        <field name="model">wua.pressuresensor</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="waterconnection"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensor_action" model="ir.actions.act_window">
+        <field name="name">Pressure Sensors</field>
+        <field name="res_model">wua.pressuresensor</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_pressuresensor_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_pressuresensor_view_search"/>
+    </record>
+
+    <menuitem id="wua_pressuresensor_menu"
+              name="Pressure Sensors"
+              parent="base_wua_infrastructure.base_wua_infrastructure_pressurized_irrigation_menu"
+              action="wua_pressuresensor_action"
+              sequence="5"/>
+
+</odoo>

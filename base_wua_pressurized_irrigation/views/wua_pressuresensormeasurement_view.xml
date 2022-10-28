@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pressuresensormeasurement_view_form" model="ir.ui.view">
+        <field name="name">Pressuresensor Measurement (form view)</field>
+        <field name="model">wua.pressuresensormeasurement</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                </header>
+                <field name="id" invisible="1"/>
+                <field name="is_last_measurement" invisible="1"/>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <img src="/base_wua_pressurized_irrigation/static/image/img_last.png"
+                             hspace="2"
+                             attrs="{'invisible':[('is_last_measurement', '=', False)]}"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="pressuresensor_id"/>
+                            <field name="measurement_time"/>
+                            <field name="pressure"/>
+                            <br/><br/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="agriculturalseason_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensormeasurement_view_tree" model="ir.ui.view">
+        <field name="name">Pressuresensor Measurement (tree view)</field>
+        <field name="model">wua.pressuresensormeasurement</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_wua_pressuresensormeasurement_view_tree">
+                <field name="pressuresensor_id"/>
+                <field name="agriculturalseason_id"/>
+                <field name="measurement_time"/>
+                <field name="pressure"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensormeasurement_view_search" model="ir.ui.view">
+        <field name="name">Pressuresensor Measurement (search view)</field>
+        <field name="model">wua.pressuresensormeasurement</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="pressuresensor_id"/>
+                <filter string="Active agricultural season" name="of_active_agriculturalseason"
+                    domain="[('of_active_agriculturalseason','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Pressure Sensor" name="pressuresensor_id"
+                        context="{'group_by':'pressuresensor_id'}"/>
+                    <filter string="Agricultural Season" name="agriculturalseason_id"
+                        context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Time" name="measurement_time"
+                        context="{'group_by':'measurement_time'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensormeasurement_view_graph" model="ir.ui.view">
+        <field name="name">Pressuresensor Measurement (graph view)</field>
+        <field name="model">wua.pressuresensormeasurement</field>
+        <field name="arch" type="xml">
+            <graph string="Consumed Energy">
+                <field name="measurement_time" type="row"/>
+                <field name="pressure" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensormeasurement_view_pivot" model="ir.ui.view">
+        <field name="name">Pressuresensor Measurement (pivot view)</field>
+        <field name="model">wua.pressuresensormeasurement</field>
+        <field name="arch" type="xml">
+            <graph string="Consumed Energy">
+                <field name="measurement_time" type="row"/>
+                <field name="pressure" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="wua_technical_assign_agseason_to_pressuresensormeasurements_action" model="ir.actions.server">
+        <field name="name">Assign agseason to pressuresensormeasurements</field>
+        <field name="model_id" ref="base_wua_pressurized_irrigation.model_wua_pressuresensormeasurement"/>
+        <field name="code">
+            action = env["wua.pressuresensormeasurement"].action_assign_agseason_to_pressuresensormeasurements()
+        </field>
+    </record>
+
+    <record id="wua_technical_show_pressuresensormeasurements_action" model="ir.actions.act_window">
+        <field name="name">Pressure sensor measurements</field>
+        <field name="res_model">wua.pressuresensormeasurement</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_pressuresensormeasurement_view_tree"/>
+        <field name="search_view_id" ref="wua_pressuresensormeasurement_view_search"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Pressure sensor measurement.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="wua_technical_assign_agseason_to_pressuresensormeasurements"
+        name="Calculation: Pressure sensor measurements"
+        parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+        action="wua_technical_assign_agseason_to_pressuresensormeasurements_action"
+        sequence="6"/>
+
+    <menuitem id="show_pressuresensormeasurements"
+        name="Show pressure sensor measurements"
+        parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+        action="wua_technical_show_pressuresensormeasurements_action"
+        sequence="7"/>
+
+</odoo>
