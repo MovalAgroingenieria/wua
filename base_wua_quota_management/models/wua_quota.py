@@ -549,7 +549,8 @@ class WuaQuota(models.Model):
                        (not waterconnection.fixed_water)):
                         hydric_consumptions = \
                             self._adapt_hydricmovements_to_sorted_quotas(
-                                hydric_consumptions)
+                                hydric_consumptions,
+                                waterconnection.water_product_order)
                     for hydric_consumption in hydric_consumptions:
                         quota = self.env['wua.quota'].search(
                             [('quotaperiod_id', '=',
@@ -821,12 +822,16 @@ class WuaQuota(models.Model):
             resp = quotaperiods[0]
         return resp
 
-    def _adapt_hydricmovements_to_sorted_quotas(self, hydric_consumptions):
+    def _adapt_hydricmovements_to_sorted_quotas(
+            self, hydric_consumptions, wc_pos):
         resp = []
         if hydric_consumptions:
             quotaperiod_id = hydric_consumptions[0]['quotaperiod_id']
+            # Check default position setted to waterconnections
             quotaperiodlines = self.env['wua.quotaperiod.line'].search(
-                [('quotaperiod_id', '=', quotaperiod_id)], order='pos')
+                [('quotaperiod_id', '=', quotaperiod_id),
+                 ('pos', '>=', wc_pos)],
+                order='pos')
             if quotaperiodlines:
                 max_for = len(quotaperiodlines)
                 for hydric_consumption in hydric_consumptions:

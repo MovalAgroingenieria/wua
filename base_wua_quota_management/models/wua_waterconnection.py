@@ -16,6 +16,10 @@ class WuaWaterconnection(models.Model):
         string='Fixed Water',
         default=False)
 
+    water_product_order = fields.Integer(
+        string='Water Order Number',
+        default=1)
+
     consumptions_graph = fields.Text(
         string='Consumptions Graph',
         compute='_compute_consumptions_graph')
@@ -23,6 +27,13 @@ class WuaWaterconnection(models.Model):
     consumptions_graph_invisible = fields.Boolean(
         string='Consumptions Graph Invisible',
         compute='_compute_consumptions_graph_invisible')
+
+    _sql_constraints = [
+        ('unique_name', 'UNIQUE (name)',
+         'Existing Reading.'),
+        ('non_negative_water_product_order', 'CHECK (water_product_order > 0)',
+         'The Water Order Number must be greater than 0.'),
+        ]
 
     @api.multi
     def _compute_consumptions_graph_invisible(self):
