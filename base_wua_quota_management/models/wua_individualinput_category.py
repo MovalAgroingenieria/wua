@@ -35,6 +35,12 @@ class WuaIndividualinputCategory(models.Model):
         translate=True,
         index=True)
 
+    superproduct_id = fields.Many2one(
+        string='Default Superproduct',
+        comodel_name='wua.superproduct',
+        index=True,
+        ondelete='restrict',)
+
     is_no_variation_category = fields.Boolean(
         string='WUA Master Individual Input Category',
         default=False)

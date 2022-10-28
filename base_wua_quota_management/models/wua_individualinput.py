@@ -378,6 +378,14 @@ class WuaIndividualinput(models.Model):
                                [('id', 'in', valid_superproduct_ids)]}
                     }
 
+    @api.onchange('superproduct_id')
+    def _onchange_superproduct_id(self):
+        if self.superproduct_id:
+            default_categ = self.env['wua.individualinput.category'].search(
+                [('superproduct_id', '=', self.superproduct_id.id)])
+            if (default_categ and len(default_categ) > 0):
+                self.category_id = default_categ[0]
+
     @api.onchange('quota_id')
     def _onchange_quota_id(self):
         self._compute_quota_accumulated_input()
