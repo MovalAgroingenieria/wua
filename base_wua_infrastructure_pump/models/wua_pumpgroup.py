@@ -2,11 +2,10 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
-import datetime
-from Crypto.Cipher import AES
 import datetime
 import pytz
+from Crypto.Cipher import AES
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaPumpgroup(models.Model):
