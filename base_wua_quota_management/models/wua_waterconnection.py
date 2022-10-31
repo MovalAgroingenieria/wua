@@ -29,8 +29,6 @@ class WuaWaterconnection(models.Model):
         compute='_compute_consumptions_graph_invisible')
 
     _sql_constraints = [
-        ('unique_name', 'UNIQUE (name)',
-         'Existing Reading.'),
         ('non_negative_water_product_order', 'CHECK (water_product_order > 0)',
          'The Water Order Number must be greater than 0.'),
         ]
