@@ -566,6 +566,8 @@ class WuaIrrigationReport(models.Model):
                             volume_time_equivalence_ls,
                     })
                 super(WuaIrrigationReport, self).write(vals)
+            else:
+                super(WuaIrrigationReport, self).write(vals)
         else:
             super(WuaIrrigationReport, self).write(vals)
         return True
