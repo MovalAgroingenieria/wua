@@ -95,7 +95,7 @@ class WuaInvoiceset(models.Model):
                 invoices_data.append(result)
         return invoices_data
 
-    def get_description(self, irrigationreport):
+    def get_description_categ11(self, irrigationreport):
         description = ""
         if irrigationreport:
             intake_name = irrigationreport.intake_id.name
@@ -226,7 +226,7 @@ class WuaInvoiceset(models.Model):
                     conversion_factor
             else:
                 quantity = irrigationreport.volume_real
-            description = self.get_description(irrigationreport)
+            description = self.get_description_categ11(irrigationreport)
             result = {
                 'partner_id': partner_id,
                 'product_id': product_id,
