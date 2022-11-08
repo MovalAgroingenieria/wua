@@ -25,6 +25,7 @@
         "views/wua_presconsumption_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_agriculturalseason_view.xml",
+        "views/wua_negative_reading_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "reports/wua_parcel_report.xml",
         "data/wua_irrigation_config_settings_data.xml",

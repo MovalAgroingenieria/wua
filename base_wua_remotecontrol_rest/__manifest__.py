@@ -7,7 +7,7 @@
     "summary": "In a water users association, base module for other modules "
                "that implement communication dialogues with remote control "
                "systems for irrigation (with REST API)",
-    "version": '10.0.1.1.1',
+    "version": '10.0.1.1.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

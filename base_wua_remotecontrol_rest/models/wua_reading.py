@@ -103,6 +103,7 @@ class WuaReading(models.Model):
                         'reading_time': reading_time,
                         'volume': reading['volume'],
                         'presconsumption_volume': negative_volume,
+                        'from_remotecontrol': True,
                         })
                     number_of_negative_readings = \
                         number_of_negative_readings + 1

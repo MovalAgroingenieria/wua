@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-18 14:06+0000\n"
-"PO-Revision-Date: 2022-10-18 14:06+0000\n"
+"POT-Creation-Date: 2022-11-08 08:53+0000\n"
+"PO-Revision-Date: 2022-11-08 08:53+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -118,6 +118,7 @@ msgid "Cons. Real Value (m3)"
 msgstr "Cons. Valor Real (m³)"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_tree
 msgid "Cons. Value (m3)"
@@ -130,7 +131,7 @@ msgstr "Consum"
 
 #. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_agriculturalseason.py:39
-#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:276
+#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:280
 #: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:162
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_presconsumption_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_agriculturalseason_presconsumption_ids
@@ -231,6 +232,11 @@ msgid "Entity (agricultural season)"
 msgstr "Element (campanya)"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_negative_reading
+msgid "Entity (negative reading)"
+msgstr "Element (lectura negativa)"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_presconsumption
 msgid "Entity (pressure consumption)"
 msgstr "Element (consum de pressió)"
@@ -261,6 +267,11 @@ msgid "Existing Name."
 msgstr "Nom existent."
 
 #. module: base_wua_pressurized_irrigation
+#: sql_constraint:wua.negative.reading:0
+msgid "Existing Negative-Reading."
+msgstr "La lectura negativa ja existeix a la base de dades."
+
+#. module: base_wua_pressurized_irrigation
 #: sql_constraint:wua.reading:0
 msgid "Existing Reading."
 msgstr "Lecture existent."
@@ -282,6 +293,7 @@ msgid "Gross Value (m3)"
 msgstr "Valor brut (m³)"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_one_waterconnection_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
@@ -295,6 +307,7 @@ msgstr "Agrupar per"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_hydraulicsector_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
@@ -359,6 +372,7 @@ msgstr "Data instal·lació"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_irrigationshed_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
@@ -459,6 +473,12 @@ msgstr "Multi-doll"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_remove_readings_view_form
 msgid "NOTE: The date range must include the last reading."
 msgstr "NOTA: L’interval de dates ha d’incloure la darrera lectura."
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_negative_reading_action
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_negative_reading_menu
+msgid "Negative Readings"
+msgstr "Lectures negatives"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_nominal_diameter
@@ -814,6 +834,7 @@ msgstr "Cabal (m³/hour)"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_waterconnection_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
@@ -848,6 +869,7 @@ msgstr "Cabal (m³/hora)"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_watermeter_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_watermeter_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_watermeter_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
 msgid "Water Meter"
 msgstr "Comptador"
@@ -911,7 +933,7 @@ msgid "You do not have permission to execute this action."
 msgstr "No teniu permís per executar aquesta acció."
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:320
+#: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:324
 #, python-format
 msgid "day"
 msgstr "dia"
