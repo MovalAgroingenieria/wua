@@ -1,0 +1,40 @@
+# -*- coding: utf-8 -*-
+# 2022 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+from odoo import models, api
+
+
+class AccountPaymentOrder(models.Model):
+    _inherit = 'account.payment.order'
+
+    # Hooks (wua implemented)
+    @api.multi
+    def generated2uploaded(self):
+        res = super(AccountPaymentOrder, self).generated2uploaded()
+        for order in self:
+            if order.payment_mode_id.name == 'DipuCR':
+                for bline in order.bank_line_ids:
+                    if bline.dipucr_sent:
+                        for l in bline.payment_line_ids:
+                            if bline.name == l.bank_line_id.name:
+                                invoice = l.invoice_id
+                                invoice.write({
+                                    'in_dipucr': True,
+                                    'dipucr_ref': bline.dipucr_ref,
+                                })
+        return res
+
+    @api.multi
+    def action_done_cancel(self):
+        for order in self:
+            if order.payment_mode_id.name == 'DipuCR':
+                for bline in order.bank_line_ids:
+                    for l in bline.payment_line_ids:
+                        if bline.name == l.bank_line_id.name:
+                            invoice = l.invoice_id
+                            invoice.write({
+                                'in_dipucr': False,
+                                'dipucr_ref': False,
+                                })
+        return super(AccountPaymentOrder, self).action_done_cancel()
