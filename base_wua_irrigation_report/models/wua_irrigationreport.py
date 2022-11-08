@@ -143,7 +143,7 @@ class WuaIrrigationReport(models.Model):
         ('validated', 'Validated')],
         string="State",
         default="draft",
-        requred=True)
+        required=True)
 
     of_active_agriculturalseason = fields.Boolean(
         string="Of active ag.season",
