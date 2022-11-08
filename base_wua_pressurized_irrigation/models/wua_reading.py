@@ -31,7 +31,7 @@ class WuaReading(models.Model):
         ondelete='restrict')
 
     volume = fields.Float(
-        string='Value (m3)',
+        string='Value (m³)',
         digits=(32, 4),
         default=0,
         required=True)
@@ -74,21 +74,21 @@ class WuaReading(models.Model):
         compute='_compute_is_last_reading')
 
     presconsumption_volume = fields.Float(
-        string='Gross Value (m3)',
+        string='Gross Value (m³)',
         digits=(32, 4),
         default=0,
         store=True,
         compute='_compute_presconsumption_volume')
 
     presconsumption_adjustement_volume = fields.Float(
-        string='Adjust. Value (m3)',
+        string='Adjust. Value (m³)',
         digits=(32, 4),
         default=0,
         store=True,
         compute='_compute_presconsumption_adjustement_volume')
 
     presconsumption_volume_real = fields.Float(
-        string='Real Value (m3)',
+        string='Real Value (m³)',
         digits=(32, 4),
         default=0,
         store=True,

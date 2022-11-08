@@ -87,14 +87,29 @@ class WuaReading(models.Model):
         vals['reading_img'] = reading_img
         if (product_id > 0):
             vals['product_id'] = product_id
+        # Removed others readings or negative reading when creating
+        # new one
         old_readings = self.sudo().env['wua.reading'].search(
             ['&', ('watermeter_id', '=', watermeter_id),
                 ('readingperiod_id', '=', rp.id)])
         if old_readings:
             for old_reading in old_readings:
                 self.delete_field_reading(old_reading.id)
+        old_negative_readings = self.sudo().env['wua.negative.reading'].search(
+            ['&', ('watermeter_id', '=', watermeter_id),
+                ('readingperiod_id', '=', rp.id)])
+        if old_negative_readings:
+            for old_reading in old_negative_readings:
+                self.delete_field_negative_reading(old_reading.id)
+        # Check if new reading will be positive or negative
+        is_negative, negative_volume = self.is_negative_reading(vals)
         try:
-            new_reading = self.sudo().env['wua.reading'].create(vals)
+            if (is_negative):
+                vals['presconsumption_volume'] = negative_volume
+                new_reading = self.sudo().env['wua.negative.reading'].create(
+                    vals)
+            else:
+                new_reading = self.sudo().env['wua.reading'].create(vals)
         except Exception as e:
             raise exceptions.UserError(e)
         rpli = self.sudo().env['wua.readingperiod.line.irrigationshed'].\
@@ -103,10 +118,19 @@ class WuaReading(models.Model):
         if (not rpli):
             raise exceptions.UserError(_(
                 'This watermeter does not belong to the open readingperiod.'))
-        rpli.write({'reading_ids':
-                    [(4, new_reading.id)]})
+        if (is_negative):
+            rpli.write({'negative_reading_ids':
+                        [(4, new_reading.id)]})
+        else:
+            rpli.write({'reading_ids':
+                        [(4, new_reading.id)]})
         return new_reading.id
 
     @api.model
     def delete_field_reading(self, reading_id):
         return self.sudo().env['wua.reading'].browse(reading_id).unlink()
+
+    @api.model
+    def delete_field_negative_reading(self, reading_id):
+        return self.sudo().env['wua.negative.reading'].browse(reading_id).\
+            unlink()

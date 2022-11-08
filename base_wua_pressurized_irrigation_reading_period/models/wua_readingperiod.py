@@ -86,6 +86,17 @@ class WuaReadingperiod(models.Model):
         index=True,
         compute='_compute_number_of_readings')
 
+    negative_reading_ids = fields.One2many(
+        string='Associated Negative Readings',
+        comodel_name='wua.negative.reading',
+        inverse_name='readingperiod_id')
+
+    number_of_negative_readings = fields.Integer(
+        string='Number of negative readings',
+        store=True,
+        index=True,
+        compute='_compute_number_of_negative_readings')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Reading Period.'),
@@ -124,6 +135,14 @@ class WuaReadingperiod(models.Model):
             if (record.reading_ids):
                 number_of_readings = len(record.reading_ids)
             record.number_of_readings = number_of_readings
+
+    @api.depends('negative_reading_ids')
+    def _compute_number_of_negative_readings(self):
+        for record in self:
+            number_of_negative_readings = 0
+            if (record.negative_reading_ids):
+                number_of_negative_readings = len(record.negative_reading_ids)
+            record.number_of_negative_readings = number_of_negative_readings
 
     @api.depends('readingperiodline_ids',
                  'readingperiodline_ids.hydraulicsector_id')
@@ -226,6 +245,32 @@ class WuaReadingperiod(models.Model):
         }
         return act_window
 
+    @api.multi
+    def action_get_negative_reading_ids(self):
+        self.ensure_one()
+        condition = [('readingperiod_id', '=', self.id)]
+        id_form_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_negative_reading_view_form').id
+        id_tree_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_negative_reading_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_negative_reading_view_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Negative Readings'),
+            'res_model': 'wua.negative.reading',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+        }
+        return act_window
+
     @api.depends('readingperiodline_ids',
                  'readingperiodline_ids.configured_line')
     def _compute_state(self):
@@ -275,7 +320,7 @@ class WuaReadingperiod(models.Model):
     def action_cancel_readingperiod(self):
         self.ensure_one()
         readingperiod = self
-        if (readingperiod.reading_ids):
+        if (readingperiod.reading_ids or readingperiod.negative_reading_ids):
             raise exceptions.UserError(_(
                 'Operation not allowed: this reading period has some '
                 'associated readings. Before canceling, it is mandatory to '
@@ -577,6 +622,11 @@ class WuaReadingperiodLineIrrigationshed(models.Model):
         comodel_name='wua.reading',
         inverse_name='readingperiodlineirrigationshed_id')
 
+    negative_reading_ids = fields.One2many(
+        string='Negative Readings',
+        comodel_name='wua.negative.reading',
+        inverse_name='readingperiodlineirrigationshed_id')
+
     is_visited = fields.Boolean(
         string='Visited?',
         store=True,
@@ -591,11 +641,11 @@ class WuaReadingperiodLineIrrigationshed(models.Model):
                 readingperiod = record.readingperiodline_id.readingperiod_id
             record.readingperiod_id = readingperiod
 
-    @api.depends('reading_ids')
+    @api.depends('reading_ids', 'negative_reading_ids')
     def _compute_is_visited(self):
         for record in self:
             is_visited = False
-            if (record.reading_ids):
+            if (record.reading_ids or record.negative_reading_ids):
                 is_visited = True
             record.is_visited = is_visited
 

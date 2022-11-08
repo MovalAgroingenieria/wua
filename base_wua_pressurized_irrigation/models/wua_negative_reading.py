@@ -25,7 +25,7 @@ class WuaNegativeReading(models.Model):
         required=True)
 
     volume = fields.Float(
-        string='Value (m3)',
+        string='Value (m³)',
         digits=(32, 4),
         default=0,
         required=True)
@@ -59,9 +59,11 @@ class WuaNegativeReading(models.Model):
         ondelete='restrict')
 
     presconsumption_volume = fields.Float(
-        string='Value (m3)',
+        string='Value (m³)',
         digits=(32, 4),
         default=0)
+
+    notes = fields.Html(string='Notes')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',

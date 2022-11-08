@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-27 06:13+0000\n"
-"PO-Revision-Date: 2021-05-27 06:13+0000\n"
+"POT-Creation-Date: 2022-11-08 12:06+0000\n"
+"PO-Revision-Date: 2022-11-08 12:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_form
+msgid "<span class=\"o_stat_text\">Negative Readings</span>"
+msgstr "<span class=\"o_stat_text\">Lectures negatives</span>"
 
 #. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_form
@@ -42,6 +47,11 @@ msgid "Associated Hydraulic-Sectors"
 msgstr "Sectors hidràulics associats"
 
 #. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_negative_reading_ids
+msgid "Associated Negative Readings"
+msgstr "Lectures negatives associades"
+
+#. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_reading_ids
 msgid "Associated Readings"
 msgstr "Lectures associades"
@@ -62,7 +72,7 @@ msgid "Closed"
 msgstr "Tancat"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:252
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:297
 #, python-format
 msgid "Configuration of Reading-Period Lines"
 msgstr "Configuració de línies de el període de lectura"
@@ -136,13 +146,18 @@ msgid "End Date"
 msgstr "Data final"
 
 #. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model,name:base_wua_pressurized_irrigation_reading_period.model_wua_negative_reading
+msgid "Entity (negative reading)"
+msgstr "Element (lectura negativa)"
+
+#. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.model,name:base_wua_pressurized_irrigation_reading_period.model_wua_reading
 msgid "Entity (pressure reading)"
 msgstr "Element (lectura de pressió)"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:333
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:489
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:378
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:534
 #, python-format
 msgid "Error when updating records."
 msgstr "Error a l'actualitzar els registres."
@@ -163,10 +178,21 @@ msgid "Field Reading"
 msgstr "Lectura de camp"
 
 #. module: base_wua_pressurized_irrigation_reading_period
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_negative_reading.py:53
 #: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_reading.py:53
 #, python-format
 msgid "Field readings must have a watermeter reader and reading period."
 msgstr "Lectura de camp ha de tenir un lector de comptadors i període de lectura associat."
+
+#. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_negative_reading_is_field_reading
+msgid "From field"
+msgstr "Origen camp"
+
+#. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_negative_reading_view_search
+msgid "From field: Yes"
+msgstr "Origen camp: Sì"
 
 #. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_search
@@ -208,7 +234,7 @@ msgid "Irrigation sheds of reading-period line"
 msgstr "Casetes de la línia de el període de lectura"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:509
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:554
 #, python-format
 msgid "Irrigationshed"
 msgstr "Caseta"
@@ -261,6 +287,11 @@ msgstr "Nº casetes"
 
 #. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_form
+msgid "N. negative readings"
+msgstr "Nº lectures negatives"
+
+#. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_form
 msgid "N. readings"
 msgstr "Nº Lectures"
 
@@ -268,6 +299,13 @@ msgstr "Nº Lectures"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_form
 msgid "N. waterconnections"
 msgstr "Nº Tomes"
+
+#. module: base_wua_pressurized_irrigation_reading_period
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:263
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_line_irrigationshed_negative_reading_ids
+#, python-format
+msgid "Negative Readings"
+msgstr "Lectures negatives"
 
 #. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_notes
@@ -279,6 +317,11 @@ msgstr "Notes"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_number_of_irrigationsheds
 msgid "Number of irrigation sheds"
 msgstr "Nº casetes"
+
+#. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_number_of_negative_readings
+msgid "Number of negative readings"
+msgstr "Nº lectures negatives"
 
 #. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_number_of_readings
@@ -312,19 +355,22 @@ msgid "Opened"
 msgstr "Oberto"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:279
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:324
 #, python-format
 msgid "Operation not allowed: this reading period has some associated readings. Before canceling, it is mandatory to remove this readings."
 msgstr "Operació no permesa: aquest període de lectura té alguna lectura associada. Abans de cancel·lar, cal eliminar les lectura associades."
 
 #. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_negative_reading_reading_img
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_reading_reading_img
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_negative_reading_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_reading_view_form
 msgid "Reading Image"
 msgstr "Imatge de la lectura"
 
 #. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.model,name:base_wua_pressurized_irrigation_reading_period.model_wua_readingperiod
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_negative_reading_readingperiod_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_reading_readingperiod_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_line_irrigationshed_readingperiod_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_line_readingperiod_id
@@ -351,12 +397,13 @@ msgid "Reading-Period Line Irrigationshed"
 msgstr "Caseta de línia de període de lectura"
 
 #. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_negative_reading_readingperiodlineirrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_reading_readingperiodlineirrigationshed_id
 msgid "Readingperiodlineirrigationshed id"
 msgstr "Readingperiodlineirrigationshed id"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:218
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:237
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_line_irrigationshed_reading_ids
 #, python-format
 msgid "Readings"
@@ -413,37 +460,38 @@ msgid "State: Opened"
 msgstr "Estat: Oberto"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:181
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:200
 #, python-format
 msgid "The reading period limits are outside of all agricultural seasons."
 msgstr "Els límits de el període de lectura estan fora de totes les campanyes."
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:198
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:217
 #, python-format
 msgid "The reading period limits overlaps with another reading period."
 msgstr "Els límits de el període de lectura coincideixen amb els d'un altre període."
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:267
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:312
 #, python-format
 msgid "There cannot be more than one open reading period."
 msgstr "No hi pot haver més d'un període de lectura obert."
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_reading.py:71
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_reading.py:72
 #, python-format
 msgid "There is no open readingperiod."
 msgstr "No hi ha període de lectura obert."
 
 #. module: base_wua_pressurized_irrigation_reading_period
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_negative_reading.py:63
 #: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_reading.py:63
 #, python-format
 msgid "This User don't belongs to watermeter reader group."
 msgstr "Aquest usuari no pertany a el grup de lector de comptadors."
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_reading.py:101
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_reading.py:119
 #, python-format
 msgid "This watermeter does not belong to the open readingperiod."
 msgstr "Aquesta tome no pertany a el període de lectura obert."
@@ -459,6 +507,7 @@ msgid "Visited?"
 msgstr "¿Visitada?"
 
 #. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_negative_reading_watermeter_reader_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_reading_watermeter_reader_id
 msgid "Water-Meter Reader"
 msgstr "Lector de comptadors"
@@ -478,3 +527,4 @@ msgstr "Usuari Lector de comptadors"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_config_readingperiod_view_form
 msgid "aux"
 msgstr "aux"
+

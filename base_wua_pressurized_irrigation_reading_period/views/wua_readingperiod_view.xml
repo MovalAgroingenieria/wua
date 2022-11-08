@@ -67,6 +67,14 @@
                                 <span class="o_stat_text">Readings</span>
                             </div>
                         </button>
+                        <button name="action_get_negative_reading_ids"
+                                type="object" class="oe_stat_button"
+                                icon="fa-list-ol"
+                                attrs="{'invisible':[('id','&lt;=',0)]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Negative Readings</span>
+                            </div>
+                        </button>
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
@@ -86,6 +94,8 @@
                                    string="N. waterconnections"/>
                             <field name="number_of_readings"
                                    string="N. readings"/>
+                            <field name="number_of_negative_readings"
+                                   string="N. negative readings"/>
                         </group>
                     </group>
                     <group name="slave_data">
