@@ -122,8 +122,8 @@ class WuaWaterpipeflowreading(models.Model):
                 'This flowmeter does not belong to the open reading period.'))
         if (is_negative):
             readingperiodflowmeterline.write(
-                {'waterpipeflowreading_id': new_waterpipeflowreading.id})
+                {'negative_flowreading_id': new_waterpipeflowreading.id})
         else:
             readingperiodflowmeterline.write(
-                {'negative_flowreading_id': new_waterpipeflowreading.id})
+                {'waterpipeflowreading_id': new_waterpipeflowreading.id})
         return new_waterpipeflowreading.id
