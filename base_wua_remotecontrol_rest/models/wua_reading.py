@@ -121,20 +121,3 @@ class WuaReading(models.Model):
                 _logger.info(_('Remote Control: Saved readings') + '... ' +
                              str(number_of_readings))
         return number_of_negative_readings
-
-    def is_negative_reading(self, reading):
-        is_negative = False
-        negative_volume = 0
-        current_volume = reading['volume']
-        current_reading_time = datetime.datetime.now().strftime(
-            '%Y-%m-%d %H:%M:%S')
-        previous_reading = self.env['wua.reading'].search(
-            [('watermeter_id', '=', reading['watermeter_id']),
-             ('reading_time', '<', current_reading_time)],
-            limit=1, order='reading_time desc')
-        if previous_reading:
-            previous_volume = previous_reading[0].volume
-        if previous_volume > current_volume:
-            is_negative = True
-            negative_volume = current_volume - previous_volume
-        return is_negative, negative_volume
