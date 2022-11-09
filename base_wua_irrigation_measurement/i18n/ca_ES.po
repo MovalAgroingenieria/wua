@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-01-28 12:04+0000\n"
-"PO-Revision-Date: 2022-01-28 12:04+0000\n"
+"POT-Creation-Date: 2022-11-09 07:51+0000\n"
+"PO-Revision-Date: 2022-11-09 07:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -29,7 +29,7 @@ msgstr "<span class=\"o_stat_text\">Cons. captacions</span>"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_adjustement_volume
 msgid "Adjust. Value (m3)"
-msgstr "Ajustar Valor (m3)"
+msgstr "Ajustar Valor (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_agriculturalseason_id
@@ -70,6 +70,11 @@ msgstr "Treure validació"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_intake_category
 msgid "Category"
 msgstr "Categoria"
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_tree
+msgid "Cons. Value (m³)"
+msgstr "Cons. Valor (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: code:addons/base_wua_irrigation_measurement/models/wua_agriculturalseason.py:58
@@ -165,7 +170,7 @@ msgstr "Data final"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model,name:base_wua_irrigation_measurement.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model,name:base_wua_irrigation_measurement.model_wua_flowreading
@@ -193,6 +198,16 @@ msgid "Entity (intake/flowmeter)"
 msgstr "Element (captació/cabalímetre)"
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.model,name:base_wua_irrigation_measurement.model_wua_negative_flowreading
+msgid "Entity (negative flow reading)"
+msgstr "Element (lectura de cabalímetre negativa)"
+
+#. module: base_wua_irrigation_measurement
+#: sql_constraint:wua.negative.flowreading:0
+msgid "Existing Negative Flow-Reading."
+msgstr "Lectura negativa de cabalímetre preexistent."
+
+#. module: base_wua_irrigation_measurement
 #: sql_constraint:wua.flowreading:0
 msgid "Existing flow-reading identifier."
 msgstr "Identificador de lectura de flux existent."
@@ -205,16 +220,17 @@ msgstr "Identificador de consum de captació existent."
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_end_volume
 msgid "Final Value (m3)"
-msgstr "Valor final (m3)"
+msgstr "Valor final (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_instant_flow
-msgid "Flow (m3/h)"
-msgstr "Caudal (m3/h)"
+msgid "Flow (m³/h)"
+msgstr "Flow (m³/h)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_flowmeter_id
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_flowmeter_id
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_search
 msgid "Flow Meter"
 msgstr "Cabalímetre"
 
@@ -269,11 +285,12 @@ msgstr "Infraestructura general"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_volume
 msgid "Gross Value (m3)"
-msgstr "Valor brut (m3)"
+msgstr "Valor brut (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_search
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_search
 msgid "Group By"
 msgstr "Agrupar per"
 
@@ -307,7 +324,7 @@ msgstr "Data inici"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_initial_volume
 msgid "Initial Value (m3)"
-msgstr "Valor Inicial (m3)"
+msgstr "Valor Inicial (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_initialization_reading
@@ -321,6 +338,7 @@ msgstr "Lectura inicialització"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_intake_id
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_search
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_search
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_search
 msgid "Intake"
 msgstr "Captació"
 
@@ -353,8 +371,8 @@ msgstr "Captacions"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_last_reading_instantflow
-msgid "Last Instant Flow (m3/h)"
-msgstr "Flux d'últim instant (m3/h)"
+msgid "Last Instant Flow (m³/h)"
+msgstr "Last Instant Flow (m³/h)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wizard_remove_flowmeter_readings___last_update
@@ -362,7 +380,7 @@ msgstr "Flux d'últim instant (m3/h)"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm___last_update
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació feta el"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_is_last_reading
@@ -387,8 +405,8 @@ msgstr "Valor última lectura"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_last_reading_value
-msgid "Last Reading Value (m3)"
-msgstr "Valor de la darrera lectura (m3)"
+msgid "Last Reading Value (m³)"
+msgstr "Last Reading Value (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wizard_remove_flowmeter_readings_write_uid
@@ -396,7 +414,7 @@ msgstr "Valor de la darrera lectura (m3)"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_write_uid
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Darrera Actualització per"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wizard_remove_flowmeter_readings_write_date
@@ -404,7 +422,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_write_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera Actualització el"
 
 #. module: base_wua_irrigation_measurement
 #: selection:wua.in.fm,flowmeter_type:0
@@ -415,6 +433,12 @@ msgstr "Level Probe"
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wizard_remove_flowmeter_readings_view_form
 msgid "NOTE: The date range must include the last reading."
 msgstr "NOTA: L’interval de dates ha d’incloure la darrera lectura."
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.actions.act_window,name:base_wua_irrigation_measurement.wua_negative_intake_reading_action
+#: model:ir.ui.menu,name:base_wua_irrigation_measurement.wua_negative_intake_reading_menu
+msgid "Negative Intake Readings"
+msgstr "Lectures de captació negatives"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_search
@@ -506,7 +530,7 @@ msgstr "Lectures per suprimir"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_volume_real
 msgid "Real Value (m3)"
-msgstr "Valor real (m3)"
+msgstr "Valor real (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: sql_constraint:wua.intakeconsumption:0
@@ -558,11 +582,6 @@ msgstr "Fins"
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intake_view_form
 msgid "Total"
 msgstr "Total"
-
-#. module: base_wua_irrigation_measurement
-#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_agriculturalseason_total_volume
-msgid "Total Volume (m3)"
-msgstr "Volum total (m3)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_flowmeter_type
@@ -632,8 +651,8 @@ msgstr "Validada: Sí"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_volume
-msgid "Value (m3)"
-msgstr "Valor (m3)"
+msgid "Value (m³)"
+msgstr "Value (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: sql_constraint:wua.flowreading:0
@@ -644,7 +663,7 @@ msgstr "El volum d’aigua no pot ser negatiu."
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_flowmeter_nominal_water_flow
 msgid "Water Flow (m3/hour)"
-msgstr "Cabal (m3 / hora)"
+msgstr "Cabal (m³/hora)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_search

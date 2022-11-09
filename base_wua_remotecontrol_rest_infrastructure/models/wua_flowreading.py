@@ -98,6 +98,7 @@ class WuaFlowreading(models.Model):
                         'volume': flowreading['volume'],
                         'instant_flow': flowreading['instant_flow'],
                         'consumption_volume': negative_volume,
+                        'from_remotecontrol': True,
                         })
                     number_of_negative_flowreadings = \
                         number_of_negative_flowreadings + 1

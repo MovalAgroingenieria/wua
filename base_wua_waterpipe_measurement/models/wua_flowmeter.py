@@ -12,11 +12,11 @@ class WuaFlowmeter(models.Model):
         string='Last Reading Time',)
 
     last_waterpipeflowreading_value = fields.Float(
-        string='Last Reading Value (m3)',
+        string='Last Reading Value (m³)',
         digits=(32, 4))
 
     last_waterpipeflowreading_instantflow = fields.Float(
-        string='Last Instant Flow (m3/h)',
+        string='Last Instant Flow (m³/h)',
         digits=(32, 4))
 
     last_reading_time_show = fields.Datetime(
@@ -25,13 +25,13 @@ class WuaFlowmeter(models.Model):
         store=True,)
 
     last_reading_value_show = fields.Float(
-        string='Last Reading Value (m3)',
+        string='Last Reading Value (m³)',
         digits=(32, 4),
         compute='_compute_last_reading_value_show',
         store=True,)
 
     last_reading_instantflow_show = fields.Float(
-        string='Last Instant Flow (m3/h)',
+        string='Last Instant Flow (m³/h)',
         digits=(32, 4),
         compute='_compute_last_reading_instantflow_show',
         store=True,)
@@ -40,11 +40,11 @@ class WuaFlowmeter(models.Model):
         string='Last Reading Time',)
 
     last_reading_value_original = fields.Float(
-        string='Last Reading Value (m3)',
+        string='Last Reading Value (m³)',
         digits=(32, 4),)
 
     last_reading_instantflow_original = fields.Float(
-        string='Last Instant Flow (m3/h)',
+        string='Last Instant Flow (m³/h)',
         digits=(32, 4),)
 
     waterpipe_ids = fields.One2many(

@@ -24,6 +24,7 @@
         "views/wua_intakeconsumption_view.xml",
         "views/wua_flowmeter_view.xml",
         "views/wua_intake_view.xml",
+        "views/wua_negative_flowreading_view.xml",
     ],
     "installable": True,
     "application": True,

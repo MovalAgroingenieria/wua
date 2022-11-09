@@ -12,11 +12,11 @@ class WuaFlowmeter(models.Model):
         string='Last Reading Time',)
 
     last_reading_value = fields.Float(
-        string='Last Reading Value (m3)',
+        string='Last Reading Value (m³)',
         digits=(32, 4))
 
     last_reading_instantflow = fields.Float(
-        string='Last Instant Flow (m3/h)',
+        string='Last Instant Flow (m³/h)',
         digits=(32, 4))
 
     flowreading_ids = fields.One2many(

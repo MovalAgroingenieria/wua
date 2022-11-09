@@ -101,6 +101,7 @@ class WuaWaterpipeflowreading(models.Model):
                         'volume': waterpipeflowreading['volume'],
                         'instant_flow': waterpipeflowreading['instant_flow'],
                         'consumption_volume': negative_volume,
+                        'from_remotecontrol': True,
                         })
                     number_of_negative_waterpipeflowreadings = \
                         number_of_negative_waterpipeflowreadings + 1

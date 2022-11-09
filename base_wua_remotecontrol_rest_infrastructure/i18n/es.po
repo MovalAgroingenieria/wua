@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-24 11:17+0000\n"
-"PO-Revision-Date: 2022-10-24 11:17+0000\n"
+"POT-Creation-Date: 2022-11-09 07:47+0000\n"
+"PO-Revision-Date: 2022-11-09 07:47+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,12 +26,7 @@ msgstr "&nbsp;&nbsp;"
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model,name:base_wua_remotecontrol_rest_infrastructure.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuration of irrigation with type of water"
-
-#. module: base_wua_remotecontrol_rest_infrastructure
-#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_negative_flowreading_view_tree
-msgid "Cons. Value (m3)"
-msgstr "Consumo bruto (m³)"
+msgstr "Configuración del riego con tipo de agua"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_flowmeter_conversion_factor
@@ -74,18 +69,12 @@ msgid "Entity (waterpipe flow reading)"
 msgstr "Elemento (lectura en ramal)"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: sql_constraint:wua.negative.flowreading:0
-msgid "Existing Negative Flow-Reading."
-msgstr "Lectura negativa de caudalímetro preexistente."
-
-#. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_instant_flow
-msgid "Flow (m3/h)"
-msgstr "Caudal (m3/h)"
+msgid "Flow (m³/h)"
+msgstr "Caudal (m³/h)"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_flowmeter_id
-#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_negative_flowreading_view_search
 msgid "Flow Meter"
 msgstr "Caudalímetro"
 
@@ -93,6 +82,16 @@ msgstr "Caudalímetro"
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_name
 msgid "Flow-Meter Reading"
 msgstr "Lectura de captación"
+
+#. module: base_wua_remotecontrol_rest_infrastructure
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_from_remotecontrol
+msgid "From remotecontrol"
+msgstr "Origen telecontrol"
+
+#. module: base_wua_remotecontrol_rest_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_negative_flowreading_view_search
+msgid "From remotecontrol: Yes"
+msgstr "Origen telecontrol: Sí"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #. openerp-web
@@ -109,19 +108,9 @@ msgid "Get readings"
 msgstr "Obtener lecturas"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_negative_flowreading_view_search
-msgid "Group By"
-msgstr "Agrupar por"
-
-#. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_id
 msgid "ID"
 msgstr "ID"
-
-#. module: base_wua_remotecontrol_rest_infrastructure
-#: selection:wua.flowmeter,telecontrol_rest_associated:0
-msgid "INELCOM"
-msgstr "INELCOM"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #. openerp-web
@@ -140,7 +129,6 @@ msgstr "¿Importar lecturas de ramal?"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_intake_id
-#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_negative_flowreading_view_search
 msgid "Intake"
 msgstr "Captación"
 
@@ -182,18 +170,6 @@ msgstr "Introducción manual: No (procedente del telecontrol)"
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_waterpipeflowreading_view_search
 msgid "Manual Introduction: Yes"
 msgstr "Introducción manual: Sí"
-
-#. module: base_wua_remotecontrol_rest_infrastructure
-#: model:ir.actions.act_window,name:base_wua_remotecontrol_rest_infrastructure.wua_negative_intake_reading_action
-#: model:ir.ui.menu,name:base_wua_remotecontrol_rest_infrastructure.wua_negative_intake_reading_menu
-msgid "Negative Intake Readings"
-msgstr "Lecturas de captación negativas"
-
-#. module: base_wua_remotecontrol_rest_infrastructure
-#: model:ir.actions.act_window,name:base_wua_remotecontrol_rest_infrastructure.wua_negative_waterpipe_reading_action
-#: model:ir.ui.menu,name:base_wua_remotecontrol_rest_infrastructure.wua_negative_waterpipe_reading_menu
-msgid "Negative Waterpipe Readings"
-msgstr "Lecturas de ramal negativas"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #. openerp-web
@@ -239,13 +215,13 @@ msgid "Remote Control: Getting water-pipe readings"
 msgstr "Remote Control: Getting water-pipe readings"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:116
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_flowreading.py:117
 #, python-format
 msgid "Remote Control: Saved flow-readings"
 msgstr "Remote Control: Saved flow-readings"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
-#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:119
+#: code:addons/base_wua_remotecontrol_rest_infrastructure/models/wua_waterpipeflowreading.py:120
 #, python-format
 msgid "Remote Control: Saved water-pipe readings"
 msgstr "Remote Control: Saved water-pipe readings"
@@ -276,8 +252,8 @@ msgstr "Tipo de telecontrol asociado"
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_consumption_volume
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_volume
-msgid "Value (m3)"
-msgstr "Valor (m3)"
+msgid "Value (m³)"
+msgstr "Valor (m³)"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #. openerp-web
@@ -289,7 +265,6 @@ msgstr "AVISO"
 
 #. module: base_wua_remotecontrol_rest_infrastructure
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest_infrastructure.field_wua_negative_flowreading_waterpipe_id
-#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest_infrastructure.wua_negative_flowreading_view_search
 msgid "Water Pipe"
 msgstr "Ramal"
 

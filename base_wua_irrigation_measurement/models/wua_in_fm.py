@@ -73,7 +73,7 @@ class WuaInFm(models.Model):
         compute='_compute_values')
 
     flowmeter_nominal_water_flow = fields.Float(
-        string='Water Flow (m3/hour)',
+        string='Water Flow (m³/hour)',
         digits=(32, 2),
         compute='_compute_values')
 

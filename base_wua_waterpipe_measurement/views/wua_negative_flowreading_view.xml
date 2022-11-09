@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_negative_flowreading_view_tree" model="ir.ui.view">
+        <field name="name">Negative Flow-Readings (tree view)</field>
+        <field name="model">wua.negative.flowreading</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_negative_flowreading_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='intake_id']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_negative_flowreading_view_search" model="ir.ui.view">
+        <field name="name">Negative Flow-Readings (search view)</field>
+        <field name="model">wua.negative.flowreading</field>
+        <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_negative_flowreading_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='intake_id']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='intake']" position="after">
+                <filter string="Water Pipe"
+                    name="waterpipe"
+                    context="{'group_by':'waterpipe_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_negative_waterpipe_reading_action" model="ir.actions.act_window">
+        <field name="name">Negative Waterpipe Readings</field>
+        <field name="res_model">wua.negative.flowreading</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_negative_flowreading_view_tree"/>
+        <field name="search_view_id" ref="wua_negative_flowreading_view_search"/>
+        <field name="domain">[("waterpipe_id", "!=", False)]</field>
+    </record>
+
+    <menuitem id="wua_negative_waterpipe_reading_menu"
+              name="Negative Waterpipe Readings"
+              parent="base_wua_irrigation_measurement.base_wua_irrigation_measurement_menu"
+              action="wua_negative_waterpipe_reading_action"
+              sequence="99"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

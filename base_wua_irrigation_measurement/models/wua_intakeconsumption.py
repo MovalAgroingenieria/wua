@@ -27,7 +27,7 @@ class WuaIntakeconsumption(models.Model):
         default=lambda self: fields.datetime.now())
 
     initial_volume = fields.Float(
-        string='Initial Value (m3)',
+        string='Initial Value (m³)',
         required=True,
         readonly=True,
         default=0,
@@ -41,14 +41,14 @@ class WuaIntakeconsumption(models.Model):
         default=lambda self: fields.datetime.now())
 
     end_volume = fields.Float(
-        string='Final Value (m3)',
+        string='Final Value (m³)',
         required=True,
         readonly=True,
         default=0,
         digits=(32, 4))
 
     volume = fields.Float(
-        string='Gross Value (m3)',
+        string='Gross Value (m³)',
         store=True,
         digits=(32, 4),
         compute='_compute_volume')
@@ -87,13 +87,13 @@ class WuaIntakeconsumption(models.Model):
         ondelete='restrict')
 
     adjustement_volume = fields.Float(
-        string='Adjust. Value (m3)',
+        string='Adjust. Value (m³)',
         required=True,
         digits=(32, 4),
         default=0)
 
     volume_real = fields.Float(
-        string='Real Value (m3)',
+        string='Real Value (m³)',
         digits=(32, 4),
         store=True,
         compute='_compute_volume_real')

@@ -26,7 +26,7 @@
         "views/wua_waterpipeflowreading_view.xml",
         "views/wua_flowmeter_view.xml", ],
     'qweb': ['static/src/xml/button_import_flowreadings.xml',
-             'static/src/xml/button_import_waterpipeflowreadings.xml',],
+             'static/src/xml/button_import_waterpipeflowreadings.xml', ],
     "installable": True,
     "application": False,
 }

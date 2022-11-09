@@ -31,13 +31,13 @@ class WuaFlowreading(models.Model):
         default=lambda self: fields.datetime.now())
 
     volume = fields.Float(
-        string='Value (m3)',
+        string='Value (m³)',
         digits=(32, 4),
         required=True,
         default=0)
 
     instant_flow = fields.Float(
-        string='Flow (m3/h)',
+        string='Flow (m³/h)',
         digits=(32, 4),
         required=True,
         default=0)

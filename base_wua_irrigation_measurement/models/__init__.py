@@ -8,3 +8,4 @@ from . import wua_in_fm
 from . import wua_flowmeter
 from . import wua_intake
 from . import wua_agriculturalseason
+from . import wua_negative_flowreading
