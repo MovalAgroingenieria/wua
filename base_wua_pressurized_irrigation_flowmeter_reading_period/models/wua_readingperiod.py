@@ -21,7 +21,6 @@ class WuaReadingperiod(models.Model):
 
     flowmeters = fields.Char(
         string='Flow-Meters',
-        size=100,
         store=True,
         compute='_compute_flowmeters')
 
@@ -46,6 +45,17 @@ class WuaReadingperiod(models.Model):
         store=True,
         index=True,
         compute='_compute_number_of_waterpipeflowreadings')
+
+    negative_flowreading_ids = fields.One2many(
+        string='Negative Flowreadings',
+        comodel_name='wua.negative.flowreading',
+        inverse_name='readingperiod_id')
+
+    number_of_negative_flowreadings = fields.Integer(
+        string='Number of negative flowreadings',
+        store=True,
+        index=True,
+        compute='_compute_number_of_negative_flowreadings')
 
     @api.depends('readingperiodflowmeterline_ids')
     def _compute_flowmeters(self):
@@ -84,12 +94,23 @@ class WuaReadingperiod(models.Model):
                 number_of_flowreadings = len(record.flowreading_ids)
             record.number_of_flowreadings = number_of_flowreadings
 
+    @api.depends('negative_flowreading_ids')
+    def _compute_number_of_negative_flowreadings(self):
+        for record in self:
+            number_of_negative_flowreadings = 0
+            if (record.negative_flowreading_ids):
+                number_of_negative_flowreadings = len(
+                    record.negative_flowreading_ids)
+            record.number_of_negative_flowreadings = \
+                number_of_negative_flowreadings
+
     @api.multi
     def action_cancel_readingperiod(self):
         self.ensure_one()
         readingperiod = self
-        if (readingperiod.reading_ids or self.flowreading_ids or
-                self.waterpipeflowreading_ids):
+        if (self.reading_ids or self.negative_reading_ids or
+            self.flowreading_ids or self.waterpipeflowreading_ids or
+                self.negative_flowreading_ids):
             raise exceptions.UserError(_(
                 'Operation not allowed: this reading period has some '
                 'associated readings. Before canceling, it is mandatory to '
@@ -115,6 +136,32 @@ class WuaReadingperiod(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Flow Readings'),
             'res_model': 'wua.flowreading',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+        }
+        return act_window
+
+    @api.multi
+    def action_get_negative_flowreading_ids(self):
+        self.ensure_one()
+        condition = [('readingperiod_id', '=', self.id)]
+        id_form_view = self.env.ref(
+            'base_wua_irrigation_measurement.'
+            'wua_negative_flowreading_view_form').id
+        id_tree_view = self.env.ref(
+            'base_wua_irrigation_measurement.'
+            'wua_negative_flowreading_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_irrigation_measurement.'
+            'wua_negative_flowreading_view_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Negative flowreadings'),
+            'res_model': 'wua.negative.flowreading',
             'view_type': 'form',
             'view_mode': 'tree',
             'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
@@ -212,6 +259,12 @@ class WuaReadingperiodFlowmeterLine(models.Model):
         comodel_name='wua.flowreading',
         ondelete='set null',)
 
+    negative_flowreading_id = fields.Many2one(
+        string='Negative Flowreading',
+        readonly=True,
+        comodel_name='wua.negative.flowreading',
+        ondelete='set null',)
+
     waterpipeflowreading_id = fields.Many2one(
         string='Water-Pipe Reading',
         readonly=True,
@@ -251,10 +304,13 @@ class WuaReadingperiodFlowmeterLine(models.Model):
 
     @api.depends('readingperiod_id.waterpipeflowreading_ids',
                  'readingperiod_id.flowreading_ids',
+                 'readingperiod_id.negative_flowreading_ids',
                  'waterpipeflowreading_id',
-                 'flowreading_id')
+                 'flowreading_id',
+                 'negative_flowreading_id')
     def _compute_is_visited(self):
         for record in self:
             is_visited = record.flowreading_id or \
-                record.waterpipeflowreading_id
+                record.waterpipeflowreading_id or \
+                record.negative_flowreading_id
             record.is_visited = is_visited

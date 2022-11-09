@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-07 14:28+0000\n"
-"PO-Revision-Date: 2021-07-07 14:28+0000\n"
+"POT-Creation-Date: 2022-11-09 11:39+0000\n"
+"PO-Revision-Date: 2022-11-09 11:39+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,12 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_flowmeter_reading_period.wua_readingperiod_view_form
 msgid "<span class=\"o_stat_text\">Intake</span>\n"
 "                        <span class=\"o_stat_text\">Readings</span>"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_flowmeter_reading_period
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_flowmeter_reading_period.wua_readingperiod_view_form
+msgid "<span class=\"o_stat_text\">Negative</span>\n"
+"                        <span class=\"o_stat_text\">Flowreadings</span>"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
@@ -53,25 +59,32 @@ msgid "Entity (flow reading)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
+#: model:ir.model,name:base_wua_pressurized_irrigation_flowmeter_reading_period.model_wua_negative_flowreading
+msgid "Entity (negative flow reading)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: model:ir.model,name:base_wua_pressurized_irrigation_flowmeter_reading_period.model_wua_waterpipeflowreading
 msgid "Entity (waterpipe flow reading)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_flowreading_is_field_reading
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_negative_flowreading_is_field_reading
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_waterpipeflowreading_is_field_reading
 msgid "Field Reading"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_flowreading.py:47
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_negative_flowreading.py:47
 #: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_waterpipeflowreading.py:47
 #, python-format
 msgid "Field readings must have a watermeter reader and reading period."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
-#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:116
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:137
 #, python-format
 msgid "Flow Readings"
 msgstr ""
@@ -93,6 +106,11 @@ msgid "Flowmeter Visited?"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_flowmeter_reading_period.wua_negative_flowreading_view_search
+msgid "From field: Yes"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_flowmeter_reading_period.wua_readingperiod_view_form
 msgid "Get flowmeters"
 msgstr ""
@@ -103,7 +121,7 @@ msgid "ID"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
-#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:156
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:203
 #, python-format
 msgid "If a period already has flowmeters, this operation is not possible."
 msgstr ""
@@ -151,6 +169,22 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_readingperiod_flowmeterline_negative_flowreading_id
+msgid "Negative Flowreading"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_flowmeter_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_readingperiod_negative_flowreading_ids
+msgid "Negative Flowreadings"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_flowmeter_reading_period
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:163
+#, python-format
+msgid "Negative flowreadings"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_readingperiod_number_of_flowmeters
 msgid "Number of flow-meters"
 msgstr ""
@@ -161,20 +195,27 @@ msgid "Number of intake readings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_readingperiod_number_of_negative_flowreadings
+msgid "Number of negative flowreadings"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_readingperiod_number_of_waterpipeflowreadings
 msgid "Number of water-pipe readings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
-#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:93
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:114
 #, python-format
 msgid "Operation not allowed: this reading period has some associated readings. Before canceling, it is mandatory to remove this readings."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_flowreading_reading_img
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_negative_flowreading_reading_img
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_waterpipeflowreading_reading_img
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_flowmeter_reading_period.wua_flowreading_view_form
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_flowmeter_reading_period.wua_negative_flowreading_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_flowmeter_reading_period.wua_waterpipewaterpipeflowreading_view_form
 msgid "Reading Image"
 msgstr ""
@@ -182,6 +223,7 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: model:ir.model,name:base_wua_pressurized_irrigation_flowmeter_reading_period.model_wua_readingperiod
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_flowreading_readingperiod_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_negative_flowreading_readingperiod_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_readingperiod_flowmeterline_readingperiod_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_waterpipeflowreading_readingperiod_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_flowmeter_reading_period.wua_flowreading_view_search
@@ -209,14 +251,15 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_flowreading.py:57
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_negative_flowreading.py:57
 #: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_waterpipeflowreading.py:57
 #, python-format
 msgid "This User don't belongs to watermeter reader group."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
-#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_flowreading.py:103
-#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_waterpipeflowreading.py:104
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_flowreading.py:116
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_waterpipeflowreading.py:121
 #, python-format
 msgid "This flowmeter does not belong to the open reading period."
 msgstr ""
@@ -228,6 +271,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_flowreading_watermeter_reader_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_negative_flowreading_watermeter_reader_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_waterpipeflowreading_watermeter_reader_id
 msgid "Water-Meter Reader"
 msgstr ""
@@ -238,7 +282,7 @@ msgid "Water-Pipe Reading"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_flowmeter_reading_period
-#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:142
+#: code:addons/base_wua_pressurized_irrigation_flowmeter_reading_period/models/wua_readingperiod.py:189
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_flowmeter_reading_period.field_wua_readingperiod_waterpipeflowreading_ids
 #, python-format
 msgid "Water-Pipe Readings"

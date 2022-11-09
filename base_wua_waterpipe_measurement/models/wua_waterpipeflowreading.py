@@ -317,3 +317,21 @@ class WuaWaterpipeflowreading(models.Model):
         for waterpipeflowreading in waterpipeflowreadings:
             if waterpipeflowreading.validated:
                 waterpipeflowreading.cancel_waterpipeflowreading()
+
+    def is_negative_waterpipeflowreading(self, waterpipeflowreading):
+        is_negative = False
+        negative_volume = 0
+        current_volume = waterpipeflowreading['volume']
+        current_reading_time = datetime.datetime.now().strftime(
+            '%Y-%m-%d %H:%M:%S')
+        previous_waterpipeflowreading = \
+            self.env['wua.waterpipeflowreading'].search(
+                [('flowmeter_id', '=', waterpipeflowreading['flowmeter_id']),
+                 ('reading_time', '<', current_reading_time)],
+                limit=1, order='reading_time desc')
+        if previous_waterpipeflowreading:
+            previous_volume = previous_waterpipeflowreading[0].volume
+            if previous_volume > current_volume:
+                is_negative = True
+                negative_volume = current_volume - previous_volume
+        return is_negative, negative_volume

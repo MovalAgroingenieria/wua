@@ -23,6 +23,7 @@
         "views/wua_readingperiod_view.xml",
         "views/wua_flowreading_view.xml",
         "views/wua_waterpipeflowreading_view.xml",
+        "views/wua_negative_flowreading_view.xml",
     ],
     "installable": True,
     "application": True,

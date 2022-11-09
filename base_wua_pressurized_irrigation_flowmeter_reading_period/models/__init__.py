@@ -5,3 +5,4 @@
 from . import wua_readingperiod
 from . import wua_flowreading
 from . import wua_waterpipeflowreading
+from . import wua_negative_flowreading

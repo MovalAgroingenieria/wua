@@ -117,20 +117,3 @@ class WuaFlowreading(models.Model):
                 _logger.info(_('Remote Control: Saved flow-readings') +
                              '... ' + str(number_of_flowreadings))
         return number_of_negative_flowreadings
-
-    def is_negative_flowreading(self, flowreading):
-        is_negative = False
-        negative_volume = 0
-        current_volume = flowreading['volume']
-        current_reading_time = datetime.datetime.now().strftime(
-            '%Y-%m-%d %H:%M:%S')
-        previous_flowreading = self.env['wua.flowreading'].search(
-            [('flowmeter_id', '=', flowreading['flowmeter_id']),
-             ('reading_time', '<', current_reading_time)],
-            limit=1, order='reading_time desc')
-        if previous_flowreading:
-            previous_volume = previous_flowreading[0].volume
-            if previous_volume > current_volume:
-                is_negative = True
-                negative_volume = current_volume - previous_volume
-        return is_negative, negative_volume

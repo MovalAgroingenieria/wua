@@ -92,8 +92,21 @@ class WuaFlowreading(models.Model):
              ('flowmeter_id', '=', flowmeter_id)])
         if old_flowreading:
             old_flowreading.unlink()
+        old_negative_flowreading = self.sudo().\
+            env['wua.negative.flowreading'].search(
+                ['&', ('flowmeter_id', '=', flowmeter_id),
+                 ('readingperiod_id', '=', readingperiod.id)])
+        if old_negative_flowreading:
+            old_negative_flowreading.unlink()
+        # Check if new reading will be positive or negative
+        is_negative, negative_volume = self.is_negative_flowreading(vals)
         try:
-            new_flowreading = flowreading_model.create(vals)
+            if (is_negative):
+                vals['consumption_volume'] = negative_volume
+                new_flowreading = self.sudo().env['wua.negative.flowreading'].\
+                    create(vals)
+            else:
+                new_flowreading = flowreading_model.create(vals)
         except Exception as e:
             raise exceptions.UserError(e)
         readingperiodflowmeterline = readingperiodflowmeterline_model.search(
@@ -102,6 +115,10 @@ class WuaFlowreading(models.Model):
         if not readingperiodflowmeterline:
             raise exceptions.UserError(_(
                 'This flowmeter does not belong to the open reading period.'))
-        readingperiodflowmeterline.write(
-            {'flowreading_id': new_flowreading.id})
+        if (is_negative):
+            readingperiodflowmeterline.write(
+                {'negative_flowreading_id': new_flowreading.id})
+        else:
+            readingperiodflowmeterline.write(
+                {'flowreading_id': new_flowreading.id})
         return new_flowreading.id

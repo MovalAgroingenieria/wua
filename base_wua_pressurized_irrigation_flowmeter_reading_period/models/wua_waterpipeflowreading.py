@@ -88,13 +88,30 @@ class WuaWaterpipeflowreading(models.Model):
             'watermeter_reader_id': watermeter_reader_id,
             'reading_img': reading_img
             }
+        # Removed others readings or negative reading when creating
+        # new one
         old_waterpipeflowreading = waterpipeflowreading_model.search(
             [('readingperiod_id', '=', readingperiod.id),
              ('flowmeter_id', '=', flowmeter_id)])
         if old_waterpipeflowreading:
             old_waterpipeflowreading.unlink()
+        old_negative_flowreading = self.sudo().\
+            env['wua.negative.flowreading'].search(
+                ['&', ('flowmeter_id', '=', flowmeter_id),
+                 ('readingperiod_id', '=', readingperiod.id)])
+        if old_negative_flowreading:
+            old_negative_flowreading.unlink()
+        # Check if new reading will be positive or negative
+        is_negative, negative_volume = self.is_negative_waterpipeflowreading(
+            vals)
         try:
-            new_waterpipeflowreading = waterpipeflowreading_model.create(vals)
+            if (is_negative):
+                vals['consumption_volume'] = negative_volume
+                new_waterpipeflowreading = self.sudo().\
+                    env['wua.negative.flowreading'].create(vals)
+            else:
+                new_waterpipeflowreading = waterpipeflowreading_model.\
+                    create(vals)
         except Exception as e:
             raise exceptions.UserError(e)
         readingperiodflowmeterline = readingperiodflowmeterline_model.search(
@@ -103,6 +120,10 @@ class WuaWaterpipeflowreading(models.Model):
         if not readingperiodflowmeterline:
             raise exceptions.UserError(_(
                 'This flowmeter does not belong to the open reading period.'))
-        readingperiodflowmeterline.write(
-            {'waterpipeflowreading_id': new_waterpipeflowreading.id})
+        if (is_negative):
+            readingperiodflowmeterline.write(
+                {'waterpipeflowreading_id': new_waterpipeflowreading.id})
+        else:
+            readingperiodflowmeterline.write(
+                {'negative_flowreading_id': new_waterpipeflowreading.id})
         return new_waterpipeflowreading.id

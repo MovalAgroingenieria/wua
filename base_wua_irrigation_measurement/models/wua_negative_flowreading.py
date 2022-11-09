@@ -55,6 +55,8 @@ class WuaNegativeFlowreading(models.Model):
         compute='_compute_name',
         index=True)
 
+    notes = fields.Html(string='Notes')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Negative Flow-Reading.'),

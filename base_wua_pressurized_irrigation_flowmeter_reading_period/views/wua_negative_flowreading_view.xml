@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_negative_flowreading_view_form" model="ir.ui.view">
+        <field name="name">Negative Flowreadings (form view)</field>
+        <field name="model">wua.negative.flowreading</field>
+        <field name="inherit_id" ref="base_wua_waterpipe_measurement.wua_negative_flowreading_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='waterpipe_id']" position="after">
+                <field name="is_field_reading" invisible="1"/>
+                <field name="readingperiod_id" attrs="{'invisible':[('is_field_reading','=',False)]}"/>
+                <field name="watermeter_reader_id" attrs="{'invisible':[('is_field_reading','=',False)]}"/>
+            </xpath>
+            <xpath expr="//page[@name='notes_page']" position="after">
+                <page name="reading_img" string="Reading Image">
+                    <group name="reading_img_group">
+                        <field name="reading_img" widget="image" class="oe_img_259_160"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_negative_flowreading_view_search" model="ir.ui.view">
+        <field name="name">Negative Flowreadings (search view)</field>
+        <field name="model">wua.negative.flowreading</field>
+        <field name="inherit_id" ref="base_wua_waterpipe_measurement.wua_negative_flowreading_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="field[@name='waterpipe_id']" position="after">
+                <filter string="From field: Yes" name="isfieldreadingyes"
+                 domain="[('is_field_reading','=',True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

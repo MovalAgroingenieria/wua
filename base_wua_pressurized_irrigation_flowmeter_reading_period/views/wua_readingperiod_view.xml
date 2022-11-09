@@ -20,7 +20,8 @@
                 <button name="action_get_flowreading_ids"
                         type="object" class="oe_stat_button"
                         icon="fa-list-ol"
-                        attrs="{'invisible':[('id','&lt;=',0)]}">
+                        attrs="{'invisible':['|', ('id','&lt;=',0),
+                                             ('number_of_flowreadings','=',0)]}">
                     <div class="o_form_field o_stat_info">
                         <span class="o_stat_text">Intake</span>
                         <span class="o_stat_text">Readings</span>
@@ -29,10 +30,21 @@
                 <button name="action_get_waterpipeflowreading_ids"
                         type="object" class="oe_stat_button"
                         icon="fa-list-ol"
-                        attrs="{'invisible':[('id','&lt;=',0)]}">
+                        attrs="{'invisible':['|', ('id','&lt;=',0),
+                                             ('number_of_waterpipeflowreadings','=',0)]}">
                     <div class="o_form_field o_stat_info">
                         <span class="o_stat_text">Water-Pipe</span>
                         <span class="o_stat_text">Readings</span>
+                    </div>
+                </button>
+                <button name="action_get_negative_flowreading_ids"
+                        type="object" class="oe_stat_button"
+                        icon="fa-list-ol"
+                        attrs="{'invisible':['|', ('id','&lt;=',0),
+                                             ('number_of_negative_flowreadings','=',0)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Negative</span>
+                        <span class="o_stat_text">Flowreadings</span>
                     </div>
                 </button>
             </xpath>
@@ -41,6 +53,8 @@
                     attrs="{'invisible':[('number_of_flowreadings','=',0)]}"/>
                 <field name="number_of_waterpipeflowreadings"
                     attrs="{'invisible':[('number_of_waterpipeflowreadings','=',0)]}"/>
+                <field name="number_of_negative_flowreadings"
+                    attrs="{'invisible':[('number_of_negative_flowreadings','=',0)]}"/>
             </xpath>
             <xpath expr="//page[@name='notes_page']" position="before">
                 <page name="flowmeters_page" string="Flow-Meters">
