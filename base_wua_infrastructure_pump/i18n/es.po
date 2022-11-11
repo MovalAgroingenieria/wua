@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-19 12:05+0000\n"
-"PO-Revision-Date: 2021-04-19 12:05+0000\n"
+"POT-Creation-Date: 2022-11-15 08:42+0000\n"
+"PO-Revision-Date: 2022-11-15 08:42+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -129,6 +129,11 @@ msgid "Entity (Water pipe)"
 msgstr "Elemento (Ramal)"
 
 #. module: base_wua_infrastructure_pump
+#: model:ir.model,name:base_wua_infrastructure_pump.model_wua_flowmeter
+msgid "Entity (flowmeter)"
+msgstr "Elemento (caudalímetro)"
+
+#. module: base_wua_infrastructure_pump
 #: model:ir.model,name:base_wua_infrastructure_pump.model_wua_hydraulicsector
 msgid "Entity (hydraulic sector)"
 msgstr "Elemento (sector hidráulico)"
@@ -177,6 +182,11 @@ msgstr "Código de bombeo existente."
 #: sql_constraint:wua.pumpgroup:0
 msgid "Existing pumpgroup."
 msgstr "Bombeo existente."
+
+#. module: base_wua_infrastructure_pump
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_pumpgroup_flowmeter_id
+msgid "Flow Meter"
+msgstr "Caudalímetro"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_with_gis_photovoltaicplant
@@ -319,7 +329,7 @@ msgid "Isolated Photovoltaic Pumping"
 msgstr "Bombeo fotovoltaico aislado"
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:186
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:191
 #, python-format
 msgid "It is not possible to populate the intake and waterpipe fields."
 msgstr "No es posible rellenar los campos de captación y ramal, elimine uno."
@@ -455,7 +465,7 @@ msgstr "Parámetro bombeo"
 #. module: base_wua_infrastructure_pump
 #: model:ir.model,name:base_wua_infrastructure_pump.model_wua_parcel
 msgid "Parcels (integrated GIS)"
-msgstr "Parcelas (integradas GIS)"
+msgstr "Parcels (integrated GIS)"
 
 #. module: base_wua_infrastructure_pump
 #: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_photovoltaicplant_photo_01
@@ -573,13 +583,14 @@ msgstr "Bombas"
 #: code:addons/base_wua_infrastructure_pump/models/wua_photovoltaicplant.py:229
 #: code:addons/base_wua_infrastructure_pump/models/wua_waterpipe.py:30
 #: model:ir.actions.act_window,name:base_wua_infrastructure_pump.wua_pumpgroup_action
+#: model:ir.model.fields,field_description:base_wua_infrastructure_pump.field_wua_flowmeter_pumpgroup_ids
 #: model:ir.ui.menu,name:base_wua_infrastructure_pump.wua_pumpgroup_menu
 #, python-format
 msgid "Pumpgroups"
 msgstr "Bombeos"
 
 #. module: base_wua_infrastructure_pump
-#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:331
+#: code:addons/base_wua_infrastructure_pump/models/wua_pumpgroup.py:336
 #: model:ir.actions.act_window,name:base_wua_infrastructure_pump.wua_pumpunit_action
 #: model:ir.ui.menu,name:base_wua_infrastructure_pump.wua_pumpunit_menu
 #, python-format
@@ -682,3 +693,4 @@ msgstr "Bomba pozo"
 #, python-format
 msgid "pump"
 msgstr "bomba"
+

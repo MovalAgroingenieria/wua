@@ -10,3 +10,4 @@ from . import wua_hydraulicsector
 from . import wua_infrastructure_config_settings
 from . import wua_waterpipe
 from . import wua_parcel
+from . import wua_flowmeter

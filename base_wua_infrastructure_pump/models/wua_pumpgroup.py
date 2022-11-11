@@ -158,6 +158,11 @@ class WuaPumpgroup(models.Model):
         string='GIS Pumpgroup',
     )
 
+    flowmeter_id = fields.Many2one(
+        string='Flow Meter',
+        comodel_name='wua.flowmeter',
+    )
+
     _sql_constraints = [
         ('unique_pumpgroup_code',
          'UNIQUE (pumpgroup_code)',

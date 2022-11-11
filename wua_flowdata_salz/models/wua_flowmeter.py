@@ -19,6 +19,7 @@ class WuaFlowmeter(models.Model):
 
     @api.multi
     def action_get_flowdata_salz(self):
+        _logger = logging.getLogger(self.__class__.__name__)
         url_salz, user_salz, passwd_salz = self._connection_params()
         salz_flowmeters = self._get_salz_flowmeters()
         if salz_flowmeters:
@@ -26,7 +27,7 @@ class WuaFlowmeter(models.Model):
                 if salz_flowmeter.id == self.id:
                     time, flow = self._get_telecontrol_data(
                         url_salz, user_salz, passwd_salz, salz_flowmeter)
-                    if time and flow:
+                    if time:
                         # Check if new data is newer than newest data in db
                         date_last_flowdata = ''
                         flowmeter_flowdata = self.env['wua.flowdata'].search(
@@ -37,16 +38,22 @@ class WuaFlowmeter(models.Model):
                                 flowmeter_flowdata[0].time,
                                 "%Y-%m-%d %H:%M:%S")
                             time = datetime.datetime.strptime(
-                                time.split('.')[0],"%Y-%m-%dT%H:%M:%S")
+                                time.split('.')[0], "%Y-%m-%dT%H:%M:%S")
                             local_timezone = pytz.timezone(self.env.user.tz)
                             offset = local_timezone.utcoffset(time)
                             time = time - offset
                             if date_last_flowdata < time:
                                 self._create_record(
                                     salz_flowmeter.id, time, flow)
+                                _logger.info(
+                                    'Flowdata inserting data: %s, %s, %s' %
+                                    (salz_flowmeter.name, time, flow))
                         else:
                             # First record
                             self._create_record(salz_flowmeter.id, time, flow)
+                            _logger.info(
+                                'Flowdata inserting data: %s, %s, %s' %
+                                (salz_flowmeter.name, time, flow))
 
     @api.model
     def action_get_flowdata_salz_cron(self):
@@ -59,7 +66,7 @@ class WuaFlowmeter(models.Model):
                              salz_flowmeter.name)
                 time, flow = self._get_telecontrol_data(
                     url_salz, user_salz, passwd_salz, salz_flowmeter)
-                if time and flow:
+                if time:
                     # Check if new data is newer than newest data in db
                     date_last_flowdata = ''
                     flowmeter_flowdata = self.env['wua.flowdata'].search(
@@ -70,7 +77,7 @@ class WuaFlowmeter(models.Model):
                             flowmeter_flowdata[0].time,
                             "%Y-%m-%d %H:%M:%S")
                         time = datetime.datetime.strptime(
-                            time.split('.')[0],"%Y-%m-%dT%H:%M:%S")
+                            time.split('.')[0], "%Y-%m-%dT%H:%M:%S")
                         local_timezone = pytz.timezone(self.env.user.tz)
                         offset = local_timezone.utcoffset(time)
                         time = time - offset
@@ -145,7 +152,7 @@ class WuaFlowmeter(models.Model):
         return time, flow
 
     def _create_record(self, flowmeter_id, time, flow):
-        if flowmeter_id and time and flow:
+        if flowmeter_id and time:
             flowdata = {
                 'flowmeter_id': flowmeter_id,
                 'time': time,
