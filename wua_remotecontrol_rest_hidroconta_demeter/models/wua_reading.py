@@ -45,32 +45,54 @@ class WuaReading(models.Model):
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
-            resprest = requests.request(
-                'POST', url_remotecontrol_rest + '/search',
-                headers={
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                    },
-                data=json.dumps({
-                    'type': ['hydrants'],
-                    'state': 'enabled'
-                    }))
             installation_identifier = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'installation_identifier')
-            if resprest.status_code == 200 and installation_identifier:
-                hydrants = json.loads(resprest.text)
-                for hydrant in hydrants:
-                    installationId = int(hydrant['installationId'])
-                    if installationId == installation_identifier:
-                        watermeter = \
-                            hydrant['counter']['code'].encode(
-                                'utf-8', 'ignore')
-                        volume = \
-                            hydrant['counter']['counterGlobalValue'] / 1000
-                        readings.append({
-                            'watermeter': watermeter,
-                            'volume': volume,
-                        })
+            if (installation_identifier):
+                request_headers = {
+                    'Content-Type': 'application/json',
+                    'Cookie': 'JSESSIONID=' + jsessionid
+                }
+                # Two type of watermeters, "hydrants" and "iris"
+                hydrants_req = requests.request(
+                    'POST', url_remotecontrol_rest + '/search',
+                    headers=request_headers,
+                    data=json.dumps({
+                        'type': ['hydrants'],
+                        'state': 'enabled'
+                        }))
+                if hydrants_req.status_code == 200:
+                    hydrants = json.loads(hydrants_req.text)
+                    for hydrant in hydrants:
+                        installationId = int(hydrant['installationId'])
+                        if installationId == installation_identifier:
+                            watermeter = \
+                                hydrant['counter']['code'].encode(
+                                    'utf-8', 'ignore')
+                            volume = \
+                                hydrant['counter']['counterGlobalValue'] / 1000
+                            readings.append({
+                                'watermeter': watermeter,
+                                'volume': volume,
+                            })
+                iris_req = requests.request(
+                    'POST', url_remotecontrol_rest + '/search',
+                    headers=request_headers,
+                    data=json.dumps({
+                        'type': ['iris'],
+                        'state': 'enabled'
+                        }))
+                if iris_req.status_code == 200:
+                    iris = json.loads(iris_req.text)
+                    for hydrant in iris:
+                        installationId = int(hydrant['installationId'])
+                        if installationId == installation_identifier:
+                            watermeter = \
+                                hydrant['code'].encode('utf-8', 'ignore')
+                            volume = hydrant['counterGlobalValue'] / 1000
+                            readings.append({
+                                'watermeter': watermeter,
+                                'volume': volume,
+                            })
             self.close_connection(url_remotecontrol_rest, jsessionid)
         return readings, error_message, error_watermeters
 

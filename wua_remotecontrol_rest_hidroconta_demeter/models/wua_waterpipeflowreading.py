@@ -75,37 +75,64 @@ class WuaWaterpipeflowreading(models.Model):
             url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if jsessionid:
-            resprest = requests.request(
-                'POST', url_remotecontrol_rest + '/search',
-                headers={
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                    },
-                data=json.dumps({
-                    'type': ['counters'],
-                    'state': 'enabled'
-                    }))
             installation_identifier = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'installation_identifier')
-            flow_in_liters = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'flow_in_liters')
-            if resprest.status_code == 200 and installation_identifier:
-                counters = json.loads(resprest.text)
-                for counter in counters:
-                    installationId = int(counter['installationId'])
-                    if installationId == installation_identifier:
-                        flowmeter = \
-                            counter['code'].encode('utf-8', 'ignore')
-                        volume = counter['counterGlobalValue'] / 1000
-                        instant_flow = counter['flow']
-                        # Flow on l/s?
-                        if (flow_in_liters):
-                            instant_flow = instant_flow * 3.6
-                        waterpipeflowreadings.append({
-                            'flowmeter': flowmeter,
-                            'volume': volume,
-                            'instant_flow': instant_flow,
-                        })
+            if (installation_identifier):
+                # Two type of flowmeters "counters" and "iris"
+                request_headers = {
+                    'Content-Type': 'application/json',
+                    'Cookie': 'JSESSIONID=' + jsessionid
+                }
+                flow_in_liters = self.env['ir.values'].get_default(
+                    'wua.irrigation.configuration', 'flow_in_liters')
+                counters_req = requests.request(
+                    'POST', url_remotecontrol_rest + '/search',
+                    headers=request_headers,
+                    data=json.dumps({
+                        'type': ['counters'],
+                        'state': 'enabled'
+                        }))
+                if counters_req.status_code == 200:
+                    counters = json.loads(counters_req.text)
+                    for counter in counters:
+                        installationId = int(counter['installationId'])
+                        if installationId == installation_identifier:
+                            flowmeter = \
+                                counter['code'].encode('utf-8', 'ignore')
+                            volume = counter['counterGlobalValue'] / 1000
+                            instant_flow = counter['flow']
+                            # Flow on l/s?
+                            if (flow_in_liters):
+                                instant_flow = instant_flow * 3.6
+                            waterpipeflowreadings.append({
+                                'flowmeter': flowmeter,
+                                'volume': volume,
+                                'instant_flow': instant_flow,
+                            })
+                iris_req = requests.request(
+                    'POST', url_remotecontrol_rest + '/search',
+                    headers=request_headers,
+                    data=json.dumps({
+                        'type': ['iris'],
+                        'state': 'enabled'
+                        }))
+                if iris_req.status_code == 200:
+                    iris = json.loads(iris_req.text)
+                    for counter in iris:
+                        installationId = int(counter['installationId'])
+                        if installationId == installation_identifier:
+                            flowmeter = \
+                                counter['code'].encode('utf-8', 'ignore')
+                            volume = counter['counterGlobalValue'] / 1000
+                            instant_flow = counter['flow']
+                            # Flow on l/s?
+                            if (flow_in_liters):
+                                instant_flow = instant_flow * 3.6
+                            waterpipeflowreadings.append({
+                                'flowmeter': flowmeter,
+                                'volume': volume,
+                                'instant_flow': instant_flow,
+                            })
             self.close_connection(url_remotecontrol_rest, jsessionid)
         return waterpipeflowreadings, error_message, error_flowmeters
 
