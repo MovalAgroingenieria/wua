@@ -55,6 +55,10 @@
                     <div class="oe_title">
                         <field name="id"
                          invisible="1"/>
+                        <field name="days_until_lease_ends"
+                         invisible="1"/>
+                        <field name="lease_dates_required"
+                         invisible="1"/>
                         <field name="parcel_type" widget="radio"
                          options="{'horizontal': true}"
                          style="width:270px"/>
@@ -67,6 +71,16 @@
                         <field name="county_id"
                          placeholder="County"
                          style="width:270px"/>
+                        <div name="leased_ended"
+                            colspan="2"
+                            style="display: inline-block;color:red;padding-top:10px;"
+                            attrs="{'invisible':
+                                ['|', '|', ('leased_parcel', '=', False),
+                                 ('days_until_lease_ends', '>', 0),
+                                 ('lease_dates_required', '!=', True),]}"
+                            class="oe_read_only">
+                            WARNING: Parcel leased has ended
+                        </div>
                     </div>
                     <group name="master_data">
                         <group>
@@ -131,13 +145,7 @@
                                  colspan="4"
                                  attrs="{'invisible':
                                     [('with_cultivationplan','=', False)]}"/>
-                                <field name="leased_parcel"
-                                 colspan="4" readonly="1"/>
                                 <newline/>
-                                <field name="leased_from"
-                                 colspan="4"/>
-                                <field name="leased_to"
-                                 colspan="4"/>
                                 <field name="elev_min"
                                  colspan="4"/>
                                 <field name="elev_max"
@@ -161,6 +169,20 @@
                                  digits="(10, 5)"
                                  attrs="{'invisible':
                                     [('street_view_active','=', False)]}"/>
+                                <newline/>
+                                <field name="leased_parcel"
+                                 colspan="4" readonly="1"/>
+                                <newline/>
+                                <field name="leased_from"
+                                 colspan="4"
+                                 attrs="{'required': [
+                                    ('leased_parcel', '=', True),
+                                    ('lease_dates_required', '=', True),]}"/>
+                                <field name="leased_to"
+                                 colspan="4"
+                                 attrs="{'required': [
+                                    ('leased_parcel', '=', True),
+                                    ('lease_dates_required', '=', True),]}"/>
                             </group>
                         </group>
                     </group>

@@ -209,13 +209,35 @@ class WuaParcel(models.Model):
         compute='_compute_area_official_hec')
 
     leased_parcel = fields.Boolean(
-        string='Leased Parcel', default=False)
+        string='Leased Parcel',
+        default=False,
+        track_visibility='onchange')
 
     leased_from = fields.Date(
-        string="From")
+        string="Date From",
+        track_visibility='onchange')
 
     leased_to = fields.Date(
-        string="To")
+        string="Date To",
+        track_visibility='onchange',
+        index=True,)
+
+    days_until_lease_ends = fields.Integer(
+        string='Days until lease ends',
+        compute='_compute_days_until_lease_ends',
+        search='_search_days_until_lease_ends')
+
+    close_to_end_lease = fields.Boolean(
+        string='Lease is close to end',
+        compute='_compute_close_to_end_lease',)
+
+    lease_ended = fields.Boolean(
+        string='Lease has ended',
+        compute='_compute_lease_ended',)
+
+    lease_dates_required = fields.Boolean(
+        string='Lease dates required',
+        compute='_compute_lease_dates_required',)
 
     internal_notes = fields.Html(string='Internal Notes')
 
@@ -567,6 +589,55 @@ class WuaParcel(models.Model):
     def _compute_date_now(self):
         for record in self:
             record.date_now = datetime.datetime.now()
+
+    @api.multi
+    def _compute_days_until_lease_ends(self):
+        for record in self:
+            days_until_lease_ends = 0
+            if record.leased_parcel and record.leased_to:
+                current_date = datetime.date.today()
+                leased_to_date = fields.Date.from_string(record.leased_to)
+                days_until_lease_ends = (
+                    leased_to_date - current_date).days
+            record.days_until_lease_ends = days_until_lease_ends
+
+    @api.multi
+    def _compute_lease_dates_required(self):
+        leased_dates_required = self.env['ir.values'].get_default(
+            'wua.configuration', 'leased_dates_required')
+        for record in self:
+            record.lease_dates_required = leased_dates_required
+
+    # Closed to end == Not ended and days less than para,eter
+    @api.multi
+    def _compute_close_to_end_lease(self):
+        warning_days = self.env['ir.values'].get_default(
+            'wua.configuration', 'notice_leased_days')
+        for record in self:
+            close_to_end_lease = False
+            if warning_days > 0 and record.leased_parcel and record.leased_to:
+                close_to_end_lease = (
+                    record.days_until_lease_ends > 0 and
+                    record.days_until_lease_ends <= warning_days)
+            record.close_to_end_lease = close_to_end_lease
+
+    # Ended when leased parcel days until ends are <= 0
+    @api.multi
+    def _compute_lease_ended(self):
+        for record in self:
+            lease_ended = False
+            if record.leased_parcel and record.leased_to:
+                lease_ended = (record.days_until_lease_ends <= 0)
+            record.lease_ended = lease_ended
+
+    def _search_days_until_lease_ends(self, operator, value):
+        date_today = datetime.date.today()
+        new_operator = operator
+        parcels = self.env['wua.parcel'].search(
+            [('leased_to', '!=', None),
+             ('leased_to', new_operator, date_today +
+              datetime.timedelta(days=value))])
+        return ([('id', 'in', [x.id for x in parcels])])
 
     @api.multi
     def _compute_number_of_subparcels(self):
@@ -970,6 +1041,15 @@ class WuaParcel(models.Model):
         partnerlinks = self.partnerlink_ids
         for partnerlink in partnerlinks:
             partnerlink.area_official = self.area_official
+
+    @api.onchange('partnerlink_ids')
+    def _onchange_partnerlink_ids(self):
+        leased_parcel = False
+        if (self.partnerlink_ids):
+            for pl in self.partnerlink_ids:
+                if (pl.profile == 'L'):
+                    leased_parcel = True
+        self.leased_parcel = leased_parcel
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,

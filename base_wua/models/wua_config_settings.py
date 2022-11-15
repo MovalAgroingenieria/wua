@@ -159,10 +159,26 @@ class WuaConfiguration(models.TransientModel):
         help='For public creation of SHP Parcels based on HTTP-GET '
              'requests, restriction to clientes from a IP address')
 
+    leased_dates_required = fields.Boolean(
+        string='Leased dates required',
+        default=False,
+        help='If checked the leased from and leased to fields becomes '
+             'mandatory')
+
+    notice_leased_days = fields.Integer(
+        string='Nº days end lease notice',
+        default=15,
+        help='Number of days until the end of the lease in which notice '
+             'is given'
+    )
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
          'The area measurement equivalence must be a value zero or positive.'),
+        ('notice_leased_days',
+         'CHECK (notice_leased_days >= 0)',
+         'The notice leased days must be zero or greater.'),
         ('valid_volume_time_equivalence',
          'CHECK (volume_time_equivalence >= 0)',
          'The volume time equivalence must be a value zero or positive.'),
@@ -231,3 +247,7 @@ class WuaConfiguration(models.TransientModel):
                            self.reports_consent_clauses)
         values.set_default('wua.configuration', 'ip_remote_address_for_shp',
                            self.ip_remote_address_for_shp)
+        values.set_default('wua.configuration', 'leased_dates_required',
+                           self.leased_dates_required)
+        values.set_default('wua.configuration', 'notice_leased_days',
+                           self.notice_leased_days)

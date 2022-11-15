@@ -40,6 +40,7 @@
         "portal_sale",
         "dev_export_excel",
         "web_favicon",
+        "web_tree_dynamic_colored_field",
         "base_wua_report",
         "l10n_es_partner_address_street_type",
         "fontawesome_ext",
