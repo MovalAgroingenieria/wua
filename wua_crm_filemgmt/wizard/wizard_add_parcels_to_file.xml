@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_add_parcels_to_file_view_form" model="ir.ui.view">
+        <field name="name">Wizard to add parcels to file</field>
+        <field name="model">wizard.add.parcels.file</field>
+        <field name="arch" type="xml">
+            <form>
+                <group colspan="6" col="4">
+                    <field name="file_code"/>
+                    <field name="date_file"/>
+                    <field name="subject" colspan="4"/>
+                    <field name="category_id" colspan="4"/>
+                </group>
+                <group>
+                    <field name="selected_parcels"/>
+                    <field name="selected_partners"/>
+                </group>
+                <div class="text-muted text-right">
+                    <span class="fa fa-lg fa-info-circle"/>
+                    <span> One partner is selected as File's main and repeated items are removed.</span>
+                </div>
+                <footer>
+                    <button name="create_file" type="object" class="oe_highlight">
+                        <div class="o_form_field">
+                            <span class="fa fa-lg fa-moval-files"/>
+                            <span style="margin-left:8px;">Create file</span>
+                        </div>
+                    </button>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+   <!-- Droplist action -->
+    <act_window id="action_add_parcels_to_file"
+        name="Create File"
+        res_model="wizard.add.parcels.file"
+        src_model="wua.parcel"
+        key2="client_action_multi"
+        view_mode="form"
+        target="new"/>
+
+</odoo>

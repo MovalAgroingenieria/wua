@@ -20,6 +20,7 @@
         "views/resources.xml",
         "views/res_file_view.xml",
         "views/wua_parcel_view.xml",
+        "wizard/wizard_add_parcels_to_file.xml",
     ],
     "installable": True,
     "application": False,

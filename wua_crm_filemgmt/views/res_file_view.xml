@@ -14,11 +14,9 @@
                             string="Get parcels" icon="fa-moval-parcel" style="margin-top:2px; margin-bottom:2px;"
                             groups="crm_filemgmt.group_file_manager"/>
                     </header>
-                    <sheet>
-                        <field name="parcellink_ids"
-                            attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"
-                            context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"/>
-                    </sheet>
+                    <field name="parcellink_ids"
+                        attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"
+                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"/>
                 </page>
             </xpath>
         </field>
