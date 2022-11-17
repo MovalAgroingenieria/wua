@@ -15,7 +15,7 @@ class WuaPumpgroupmeasurement(models.Model):
     _inherit = 'wua.pumpgroupmeasurement'
 
     FACTOR_PRESSURE = 10.33
-    FACTOR_FLOW = 4.0
+    FACTOR_FLOW = 3.6
 
     # Specialization
     def _import_measurements(self, pumpgroup):
