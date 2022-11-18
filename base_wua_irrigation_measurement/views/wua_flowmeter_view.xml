@@ -7,13 +7,40 @@
       <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
       <field name="arch" type="xml">
         <xpath expr="//button[@name='action_see_gis_viewer']" position="before">
+          <field name="connected_to_intake" invisible="1"/>
+          <button name="action_see_flowreadings"
+                  type="object"
+                  class="oe_stat_button"
+                  icon="fa-moval-intake-wall-reading"
+                  groups="base_wua.group_wua_user"
+                  attrs="{'invisible': ['|', ('id', '=', False),
+                                             ('num_intakeflowreading_ids', '=', 0)]}">
+                  <div class="o_form_field o_stat_info">
+                      <span class="o_stat_value" style="display: flex;">
+                          <field name="num_intakeflowreading_ids"/>
+                          <span class="fa fa-link" style="margin-left:auto; margin-right:2%; color:green;"
+                              attrs="{'invisible': [('connected_to_intake', '=', False)]}"/>
+                          <span class="fa fa-unlink" style="margin-left:auto; margin-right:2%; color:red;"
+                              attrs="{'invisible': [('connected_to_intake', '=', True)]}"/>
+                      </span>
+                      <span class="o_stat_text">Intake Reads.</span>
+                  </div>
+          </button>
           <button name="action_see_flowmeterconsumptions"
                   type="object"
                   class="oe_stat_button"
-                  icon="fa-moval-irrigation"
+                  icon="fa-moval-intake-wall-consumption"
                   groups="base_wua.group_wua_user"
-                  attrs="{'invisible': [('id', '=', False)]}">
+                  attrs="{'invisible': ['|', ('id', '=', False),
+                                             ('num_intakeconsumption_ids', '=', 0)]}">
                   <div class="o_form_field o_stat_info">
+                      <span class="o_stat_value" style="display: flex;">
+                          <field name="num_intakeconsumption_ids"/>
+                          <span class="fa fa-link" style="margin-left:auto; margin-right:2%; color:green;"
+                              attrs="{'invisible': [('connected_to_intake', '=', False)]}"/>
+                          <span class="fa fa-unlink" style="margin-left:auto; margin-right:2%; color:red;"
+                              attrs="{'invisible': [('connected_to_intake', '=', True)]}"/>
+                      </span>
                       <span class="o_stat_text">Intake Cons.</span>
                   </div>
           </button>

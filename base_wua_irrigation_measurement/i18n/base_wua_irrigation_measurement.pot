@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-09 07:51+0000\n"
-"PO-Revision-Date: 2022-11-09 07:51+0000\n"
+"POT-Creation-Date: 2022-11-18 09:31+0000\n"
+"PO-Revision-Date: 2022-11-18 09:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,8 +27,13 @@ msgid "<span class=\"o_stat_text\">Intake Cons.</span>"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowmeter_view_form
+msgid "<span class=\"o_stat_text\">Intake Reads.</span>"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_adjustement_volume
-msgid "Adjust. Value (m3)"
+msgid "Adjust. Value (m³)"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -72,13 +77,14 @@ msgid "Category"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_tree
 msgid "Cons. Value (m³)"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
 #: code:addons/base_wua_irrigation_measurement/models/wua_agriculturalseason.py:58
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowmeter.py:51
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowmeter.py:71
 #: code:addons/base_wua_irrigation_measurement/models/wua_intake.py:84
 #, python-format
 msgid "Consumptions"
@@ -219,7 +225,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_end_volume
-msgid "Final Value (m3)"
+msgid "Final Value (m³)"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -237,6 +243,12 @@ msgstr ""
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.menu,name:base_wua_irrigation_measurement.wua_flowreading_menu
 msgid "Flow Meter Readings"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowmeter.py:94
+#, python-format
+msgid "Flow readings"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -284,7 +296,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_volume
-msgid "Gross Value (m3)"
+msgid "Gross Value (m³)"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -323,7 +335,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_initial_volume
-msgid "Initial Value (m3)"
+msgid "Initial Value (m³)"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -448,9 +460,11 @@ msgstr ""
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_notes
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_notes
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_notes
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_form
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_form
 msgid "Notes"
 msgstr ""
 
@@ -462,6 +476,16 @@ msgstr ""
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,help:base_wua_irrigation_measurement.field_wua_intakeconsumption_notes
 msgid "Notes about intake consumption"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_num_intakeconsumption_ids
+msgid "Num. Intake consumption"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_num_intakeflowreading_ids
+msgid "Num. Intake flowreadings"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -529,7 +553,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_volume_real
-msgid "Real Value (m3)"
+msgid "Real Value (m³)"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -581,6 +605,11 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowmeter_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intake_view_form
 msgid "Total"
+msgstr ""
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_agriculturalseason_total_volume
+msgid "Total volume"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement
@@ -662,7 +691,7 @@ msgstr ""
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_flowmeter_nominal_water_flow
-msgid "Water Flow (m3/hour)"
+msgid "Water Flow (m³/hour)"
 msgstr ""
 
 #. module: base_wua_irrigation_measurement

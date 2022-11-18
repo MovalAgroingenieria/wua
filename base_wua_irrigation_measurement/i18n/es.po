@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-09 07:51+0000\n"
-"PO-Revision-Date: 2022-11-09 07:51+0000\n"
+"POT-Creation-Date: 2022-11-18 09:32+0000\n"
+"PO-Revision-Date: 2022-11-18 09:32+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,8 +27,13 @@ msgid "<span class=\"o_stat_text\">Intake Cons.</span>"
 msgstr "<span class=\"o_stat_text\">Cons. captación</span>"
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowmeter_view_form
+msgid "<span class=\"o_stat_text\">Intake Reads.</span>"
+msgstr "<span class=\"o_stat_text\">Lect. captación</span>"
+
+#. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_adjustement_volume
-msgid "Adjust. Value (m3)"
+msgid "Adjust. Value (m³)"
 msgstr "Regularización (m³)"
 
 #. module: base_wua_irrigation_measurement
@@ -64,7 +69,7 @@ msgstr "Calculo: consumos de captación"
 #: model:ir.actions.server,name:base_wua_irrigation_measurement.wua_cancel_flowreadings
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wizard_remove_flowmeter_readings_view_form
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Quitar validación"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_intake_category
@@ -72,13 +77,14 @@ msgid "Category"
 msgstr "Categoría"
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_tree
 msgid "Cons. Value (m³)"
 msgstr "Consumo bruto (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: code:addons/base_wua_irrigation_measurement/models/wua_agriculturalseason.py:58
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowmeter.py:51
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowmeter.py:71
 #: code:addons/base_wua_irrigation_measurement/models/wua_intake.py:84
 #, python-format
 msgid "Consumptions"
@@ -98,7 +104,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_create_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_create_date
 msgid "Created on"
-msgstr "Creado el"
+msgstr "Creado en"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_search
@@ -170,7 +176,7 @@ msgstr "Fecha finalización"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model,name:base_wua_irrigation_measurement.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Elemento (Campaña)"
+msgstr "Elemento (campaña)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model,name:base_wua_irrigation_measurement.model_wua_flowreading
@@ -219,7 +225,7 @@ msgstr "Identificador de  consumo de captación ya existente."
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_end_volume
-msgid "Final Value (m3)"
+msgid "Final Value (m³)"
 msgstr "Lec. final, m³"
 
 #. module: base_wua_irrigation_measurement
@@ -237,6 +243,12 @@ msgstr "Caudalímetro"
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.menu,name:base_wua_irrigation_measurement.wua_flowreading_menu
 msgid "Flow Meter Readings"
+msgstr "Lecturas de captación"
+
+#. module: base_wua_irrigation_measurement
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowmeter.py:94
+#, python-format
+msgid "Flow readings"
 msgstr "Lecturas de captación"
 
 #. module: base_wua_irrigation_measurement
@@ -275,7 +287,7 @@ msgstr "Free Sheet"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_assign_start
 msgid "From date"
-msgstr "Desde la fecha"
+msgstr "Desde"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.menu,name:base_wua_irrigation_measurement.base_wua_irrigation_measurement_menu
@@ -284,7 +296,7 @@ msgstr "Infraestructura general"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_volume
-msgid "Gross Value (m3)"
+msgid "Gross Value (m³)"
 msgstr "Volumen bruto (m³)"
 
 #. module: base_wua_irrigation_measurement
@@ -323,7 +335,7 @@ msgstr "Fecha inicio"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_initial_volume
-msgid "Initial Value (m3)"
+msgid "Initial Value (m³)"
 msgstr "Lec. inicial, m³"
 
 #. module: base_wua_irrigation_measurement
@@ -372,7 +384,7 @@ msgstr "Captaciones"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_last_reading_instantflow
 msgid "Last Instant Flow (m³/h)"
-msgstr "Último caudal instanteo (m³/h)"
+msgstr "Último caudal instantáneo (m³/h)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wizard_remove_flowmeter_readings___last_update
@@ -380,7 +392,7 @@ msgstr "Último caudal instanteo (m³/h)"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm___last_update
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption___last_update
 msgid "Last Modified on"
-msgstr "Última modificación el"
+msgstr "Last Modified on"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_is_last_reading
@@ -427,7 +439,7 @@ msgstr "Última actualización el"
 #. module: base_wua_irrigation_measurement
 #: selection:wua.in.fm,flowmeter_type:0
 msgid "Level Probe"
-msgstr "Level Probe"
+msgstr "Sonda de nivel"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wizard_remove_flowmeter_readings_view_form
@@ -448,9 +460,11 @@ msgstr "Lectura normal"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_notes
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_notes
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_notes
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_form
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_form
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_form
 msgid "Notes"
 msgstr "Notas"
 
@@ -463,6 +477,16 @@ msgstr "Notas sobre lecturas de captación"
 #: model:ir.model.fields,help:base_wua_irrigation_measurement.field_wua_intakeconsumption_notes
 msgid "Notes about intake consumption"
 msgstr "Notas sobre el consumo de captación"
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_num_intakeconsumption_ids
+msgid "Num. Intake consumption"
+msgstr "Nº consumos captación"
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowmeter_num_intakeflowreading_ids
+msgid "Num. Intake flowreadings"
+msgstr "Nº lecturas captación"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_agriculturalseason_number_of_intakeconsumptions
@@ -478,13 +502,12 @@ msgstr "Número de lecturas para ser borradas."
 #: code:addons/base_wua_irrigation_measurement/wizard/wizard_remove_flowmeter_readings.py:50
 #, python-format
 msgid "Operation not allowed for multiple records."
-msgstr "Operación no permitida para múltiples registros\n"
-"."
+msgstr "Operación no permitida para múltiples registros."
 
 #. module: base_wua_irrigation_measurement
 #: selection:wua.in.fm,intake_type:0
 msgid "Pressure"
-msgstr "Pressure"
+msgstr "Presión"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_flowreading_id
@@ -530,7 +553,7 @@ msgstr "Lecturas para borrar"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_volume_real
-msgid "Real Value (m3)"
+msgid "Real Value (m³)"
 msgstr "Volumen real (m³)"
 
 #. module: base_wua_irrigation_measurement
@@ -561,12 +584,12 @@ msgstr "No puede haber lecturas finales sin eliminar."
 #: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:275
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
-msgstr "No puedesn habe lecturas intermedias sin eliminar."
+msgstr "No puede haber lecturas intermedias sin eliminar."
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_reading_time
 msgid "Time"
-msgstr "Tiempo"
+msgstr "Instante"
 
 #. module: base_wua_irrigation_measurement
 #: selection:wua.in.fm,flowmeter_type:0
@@ -583,6 +606,11 @@ msgstr "Hasta"
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intake_view_form
 msgid "Total"
 msgstr "Total"
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_agriculturalseason_total_volume
+msgid "Total volume"
+msgstr "Volumem total"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_flowmeter_type
@@ -603,7 +631,7 @@ msgstr "Ultrasonic"
 #. module: base_wua_irrigation_measurement
 #: selection:wua.in.fm,flowmeter_type:0
 msgid "Undefined"
-msgstr "Undefined"
+msgstr "Indefinido"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.actions.server,name:base_wua_irrigation_measurement.wua_validate_flowreadings
@@ -663,7 +691,7 @@ msgstr "Cantidad de agua no puede ser negativa."
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_flowmeter_nominal_water_flow
-msgid "Water Flow (m3/hour)"
+msgid "Water Flow (m³/hour)"
 msgstr "Caudal (m³/hora)"
 
 #. module: base_wua_irrigation_measurement
@@ -686,5 +714,5 @@ msgstr "Woltmann"
 #: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:313
 #, python-format
 msgid "You do not have permission to execute this action."
-msgstr "You do not have permission to execute this action."
+msgstr "No tiene suficientes permisos para ejecutar esta acción."
 

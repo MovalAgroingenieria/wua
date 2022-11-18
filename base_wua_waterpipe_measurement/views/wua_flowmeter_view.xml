@@ -7,16 +7,43 @@
         <field name="inherit_id" ref="base_wua_irrigation_measurement.wua_flowmeter_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_see_flowmeterconsumptions']" position="before">
-            <button name="action_see_waterpipeconsumptions"
-                    type="object"
-                    class="oe_stat_button"
-                    icon="fa-moval-flowmeter"
-                    groups="base_wua.group_wua_user"
-                    attrs="{'invisible': [('id', '=', False)]}">
-                    <div class="o_form_field o_stat_info">
-                        <span class="o_stat_text">Waterpipe Cons.</span>
-                    </div>
-            </button>
+                <field name="connected_to_waterpipe" invisible="1"/>
+                <button name="action_see_waterpipeflowreading"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-moval-waterpipe-reading"
+                        groups="base_wua.group_wua_user"
+                        attrs="{'invisible': ['|', ('id', '=', False),
+                                             ('num_waterpipeflowreading_ids', '=', 0)]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value" style="display: flex;">
+                                <field name="num_waterpipeflowreading_ids"/>
+                                <span class="fa fa-link" style="margin-left:auto; margin-right:2%; color:green;"
+                                    attrs="{'invisible': [('connected_to_waterpipe', '=', False)]}"/>
+                                <span class="fa fa-unlink" style="margin-left:auto; margin-right:2%; color:red;"
+                                    attrs="{'invisible': [('connected_to_waterpipe', '=', True)]}"/>
+                            </span>
+                            <span class="o_stat_text">Waterpipe Reads.</span>
+                        </div>
+                </button>
+                <button name="action_see_waterpipeconsumptions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-moval-waterpipe-consumption"
+                        groups="base_wua.group_wua_user"
+                        attrs="{'invisible': ['|', ('id', '=', False),
+                                             ('num_waterpipeconsumption_ids', '=', 0)]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value" style="display: flex;">
+                                <field name="num_waterpipeconsumption_ids"/>
+                                <span class="fa fa-link" style="margin-left:auto; margin-right:2%; color:green;"
+                                    attrs="{'invisible': [('connected_to_waterpipe', '=', False)]}"/>
+                                <span class="fa fa-unlink" style="margin-left:auto; margin-right:2%; color:red;"
+                                    attrs="{'invisible': [('connected_to_waterpipe', '=', True)]}"/>
+                            </span>
+                            <span class="o_stat_text">Waterpipe Cons.</span>
+                        </div>
+                </button>
             </xpath>
             <xpath expr="//field[@name='intake_id']" position="after">
                 <field name="connected_to_waterpipe" invisible="1"/>

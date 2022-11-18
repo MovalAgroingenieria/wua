@@ -80,6 +80,14 @@ class WuaFlowmeter(models.Model):
         comodel_name='wua.wp.fm',
         inverse_name='flowmeter_id')
 
+    num_waterpipeflowreading_ids = fields.Integer(
+        string='Num. Waterpipe flowreadings',
+        compute='_compute_num_waterpipeflowreading_ids')
+
+    num_waterpipeconsumption_ids = fields.Integer(
+        string='Num. Waterpipe consumption',
+        compute='_compute_num_waterpipeconsumption_ids')
+
     @api.depends('waterpipe_ids')
     def _compute_waterpipe_id(self):
         for record in self:
@@ -141,6 +149,18 @@ class WuaFlowmeter(models.Model):
             record.last_reading_instantflow_show = \
                 last_reading_instantflow_show
 
+    @api.depends('waterpipeflowreading_ids')
+    def _compute_num_waterpipeflowreading_ids(self):
+        for record in self:
+            record.num_waterpipeflowreading_ids = \
+                len(record.waterpipeflowreading_ids)
+
+    @api.depends('waterpipeconsumption_ids')
+    def _compute_num_waterpipeconsumption_ids(self):
+        for record in self:
+            record.num_waterpipeconsumption_ids = \
+                len(record.waterpipeconsumption_ids)
+
     @api.model
     def create(self, vals):
         if ('last_reading_time_original' in vals):
@@ -176,6 +196,31 @@ class WuaFlowmeter(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Consumptions'),
             'res_model': 'wua.waterpipeconsumption',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            }
+        return act_window
+
+    @api.multi
+    def action_see_waterpipeflowreading(self):
+        self.ensure_one()
+        condition = [('flowmeter_id', '=', self.id)]
+        id_form_view = self.env.ref('base_wua_waterpipe_measurement.'
+                                    'wua_waterpipeflowreading_view_form').id
+        id_tree_view = self.env.ref(
+            'base_wua_waterpipe_measurement.'
+            'wua_waterpipeflowreading_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_waterpipe_measurement.'
+            'wua_waterpipeflowreading_view_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Waterpipe Readings'),
+            'res_model': 'wua.waterpipeflowreading',
             'view_type': 'form',
             'view_mode': 'tree',
             'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
