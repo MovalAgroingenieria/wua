@@ -56,6 +56,7 @@ class WuaWaterconnection(models.Model):
 
     position = fields.Integer(
         string="Position",
+        group_operator=False,
         required=True)
 
     image = fields.Binary(
@@ -252,15 +253,6 @@ class WuaWaterconnection(models.Model):
                 vals['irrigationshed_id'])
             vals.update({'hydraulicsector_id': hydraulicsector_id})
         return super(WuaWaterconnection, self).write(vals)
-
-    # No summary for position field
-    @api.model
-    def read_group(self, domain, fields, groupby,
-                   offset=0, limit=None, orderby=False, lazy=True):
-        if 'position' in fields:
-            fields.remove('position')
-            return super(WuaWaterconnection, self).read_group(
-                domain, fields, groupby, offset, limit, orderby, lazy)
 
     def refine_name(self, vals):
         name = vals['name']
