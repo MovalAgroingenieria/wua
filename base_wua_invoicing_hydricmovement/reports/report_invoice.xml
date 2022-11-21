@@ -49,19 +49,29 @@
                                           <td class="text-center"><span t-esc="reading_initial_time"/></td>
                                           <td class="text-center"><span t-esc="reading_end_time"/></td>
                                           <td class="text-right">
-                                              <span t-esc="'{:.0f}'.format(c['initial_volume'])"/>
+                                              <t t-set="initial_volume"
+                                                 t-value="o.env['wua.parcel'].transform_float_to_locale(c['initial_volume'], 0)"/>
+                                              <span t-esc="initial_volume"/>
                                           </td>
                                           <td class="text-right">
-                                              <span t-esc="'{:.0f}'.format(c['end_volume'])"/>
+                                              <t t-set="end_volume"
+                                                 t-value="o.env['wua.parcel'].transform_float_to_locale(c['end_volume'], 0)"/>
+                                              <span t-esc="end_volume"/>
                                           </td>
                                           <td class="text-right">
-                                              <span t-esc="'{:.0f}'.format(c['volume'])"/>
+                                              <t t-set="volume"
+                                                 t-value="o.env['wua.parcel'].transform_float_to_locale(c['volume'], 0)"/>
+                                              <span t-esc="volume"/>
                                           </td>
                                           <td class="text-right">
-                                              <span t-esc="'{:.0f}'.format(c['adjustement_volume'])"/>
+                                              <t t-set="adjustement_volume"
+                                                 t-value="o.env['wua.parcel'].transform_float_to_locale(c['adjustement_volume'], 0)"/>
+                                              <span t-esc="adjustement_volume"/>
                                           </td>
                                           <td class="text-right">
-                                              <span t-esc="'{:.0f}'.format(c['volume_real'])"/>
+                                              <t t-set="volume_real"
+                                                 t-value="o.env['wua.parcel'].transform_float_to_locale(c['volume_real'], 0)"/>
+                                              <span t-esc="volume_real"/>
                                           </td>
                                       </tr>
                                 </tbody>
