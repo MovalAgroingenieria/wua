@@ -40,6 +40,7 @@ class WuaReportrequest(models.Model):
         required=True,
         index=True,
         ondelete='restrict',
+        domain=[('is_wua_partner', '=', True)],
         default=_default_partner_id)
 
     request_date = fields.Date(
