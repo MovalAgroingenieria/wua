@@ -3054,6 +3054,15 @@ class WuaParcelPartnerlink(models.Model):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"readonly": true, \
                                             "tree_invisible": true}')
+            leased_dates_required = self.env['ir.values'].get_default(
+                'wua.configuration', 'leased_dates_required')
+            if not leased_dates_required:
+                for node in doc.xpath("//field[@name='leased_parcel']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
+                for node in doc.xpath("//field[@name='leased_to']"):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
             area_measurement_type = self.env['ir.values'].get_default(
                 'wua.configuration', 'area_measurement_type')
             area_measurement_name = ''
