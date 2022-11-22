@@ -536,6 +536,16 @@
                  widget="many2one_unclickable"/>
                 <field name="profile"/>
                 <field name="is_usufructuary"/>
+                <field name="close_to_end_lease" invisible="1"/>
+                <field name="lease_ended" invisible="1"/>
+                <field name="lease_dates_required" invisible="1"/>
+                <field name="leased_parcel" attrs="{'invisible':
+                                      [('lease_dates_required','!=', True)]}"/>
+                <field name="leased_to"
+                       attrs="{'invisible':
+                                      [('lease_dates_required','!=', True)]}"
+                       bg_color="red:lease_ended == True; orange:close_to_end_lease == True;"
+                       />
                 <field name="area_official"/>
                 <field name="ownership_percentage"/>
                 <field name="area_official_net"/>
@@ -632,6 +642,16 @@
                  widget="many2one_unclickable"/>
                 <field name="profile"/>
                 <field name="is_usufructuary"/>
+                <field name="close_to_end_lease" invisible="1"/>
+                <field name="lease_ended" invisible="1"/>
+                <field name="lease_dates_required" invisible="1"/>
+                <field name="leased_parcel" attrs="{'invisible':
+                                      [('lease_dates_required','!=', True)]}"/>
+                <field name="leased_to"
+                       attrs="{'invisible':
+                                      [('lease_dates_required','!=', True)]}"
+                       bg_color="red:lease_ended == True; orange:close_to_end_lease == True;"
+                       />
                 <field name="area_official"/>
                 <field name="area_official_hec"/>
                 <field name="ownership_percentage"/>

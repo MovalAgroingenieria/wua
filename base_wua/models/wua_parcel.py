@@ -2759,6 +2759,29 @@ class WuaParcelPartnerlink(models.Model):
         required=True,
         default=0)
 
+    leased_parcel = fields.Boolean(
+        string='Leased Parcel',
+        store=True,
+        related='parcel_id.leased_parcel',)
+
+    leased_to = fields.Date(
+        string='Date To',
+        store=True,
+        related='parcel_id.leased_to',
+        index=True,)
+
+    close_to_end_lease = fields.Boolean(
+        string='Lease is close to end',
+        related='parcel_id.close_to_end_lease',)
+
+    lease_ended = fields.Boolean(
+        string='Lease has ended',
+        related='parcel_id.lease_ended',)
+
+    lease_dates_required = fields.Boolean(
+        string='Lease dates required',
+        related='parcel_id.lease_dates_required',)
+
     partner_id = fields.Many2one(
         string='Partner Name',
         comodel_name='res.partner',
