@@ -16,7 +16,7 @@
         "base_wua_irrigation_report",
         "base_wua_quota_management", ],
     "data": [
-        "views/wua_irrigationreport_view.xml", ],
+        ],
     "installable": True,
     "application": False,
 }
