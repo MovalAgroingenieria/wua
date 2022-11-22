@@ -45,6 +45,7 @@
         "l10n_es_partner_address_street_type",
         "fontawesome_ext",
         "base_extra_attachment",
+        "html_field_in_tree_view",
     ],
     "data": [
         "security/security.xml",
