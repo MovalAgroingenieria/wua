@@ -39,16 +39,24 @@
                 <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='hours']" position="attributes">
-                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)],
+                                         'readonly':[('invoiced','=', True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='volume']" position="attributes">
-                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)],
+                                         'readonly':[('invoiced','=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='conversion_factor']" position="attributes">
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)],
+                                         'readonly':[('invoiced','=', True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='adjustement_volume']" position="attributes">
-                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)],
+                                         'readonly':[('invoiced','=', True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='volume_real']" position="attributes">
-                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)]}</attribute>
+                <attribute name="attrs">{'invisible': [('with_end_time', '=', False)],
+                                         'readonly':[('invoiced','=', True)]}</attribute>
             </xpath>
         </field>
     </record>
