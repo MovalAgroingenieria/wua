@@ -52,6 +52,10 @@ class ResPartner(models.Model):
         required=True,
         index=True)
 
+    name_alias = fields.Char(
+        string='Name Alias',
+        index=True,)
+
     customer = fields.Boolean(default=True)
 
     supplier = fields.Boolean(default=False)

@@ -62,6 +62,7 @@
             <xpath expr="//h1//field[@name='name']/.." position="after">
                 <group attrs="{'invisible':[('is_wua_partner','=',False)]}">
                     <field name="partner_code"/>
+                    <field name="name_alias"/>
                     <field name="apply_second_partner_coding"
                            class="oe_edit_only"/>
                 </group>
@@ -98,14 +99,6 @@
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_payer" readonly="1"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
-                <!-- <separator string="Provisional" colspan="2"/>
-                <field name="parcel_owner_number"/>
-                <field name="parcel_owner_area"/>
-                <field name="parcel_owner_area_hec"/>
-                <field name="parcel_lessee_number"/>
-                <field name="parcel_lessee_area"/>
-                <field name="parcel_payer_number"/>
-                <field name="parcel_payer_area"/> -->
             </xpath>
             <xpath expr="//group[@name='sale']//field[@name='customer']"
              position="attributes">
@@ -156,6 +149,7 @@
                 </attribute>
             </xpath>
             <xpath expr="//field[@name='display_name']" position="before">
+                <field name="name_alias" invisible="1"/>
                 <field name="partner_code"/>
             </xpath>
             <xpath expr="//field[@name='phone']" position="attributes">
@@ -201,6 +195,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="partner_code"/>
+                <field name="name_alias"/>
                 <field name="display_name"/>
                 <field name="category_id"/>
                 <filter string="Persons" name="notiscompany"
