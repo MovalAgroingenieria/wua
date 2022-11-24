@@ -142,12 +142,22 @@
         </field>
     </record>
 
+    <record id="wua_reportrequest_view_pivot" model="ir.ui.view" >
+        <field name="name">Report Requests (pivot view)</field>
+        <field name="model">wua.reportrequest</field>
+        <field name="arch" type="xml">
+            <pivot string="Report Requests" display_quantity="true">
+                <field name="volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <!-- Actions -->
     <record id="wua_reportrequest_action" model="ir.actions.act_window">
         <field name="name">Report Requests</field>
         <field name="res_model">wua.reportrequest</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" ref="wua_reportrequest_view_tree"/>
         <field name="search_view_id" ref="wua_reportrequest_view_search"/>
         <field name="context">
