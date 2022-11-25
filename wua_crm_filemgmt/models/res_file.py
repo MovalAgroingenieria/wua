@@ -83,7 +83,7 @@ class ResFileParcellink(models.Model):
     _name = 'res.file.parcellink'
 
     file_id = fields.Many2one(
-        string='File',
+        string='File_',
         comodel_name='res.file',
         required=True,
         index=True,
@@ -130,6 +130,10 @@ class ResFileParcellink(models.Model):
     subject = fields.Char(
         string='Subject',
         related='file_id.subject')
+
+    category_id = fields.Many2one(
+        string='Category',
+        related='file_id.category_id')
 
     @api.multi
     def _compute_parcel_gis_viewer_link(self):
