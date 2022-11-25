@@ -18,7 +18,7 @@ from collections import OrderedDict
 from xml.etree import ElementTree
 from owslib.wms import WebMapService
 from owslib.wfs import WebFeatureService
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, exceptions, tools, _
 
 
 class WuaParcel(models.Model):
@@ -3128,3 +3128,50 @@ class WuaParcelPartnerlink(models.Model):
         if len(filtered_translations) > 0:
             resp = filtered_translations[0].value
         return resp
+
+
+class WuaParcelConcessionlink(models.Model):
+    _name = 'wua.parcel.concessionlink'
+    _auto = False
+    _description = 'Concession link of a parcel'
+
+    parcel_id = fields.Many2one(
+        string='Parcel Code',
+        comodel_name='wua.parcel',
+        required=True,
+        index=True,
+        ondelete='cascade')
+
+    concession_id = fields.Many2one(
+        string='Concession',
+        comodel_name='wua.concession',
+        required=True,
+        index=True,
+        ondelete='cascade')
+
+    description = fields.Char(
+        string='Description',
+        related='concession_id.description')
+
+    notes = fields.Html(
+        string='Notes',
+        related='concession_id.notes')
+
+    @api.model_cr
+    def init(self):
+        self.env.cr.execute("""SELECT EXISTS(
+            SELECT * FROM information_schema.tables
+            WHERE table_name='wua_parcel_concessionlink')""")
+        if self.env.cr.fetchone()[0]:
+            tools.drop_view_if_exists(self.env.cr, 'wua_parcel_concessionlink')
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                CREATE OR REPLACE VIEW wua_parcel_concessionlink AS (SELECT
+                row_number() OVER() AS id, row.* FROM (SELECT parcel.id AS
+                parcel_id, concession.id AS concession_id, concession.notes
+                FROM wua_parcel_concession_rel rel INNER JOIN wua_parcel parcel
+                ON rel.parcel_id = parcel.id INNER JOIN wua_concession
+                concession ON rel.concession_id = concession.id) row)""")
+        except Exception:
+            self.env.cr.rollback()

@@ -663,6 +663,36 @@
         </field>
     </record>
 
+    <record id="wua_technical_concessionlinks_view_tree" model="ir.ui.view" >
+        <field name="name">Concession Links (tree view)</field>
+        <field name="model">wua.parcel.concessionlink</field>
+        <field name="arch" type="xml">
+            <tree class="o_wua_technical_concessionlinks_view_tree">
+                <field name="parcel_id"/>
+                <field name="concession_id"/>
+                <field name="description"/>
+                <field name="notes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_technical_concessionlinks_view_search" model="ir.ui.view">
+        <field name="name">Concession Links (search view)</field>
+        <field name="model">wua.parcel.concessionlink</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="concession_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Parcel" name="groupby_parcel_id"
+                        context="{'group_by':'parcel_id'}"/>
+                    <filter string="Concession" name="groupby_concession_id"
+                        context="{'group_by':'concession_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="wua_parcel_action" model="ir.actions.act_window">
         <field name="name">Parcels</field>
         <field name="res_model">wua.parcel</field>
@@ -745,6 +775,14 @@
         <field name="res_model">account.banking.mandate</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="account_banking_mandate.view_mandate_tree"/>
+    </record>
+
+    <record id="wua_technical_concessionlinks_action" model="ir.actions.act_window">
+        <field name="name">Concession Links (low-level)</field>
+        <field name="res_model">wua.parcel.concessionlink</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_technical_concessionlinks_view_tree"/>
+        <field name="search_view_id" ref="wua_technical_concessionlinks_view_search"/>
     </record>
 
     <record id="wua_technical_global_vote_calculation_action" model="ir.actions.server">
@@ -853,30 +891,37 @@
               sequence="4"
               groups="base.group_system"/>
 
+   <menuitem id="wua_technical_concessionlinks_menu"
+              name="Concessions"
+              parent="base_wua_technical_menu"
+              action="wua_technical_concessionlinks_action"
+              sequence="5"
+              groups="base.group_system"/>
+
     <menuitem id="wua_technical_global_vote_calculation_menu"
               name="Calculation: partners"
               parent="base_wua_technical_menu"
               action="wua_technical_global_vote_calculation_action"
-              sequence="5"
+              sequence="6"
               groups="base.group_system"/>
 
     <menuitem id="wua_technical_update_gis_link_menu"
               name="Calculation: GIS links"
               parent="base_wua_technical_menu"
               action="wua_technical_update_gis_link_action"
-              sequence="6"/>
+              sequence="7"/>
 
     <menuitem id="wua_technical_regenerate_shp"
               name="GIS Regeneration (shp)"
               parent="base_wua_technical_menu"
               action="wua_technical_regenerate_shp_action"
-              sequence="7"/>
+              sequence="8"/>
 
     <menuitem id="wua_technical_regenerate_aerial_img"
               name="Aerial Image Regeneration"
               parent="base_wua_technical_menu"
               action="wua_technical_regenerate_aerial_img_action"
-              sequence="8"
+              sequence="9"
               groups="base.group_system"/>
 
 </odoo>
