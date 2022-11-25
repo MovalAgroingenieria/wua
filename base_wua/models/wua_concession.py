@@ -16,6 +16,8 @@ class WuaConcession(models.Model):
     _lowercase_name = False
     _uppercase_name = False
 
-    name = fields.Char(string='Water Concession')
+    name = fields.Char(
+        string='Water Concession')
 
-    notes = fields.Html(string='Notes')
+    notes = fields.Html(
+        string='Notes')
