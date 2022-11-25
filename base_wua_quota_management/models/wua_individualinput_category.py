@@ -45,6 +45,10 @@ class WuaIndividualinputCategory(models.Model):
         string='WUA Master Individual Input Category',
         default=False)
 
+    is_readonly = fields.Boolean(
+        string='WUA Individual Input Category Readonly',
+        default=False)
+
     effective_factor = fields.Float(
         digits=(32, 2),
         string='Effective Factor',
@@ -83,7 +87,7 @@ class WuaIndividualinputCategory(models.Model):
     @api.multi
     def unlink(self):
         for record in self:
-            if record.is_no_variation_category:
+            if record.is_no_variation_category or record.is_readonly:
                 raise exceptions.UserError(_('It is not possible to remove '
                                              'the \'NO-VARIATION\' category.'))
         res = super(WuaIndividualinputCategory, self).unlink()

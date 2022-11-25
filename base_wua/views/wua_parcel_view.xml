@@ -352,8 +352,14 @@
                 <field name="cadastral_polygon"/>
                 <field name="cadastral_parcel"/>
                 <field name="cadastral_reference"/>
-                <field name="leased_parcel"/>
                 <field name="number_of_subparcels"/>
+                <field name="leased_parcel"/>
+                <field name="days_until_lease_ends" invisible="1"/>
+                <field name="close_to_end_lease" invisible="1"/>
+                <field name="lease_ended" invisible="1"/>
+                <field name="leased_to"
+                       bg_color="red:lease_ended == True; orange:close_to_end_lease == True;"
+                       />
                 <button name="action_see_street_view"
                         type="object" class="oe_stat_button"
                         string="Street View"
