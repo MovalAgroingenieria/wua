@@ -62,7 +62,6 @@
             <xpath expr="//h1//field[@name='name']/.." position="after">
                 <group attrs="{'invisible':[('is_wua_partner','=',False)]}">
                     <field name="partner_code"/>
-                    <field name="name_alias"/>
                     <field name="apply_second_partner_coding"
                            class="oe_edit_only"/>
                 </group>
@@ -92,6 +91,8 @@
                 <field name="gender"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="birthdate"
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
+                <field name="name_alias"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_owner" readonly="1"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>

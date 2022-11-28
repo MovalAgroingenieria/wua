@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_superproduct_view_form" model="ir.ui.view">
+        <field name="name">Superproducts (form view)</field>
+        <field name="model">wua.superproduct</field>
+        <field name="inherit_id"
+               ref="base_wua_quota_management.wua_superproduct_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='superproduct_code_div']" position="after">
+                <div name="transferable_div">
+                    <label for="is_transferable"/>
+                    <field name="is_transferable"
+                            style="width:100px"/>
+                </div>
+                <div name="transfer_superproduct_div"
+                     attrs="{'invisible': [('is_transferable', '=', False)],
+                               'required': [('is_transferable', '=', True)]}">
+                    <label for="transfer_superproduct_id"/>
+                    <field name="transfer_superproduct_id"
+                            style="width:100px"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

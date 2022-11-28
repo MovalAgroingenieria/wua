@@ -229,7 +229,7 @@ class WuaInvoicesetLine(models.Model):
     def populate_items_select_invoice_with_variable_surcharge(
             self, product_id):
         invoices = self.env['account.invoice'].search(
-            [('state', '=', 'open'), ('residual', '>', 0)])
+            ['|', ('type', '=', 'out_invoice'), ('type', '=', 'out_refund')])
         if len(invoices) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
@@ -249,7 +249,7 @@ class WuaInvoicesetLine(models.Model):
                     residual, date_due, date_invoice, invoiceset_id,
                     number_of_variable_surcharges
                     FROM account_invoice
-                    WHERE state = 'open' AND residual > 0 AND
+                    WHERE type = 'out_refund' OR
                     type = 'out_invoice'
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
@@ -262,7 +262,7 @@ class WuaInvoicesetLine(models.Model):
     def populate_items_select_invoice_with_fixed_surcharge(
             self, product_id):
         invoices = self.env['account.invoice'].search(
-            [('state', '=', 'open'), ('residual', '>', 0)])
+            ['|', ('type', '=', 'out_invoice'), ('type', '=', 'out_refund')])
         if len(invoices) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
@@ -283,7 +283,7 @@ class WuaInvoicesetLine(models.Model):
                     residual, date_due, date_invoice, invoiceset_id,
                     number_of_fixed_surcharges
                     FROM account_invoice
-                    WHERE state = 'open' AND residual > 0 AND
+                    WHERE type = 'out_refund' OR
                     type = 'out_invoice'
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
@@ -332,7 +332,6 @@ class WuaInvoicesetLineInvoiceSurchargeVariable(models.Model):
     invoiceset_id = fields.Many2one(
         string='Invoiceset',
         comodel_name='wua.invoiceset',
-        required=True,
         ondelete='cascade')
 
     selected = fields.Boolean(
@@ -418,7 +417,6 @@ class WuaInvoicesetLineInvoiceSurchargeFixed(models.Model):
     invoiceset_id = fields.Many2one(
         string='Invoiceset',
         comodel_name='wua.invoiceset',
-        required=True,
         ondelete='cascade')
 
     selected = fields.Boolean(
