@@ -2,6 +2,7 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import urllib
 from odoo import models, fields, api, _
 
 
@@ -212,3 +213,21 @@ class WuaWatermeter(models.Model):
             'target': 'current',
             }
         return act_window
+
+    # For report
+    def _get_or_generate_watermeter_link(self):
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        watermeter_id = str(self.id)
+        action = str(self.env.ref(
+            'base_wua_pressurized_irrigation.wua_watermeter_action').id)
+        url_raw = base_url + '/web#id=' + watermeter_id + '&view_type=form' + \
+            '&model=wua.watermeter' + '&action=' + action
+        # Search link
+        link = self.env['link.tracker'].search([('url', '=', url_raw)])
+        if link:
+            url = link.short_url
+        else:
+            link_title = _("QR code link for watermeter %s") % self.name
+            url = (self.env['link.tracker'].sudo().create(
+             {"title": link_title,"url": url_raw}).short_url)
+        return url

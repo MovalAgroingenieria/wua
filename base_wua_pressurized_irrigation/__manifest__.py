@@ -29,6 +29,7 @@
         "views/wua_irrigation_config_settings_view.xml",
         "reports/wua_parcel_report.xml",
         "data/wua_irrigation_config_settings_data.xml",
+        "reports/wua_watermeter_report.xml",
     ],
     "installable": True,
     "application": True,

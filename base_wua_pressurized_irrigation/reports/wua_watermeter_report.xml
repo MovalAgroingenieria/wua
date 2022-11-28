@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Paper format for watermeter reports -->
+    <record id="paperformat_watermeter_technical_sheet_report" model="report.paperformat">
+        <field name="name">Watermeter technical sheet</field>
+        <field name="default" eval="True"/>
+        <field name="format">A6</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">2</field>
+        <field name="margin_bottom">2</field>
+        <field name="margin_left">2</field>
+        <field name="margin_right">2</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">2</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="wua_watermeter_technical_sheet_report"
+        string="Watermeter technical sheet"
+        model="wua.watermeter"
+        report_type="qweb-pdf"
+        file="base_wua_pressurized_irrigation.wua_watermeter_technical_sheet_report_document"
+        name="base_wua_pressurized_irrigation.wua_watermeter_technical_sheet_report_document"
+        paperformat="base_wua_pressurized_irrigation.paperformat_watermeter_technical_sheet_report"/>
+
+    <template id="wua_watermeter_technical_sheet_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page" style="border: 2px solid lightgrey; padding: 4px;">
+                    <!-- Vars -->
+                    <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+
+                    <!-- Title -->
+                    <div name="title">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
+                                <div style="float: left; display: inline;">
+                                    <strong><t t-if="o.name"><span t-field="o.name"></span></t></strong>
+                                </div>
+                                <div style="float: right; font-size: 1.5em;"><span class="fa fa-moval-logo"/></div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
+                                <div style="float: left; display: inline;">
+                                    <strong><t t-if="o.name"><span t-field="o.name"></span></t></strong>
+                                </div>
+                                <div style="float: right; font-size: 1.5em;"><span class="fa fa-moval-logo"/></div>
+                            </div>
+                        </t>
+                    </div>
+                    <div style="font-size: 0.8em;">
+                        <div class="row" style="margin-bottom: 4px; margin-top: 4px;">
+                            <div class="col-xs-12" style="display: table;">
+                                <div style="display: table-cell; border-right: 1px solid lightgrey;">
+                                    <table name="watermeter_data_left" class="table-condensed table-striped" style="width:100%;">
+                                        <tbody>
+                                            <tr name="tr_installation_date">
+                                                <td><span>Installation date:</span></td>
+                                                <td class="text-right"><span t-field="o.installation_date"/></td>
+                                            </tr>
+                                            <tr name="tr_serial_number">
+                                                <td><span>Serial Num.:</span></td>
+                                                <td class="text-right"><span t-field="o.serial_number"/></td>
+                                            </tr>
+                                            <tr name="tr_watermeter_brand">
+                                                <td><span>Brand:</span></td>
+                                                <td class="text-right"><span t-field="o.watermeter_brand"/></td>
+                                            </tr>
+                                            <tr name="tr_watermeter_model">
+                                                <td><span>Model:</span></td>
+                                                <td class="text-right"><span t-field="o.watermeter_model"/></td>
+                                            </tr>
+                                            <tr name="tr_nominal_diameter">
+                                                <td><span>Diameter:</span></td>
+                                                <td class="text-right">
+                                                    <span t-field="o.nominal_diameter"/>
+                                                    <span>mm</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="text-center">
+                                    <div style="font-size: 0.3px; margin-bottom: 2px;">&amp;nbsp;</div>
+                                    <img t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' % 
+                                    (o._get_or_generate_watermeter_link(), 3, 4, 0, 1)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <table name="watermeter_data_down" class="table-condensed table-striped" style="width:100%;">
+                            <tbody>
+                                <tr name="tr_partner_id">
+                                    <td class="text-center" style="width:100%;">
+                                        <t t-foreach="o.waterconnection_id.irrigationpoint_ids" t-as="ip">
+                                            <t t-set="partner_code" t-value="str(ip.partner_id.partner_code)"/>
+                                            <span>[ <span t-esc="partner_code"/> ]</span>
+                                            <strong><span t-field="ip.partner_id"/></strong>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div><!--end page -->
+            </t>
+        </t>
+    </template>
+
+</odoo>
