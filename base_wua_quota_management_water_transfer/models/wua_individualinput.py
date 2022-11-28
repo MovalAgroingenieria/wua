@@ -11,8 +11,7 @@ class WuaIndividualinput(models.Model):
     watertransfer_id = fields.Many2one(
         string='Water Transfer',
         comodel_name='wua.watertransfer',
-        index=True,
-        ondelete='restrict',)
+        index=True,)
 
     @api.multi
     def unlink(self):
