@@ -191,7 +191,7 @@ class WuaFlowreading(models.Model):
                 [('flowmeter_id', '=', vals['flowmeter_id'])],
                 limit=1, order='reading_time desc')
             if (last_reading and last_reading.reading_time >
-                    reading_end_time):
+                    fields.Datetime.from_string(reading_end_time)):
                 raise exceptions.UserError(_('The reading time is minor '
                                              'than the time of the previous '
                                              'reading.'))
