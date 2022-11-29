@@ -14,7 +14,6 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_invoicing_irrigation_report",
-        "report_qr",
     ],
     "data": [
         "security/security.xml",
