@@ -354,6 +354,7 @@ class WuaParcel(models.Model):
         return gis_photovoltaicplant_ok
 
     def create_gis_data(self):
+        super(WuaParcel, self).create_gis_data()
         try:
             self.create_wua_gis_pumpgroup_table()
             self.create_pumpgroup_triggers()

@@ -351,6 +351,7 @@ class WuaParcel(models.Model):
         return gis_intake_ok
 
     def create_gis_data(self):
+        super(WuaParcel, self).create_gis_data()
         try:
             self.create_wua_gis_flowmeter_table()
             self.create_flowmeter_triggers()
