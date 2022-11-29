@@ -11,13 +11,16 @@ class ProductCategory(models.Model):
 
     linkable_unit_type = fields.Selection(selection_add=[
         ('variablesurcharge', 'Variable Surcharge'),
-        ('fixedsurcharge', 'Fixed Surcharge')])
+        ('fixedsurcharge', 'Fixed Surcharge'),
+        ('variabletotalsurcharge', 'Variable Surcharge (Total)')])
 
     def _get_linkable_unit_type_from_category(self, productcategory_code):
         if productcategory_code == 16:
             resp = 'variablesurcharge'
         elif productcategory_code == 17:
             resp = 'fixedsurcharge'
+        elif productcategory_code == 18:
+            resp = 'variabletotalsurcharge'
         else:
             resp = super(ProductCategory, self).\
                 _get_linkable_unit_type_from_category(productcategory_code)
@@ -30,4 +33,5 @@ class ProductTemplate(models.Model):
 
     linkable_unit_type = fields.Selection(selection_add=[
         ('variablesurcharge', 'Variable Surcharge'),
-        ('fixedsurcharge', 'Fixed Surcharge')])
+        ('fixedsurcharge', 'Fixed Surcharge'),
+        ('variabletotalsurcharge', 'Variable Surcharge (Total)')])

@@ -20,6 +20,12 @@ class AccountInvoice(models.Model):
         store=True,
         compute='_compute_amount')
 
+    amount_untaxed_categ18 = fields.Monetary(
+        string='C18: Variable surcharge (Total amount).',
+        currency_field='currency_id',
+        store=True,
+        compute='_compute_amount')
+
     invoiceline_variable_surcharge_ids = fields.One2many(
         string='Invoice Lines Variable Surcharges',
         comodel_name='account.invoice.line',
@@ -29,6 +35,11 @@ class AccountInvoice(models.Model):
         string='Invoice Lines Fixed Surcharges',
         comodel_name='account.invoice.line',
         inverse_name='invoice_with_fixed_surcharge_id',)
+
+    invoiceline_total_variable_surcharge_ids = fields.One2many(
+        string='Invoice Lines Variable Surcharges (Total amount)',
+        comodel_name='account.invoice.line',
+        inverse_name='invoice_with_variable_surcharge_id')
 
     number_of_variable_surcharges = fields.Integer(
         string='Invoicing Processes Variable Surcharges',
@@ -42,6 +53,12 @@ class AccountInvoice(models.Model):
         index=True,
         compute='_compute_number_of_fixed_surcharges',)
 
+    number_of_total_variable_surcharges = fields.Integer(
+        string='Invoicing Processes Variable Surcharges (Total amount)',
+        store=True,
+        index=True,
+        compute='_compute_number_of_total_variable_surcharges')
+
     @api.depends('invoiceline_variable_surcharge_ids')
     def _compute_number_of_variable_surcharges(self):
         for record in self:
@@ -53,6 +70,18 @@ class AccountInvoice(models.Model):
                     invoiceset_ids.append(invoiceline.invoiceset_id)
             record.number_of_variable_surcharges = \
                 number_of_variable_surcharges
+
+    @api.depends('invoiceline_total_variable_surcharge_ids')
+    def _compute_number_of_total_variable_surcharges(self):
+        for record in self:
+            number_of_total_variable_surcharges = 0
+            invoiceset_ids = []
+            for invoiceline in record.invoiceline_total_variable_surcharge_ids:
+                if (invoiceline.invoiceset_id not in invoiceset_ids):
+                    number_of_total_variable_surcharges += 1
+                    invoiceset_ids.append(invoiceline.invoiceset_id)
+            record.number_of_total_variable_surcharges = \
+                number_of_total_variable_surcharges
 
     @api.depends('invoiceline_fixed_surcharge_ids')
     def _compute_number_of_fixed_surcharges(self):
@@ -76,8 +105,12 @@ class AccountInvoice(models.Model):
             record.amount_untaxed_categ17 = \
                 sum(line.price_subtotal for line in record.invoice_line_ids.
                     filtered(lambda x: x.categ_id.productcategory_code == 17))
+            record.amount_untaxed_categ18 = \
+                sum(line.price_subtotal for line in record.invoice_line_ids.
+                    filtered(lambda x: x.categ_id.productcategory_code == 18))
             record.amount_untaxed_nocateg = record.amount_untaxed_nocateg - \
-                record.amount_untaxed_categ16 - record.amount_untaxed_categ17
+                record.amount_untaxed_categ16 - \
+                record.amount_untaxed_categ17 - record.amount_untaxed_categ18
 
 
 class AccountInvoiceLine(models.Model):
@@ -90,6 +123,12 @@ class AccountInvoiceLine(models.Model):
         ondelete='restrict')
 
     invoice_with_variable_surcharge_id = fields.Many2one(
+        string='Invoice',
+        comodel_name='account.invoice',
+        index=True,
+        ondelete='restrict')
+
+    invoice_with_total_variable_surcharge_id = fields.Many2one(
         string='Invoice',
         comodel_name='account.invoice',
         index=True,

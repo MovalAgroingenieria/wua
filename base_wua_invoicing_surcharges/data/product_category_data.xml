@@ -16,6 +16,13 @@
     </data>
 
     <data noupdate="0">
+        <record id="categ_18" model="product.category">
+            <field name="name">Variable Surcharge for account invoices (Total amount)</field>
+            <field name="productcategory_code">18</field>
+        </record>
+    </data>
+
+    <data noupdate="0">
         <record id="categ_16" model="product.category">
             <field name="parent_id" ref="base_wua_invoicing.categ_00"/>
         </record>
@@ -23,6 +30,12 @@
 
     <data noupdate="0">
         <record id="categ_17" model="product.category">
+            <field name="parent_id" ref="base_wua_invoicing.categ_00"/>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="categ_18" model="product.category">
             <field name="parent_id" ref="base_wua_invoicing.categ_00"/>
         </record>
     </data>
@@ -64,6 +77,17 @@
             <field name="categ_id" ref="categ_17"/>
             <field name="uom_id" ref="product_uom_invoices"/>
             <field name="uom_po_id" ref="product_uom_invoices"/>
+        </record>
+
+        <record id="product_18" model="product.template">
+            <field name="name">Variable Surcharge (Total amount)</field>
+            <field name="sale_ok">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">0.00</field>
+            <field name="categ_id" ref="categ_18"/>
+            <field name="uom_id" ref="product_uom_residual"/>
+            <field name="uom_po_id" ref="product_uom_residual"/>
         </record>
 
     </data>
