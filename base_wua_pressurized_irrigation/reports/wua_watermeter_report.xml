@@ -97,10 +97,10 @@
                             <tbody>
                                 <tr name="tr_partner_id">
                                     <td class="text-center" style="width:100%;">
-                                        <t t-foreach="o.waterconnection_id.irrigationpoint_ids" t-as="ip">
-                                            <t t-set="partner_code" t-value="str(ip.partner_id.partner_code)"/>
+                                        <t t-if="o.waterconnection_id.irrigationpoint_ids and len(o.waterconnection_id.irrigationpoint_ids) > 0">
+                                            <t t-set="partner_code" t-value="str(o.waterconnection_id.irrigationpoint_ids[0].partner_id.partner_code)"/>
                                             <span>[ <span t-esc="partner_code"/> ]</span>
-                                            <strong><span t-field="ip.partner_id"/></strong>
+                                            <strong><span t-field="o.waterconnection_id.irrigationpoint_ids[0].partner_id"/></strong>
                                         </t>
                                     </td>
                                 </tr>
