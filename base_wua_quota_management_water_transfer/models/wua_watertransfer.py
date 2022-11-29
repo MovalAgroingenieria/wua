@@ -422,6 +422,13 @@ class WuaWatertransfer(models.Model):
             }
         return act_window
 
+    def _get_water_transfer_reason(self, watertransfer):
+        reason = _('Water transfer from')
+        reason += ' ' + watertransfer.superproduct_id.name + ' '
+        reason += _('to superproduct')
+        reason += ' ' + watertransfer.receiver_superproduct_id.name + ' '
+        return reason
+
     def _create_individualinputs(self, watertransfer):
         agriculturalseason = watertransfer.agriculturalseason_id
         quotaperiod = watertransfer.quotaperiod_id
@@ -433,10 +440,7 @@ class WuaWatertransfer(models.Model):
             'individualinputcategory_water_transfer')
         event_time = watertransfer.event_time
         volume = watertransfer.volume
-        reason = _('Water transfer from')
-        reason += ' ' + superproduct.name + ' '
-        reason += _('to superproduct')
-        reason += ' ' + receiver_superproduct.name + ' '
+        reason = self._get_water_transfer_reason(watertransfer)
         # Negative individual input to transferable superproduct
         self.env['wua.individualinput'].create({
             'agriculturalseason_id': agriculturalseason.id,
