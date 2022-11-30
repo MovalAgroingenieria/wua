@@ -39,20 +39,20 @@
                     <table class="table table-condensed" style="margin-top: 2px;">
                         <thead>
                             <tr>
-                                <th name="pression_parcel">Parcel</th>
-                                <th name="pression_intake">Intake</th>
+                                <th class="text-center" name="pression_parcel">Parcel</th>
+                                <th name="pression_waterconnection">Water Connection</th>
                                 <th name="pression_irrigation_shed">Irrigation Shed</th>
-                                <th name="pression_hidraulicsector">Hydraulic Sector</th>
+                                <th class="text-center" name="pression_hidraulicsector">Hydraulic Sector</th>
                             </tr>
                         </thead>
                         <tbody>
                             <t t-foreach="o.partnerlink_ids" t-as="p">
                                 <tr t-foreach="p.parcel_id.irrigationpoint_ids" t-as="ip">
                                     <t t-if="ip.type == 'WC'">
-                                        <td name="pression_parcel"><span t-field="p.parcel_id"/></td>
-                                        <td name="pression_intake"><span t-field="ip.waterconnection_id"/></td>
+                                        <td class="text-center" name="pression_parcel"><span t-field="p.parcel_id"/></td>
+                                        <td name="pression_waterconnection"><span t-field="ip.waterconnection_id"/></td>
                                         <td name="pression_irrigation_shed"><span t-field="ip.irrigationshed_id"/></td>
-                                        <td name="pression_hidraulicsector"><span t-field="ip.hydraulicsector_id"/></td>
+                                        <td class="text-center" name="pression_hidraulicsector"><span t-field="ip.hydraulicsector_id"/></td>
                                     </t>
                                 </tr>
                             </t>
