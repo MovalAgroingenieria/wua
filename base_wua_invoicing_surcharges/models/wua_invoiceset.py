@@ -172,15 +172,12 @@ class WuaInvoiceset(models.Model):
         return invoice_details_categ17
 
     def get_description_categ18(self, invoice, product_id, quantity):
-        product_var = self.env['product.product'].browse(product_id)
         partner_lang = invoice.partner_id.lang
         invoice_date_format = self.env['wua.parcel'].transform_date_to_locale(
             invoice.date_invoice, partner_lang)
-        percentage_value = product_var.list_price * 100
         description = ''
-        description += _('Surcharge of the ')
-        description += str(percentage_value)
-        description += _('% for invoice ')
+        description += _('Reference Invoice')
+        description += ' '
         description += invoice.number + ' (' + invoice_date_format
         if (invoice.invoiceset_id):
             description += ' - ' + invoice.invoiceset_id.description
@@ -210,7 +207,7 @@ class WuaInvoiceset(models.Model):
 
     def add_to_invoice_data_line_ref_to_other_types(
             self, categ_code, invoice_data_line, data):
-        if categ_code != 16 and categ_code != 17:
+        if categ_code != 16 and categ_code != 17 and categ_code != 18:
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
@@ -219,6 +216,10 @@ class WuaInvoiceset(models.Model):
             data['partner_id'] = invoice_data_line['key2']
         if categ_code == 17:
             data['invoice_with_variable_surcharge_id'] = \
+                invoice_data_line['key1']
+            data['partner_id'] = invoice_data_line['key2']
+        if categ_code == 18:
+            data['invoice_with_total_variable_surcharge_id'] = \
                 invoice_data_line['key1']
             data['partner_id'] = invoice_data_line['key2']
         return data
@@ -236,12 +237,17 @@ class WuaInvoiceset(models.Model):
                 for l_invoice_fixed in \
                         line.line_invoice_with_fixed_surcharge_ids:
                     invoice_ids.append(l_invoice_fixed.invoice_id.id)
+            elif line.categ_id.productcategory_code == 18:
+                for l_invoice_total_variable in \
+                        line.line_invoice_with_total_variable_surcharge_ids:
+                    invoice_ids.append(l_invoice_total_variable.invoice_id.id)
         if invoice_ids:
             invoice_ids = list(set(invoice_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             invoices._compute_number_of_variable_surcharges()
             invoices._compute_number_of_fixed_surcharges()
+            invoices._compute_number_of_total_variable_surcharges()
 
 
 class WuaInvoicesetLine(models.Model):
@@ -321,8 +327,8 @@ class WuaInvoicesetLine(models.Model):
                     residual, date_due, date_invoice, invoiceset_id,
                     number_of_variable_surcharges
                     FROM account_invoice
-                    WHERE type = 'out_refund' OR
-                    type = 'out_invoice'
+                    WHERE (type = 'out_refund' OR
+                    type = 'out_invoice') AND state != 'draft'
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
@@ -355,8 +361,8 @@ class WuaInvoicesetLine(models.Model):
                     residual, date_due, date_invoice, invoiceset_id,
                     number_of_fixed_surcharges
                     FROM account_invoice
-                    WHERE type = 'out_refund' OR
-                    type = 'out_invoice'
+                    WHERE (type = 'out_refund' OR
+                    type = 'out_invoice') AND state != 'draft'
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
@@ -388,8 +394,8 @@ class WuaInvoicesetLine(models.Model):
                     amount_total, date_due, date_invoice, invoiceset_id,
                     number_of_total_variable_surcharges
                     FROM account_invoice
-                    WHERE type = 'out_refund' OR
-                    type = 'out_invoice'
+                    WHERE (type = 'out_refund' OR
+                    type = 'out_invoice') AND state != 'draft'
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
