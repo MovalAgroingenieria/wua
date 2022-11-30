@@ -46,6 +46,7 @@
         "fontawesome_ext",
         "base_extra_attachment",
         "html_field_in_tree_view",
+        "report_qr",
     ],
     "data": [
         "security/security.xml",
