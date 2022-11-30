@@ -14,7 +14,7 @@ Description
 
 Global Invoicing based on:
 
-* Fixed and variable surcharges for unpayed invoices.
+* Fixed and variable surcharges for unpayed (or payed) invoices.
 
 Credits
 =======
