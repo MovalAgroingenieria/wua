@@ -18,6 +18,7 @@ from collections import OrderedDict
 from xml.etree import ElementTree
 from owslib.wms import WebMapService
 from owslib.wfs import WebFeatureService
+from operator import itemgetter
 from odoo import models, fields, api, exceptions, tools, _
 
 
@@ -2888,6 +2889,12 @@ class WuaParcelPartnerlink(models.Model):
         string='Cadastral Reference',
         compute='_compute_cadastral_reference')
 
+    propietary_partner_id = fields.Many2one(
+        string='Propietary',
+        comodel_name='res.partner',
+        store=True,
+        compute="_compute_propieraty_partner_id")
+
     _sql_constraints = [
         ('valid_ownership_percentage',
          'CHECK (ownership_percentage >= 0 and ownership_percentage <= 100)',
@@ -3005,6 +3012,28 @@ class WuaParcelPartnerlink(models.Model):
                      partnerlink.other_costs_percentage)/100
                 partnerlink.area_official_other_costs_net_hec = \
                     factor * partnerlink.area_official_other_costs_net
+
+    @api.depends('profile', 'parcel_id.partnerlink_ids')
+    def _compute_propieraty_partner_id(self):
+        for record in self:
+            propietary_partner_id = False
+            if record.profile != 'O':
+                candidate_partners = []
+                for partner in record.parcel_id.partnerlink_ids:
+                    if partner.profile == 'O':
+                        data = {
+                            "owner_partner": partner,
+                            "ownership_percentage":
+                            partner.ownership_percentage}
+                        candidate_partners.append(data)
+                if len(candidate_partners) > 0:
+                    candidate_partners_ordered = sorted(
+                        candidate_partners,
+                        key=itemgetter('ownership_percentage'),
+                        reverse=True)
+                    owner = candidate_partners_ordered[0]['owner_partner']
+                    propietary_partner_id = owner.partner_id
+            record.propietary_partner_id = propietary_partner_id
 
     @api.multi
     def _compute_cadastral_reference(self):

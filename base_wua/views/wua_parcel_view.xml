@@ -536,19 +536,17 @@
                 class="o_base_wua_parcel_partnerlink_view_tree">
                 <field name="parcel_id"/>
                 <field name="cadastral_reference"/>
-                <field name="partnerlink_code"
-                 invisible="1"/>
-                <field name="partner_id"
-                 widget="many2one_unclickable"/>
+                <field name="partnerlink_code" invisible="1"/>
+                <field name="partner_id" widget="many2one_unclickable"/>
                 <field name="profile"/>
+                <field name="propietary_partner_id" invisible="1"/>
                 <field name="is_usufructuary"/>
                 <field name="close_to_end_lease" invisible="1"/>
                 <field name="lease_ended" invisible="1"/>
                 <field name="lease_dates_required" invisible="1"/>
                 <field name="leased_parcel"/>
                 <field name="leased_to"
-                       bg_color="red:lease_ended == True; orange:close_to_end_lease == True;"
-                       />
+                    bg_color="red:lease_ended == True; orange:close_to_end_lease == True;"/>
                 <field name="area_official"/>
                 <field name="ownership_percentage"/>
                 <field name="area_official_net"/>
@@ -572,9 +570,10 @@
                 <filter string="Payer" name="payer"
                  domain="[('profile','=','P')]"/>
                 <group expand="0" string="Group By">
-                    <filter string="Profile"
-                     name="profile"
-                     context="{'group_by':'profile'}"/>
+                    <filter string="Profile" name="profile"
+                        context="{'group_by':'profile'}"/>
+                    <filter string="Propietary" name="propietary"
+                        context="{'group_by':'propietary_partner_id'}"/>
                 </group>
             </search>
         </field>
