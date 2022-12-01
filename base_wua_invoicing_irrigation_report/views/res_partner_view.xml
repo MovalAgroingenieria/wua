@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='followup']" position="after">
+                    <field name="irrigationreport_separate_invoicing" invisible="1"/>
+                    <field name="irrigationreport_mandate_required" invisible="1"/>
+                    <group name="group_irrigationreport_costs" string="Irrigation report Costs"
+                           attrs="{'invisible':
+                                   [('irrigationreport_separate_invoicing', '!=', True)]}">
+                        <field name="irrigationreport_payment_mode_id"
+                            string="Payment Mode"
+                            domain="[('payment_type','=','inbound')]"/>
+                        <field name="irrigationreport_mandate_id"
+                            string="Direct Debit Mandate"
+                            attrs="{'invisible':
+                                    [('irrigationreport_mandate_required', '=', False),],
+                                    'required':
+                                    [('irrigationreport_mandate_required', '=', True),]}"
+                            domain="[('state','=','valid'),
+                                    ('partner_id','=',id)]"
+                            context="{'reduced_name_get_for_bankingmandate':
+                                    True}"/>
+                    </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

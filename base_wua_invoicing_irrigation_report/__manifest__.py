@@ -21,6 +21,7 @@
         'reports/report_wua_irrigationreport.xml',
         'views/resources.xml',
         'views/account_invoice_view.xml',
+        'views/res_partner_view.xml',
         'views/wua_intake_view.xml',
         'views/wua_invoiceset_view.xml',
         'views/wua_irrigationreport_view.xml',

@@ -21,6 +21,13 @@ class WuaInvoicingConfiguration(models.TransientModel):
         'with the time not in hours will show the initial and the final '
         'reading value')
 
+    irrigationreport_separate_invoicing = fields.Boolean(
+        string='Separate invoicing for irrigation reports',
+        default=False,
+        help='If enabled, the payment method and mandate for '
+             'invoicing the irrigation reports can be setted directly on '
+             'the partner')
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -31,3 +38,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'irrigationreport_readings_data_in_detail',
                            self.irrigationreport_readings_data_in_detail)
+        values.set_default('wua.invoicing.configuration',
+                           'irrigationreport_separate_invoicing',
+                           self.irrigationreport_separate_invoicing)
