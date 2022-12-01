@@ -18,6 +18,16 @@
                                     <span class="o_stat_text">Measurements</span>
                                 </div>
                         </button>
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_pressuresensor" invisible="1"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                      ['|',('gis_viewer_link','=',False),
+                                      ('with_gis_pressuresensor','=',False)]}"/>
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">

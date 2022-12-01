@@ -21,7 +21,7 @@ class WuaPressuresensormeasurement(models.Model):
         ondelete='restrict')
 
     measurement_time = fields.Datetime(
-        string="Time",
+        string="Instant",
         required=True,
         index=True)
 

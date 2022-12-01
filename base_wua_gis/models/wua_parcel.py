@@ -7,7 +7,6 @@ from odoo import models, fields, api
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
-    _description = 'Parcels (integrated GIS)'
 
     html_gisviewer_frame = fields.Text(
         string='GIS Viewer',

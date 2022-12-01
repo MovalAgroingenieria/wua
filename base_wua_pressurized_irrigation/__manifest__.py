@@ -13,7 +13,6 @@
     "license": "AGPL-3",
     "depends": [
         "wua_structure_irrigation",
-        #"report_qr",
     ],
     "data": [
         "security/ir.model.access.csv",
