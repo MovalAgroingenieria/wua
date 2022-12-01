@@ -342,3 +342,12 @@ class WuaPumpgroup(models.Model):
             'target': 'current',
         }
         return act_window
+
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_pumpgroup_table()
+            parcel_model.create_pumpgroup_triggers()
+        except Exception:
+            pass

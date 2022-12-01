@@ -35,6 +35,12 @@ class WuaIrrigationshed(models.Model):
                 DELETE from ir_values WHERE model = \
                 'wua.infrastructure.configuration'
                 """)
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_irrigationshed_table()
+            parcel_model.create_irrigationshed_triggers()
+        except Exception:
+            pass
 
     name = fields.Char(
         string='Identifier',

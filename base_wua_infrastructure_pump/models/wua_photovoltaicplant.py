@@ -236,3 +236,12 @@ class WuaPhotovoltaicplant(models.Model):
             'target': 'current',
         }
         return act_window
+
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_photovoltaicplant_table()
+            parcel_model.create_photovoltaicplant_triggers()
+        except Exception:
+            pass

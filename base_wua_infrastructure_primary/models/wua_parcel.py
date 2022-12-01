@@ -350,16 +350,6 @@ class WuaParcel(models.Model):
                 gis_intake_ok = False
         return gis_intake_ok
 
-    def create_gis_data(self):
-        super(WuaParcel, self).create_gis_data()
-        try:
-            self.create_wua_gis_flowmeter_table()
-            self.create_flowmeter_triggers()
-            self.create_wua_gis_intake_table()
-            self.create_intake_triggers()
-        except Exception:
-            pass
-
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         # @INFO: The original method return False if gis_parcels_ok

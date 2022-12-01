@@ -353,16 +353,6 @@ class WuaParcel(models.Model):
                 gis_photovoltaicplant_ok = False
         return gis_photovoltaicplant_ok
 
-    def create_gis_data(self):
-        super(WuaParcel, self).create_gis_data()
-        try:
-            self.create_wua_gis_pumpgroup_table()
-            self.create_pumpgroup_triggers()
-            self.create_wua_gis_photovoltaicplant_table()
-            self.create_photovoltaicplant_triggers()
-        except Exception:
-            pass
-
     # Expand original method
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()

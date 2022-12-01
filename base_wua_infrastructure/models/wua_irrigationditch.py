@@ -419,3 +419,12 @@ class WuaIrrigationditch(models.Model):
         if len(filtered_translations) > 0:
             resp = filtered_translations[0].value
         return resp
+
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_irrigationditch_table()
+            parcel_model.create_irrigationditch_triggers()
+        except Exception:
+            pass

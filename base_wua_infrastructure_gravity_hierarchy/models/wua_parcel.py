@@ -1038,14 +1038,6 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
-    def create_gis_data(self):
-        super(WuaParcel, self).create_gis_data()
-        try:
-            self.create_wua_gis_drainageditch_table()
-            self.create_drainageditch_triggers()
-        except Exception:
-            pass
-
     # Expand original method
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()

@@ -156,14 +156,6 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
-    def create_gis_data(self):
-        super(WuaParcel, self).create_gis_data()
-        try:
-            self.create_wua_gis_tank_table()
-            self.create_tank_triggers()
-        except Exception:
-            pass
-
     def set_gis_fields_tank(self):
         gis_tank_ok = self.check_gis_tank_created()
         if (gis_tank_ok):

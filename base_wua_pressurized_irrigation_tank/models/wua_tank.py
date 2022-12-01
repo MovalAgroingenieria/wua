@@ -131,3 +131,12 @@ class WuaTank(models.Model):
                 'url': self.gis_viewer_link,
                 'target': 'new',
             }
+
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_tank_table()
+            parcel_model.create_tank_triggers()
+        except Exception:
+            pass

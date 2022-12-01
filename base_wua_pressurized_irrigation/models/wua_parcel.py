@@ -156,14 +156,6 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
-    def create_gis_data(self):
-        super(WuaParcel, self).create_gis_data()
-        try:
-            self.create_wua_gis_pressuresensor_table()
-            self.create_pressuresensor_triggers()
-        except Exception:
-            pass
-
 
 class WuaParcelIrrigationpointWC(models.Model):
     _inherit = 'wua.parcel.irrigationpointwc'

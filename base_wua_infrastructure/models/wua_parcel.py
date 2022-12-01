@@ -609,16 +609,6 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
-    def create_gis_data(self):
-        super(WuaParcel, self).create_gis_data()
-        try:
-            self.create_wua_gis_irrigationshed_table()
-            self.create_irrigationshed_triggers()
-            self.create_wua_gis_irrigationditch_table()
-            self.create_irrigationditch_triggers()
-        except Exception:
-            pass
-
     def set_gis_fields_irrigationshed(self):
         gis_irrigationshed_ok = self.check_gis_irrigationshed_created()
         if (gis_irrigationshed_ok):

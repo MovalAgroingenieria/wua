@@ -141,14 +141,6 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
-    def create_gis_data(self):
-        super(WuaParcel, self).create_gis_data()
-        try:
-            self.create_wua_gis_reservoir_table()
-            self.create_reservoir_triggers()
-        except Exception:
-            pass
-
     # Expand and split original method for reservoirs
     def set_gis_fields_reservoir(self):
         gis_reservoir_ok = self.check_gis_reservoir_created()
