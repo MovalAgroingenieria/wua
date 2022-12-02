@@ -10,14 +10,20 @@
                 <templates>
                     <t t-name="gisviewer">
                          <field name="with_gis_parcel" invisible="1"/>
+                         <field name="parcel_gis_preview_in_form" invisible="1"/>
                          <div id="gisviewer_parcel"
-                              attrs="{'invisible':
-                                      [('with_gis_parcel','=',False)]}">
+                              attrs="{'invisible':['|', '|', ('with_gis_parcel','=',False), ('html_gisviewer_frame', '=', False), ('parcel_gis_preview_in_form', '!=', True)]}">
                              <field name="html_gisviewer_frame" widget="html"/>
                          </div>
                     </t>
                 </templates>            
-            </xpath>        
+            </xpath>
+            <xpath expr="//page[@name='aerial_img']" position="after">
+                <page name="gis_preview" string="GIS Preview"
+                      attrs="{'invisible':['|', '|', ('with_gis_parcel','=',False), ('html_gisviewer_frame_bis', '=', False), ('parcel_gis_preview_in_form', '=', True)]}">
+                    <field name="html_gisviewer_frame_bis" widget="html" style="margin-top:15px;"/>
+                </page>
+            </xpath>
         </field>
     </record>
 

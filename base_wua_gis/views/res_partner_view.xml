@@ -7,10 +7,19 @@
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="before">
+                 <field name="partner_gis_preview_in_form" invisible="1"/>
                  <div id="gisviewer_partner"
-                      attrs="{'invisible':[('parcel_number', '=', 0)]}">
+                      style="margin-top:20px;margin-bottom:20px;"
+                      attrs="{'invisible':['|', '|', ('parcel_number', '=', 0), ('html_gisviewer_frame', '=', False), ('partner_gis_preview_in_form', '!=', True)]}">
                      <field name="html_gisviewer_frame" widget="html"/>
                  </div>
+            </xpath>
+            <xpath expr="//page[@name='quotas']" position="after">
+                <page name="gis_preview" string="GIS Preview"
+                      attrs="{'invisible':['|', '|', ('is_wua_partner','=',False), ('html_gisviewer_frame_bis', '=', False), ('partner_gis_preview_in_form', '=', True)]}"
+                      groups="base_wua.group_wua_user">
+                    <field name="html_gisviewer_frame_bis" widget="html" style="margin-top:15px;"/>
+                </page>
             </xpath>
         </field>
     </record>

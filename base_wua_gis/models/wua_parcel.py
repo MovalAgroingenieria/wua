@@ -11,8 +11,15 @@ class WuaParcel(models.Model):
 
     html_gisviewer_frame = fields.Text(
         string='GIS Viewer',
-        compute='_compute_html_gisviewer_frame'
-        )
+        compute='_compute_html_gisviewer_frame')
+
+    html_gisviewer_frame_bis = fields.Text(
+        string='GIS Viewer (bis)',
+        related='html_gisviewer_frame')
+
+    parcel_gis_preview_in_form = fields.Boolean(
+        string='GIS preview of parcels in the form',
+        compute='_compute_parcel_gis_preview_in_form')
 
     @api.multi
     def _compute_html_gisviewer_frame(self):
@@ -21,12 +28,20 @@ class WuaParcel(models.Model):
                 url = record.gis_viewer_link + '&mode=min'
                 url = url.replace('http://', 'https://')
                 record.html_gisviewer_frame = \
-                    '<p style="text-align:center;margin-top:0px;' + \
+                    '<p style="text-align:center;' + \
                     'margin-left:6px;margin-right:6px;">' + \
                     '<iframe id="iframe_parcels" scrolling="no" ' + \
                     'marginheight="0" marginwidth="0" ' + \
                     'src="' + url + '" ' + \
-                    'frameborder="0" height="260" width="98%" ' + \
+                    'frameborder="1" height="400" width="67%" ' + \
                     '></iframe></p>'
             else:
                 record.html_gisviewer_frame = ''
+
+    @api.multi
+    def _compute_parcel_gis_preview_in_form(self):
+        parcel_gis_preview_in_form = \
+            self.env['ir.values'].get_default(
+                'wua.configuration', 'parcel_gis_preview_in_form')
+        for record in self:
+            record.parcel_gis_preview_in_form = parcel_gis_preview_in_form
