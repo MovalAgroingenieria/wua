@@ -10,8 +10,15 @@ class ResPartner(models.Model):
 
     html_gisviewer_frame = fields.Text(
         string='GIS Viewer',
-        compute='_compute_html_gisviewer_frame'
-        )
+        compute='_compute_html_gisviewer_frame')
+
+    html_gisviewer_frame_bis = fields.Text(
+        string='GIS Viewer (bis)',
+        related='html_gisviewer_frame')
+
+    partner_gis_preview_in_form = fields.Boolean(
+        string='GIS preview of partners in the form',
+        compute='_compute_partner_gis_preview_in_form')
 
     @api.multi
     def _compute_html_gisviewer_frame(self):
@@ -33,11 +40,19 @@ class ResPartner(models.Model):
                     url = record.gis_viewer_link + '&mode=min'
                     url = url.replace('http://', 'https://')
                     html_gisviewer_frame = \
-                        '<p style="text-align:center;margin-top:20px;' + \
-                        'margin-bottom:20px;margin-left:6px;margin-right:6px;">' + \
-                        '<iframe id="iframe_parcels" scrolling="no" ' + \
-                        'marginheight="0" marginwidth="0" ' + \
+                        '<p style="text-align:center;' + \
+                        'margin-left:6px;margin-right:6px;">' + \
+                        '<iframe id="iframe_partner_parcels" ' + \
+                        'scrolling="no" marginheight="0" marginwidth="0" ' + \
                         'src="' + url + '" ' + \
-                        'frameborder="1" height="400" width="55%" ' + \
+                        'frameborder="1" height="400" width="67%" ' + \
                         '></iframe></p>'
             record.html_gisviewer_frame = html_gisviewer_frame
+
+    @api.multi
+    def _compute_partner_gis_preview_in_form(self):
+        partner_gis_preview_in_form = \
+            self.env['ir.values'].get_default(
+                'wua.configuration', 'partner_gis_preview_in_form')
+        for record in self:
+            record.partner_gis_preview_in_form = partner_gis_preview_in_form

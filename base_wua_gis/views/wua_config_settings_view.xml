@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.configuration</field>
+        <field name="inherit_id" ref="base_wua.wua_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='url_gis_viewer_epsg_code']" position="after">
+                <field name="partner_gis_preview_in_form"
+                       string="Partners: GIS preview in the form"/>
+                <field name="parcel_gis_preview_in_form"
+                       string="Parcels: GIS preview in the form"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

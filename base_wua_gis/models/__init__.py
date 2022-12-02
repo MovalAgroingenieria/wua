@@ -4,3 +4,4 @@
 
 from . import wua_parcel
 from . import res_partner
+from . import wua_config_settings
