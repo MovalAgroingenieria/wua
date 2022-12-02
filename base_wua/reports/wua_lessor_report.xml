@@ -21,10 +21,14 @@
                         <!-- Vars -->
                         <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
                         <t t-set="measurement_unit" t-value="str(' ')"/>
+                        <t t-set="printing_date" t-value="str(' ')"/>
                         <t t-set="total_leased_area" t-value="0"/>
                         <t t-set="leased_parcel_ids" t-value="[]"/>
                         <t t-if="o.partnerlink_ids">
                             <t t-set="measurement_unit" t-value="o.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
+                            <t t-set="printing_date"
+                               t-value="o.env['wua.parcel'].transform_date_to_locale(
+                                o.partnerlink_ids[0].parcel_id.date_now.split()[0], lang=o.lang)"/>
                             <t t-foreach="o.partnerlink_ids" t-as="p">
                                 <t t-if="p.leased_parcel">
                                     <t t-set="total_leased_area" t-value="total_leased_area + p.area_official"/>
@@ -32,7 +36,10 @@
                                 </t>
                             </t>
                         </t>
-                        <t t-set="leased_parcels" t-value="o.env['wua.parcel.partnerlink'].browse(leased_parcel_ids)"/>
+                        <!-- Get partlinks record and order by propietary -->
+                        <t t-set="leased_parcels"
+                           t-value="o.env['wua.parcel.partnerlink'].search(
+                            [('id', 'in', leased_parcel_ids)], order='propietary_partner_id, parcel_id')"/>
 
                         <!-- Partner data -->
                         <div name="wua_partner_data">
@@ -118,7 +125,13 @@
                                                     <td><span>Total leased area:</span></td>
                                                     <td class="text-right" style="padding: 0 0 0 28px;">
                                                         <span t-field="o.parcel_lessee_area"/>
-                                                        <span><t t-esc="measurement_unit"/></span>
+                                                        <span t-esc="measurement_unit"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span>Printing date:</span></td>
+                                                    <td class="text-right">
+                                                        <strong><span t-esc="printing_date"/></strong>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -171,7 +184,9 @@
                                                 <span t-att-style="row_style" t-field="p.parcel_id"/>
                                             </td>
                                             <td name="td_propietary">
+                                                <t t-set="propietary_code" t-value="str(p.propietary_partner_id.partner_code)"/>
                                                 <span t-att-style="row_style" t-field="p.propietary_partner_id"/>
+                                                <span t-att-style="row_style">[<span t-esc="propietary_code"/>]</span>
                                             </td>
                                             <td name="td_area" class="text-right">
                                                 <span t-att-style="row_style" t-field="p.area_official"/>
