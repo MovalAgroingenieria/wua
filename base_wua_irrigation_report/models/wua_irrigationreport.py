@@ -48,7 +48,8 @@ class WuaIrrigationReport(models.Model):
         required=True,
         index=True,
         comodel_name="wua.intake",
-        ondelete="restrict")
+        ondelete="restrict",
+        domain=[('valid_for_irrigationreports', '=', True)])
 
     agriculturalseason_id = fields.Many2one(
         string="Agricultural Season",

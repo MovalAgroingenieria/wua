@@ -26,6 +26,27 @@
             <xpath expr="//field[@name='intake_code']" position="attributes">
                 <attribute name="attrs">{'readonly':[('number_of_irrigationreports','>', 0)]}</attribute>
             </xpath>
+            <xpath expr="//field[@name='category']" position="after">
+                <field name="valid_for_irrigationreports"
+                       string='Supports irrig. reports'/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_intake_view_search" model="ir.ui.view">
+        <field name="name">Intakes (search view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_freesheet']" position="after">
+                <separator/>
+                <filter string="Supports irrig. reports: Yes"
+                        name="valid_for_irrigationreports_yes"
+                        domain="[('valid_for_irrigationreports','=', True)]"/>
+                <filter string="Supports irrig. reports: No"
+                        name="valid_for_irrigationreports_no"
+                        domain="[('valid_for_irrigationreports','=', False)]"/>
+            </xpath>
         </field>
     </record>
 

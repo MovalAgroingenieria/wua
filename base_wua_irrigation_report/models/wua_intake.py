@@ -19,6 +19,11 @@ class WuaIntake(models.Model):
         store=True,
         compute="_compute_number_of_irrigationreports")
 
+    valid_for_irrigationreports = fields.Boolean(
+        string='Valid for irrigation reports',
+        default=True,
+        required=True)
+
     @api.depends('irrigationreport_ids')
     def _compute_number_of_irrigationreports(self):
         for record in self:

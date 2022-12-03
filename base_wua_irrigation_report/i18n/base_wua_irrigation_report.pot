@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-25 14:53+0000\n"
-"PO-Revision-Date: 2022-10-25 14:53+0000\n"
+"POT-Creation-Date: 2022-12-03 15:15+0000\n"
+"PO-Revision-Date: 2022-12-03 15:15+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -310,6 +310,11 @@ msgid "Entity (intake)"
 msgstr ""
 
 #. module: base_wua_irrigation_report
+#: model:ir.model,name:base_wua_irrigation_report.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr ""
+
+#. module: base_wua_irrigation_report
 #: sql_constraint:wua.irrigationreport:0
 msgid "Existing report code."
 msgstr ""
@@ -317,6 +322,16 @@ msgstr ""
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_end_volume
 msgid "Final Value (m³)"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence_ls
+msgid "Flow (l/s)"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence
+msgid "Flow (m³/h)"
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -358,7 +373,7 @@ msgstr ""
 #. module: base_wua_irrigation_report
 #: code:addons/base_wua_irrigation_report/models/res_partner.py:45
 #: code:addons/base_wua_irrigation_report/models/wua_agriculturalseason.py:142
-#: code:addons/base_wua_irrigation_report/models/wua_intake.py:45
+#: code:addons/base_wua_irrigation_report/models/wua_intake.py:50
 #: code:addons/base_wua_irrigation_report/models/wua_parcel.py:45
 #: model:ir.actions.act_window,name:base_wua_irrigation_report.wua_irrigationreport_action
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_res_partner_irrigationreport_ids
@@ -453,11 +468,6 @@ msgid "Parcel"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: model:ir.model,name:base_wua_irrigation_report.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr ""
-
-#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_partner_id
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
 msgid "Partner"
@@ -510,18 +520,33 @@ msgid "State"
 msgstr ""
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_intake_view_form
+msgid "Supports irrig. reports"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_intake_view_search
+msgid "Supports irrig. reports: No"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_intake_view_search
+msgid "Supports irrig. reports: Yes"
+msgstr ""
+
+#. module: base_wua_irrigation_report
 #: sql_constraint:wua.irrigationreport:0
 msgid "The custom flow be 0 or a greater number"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:478
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:485
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:235
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:234
 #: sql_constraint:wua.irrigationreport:0
 #, python-format
 msgid "The delivery note must be 0 or a greater number"
@@ -556,8 +581,18 @@ msgid "There are some validated irrigation reports for this agricultural season,
 msgstr ""
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_total_volume
+msgid "Total Volume (m³)"
+msgstr ""
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_user_id
 msgid "User"
+msgstr ""
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_intake_valid_for_irrigationreports
+msgid "Valid for irrigation reports"
 msgstr ""
 
 #. module: base_wua_irrigation_report
@@ -578,28 +613,12 @@ msgid "Values of hour in the HH:MM format (if not, as decimal format)"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence_ls
-msgid "Flow (l/s)"
-msgstr ""
-
-#. module: base_wua_irrigation_report
-#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence
-msgid "Flow (m³/h)"
-msgstr ""
-
-#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_volume_time_equivalence
 msgid "Volume per hour (m³)"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence_ls
-msgid "Volume, in liters, which is equal to one second"
-msgstr ""
-
-#. module: base_wua_irrigation_report
 #: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_agriculturalseason_volume_time_equivalence
-#: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence
 msgid "Volume, in m³, which is equal to one hour"
 msgstr ""
 
@@ -629,8 +648,8 @@ msgid "Without Irrigation Worker"
 msgstr ""
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:606
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:616
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:615
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:625
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr ""
