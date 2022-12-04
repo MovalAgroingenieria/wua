@@ -143,12 +143,37 @@ class WuaCertificateType(models.Model):
         return result
 
     @api.multi
+    def write(self, vals):
+        user_is_certificate_manager_only = \
+            (self.env.user.has_group(
+                'base_wua_certificate.group_wua_certificate_manager') and
+             (not self.env.user.has_group(
+                 'base_wua.group_wua_manager')))
+        for record in self:
+            if (user_is_certificate_manager_only and
+               (record.create_uid != self.env.user)):
+                raise exceptions.UserError(_(
+                    'A certificate manger can only edit their own '
+                    'certificate types.'))
+        return super(WuaCertificateType, self).write(vals)
+
+    @api.multi
     def unlink(self):
+        user_is_certificate_manager_only = \
+            (self.env.user.has_group(
+                'base_wua_certificate.group_wua_certificate_manager') and
+             (not self.env.user.has_group(
+                 'base_wua.group_wua_manager')))
         for record in self:
             if record.is_standard_certificatetype:
                 raise exceptions.UserError(_('It is not possible to remove '
                                              'the \'STANDARD\' certificate '
                                              'type.'))
+            if (user_is_certificate_manager_only and
+               (record.create_uid != self.env.user)):
+                raise exceptions.UserError(_(
+                    'A certificate manger can only delete their own '
+                    'certificate types.'))
         res = super(WuaCertificateType, self).unlink()
         return res
 

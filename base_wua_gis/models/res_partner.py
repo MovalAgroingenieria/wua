@@ -25,6 +25,8 @@ class ResPartner(models.Model):
         model_wua_parcel = self.env['wua.parcel']
         model_wua_parcel_partnerlink = self.env['wua.parcel.partnerlink']
         for record in self:
+            parcel_number = record.parcel_number
+            gis_viewer_link = record.gis_viewer_link
             html_gisviewer_frame = ''
             if record.parcel_number > 0 and record.gis_viewer_link != '':
                 parcels_with_gis = False

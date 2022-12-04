@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-22 12:48+0000\n"
-"PO-Revision-Date: 2022-06-22 12:48+0000\n"
+"POT-Creation-Date: 2022-12-04 15:24+0000\n"
+"PO-Revision-Date: 2022-12-04 15:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,12 @@ msgstr ""
 
 #. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "<b><font style=\"font-size: 14px;\">MARIANO SOTO GARCÍA, SECRETARIO DE LA {{ partner.company_id.name.upper() }}</font></b>"
+msgid "<b><font style=\"font-size: 14px;\">{{ certificate.name_of_signer.upper() }}, SECRETARY OF {{ partner.company_id.name.upper() }}</font></b>"
+msgstr ""
+
+#. module: base_wua_certificate
+#: model:wua.certificate.type,final_paragraph:base_wua_certificate.certificatetype_no_variation
+msgid "<b><u>ADVERTENCIA</u></b>"
 msgstr ""
 
 #. module: base_wua_certificate
@@ -221,7 +226,19 @@ msgstr ""
 
 #. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "<u><b><font style=\"font-size: 18px;\">CERTIFICO:</font></b></u>"
+msgid "<u><b><font style=\"font-size: 18px;\">CERTIFY:</font></b></u>"
+msgstr ""
+
+#. module: base_wua_certificate
+#: code:addons/base_wua_certificate/models/wua_certificate_type.py:174
+#, python-format
+msgid "A certificate manger can only delete their own certificate types."
+msgstr ""
+
+#. module: base_wua_certificate
+#: code:addons/base_wua_certificate/models/wua_certificate_type.py:155
+#, python-format
+msgid "A certificate manger can only edit their own certificate types."
 msgstr ""
 
 #. module: base_wua_certificate
@@ -246,6 +263,11 @@ msgid "Aerial image not found"
 msgstr ""
 
 #. module: base_wua_certificate
+#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
+msgid "Aerial photo of each plot is accompanied on the last page of this certificate."
+msgstr ""
+
+#. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
 msgid "Allowed remote IP"
 msgstr ""
@@ -258,6 +280,11 @@ msgstr ""
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_allowed_request_for_portal_user
 msgid "Allowed request for portal user"
+msgstr ""
+
+#. module: base_wua_certificate
+#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
+msgid "And as evidence thereof, I hereby issue this certificate in {{ partner.company_id.city }} on {{ current_month }} {{ current_day }}th, {{ current_year }}.<br>"
 msgstr ""
 
 #. module: base_wua_certificate
@@ -368,6 +395,11 @@ msgid "Certificate Management"
 msgstr ""
 
 #. module: base_wua_certificate
+#: model:res.groups,name:base_wua_certificate.group_wua_certificate_manager
+msgid "Certificate Manager"
+msgstr ""
+
+#. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_parcel_name
 msgid "Certificate Parcel"
 msgstr ""
@@ -411,7 +443,7 @@ msgstr ""
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/res_partner.py:70
 #: code:addons/base_wua_certificate/models/wua_certificate.py:583
-#: code:addons/base_wua_certificate/models/wua_certificate_type.py:170
+#: code:addons/base_wua_certificate/models/wua_certificate_type.py:195
 #: model:ir.actions.act_window,name:base_wua_certificate.wua_certificate_action
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_certificate_ids
 #: model:ir.ui.menu,name:base_wua_certificate.certificate_menu
@@ -549,6 +581,11 @@ msgid "ERROR IN TEMPLATE"
 msgstr ""
 
 #. module: base_wua_certificate
+#: model:wua.certificate.type,final_paragraph:base_wua_certificate.certificatetype_no_variation
+msgid "El certificado otorgado a <b>{{ partner.name }}</b> carecerá de validez jurídica si no está firmado digitalmente. Esta firma digital tiene que ser accesible desde cualquier visor PDF homologado.<br>"
+msgstr ""
+
+#. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_one_partner_view_tree
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_tree
 msgid "Elect. Office"
@@ -678,7 +715,7 @@ msgid "It is not allowed to modify certificates from the electronic office."
 msgstr ""
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate_type.py:149
+#: code:addons/base_wua_certificate/models/wua_certificate_type.py:169
 #, python-format
 msgid "It is not possible to remove the 'STANDARD' certificate type."
 msgstr ""
@@ -944,11 +981,6 @@ msgid "Processing Status"
 msgstr ""
 
 #. module: base_wua_certificate
-#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "Que <b>{{ partner.name }}</b>, con domicilio en <b>{{ partner.street }}, {{partner.city}} -{{partner.state_id.name}}-</b>, y DNI/CIF <b>{{ partner.vat }}</b>, figura en el censo de partícipes y/o titulares de esta comunidad de regantes, en las parcelas listadas en la siguiente página, estando dichas parcelas autorizadas para el uso, en regadío agrícola, del agua distribuida por esta corporación.<br>"
-msgstr ""
-
-#. module: base_wua_certificate
 #: code:addons/base_wua_certificate/wizard/wizard_create_certificate.py:57
 #, python-format
 msgid "REQUEST PROCESSED"
@@ -1068,6 +1100,11 @@ msgid "State: Validated"
 msgstr ""
 
 #. module: base_wua_certificate
+#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
+msgid "That <b>{{ partner.name }}</b>, located at <b>{{ partner.street }}, {{partner.city}} -{{partner.state_id.name}}-</b>, and holder of identity document number <b>{{ partner.vat }}</b> is enrolled in the census of this water users association, with the parcels listed on the next page. These parcels are authorized for the use of the water distributed by this corporation, for agricultural irrigation.<br>"
+msgstr ""
+
+#. module: base_wua_certificate
 #: sql_constraint:wua.certificate.type:0
 msgid "The certificate type code must be a positive value."
 msgstr ""
@@ -1175,11 +1212,6 @@ msgstr ""
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_has_mailtemplate
 msgid "With mail template"
-msgstr ""
-
-#. module: base_wua_certificate
-#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "Y para que conste, a petición del interesado, expido el presente, en {{ partner.company_id.city }}, a {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
 msgstr ""
 
 #. module: base_wua_certificate

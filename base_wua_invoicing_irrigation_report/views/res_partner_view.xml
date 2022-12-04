@@ -6,12 +6,13 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base_wua_irrigation_report.view_partner_form"/>
         <field name="arch" type="xml">
-            <xpath expr="(//page[@name='accounting']/group[1]/group)[last()]" position="after">
+            <xpath expr="//page[@name='quotas']" position="before">
+                <page name="payment_modes" string="Separate Billing"
+                      attrs="{'invisible': [('irrigationreport_separate_invoicing', '!=', True)]}"
+                      groups="base_wua.group_wua_user">
                     <field name="irrigationreport_separate_invoicing" invisible="1"/>
                     <field name="irrigationreport_mandate_required" invisible="1"/>
-                    <group name="group_irrigationreport_costs" string="Irrigation report Costs"
-                           attrs="{'invisible':
-                                   [('irrigationreport_separate_invoicing', '!=', True)]}">
+                    <group name="group_irrigationreport_costs" string="Irrigation report Costs">
                         <field name="irrigationreport_payment_mode_id"
                             string="Payment Mode"
                             domain="[('payment_type','=','inbound')]"/>
@@ -26,6 +27,7 @@
                             context="{'reduced_name_get_for_bankingmandate':
                                     True}"/>
                     </group>
+                </page>
             </xpath>
         </field>
     </record>

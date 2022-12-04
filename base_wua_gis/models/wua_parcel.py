@@ -23,6 +23,8 @@ class WuaParcel(models.Model):
     @api.multi
     def _compute_html_gisviewer_frame(self):
         for record in self:
+            with_gis_parcel = record.with_gis_parcel
+            gis_viewer_link = record.gis_viewer_link
             if record.with_gis_parcel and record.gis_viewer_link != '':
                 url = record.gis_viewer_link + '&mode=min'
                 url = url.replace('http://', 'https://')
