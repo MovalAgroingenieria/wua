@@ -1,11 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- File views -->
     <record id="res_file_view_form" model="ir.ui.view">
         <field name="name">Files (form view)</field>
         <field name="model">res.file</field>
         <field name="inherit_id" ref="crm_filemgmt.res_file_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//group[@name='master_data_fields']" position="inside">
+                <field name="category_is_lease" invisible="1"/>
+                <field name="category_is_trading" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="leased_from" attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                                                  'invisible':[('category_is_lease', '=', False)],
+                                                  'required':[('category_is_lease', '=', True)]}"/>
+                <field name="leased_to"  attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                                                 'invisible':[('category_is_lease', '=', False)],
+                                                 'required':[('category_is_lease', '=', True)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='partnerlink_ids']" position="replace">
+                <field name="partnerlink_ids" attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                                                      'invisible':['|',('category_is_lease', '=', True),('category_is_trading', '=', True)]}"
+                       context="{'tree_view_ref': 'crm_filemgmt.res_file_partnerlink_view_tree'}"/>
+                <field name="partnerlink_lease_ids" attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                                                      'invisible':[('category_is_lease', '=', False)]}"
+                       context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_lease'}"/>
+                <field name="partnerlink_trading_ids" attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                                                      'invisible':[('category_is_trading', '=', False)]}"
+                       context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_trading'}"/>
+            </xpath>
             <xpath expr="//page[@name='attachments']" position="before">
                 <page name="parcellink_page" string="Parcel Links">
                     <header>
@@ -38,6 +62,42 @@
         </field>
     </record>
 
+    <!-- Partner link views -->
+    <record id="res_file_partnerlink_view_tree_lease" model="ir.ui.view">
+        <field name="name">File Partnerlink (tree view)</field>
+        <field name="model">res.file.partnerlink</field>
+        <field name="arch" type="xml">
+            <tree class="o_res_file_partnerlink_view_tree" editable="bottom">
+                <field name="category_is_lease" invisible="1"/>
+                <field name="category_id" readonly="1"/>
+                <field name="partner_id"/>
+                <field name="is_lessor" attrs="{'readonly':[('is_tenant','=',True)],
+                                                'required':[('category_is_lease', '=', True)]}"/>
+                <field name="is_tenant" attrs="{'readonly':[('is_lessor','=',True)],
+                                                'required':[('category_is_lease', '=', True)]}"/>
+                <field name="is_main"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_file_partnerlink_view_tree_trading" model="ir.ui.view">
+        <field name="name">File Partnerlink (tree view)</field>
+        <field name="model">res.file.partnerlink</field>
+        <field name="arch" type="xml">
+            <tree class="o_res_file_partnerlink_view_tree" editable="bottom">
+                <field name="category_is_trading" invisible="1"/>
+                <field name="category_id" readonly="1"/>
+                <field name="partner_id"/>
+                <field name="is_buyer" attrs="{'readonly':[('is_seller','=',True)],
+                                               'required':[('category_is_trading', '=', True)]}"/>
+                <field name="is_seller" attrs="{'readonly':[('is_buyer','=',True)],
+                                                'required':[('category_is_trading', '=', True)]}"/>
+                <field name="is_main"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Parcel link views -->
     <record id="res_file_parcellink_view_form" model="ir.ui.view">
         <field name="name">File Parcellink (form view)</field>
         <field name="model">res.file.parcellink</field>

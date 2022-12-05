@@ -2,8 +2,9 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, exceptions, _
+from lxml import etree
 from datetime import datetime
+from odoo import models, fields, api, exceptions, _
 
 
 class ResFile(models.Model):
@@ -20,6 +21,48 @@ class ResFile(models.Model):
         default=False,
         compute="_compute_has_parcellinks",)
 
+    category_is_lease = fields.Boolean(
+        string='Category is lease',
+        default=False,
+        compute="_compute_category_is_lease")
+
+    category_is_trading = fields.Boolean(
+        string='Category is trading',
+        default=False,
+        compute="_compute_category_is_trading")
+
+    leased_from = fields.Date(
+        string="Lease from",
+        track_visibility='onchange',
+        index=True)
+
+    leased_to = fields.Date(
+        string="Lease to",
+        track_visibility='onchange',
+        index=True)
+
+    partnerlink_lease_ids = fields.One2many(
+        string='Partners',
+        comodel_name='res.file.partnerlink',
+        inverse_name='file_id')
+
+    partnerlink_trading_ids = fields.One2many(
+        string='Partners',
+        comodel_name='res.file.partnerlink',
+        inverse_name='file_id')
+
+    @api.depends('partnerlink_lease_ids')
+    def _insert_partnerlink_ids_from_lease(self):
+        for record in self:
+            if record.partnerlink_lease_ids:
+                record.partnerlink_ids = record.partnerlink_lease_ids
+
+    @api.depends('partnerlink_trading_ids')
+    def _insert_partnerlink_ids_from_trading(self):
+        for record in self:
+            if record.partnerlink_trading_ids:
+                record.partnerlink_ids = record.partnerlink_trading_ids
+
     @api.depends('parcellink_ids')
     def _compute_has_parcellinks(self):
         for record in self:
@@ -28,15 +71,35 @@ class ResFile(models.Model):
                 has_parcellinks = True
             record.has_parcellinks = has_parcellinks
 
+    @api.depends('category_id')
+    def _compute_category_is_lease(self):
+        for record in self:
+            category_is_lease = False
+            category_is_lease_id = self.env.ref(
+                'wua_crm_filemgmt.resfilecategory_lease_file').id
+            if record.category_id.id == category_is_lease_id:
+                category_is_lease = True
+            record.category_is_lease = category_is_lease
+
+    @api.depends('category_id')
+    def _compute_category_is_trading(self):
+        for record in self:
+            category_is_trading = False
+            category_is_trading_id = self.env.ref(
+                'wua_crm_filemgmt.resfilecategory_trading_file').id
+            if record.category_id.id == category_is_trading_id:
+                category_is_trading = True
+            record.category_is_trading = category_is_trading
+
     @api.constrains('parcellink_ids')
     def _check_parcellink_ids(self):
         if len(self) == 1:
-            file = self
+            current_file = self
             unique_ids_of_parcel = []
-            for parcellink in file.parcellink_ids:
+            for parcellink in current_file.parcellink_ids:
                 unique_ids_of_parcel.append(parcellink.parcel_id.id)
             unique_ids_of_parcel = list(set(unique_ids_of_parcel))
-            if len(unique_ids_of_parcel) != len(file.parcellink_ids):
+            if len(unique_ids_of_parcel) != len(current_file.parcellink_ids):
                 raise exceptions.UserError(_('There are repeated parcels.'))
 
     @api.multi
@@ -77,6 +140,30 @@ class ResFile(models.Model):
                 'parcel_cadastral_reference': parcel.cadastral_reference,
                 'parcel_partner_id': parcel.partner_id.id,
             })
+
+
+class ResFilePartnerlink(models.Model):
+    _inherit = 'res.file.partnerlink'
+
+    category_is_lease = fields.Boolean(
+        string='Category is lease',
+        related='file_id.category_is_lease')
+
+    category_is_trading = fields.Boolean(
+        string='Category is trading',
+        related='file_id.category_is_trading')
+
+    is_lessor = fields.Boolean(
+        string='Lessor')
+
+    is_tenant = fields.Boolean(
+        string='Tenant')
+
+    is_buyer = fields.Boolean(
+        string='Buyer')
+
+    is_seller = fields.Boolean(
+        string='Seller')
 
 
 class ResFileParcellink(models.Model):
@@ -134,6 +221,14 @@ class ResFileParcellink(models.Model):
     category_id = fields.Many2one(
         string='Category',
         related='file_id.category_id')
+
+    category_is_lease = fields.Boolean(
+        string='Category is lease',
+        related='file_id.category_is_lease')
+
+    category_is_trading = fields.Boolean(
+        string='Category is trading',
+        related='file_id.category_is_trading')
 
     @api.multi
     def _compute_parcel_gis_viewer_link(self):

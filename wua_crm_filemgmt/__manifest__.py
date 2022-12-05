@@ -17,6 +17,7 @@
     "data": [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'data/res_file_category_data.xml',
         "views/resources.xml",
         "views/res_file_view.xml",
         "views/wua_parcel_view.xml",

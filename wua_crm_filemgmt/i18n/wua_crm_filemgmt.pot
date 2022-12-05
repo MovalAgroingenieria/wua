@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-25 12:53+0000\n"
-"PO-Revision-Date: 2022-11-25 12:53+0000\n"
+"POT-Creation-Date: 2022-12-13 15:22+0000\n"
+"PO-Revision-Date: 2022-12-13 15:22+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -49,6 +49,11 @@ msgid "Associated Files"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_is_buyer
+msgid "Buyer"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_cadastral_reference
 msgid "Cadastral Reference"
 msgstr ""
@@ -68,6 +73,20 @@ msgstr ""
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_category_id
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_category_id
 msgid "Category"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_is_lease
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_category_is_lease
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_category_is_lease
+msgid "Category is lease"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_is_trading
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_category_is_trading
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_category_is_trading
+msgid "Category is trading"
 msgstr ""
 
 #. module: wua_crm_filemgmt
@@ -101,6 +120,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_display_name
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_display_name
 msgid "Display Name"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.model,name:wua_crm_filemgmt.model_wua_parcel
+msgid "Entity (parcel)"
 msgstr ""
 
 #. module: wua_crm_filemgmt
@@ -163,7 +187,7 @@ msgid "ID"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:63
+#: code:addons/wua_crm_filemgmt/models/res_file.py:104
 #, python-format
 msgid "If a file already has parcels, this operation is not possible."
 msgstr ""
@@ -192,6 +216,26 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:res.file.category,name:wua_crm_filemgmt.resfilecategory_lease_file
+msgid "Lease"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_leased_from
+msgid "Lease from"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_leased_to
+msgid "Lease to"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_is_lessor
+msgid "Lessor"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_rural_location_county
 msgid "Location"
 msgstr ""
@@ -202,7 +246,7 @@ msgid "Log of Files Movements"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:60
+#: code:addons/wua_crm_filemgmt/models/res_file.py:101
 #, python-format
 msgid "No main partner has been selected for this file."
 msgstr ""
@@ -233,15 +277,10 @@ msgid "Parcel Links"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:48
+#: code:addons/wua_crm_filemgmt/models/res_file.py:89
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_ids
 #, python-format
 msgid "Parcels"
-msgstr ""
-
-#. module: wua_crm_filemgmt
-#: model:ir.model,name:wua_crm_filemgmt.model_wua_parcel
-msgid "Parcels (integrated GIS)"
 msgstr ""
 
 #. module: wua_crm_filemgmt
@@ -255,20 +294,40 @@ msgid "Selected partners"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_is_seller
+msgid "Seller"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_subject
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_subject
 msgid "Subject"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:40
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_is_tenant
+msgid "Tenant"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: code:addons/wua_crm_filemgmt/models/res_file.py:81
 #, python-format
 msgid "There are repeated parcels."
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:res.file.category,name:wua_crm_filemgmt.resfilecategory_trading_file
+msgid "Trading"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.model,name:wua_crm_filemgmt.model_res_file_parcellink
 msgid "res.file.parcellink"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.model,name:wua_crm_filemgmt.model_res_file_partnerlink
+msgid "res.file.partnerlink"
 msgstr ""
 
 #. module: wua_crm_filemgmt
