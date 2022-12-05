@@ -45,12 +45,10 @@
                             <field name="partner_id"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
-                                   domain="[('is_wua_partner', '=', True)]"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="parcel_id"
                                    options="{'no_quick_create':True,
-                                             'no_create_edit':True}"
-                                   domain="[('partner_id', '=', partner_id)]"/>
+                                             'no_create_edit':True}"/>
                             <field name="with_irrigation_worker"/>
                             <field name="employee_id"
                                    attrs="{'invisible': [('with_irrigation_worker', '=', False)]}"

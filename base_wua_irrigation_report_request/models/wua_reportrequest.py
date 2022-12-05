@@ -91,6 +91,7 @@ class WuaReportrequest(models.Model):
         string='Parcel',
         comodel_name='wua.parcel',
         index=True,
+        domain="[('partner_id', '=', partner_id)]",
         ondelete='set null')
 
     volume = fields.Float(

@@ -76,6 +76,7 @@ class WuaIrrigationReport(models.Model):
         string="Partner",
         required=True,
         index=True,
+        domain="[('is_wua_partner', '=', True)]",
         comodel_name="res.partner",
         ondelete="restrict")
 
@@ -170,7 +171,8 @@ class WuaIrrigationReport(models.Model):
         string='Parcel',
         comodel_name='wua.parcel',
         index=True,
-        ondelete='restrict')
+        ondelete='restrict',
+        domain="[('partner_id', '=', partner_id)]",)
 
     with_irrigation_worker = fields.Boolean(
         string="With Irrig. Worker",
