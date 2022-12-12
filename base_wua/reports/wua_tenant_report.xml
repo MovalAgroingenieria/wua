@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Wua lessor report (droplist menu) -->
+    <!-- Wua tenant report (droplist menu) -->
     <report
-        id="wua_lessor_report"
-        string="Wua lessor report"
+        id="wua_tenant_report"
+        string="Wua tenant report"
         model="res.partner"
         report_type="qweb-pdf"
-        file="base_wua.wua_lessor_report_document"
-        name="base_wua.wua_lessor_report_document"
+        file="base_wua.wua_tenant_report_document"
+        name="base_wua.wua_tenant_report_document"
         paperformat="base_wua_report.paperformat_wua_reports"/>
 
-    <!-- Wua lessor report -->
-    <template id="wua_lessor_report_document">
+    <!-- Wua tenant report -->
+    <template id="wua_tenant_report_document">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
@@ -22,27 +22,25 @@
                         <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
                         <t t-set="measurement_unit" t-value="str(' ')"/>
                         <t t-set="printing_date" t-value="str(' ')"/>
-                        <t t-set="total_rented_area" t-value="0"/>
-                        <t t-set="rented_parcel_ids" t-value="[]"/>
-                        <t t-set="number_rented_parcels" t-value="0"/>
+                        <t t-set="total_leased_area" t-value="0"/>
+                        <t t-set="leased_parcel_ids" t-value="[]"/>
                         <t t-if="o.partnerlink_ids">
                             <t t-set="measurement_unit" t-value="o.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
                             <t t-set="printing_date"
                                t-value="o.env['wua.parcel'].transform_date_to_locale(
                                 o.partnerlink_ids[0].parcel_id.date_now.split()[0], lang=o.lang)"/>
                             <t t-foreach="o.partnerlink_ids" t-as="p">
-                                <t t-if="p.leased_parcel and p.profile == 'O'">
-                                    <t t-set="total_rented_area" t-value="total_rented_area + p.area_official"/>
-                                    <t t-set="rented_parcel_ids" t-value="rented_parcel_ids + [p.id]"/>
+                                <t t-if="p.leased_parcel and p.profile == 'L'">
+                                    <t t-set="total_leased_area" t-value="total_leased_area + p.area_official"/>
+                                    <t t-set="leased_parcel_ids" t-value="leased_parcel_ids + [p.id]"/>
                                 </t>
                             </t>
-                            <t t-set="number_rented_parcels" t-value="len(rented_parcel_ids)"/>
                         </t>
 
                         <!-- Get partlinks record and order by propietary -->
-                        <t t-set="rented_parcels"
+                        <t t-set="leased_parcels"
                            t-value="o.env['wua.parcel.partnerlink'].search(
-                            [('id', 'in', rented_parcel_ids)], order='lessor_partner_id, parcel_id')"/>
+                            [('id', 'in', leased_parcel_ids)], order='propietary_partner_id, parcel_id')"/>
 
                         <!-- Partner data -->
                         <div name="wua_partner_data">
@@ -50,13 +48,13 @@
                                 <t t-if="report_style == 'light'">
                                     <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
-                                        <div style="float: left; display: inline;"><strong>Lessor</strong></div>
+                                        <div style="float: left; display: inline;"><strong>Tenant</strong></div>
                                    </div>
                                 </t>
                                 <t t-else="">
                                     <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
-                                        <div style="float: left; display: inline;"><strong>Lessor</strong></div>
+                                        <div style="float: left; display: inline;"><strong>Tenant</strong></div>
                                     </div>
                                 </t>
                             </div>
@@ -121,13 +119,13 @@
                                                     <td class="text-right"><span t-field="o.number_of_votes"/></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><span>Number of rented parcels:</span></td>
-                                                    <td class="text-right"><span t-esc="number_rented_parcels"/></td>
+                                                    <td><span>Number of leased parcels:</span></td>
+                                                    <td class="text-right"><span t-field="o.parcel_lessee_number"/></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><span>Total rented area:</span></td>
+                                                    <td><span>Total leased area:</span></td>
                                                     <td class="text-right" style="padding: 0 0 0 28px;">
-                                                        <span t-esc="total_rented_area"/>
+                                                        <span t-field="o.parcel_lessee_area"/>
                                                         <span t-esc="measurement_unit"/>
                                                     </td>
                                                 </tr>
@@ -144,28 +142,28 @@
                             </div>
                         </div>
 
-                        <!-- Rented parcels data -->
-                        <div name="wua_rented_parcels" style="margin-top: 20px;">
+                        <!-- Leased parcels data -->
+                        <div name="wua_leased_parcels" style="margin-top: 20px;">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                                 <t t-if="report_style == 'light'">
                                     <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                                        <div style="float: left; display: inline;"><strong>Rented&amp;nbsp;parcels</strong></div>
+                                        <div style="float: left; display: inline;"><strong>Leased&amp;nbsp;parcels</strong></div>
                                    </div>
                                 </t>
                                 <t t-else="">
                                     <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                                        <div style="float: left; display: inline;"><strong>Rented&amp;nbsp;parcels</strong></div>
+                                        <div style="float: left; display: inline;"><strong>Leased&amp;nbsp;parcels</strong></div>
                                     </div>
                                 </t>
                             </div>
-                            <t t-if="rented_parcels">
+                            <t t-if="leased_parcels">
                                 <table class="table table-striped" style="margin-top: 2px;">
                                     <thead>
                                         <tr>
                                             <th name="th_parcel" class="text-center">Parcel</th>
-                                            <th name="th_tenant">Tenant</th>
+                                            <th name="th_propietary">Propietary / Lessor</th>
                                             <th name="th_area" class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
                                             <th name="th_leased_from" class="text-center">From</th>
                                             <th name="th_leased_to" class="text-center">To</th>
@@ -173,7 +171,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr t-foreach="rented_parcels" t-as="p" style="page-break-inside: avoid;">
+                                        <tr t-foreach="leased_parcels" t-as="p" style="page-break-inside: avoid;">
                                             <t t-if="p.lease_ended">
                                                 <t t-set="row_style" t-value="'color:red'"/>
                                             </t>
@@ -186,9 +184,9 @@
                                             <td name="td_parcel" class="text-center">
                                                 <span t-att-style="row_style" t-field="p.parcel_id"/>
                                             </td>
-                                            <td name="td_tenant">
-                                                <t t-set="propietary_code" t-value="str(p.lessor_partner_id.partner_code)"/>
-                                                <span t-att-style="row_style" t-field="p.lessor_partner_id"/>
+                                            <td name="td_propietary">
+                                                <t t-set="propietary_code" t-value="str(p.propietary_partner_id.partner_code)"/>
+                                                <span t-att-style="row_style" t-field="p.propietary_partner_id"/>
                                                 <span t-att-style="row_style">[<span t-esc="propietary_code"/>]</span>
                                             </td>
                                             <td name="td_area" class="text-right">
@@ -204,17 +202,20 @@
                                                 <span t-att-style="row_style" t-field="p.parcel_id.days_until_lease_ends"/>
                                             </td>
                                         </tr>
-                                        <tr name="total_rented_area">
+                                        <tr name="total_leased_area">
                                             <td></td>
-                                            <td class="text-right"><b>Total rented area:</b></td>
-                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_rented_area, 4)"/></td>
+                                            <td class="text-right"><b>Total leased area:</b></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_leased_area, 4)"/></td>
                                             <td></td><td></td><td></td>
                                         </tr>
                                     </tbody>
                                 </table>
+                                <div class="text-muted" style="font-size: 0.8em;">
+                                    <span>(*) The owner with the highest percentage of ownership is chosen as the owner.</span>
+                                </div>
                             </t>
                             <t t-else="">
-                                <span>This partner has no rented parcels.</span>
+                                <span>This partner has no leased parcels.</span>
                             </t>
                         </div>
 
@@ -223,8 +224,8 @@
 
                         <!-- Parcels aerial images  -->
                         <div name="wua_parcel_aerial_images">
-                            <t t-if="rented_parcels">
-                                <t t-foreach="rented_parcels" t-as="p">
+                            <t t-if="leased_parcels">
+                                <t t-foreach="leased_parcels" t-as="p">
                                     <t t-if="p.lease_ended">
                                         <t t-set="row_style" t-value="'color:red'"/>
                                     </t>
