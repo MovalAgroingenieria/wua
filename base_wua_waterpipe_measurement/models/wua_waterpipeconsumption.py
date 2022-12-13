@@ -166,7 +166,8 @@ class WuaWaterpipeconsumption(models.Model):
                 name = name_first_part + ' - ' + record.reading_end_time
             record.name = name
 
-    @api.depends('waterpipeflowreading_id', 'waterpipeflowreading_id.validated')
+    @api.depends('waterpipeflowreading_id',
+                 'waterpipeflowreading_id.validated')
     def _compute_validated(self):
         for record in self:
             validated = False

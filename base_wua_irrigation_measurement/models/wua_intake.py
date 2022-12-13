@@ -2,7 +2,6 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
 from odoo import models, fields, api, _
 
 
@@ -127,7 +126,7 @@ class WuaIntake(models.Model):
 
     # Update the "wua.in.fm" model.
     def update_wua_in_fm(self, intake_id, flowmeter_id):
-        current_date = datetime.datetime.now()
+        current_date = fields.Datetime.now()
         in_fm_registers = self.env['wua.in.fm']
         # For the old water connection...
         last_in_fm_registers_for_current_flowmeter = \

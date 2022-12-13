@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, _, exceptions, api
-import datetime
 
 
 class WuaWaterpipe(models.Model):
@@ -153,7 +152,7 @@ class WuaWaterpipe(models.Model):
 
     # Update the "wua.wp.fm" model.
     def update_wua_wp_fm(self, waterpipe_id, flowmeter_id):
-        current_date = datetime.datetime.now()
+        current_date = fields.Datetime.now()
         wp_fm_registers = self.env['wua.wp.fm']
         # For the old water connection...
         last_wp_fm_registers_for_current_flowmeter = \
