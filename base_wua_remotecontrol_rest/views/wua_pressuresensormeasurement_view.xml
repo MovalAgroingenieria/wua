@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pressuresensormeasurement_view_tree" model="ir.ui.view">
+        <field name="name">Pressuresensor Measurement (tree view)</field>
+        <field name="model">wua.pressuresensormeasurement</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_pressuresensormeasurement_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='pressure']" position="after">
+                <field name="from_import" string="Man."/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensormeasurement_view_search" model="ir.ui.view">
+        <field name="name">Pressuresensor Measurement (search view)</field>
+        <field name="model">wua.pressuresensormeasurement</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_pressuresensormeasurement_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='of_active_agriculturalseason']" position="after">
+                <separator/>
+                <filter string="Manual Introduction: Yes" name="fromimportyes"
+                 domain="[('from_import','=',True)]"/>
+                <filter string="Manual Introduction: No (from remote control)" name="fromimportno"
+                 domain="[('from_import','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

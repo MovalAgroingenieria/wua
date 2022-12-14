@@ -11,3 +11,5 @@ from . import wua_irrigationshed
 from . import wua_hydraulicsector
 from . import wua_negative_reading
 from . import wua_waterconnection_telecontrol
+from . import wua_pressuresensor
+from . import wua_pressuresensormeasurement

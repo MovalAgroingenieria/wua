@@ -18,6 +18,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/wua_waterconnection_telecontrol_cron.xml",
+        "data/wua_pressuresensormeasurement_cron.xml",
         "views/resources.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/res_partner_view.xml",
@@ -26,9 +27,14 @@
         "views/wua_irrigationshed_view.xml",
         "views/wua_hydraulicsector_view.xml",
         "views/wua_reading_view.xml",
+        "views/wua_pressuresensor_view.xml",
+        "views/wua_pressuresensormeasurement_view.xml",
         "views/wua_negative_reading_view.xml", ],
     "post_init_hook": "post_init_hook",
-    'qweb': ['static/src/xml/button_import_readings.xml'],
+    'qweb': [
+        'static/src/xml/button_import_readings.xml',
+        'static/src/xml/button_import_pressuresensormeasurement.xml',
+        ],
     "installable": True,
     "application": False,
 }

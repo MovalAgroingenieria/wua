@@ -58,5 +58,10 @@ class WuaIrrigationConfiguration(models.TransientModel):
 
     # Function to be inherited and extended by every telecontrol
     # With super
+    def import_from_pressuresensor_any(self):
+        return False
+
+    # Function to be inherited and extended by every telecontrol
+    # With super
     def import_from_hydraulicsector_any(self):
         return False
