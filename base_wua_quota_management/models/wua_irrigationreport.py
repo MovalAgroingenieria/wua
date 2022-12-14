@@ -10,6 +10,10 @@ class WuaIrrigationReport(models.Model):
 
     _in_create = False
 
+    _FIELDS_FOR_HMOVEMENT_CALCULUS = [
+        'initial_volume', 'end_volume', 'hours', 'adjustement_volume',
+        'product_id']
+
     hydricmovement_ids = fields.One2many(
         string='Hydric Consumptions',
         comodel_name='wua.hydricmovement',
@@ -58,9 +62,9 @@ class WuaIrrigationReport(models.Model):
                 create_hydricmovements = False
             if (self.is_valid_irrigationreport(updated_irrigationreport) and
                (not delete_hydricmovements) and (not create_hydricmovements)):
-                if ('initial_volume' in vals or 'end_volume' in vals or
-                   'hours' in vals or 'adjustement_volume' in vals or
-                   'product_id' in vals):
+                # Check if some field that changes make an hmovement replace
+                if (any(i in vals for i in
+                        self._FIELDS_FOR_HMOVEMENT_CALCULUS)):
                     delete_hydricmovements = True
                     create_hydricmovements = True
             if delete_hydricmovements or create_hydricmovements:
