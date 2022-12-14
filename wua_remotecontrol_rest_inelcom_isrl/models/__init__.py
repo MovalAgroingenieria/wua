@@ -11,3 +11,5 @@ from . import wua_flowmeter
 from . import wua_waterconnection_telecontrol
 from . import wua_flowreading
 from . import wua_waterpipeflowreading
+from . import wua_pressuresensor
+from . import wua_pressuresensormeasurement

@@ -40,8 +40,14 @@ class WuaIrrigationConfiguration(models.TransientModel):
     import_from_readings_inelcom = fields.Boolean(
         string='Import from readings')
 
+    import_from_pressuresensormeasurement_inelcom = fields.Boolean(
+        string='Import from pressure measurements')
+
     import_from_waterconnection_inelcom = fields.Boolean(
         string='Import from waterconnection')
+
+    import_from_pressuresensor_inelcom = fields.Boolean(
+        string='Import from pressuresensor')
 
     import_from_irrigationshed_inelcom = fields.Boolean(
         string='Import from irrigationshed')
@@ -112,6 +118,15 @@ class WuaIrrigationConfiguration(models.TransientModel):
         inelcom_can_impport = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'import_from_irrigationshed_inelcom')
+        return other_can_import or inelcom_can_impport
+
+    def import_from_pressuresensor_any(self):
+        other_can_import = super(WuaIrrigationConfiguration, self).\
+            import_from_pressuresensor_any()
+        # GET Inelcom config
+        inelcom_can_impport = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_from_pressuresensor_inelcom')
         return other_can_import or inelcom_can_impport
 
     def import_from_hydraulicsector_any(self):
