@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-08 09:05+0000\n"
-"PO-Revision-Date: 2022-11-08 09:05+0000\n"
+"POT-Creation-Date: 2022-12-14 16:17+0000\n"
+"PO-Revision-Date: 2022-12-14 16:17+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,7 @@ msgstr ""
 
 #. module: base_wua_remotecontrol_rest
 #. openerp-web
+#: code:addons/base_wua_remotecontrol_rest/static/src/xml/button_import_pressuresensormeasurement.xml:6
 #: code:addons/base_wua_remotecontrol_rest/static/src/xml/button_import_readings.xml:6
 #, python-format
 msgid "&nbsp;&nbsp;"
@@ -92,9 +93,24 @@ msgid "Entity (negative reading)"
 msgstr "Elemento (lectura negativa)"
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Entity (parcel)"
+
+#. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_reading
 msgid "Entity (pressure reading)"
 msgstr "Elemento (lectura de presión)"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_pressuresensor
+msgid "Entity (pressure sensor)"
+msgstr "Elemento (sensor de presión)"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_pressuresensormeasurement
+msgid "Entity (pressuresensormeasurement)"
+msgstr "Elemento (medida de presión)"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_waterconnection
@@ -123,10 +139,21 @@ msgstr "Visor GIS (modo telecontrol)"
 
 #. module: base_wua_remotecontrol_rest
 #. openerp-web
+#: code:addons/base_wua_remotecontrol_rest/static/src/xml/button_import_pressuresensormeasurement.xml:6
 #: code:addons/base_wua_remotecontrol_rest/static/src/xml/button_import_readings.xml:6
 #, python-format
 msgid "Get from remote control"
 msgstr "Obtener del telecontrol"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_pressuresensor_view_form
+msgid "Get pressure measurements"
+msgstr "Obtener medidas de presión"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.actions.server,name:base_wua_remotecontrol_rest.wua_import_pressuresensormeasurements_from_pressuresensors
+msgid "Get pressuresensormeasurements"
+msgstr "Obtener medidas de presión"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.actions.server,name:base_wua_remotecontrol_rest.wua_import_readings_from_hydraulicsectors
@@ -139,20 +166,38 @@ msgid "Get readings"
 msgstr "Obtener lecturas"
 
 #. module: base_wua_remotecontrol_rest
+#: selection:wua.waterconnection,telecontrol_associated:0
+msgid "Hidroconta"
+msgstr "Hidroconta"
+
+#. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_hydraulicsector_id
 msgid "Hydraulic Sector"
 msgstr "Sector hidráulico"
-
-#. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection,telecontrol_associated:0
-msgid "ICR Hidroweb"
-msgstr "ICR Hidroweb"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_id
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_id
 msgid "ID"
 msgstr "ID"
+
+#. module: base_wua_remotecontrol_rest
+#: selection:wua.pressuresensor,telecontrol_associated:0
+#: selection:wua.waterconnection,telecontrol_associated:0
+msgid "INELCOM"
+msgstr "INELCOM"
+
+#. module: base_wua_remotecontrol_rest
+#. openerp-web
+#: code:addons/base_wua_remotecontrol_rest/static/src/js/button_import_pressuresensormeasurement.js:18
+#, python-format
+msgid "Import measurements?"
+msgstr "¿Importar medidas?"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_pressuresensor_view_form
+msgid "Import pressure measurements?"
+msgstr "¿Importar medidas de presión?"
 
 #. module: base_wua_remotecontrol_rest
 #. openerp-web
@@ -212,23 +257,27 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_pressuresensormeasurement_view_tree
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_reading_one_watermeter_view_tree
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_reading_view_tree
 msgid "Man."
 msgstr "Man."
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_pressuresensormeasurement_from_import
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_reading_from_import
 msgid "Manual Introduction"
 msgstr "Introducción manual"
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_pressuresensormeasurement_view_search
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_reading_view_search
 msgid "Manual Introduction: No (from remote control)"
 msgstr "Introducción manual: No (procedente del telecontrol)"
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_pressuresensormeasurement_view_search
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_reading_view_search
 msgid "Manual Introduction: Yes"
@@ -236,15 +285,17 @@ msgstr "Introducción manual: Sí"
 
 #. module: base_wua_remotecontrol_rest
 #. openerp-web
+#: code:addons/base_wua_remotecontrol_rest/static/src/js/button_import_pressuresensormeasurement.js:24
+#, python-format
+msgid "Number of measurements"
+msgstr "Nº de medidas"
+
+#. module: base_wua_remotecontrol_rest
+#. openerp-web
 #: code:addons/base_wua_remotecontrol_rest/static/src/js/button_import_readings.js:24
 #, python-format
 msgid "Number of readings"
 msgstr "Número de lecturas"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcelas (integradas GIS)"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.actions.server,name:base_wua_remotecontrol_rest.wua_technical_synchronize_parcels_action
@@ -292,6 +343,7 @@ msgstr "Telecontrol"
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_hydraulicsector_remotecontrol_enabled
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_irrigationshed_remotecontrol_enabled
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_parcel_remotecontrol_enabled
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_pressuresensor_remotecontrol_enabled
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_remotecontrol_enabled
 msgid "Remote Control enabled"
 msgstr "Telecontrol habilitado"
@@ -309,6 +361,12 @@ msgid "Remote Control: Deleting remote control for partner "
 msgstr "Remote Control: Deleting remote control for partner "
 
 #. module: base_wua_remotecontrol_rest
+#: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensormeasurement.py:55
+#, python-format
+msgid "Remote Control: Error getting pressure measurements"
+msgstr "Remote Control: Error getting pressure measurements"
+
+#. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:56
 #, python-format
 msgid "Remote Control: Error getting readings"
@@ -319,6 +377,12 @@ msgstr "Remote Control: Error getting readings"
 #, python-format
 msgid "Remote Control: Error getting waterconnection info"
 msgstr "Remote Control: Error getting waterconnection info"
+
+#. module: base_wua_remotecontrol_rest
+#: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensormeasurement.py:48
+#, python-format
+msgid "Remote Control: Getting pressure measurements"
+msgstr "Remote Control: Getting pressure measurements"
 
 #. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:49
@@ -333,10 +397,22 @@ msgid "Remote Control: Saved WaterconnectionTelecontrol Info"
 msgstr "Remote Control: Saved WaterconnectionTelecontrol Info"
 
 #. module: base_wua_remotecontrol_rest
+#: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensormeasurement.py:99
+#, python-format
+msgid "Remote Control: Saved measurements"
+msgstr "Remote Control: Saved measurements"
+
+#. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:121
 #, python-format
 msgid "Remote Control: Saved readings"
 msgstr "Remote Control: Saved readings"
+
+#. module: base_wua_remotecontrol_rest
+#: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensor.py:39
+#, python-format
+msgid "Remote Control: Starting import pressure measurement in pressuresensor"
+msgstr "Remote Control: Starting import pressure measurement in pressuresensor"
 
 #. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/wua_hydraulicsector.py:34
@@ -356,6 +432,12 @@ msgstr "Remote Control: Starting reading in irrigation sheds"
 #, python-format
 msgid "Remote Control: Starting reading in irrigationsheds"
 msgstr "Remote Control: Starting reading in irrigationsheds"
+
+#. module: base_wua_remotecontrol_rest
+#: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensor.py:63
+#, python-format
+msgid "Remote Control: Starting reading in pressure sensors"
+msgstr "Remote Control: Starting reading in pressure sensors"
 
 #. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:77
@@ -458,6 +540,7 @@ msgstr "Telecontrol Info"
 #. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/res_partner.py:406
 #: code:addons/base_wua_remotecontrol_rest/models/wua_parcel.py:417
+#: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensormeasurement.py:65
 #: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:65
 #: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:99
 #, python-format
@@ -488,7 +571,9 @@ msgid "Total (m³)"
 msgstr "Total (m³)"
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_pressuresensor_telecontrol_associated
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_associated
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_pressuresensor_view_search
 msgid "Type of telecontrol associated"
 msgstr "Tipo de telecontrol asociado"
 
@@ -525,7 +610,7 @@ msgstr "Actualizado en el telecontrol"
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_presconsumption_volume
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_volume
-msgid "Value (m3)"
+msgid "Value (m³)"
 msgstr "Valor (m³)"
 
 #. module: base_wua_remotecontrol_rest
@@ -572,6 +657,7 @@ msgstr "Válvula programada"
 
 #. module: base_wua_remotecontrol_rest
 #. openerp-web
+#: code:addons/base_wua_remotecontrol_rest/static/src/js/button_import_pressuresensormeasurement.js:25
 #: code:addons/base_wua_remotecontrol_rest/static/src/js/button_import_readings.js:25
 #, python-format
 msgid "WARNING"
@@ -611,6 +697,7 @@ msgstr "Caudal"
 #: code:addons/base_wua_remotecontrol_rest/models/wua_hydraulicsector.py:50
 #: code:addons/base_wua_remotecontrol_rest/models/wua_irrigationshed.py:84
 #: code:addons/base_wua_remotecontrol_rest/models/wua_parcel.py:408
+#: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensor.py:58
 #: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:93
 #, python-format
 msgid "You do not have permission to execute this action."
