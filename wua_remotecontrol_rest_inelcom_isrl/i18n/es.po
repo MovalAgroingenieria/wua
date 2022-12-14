@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-24 11:28+0000\n"
-"PO-Revision-Date: 2022-10-24 11:28+0000\n"
+"POT-Creation-Date: 2022-12-14 16:38+0000\n"
+"PO-Revision-Date: 2022-12-14 16:38+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,21 @@ msgstr " No ha sido posible obtener la información. "
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_url_remotecontrol_rest_inelcom
 msgid "API REST URL"
 msgstr "URL del API REST"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_hydrant_analog
+msgid "Analog Measurement"
+msgstr "Medida analógica"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: selection:wua.pressuresensor,inelcom_hydrant_analog:0
+msgid "Analog Measurement 1"
+msgstr "Entrada analógica 1"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: selection:wua.pressuresensor,inelcom_hydrant_analog:0
+msgid "Analog Measurement 2"
+msgstr "Entrada analógica 2"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_url_remotecontrol_application_inelcom
@@ -73,9 +88,24 @@ msgid "Entity (flowmeter)"
 msgstr "Elemento (caudalímetro)"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Entity (parcel)"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_reading
 msgid "Entity (pressure reading)"
 msgstr "Elemento (lectura de presión)"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_pressuresensor
+msgid "Entity (pressure sensor)"
+msgstr "Elemento (sensor de presión)"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_pressuresensormeasurement
+msgid "Entity (pressuresensormeasurement)"
+msgstr "Elemento (medida de presión)"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_waterconnection
@@ -91,6 +121,11 @@ msgstr "Elemento (toma telecontrol)"
 #: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_waterpipeflowreading
 msgid "Entity (waterpipe flow reading)"
 msgstr "Elemento (lectura en ramal)"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: selection:wua.pressuresensor,inelcom_pressuresensor_type:0
+msgid "Hydrant"
+msgstr "Hidrante"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_from_flowmeter_inelcom
@@ -113,6 +148,16 @@ msgid "Import from irrigationshed"
 msgstr "Importación de lecturas de una caseta en telecontrol"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_from_pressuresensormeasurement_inelcom
+msgid "Import from pressure measurements"
+msgstr "Importar desde medidas de presión"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_from_pressuresensor_inelcom
+msgid "Import from pressuresensor"
+msgstr "Importar desde sensores de presión"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_from_readings_inelcom
 msgid "Import from readings"
 msgstr "Importación global de lecturas en telecontrol"
@@ -129,8 +174,24 @@ msgstr "Importación de lecturas de una toma en telecontrol"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_id
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_id
 msgid "Inelcom code"
 msgstr "Código INELCOM"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_pressuresensor_type
+msgid "Inelcom type"
+msgstr "Tipo INELCOM"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: selection:wua.pressuresensor,inelcom_pressuresensor_type:0
+msgid "Irrigation Head"
+msgstr "Cabecera"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_irrigation_head_id
+msgid "Irrigation Head ID"
+msgstr "ID Cabecera"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.actions.server,name:wua_remotecontrol_rest_inelcom_isrl.wua_remotecontrol_application_inelcom_action
@@ -141,11 +202,6 @@ msgstr "Telecontrol INELCOM"
 #: model:ir.ui.menu,name:wua_remotecontrol_rest_inelcom_isrl.wua_remotecontrol_application_inelcom_menu
 msgid "Native Remote Control INELCOM"
 msgstr "Telecontrol INELCOM"
-
-#. module: wua_remotecontrol_rest_inelcom_isrl
-#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcelas (GIS Integrado)"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_res_partner
