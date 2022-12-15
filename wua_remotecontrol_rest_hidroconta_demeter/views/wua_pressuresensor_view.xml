@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pressuresensor_view_form" model="ir.ui.view">
+        <field name="name">Pressure Sensor (form view)</field>
+        <field name="model">wua.pressuresensor</field>
+        <field name="inherit_id"
+               ref="base_wua_remotecontrol_rest.wua_pressuresensor_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='telecontrol_associated']" position="after">
+              <field name="hidroconta_id"
+                     attrs="{'invisible':[('telecontrol_associated', '!=', 'hidroconta')],
+                             'required': [('telecontrol_associated', '=', 'hidroconta')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
