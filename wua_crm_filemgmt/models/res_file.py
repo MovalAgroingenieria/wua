@@ -2,7 +2,9 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import json
 from datetime import datetime
+from jinja2 import Template, TemplateError
 from odoo import models, fields, api, exceptions, _
 
 
@@ -50,6 +52,22 @@ class ResFile(models.Model):
         comodel_name='res.file.partnerlink',
         inverse_name='file_id')
 
+    category_report_id = fields.Many2one(
+        string="Report",
+        comodel_name='res.file.category.report')
+
+    category_report_id_domain = fields.Char(
+        readonly=True,
+        compute="_compute_category_report_id_domain")
+
+    template_start_rendered = fields.Html(
+        string='Template start rendered',
+        compute='_compute_template_start_rendered')
+
+    template_end_rendered = fields.Html(
+        string='Template end rendered',
+        compute='_compute_template_end_rendered')
+
     @api.depends('partnerlink_lease_ids')
     def _insert_partnerlink_ids_from_lease(self):
         for record in self:
@@ -90,16 +108,55 @@ class ResFile(models.Model):
                 category_is_trading = True
             record.category_is_trading = category_is_trading
 
-    @api.constrains('parcellink_ids')
-    def _check_parcellink_ids(self):
-        if len(self) == 1:
-            current_file = self
-            unique_ids_of_parcel = []
-            for parcellink in current_file.parcellink_ids:
-                unique_ids_of_parcel.append(parcellink.parcel_id.id)
-            unique_ids_of_parcel = list(set(unique_ids_of_parcel))
-            if len(unique_ids_of_parcel) != len(current_file.parcellink_ids):
-                raise exceptions.UserError(_('There are repeated parcels.'))
+    @api.depends('category_id')
+    def _compute_category_report_id_domain(self):
+        for record in self:
+            domain = False
+            if record.category_id:
+                domain = [('category_id', '=', record.category_id.id)]
+            if domain:
+                record.category_report_id_domain = json.dumps(domain)
+            else:
+                record.category_report_id_domain = False
+
+    @api.depends('category_report_id',
+                 'category_report_id.report_template_start')
+    def _compute_template_start_rendered(self):
+        for record in self:
+            template_start_rendered = ''
+            if (record.category_report_id and
+                    record.category_report_id.report_template_start):
+                try:
+                    template_start = Template(
+                        self.category_report_id.report_template_start)
+                    template_start_rendered = \
+                        template_start.render(record=record)
+                except TemplateError as e:
+                    template_start_rendered = \
+                        '<p style="text-align:center;color:red;">' + \
+                        '<b><font style="font-size: 14px;">' + \
+                        _('ERROR IN START TEMPLATE') + '</font></b></p>' + \
+                        '<p><br>' + e.message + '</p>'
+            record.template_start_rendered = template_start_rendered
+
+    @api.depends('category_report_id',
+                 'category_report_id.report_template_end')
+    def _compute_template_end_rendered(self):
+        for record in self:
+            template_end_rendered = ''
+            if (record.category_report_id and
+                    record.category_report_id.report_template_end):
+                try:
+                    template_end = Template(
+                        self.category_report_id.report_template_end)
+                    template_end_rendered = template_end.render(record=record)
+                except TemplateError as e:
+                    template_end_rendered = \
+                        '<p style="text-align:center;color:red;">' + \
+                        '<b><font style="font-size: 14px;">' + \
+                        _('ERROR IN END TEMPLATE') + '</font></b></p>' + \
+                        '<p><br>' + e.message + '</p>'
+            record.template_end_rendered = template_end_rendered
 
     @api.multi
     def action_generate_parcels_shp(self):
@@ -140,6 +197,59 @@ class ResFile(models.Model):
                 'parcel_partner_id': parcel.partner_id.id,
             })
 
+    @api.multi
+    def action_print_selected_report(self):
+        self.ensure_one()
+        report_name = ''
+        if self.category_report_id.iractreportxml_id:
+            report_name = self.category_report_id.iractreportxml_id.report_name
+        return self.env['report'].with_context(
+            {'lang': self.partner_id.lang}).get_action(
+                self, report_name)
+
+    @api.constrains('parcellink_ids')
+    def _check_parcellink_ids(self):
+        if len(self) == 1:
+            current_file = self
+            unique_ids_of_parcel = []
+            for parcellink in current_file.parcellink_ids:
+                unique_ids_of_parcel.append(parcellink.parcel_id.id)
+            unique_ids_of_parcel = list(set(unique_ids_of_parcel))
+            if len(unique_ids_of_parcel) != len(current_file.parcellink_ids):
+                raise exceptions.UserError(_('There are repeated parcels.'))
+
+    @api.constrains('partnerlink_ids', 'partnerlink_lease_ids')
+    def _check_category_lease_partnerlink_ids(self):
+        if len(self) == 1:
+            current_file = self
+            lessor_found = tenant_found = False
+            if current_file.category_is_lease:
+                for partnerlink in current_file.partnerlink_ids:
+                    if partnerlink.is_lessor:
+                        lessor_found = True
+                    if partnerlink.is_tenant:
+                        tenant_found = True
+                if not lessor_found or not tenant_found:
+                    raise exceptions.UserError(
+                        _('A lessor and a tenant are required for this type '
+                          'of file.'))
+
+    @api.constrains('partnerlink_ids', 'partnerlink_trading_ids')
+    def _check_category_trading_partnerlink_ids(self):
+        if len(self) == 1:
+            current_file = self
+            seller_found = buyer_found = False
+            if current_file.category_is_trading:
+                for partnerlink in current_file.partnerlink_ids:
+                    if partnerlink.is_seller:
+                        seller_found = True
+                    if partnerlink.is_buyer:
+                        buyer_found = True
+                if not seller_found or not buyer_found:
+                    raise exceptions.UserError(
+                        _('A seller and a buyer are required for this type '
+                          'of file.'))
+
 
 class ResFilePartnerlink(models.Model):
     _inherit = 'res.file.partnerlink'
@@ -158,11 +268,27 @@ class ResFilePartnerlink(models.Model):
     is_tenant = fields.Boolean(
         string='Tenant')
 
+    is_seller = fields.Boolean(
+        string='Seller')
+
     is_buyer = fields.Boolean(
         string='Buyer')
 
-    is_seller = fields.Boolean(
-        string='Seller')
+    @api.onchange('is_main', 'is_lessor', 'is_tenant')
+    def _onchange_lessor_tenant(self):
+        for record in self:
+            if record.is_lessor:
+                record.is_main = False
+            if record.is_tenant:
+                record.is_main = True
+
+    @api.onchange('is_main', 'is_seller', 'is_buyer')
+    def _onchange_seller_buyer(self):
+        for record in self:
+            if record.is_seller:
+                record.is_main = False
+            if record.is_buyer:
+                record.is_main = True
 
 
 class ResFileParcellink(models.Model):

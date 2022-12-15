@@ -3,3 +3,5 @@
 
 from . import res_file
 from . import wua_parcel
+from . import res_file_category
+from . import res_file_category_report

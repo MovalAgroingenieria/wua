@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_file_category_report_view_form" model="ir.ui.view">
+        <field name="name">File Category Report (form view)</field>
+        <field name="model">res.file.category.report</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                    </div>
+                    <div class="oe_title">
+                        <label class="oe_edit_only" for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Category Report Name"/>
+                        </h1>
+                    </div>
+                    <group name="master_data">
+                        <group>
+                            <field name="category_id"/>
+                            <field name="iractreportxml_id"/>
+                        </group>
+                        <group></group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="template_main_page" string="Template start">
+                                <field name="report_template_start"/>
+                                <div name="help_jinja" style="margin-top: 0px;" class="oe_edit_only">
+                                   This templates use jinja2 variables: {{ object.attribute }}.<br/>
+                                   You can use the <i>record</i> variable with any attribute of the File.<br/>
+                               </div>
+                            </page>
+                            <page name="template_page" string="Template end">
+                                <field name="report_template_end"/>
+                                <div name="help_jinja" style="margin-top: 0px;" class="oe_edit_only">
+                                   This templates use jinja2 variables: {{ object.attribute }}.<br/>
+                                   You can use the <i>record</i> variable with any attribute of the File.<br/>
+                               </div>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="res_file_category_report_view_tree" model="ir.ui.view">
+        <field name="name">File Category Report (tree view)</field>
+        <field name="model">res.file.category.report</field>
+        <field name="arch" type="xml">
+            <tree class="res_file_category_report_view_tree">
+                <field name="name"/>
+                <field name="category_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_file_category_report_view_search" model="ir.ui.view">
+        <field name="name">File Category Report (search view)</field>
+        <field name="model">res.file.category.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="category_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="res_file_category_report_action" model="ir.actions.act_window">
+        <field name="name">File Category Report</field>
+        <field name="res_model">res.file.category.report</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('res_file_category_report_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('res_file_category_report_view_form')})]"/>
+        <field name="search_view_id" ref="res_file_category_report_view_search"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new file category report
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="file_category_report menu"
+              name="Category reports"
+              parent="crm_filemgmt.configuration_menu"
+              sequence="7"
+              action="res_file_category_report_action"/>
+
+</odoo>

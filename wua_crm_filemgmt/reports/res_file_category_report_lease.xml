@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+        id="res_file_category_report_lease"
+        string="Lease report"
+        model="res.file"
+        report_type="qweb-pdf"
+        file="wua_crm_filemgmt.category_report_lease_document"
+        name="wua_crm_filemgmt.category_report_lease_document"
+        paperformat="base_wua_report.paperformat_wua_reports"
+        menu="False"/>
+
+    <template id="wua_crm_filemgmt.category_report_lease_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+
+                        <!-- Vars -->
+                        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="lessor" t-value="bool('')"/>
+                        <t t-set="tenant" t-value="bool('')"/>
+                        <t t-set="measurement_unit" t-value="bool('')"/>
+                        <t t-set="total_area" t-value="0"/>
+                        <t t-if="o.partnerlink_lease_ids">
+                            <t t-foreach="o.partnerlink_lease_ids" t-as="p">
+                                <t t-if="p.is_lessor">
+                                    <t t-set="lessor" t-value="p"/>
+                                </t>
+                                <t t-if="p.is_tenant">
+                                    <t t-set="tenant" t-value="p"/>
+                                </t>
+                            </t>
+                        </t>
+                        <t t-if="o.parcellink_ids">
+                            <t t-set="measurement_unit" t-value="o.parcellink_ids[0].parcel_id._compute_area_measurement_name()"/>
+                            <t t-foreach="o.parcellink_ids" t-as="p">
+                                <t t-set="total_area" t-value="total_area + p.parcel_area_official"/>
+                            </t>
+                        </t>
+
+                        <!-- Title -->
+                        <div name="title" class="text-center">
+                            <h4><strong>RUSTIC LEASE AGREEMENT</strong></h4>
+                            <t t-if="o.state == '01_draft'">
+                                <span class="text-muted">[ <span t-field="o.state"/> ]</span>
+                            </t>
+                        </div>
+
+                        <!-- Lessor and tenant data -->
+                        <div class="col-xs-12" style="display: table; margin-bottom: 10px;" name="lessor_and_tenant">
+                            <div style="display: table-cell;">
+                                <table name="identity_lessor" class="table-condensed">
+                                    <tbody>
+                                        <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                            <t t-if="report_style == 'light'">
+                                                <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                                    <div style="float: left; width:32px;"><span class="fa fa-user"/></div>
+                                                    <div style="float: left; display:inline;"><strong>Lessor</strong></div>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                                    <div style="float: left; width:32px;"><span class="fa fa-user"/></div>
+                                                    <div style="float: left; display:inline;"><strong>Lessor</strong></div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div name="lessor_data">
+                                            <t t-if="lessor.partner_id.name">
+                                                <strong><span t-field="lessor.partner_id.name"/></strong>
+                                                <t t-if="lessor.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="lessor.partner_id.vat"/>)</span></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="lessor.partner_id.street_type_show or lessor.partner_id.street or lessor.partner_id.street_num or lessor.partner_id.street2">
+                                                <t t-if="lessor.partner_id.street_type_show"><span t-field="lessor.partner_id.street_type_show"/></t>
+                                                <t t-if="lessor.partner_id.street"><span t-field="lessor.partner_id.street"/></t>
+                                                <t t-if="lessor.partner_id.street_num"><span t-field="lessor.partner_id.street_num"/></t>
+                                                <t t-if="lessor.partner_id.street2"><span t-field="lessor.partner_id.street2"/></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="lessor.partner_id.city or lessor.partner_id.zip">
+                                                <t t-if="lessor.partner_id.city"><span t-field="lessor.partner_id.city"/></t>
+                                                <t t-if="lessor.partner_id.zip"><span>-&amp;nbsp;</span><span t-field="lessor.partner_id.zip"/></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="lessor.partner_id.state_id or lessor.partner_id.country_id">
+                                                <t t-if="lessor.partner_id.state_id"><span t-field="lessor.partner_id.state_id"/></t>
+                                                <t t-if="lessor.partner_id.country_id"><span>-&amp;nbsp;</span><span t-field="lessor.partner_id.country_id"></span></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="lessor.partner_id.phones or lessor.partner_id.phone or lessor.partner_id.mobile">
+                                                <t t-if="lessor.partner_id.phones"><span t-field="lessor.partner_id.phones"/></t>
+                                                <t t-else="">
+                                                    <t t-if="lessor.partner_id.phone"><span t-field="lessor.partner_id.phone"/></t>
+                                                    <t t-if="lessor.partner_id.mobile"><span t-field="lessor.partner_id.mobile"/></t>
+                                                </t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="lessor.partner_id.email"><span t-field="lessor.partner_id.email"/><br/></t>
+                                        </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-xs-1"></div>
+                            <div style="display: table-cell;">
+                                <table name="identity_tenant" class="table-condensed">
+                                    <tbody>
+                                        <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                            <t t-if="report_style == 'light'">
+                                                <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                                    <div style="float: left; width:32px;"><span class="fa fa-user"/></div>
+                                                    <div style="float: left; display:inline;"><strong>Tenant</strong></div>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                                    <div style="float: left; width:32px;"><span class="fa fa-user"/></div>
+                                                    <div style="float: left; display:inline;"><strong>Tenant</strong></div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                        <div name="tenant_data">
+                                            <t t-if="tenant.partner_id.name">
+                                                <strong><span t-field="tenant.partner_id.name"/></strong>
+                                                <t t-if="tenant.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="tenant.partner_id.vat"/>)</span></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="tenant.partner_id.street_type_show or tenant.partner_id.street or tenant.partner_id.street_num or tenant.partner_id.street2">
+                                                <t t-if="tenant.partner_id.street_type_show"><span t-field="tenant.partner_id.street_type_show"/></t>
+                                                <t t-if="tenant.partner_id.street"><span t-field="tenant.partner_id.street"/></t>
+                                                <t t-if="tenant.partner_id.street_num"><span t-field="tenant.partner_id.street_num"/></t>
+                                                <t t-if="tenant.partner_id.street2"><span t-field="tenant.partner_id.street2"/></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="tenant.partner_id.city or tenant.partner_id.zip">
+                                                <t t-if="tenant.partner_id.city"><span t-field="tenant.partner_id.city"/></t>
+                                                <t t-if="tenant.partner_id.zip"><span>-&amp;nbsp;</span><span t-field="tenant.partner_id.zip"/></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="tenant.partner_id.state_id or tenant.partner_id.country_id">
+                                                <t t-if="tenant.partner_id.state_id"><span t-field="tenant.partner_id.state_id"/></t>
+                                                <t t-if="tenant.partner_id.country_id"><span>-&amp;nbsp;</span><span t-field="tenant.partner_id.country_id"></span></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="tenant.partner_id.phones or tenant.partner_id.phone or tenant.partner_id.mobile">
+                                                <t t-if="tenant.partner_id.phones"><span t-field="tenant.partner_id.phones"/></t>
+                                                <t t-else="">
+                                                    <t t-if="tenant.partner_id.phone"><span t-field="tenant.partner_id.phone"/></t>
+                                                    <t t-if="tenant.partner_id.mobile"><span t-field="tenant.partner_id.mobile"/></t>
+                                                </t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="tenant.partner_id.email"><span t-field="tenant.partner_id.email"/><br/></t>
+                                        </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Template start -->
+                        <div name="template_start_rendered">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">&amp;nbsp;</div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">&amp;nbsp;</div>
+                                </t>
+                            </div>
+                            <div t-field="o.template_start_rendered"/>
+                        </div>
+
+                        <!-- Involved parcels -->
+                        <div name="involved_parcellinks_ids" style="margin-top: 20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                        <div style="float: left; display: inline;"><strong>Involved&amp;nbsp;parcels</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                        <div style="float: left; display: inline;"><strong>Involved&amp;nbsp;parcels</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <t t-if="o.parcellink_ids">
+                                <table class="table table-striped" style="margin-top: 2px;">
+                                    <thead>
+                                        <tr>
+                                            <th name="th_parcel">Parcel</th>
+                                            <th name="th_cadastral_ref" class="text-center">Cadastral reference</th>
+                                            <th name="th_location">Location</th>
+                                            <th name="th_area" class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="o.parcellink_ids" t-as="p" style="page-break-inside: avoid;">
+                                            <td name="td_parcel"><span t-field="p.parcel_id"/></td>
+                                            <td name="td_cadastral_ref" class="text-center"><span t-field="p.parcel_cadastral_reference"/></td>
+                                            <td name="td_location"><span t-field="p.parcel_rural_location_county"/></td>
+                                            <td name="td_area" class="text-right"><span t-field="p.parcel_area_official"/></td>
+                                        </tr>
+                                        <tr name="total_area">
+                                            <td></td><td></td>
+                                            <td class="text-right"><b>Total area:</b></td>
+                                            <td class="text-right"><span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area, 4)"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <t t-else="">
+                                <span>No parcel has been selected.</span>
+                            </t>
+                        </div>
+
+                        <!-- Template end -->
+                        <div name="template_end_rendered">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                                        <div style="float: left; display: inline;"><strong>Whereas</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                                        <div style="float: left; display: inline;"><strong>Whereas</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div t-field="o.template_end_rendered"/>
+                        </div>
+
+                        <!-- Conformity -->
+                        <div name="conformity" style="margin-top: 32px; page-break-inside: avoid;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                                        <div style="float: left; display: inline;"><strong>Conformity</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                                        <div style="float: left; display: inline;"><strong>Conformity</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div name="signatures" class="row" style="border: 1px solid lightgrey; margin: 2px 1px; page-break-inside: avoid;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="border-right: 1px solid lightgrey; width: 50%; display: table-cell;">
+                                        <p style="margin-left: -8px; margin-top: 2px; margin-bottom: 0px;">
+                                            <span><b>Lessor</b></span>
+                                        </p>
+                                        <p>&amp;nbsp;</p><p>&amp;nbsp;</p><p>&amp;nbsp;</p>
+                                        <p>
+                                            <span>Sgd.:</span>
+                                            <span t-field="lessor.partner_id.name"/>
+                                        </p>
+                                    </div>
+                                    <div style="width: 50%; display: table-cell; padding: 0px 8px;">
+                                        <p style="margin-top: 2px; margin-bottom: 0px">
+                                            <span><b>Tenant</b></span>
+                                        </p>
+                                        <p>&amp;nbsp;</p><p>&amp;nbsp;</p><p>&amp;nbsp;</p>
+                                        <p>
+                                            <span>Sgd.:</span>
+                                            <span t-field="tenant.partner_id.name"/>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div> <!-- end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

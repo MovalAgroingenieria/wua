@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record id="resfilecategoryreport_lease" model="res.file.category.report" forcecreate="False">
+            <field name="name">Lease standard</field>
+            <field name="category_id" ref="wua_crm_filemgmt.resfilecategory_lease_file"/>
+            <field name="iractreportxml_id" ref="wua_crm_filemgmt.res_file_category_report_lease"/>
+            <field name="report_template_start" type="html">
+                <p style="text-align: right;">
+                    In {% if record.env.user.city %} {{ record.env.user.city }}, {% else %}
+                    <span style="color:red;">Not found</span>, {% endif %} a
+                    {{ record.env['wua.parcel'].transform_date_to_locale(record.date_file) }}<br/>
+                </p>
+                <p style="text-align: center;">
+                    <b>GATHERED</b>
+                    <br/>
+                </p>
+                <p style="text-align: justify;">
+                    ON THE ONE PART, as LESSOR, the community member identified under the heading of Lessor, hereinafter
+                    referred to as the <b>Lessor</b> for the purposes of this contract.<br/>
+                    <br/>
+                    ON THE OTHER PART, as TENANT, the community member identified under the heading of Tenant, hereinafter
+                    referred to as the <b>Tenant</b> for the purposes of this contract.<br/>
+                    <br/>
+                    Both parties agree to the LEASE of the cadastral parcels indicated in the section <b>Involved parcels</b>,
+                    and in accordance with the agreements and general conditions described in the WHEREAS section.<br/>
+               </p>
+            </field>
+            <field name="report_template_end" type="html">
+                <ul style="list-style-type:none; padding:0; margin:0;">
+                    <li><b>I.</b> That both parties intervene in their own name and right.</li>
+                    <li><b>II.</b> That both parties mutually recognize the legal capacity necessary to grant this rural lease
+                    of the farms described in the section <b>Involved parcels</b>, which they freely agree to in accordance with the
+                    general conditions described below.</li>
+                </ul>
+                <br/>
+                <p style="text-align: center;">
+                    <b>GENERAL CONDITIONS</b>
+                </p>
+                <p style="text-align: justify;">
+                    <b>1st. Legal regime.</b><br/>
+                    This contract is governed by what is expressly agreed by the parties, provided that it does not oppose the Law.
+                    In addition, the Civil Code will govern and, failing that, the uses and customs that are applicable.<br/>
+                    <br/>
+                    <b>2nd. Duration.</b><br/>
+                    This contract will last for ........... years.<br/>
+                    Once the time has elapsed, the lessee will make possession of the leased properties available to the lessor.<br/>
+                    The <b>lessor</b>, in order to recover possession of the property at the end of the contractual term, must reliably
+                    notify the lessee one year in advance. Otherwise, if the lessee does not make possession of the leased properties
+                    available to the lessor at the end of the term, the contract shall be understood as extended for a period of five
+                    years. Such extensions will continue indefinitely until the contract is denounced.<br/>
+                    <br/>
+                    <b>3rd. Development of the contract.</b><br/>
+                    The <b>tenant</b> has the right to determine the type of crop, without prejudice to his obligation to return the property,
+                    at the end of the lease, in the state in which it was received and the provisions of the Law on improvements.<br/>
+                    <br/>
+                    <b>4th. Criteria and formal requirements.</b><br/>
+                    This contract may be entered into a public deed at the request of any of the parties, being on the account of the party
+                    request the expenses that derive from it.<br/>
+                    <br/>
+                    <b>5th. Rent.</b><br/>
+                    The tenant will pay the lessor an income of............ € per year.<br/>
+                    The rent will be updated for each annuity by reference to the annual consumer price index.<br/>
+                    The rent will be paid in arrears, within the ............ first days of the month of ......................... ,
+                    setting as domicile for payment.................................................. .....................................
+                    .......................................
+                    <br/>
+                    The <b>Lessor</b> agrees to provide the tenant with a receipt for payment.<br/>
+                    All amounts to be paid by the <b>Lessor</b> and that by legal provision are chargeable to the <b>Tenan</b> may be demanded by
+                    the <b>lessor</b> from the moment they have been paid, stating the concept, amount and provision that authorizes the charge.
+                    Failure to pay such amounts will be equivalent to non-payment of rent. The right to pass on will prescribe one year after the
+                    payment has been made by the <b>Lessor</b>.<br/>
+                    <br/>
+                    <b>6th. Insurance contract.</b><br/>
+                    The <b>Tenant</b> may insure the normal production of the farm against the normally insurable risks, being able to pass on to
+                    the <b>Lessor</b>, from the moment in which he is notified of the arranged insurance, a part of the premium that he saves, in
+                    relation to its total amount, the same proportion that exists between the income and the total sum insured.<br/>
+                    <br/>
+                    <b>7th. Expenses and improvements.</b><br/>
+                    The <b>Lessor</b> and the <b>Tenant</b> are obliged to allow the carrying out of the works, repairs and improvements that the
+                    other contracting party must or may carry out. Said repairs will be carried out at the time of the year and in the manner that
+                    disturbs the least, unless they cannot be deferred.<br/>
+                    <br/>
+                    <b>8th. Assignment and sublease.</b><br/>
+                    The <b>Tenant</b> may not assign or sublease the farm or exploitation without the express consent of the <b>Lessor</b>. This
+                    will not be necessary when the assignment or sublease is made in favor of the spouse or one of the lessee's descendants,
+                    although the assignment or sublease must be communicated by either party to the lessor within a period of sixty business days
+                    from of your celebration. The assignment and sublease will refer to the entire property or exploitation, and will be granted
+                    for the entire time remaining in the lease term for a rent that may not exceed the amount agreed between the <b>lessor</b> and
+                    the <b>tenant</b>.<br/>
+                    <br/>
+                    <b>9th. Termination, resolution and rescission of the lease.</b><br/>
+                    The lease will end for any of the following reasons:<br/>
+                    <span> </span>a) For total loss of the leased thing and for forced expropriation when it is also total. If the loss or
+                    expropriation were partial, the lessee may continue with the lease, proportionally reducing the rent. In addition, in case of
+                    expropriation, he will be entitled to the compensation that has been set.<br/>
+                    <span> </span>b) By expiration of the legal and conventional term and of the extension, if applicable.<br/>
+                    <span> </span>c) By mutual agreement of the parties.<br/>
+                    <span> </span>d) By unilateral withdrawal of the <b>Tenant</b>, at the end of the agricultural year, having to notify the
+                    <b>Lessor</b> one year in advance.<br/>
+                    <span> </span>e) Due to the death of the <b>Tenant</b>, the right of their legitimate successors being protected under the terms
+                    established in the Law.<br/>
+                    <span> </span>f) In leases made in favor of legal persons or community property, from the moment of its extinction.<br/>
+                    <span> </span>g) By resolution of the <b>Lessor</b>'s right.<br/>
+                    <br/>
+                    In addition, it may be resolved at the request of the <b>Lessor</b> for any of the following reasons:<br/>
+                    <span> </span>a) Lack of payment of the rent or the amounts assimilated to it.<br/>
+                    <span> </span>b) Seriously breaching the obligation to improve or transform the property, to which the <b>Tenant</b> had committed in
+                    the contract.<br/>
+                    <br/>
+                    And for the record, they sign this lease, in duplicate, on the date and place indicated above.
+                </p>
+            </field>
+        </record>
+
+       <record id="resfilecategoryreport_trading" model="res.file.category.report" forcecreate="False">
+            <field name="name">Trading standard</field>
+            <field name="category_id" ref="wua_crm_filemgmt.resfilecategory_trading_file"/>
+            <field name="iractreportxml_id" ref="wua_crm_filemgmt.res_file_category_report_trading"/>
+            <field name="report_template_start" type="html">
+                <p style="text-align: right;">
+                    In {% if record.env.user.city %} {{ record.env.user.city }}, {% else %}
+                    <span style="color:red;">Not found</span>, {% endif %} a
+                    {{ record.env['wua.parcel'].transform_date_to_locale(record.date_file) }}<br/>
+                </p>
+                <p style="text-align: center;">
+                    <b>GATHERED</b>
+                    <br/>
+                </p>
+                <p style="text-align: justify;">
+                    ON THE ONE PART, as SELLER, the community member identified under the heading of Seller, hereinafter referred
+                    to as the <b>Seller</b> for the purposes of this contract.<br/>
+                    <br/>
+                    ON THE OTHER PART, as BUYER, the community member identified under the heading of Buyer, referred to hereinafter
+                    and for the purposes of this contract as the <b>Buyer</b>.<br/>
+                    <br/>
+                    Both parties agree to the TRADING of the cadastral parcles indicated in the section <b>Involved parcels</b>, and
+                    in accordance with the agreements and general conditions described in the WHEREAS section.<br/>
+               </p>
+            </field>
+            <field name="report_template_end" type="html">
+                <ul style="list-style-type:none; padding:0; margin:0;">
+                    <li><b>I.</b> That both parties intervene in their own name and right.</li>
+                    <li><b>II.</b> That both parties mutually recognize the legal capacity necessary to grant this rural trading
+                    of the farms described in the section <b>Involved parcels</b>, which they freely agree to in accordance with the
+                    general conditions described below.</li>
+                    <li><b>III.</b> That the <b>Seller</b> is the owner of full ownership of the properties described in the
+                    <b>Involved parcels</b> section.</li>
+                </ul>
+                <br/>
+                <p> The rustic properties described in the section <b>Involved parcels</b> are being sold for a <b>value</b> of <b>.........€</b>.</p>
+                <br/>
+                <p style="text-align: center;">
+                    <b>GENERAL CONDITIONS</b>
+                </p>
+                <p style="text-align: justify;">
+                    <b>1st. Trading.</b><br/>
+                    That the <b>Seller</b> sells to the <b>Buyer</b> the rustic properties described in the section <b>Involved parcels</b> free of
+                    charges and leases, along with all elements thereof that they are accessories and inherent to them.<br/>
+                    <br/>
+                    <b>2nd. Price.</b><br/>
+                    The total price of this sale is ......... €.<br/>
+                    <br/>
+                    <b>3rd. Object.</b><br/>
+                    The object of this contract are the rural properties described in the section <b>Involved parcels</b>. Parcels are sold as certain
+                    bodies, free of charges and tenants, and up to date with the payment of contributions, taxes and excise duties, in its current,
+                    physical and legal state, known by the parties.<br/>
+                    <br/>
+                    In this act, the <b>Seller</b> delivers to the <b>Buyer</b>, who receives it, in perfect conditions of use.<br/>
+                    <br/>
+                    <b>4th. Elevation to public deed and registration in the property registry.</b><br/>
+                    The <b>Buyer</b>, may demand the elevation of this contract to the public to request its registration in the corresponding Property
+                    Registry. All expenses, taxes and excise duties, which accrue accordingly, including the Plus-Valía Municipal Excise, if any, must be
+                    paid in accordance with current legislation.<br/>
+                    <br/>
+                    <b>5ª. Jurisdiction.</b><br/>
+                    The parties, expressly waiving any jurisdiction that may correspond to them, for questions that may arise or actions brought on the
+                    interpretation of compliance or non-compliance with what is agreed herein, expressly submit to the Judges and Courts of 
+                    {% if record.env.user.city %} {{ record.env.user.city }}. {% else %} <span style="color:red;">Not found</span>.{% endif %}<br/>
+                    <br/>
+                    And for the record, they sign this trading contract, in duplicate, on the date and place indicated above.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

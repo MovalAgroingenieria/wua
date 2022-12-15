@@ -10,25 +10,35 @@
             <xpath expr="//group[@name='master_data_fields']" position="inside">
                 <field name="category_is_lease" invisible="1"/>
                 <field name="category_is_trading" invisible="1"/>
+                <field name="category_report_id_domain" invisible="1"/>
             </xpath>
-            <xpath expr="//field[@name='category_id']" position="after">
-                <field name="leased_from" attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
-                                                  'invisible':[('category_is_lease', '=', False)],
-                                                  'required':[('category_is_lease', '=', True)]}"/>
-                <field name="leased_to"  attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
-                                                 'invisible':[('category_is_lease', '=', False)],
-                                                 'required':[('category_is_lease', '=', True)]}"/>
+            <xpath expr="//field[@name='category_id']" position="replace">
+                <field name="category_id"
+                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"/>
+                <field name="category_report_id" domain="category_report_id_domain"
+                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"/>
+                <field name="leased_from"
+                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                               'invisible':[('category_is_lease', '=', False)],
+                               'required':[('category_is_lease', '=', True)]}"/>
+                <field name="leased_to"
+                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                               'invisible':[('category_is_lease', '=', False)],
+                               'required':[('category_is_lease', '=', True)]}"/>
             </xpath>
             <xpath expr="//field[@name='partnerlink_ids']" position="replace">
-                <field name="partnerlink_ids" attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
-                                                      'invisible':['|',('category_is_lease', '=', True),('category_is_trading', '=', True)]}"
-                       context="{'tree_view_ref': 'crm_filemgmt.res_file_partnerlink_view_tree'}"/>
-                <field name="partnerlink_lease_ids" attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
-                                                      'invisible':[('category_is_lease', '=', False)]}"
-                       context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_lease'}"/>
-                <field name="partnerlink_trading_ids" attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
-                                                      'invisible':[('category_is_trading', '=', False)]}"
-                       context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_trading'}"/>
+                <field name="partnerlink_ids"
+                       context="{'tree_view_ref': 'crm_filemgmt.res_file_partnerlink_view_tree'}"
+                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                               'invisible':['|',('category_is_lease', '=', True),('category_is_trading', '=', True)]}"/>
+                <field name="partnerlink_lease_ids"
+                       context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_lease'}"
+                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                               'invisible':[('category_is_lease', '=', False)]}"/>
+                <field name="partnerlink_trading_ids"
+                       context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_trading'}"
+                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                               'invisible':[('category_is_trading', '=', False)]}"/>
             </xpath>
             <xpath expr="//page[@name='attachments']" position="before">
                 <page name="parcellink_page" string="Parcel Links">
@@ -39,8 +49,8 @@
                             groups="crm_filemgmt.group_file_manager"/>
                     </header>
                     <field name="parcellink_ids"
-                        attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"
-                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"/>
+                           context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"
+                           attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"/>
                 </page>
             </xpath>
         </field>
@@ -88,10 +98,10 @@
                 <field name="category_is_trading" invisible="1"/>
                 <field name="category_id" readonly="1"/>
                 <field name="partner_id"/>
-                <field name="is_buyer" attrs="{'readonly':[('is_seller','=',True)],
-                                               'required':[('category_is_trading', '=', True)]}"/>
                 <field name="is_seller" attrs="{'readonly':[('is_buyer','=',True)],
                                                 'required':[('category_is_trading', '=', True)]}"/>
+                <field name="is_buyer" attrs="{'readonly':[('is_seller','=',True)],
+                                               'required':[('category_is_trading', '=', True)]}"/>
                 <field name="is_main"/>
             </tree>
         </field>
@@ -183,6 +193,22 @@
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_generate_files_parcel_shp'))"/>
+    </record>
+
+    <record id="res_file_print_selected_report" model="ir.actions.server">
+        <field name="name">Print report</field>
+        <field name="model_id" ref="model_res_file"/>
+        <field name="code">
+            action =  env['res.file'].browse(context['active_ids']).action_print_selected_report()
+        </field>
+    </record>
+
+    <record id="action_res_file_print_selected_report" model="ir.values">
+        <field name="name">Print report</field>
+        <field name="model">res.file</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('res_file_print_selected_report'))"/>
     </record>
 
 </odoo>
