@@ -163,7 +163,8 @@ class WuaInvoiceset(models.Model):
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
-        data['partner_id'] = invoice_data_line['key1']
+        # Modified by EIS (2022-12-14)
+        # data['partner_id'] = invoice_data_line['key1']
         if 'key2' in invoice_data_line and invoice_data_line['key2'] != 0:
             data['waterconnection_ids_str'] = invoice_data_line['key2']
         if 'quota_day' in invoice_data_line and \
