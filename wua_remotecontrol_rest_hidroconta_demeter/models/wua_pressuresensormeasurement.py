@@ -5,9 +5,6 @@
 import requests
 import json
 from odoo import models
-import time
-import datetime
-import pytz
 
 
 class WuaPressuresensormeasurement(models.Model):
@@ -36,6 +33,8 @@ class WuaPressuresensormeasurement(models.Model):
             installation_identifier = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'installation_identifier')
             if (installation_identifier):
+                # TODO Add check before call to check if some pressure sensor
+                # is from hidroconta
                 # Dict with the key = pressuresensor.hidroconta_id of
                 # pressure sensors
                 ps_dict = dict(
@@ -45,8 +44,6 @@ class WuaPressuresensormeasurement(models.Model):
                     for ps in self.env['wua.pressuresensor'].search(
                         [('telecontrol_associated', '=', 'hidroconta')])
                 )
-                # TODO Add check before call to check if some pressure sensor
-                # is from hidroconta
                 request_headers = {
                     'Content-Type': 'application/json',
                     'Cookie': 'JSESSIONID=' + jsessionid
@@ -86,17 +83,18 @@ class WuaPressuresensormeasurement(models.Model):
             list(super(WuaPressuresensormeasurement, self).
                  do_import_pressure_measurement_of_telecontrol())
         url_remotecontrol_rest = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'url_remotecontrol_rest_hidroconta')
+            'wua.irrigation.configuration',
+            'url_remotecontrol_rest_hidroconta')
         url_remotecontrol_rest_username = self.env['ir.values'].\
             get_default('wua.irrigation.configuration',
                         'url_remotecontrol_rest_username_hidroconta')
         url_remotecontrol_rest_password = self.env['ir.values'].\
             get_default('wua.irrigation.configuration',
                         'url_remotecontrol_rest_password_hidroconta')
-        import_from_pressuresensormeasurement_hidroconta = self.env['ir.values'].\
-            get_default(
-            'wua.irrigation.configuration',
-            'import_from_pressuresensormeasurement_hidroconta')
+        import_from_pressuresensormeasurement_hidroconta = self.\
+            env['ir.values'].get_default(
+                'wua.irrigation.configuration',
+                'import_from_pressuresensormeasurement_hidroconta')
         if (import_from_pressuresensormeasurement_hidroconta and
             url_remotecontrol_rest and url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
