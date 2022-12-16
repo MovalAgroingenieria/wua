@@ -27,7 +27,6 @@ class WuaPressuresensormeasurement(models.Model):
 
     name = fields.Char(
         string="Measurement",
-        size=30,
         store=True,
         index=True,
         compute="_compute_name")
