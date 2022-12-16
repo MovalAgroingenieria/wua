@@ -23,6 +23,7 @@ class WuaIrrigationReport(models.Model):
         default=_default_product_id,
         required=True,
         index=True,
+        domain=[('categ_id.productcategory_code', '=', 11)],
         ondelete='restrict')
 
     invoiceline_ids = fields.One2many(
