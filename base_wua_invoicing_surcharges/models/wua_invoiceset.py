@@ -328,7 +328,8 @@ class WuaInvoicesetLine(models.Model):
                     number_of_variable_surcharges
                     FROM account_invoice
                     WHERE (type = 'out_refund' OR
-                    type = 'out_invoice') AND state != 'draft'
+                    type = 'out_invoice') AND state != 'draft' AND residual > 0
+                    AND number IS NOT NULL
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
@@ -362,7 +363,8 @@ class WuaInvoicesetLine(models.Model):
                     number_of_fixed_surcharges
                     FROM account_invoice
                     WHERE (type = 'out_refund' OR
-                    type = 'out_invoice') AND state != 'draft'
+                    type = 'out_invoice') AND state != 'draft' AND
+                    number IS NOT NULL
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
@@ -395,7 +397,8 @@ class WuaInvoicesetLine(models.Model):
                     number_of_total_variable_surcharges
                     FROM account_invoice
                     WHERE (type = 'out_refund' OR
-                    type = 'out_invoice') AND state != 'draft'
+                    type = 'out_invoice') AND state != 'draft' AND
+                    number IS NOT NULL
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
