@@ -65,9 +65,9 @@ class AccountInvoice(models.Model):
             number_of_variable_surcharges = 0
             invoiceset_ids = []
             for invoiceline in record.invoiceline_variable_surcharge_ids:
-                if (invoiceline.invoiceset_id not in invoiceset_ids):
+                if (invoiceline.invoiceset_id.id not in invoiceset_ids):
                     number_of_variable_surcharges += 1
-                    invoiceset_ids.append(invoiceline.invoiceset_id)
+                    invoiceset_ids.append(invoiceline.invoiceset_id.id)
             record.number_of_variable_surcharges = \
                 number_of_variable_surcharges
 
@@ -77,9 +77,9 @@ class AccountInvoice(models.Model):
             number_of_total_variable_surcharges = 0
             invoiceset_ids = []
             for invoiceline in record.invoiceline_total_variable_surcharge_ids:
-                if (invoiceline.invoiceset_id not in invoiceset_ids):
+                if (invoiceline.invoiceset_id.id not in invoiceset_ids):
                     number_of_total_variable_surcharges += 1
-                    invoiceset_ids.append(invoiceline.invoiceset_id)
+                    invoiceset_ids.append(invoiceline.invoiceset_id.id)
             record.number_of_total_variable_surcharges = \
                 number_of_total_variable_surcharges
 
@@ -89,9 +89,9 @@ class AccountInvoice(models.Model):
             number_of_fixed_surcharges = 0
             invoiceset_ids = []
             for invoiceline in record.invoiceline_fixed_surcharge_ids:
-                if (invoiceline.invoiceset_id not in invoiceset_ids):
+                if (invoiceline.invoiceset_id.id not in invoiceset_ids):
                     number_of_fixed_surcharges += 1
-                    invoiceset_ids.append(invoiceline.invoiceset_id)
+                    invoiceset_ids.append(invoiceline.invoiceset_id.id)
             record.number_of_fixed_surcharges = \
                 number_of_fixed_surcharges
 
