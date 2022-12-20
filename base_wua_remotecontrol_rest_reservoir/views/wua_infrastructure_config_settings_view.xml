@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_infrastructure_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.infrastructure.configuration</field>
+        <field name="inherit_id" ref="base_wua_reservoir.wua_infrastructure_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='measurements_in_height']" position="after">
+                <field name="conversion_factor_bar_to_meters"
+                       attrs="{'invisible': [('measurements_in_height', '!=', True)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
