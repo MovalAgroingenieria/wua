@@ -13,11 +13,13 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_remotecontrol_rest",
-        "base_wua_remotecontrol_rest_infrastructure", ],
+        "base_wua_remotecontrol_rest_infrastructure",
+        "base_wua_remotecontrol_rest_reservoir", ],
     "data": [
         "data/wua_irrigation_config_settings_data.xml",
         "views/wua_irrigation_config_settings_view.xml",
-        "views/wua_pressuresensor_view.xml", ],
+        "views/wua_pressuresensor_view.xml",
+        "views/wua_reservoir_view.xml", ],
     "installable": True,
     "application": False,
 }

@@ -58,6 +58,12 @@ class WuaIrrigationConfiguration(models.TransientModel):
     import_from_flowmeter_hidroconta = fields.Boolean(
         string='Import from flow meter')
 
+    import_from_reservoir_readings_hidroconta = fields.Boolean(
+        string='Import from reservoir readings')
+
+    import_from_reservoir_hidroconta = fields.Boolean(
+        string='Import from reservoir')
+
     installation_identifier = fields.Integer(
         string='Installation Id.',
         default=0,
@@ -154,4 +160,13 @@ class WuaIrrigationConfiguration(models.TransientModel):
         hidroconta_can_impport = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'import_from_flowmeter_hidroconta')
+        return other_can_import or hidroconta_can_impport
+
+    def import_from_reservoir_any(self):
+        other_can_import = super(WuaIrrigationConfiguration, self).\
+            import_from_reservoir_any()
+        # GET hidroconta config
+        hidroconta_can_impport = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_from_reservoir_hidroconta')
         return other_can_import or hidroconta_can_impport

@@ -64,11 +64,13 @@ class WuaPressuresensormeasurement(models.Model):
                             if (analoginput['units'] == 'bar'):
                                 pressuresensor = analoginput['code'].encode(
                                     'utf-8', 'ignore')
-                            pressure = analoginput['value']
-                            pressuresensor_measurements.append({
-                                'pressuresensor': pressuresensor,
-                                'pressure': pressure,
-                                })
+                            if (pressuresensor in ps_dict):
+                                ps = ps_dict[pressuresensor]
+                                pressure = analoginput['value']
+                                pressuresensor_measurements.append({
+                                    'pressuresensor': ps.name,
+                                    'pressure': pressure,
+                                    })
             self.env['wua.reading'].close_connection(
                 url_remotecontrol_rest, jsessionid)
         return [pressuresensor_measurements, error_message,
