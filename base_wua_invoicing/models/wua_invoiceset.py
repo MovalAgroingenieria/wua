@@ -751,19 +751,67 @@ class WuaInvoiceset(models.Model):
                     invoice_details_categ03.append(result)
         return invoice_details_categ03
 
-    def calculate_invoice_details_categ04(self, product_id, categ_code,
-                                          item_ids, partnerlinks):
-        invoice_details_categ04 = []
-        parcels = self.env['wua.parcel'].browse(item_ids).filtered(
-            lambda x: x.is_billable_expenses is True)
+    def get_description_categ04(self, parcel, partnerlink):
+        description = ''
         area_measurement_name = self.get_area_measurement_name()
-        # Get Invoicing Area settings
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
+        # Parecel info
+        parcel_code = parcel.name
+        area_official = parcel.area_official
+        # Partnerlink info
+        profile = partnerlink.profile
+        percentage = partnerlink.ownership_percentage
+        # Labels:
+        default_parcel_label = _('Parcel')
+        parcel_label = self.get_value_from_translation(
+            'base_wua_invoicing', 'Parcel',
+            partnerlink.partner_id.lang)
+        if not parcel_label:
+            parcel_label = default_parcel_label
+        profile_name_label = self.get_profile_name(
+            profile, partnerlink.partner_id.lang)
+        default_cost_label = _('cost:')
+        cost_label = self.get_value_from_translation(
+            'base_wua_invoicing', 'cost:',
+            partnerlink.partner_id.lang)
+        if not cost_label:
+            cost_label = default_cost_label
+        # Values to str
+        area_official_str = ('%.4f' % area_official).replace('.', ',')
+        percentage_str = '%.2f' % percentage
         if alter_invoicing_behavior:
             area_invoicing_measurement_name = \
                 self.get_invoicing_area_measurement_name()
             area_invoicing_measurement_equivalence = \
                 self.get_invoicing_area_measurement_equivalence()
+            invoicing_area_official = \
+                parcel.area_official / \
+                area_invoicing_measurement_equivalence
+            invoicing_area_official_str = \
+                ('%.4f' % invoicing_area_official).\
+                replace('.', ',')
+            description = parcel_label + ' ' + parcel_code + ' ' \
+                + '(' + area_official_str + ' ' + \
+                area_measurement_name + ', ' + \
+                invoicing_area_official_str + ' ' \
+                + area_invoicing_measurement_name + '), ' + \
+                profile_name_label + \
+                ' (' + cost_label + ' ' + percentage_str + ' %)'
+        else:
+            description = parcel_label + ' ' + parcel_code \
+                + ' ' + '(' + area_official_str + ' ' +  \
+                area_measurement_name + '), ' + \
+                profile_name_label + \
+                ' (' + cost_label + ' ' + percentage_str + ' %)'
+        return description
+
+    def calculate_invoice_details_categ04(self, product_id, categ_code,
+                                          item_ids, partnerlinks):
+        invoice_details_categ04 = []
+        parcels = self.env['wua.parcel'].browse(item_ids).filtered(
+            lambda x: x.is_billable_expenses is True)
+        alter_invoicing_behavior = self.get_alter_invoicing_behavior()
+        # Get Invoicing Area settings
         for parcel in parcels:
             partnerlinks_of_parcel = partnerlinks.filtered(
                 lambda x: x.parcel_id.id == parcel.id and
@@ -771,55 +819,23 @@ class WuaInvoiceset(models.Model):
             if len(partnerlinks_of_parcel) > 0:
                 for partnerlink in partnerlinks_of_parcel:
                     partner_id = partnerlink.partner_id.id
-                    profile = partnerlink.profile
-                    parcel_code = parcel.name
                     area_official = parcel.area_official
-                    area_official_str = ('%.4f' % area_official).\
-                        replace('.', ',')
                     # Calculate area according to Invoicing Area setting
                     if alter_invoicing_behavior:
+                        area_invoicing_measurement_equivalence = \
+                            self.get_invoicing_area_measurement_equivalence()
                         invoicing_area_official = \
                             parcel.area_official / \
                             area_invoicing_measurement_equivalence
-                        invoicing_area_official_str = \
-                            ('%.4f' % invoicing_area_official).\
-                            replace('.', ',')
                     percentage = partnerlink.ownership_percentage
-                    percentage_str = '%.2f' % percentage
                     # Set quantity according to Invoicing Area setting
                     if alter_invoicing_behavior:
                         quantity = invoicing_area_official * (percentage / 100)
                     else:
                         quantity = area_official * (percentage / 100)
-                    default_parcel_label = _('Parcel')
-                    parcel_label = self.get_value_from_translation(
-                        'base_wua_invoicing', 'Parcel',
-                        partnerlink.partner_id.lang)
-                    if not parcel_label:
-                        parcel_label = default_parcel_label
-                    profile_name_label = self.get_profile_name(
-                        profile, partnerlink.partner_id.lang)
-                    default_cost_label = _('cost:')
-                    cost_label = self.get_value_from_translation(
-                        'base_wua_invoicing', 'cost:',
-                        partnerlink.partner_id.lang)
-                    if not cost_label:
-                        cost_label = default_cost_label
                     # Set description according to Invoicing Area setting
-                    if alter_invoicing_behavior:
-                        description = parcel_label + ' ' + parcel_code + ' ' \
-                            + '(' + area_official_str + ' ' + \
-                            area_measurement_name + ', ' + \
-                            invoicing_area_official_str + ' ' \
-                            + area_invoicing_measurement_name + '), ' + \
-                            profile_name_label + \
-                            ' (' + cost_label + ' ' + percentage_str + ' %)'
-                    else:
-                        description = parcel_label + ' ' + parcel_code \
-                            + ' ' + '(' + area_official_str + ' ' +  \
-                            area_measurement_name + '), ' + \
-                            profile_name_label + \
-                            ' (' + cost_label + ' ' + percentage_str + ' %)'
+                    description = self.get_description_categ04(
+                        parcel, partnerlink)
                     result = {
                         'partner_id': partner_id,
                         'product_id': product_id,

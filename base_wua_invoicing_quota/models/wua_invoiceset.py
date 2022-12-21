@@ -47,7 +47,7 @@ class WuaInvoiceset(models.Model):
                 quota.quota_id.id)
         return quota_ids
 
-    def get_description(self, quota):
+    def get_description_categ13(self, quota):
         description = ""
         if quota:
             quota_initial_date = datetime.datetime.strptime(
@@ -83,7 +83,7 @@ class WuaInvoiceset(models.Model):
                 quantity = abs(quota.balance)
             else:
                 quantity = quota.balance
-            description = self.get_description(quota)
+            description = self.get_description_categ13(quota)
             result = {
                 'partner_id': partner_id,
                 'product_id': product_id,

@@ -47,8 +47,8 @@ class WuaInvoiceset(models.Model):
                 enrolledsubparcel.enrolledsubparcel_id.id)
         return enrolledsubparcel_ids
 
-    def get_description(self, partnerlink, enrolledsubparcel,
-                        product_id, quantity):
+    def get_description_categ09(self, partnerlink, enrolledsubparcel,
+                                product_id, quantity):
         description = ""
         parcel_label = self.get_value_from_translation(
             'base_wua_invoicing', 'Parcel', partnerlink.partner_id.lang
@@ -128,7 +128,7 @@ class WuaInvoiceset(models.Model):
                 percentage = partnerlink.water_costs_percentage
                 quantity = contracted_volume * (percentage / 100)
                 description = \
-                    self.get_description(
+                    self.get_description_categ09(
                         partnerlink, enrolledsubparcel, product_id, quantity)
                 result = {
                     'partner_id': partner_id,
