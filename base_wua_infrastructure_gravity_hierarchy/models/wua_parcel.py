@@ -1068,3 +1068,25 @@ class WuaParcel(models.Model):
                 self.env.cr.rollback()
                 gis_drainageditch_ok = False
         return gis_parcels_ok and gis_drainageditch_ok
+
+
+class WuaParcelSubparcel(models.Model):
+    _inherit = 'wua.parcel.subparcel'
+
+    main_irrigationditch_id = fields.Many2one(
+        string="Main irrigation ditch",
+        comodel_name="wua.irrigationditch",
+        index=True,
+        ondelete='restrict',
+        store=True,
+        compute='_compute_main_irrigationditch_id')
+
+    @api.depends('irrigationditch_id', 'irrigationditch_id.path')
+    def _compute_main_irrigationditch_id(self):
+        for record in self:
+            main_irrigationditch_id = None
+            if (record.irrigationditch_id and
+               record.irrigationditch_id.main_irrigationditch_id):
+                main_irrigationditch_id = \
+                    record.irrigationditch_id.main_irrigationditch_id.id
+            record.main_irrigationditch_id = main_irrigationditch_id

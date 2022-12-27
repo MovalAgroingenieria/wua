@@ -22,6 +22,7 @@
         "views/wua_parcel_view.xml",
         "views/wua_invoiceset_view.xml",
         "views/wua_drainageditch_view.xml",
+        "views/wua_gravconsumption_view.xml",
         "reports/wua_partner_infrastructure_report.xml",
     ],
     "installable": True,
