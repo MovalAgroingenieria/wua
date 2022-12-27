@@ -190,6 +190,14 @@ class WuaIrrigationditch(models.Model):
         inverse_name='irrigationditch_30_id',
         string="Parcels at level 30 ditch")
 
+    main_irrigationditch_id = fields.Many2one(
+        string="Main irrigation ditch",
+        comodel_name="wua.irrigationditch",
+        index=True,
+        ondelete='restrict',
+        store=True,
+        compute='_compute_main_irrigationditch_id')
+
     @api.depends('irrigationditch_id', 'name', 'irrigationditch_id.path')
     def _compute_level_n_path(self):
         for record in self:
@@ -296,6 +304,21 @@ class WuaIrrigationditch(models.Model):
                         total_affected_area_official += parcel.area_official
                 level -= 1
             record.total_affected_area_official = total_affected_area_official
+
+    @api.depends('path')
+    def _compute_main_irrigationditch_id(self):
+        model_wua_irrigationdich = self.env['wua.irrigationditch']
+        for record in self:
+            main_irrigationditch_id = None
+            irrigationditch_names = record.path.split('/')
+            if irrigationditch_names and len(irrigationditch_names) > 0:
+                main_irrigationditch_name = irrigationditch_names[0]
+                if main_irrigationditch_name != '':
+                    main_irrigationditch = model_wua_irrigationdich.search(
+                        [('name', '=', main_irrigationditch_name)])
+                    if main_irrigationditch:
+                        main_irrigationditch_id = main_irrigationditch[0].id
+            record.main_irrigationditch_id = main_irrigationditch_id
 
     @api.constrains('is_main', 'irrigationditch_id')
     def _check_irrigationditch_id(self):

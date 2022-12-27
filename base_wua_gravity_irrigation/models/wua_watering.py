@@ -707,6 +707,7 @@ class WuaWatering(models.Model):
                      ('cancelled', '=', False)]
         if self.only_cultivable_subparcel:
             condition.append(('subparcel_id.is_cultivable', '=', True))
+        condition = self._update_condition(condition)
         gravconsumptions = self.env['wua.gravconsumption'].search(condition)
         if gravconsumptions:
             for gravconsumption in gravconsumptions:
@@ -734,6 +735,7 @@ class WuaWatering(models.Model):
                      ('parcel_id.with_watering_shift', '=', True)]
         if self.only_cultivable_subparcel:
             condition.append(('is_cultivable', '=', True))
+        condition = self._update_condition(condition)
         subparcels = self.env['wua.parcel.subparcel'].search(condition)
         if subparcels:
             for subparcel in subparcels:
@@ -857,9 +859,10 @@ class WuaWatering(models.Model):
                 })
         subparcels_to_irrigate = sorted(
             subparcels_data, key=lambda k: k['hydraulic_order'])
+        condition = [('irrigationditch_id', '=', self.irrigationditch_id.id)]
+        condition = self._update_condition(condition)
         irrigationgates = self.env['wua.irrigationgate'].search(
-            [('irrigationditch_id', '=', self.irrigationditch_id.id)],
-            order='hydraulic_order asc')
+            condition, order='hydraulic_order asc')
         accumulated_delay_time = 0
         current_fd_id = 0
         ig_blacklist, subparcels_empty_bif, ig_empty_bif = \
@@ -1253,3 +1256,14 @@ class WuaWatering(models.Model):
                             else:
                                 ig_empty_bif.append(irrigationgate.name)
         return ig_blacklist, subparcels_empty_bif, ig_empty_bif
+
+    # Hook: This method is called from descendant classes to refine
+    # the condition to find gravity-consumptions in the
+    # "join_gravconsumptions_to_watering_by_request" method, find subparcels
+    # in the "join_gravconsumptions_to_watering_by_distribution" method,
+    # and find irrigation-gates in the "calculate_durations" method.
+    # Example: in the hieralchical irrigation, to considerer
+    # "main_irrigationditch_id" instead of "irrigationditch_id".
+    def _update_condition(self, condition):
+        resp = condition
+        return resp

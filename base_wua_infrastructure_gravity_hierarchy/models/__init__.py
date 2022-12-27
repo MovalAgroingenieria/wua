@@ -6,3 +6,6 @@ from . import wua_irrigationditch
 from . import wua_parcel
 from . import wua_invoiceset
 from . import wua_drainageditch
+from . import wua_watering
+from . import wua_irrigationgate
+from . import wua_gravconsumption
