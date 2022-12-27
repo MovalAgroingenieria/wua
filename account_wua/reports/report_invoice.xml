@@ -407,14 +407,14 @@
                             </div>
                             <div class="col-xs-4 pull-right" name="subtotal_table">
                                 <table class="table table-condensed">
-                                    <tr class="border-black">
+                                    <tr class="border-black" name="tr_subtotal">
                                         <td><strong>Subtotal</strong></td>
                                         <td class="text-right">
                                             <span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                         </td>
                                     </tr>
-                                    <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group">
-                                        <tr>
+                                    <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group" name="t_amount_by_group">
+                                        <tr name="tr_amount_by_group">
                                             <td>
 
                                                 <!-- Transient modification  -->
