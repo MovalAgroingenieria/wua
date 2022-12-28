@@ -12,6 +12,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_invoicing",
+        "base_wua_gravity_irrigation",
     ],
     "data": [
         "security/ir.model.access.csv",
