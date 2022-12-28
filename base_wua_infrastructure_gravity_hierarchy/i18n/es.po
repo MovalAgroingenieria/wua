@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-27 19:33+0000\n"
-"PO-Revision-Date: 2022-12-27 19:33+0000\n"
+"POT-Creation-Date: 2022-12-28 20:46+0000\n"
+"PO-Revision-Date: 2022-12-28 20:46+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,13 +22,13 @@ msgstr "<strong>Riego&amp;nbsp;por&amp;nbsp;gravedad</strong>"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:407
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:366
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:377
 #, python-format
 msgid "A ditch cannot be supplied by itself."
 msgstr "Una acequia no puede abastecerse a sí misma."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:329
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:340
 #, python-format
 msgid "A non-main ditch must be supplied by another."
 msgstr "Una acequia que no sea acequia principal necesariamente tiene que ser abastecida por otra."
@@ -202,9 +202,20 @@ msgid "GIS Viewer (zoom to point)"
 msgstr "Visor GIS (zoom al punto)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_view_tree
+msgid "H.O."
+msgstr "O.H."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_infrastructure_config_settings_view_form
 msgid "Hierarchical Gravity"
 msgstr "Riego por gravedad jerárquico"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_hydraulic_order
+msgid "Hydraulic Order"
+msgstr "Orden hidráulico"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_id
@@ -245,7 +256,7 @@ msgstr "Principal: Sí"
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Last Modified on"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_write_uid
@@ -255,7 +266,7 @@ msgstr "Última actualización por"
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_write_date
 msgid "Last Updated on"
-msgstr "Última actualización el"
+msgstr "Última actualización en"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_level
@@ -621,7 +632,7 @@ msgstr "Parcela"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:514
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:436
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:447
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_parcels_action_gh
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_parcels_action_gh
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
@@ -973,8 +984,8 @@ msgstr "El carácter \"/\" no se puede usar en el nombre de un azarbe."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:388
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:347
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:360
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:358
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:371
 #, python-format
 msgid "The character \"/\" cannot be used in the name of the irrigation ditch."
 msgstr "El carácter \"/\" no se puede usar en el nombre de una acequia."
@@ -993,7 +1004,12 @@ msgid "The drainage ditch code must be a positive value."
 msgstr "El código de azarbe debe ser un valor positivo."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:326
+#: sql_constraint:wua.irrigationditch:0
+msgid "The hydraulic_order must be a positive value."
+msgstr "The hydraulic_order must be a positive value."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:337
 #, python-format
 msgid "The main ditch cannot be supplied by any other."
 msgstr "Una acequia principal no puede ser abastecida por otra."
@@ -1011,7 +1027,7 @@ msgid "You cannot create a drainage ditch that depends on a ditch of the highest
 msgstr "No es posible dar de alta un azarbe que dependa de otro del nivel máximo (%s)."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:338
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:349
 #, python-format
 msgid "You cannot create a irrigation ditch that depends on a ditch of the highest level (%s)."
 msgstr "No es posible dar de alta una acequia que dependa de otra del nivel máximo (%s)."

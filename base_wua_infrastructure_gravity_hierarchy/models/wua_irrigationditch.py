@@ -198,6 +198,17 @@ class WuaIrrigationditch(models.Model):
         store=True,
         compute='_compute_main_irrigationditch_id')
 
+    hydraulic_order = fields.Integer(
+        string="Hydraulic Order",
+        default=1,
+        required=True)
+
+    _sql_constraints = [
+        ('valid_hydraulic_order',
+         'CHECK (hydraulic_order > 0)',
+         'The hydraulic_order must be a positive value.'),
+        ]
+
     @api.depends('irrigationditch_id', 'name', 'irrigationditch_id.path')
     def _compute_level_n_path(self):
         for record in self:

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-27 19:33+0000\n"
-"PO-Revision-Date: 2022-12-27 19:33+0000\n"
+"POT-Creation-Date: 2022-12-28 20:46+0000\n"
+"PO-Revision-Date: 2022-12-28 20:46+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,13 +22,13 @@ msgstr "<strong>Reg&amp;nbsp;per&amp;nbsp;gravetat</strong>"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:407
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:366
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:377
 #, python-format
 msgid "A ditch cannot be supplied by itself."
 msgstr "Una sèquia no pot proveir-se a si mateixa."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:329
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:340
 #, python-format
 msgid "A non-main ditch must be supplied by another."
 msgstr "Una sèquia que no sigui sèquia principal necessàriament ha de ser proveïda per una altra."
@@ -202,9 +202,20 @@ msgid "GIS Viewer (zoom to point)"
 msgstr "Visor GIS (zoom a punt)"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_view_tree
+msgid "H.O."
+msgstr "O.H."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_infrastructure_config_settings_view_form
 msgid "Hierarchical Gravity"
 msgstr "Reg per gravetat jeràrquic"
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_hydraulic_order
+msgid "Hydraulic Order"
+msgstr "Ordre hidràulic"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_id
@@ -245,7 +256,7 @@ msgstr "Principal: Si"
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_write_uid
@@ -572,7 +583,7 @@ msgstr "Línia de detall de lot de factures"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_is_main
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_irrigationditch_is_main
 msgid "Main"
-msgstr "Regant"
+msgstr "Principal"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_gravconsumption_main_irrigationditch_id
@@ -621,7 +632,7 @@ msgstr "Parcel·la"
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:514
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:436
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:447
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_parcels_action_gh
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_parcels_action_gh
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
@@ -973,8 +984,8 @@ msgstr "El caràcter \"/\" no es pot usar en el nom d'un assarb."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:388
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:347
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:360
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:358
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:371
 #, python-format
 msgid "The character \"/\" cannot be used in the name of the irrigation ditch."
 msgstr "El caràcter \"/\" no es pot usar en el nom d'una sèquia."
@@ -993,7 +1004,12 @@ msgid "The drainage ditch code must be a positive value."
 msgstr "El codi de assarb ha de ser un valor positiu."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:326
+#: sql_constraint:wua.irrigationditch:0
+msgid "The hydraulic_order must be a positive value."
+msgstr "The hydraulic_order must be a positive value."
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:337
 #, python-format
 msgid "The main ditch cannot be supplied by any other."
 msgstr "Una sèquia principal no pot ser proveïda per una altra."
@@ -1011,7 +1027,7 @@ msgid "You cannot create a drainage ditch that depends on a ditch of the highest
 msgstr "No és possible donar d'alta un assarb que depengui d'un altre del nivell màxim (%s)."
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:338
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:349
 #, python-format
 msgid "You cannot create a irrigation ditch that depends on a ditch of the highest level (%s)."
 msgstr "No és possible donar d'alta una sèquia que depengui d'una altra del nivell màxim (% s)."

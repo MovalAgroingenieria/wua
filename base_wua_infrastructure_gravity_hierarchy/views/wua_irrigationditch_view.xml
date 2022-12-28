@@ -35,6 +35,7 @@
 
             <!-- Add gravity hierarchy fields -->
             <xpath expr="//field[@name='description']" position="after">
+                <field name="hydraulic_order"/>
                 <field name="is_main"/>
                 <field name="irrigationditch_id" attrs="{'invisible':[('is_main', '=', True)],
                                                          'required':[('is_main', '=', False)]}"/>
@@ -46,10 +47,12 @@
             <xpath expr="//page[@name='notes_page']" position="before">
                 <page name="irrigationditch_ids_page" string="Supplied irrigation ditches" autofocus="True">
                     <field name="irrigationditch_ids">
-                        <tree create="false" edit="false" delete="false">
+                        <tree create="false" edit="false" delete="false"
+                              default_order="level, hydraulic_order, irrigationditch_code">
                             <field name="irrigationditch_code"/>
                             <field name="name"/>
                             <field name="level"/>
+                            <field name="hydraulic_order" string="H.O."/>
                             <field name="path"/>
                             <field name="total_affected_area_official"/>
                             <field name="number_of_parcels"/>
@@ -68,6 +71,10 @@
         <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationditch_view_tree"/>
         <field name="arch" type="xml">
 
+            <xpath expr="//tree" position="attributes">
+                <attribute name="default_order">level, hydraulic_order, irrigationditch_code</attribute>
+            </xpath>
+
             <!-- Hide unnecessary fields -->
             <xpath expr="//field[@name='description']" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -81,6 +88,7 @@
                 <field name="path" invisible="1"/>
                 <field name="is_main"/>
                 <field name="level"/>
+                <field name="hydraulic_order" string="H.O."/>
                 <field name="irrigationditch_id"/>
             </xpath>
 
