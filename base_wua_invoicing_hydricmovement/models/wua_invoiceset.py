@@ -87,11 +87,19 @@ class WuaInvoiceset(models.Model):
             partner_id = hydricmovement.partner_id.id
             product_id = product_id
             categ_code = categ_code
-            key1 = hydricmovement.id
+            # Modified by EIS, 2022-12-29 (it is necessary for the separate
+            # billing of the water connections applied to the water movements
+            # mapped to the pressure consumption).
+            # key1 = hydricmovement.id
+            # if hydricmovement.type == 'pres_consumption':
+            #     key2 = hydricmovement.presconsumption_id.id
+            # else:
+            #     key2 = 0
+            key1 = 0
+            key2 = 0
             if hydricmovement.type == 'pres_consumption':
                 key2 = hydricmovement.presconsumption_id.id
-            else:
-                key2 = 0
+                key1 = hydricmovement.presconsumption_id.waterconnection_id.id
             quantity = hydricmovement.volume
             # Check if quantity should be negative
             if ((hydricmovement.type == 'granted_cession' or

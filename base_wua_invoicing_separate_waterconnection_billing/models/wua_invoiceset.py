@@ -58,12 +58,24 @@ class WuaInvoiceset(models.Model):
     def get_waterconnection_id(self, invoice_detail):
         waterconnection_id = 0
         is_watercosts = False
+        # Modified by EIS, 2022-12-29 (it is necessary for the separate
+        # billing of the water connections applied to the water movements
+        # mapped to the pressure consumption).
+        # if (invoice_detail['categ_code'] == 5 or
+        #    invoice_detail['categ_code'] == 7 or
+        #    invoice_detail['categ_code'] == 10):
+        #     waterconnection_id = invoice_detail['key1']
+        #     if (invoice_detail['categ_code'] == 7 or
+        #        invoice_detail['categ_code'] == 10):
+        #         is_watercosts = True
         if (invoice_detail['categ_code'] == 5 or
            invoice_detail['categ_code'] == 7 or
-           invoice_detail['categ_code'] == 10):
+           invoice_detail['categ_code'] == 10 or
+           invoice_detail['categ_code'] == 14):
             waterconnection_id = invoice_detail['key1']
             if (invoice_detail['categ_code'] == 7 or
-               invoice_detail['categ_code'] == 10):
+               invoice_detail['categ_code'] == 10 or
+               invoice_detail['categ_code'] == 14):
                 is_watercosts = True
         return waterconnection_id, is_watercosts
 

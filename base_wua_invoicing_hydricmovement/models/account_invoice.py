@@ -29,11 +29,16 @@ class AccountInvoice(models.Model):
         lines = []
         pres_consumption_ids = []
         for invoice_line in invoice_lines:
+            # Modified by EIS, 2022-12-29 (it is necessary for the separate
+            # billing of the water connections applied to the water movements
+            # mapped to the pressure consumption).
+            # if invoice_line.categ_id.productcategory_code == 14 and \
+            #         invoice_line.presconsumption_id and \
+            #         invoice_line.hydricmovement_id.type == 'pres_consumption':
+            #     pres_consumption_ids.append(invoice_line.presconsumption_id.id)
             if invoice_line.categ_id.productcategory_code == 14 and \
-                    invoice_line.presconsumption_id and \
-                    invoice_line.hydricmovement_id.type == 'pres_consumption':
+                    invoice_line.presconsumption_id:
                 pres_consumption_ids.append(invoice_line.presconsumption_id.id)
-
         if pres_consumption_ids:
             pres_consumption_ids = list(set(pres_consumption_ids))
             pres_consumptions = \
