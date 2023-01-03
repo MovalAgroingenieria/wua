@@ -5,7 +5,7 @@
 from odoo import models, _
 
 
-class WuaIrrigationreport(models.Model):
+class WuaIrrigationReport(models.Model):
     _inherit = 'wua.irrigationreport'
 
     # Overwrite original method

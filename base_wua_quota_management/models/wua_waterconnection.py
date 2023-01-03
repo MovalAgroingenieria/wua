@@ -20,6 +20,12 @@ class WuaWaterconnection(models.Model):
         string='Water Order Number',
         default=1)
 
+    superproduct_excluded_ids = fields.Many2many(
+        string='Water excluded from quota',
+        comodel_name='wua.superproduct',
+        relation='wua_waterconnection_superproduct_rel',
+        column1='waterconnection_id', column2='superproduct_id')
+
     consumptions_graph = fields.Text(
         string='Consumptions Graph',
         compute='_compute_consumptions_graph')

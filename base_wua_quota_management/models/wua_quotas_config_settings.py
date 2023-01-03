@@ -16,6 +16,12 @@ class WuaQuotasConfiguration(models.TransientModel):
         help='Apply superproduct sorting of quota periods to calculate '
              'the hydric consumptions')
 
+    sorted_irrigationreport_quotas = fields.Boolean(
+        string='Sort in superproducts for irrigation reports',
+        default=False,
+        help='Apply superproduct sorting of quota periods to calculate '
+             'the irrigation reports consumptions')
+
     show_aggregated_quotas = fields.Boolean(
         string='Show aggregated quotas',
         default=False,
@@ -26,6 +32,9 @@ class WuaQuotasConfiguration(models.TransientModel):
         values = self.env['ir.values'].sudo()
         values.set_default('wua.quotas.configuration', 'sorted_quotas',
                            self.sorted_quotas)
+        values.set_default('wua.quotas.configuration',
+                           'sorted_irrigationreport_quotas',
+                           self.sorted_irrigationreport_quotas)
         values.set_default('wua.quotas.configuration',
                            'show_aggregated_quotas',
                            self.show_aggregated_quotas)

@@ -6,7 +6,7 @@ import datetime
 from odoo import models, fields, api, _
 
 
-class WuaIrrigationreport(models.Model):
+class WuaIrrigationReport(models.Model):
     _inherit = 'wua.irrigationreport'
 
     html_quota_balance = fields.Html(

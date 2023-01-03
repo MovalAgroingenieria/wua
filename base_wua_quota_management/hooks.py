@@ -11,13 +11,14 @@ def post_init_hook(cr, registry):
     for template in templates:
         if template.categ_id.productcategory_code == 7:
             template.superproduct_id = env.ref(
-               'base_wua_quota_management.superproduct_pressurized_irrigation')
+                'base_wua_quota_management.'
+                'superproduct_pressurized_irrigation')
         if template.categ_id.productcategory_code == 8:
             template.superproduct_id = env.ref(
-               'base_wua_quota_management.superproduct_gravity_irrigation')
+                'base_wua_quota_management.superproduct_gravity_irrigation')
         if template.categ_id.productcategory_code == 11:
             template.superproduct_id = env.ref(
-               'base_wua_quota_management.superproduct_irrigation_reports')
+                'base_wua_quota_management.superproduct_irrigation_reports')
 
 
 def uninstall_hook(cr, registry):
@@ -46,7 +47,7 @@ def uninstall_hook(cr, registry):
     try:
         param_wua_quotas_configuration = env.ref(
             'base_wua_quota_management.param_wua_quotas_configuration')
-    except:
+    except Exception:
         param_wua_quotas_configuration = False
     if param_wua_quotas_configuration:
         param_wua_quotas_configuration.unlink()
@@ -54,10 +55,20 @@ def uninstall_hook(cr, registry):
     try:
         param_ir_values_sorted_quotas = env.ref(
             'base_wua_quota_management.param_ir_values_sorted_quotas')
-    except:
+    except Exception:
         param_ir_values_sorted_quotas = False
     if param_ir_values_sorted_quotas:
         param_ir_values_sorted_quotas.unlink()
+    param_ir_values_sorted_irrigationreport_quotas = None
+    try:
+        param_ir_values_sorted_irrigationreport_quotas = env.ref(
+            'base_wua_quota_management.'
+            'param_ir_values_sorted_irrigationreport_quotas')
+    except Exception:
+        param_ir_values_sorted_irrigationreport_quotas = False
+    if param_ir_values_sorted_irrigationreport_quotas:
+        param_ir_values_sorted_irrigationreport_quotas.unlink()
+
     product_template_action = env.ref(
         'product.product_template_action')
     if product_template_action:

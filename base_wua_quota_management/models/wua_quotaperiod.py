@@ -33,6 +33,12 @@ class WuaQuotaperiod(models.Model):
             'wua.quotas.configuration', 'sorted_quotas')
         return default_sorted_quotas
 
+    def _default_sorted_irrigationreport_quotas(self):
+        default_sorted_irrigationreport_quotas = self.env['ir.values'].\
+            get_default('wua.quotas.configuration',
+                        'sorted_irrigationreport_quotas')
+        return default_sorted_irrigationreport_quotas
+
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
         comodel_name='wua.agriculturalseason',
@@ -83,6 +89,10 @@ class WuaQuotaperiod(models.Model):
     sorted_quotas = fields.Boolean(
         string='Sort in superproducts',
         default=_default_sorted_quotas)
+
+    sorted_irrigationreport_quotas = fields.Boolean(
+        string='Sort in superproducts associated to irrigationreports',
+        default=_default_sorted_irrigationreport_quotas)
 
     volume_total = fields.Float(
         string='Total Volume (m³)',

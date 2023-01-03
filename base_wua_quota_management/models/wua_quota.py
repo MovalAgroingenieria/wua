@@ -550,7 +550,7 @@ class WuaQuota(models.Model):
                         hydric_consumptions = \
                             self._adapt_hydricmovements_to_sorted_quotas(
                                 hydric_consumptions,
-                                waterconnection.water_product_order)
+                                waterconnection)
                     for hydric_consumption in hydric_consumptions:
                         quota = self.env['wua.quota'].search(
                             [('quotaperiod_id', '=',
@@ -721,11 +721,12 @@ class WuaQuota(models.Model):
                     })
                 if hydric_consumptions:
                     # Modified: for irrigation reports, does not apply the
-                    # parameter "sorted_quotas".
-                    # if quotaperiod.sorted_quotas:
-                    #     hydric_consumptions = \
-                    #         self._adapt_hydricmovements_to_sorted_quotas(
-                    #             hydric_consumptions)
+                    # parameter "sorted_quotas" Instead, use specific
+                    # sorted_irrigationreport_quotas.
+                    if quotaperiod.sorted_irrigationreport_quotas:
+                        hydric_consumptions = self.\
+                            _adapt_hydricmovements_to_sorted_ireport_quotas(
+                                hydric_consumptions, irrigationreport)
                     for hydric_consumption in hydric_consumptions:
                         quota = self.env['wua.quota'].search(
                             [('quotaperiod_id', '=',
@@ -823,15 +824,82 @@ class WuaQuota(models.Model):
         return resp
 
     def _adapt_hydricmovements_to_sorted_quotas(
-            self, hydric_consumptions, wc_pos):
+            self, hydric_consumptions, wc):
         resp = []
         if hydric_consumptions:
+            wc_pos = wc.water_product_order
+            superproducts_to_exclude = wc.superproduct_excluded_ids.ids
             quotaperiod_id = hydric_consumptions[0]['quotaperiod_id']
             # Check default position setted to waterconnections
             quotaperiodlines = self.env['wua.quotaperiod.line'].search(
                 [('quotaperiod_id', '=', quotaperiod_id),
-                 ('pos', '>=', wc_pos)],
+                 ('pos', '>=', wc_pos),
+                 ('superproduct_id', 'not in', superproducts_to_exclude)],
                 order='pos')
+            if quotaperiodlines:
+                max_for = len(quotaperiodlines)
+                for hydric_consumption in hydric_consumptions:
+                    remaining_volume = hydric_consumption['volume']
+                    new_hydric_consumptions = []
+                    current_pos = 1
+                    partner_id = hydric_consumption['partner_id']
+                    for quotaperiodline in quotaperiodlines:
+                        superproduct_id = quotaperiodline.superproduct_id.id
+                        current_quota = self.env['wua.quota'].search(
+                            [('quotaperiod_id', '=', quotaperiod_id),
+                             ('superproduct_id', '=', superproduct_id),
+                             ('partner_id', '=', partner_id)])
+                        if current_quota:
+                            current_quota = current_quota[0]
+                            if (current_quota.balance >= remaining_volume or
+                               current_pos == max_for):
+                                new_hydric_consumptions.append({
+                                    'quotaperiod_id': quotaperiod_id,
+                                    'superproduct_id': superproduct_id,
+                                    'partner_id': partner_id,
+                                    'volume': remaining_volume,
+                                    'pos': current_pos - 1,
+                                    })
+                                remaining_volume = 0
+                            else:
+                                if current_quota.balance > 0:
+                                    new_hydric_consumptions.append({
+                                        'quotaperiod_id': quotaperiod_id,
+                                        'superproduct_id': superproduct_id,
+                                        'partner_id': partner_id,
+                                        'volume': current_quota.balance,
+                                        'pos': current_pos - 1,
+                                        })
+                                    remaining_volume = remaining_volume - \
+                                        current_quota.balance
+                            if remaining_volume == 0:
+                                break
+                        current_pos = current_pos + 1
+                    if new_hydric_consumptions:
+                        # Add new hydric consumptions (sorted)
+                        resp.extend(new_hydric_consumptions)
+                    else:
+                        # Add the original hydric consumption
+                        resp.append(hydric_consumption)
+            else:
+                resp = hydric_consumptions
+        return resp
+
+    def _adapt_hydricmovements_to_sorted_ireport_quotas(
+            self, hydric_consumptions, irrigationreport):
+        resp = []
+        if hydric_consumptions:
+            quotaperiod_id = hydric_consumptions[0]['quotaperiod_id']
+            # Check default position setted to irrigationreport
+            quotaperiodline_start = self.env['wua.quotaperiod.line'].search(
+                [('quotaperiod_id', '=', quotaperiod_id),
+                 ('superproduct_id', '=',
+                    irrigationreport.product_id.superproduct_id.id)],
+                order='pos')[0]
+            first_pos = quotaperiodline_start.pos
+            quotaperiodlines = self.env['wua.quotaperiod.line'].search(
+                [('quotaperiod_id', '=', quotaperiod_id),
+                 ('pos', '>=', first_pos)], order='pos')
             if quotaperiodlines:
                 max_for = len(quotaperiodlines)
                 for hydric_consumption in hydric_consumptions:
