@@ -407,6 +407,10 @@ class WuaParcel(models.Model):
         string='Scale',
         readonly=True)
 
+    aerial_img_last_import_date = fields.Datetime(
+        string='Date of last import aerial image',
+        default='2023-01-01 00:00:00')
+
     aerial_img_date = fields.Date(
         string='Date of aerial image')
 
@@ -1410,8 +1414,12 @@ class WuaParcel(models.Model):
     @api.multi
     def action_regenerate_aerial_img(self):
         parcels = self.env['wua.parcel'].search(
-            [('with_gis_parcel', '=', True)])
-        parcels.regenerate_aerial_img()
+            [('with_gis_parcel', '=', True)],
+            order='aerial_img_last_import_date')
+        for parcel in parcels:
+            parcel.regenerate_aerial_img()
+            # Added to make sure some parcels are stored
+            self.env.cr.commit()
 
     @api.multi
     def generate_parcel_shp(self):
@@ -1634,6 +1642,8 @@ class WuaParcel(models.Model):
                                       'aerial_img_scale': aerial_img_scale,
                                       'aerial_img_accuracy': resolution,
                                       'aerial_img_date': date,
+                                      'aerial_img_last_import_date':
+                                      fields.Datetime.now(),
                                       'aerial_img_bbox':
                                       ','.join(map(str, list(bbox)))})
                     except Exception:

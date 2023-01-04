@@ -58,6 +58,7 @@
         "data/wua_subparceltype_data.xml",
         "data/wua_cultivation_data.xml",
         "data/wua_sequences.xml",
+        "data/wua_parcel_cron.xml",
         "wizard/wizard_change_parcel_name_view.xml",
         "views/resources.xml",
         "views/wua_parcel_view.xml",
