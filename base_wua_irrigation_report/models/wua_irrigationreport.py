@@ -73,7 +73,7 @@ class WuaIrrigationReport(models.Model):
         compute="_compute_irrigationreport_number_name")
 
     partner_id = fields.Many2one(
-        string="Partner",
+        string="WUA Partner",
         required=True,
         index=True,
         domain="[('is_wua_partner', '=', True)]",

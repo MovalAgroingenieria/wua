@@ -449,5 +449,5 @@ class WuaSuperproduct(models.Model):
                     DELETE FROM product_template WHERE id in """ + where)
                 self.env.cr.commit()
                 self.env.invalidate_all()
-            except:
+            except Exception:
                 self.env.cr.rollback()
