@@ -113,6 +113,7 @@ class WuaInvoiceset(models.Model):
                 'categ_code': categ_code,
                 'key1': key1,
                 'key2': key2,
+                'hydricmovement_id': hydricmovement.id,
                 'quantity': quantity,
                 'description': description,
                 }
@@ -125,7 +126,7 @@ class WuaInvoiceset(models.Model):
             return super(WuaInvoiceset,
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
-        data['hydricmovement_id'] = invoice_data_line['key1']
+        data['waterconnection_id'] = invoice_data_line['key1']
         data['presconsumption_id'] = invoice_data_line['key2']
         return data
 

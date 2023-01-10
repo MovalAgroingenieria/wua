@@ -16,10 +16,10 @@ class WuaPresconsumption(models.Model):
     @api.depends('hydricmovement_ids',
                  'hydricmovement_ids.invoiced_hydricmovement')
     def _compute_invoiced_consumption_quota(self):
-        result = False
         for record in self:
+            result = False
             for hydricmov in record.hydricmovement_ids:
                 if hydricmov.invoiced_hydricmovement:
                     result = True
                     break
-        record.invoiced_consumption_quota = result
+            record.invoiced_consumption_quota = result
