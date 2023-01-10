@@ -1055,6 +1055,8 @@ class WuaParcel(models.Model):
                 if (pl.profile == 'L'):
                     leased_parcel = True
         self.leased_parcel = leased_parcel
+        # On create the api multi is not being calculated and is needed
+        self._compute_lease_dates_required()
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
