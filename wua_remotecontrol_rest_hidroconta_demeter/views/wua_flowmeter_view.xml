@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowmeter_view_form" model="ir.ui.view">
+        <field name="name">Flowmeter (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id"
+               ref="base_wua_remotecontrol_rest_infrastructure.wua_flowmeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='telecontrol_rest_associated']" position="after">
+              <field name="hidroconta_id"
+                     attrs="{'invisible':[('telecontrol_rest_associated', '!=', 'hidroconta')],
+                             'required': [('telecontrol_rest_associated', '=', 'hidroconta')]}"/>"
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

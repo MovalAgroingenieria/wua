@@ -19,6 +19,7 @@
         "data/wua_irrigation_config_settings_data.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/wua_pressuresensor_view.xml",
+        "views/wua_flowmeter_view.xml",
         "views/wua_reservoir_view.xml", ],
     "installable": True,
     "application": False,
