@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-12 08:16+0000\n"
-"PO-Revision-Date: 2023-01-12 08:16+0000\n"
+"POT-Creation-Date: 2023-01-16 16:06+0000\n"
+"PO-Revision-Date: 2023-01-16 16:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -277,13 +277,19 @@ msgstr "<b>Área total:</b>"
 
 #. module: wua_crm_filemgmt
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_add_parcels_to_file_view_form
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_partner_file_view_form
 msgid "<span class=\"fa fa-lg fa-info-circle\"/>\n"
-"                    <span> One partner is selected as File's main and repeated items are removed.</span>"
+"                    <span> All other parameters of the File are edited after its creation.\n"
+"                           One partner is selected as File's main and repeated items are removed.\n"
+"                    </span>"
 msgstr "<span class=\"fa fa-lg fa-info-circle\"/>\n"
-"                    <span> Un socio es seleccionado como principal y los elementos repetidos son eliminados.</span>"
+"                    <span> Los demás parámetros se rellenan tras la creación del Expediente.\n"
+"                           Un socio será elegido como Principal para el Expediente. Los ítems repetidos son eliminados.\n"
+"                    </span>"
 
 #. module: wua_crm_filemgmt
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_add_parcels_to_file_view_form
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_partner_file_view_form
 msgid "<span class=\"fa fa-lg fa-moval-files\"/>\n"
 "                            <span style=\"margin-left:8px;\">Create file</span>"
 msgstr "<span class=\"fa fa-lg fa-moval-files\"/>\n"
@@ -444,6 +450,7 @@ msgstr "Referencia catastral"
 
 #. module: wua_crm_filemgmt
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_add_parcels_to_file_view_form
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_partner_file_view_form
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -456,6 +463,7 @@ msgstr "Categorías de expedientes"
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_category_id
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_category_id
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_category_id
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_category_id
 msgid "Category"
 msgstr "Categoría"
 
@@ -497,6 +505,7 @@ msgstr "Haga clic para añadir un nuevo informe de categoría"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_file_code
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_file_code
 msgid "Code"
 msgstr "Código"
 
@@ -509,6 +518,7 @@ msgstr "Crear expediente"
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_create_uid
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_create_uid
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_create_uid
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_create_uid
 msgid "Created by"
 msgstr "Creado por"
 
@@ -516,11 +526,13 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_create_date
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_create_date
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_create_date
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_create_date
 msgid "Created on"
 msgstr "Creado en"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_date_file
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_date_file
 msgid "Discharge date"
 msgstr "Fecha de alta"
 
@@ -528,8 +540,9 @@ msgstr "Fecha de alta"
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_display_name
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_display_name
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_display_name
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre mostrado"
 
 #. module: wua_crm_filemgmt
 #: code:addons/wua_crm_filemgmt/models/res_file.py:157
@@ -546,7 +559,7 @@ msgstr "ERROR EN PLANTILLA INICIAL"
 #. module: wua_crm_filemgmt
 #: model:ir.model,name:wua_crm_filemgmt.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
+msgstr "Entitdad (parcela)"
 
 #. module: wua_crm_filemgmt
 #: sql_constraint:res.file.category.report:0
@@ -555,6 +568,7 @@ msgstr "El nombre para el informe de categoría ya existe."
 
 #. module: wua_crm_filemgmt
 #: code:addons/wua_crm_filemgmt/wizard/wizard_add_parcels_to_file.py:124
+#: code:addons/wua_crm_filemgmt/wizard/wizard_partner_file.py:119
 #, python-format
 msgid "File"
 msgstr "Expediente"
@@ -617,9 +631,10 @@ msgid "Has parcellinks"
 msgstr "Tiene parcelas"
 
 #. module: wua_crm_filemgmt
-#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_id_15679
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_id_10970
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_id
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_id
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_id
 msgid "ID"
 msgstr "ID"
 
@@ -648,13 +663,15 @@ msgstr "Regante"
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report___last_update
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink___last_update
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file___last_update
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última modificación el"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_write_uid
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_write_uid
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_write_uid
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
@@ -662,8 +679,9 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_write_date
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_write_date
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_write_date
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_write_date
 msgid "Last Updated on"
-msgstr "Última actualización el"
+msgstr "Última actualización en"
 
 #. module: wua_crm_filemgmt
 #: model:res.file.category,name:wua_crm_filemgmt.resfilecategory_lease_file
@@ -678,7 +696,12 @@ msgstr "Desde"
 #. module: wua_crm_filemgmt
 #: model:ir.actions.report.xml,name:wua_crm_filemgmt.res_file_category_report_lease
 msgid "Lease report"
-msgstr "Lease report"
+msgstr "Informe arrendamiento"
+
+#. module: wua_crm_filemgmt
+#: model:res.file.category.report,name:wua_crm_filemgmt.resfilecategoryreport_lease
+msgid "Lease standard"
+msgstr "Arrendamiento estándar"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_leased_to
@@ -790,7 +813,7 @@ msgstr "Parcelas"
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_lease_ids
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_trading_ids
 msgid "Partners"
-msgstr "Empresas"
+msgstr "Socios"
 
 #. module: wua_crm_filemgmt
 #: model:ir.actions.server,name:wua_crm_filemgmt.res_file_print_selected_report
@@ -809,11 +832,13 @@ msgstr "Informe de categorías de Expedientes"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_selected_parcels
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_selected_parcels
 msgid "Selected parcels"
 msgstr "Parcelas"
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_selected_partners
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_selected_partners
 msgid "Selected partners"
 msgstr "Socios"
 
@@ -825,6 +850,7 @@ msgstr "Vendedor"
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_subject
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_subject
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_subject
 msgid "Subject"
 msgstr "Asunto"
 
@@ -889,6 +915,11 @@ msgid "Trading report"
 msgstr "Informe compraventa"
 
 #. module: wua_crm_filemgmt
+#: model:res.file.category.report,name:wua_crm_filemgmt.resfilecategoryreport_trading
+msgid "Trading standard"
+msgstr "Compraventa estándar"
+
+#. module: wua_crm_filemgmt
 #: model:ir.model,name:wua_crm_filemgmt.model_res_file_parcellink
 msgid "res.file.parcellink"
 msgstr "res.file.parcellink"
@@ -902,4 +933,9 @@ msgstr "res.file.partnerlink"
 #: model:ir.model,name:wua_crm_filemgmt.model_wizard_add_parcels_file
 msgid "wizard.add.parcels.file"
 msgstr "wizard.add.parcels.file"
+
+#. module: wua_crm_filemgmt
+#: model:ir.model,name:wua_crm_filemgmt.model_wizard_partner_file
+msgid "wizard.partner.file"
+msgstr "wizard.partner.file"
 

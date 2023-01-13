@@ -13,6 +13,7 @@ class ResFileCategoryReport(models.Model):
         string='Category Report Name',
         size=50,
         required=True,
+        translate=True,
         index=True)
 
     category_id = fields.Many2one(
