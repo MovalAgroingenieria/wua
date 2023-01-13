@@ -47,6 +47,7 @@
         "base_extra_attachment",
         "html_field_in_tree_view",
         "report_qr",
+        "web_domain_field",
     ],
     "data": [
         "security/security.xml",
