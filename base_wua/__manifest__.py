@@ -52,6 +52,7 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "data/mail_template_data.xml",
         "data/wua_region_data.xml",
         "data/wua_config_settings_data.xml",
         "data/wua_irrigationsystem_data.xml",

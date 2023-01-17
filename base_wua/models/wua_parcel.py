@@ -214,6 +214,16 @@ class WuaParcel(models.Model):
         default=False,
         track_visibility='onchange')
 
+    leaser_id = fields.Many2one(
+        string='Leaser',
+        comodel_name='res.partner',
+        compute='_compute_leaser_id')
+
+    owner_id = fields.Many2one(
+        string='Owner',
+        comodel_name='res.partner',
+        compute='_compute_owner_id')
+
     leased_from = fields.Date(
         string="Date From",
         track_visibility='onchange')
@@ -605,6 +615,28 @@ class WuaParcel(models.Model):
                 days_until_lease_ends = (
                     leased_to_date - current_date).days
             record.days_until_lease_ends = days_until_lease_ends
+
+    @api.multi
+    def _compute_leaser_id(self):
+        for record in self:
+            leaser_id = None
+            if (record.partnerlink_ids):
+                leasers = record.partnerlink_ids.filtered(
+                    lambda x: x.profile == 'L')
+                if (leasers and leasers[0]):
+                    leaser_id = leasers[0].partner_id
+            record.leaser_id = leaser_id
+
+    @api.multi
+    def _compute_owner_id(self):
+        for record in self:
+            owner_id = None
+            if (record.partnerlink_ids):
+                owners = record.partnerlink_ids.filtered(
+                    lambda x: x.profile == 'O')
+                if (owners and owners[0]):
+                    owner_id = owners[0].partner_id
+            record.owner_id = owner_id
 
     @api.multi
     def _compute_lease_dates_required(self):
@@ -1156,6 +1188,115 @@ class WuaParcel(models.Model):
         else:
             results = _('ha')
         return results
+
+    def _get_sms_subject_for_leases_notify(self, lang, parcel):
+        # Default label for translations
+        default_lease_of_parcel_label = _('Lease of parcel')
+        lease_of_parcel_label = self.get_value_from_translation(
+            'base_wua', 'Lease of parcel', parcel.owner_id.lang)
+        if (not lease_of_parcel_label):
+            lease_of_parcel_label = default_lease_of_parcel_label
+        sms_subject = lease_of_parcel_label + ' ' + parcel.name
+        return sms_subject
+
+    def _get_sms_message_for_leases_notify(self, lang, parcel):
+        default_the_lease_parcel_label = _('The lease of the parcel')
+        default_will_end_label = _('will end on')
+        default_please_contact_label = _(
+            ', please, contact the community to regularize your '
+            'situation')
+        # Get labels with owner lang and send SMS
+        the_lease_parcel_label = self.get_value_from_translation(
+            'base_wua', 'The lease of the parcel',
+            lang)
+        if not the_lease_parcel_label:
+            the_lease_parcel_label = default_the_lease_parcel_label
+        will_end_label = self.get_value_from_translation(
+            'base_wua', 'will end on',
+            lang)
+        if not will_end_label:
+            will_end_label = default_will_end_label
+        please_contact_label = self.get_value_from_translation(
+            'base_wua',
+            ', please, contact the community to regularize your '
+            'situation',
+            lang)
+        if not please_contact_label:
+            please_contact_label = default_please_contact_label
+        sms_message = the_lease_parcel_label + ' ' + parcel.name + \
+            ' ' + will_end_label + ' ' + parcel.leased_to + \
+            please_contact_label
+        return sms_message
+
+    @api.model
+    def notify_leases_status_sms(self):
+        notice_leased_days = self.env['ir.values'].get_default(
+            'wua.configuration', 'notice_leased_days')
+        parcels_affected = self.env['wua.parcel'].search(
+            [('leased_parcel', '=', True), ('days_until_lease_ends', '=',
+                                            notice_leased_days)])
+        if (parcels_affected and len(parcels_affected) > 0):
+            for parcel in parcels_affected:
+                # Send SMS to owner and leaser of the parcel
+                # OWNER:
+                # SMS Subject
+                sms_subject = self._get_sms_subject_for_leases_notify(
+                    parcel.owner_id.lang, parcel
+                )
+                # SMS message
+                sms_message = self._get_sms_message_for_leases_notify(
+                    parcel.owner_id.lang, parcel)
+                sms_wizard = self.env['wausms.wizard'].create({
+                    'subject': sms_subject,
+                    'sms_message': sms_message,
+                })
+                sms_wizard.send_sms_action({
+                    'mode': 'partner',
+                    'active_ids': [parcel.owner_id.id]
+                })
+                # LEASER
+                sms_subject = self._get_sms_subject_for_leases_notify(
+                    parcel.leaser_id.lang, parcel
+                )
+                # SMS message
+                sms_message = self._get_sms_message_for_leases_notify(
+                    parcel.leaser_id.lang, parcel
+                )
+                sms_wizard = self.env['wausms.wizard'].create({
+                    'subject': sms_subject,
+                    'sms_message': sms_message,
+                })
+                sms_wizard.send_sms_action({
+                    'mode': 'partner',
+                    'active_ids': [parcel.leaser_id.id]
+                })
+
+    @api.model
+    def notify_leases_status_mail(self):
+        notice_leased_days = self.env['ir.values'].get_default(
+            'wua.configuration', 'notice_leased_days')
+        # Send MAIL Info to owner and lease
+        owner_info_template_id = self.env.ref(
+            'base_wua.'
+            'lease_near_end_partner_report_email_template').id
+        leaser_info_template_id = self.env.ref(
+            'base_wua.'
+            'lease_near_end_leaser_partner_report_email_template').id
+        parcels_affected = self.env['wua.parcel'].search(
+            [('leased_parcel', '=', True), ('days_until_lease_ends', '=',
+                                            notice_leased_days)])
+        if (parcels_affected and len(parcels_affected) > 0):
+            if (owner_info_template_id and leaser_info_template_id):
+                # Parcels which lease have ended or
+                owner_info_template = self.env['mail.template'].browse(
+                    owner_info_template_id)
+                leaser_info_template = self.env['mail.template'].browse(
+                    leaser_info_template_id)
+                for parcel in parcels_affected:
+                    owner_info_template.send_mail(
+                        parcel.id, force_send=True)
+                    leaser_info_template.send_mail(
+                        parcel.id, force_send=True)
 
     @api.multi
     def unlink(self):
@@ -2913,6 +3054,11 @@ class WuaParcelPartnerlink(models.Model):
         store=True,
         compute="_compute_lessor_partner_id")
 
+    # Aux fields
+    lease_info_html_table = fields.Html(
+        string='Lease info HTML table',
+        compute='_compute_lease_info_html_table')
+
     _sql_constraints = [
         ('valid_ownership_percentage',
          'CHECK (ownership_percentage >= 0 and ownership_percentage <= 100)',
@@ -3075,6 +3221,40 @@ class WuaParcelPartnerlink(models.Model):
                     record.parcel_id.cadastral_reference
             record.cadastral_reference = cadastral_reference
 
+    # Aux method for rendering mail template HTML
+    @api.multi
+    def _compute_lease_info_html_table(self):
+        html_table = '''
+            <table>
+                <tbody>
+                    <tr style='border-bottom: 1px solid #ddd;
+                               padding-bottom: 2px'>
+                        <td style="padding-right: 5px;">Parcela</td>
+                        <td style="padding-right: 5px;">Regante</td>
+                        <td style="padding-right: 5px;">Hasta</td>
+                    </tr>
+        '''
+        html_table += ''.join(self.env['wua.parcel'].search(
+            [('leased_parcel', '=', True),
+             ('days_until_lease_ends', '<=',
+              self.env['ir.values'].get_default(
+                  'wua.configuration', 'notice_leased_days'))],
+            order="leased_to desc").mapped(
+            lambda x: '<tr style="border-bottom: 1px solid #ddd; ' +
+            'padding-bottom: 2px; color: ' + (
+                'orange' if x.close_to_end_lease else 'red') +
+            ';">' +
+            '<td style="padding-right: 5px;">' + x.name +
+            '</td><td style="padding-right: 5px;">' +
+            x.partner_id.name + '</td><td style="padding-right: 5px;">' +
+            x.leased_to + '</td></tr>'))
+        html_table += '''
+                </tbody>
+            </table>
+        '''
+        for record in self:
+            record.lease_info_html_table = html_table
+
     @api.onchange('profile')
     def _onchange_profile(self):
         if self.profile != 'O':
@@ -3091,6 +3271,26 @@ class WuaParcelPartnerlink(models.Model):
             fields.remove('other_costs_percentage')
         return super(WuaParcelPartnerlink, self).read_group(
             domain, fields, groupby, offset, limit, orderby, lazy)
+
+    @api.model
+    def notify_leases_status(self):
+        notice_leased_days = self.env['ir.values'].get_default(
+            'wua.configuration', 'notice_leased_days')
+        # Send MAIL summary of lease states
+        cr_lease_info_template_id = self.env.ref(
+            'base_wua.'
+            'lease_ended_or_near_report_email_template').id
+        if cr_lease_info_template_id:
+            # Parcels which lease have ended or
+            parcels_affected = self.env['wua.parcel'].search(
+                [('leased_parcel', '=', True), ('days_until_lease_ends', '<=',
+                                                notice_leased_days)])
+            if (parcels_affected and len(parcels_affected) > 0):
+                cr_lease_info_template = self.env['mail.template'].browse(
+                    cr_lease_info_template_id)
+                cr_lease_info_template.send_mail(
+                    self.env['wua.parcel.partnerlink'].search([])[0].id,
+                    force_send=True)
 
     @api.model
     def create(self, vals):

@@ -11,6 +11,42 @@
             <field name="model">wua.parcel</field>
             <field name="function">action_regenerate_aerial_img</field>
             <field name="args">()</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <record id="wua_cron_notify_leases_status_sms_action" model="ir.cron">
+            <field name="name">Notify Status of Leases via SMS</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">wua.parcel</field>
+            <field name="function">notify_leases_status_sms</field>
+            <field name="args">()</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="wua_cron_notify_leases_status_mail_action" model="ir.cron">
+            <field name="name">Notify Status of Leases via Mail</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">wua.parcel</field>
+            <field name="function">notify_leases_status_mail</field>
+            <field name="args">()</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="wua_cron_notify_leases_status_action" model="ir.cron">
+            <field name="name">Notify Status of Leases</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">wua.parcel.partnerlink</field>
+            <field name="function">notify_leases_status</field>
+            <field name="args">()</field>
             <field name="active" eval="False"/>
         </record>
 

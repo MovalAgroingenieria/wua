@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="1">
+
+        <!-- Mail for owner which lease is about to end -->
+        <record id="lease_near_end_partner_report_email_template"
+                model="mail.template">
+            <field name="name">Lease near to expiration (Owner)</field>
+            <field name="model_id" ref="base_wua.model_wua_parcel"/>
+            <field name="email_from">"${object.partner_id.company_id.name|safe}" &lt;${(object.partner_id.company_id.email or user.email)|safe}&gt;</field>
+            <field name="partner_to">${object.owner_id.id}</field>
+            <field name="subject">Lease of the parcel ${object.name} near to expiration</field>
+            <field name="body_html" type="html">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear Mr/Ms ${object.owner_id.name}.
+
+                    According to the information available to the ${object.partner_id.company_id.name|safe}. The lease of the parcel ${object.name} will end on ${object.days_until_lease_ends} days.
+                </p>
+                <br/>
+                <p style="margin: 0px; padding: 0px;">
+                    If you want to regularize the available information, contact with ${object.partner_id.company_id.name|safe} via mail ${(object.partner_id.company_id.email or user.email)|safe} or phone ${(object.partner_id.company_id.phone)|safe}.
+                </p>
+                <br/>
+                <p style="margin: 0px; padding: 0px;">
+                    In case of not receiving news, the lease will be terminated.
+                </p>
+                <br/>
+                <p>
+                    Receive a cordial greeting.
+                </p>
+            </field>
+            <field name="lang">${object.owner_id.lang}</field>
+        </record>
+
+        <!-- Mail for leaser which lease is about to end -->
+        <record id="lease_near_end_leaser_partner_report_email_template"
+                model="mail.template">
+            <field name="name">Lease near to expiration (Leasor)</field>
+            <field name="model_id" ref="base_wua.model_wua_parcel"/>
+            <field name="email_from">"${object.partner_id.company_id.name|safe}" &lt;${(object.partner_id.company_id.email or user.email)|safe}&gt;</field>
+            <field name="partner_to">${(object.leaser_id.id)|safe}</field>
+            <field name="subject">Lease of the parcel ${object.name} near to expiration</field>
+            <field name="body_html" type="html">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear Mr/Ms ${object.owner_id.name}.
+
+                    According to the information available to the ${object.partner_id.company_id.name|safe}. The lease of the parcel ${object.name} will end on ${object.days_until_lease_ends} days.
+                </p>
+                <br/>
+                <p style="margin: 0px; padding: 0px;">
+                    If you want to regularize the available information, contact with ${object.partner_id.company_id.name|safe} via mail ${(object.partner_id.company_id.email or user.email)|safe} or phone ${(object.partner_id.company_id.phone)|safe}.
+                </p>
+                <br/>
+                <p style="margin: 0px; padding: 0px;">
+                    In case of not receiving news, the lease will be terminated.
+                </p>
+                <br/>
+                <p>
+                    Receive a cordial greeting.
+                </p>
+            </field>
+            <field name="lang">${object.leaser_id.lang}</field>
+        </record>
+
+        <!-- Mail with summary of all leases about to end or ended -->
+        <record id="lease_ended_or_near_report_email_template"
+                model="mail.template">
+            <field name="name">Lease report</field>
+            <field name="model_id" ref="base_wua.model_wua_parcel_partnerlink"/>
+            <field name="email_from">"${object.partner_id.company_id.name|safe}" &lt;${(object.partner_id.company_id.email or user.email)|safe}&gt;</field>
+            <field name="email_to">${object.env['ir.values'].get_default('wua.configuration', 'mail_leaser_address')}</field>
+            <field name="subject">Analysis of terminated or close to expiration leases</field>
+            <field name="body_html" type="html">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Report Parcels with leases ended or about to end.
+                </p>
+                <br/>
+                <br/>
+                <div style="margin: 0px; padding: 0px;">
+                    ${object.lease_info_html_table|safe}
+                </div>
+            </field>
+            <field name="lang">es_ES</field>
+        </record>
+
+
+    </data>
+
+</odoo>

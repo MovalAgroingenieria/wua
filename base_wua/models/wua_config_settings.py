@@ -172,6 +172,16 @@ class WuaConfiguration(models.TransientModel):
              'is given'
     )
 
+    mail_leaser_address = fields.Char(
+        string='Mail receiver for lease reports',)
+
+    @api.multi
+    def set_default_values(self):
+        values = self.env['ir.values'].sudo()
+        super(WuaConfiguration, self).set_default_values()
+        values.set_default('wua.configuration', 'mail_leaser_partner_id',
+                           self.mail_leaser_partner_id.id)
+
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
@@ -251,3 +261,5 @@ class WuaConfiguration(models.TransientModel):
                            self.leased_dates_required)
         values.set_default('wua.configuration', 'notice_leased_days',
                            self.notice_leased_days)
+        values.set_default('wua.configuration', 'mail_leaser_address',
+                           self.mail_leaser_address)
