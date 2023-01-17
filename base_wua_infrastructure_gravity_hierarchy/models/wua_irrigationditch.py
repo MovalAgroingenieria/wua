@@ -16,6 +16,10 @@ class WuaIrrigationditch(models.Model):
         default=True,
         required=True)
 
+    is_leading_irrigationditch = fields.Boolean(
+        string="Leading irrigationditch",
+        default=False,)
+
     irrigationditch_id = fields.Many2one(
         string="Supplied by",
         comodel_name="wua.irrigationditch",
