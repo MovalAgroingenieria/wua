@@ -36,10 +36,12 @@
             <!-- Add gravity hierarchy fields -->
             <xpath expr="//field[@name='description']" position="after">
                 <field name="hydraulic_order"/>
-                <field name="is_leading_irrigationditch"/>
                 <field name="is_main"/>
                 <field name="irrigationditch_id" attrs="{'invisible':[('is_main', '=', True)],
                                                          'required':[('is_main', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='number_of_parcels']" position="before">
+                <field name="is_leading_irrigationditch"/>
             </xpath>
             <xpath expr="//field[@name='total_affected_area_official']" position="after">
                 <field name="level"/>
