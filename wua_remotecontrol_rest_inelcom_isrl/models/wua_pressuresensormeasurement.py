@@ -15,6 +15,8 @@ class WuaPressuresensormeasurement(models.Model):
 
     MAX_NUMBER_OF_RETRIES = 3
     SECONDS_TO_SLEEP = 60
+    # Two hours to avoid 0 errors
+    MINUTES_MARGIN = 120
 
     # Implemented hook
     def populate_data_for_import_pressuresensormeasurement_inelcom(
@@ -64,7 +66,8 @@ class WuaPressuresensormeasurement(models.Model):
                 url_get_measurements = url_remotecontrol_rest + \
                     '/hidrantes/medidas?sesion=' + id_session + '&' + \
                     'fecha=' + date_now + '&' + \
-                    'hora=' + time_now
+                    'hora=' + time_now + '&' + 'margen=' + \
+                    str(self.MINUTES_MARGIN)
                 resprest = requests.get(url_get_measurements)
                 if resprest.status_code == 200:
                     outputrest = json.loads(resprest.text)
