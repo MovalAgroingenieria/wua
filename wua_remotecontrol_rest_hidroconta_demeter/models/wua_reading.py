@@ -34,6 +34,57 @@ class WuaReading(models.Model):
         resp = True
         return resp
 
+    def get_hydrants_from_hidroconta(self, url_remotecontrol_rest, jsessionid):
+        hydrants = []
+        request_headers = {
+            'Content-Type': 'application/json',
+            'Cookie': 'JSESSIONID=' + jsessionid
+        }
+        hydrants_req = requests.request(
+            'POST', url_remotecontrol_rest + '/search',
+            headers=request_headers,
+            data=json.dumps({
+                'type': ['hydrants'],
+                'state': 'enabled'
+                }))
+        if hydrants_req.status_code == 200:
+            hydrants = json.loads(hydrants_req.text)
+        return hydrants
+
+    def get_iris_from_hidroconta(self, url_remotecontrol_rest, jsessionid):
+        iris = []
+        request_headers = {
+            'Content-Type': 'application/json',
+            'Cookie': 'JSESSIONID=' + jsessionid
+        }
+        iris_req = requests.request(
+            'POST', url_remotecontrol_rest + '/search',
+            headers=request_headers,
+            data=json.dumps({
+                'type': ['iris'],
+                'state': 'enabled'
+                }))
+        if iris_req.status_code == 200:
+            iris = json.loads(iris_req.text)
+        return iris
+
+    def get_counters_from_hidroconta(self, url_remotecontrol_rest, jsessionid):
+        counters = []
+        request_headers = {
+            'Content-Type': 'application/json',
+            'Cookie': 'JSESSIONID=' + jsessionid
+        }
+        counters_req = requests.request(
+            'POST', url_remotecontrol_rest + '/search',
+            headers=request_headers,
+            data=json.dumps({
+                'type': ['counters'],
+                'state': 'enabled'
+                }))
+        if counters_req.status_code == 200:
+            counters = json.loads(counters_req.text)
+        return counters
+
     # Implemented hook
     def import_readings_hidroconta(
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
@@ -48,51 +99,45 @@ class WuaReading(models.Model):
             installation_identifier = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'installation_identifier')
             if (installation_identifier):
-                request_headers = {
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                }
-                # Two type of watermeters, "hydrants" and "iris"
-                hydrants_req = requests.request(
-                    'POST', url_remotecontrol_rest + '/search',
-                    headers=request_headers,
-                    data=json.dumps({
-                        'type': ['hydrants'],
-                        'state': 'enabled'
-                        }))
-                if hydrants_req.status_code == 200:
-                    hydrants = json.loads(hydrants_req.text)
-                    for hydrant in hydrants:
-                        installationId = int(hydrant['installationId'])
-                        if installationId == installation_identifier:
-                            watermeter = \
-                                hydrant['counter']['code'].encode(
-                                    'utf-8', 'ignore')
-                            volume = \
-                                hydrant['counter']['counterGlobalValue'] / 1000
-                            readings.append({
-                                'watermeter': watermeter,
-                                'volume': volume,
-                            })
-                iris_req = requests.request(
-                    'POST', url_remotecontrol_rest + '/search',
-                    headers=request_headers,
-                    data=json.dumps({
-                        'type': ['iris'],
-                        'state': 'enabled'
-                        }))
-                if iris_req.status_code == 200:
-                    iris = json.loads(iris_req.text)
-                    for hydrant in iris:
-                        installationId = int(hydrant['installationId'])
-                        if installationId == installation_identifier:
-                            watermeter = \
-                                hydrant['code'].encode('utf-8', 'ignore')
-                            volume = hydrant['counterGlobalValue'] / 1000
-                            readings.append({
-                                'watermeter': watermeter,
-                                'volume': volume,
-                            })
+                # Three type of watermeters, "hydrants", "iris" and "counters"
+                hydrants = self.get_hydrants_from_hidroconta(
+                    url_remotecontrol_rest, jsessionid)
+                for hydrant in hydrants:
+                    installationId = int(hydrant['installationId'])
+                    if installationId == installation_identifier:
+                        watermeter = \
+                            hydrant['counter']['code'].encode(
+                                'utf-8', 'ignore')
+                        volume = \
+                            hydrant['counter']['counterGlobalValue'] / 1000
+                        readings.append({
+                            'watermeter': watermeter,
+                            'volume': volume,
+                        })
+                iris = self.get_iris_from_hidroconta(
+                    url_remotecontrol_rest, jsessionid)
+                for counter in iris:
+                    installationId = int(counter['installationId'])
+                    if installationId == installation_identifier:
+                        watermeter = \
+                            counter['code'].encode('utf-8', 'ignore')
+                        volume = counter['counterGlobalValue'] / 1000
+                        readings.append({
+                            'watermeter': watermeter,
+                            'volume': volume,
+                        })
+                counters = self.get_counters_from_hidroconta(
+                    url_remotecontrol_rest, jsessionid)
+                for counter in counters:
+                    installationId = int(counter['installationId'])
+                    if installationId == installation_identifier:
+                        watermeter = \
+                            counter['code'].encode('utf-8', 'ignore')
+                        volume = counter['counterGlobalValue'] / 1000
+                        readings.append({
+                            'watermeter': watermeter,
+                            'volume': volume,
+                        })
             self.close_connection(url_remotecontrol_rest, jsessionid)
         return readings, error_message, error_watermeters
 
