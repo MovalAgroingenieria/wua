@@ -12,6 +12,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_flowdata",
+        "wua_remotecontrol_rest_inelcom_isrl",  # Temporal dependency
     ],
     "data": [
         "views/wua_flowmeter_view.xml",
