@@ -64,6 +64,12 @@ class WuaIrrigationConfiguration(models.TransientModel):
     import_from_flowmeter_inelcom = fields.Boolean(
         string='Import from flow meter')
 
+    last_api_response_hidrantes = fields.Char(
+        string='API Raw Response for endpoint /hidrantes/medidas')
+
+    last_api_response_cabezales = fields.Char(
+        string='API Raw Response for endpoint /cabezales/medidas')
+
     @api.multi
     def set_default_values(self):
         super(WuaIrrigationConfiguration, self).set_default_values()
@@ -83,6 +89,12 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'automatic_census_synchronization_inelcom',
                            self.automatic_census_synchronization_inelcom)
+        values.set_default('wua.irrigation.configuration',
+                           'last_api_response_hidrantes',
+                           self.last_api_response_hidrantes)
+        values.set_default('wua.irrigation.configuration',
+                           'last_api_response_cabezales',
+                           self.last_api_response_cabezales)
 
     def can_be_sent_partners_census_any(self):
         other_can_send = super(WuaIrrigationConfiguration, self).\

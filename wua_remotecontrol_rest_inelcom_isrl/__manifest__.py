@@ -16,6 +16,7 @@
         "base_wua_invoicing", ],
     "data": [
         "data/wua_irrigation_config_settings_data.xml",
+        "data/wua_inelcom_data_refresh_cron.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/wua_flowmeter_view.xml",
         "views/wua_pressuresensor_view.xml", ],

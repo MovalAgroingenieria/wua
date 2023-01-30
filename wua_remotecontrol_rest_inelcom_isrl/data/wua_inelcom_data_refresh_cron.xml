@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="wua_cron_import_inelcom_data_from_api_global_action" model="ir.cron">
+            <field name="name">Get INELCOM Data Service</field>
+            <field name="interval_number">60</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">wua.reading</field>
+            <field name="function">do_update_inelcom_data</field>
+            <field eval="'(True, True, 30)'" name="args"/>
+            <field name="active" eval="False"/>
+        </record>
+
+    </data>
+
+</odoo>

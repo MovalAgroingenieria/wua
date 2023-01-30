@@ -3,6 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import requests
+from datetime import datetime
+import pytz
 import json
 from odoo import models, api, exceptions, _
 import time
@@ -13,6 +15,68 @@ class WuaReading(models.Model):
 
     MAX_NUMBER_OF_RETRIES = 3
     SECONDS_TO_SLEEP = 60
+
+    # Api Call INELCOM to get /hidrantes/medidas response as RAW text
+    def get_hidrantes_medidas_from_inelcom(self, url_remotecontrol_rest,
+                                           id_session, margin=30):
+        response = False
+        tz = pytz.timezone('Europe/Madrid')
+        current_time = datetime.now(tz)
+        date_str = current_time.strftime('%d/%m/%y')
+        time_str = current_time.strftime('%H:%M')
+        url_get_hidrantes_medidas = url_remotecontrol_rest + \
+            '/hidrantes/medidas?sesion=' + id_session + '&fecha=' + \
+            date_str + '&hora=' + time_str + '&margen=' + str(margin)
+        request_headers = {
+            'Content-Type': 'application/json',
+        }
+        hidrantes_medidas_request = requests.request(
+            'GET', url_get_hidrantes_medidas,
+            headers=request_headers)
+        if hidrantes_medidas_request.status_code == 200 and \
+                hidrantes_medidas_request.text:
+            response = hidrantes_medidas_request.text
+        return response
+
+    # Api Call INELCOM to get /cabezales/medidas response as RAW text
+    def get_cabezales_medidas_from_inelcom(self, url_remotecontrol_rest,
+                                           id_session, margin=30):
+        response = False
+        tz = pytz.timezone('Europe/Madrid')
+        current_time = datetime.now(tz)
+        date_str = current_time.strftime('%d/%m/%y')
+        time_str = current_time.strftime('%H:%M')
+        url_get_cabezales_medidas = url_remotecontrol_rest + \
+            '/cabezales/medidas?sesion=' + id_session + '&fecha=' + \
+            date_str + '&hora=' + time_str + '&margen=' + str(margin)
+        request_headers = {
+            'Content-Type': 'application/json',
+        }
+        cabezales_medidas_request = requests.request(
+            'GET', url_get_cabezales_medidas,
+            headers=request_headers)
+        if cabezales_medidas_request.status_code == 200 and \
+                cabezales_medidas_request.text:
+            response = cabezales_medidas_request.text
+        return response
+
+    def open_connection_inelcom(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
+        id_session = False
+        url_open_session = url_remotecontrol_rest + '/sesiones'
+        auth_data = {
+            'usuario': url_remotecontrol_rest_username,
+            'clave': url_remotecontrol_rest_password,
+            }
+        headers_data = {
+            'content-type': 'application/json',
+            }
+        resprest = requests.post(
+            url_open_session, data=json.dumps(auth_data), headers=headers_data)
+        if resprest.status_code == 200 and resprest.text:
+            id_session = resprest.text
+        return id_session
 
     @api.model
     def run_remotecontrol_application_url_inelcom(self):
@@ -31,29 +95,70 @@ class WuaReading(models.Model):
             'url': url_remotecontrol_application,
             'target': 'new', }
 
+    # Method for updating the INELCOM Static data that comes from the API
+    @api.model
+    def do_update_inelcom_data(
+            self, hidrantes=True, cabezales=True, margin=30):
+        values = self.env['ir.values'].sudo()
+        url_remotecontrol_rest = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'url_remotecontrol_rest_inelcom')
+        url_remotecontrol_rest_username = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_username_inelcom')
+        url_remotecontrol_rest_password = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'url_remotecontrol_rest_password_inelcom')
+        if (url_remotecontrol_rest and url_remotecontrol_rest_username and
+                url_remotecontrol_rest_password):
+            # /cabezales/medidas
+            if (cabezales):
+                cabezales_response = False
+                id_session = self.open_connection_inelcom(
+                    url_remotecontrol_rest, url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                if (id_session):
+                    cabezales_response = self.\
+                        get_cabezales_medidas_from_inelcom(
+                            url_remotecontrol_rest, id_session, margin)
+                if (cabezales_response):
+                    cabezales_response = cabezales_response.encode(
+                        'utf-8', 'ignore')
+                    values.set_default('wua.irrigation.configuration',
+                                       'last_api_response_cabezales',
+                                       cabezales_response)
+            # /hidrantes/medidas
+            if (hidrantes):
+                hidrantes_response = False
+                id_session = self.open_connection_inelcom(
+                    url_remotecontrol_rest, url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                hidrantes_response = False
+                if (id_session):
+                    hidrantes_response = self.\
+                        get_hidrantes_medidas_from_inelcom(
+                            url_remotecontrol_rest, id_session, margin)
+                if (hidrantes_response):
+                    # Encoding errors
+                    hidrantes_response = json.dumps(
+                        json.loads(hidrantes_response))
+                    values.set_default('wua.irrigation.configuration',
+                                       'last_api_response_hidrantes',
+                                       hidrantes_response)
+
     # Implemented hook
     def populate_data_for_import_readings_inelcom(
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password):
         resp = []
-        url_open_session = url_remotecontrol_rest + '/sesiones'
-        auth_data = {
-            'usuario': url_remotecontrol_rest_username,
-            'clave': url_remotecontrol_rest_password,
-            }
-        headers_data = {
-            'content-type': 'application/json',
-            }
         tries = 0
         while (not resp and tries < self.MAX_NUMBER_OF_RETRIES):
             if (tries > 0):
                 time.sleep(self.SECONDS_TO_SLEEP)
             tries += 1
-            resprest = requests.post(url_open_session,
-                                     data=json.dumps(auth_data),
-                                     headers=headers_data)
-            if resprest.status_code == 200 and resprest.text:
-                id_session = resprest.text
+            id_session = self.open_connection_inelcom(
+                url_remotecontrol_rest,  url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if (id_session):
                 url_get_sectors = url_remotecontrol_rest + \
                     '/nodos/sectores?sesion=' + id_session
                 resprest = requests.get(url_get_sectors)
@@ -72,24 +177,15 @@ class WuaReading(models.Model):
         readings = []
         error_message = ''
         error_watermeters = []
-        url_open_session = url_remotecontrol_rest + '/sesiones'
-        auth_data = {
-            'usuario': url_remotecontrol_rest_username,
-            'clave': url_remotecontrol_rest_password,
-            }
-        headers_data = {
-            'content-type': 'application/json',
-            }
         tries = 0
         while (not readings and tries < self.MAX_NUMBER_OF_RETRIES):
             if (tries > 0):
                 time.sleep(self.SECONDS_TO_SLEEP)
             tries += 1
-            resprest = requests.post(url_open_session,
-                                     data=json.dumps(auth_data),
-                                     headers=headers_data)
-            if resprest.status_code == 200 and resprest.text:
-                id_session = resprest.text
+            id_session = self.open_connection_inelcom(
+                url_remotecontrol_rest,  url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if (id_session):
                 for sector in list_of_data:
                     url_get_watermeters = url_remotecontrol_rest + \
                         '/hidrantes/contadores?sesion=' + id_session + \
