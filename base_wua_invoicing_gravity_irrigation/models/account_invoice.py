@@ -45,6 +45,8 @@ class AccountInvoice(models.Model):
                 if data_current_line:
                     consumptions.extend(data_current_line)
         if consumptions:
+            # Delete duplicates
+            consumptions = set(consumptions)
             for consumption in consumptions:
                 watering_initial_time = consumption.watering_initial_time
                 watering_end_time = consumption.watering_end_time
