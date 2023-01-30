@@ -524,7 +524,7 @@ class WuaReadingperiodLine(models.Model):
                     %s, now(), now(), %s, %s, id, hydraulicsector_id,
                     elevation, number_of_parcels, number_of_waterconnections,
                     total_affected_area_official_hec FROM wua_irrigationshed
-                    WHERE hydraulicsector_id = %s
+                    WHERE hydraulicsector_id = %s AND active
                     """, (user_id, user_id, readingperiodline_id, selected_val,
                           hydraulicsector_id))
                 self.env.cr.commit()
