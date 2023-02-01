@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="account_invoice_tag_tree_view" model="ir.ui.view">
+            <field name="name">account.invoice.tag.tree</field>
+            <field name="model">account.invoice.tag</field>
+            <field name="arch" type="xml">
+                <tree string="Invoice Tags">
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="account_invoice_tag_form_view" model="ir.ui.view">
+            <field name="name">account.invoice.tag.form</field>
+            <field name="model">account.invoice.tag</field>
+            <field name="arch" type="xml">
+                <form string="Invoice Tags">
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="account_invoice_tag_action" model="ir.actions.act_window">
+            <field name="name">Invoice Tags</field>
+            <field name="res_model">account.invoice.tag</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+              <p class="oe_view_nocontent_create">
+                Click to add a new tag.
+              </p>
+            </field>
+        </record>
+
     <record id="invoice_tree" model="ir.ui.view">
         <field name="name">Invoices (tree view)</field>
         <field name="model">account.invoice</field>
@@ -16,6 +50,7 @@
             </xpath>
             <xpath expr="//field[@name='state']" position="after">
                 <field name="invoiceset_id"/>
+                <field name="state_tag_ids" widget="many2many_tags" invisible="1"/>
             </xpath>
         </field>
     </record>
@@ -25,6 +60,9 @@
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='date_due']" position="after">
+                <field name="state_tag_ids" widget="many2many_tags"/>
+            </xpath>
             <xpath expr="//field[@name='user_id']" position="after">
                 <field name="invoiceset_id"/>
             </xpath>
@@ -391,5 +429,10 @@
               action="wua_invoicelines_action"
               sequence="3"
               groups="base_wua.group_wua_user"/>
+
+    <menuitem id="account_invoice_tag_menu"
+              action="account_invoice_tag_action"
+              parent="account.account_account_menu"
+              sequence="31" />
 
 </odoo>

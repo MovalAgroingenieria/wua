@@ -63,6 +63,14 @@ class AccountInvoice(models.Model):
         string='Overdue',
         compute='_compute_overdue')
 
+    state_tag_ids = fields.Many2many(
+        string='Invoice States',
+        comodel_name='account.invoice.tag',
+        relation='account_invoice_account_invoice_tag_rel',
+        column1='invoice_id',
+        column2='state_tag_id',
+        index=True,)
+
     # It is not necessary "api.depends" (get from parent method).
     def _compute_amount(self):
         super(AccountInvoice, self)._compute_amount()
@@ -245,3 +253,17 @@ class AccountInvoiceLine(models.Model):
             fields.remove('price_unit')
         return super(AccountInvoiceLine, self).read_group(
             domain, fields, groupby, offset, limit, orderby, lazy)
+
+
+class AccountInvoiceTag(models.Model):
+    _name = 'account.invoice.tag'
+    _description = 'Invoice Tags'
+    _order = "name asc"
+
+    name = fields.Char(
+        string='Invoice Tag',
+        index=True,
+        required=True,)
+
+    color = fields.Integer(
+        string='Color Index')
