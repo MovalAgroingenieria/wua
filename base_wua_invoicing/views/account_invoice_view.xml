@@ -2,38 +2,38 @@
 <odoo>
 
     <record id="account_invoice_tag_tree_view" model="ir.ui.view">
-            <field name="name">account.invoice.tag.tree</field>
-            <field name="model">account.invoice.tag</field>
-            <field name="arch" type="xml">
-                <tree string="Invoice Tags">
+        <field name="name">account.invoice.tag.tree</field>
+        <field name="model">account.invoice.tag</field>
+        <field name="arch" type="xml">
+            <tree string="Invoice Tags">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="account_invoice_tag_form_view" model="ir.ui.view">
+        <field name="name">account.invoice.tag.form</field>
+        <field name="model">account.invoice.tag</field>
+        <field name="arch" type="xml">
+            <form string="Invoice Tags">
+                <group>
                     <field name="name"/>
-                </tree>
-            </field>
-        </record>
+                </group>
+            </form>
+        </field>
+    </record>
 
-        <record id="account_invoice_tag_form_view" model="ir.ui.view">
-            <field name="name">account.invoice.tag.form</field>
-            <field name="model">account.invoice.tag</field>
-            <field name="arch" type="xml">
-                <form string="Invoice Tags">
-                    <group>
-                        <field name="name"/>
-                    </group>
-                </form>
-            </field>
-        </record>
-
-        <record id="account_invoice_tag_action" model="ir.actions.act_window">
-            <field name="name">Invoice Tags</field>
-            <field name="res_model">account.invoice.tag</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-              <p class="oe_view_nocontent_create">
-                Click to add a new tag.
-              </p>
-            </field>
-        </record>
+    <record id="account_invoice_tag_action" model="ir.actions.act_window">
+        <field name="name">Invoice Tags</field>
+        <field name="res_model">account.invoice.tag</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Click to add a new tag.
+            </p>
+        </field>
+    </record>
 
     <record id="invoice_tree" model="ir.ui.view">
         <field name="name">Invoices (tree view)</field>
