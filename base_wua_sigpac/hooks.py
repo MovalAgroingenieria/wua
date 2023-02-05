@@ -132,7 +132,8 @@ def uninstall_hook(cr, registry):
             DELETE FROM ir_values
             WHERE model='wua.configuration' AND
             (name='sigpac_path' OR name='sigpac_names' OR
-            name='sigpac_minimum_intersection_percentage')""")
+            name='sigpac_minimum_intersection_percentage' OR
+            name='sigpac_use_venv27')""")
         env.cr.commit()
     except Exception:
         env.cr.rollback()

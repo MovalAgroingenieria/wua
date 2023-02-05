@@ -31,6 +31,10 @@ class WuaConfiguration(models.TransientModel):
         help='Minimum intersection percentage allowed for parcels and SIGPAC '
              'enclosures')
 
+    sigpac_use_venv27 = fields.Boolean(
+        string='venv27 (python)',
+        default=True)
+
     _sql_constraints = [
         ('valid_minimum_intersection_percentage',
          'CHECK (sigpac_minimum_intersection_percentage >= 0 '
@@ -52,6 +56,9 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration',
                            'sigpac_minimum_intersection_percentage',
                            self.sigpac_minimum_intersection_percentage)
+        values.set_default('wua.configuration',
+                           'sigpac_use_venv27',
+                           self.sigpac_use_venv27)
 
     @api.multi
     def action_load_sigpac(self):
@@ -94,6 +101,8 @@ class WuaConfiguration(models.TransientModel):
             sigpac_names = ''
         else:
             sigpac_names = sigpac_names.strip()
+        sigpac_use_venv27 = model_ir_values.get_default(
+            'wua.configuration', 'sigpac_use_venv27')
         # Get shapefiles and conditions.
         shp_list = self._get_shp_list(sigpac_path, sigpac_names)
         if (not shp_list):
@@ -118,12 +127,23 @@ class WuaConfiguration(models.TransientModel):
             if shp['condition'] != '':
                 shptoimport = shptoimport + '(' + shp['condition'] + ')'
         shptoimport = shptoimport[1:]
-        list_of_args = ['python', program_path, host, str(port), dbname,
-                        user, password, shptoimport, str(srs)]
-        subprocess.Popen(list_of_args)
-        _logger = logging.getLogger(self.__class__.__name__)
-        _logger.info('load_sigpac.py (ogr2ogr) for... ' +
-                     ' '.join([str(x) for x in list_of_args]))
+        external_program = 'python'
+        if sigpac_use_venv27:
+            external_program = '/home/odoo10/venv2.7/bin/python'
+        list_of_args = [external_program, program_path, host,
+                        str(port), dbname, user, password,
+                        shptoimport, str(srs)]
+        python_ok = True
+        try:
+            subprocess.Popen(list_of_args)
+        except Exception:
+            python_ok = False
+            exit_code = 1
+            message_error = 'Python Error'
+        if python_ok:
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.info('load_sigpac.py (ogr2ogr) for... ' +
+                         ' '.join([str(x) for x in list_of_args]))
         return exit_code, message_error
 
     def _get_shp_list(self, sigpac_path, sigpac_names):
