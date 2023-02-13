@@ -124,6 +124,19 @@
                       groups="base_wua.group_wua_user">
                 </page>
             </notebook>
+            <xpath expr="//field[@name='child_ids']//form//field[@name='title']" position="before">
+                <field name="vat_wua_legalrep" string="TIN"
+                       attrs="{'invisible':[('type', '!=', 'wua_legalrep')]}"/>
+            </xpath>
+            <xpath expr="//img[@t-att-src='_s + &quot;/base/static/src/img/money.png&quot;']" position="after">
+                <img t-if="record.type.raw_value === 'wua_legalrep'" t-att-src='"/base_wua/static/img/lawyer.png"'/>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']//kanban//templates//t//div//div//t//t" position="attributes">
+                <attribute name="t-if">record.type.raw_value !== &apos;invoice&apos; &amp;&amp; record.type.raw_value !== &apos;delivery&apos;  &amp;&amp; record.type.raw_value !== &apos;wua_legalrep&apos;</attribute>
+            </xpath>
+            <xpath expr="//div[@t-if='record.fax.raw_value']" position="after">
+                <div t-if="record.type.raw_value === 'wua_legalrep'">LEGAL REPRESENTATIVE</div>
+            </xpath>
         </field>
     </record>
 
@@ -210,6 +223,9 @@
                  domain="[('is_lessee','=',True)]"/>
                 <filter string="Payer" name="ispayer"
                  domain="[('is_payer','=',True)]"/>
+                <separator/>
+                <filter string="With legal representative" name="with_legalrep_yes"
+                 domain="[('with_legalrep','=',True)]"/>
                 <separator/>
                 <filter string="Archived" name="inactive"
                  domain="[('active','=',False)]"/>

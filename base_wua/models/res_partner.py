@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
+# Copyright 2023 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from math import ceil, floor
@@ -8,7 +8,8 @@ from lxml import etree
 from Crypto.Cipher import AES
 import datetime
 import pytz
-from odoo import models, fields, api, exceptions, _
+from odoo.modules import get_module_resource
+from odoo import models, fields, api, exceptions, _, tools
 
 
 class ResPartner(models.Model):
@@ -190,6 +191,24 @@ class ResPartner(models.Model):
     apply_second_partner_coding = fields.Boolean(
         string='Second Coding',
         default=False)
+
+    type = fields.Selection(selection_add=[
+        ('wua_legalrep', _('Legal Rep.'))])
+
+    vat_wua_legalrep = fields.Char(
+        string='TIN (legal rep.)')
+
+    with_legalrep = fields.Boolean(
+        string='With legal representative',
+        defult=False,
+        store=True,
+        compute='_compute_legalrep_id')
+
+    legalrep_id = fields.Many2one(
+        string='Person acting as legal representative',
+        store=True,
+        compute='_compute_legalrep_id',
+        index=True)
 
     _sql_constraints = [
         ('valid_parcel_owner_number',
@@ -395,6 +414,20 @@ class ResPartner(models.Model):
                                 area_for_votes, polling_system_intervals)
         self.number_of_votes = votes
 
+    @api.depends('child_ids', 'child_ids.type')
+    def _compute_legalrep_id(self):
+        for record in self:
+            with_legalrep = False
+            legalrep_id = None
+            if record.child_ids:
+                for partner_child in record.child_ids:
+                    if partner_child.type == 'wua_legalrep':
+                        with_legalrep = True
+                        legalrep_id = partner_child.id
+                        break
+            record.with_legalrep = with_legalrep
+            record.legalrep_id = legalrep_id
+
     @api.constrains('partner_code')
     def _check_partner_code(self):
         if ((self.env.context.get('wua') == '1' or self.is_wua_partner) and
@@ -402,6 +435,39 @@ class ResPartner(models.Model):
            self.partner_code <= 0):
             raise exceptions.ValidationError(_('The partner code '
                                                'must be a positive value.'))
+
+    @api.constrains('vat_wua_legalrep')
+    def _check_vat_wua_legalrep(self):
+        if self.env.context.get('company_id'):
+            company = self.env['res.company'].browse(
+                self.env.context['company_id'])
+        else:
+            company = self.env.user.company_id
+        if company.vat_check_vies:
+            check_func = self.vies_vat_check
+        else:
+            check_func = self.simple_vat_check
+        for partner in self:
+            if not partner.vat_wua_legalrep:
+                continue
+            vat_country = partner.vat_wua_legalrep[:2].lower()
+            vat_number = partner.vat_wua_legalrep[2:].replace(' ', '')
+            if not check_func(vat_country, vat_number):
+                raise exceptions.ValidationError(
+                    _('The VAT number [%s] for partner [%s] is invalid.') %
+                    (partner.vat_wua_legalrep, partner.name))
+
+    @api.constrains('child_ids', 'child_ids.type')
+    def _check_type(self):
+        for record in self:
+            if record.child_ids:
+                number_of_legalrep = 0
+                for partner_child in record.child_ids:
+                    if partner_child.type == 'wua_legalrep':
+                        number_of_legalrep = number_of_legalrep + 1
+                if number_of_legalrep > 1:
+                    raise exceptions.ValidationError(
+                        _('Only one legal representative is allowed.'))
 
     @api.onchange('apply_second_partner_coding')
     def _onchange_apply_second_partner_coding(self):
@@ -747,4 +813,15 @@ class ResPartner(models.Model):
                         calc_votes = area_for_votes / float(
                             polling_system_interval)
                         resp = int(ceil(calc_votes)) + base_for_votes
+        return resp
+
+    def _get_default_image(self, partner_type, is_company, parent_id):
+        resp = super(ResPartner, self)._get_default_image(
+            partner_type, is_company, parent_id)
+        if partner_type == 'wua_legalrep':
+            img_path = get_module_resource('base_wua', 'static/img',
+                                           'lawyer.png')
+            with open(img_path, 'rb') as f:
+                image = f.read()
+            resp = tools.image_resize_image_big(image.encode('base64'))
         return resp
