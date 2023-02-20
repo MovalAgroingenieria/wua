@@ -55,13 +55,14 @@ class WuaFlowmeter(models.Model):
             'wua.irrigation.configuration', 'enable_remotecontrol')
         if enable_remotecontrol:
             url_remotecontrol_rest = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'url_remotecontrol_rest')
+                'wua.irrigation.configuration',
+                'url_remotecontrol_rest_hidroconta')
             url_remotecontrol_rest_username = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_username')
+                            'url_remotecontrol_rest_username_hidroconta')
             url_remotecontrol_rest_password = self.env['ir.values'].\
                 get_default('wua.irrigation.configuration',
-                            'url_remotecontrol_rest_password')
+                            'url_remotecontrol_rest_password_hidroconta')
             if not url_remotecontrol_rest or not \
                 url_remotecontrol_rest_username or not \
                     url_remotecontrol_rest_password:
