@@ -105,7 +105,7 @@ class WuaFlowmeter(models.Model):
                         'The data obtained is not more recent than the last '
                         'record in the database.')
                     message = '<center>' + '<span style="color:orange;">' + \
-                    message_01 + '</span>' + '</center><br>' + message_02
+                        message_01 + '</span>' + '</center><br>' + message_02
                 else:
                     # Create record with UTC time
                     self._create_record(flowmeter.id, moment, flow)
@@ -136,7 +136,7 @@ class WuaFlowmeter(models.Model):
         for flowmeter in flowmeters:
             conversion_factor = flowmeter.conversion_factor
             instantaneous_flow_deviceid = \
-            instantaneous_flow_measurementid = False
+                instantaneous_flow_measurementid = False
             if (flowmeter.connected_to_intake and
                     len(flowmeter.intake_id.pumpgroup_ids) == 1):
                 pumpgroup = flowmeter.intake_id.pumpgroup_ids[0]
@@ -206,7 +206,7 @@ class WuaFlowmeter(models.Model):
                         self._create_record(flowmeter.id, moment, flow)
                         _logger.info(
                             'Flowdata [%s] Inserting data: %s, %s l/s' %
-                            (flowmeter.name, moment, flow))
+                            (flowmeter.name, moment_str, flow))
 
     # Getting data from module wua_energymonitoring_rest_seinon_readingapi
     def _connection_params(self):
