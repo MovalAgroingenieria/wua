@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_flowmeter_view_form" model="ir.ui.view">
+        <field name="name">Flowmeter (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_flowdata']" position="before">
+                <field name="telecontrol_associated" invisible="1"/>
+                <button name="action_get_flowdata_seinon" type="object" class="oe_stat_button"
+                        icon="fa-moval-flowdata-get" groups="base_wua.group_wua_user"
+                        attrs="{'invisible': ['|', ('id', '=', False),
+                                                   ('telecontrol_associated', '!=', 'seinon')]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Get flowdata</span>
+                            <span class="o_stat_text">(Seinon)</span>
+                        </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <!--
+    <record id="wua_flowmeter_view_form_base" model="ir.ui.view">
+        <field name="name">Flowmeter base (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_flowdata.wua_flowmeter_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='telecontrol_associated']" position="after">
+                <field name="inelcom_id"
+                    attrs="{'invisible': [('telecontrol_associated', '!=', 'inelcom_isrl')]}"/>
+            </xpath>
+        </field>
+    </record>
+    -->
+
+</odoo>
