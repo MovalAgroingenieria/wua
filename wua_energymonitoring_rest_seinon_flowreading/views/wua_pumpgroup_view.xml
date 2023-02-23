@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_pumpgroup_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup (form view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id" ref="base_wua_energymonitoring_rest.wua_pumpgroup_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='div_instantaneous_flow_measurementdesc']" position="after">
+                <div colspan="2" style="margin-top: 10px;margin-bottom: 10px;" class="text-center">
+                    <span style="font-weight: bold;">ACCUMULATED FLOW</span>
+                </div>
+                <field name="accumulated_flow_deviceid" string="Device"/>
+                <div name="div_instantaneous_flow_devicedesc" colspan="2"
+                    attrs="{'invisible': [('accumulated_flow_devicedesc','=',False)]}">
+                    <span>(</span>&#x2063;<field name="accumulated_flow_devicedesc" nolabel="1"/>&#x2063;<span>)</span>
+                </div>
+                <field name="accumulated_flow_measurementid" string="Measurement"/>
+                <div name="div_accumulated_flow_measurementdesc" colspan="2"
+                    attrs="{'invisible': [('accumulated_flow_measurementdesc','=',False)]}">
+                    <span>(</span>&#x2063;<field name="accumulated_flow_measurementdesc" nolabel="1"/>&#x2063;<span>)</span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

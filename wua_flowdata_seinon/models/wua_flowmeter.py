@@ -226,7 +226,7 @@ class WuaFlowmeter(models.Model):
         last_record = self.env['wua.flowdata'].search(
             [('flowmeter_id', '=', flowmeter.id)], order='time desc', limit=1)
         if len(last_record) == 0:  # First record
-            last_record_time = datetime.now() - timedelta(minutes=20)
+            last_record_time = datetime.now() - timedelta(minutes=15)
         elif len(last_record) == 1:
             last_record_time = datetime.strptime(
                 last_record.time, '%Y-%m-%d %H:%M:%S')
