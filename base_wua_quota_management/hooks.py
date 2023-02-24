@@ -19,6 +19,10 @@ def post_init_hook(cr, registry):
         if template.categ_id.productcategory_code == 11:
             template.superproduct_id = env.ref(
                 'base_wua_quota_management.superproduct_irrigation_reports')
+    mail_template_action = env.ref(
+        'base_wua_quota_management.'
+        'quota_notice_partner_report_email_template')
+    mail_template_action.create_action()
 
 
 def uninstall_hook(cr, registry):
