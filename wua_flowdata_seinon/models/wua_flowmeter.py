@@ -9,7 +9,6 @@ from datetime import datetime
 from datetime import timedelta
 import pytz
 from odoo import models, fields, api, exceptions, _
-from datetime import date
 
 
 class WuaFlowmeter(models.Model):
@@ -28,7 +27,7 @@ class WuaFlowmeter(models.Model):
         buttons = [{'type': 'ir.actions.act_window_close', 'name': _('Close')}]
         flowmeter = self
         conversion_factor = self.conversion_factor
-        url, username, password = self._connection_params()
+        url, username, password = self._connection_params_seinon()
 
         # Get flowmeter specific params (from pumpgroups)
         instantaneous_flow_deviceid = instantaneous_flow_measurementid = False
@@ -132,7 +131,7 @@ class WuaFlowmeter(models.Model):
         _logger = logging.getLogger(self.__class__.__name__)
         status_code = _('Unknown')
         flowmeters = self._get_flowmeters_seinon()
-        url, username, password = self._connection_params()
+        url, username, password = self._connection_params_seinon()
         for flowmeter in flowmeters:
             conversion_factor = flowmeter.conversion_factor
             instantaneous_flow_deviceid = \
@@ -209,7 +208,7 @@ class WuaFlowmeter(models.Model):
                             (flowmeter.name, moment_str, flow))
 
     # Getting data from module wua_energymonitoring_rest_seinon_readingapi
-    def _connection_params(self):
+    def _connection_params_seinon(self):
         model_values = self.env['ir.values'].sudo()
         url = model_values.get_default(
             'wua.infrastructure.configuration',

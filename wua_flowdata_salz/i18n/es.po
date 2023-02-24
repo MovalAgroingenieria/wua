@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-07-11 08:54+0000\n"
-"PO-Revision-Date: 2022-07-11 08:54+0000\n"
+"POT-Creation-Date: 2023-02-28 15:48+0000\n"
+"PO-Revision-Date: 2023-02-28 15:48+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,8 +17,16 @@ msgstr ""
 
 #. module: wua_flowdata_salz
 #: model:ir.ui.view,arch_db:wua_flowdata_salz.wua_flowmeter_view_form
-msgid "<span class=\"o_stat_text\">Get flowdata</span>"
-msgstr "<span class=\"o_stat_text\">Obtener caudal</span>"
+msgid "<span class=\"o_stat_text\">Get flowdata</span>\n"
+"                            <span class=\"o_stat_text\">(Salz)</span>"
+msgstr "<span class=\"o_stat_text\">Obtener caudal</span>\n"
+"                            <span class=\"o_stat_text\">(Salz)</span>"
+
+#. module: wua_flowdata_salz
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:23
+#, python-format
+msgid "Close"
+msgstr "Cerrar"
 
 #. module: wua_flowdata_salz
 #: model:ir.model,name:wua_flowdata_salz.model_wua_flowmeter
@@ -26,13 +34,47 @@ msgid "Entity (flowmeter)"
 msgstr "Elemento (caudalímetro)"
 
 #. module: wua_flowdata_salz
-#: model:ir.model,name:wua_flowdata_salz.model_wua_flowdata
-msgid "Flow Data"
-msgstr "Caudales"
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:60
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:85
+#, python-format
+msgid "Flow"
+msgstr "Caudal"
 
 #. module: wua_flowdata_salz
-#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:94
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:57
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:82
+#, python-format
+msgid "Flow data from %s"
+msgstr "Datos de caudal desde %s"
+
+#. module: wua_flowdata_salz
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:93
+#, python-format
+msgid "Get last flow data"
+msgstr "Obtener último dato de caudal"
+
+#. module: wua_flowdata_salz
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:67
+#, python-format
+msgid "Repeated or older data"
+msgstr "Dato repetido o más antiguo"
+
+#. module: wua_flowdata_salz
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:69
+#, python-format
+msgid "The data obtained is not more recent than the last record in the database."
+msgstr "El dato obtenido no es más reciente que el último dato en la base de datos."
+
+#. module: wua_flowdata_salz
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:147
 #, python-format
 msgid "The remote control connection parameters are not configured."
 msgstr "Los parámetros de configuración del telecontrol no están configurados."
+
+#. module: wua_flowdata_salz
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:59
+#: code:addons/wua_flowdata_salz/models/wua_flowmeter.py:84
+#, python-format
+msgid "Time"
+msgstr "Tiempo"
 

@@ -21,7 +21,10 @@ class WuaFlowmeter(models.Model):
 
     @api.multi
     def action_get_flowdata_demeter(self):
-        url, username, passwd = self._connection_params()
+        _logger = logging.getLogger(self.__class__.__name__)
+        message = ""
+        buttons = [{'type': 'ir.actions.act_window_close', 'name': _('Close')}]
+        url, username, passwd = self._connection_params_demeter()
         demeter_flowmeters = self._get_demeter_flowmeters()
         if demeter_flowmeters:
             for demeter_flowmeter in (demeter_flowmeters or []):
@@ -31,11 +34,32 @@ class WuaFlowmeter(models.Model):
                         url, username, passwd, demeter_flowmeter)
                 if data_found:
                     self._create_record(demeter_flowmeter.id, time, flow)
+                    _logger.info('Flowdata inserting data: %s, %s, %s l/s' %
+                                 (demeter_flowmeter.name, time, flow))
+                    flow_str = str(round(flow, 4))
+                    time_str = datetime.datetime.strftime(
+                        time, '%d/%m/%Y %H:%M:%S')
+                    message_01 = \
+                        _('Flow data from %s') % demeter_flowmeter.name
+                    message_02 = _('Time')
+                    message_03 = _('Flow')
+                    message = '<center>' + message_01 + '</center><br>' + \
+                        message_02 + ': ' + '<b>' + time_str + '</b><br>' + \
+                        message_03 + ': ' + '<b>' + flow_str + ' l/s' + '<b>'
+        act_window = {
+            'type': 'ir.actions.act_window.message',
+            'title': _('Get last flow data'),
+            'message': message,
+            'is_html_message': True,
+            'close_button_title': False,
+            'buttons': buttons
+            }
+        return act_window
 
     @api.model
     def action_get_flowdata_demeter_cron(self):
         _logger = logging.getLogger(self.__class__.__name__)
-        url, username, passwd = self._connection_params()
+        url, username, passwd = self._connection_params_demeter()
         demeter_flowmeters = self._get_demeter_flowmeters()
         if demeter_flowmeters:
             for demeter_flowmeter in (demeter_flowmeters or []):
@@ -47,7 +71,7 @@ class WuaFlowmeter(models.Model):
                 if data_found:
                     self._create_record(demeter_flowmeter.id, time, flow)
 
-    def _connection_params(self):
+    def _connection_params_demeter(self):
         enable_remotecontrol = url_remotecontrol_rest = \
             url_remotecontrol_rest_username = \
             url_remotecontrol_rest_password = False
@@ -87,7 +111,7 @@ class WuaFlowmeter(models.Model):
 
     def _get_telecontrol_data(self, url, username, passwd, demeter_flowmeter):
         _logger = logging.getLogger(self.__class__.__name__)
-        time = flow = False
+        time = flow = data_found = False
         jsessionid = self.env['wua.flowreading'].open_connection_hidroconta(
             url, username, passwd)
         if jsessionid:
@@ -106,7 +130,6 @@ class WuaFlowmeter(models.Model):
                 flowmeter_name = \
                     demeter_flowmeter.flowmeter_analogic_name.encode('utf-8')
                 found_counters = []
-                data_found = False  # Flow can be zero
                 for counter in counters:
                     counter_name = counter['code'].encode('utf-8')
                     if counter_name == flowmeter_name:

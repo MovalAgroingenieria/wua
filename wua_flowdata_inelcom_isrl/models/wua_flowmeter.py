@@ -30,7 +30,7 @@ class WuaFlowmeter(models.Model):
         inelcom_id = self.inelcom_id
         conversion_factor = self.conversion_factor
         id_session = False
-        url, username, password = self._connection_params()
+        url, username, password = self._connection_params_inelcom_isrl()
         url_open_session = url + '/sesiones'
         auth_data = {'usuario': username, 'clave': password, }
         headers_data = {'content-type': 'application/json', }
@@ -107,7 +107,7 @@ class WuaFlowmeter(models.Model):
     def action_get_flowdata_inelcom_isrl_cron(self):
         _logger = logging.getLogger(self.__class__.__name__)
         id_session = False
-        url, username, password = self._connection_params()
+        url, username, password = self._connection_params_inelcom_isrl()
         url_open_session = url + '/sesiones'
         auth_data = {'usuario': username, 'clave': password, }
         headers_data = {'content-type': 'application/json', }
@@ -163,7 +163,7 @@ class WuaFlowmeter(models.Model):
         return flowmeters
 
     # Getting data from module wua_remotecontrol_rest_inelcom_isrl [@TODO]
-    def _connection_params(self):
+    def _connection_params_inelcom_isrl(self):
         url = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'url_remotecontrol_rest_inelcom')
         username = self.env['ir.values'].get_default(

@@ -20,7 +20,9 @@ class WuaFlowmeter(models.Model):
     @api.multi
     def action_get_flowdata_salz(self):
         _logger = logging.getLogger(self.__class__.__name__)
-        url_salz, user_salz, passwd_salz = self._connection_params()
+        buttons = [{'type': 'ir.actions.act_window_close', 'name': _('Close')}]
+        message = ""
+        url_salz, user_salz, passwd_salz = self._connection_params_salz()
         salz_flowmeters = self._get_salz_flowmeters()
         if salz_flowmeters:
             for salz_flowmeter in (salz_flowmeters or []):
@@ -48,17 +50,58 @@ class WuaFlowmeter(models.Model):
                                 _logger.info(
                                     'Flowdata inserting data: %s, %s, %s' %
                                     (salz_flowmeter.name, time, flow))
+                                flow_str = str(round(flow, 4))
+                                time_str = datetime.datetime.strftime(
+                                    time, '%d/%m/%Y %H:%M:%S')
+                                message_01 = \
+                                    _('Flow data from %s') % \
+                                    salz_flowmeter.name
+                                message_02 = _('Time')
+                                message_03 = _('Flow')
+                                message = '<center>' + message_01 + \
+                                    '</center><br>' + message_02 + ': ' + \
+                                    '<b>' + time_str + '</b><br>' + \
+                                    message_03 + ': ' + '<b>' + flow_str + \
+                                    ' l/s' + '<b>'
+                            else:
+                                message_01 = _('Repeated or older data')
+                                message_02 = \
+                                    _('The data obtained is not more recent '
+                                      'than the last record in the database.')
+                                message = \
+                                    '<center>' + \
+                                    '<span style="color:orange;">' + \
+                                    message_01 + '</span>' + '</center><br>' \
+                                    + message_02
                         else:
                             # First record
                             self._create_record(salz_flowmeter.id, time, flow)
                             _logger.info(
                                 'Flowdata inserting data: %s, %s, %s' %
                                 (salz_flowmeter.name, time, flow))
+                            message_01 = _('Flow data from %s') % \
+                                salz_flowmeter.name
+                            message_02 = _('Time')
+                            message_03 = _('Flow')
+                            message = '<center>' + message_01 + \
+                                '</center><br>' + message_02 + ': ' + \
+                                '<b>' + time_str + '</b><br>' + \
+                                message_03 + ': ' + '<b>' + flow_str + \
+                                ' l/s' + '<b>'
+            act_window = {
+                'type': 'ir.actions.act_window.message',
+                'title': _('Get last flow data'),
+                'message': message,
+                'is_html_message': True,
+                'close_button_title': False,
+                'buttons': buttons
+                }
+            return act_window
 
     @api.model
     def action_get_flowdata_salz_cron(self):
         _logger = logging.getLogger(self.__class__.__name__)
-        url_salz, user_salz, passwd_salz = self._connection_params()
+        url_salz, user_salz, passwd_salz = self._connection_params_salz()
         salz_flowmeters = self._get_salz_flowmeters()
         if salz_flowmeters:
             for salz_flowmeter in (salz_flowmeters or []):
@@ -90,7 +133,7 @@ class WuaFlowmeter(models.Model):
                     _logger.info('Flowdata inserting data: %s, %s, %s' %
                                  (salz_flowmeter.name, time, flow))
 
-    def _connection_params(self):
+    def _connection_params_salz(self):
         url_salz = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'url_remote_flowmeter_rest')
         user_salz = self.env['ir.values'].get_default(
