@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="wausms_template_view_form" model="ir.ui.view">
+        <field name="name">WauSMS Template Form</field>
+        <field name="model">wausms.template</field>
+        <field name="inherit_id" ref="wausms_client_sms.wausms_template_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='help_invoice']/br" position="replace">
+                <div>
+                    The quota object is also available. Note that this object has many
+                    attributes and they depend on the installed modules.
+                 </div>
+            </xpath>
+            <xpath expr="//tr[@name='partner_vat']" position="after">
+                <tr name="quota_agriculturalseason" attrs="{'invisible': [('type','!=','quota')]}">
+                    <td>Quota agriculturalseason</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ quota.agriculturalseason_id.description }}</td>
+                </tr>
+                <tr name="quota_quotaperiod" attrs="{'invisible': [('type','!=','quota')]}">
+                    <td>Quota period</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ quota.quotaperiod_id.description }}</td>
+                </tr>
+                <tr name="quota_superproduct" attrs="{'invisible': [('type','!=','quota')]}">
+                    <td>Quota superproduct</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ quota.superproduct_id.name }}</td>
+                </tr>
+                <tr name="quota_balance" attrs="{'invisible': [('type','!=','quota')]}">
+                    <td>Quota balance</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ quota.balance }}</td>
+                </tr>
+                <tr name="quota_negative_balance" attrs="{'invisible': [('type','!=','quota')]}">
+                    <td>Quota negative balance</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ quota.negative_balance }}</td>
+                </tr>
+                <!--
+                <tr name="quota_available_quota_percentage" attrs="{'invisible': [('type','!=','quota')]}">
+                    <td>Quota available percentage</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ quota.available_quota_percentage_with_suffix }}</td>
+                </tr> -->
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

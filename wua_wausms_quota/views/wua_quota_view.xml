@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="wua_quota_view_form" model="ir.ui.view">
+        <field name="name">Quotas (form view)</field>
+        <field name="model">wua.quota</field>
+        <field name="inherit_id" ref="base_wua_quota_management.wua_quota_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='master_data']" position="before">
+                <div name="buttons" class="oe_button_box">
+                    <button name="action_see_wausms_quota" class="oe_stat_button" icon="fa-wausms-sms-registre"
+                        type="object"  attrs="{'invisible': [('num_sms','=', 0)]}" help="SMS's that have been sent.">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_value" style="display:inline;"><field name="num_sms"/></span>
+                            <span class="o_stat_text" style="display:inline;"> SMS's</span>
+                        </div>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
