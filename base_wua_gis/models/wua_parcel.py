@@ -35,7 +35,7 @@ class WuaParcel(models.Model):
                     'marginheight="0" marginwidth="0" ' + \
                     'src="' + url + '" ' + \
                     'frameborder="1" height="400" width="67%" ' + \
-                    '></iframe></p>'
+                    'loading="lazy"></iframe></p>'
             else:
                 record.html_gisviewer_frame = ''
 

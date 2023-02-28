@@ -48,7 +48,7 @@ class ResPartner(models.Model):
                         'scrolling="no" marginheight="0" marginwidth="0" ' + \
                         'src="' + url + '" ' + \
                         'frameborder="1" height="400" width="67%" ' + \
-                        '></iframe></p>'
+                        'loading="lazy"></iframe></p>'
             record.html_gisviewer_frame = html_gisviewer_frame
 
     @api.multi
