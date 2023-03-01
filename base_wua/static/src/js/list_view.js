@@ -14,7 +14,8 @@ list_view.include({
                 this.sidebar.add_toolbar(this.fields_view.toolbar);
             }
             this.sidebar.add_items('other', _.compact([
-                this.is_action_enabled('delete') && { label: _t("Export"), callback: this.on_sidebar_export },
+                // Make always true to ensure of you can read you can export
+                true && { label: _t("Export"), callback: this.on_sidebar_export },
                 this.is_action_enabled('delete') && this.fields_view.fields.active && {label: _t("Archive"), callback: this.do_archive_selected},
                 this.is_action_enabled('delete') && this.fields_view.fields.active && {label: _t("Unarchive"), callback: this.do_unarchive_selected},
                 this.is_action_enabled('delete') && { label: _t('Delete'), callback: this.do_delete_selected }
@@ -26,7 +27,7 @@ list_view.include({
             // Hide the sidebar by default (it will be shown as soon as a record is selected)
             this.sidebar.do_hide();
         }
-    },    
+    },
 });
 
 })
