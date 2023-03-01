@@ -14,7 +14,7 @@ from odoo import models, fields, api, exceptions, _
 class WuaFlowmeter(models.Model):
     _inherit = 'wua.flowmeter'
 
-    FACTOR_FLOW = 3.6
+    FACTOR_FLOW = 3600
 
     telecontrol_associated = fields.Selection(
         selection_add=[('seinon', 'Seinon')])
