@@ -497,8 +497,29 @@ class WuaQuota(models.Model):
         quota.sudo()._compute_accumulated_consumption()
         quota.sudo()._compute_balance()
 
+    def _get_water_payers_by_parcel(self, wc):
+        parcels_data = []
+        msg = ""
+        parcels_of_wc = wc.irrigationpointwc_ids.filtered(
+            lambda x: x.parcel_id.is_billable_water).mapped(
+                lambda x: x.parcel_id)
+        for parcel in parcels_of_wc:
+            msg = parcel.name + ": " + ', '.join(
+                parcel.partnerlink_ids.filtered(
+                    lambda x: x.water_costs_percentage > 0.0).mapped(
+                    lambda x: x.partner_id.display_name))
+            parcels_data.append(msg)
+        return '\n'.join(parcels_data)
+
     # For client classes (pressurized consumptions...)
     def create_hydricmovements_presconsumption(self, presconsumption):
+        # Add check to know if the waterconnection has all the
+        # parcels with same water payer
+        based_on_wc = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration', 'invoicing_based_on_wc')
+        wc_label = _("The waterconnection ")
+        diff_wp_label = _("Have different water payers on some parcel: ")
+        error_msg = ''
         waterconnection = presconsumption.waterconnection_id
         volume = presconsumption.volume_real
         quotaperiod = self._get_quotaperiod(presconsumption.reading_end_time)
@@ -526,6 +547,8 @@ class WuaQuota(models.Model):
                             'parcel_id': parcel.id,
                             'volume': volume_of_parcel,
                             })
+                # Only one water payer if parameter is setted
+                pl_payer = None
                 for data_parcel in (data_parcels or []):
                     parcel = filter(lambda x: x['id'] ==
                                     data_parcel['parcel_id'], parcels)[0]
@@ -535,6 +558,17 @@ class WuaQuota(models.Model):
                              partnerlink.water_costs_percentage / 100)
                         if volume_of_hydric_consumption == 0:
                             continue
+                        # First to check
+                        if (not pl_payer):
+                            pl_payer = partnerlink.partner_id.id
+                        # Only check if parameter is setted
+                        if (based_on_wc and (pl_payer !=
+                                             partnerlink.partner_id.id)):
+                            error_msg = wc_label + waterconnection.name + \
+                                " " + diff_wp_label + "\n" + \
+                                self._get_water_payers_by_parcel(
+                                    waterconnection)
+                            raise exceptions.UserError(error_msg)
                         hydric_consumptions.append({
                             'quotaperiod_id': quotaperiod.id,
                             'superproduct_id': superproduct_id,
