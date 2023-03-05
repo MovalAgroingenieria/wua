@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_assembly_view_form" model="ir.ui.view">
+        <field name="name">Assemblies (form view)</field>
+        <field name="model">wua.assembly</field>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <field name="is_wua_portal_user" invisible="1"/>
+                <header>
+                    <button name="action_go_to_state_02_called"
+                            type="object" string="Convoke"
+                            style="width: 105px;"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state','!=','01_draft')]}"
+                            groups="base_wua.group_wua_user"
+                            confirm="This action will change to the 'Called' state. Proceed?"/>
+                    <button name="action_return_to_state_01_draft"
+                            type="object" string="Cancel"
+                            style="width: 105px;"
+                            attrs="{'invisible': [('state','!=','02_called')]}"
+                            groups="base_wua.group_wua_user"
+                            confirm="This action will return to the 'Draft' state. Proceed?"/>
+                    <button name="action_go_to_state_03_in_progress"
+                            type="object" string="Start"
+                            style="width: 105px;"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state','!=','02_called')]}"
+                            groups="base_wua.group_wua_user"
+                            confirm="This action will change to the 'In progress' state. Proceed?"/>
+                    <button name="action_return_to_state_02_called"
+                            type="object" string="Cancel"
+                            style="width: 105px;"
+                            attrs="{'invisible': [('state','!=','03_in_progress')]}"
+                            groups="base_wua.group_wua_user"
+                            confirm="This action will return to the 'Called' state. IMPORTANT: The possible results of voting and comments will be eliminated. Proceed?"/>
+                    <button name="action_go_to_state_04_finished"
+                            type="object" string="Finish"
+                            style="width: 105px;"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state','!=','03_in_progress')]}"
+                            groups="base_wua.group_wua_user"
+                            confirm="This action will change to the 'Finished' state. Proceed?"/>
+                    <button name="action_return_to_state_03_in_progress"
+                            type="object" string="Cancel"
+                            style="width: 105px;"
+                            attrs="{'invisible': [('state','!=','04_finished')]}"
+                            groups="base_wua.group_wua_user"
+                            confirm="This action will return to the 'In progress' state. Proceed?"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="01_draft,02_called,03_in_progress,04_finished"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_get_agendaitems"
+                                type="object" class="oe_stat_button"
+                                icon="fa-list-ol">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_agendaitems"/>
+                                </span>
+                                <span class="o_stat_text">Items</span>
+                            </div>
+                        </button>
+                        <button name="action_get_attendances_calls"
+                                type="object" class="oe_stat_button"
+                                icon="fa-bullhorn"
+                                attrs="{'invisible': [('state','=','01_draft')]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_attendances"/>
+                                </span>
+                                <span class="o_stat_text">Partners</span>
+                            </div>
+                        </button>
+                        <!-- <button name="action_get_delegations"
+                                type="object" class="oe_stat_button"
+                                icon="fa-hand-o-right"
+                                attrs="{'invisible': [('state','=','01_draft')]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_delegations"/>
+                                </span>
+                                <span class="o_stat_text">Delegations</span>
+                            </div>
+                        </button> -->
+                    </div>
+                    <div class="oe_title" style="min-width:47%">
+                        <label for="issue" string="Issue:"/>
+                        <h1>
+                             <field name="issue"
+                                    style="margin-top:5px;"
+                                    attrs="{'readonly': [('state','!=','01_draft')]}"/>
+                        </h1>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="assembly_date"
+                                   string="Date of the assembly"
+                                   attrs="{'readonly': [('state','!=','01_draft')]}"/>
+                            <field name="first_hour"
+                                   string="First Hour"
+                                   style="width:60px"
+                                   widget="float_time"
+                                   attrs="{'readonly': [('state','!=','01_draft')]}"/>
+                            <field name="second_hour"
+                                   string="Second Hour"
+                                   style="width:60px"
+                                   widget="float_time"
+                                   attrs="{'readonly': [('state','!=','01_draft')]}"/>
+                            <field name="convocation_date"
+                                   string="Date of convocation"
+                                   attrs="{'readonly': ['|',('state','=','03_in_progress'),('state','=','04_finished')]}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <label for="street"
+                                   string="Assembly Address"/>
+                            <div name="div_address"
+                                 class="o_address_format">
+                                <field name="street"
+                                       placeholder="Street"
+                                       class="o_address_street"
+                                       attrs="{'readonly': [('state','!=','01_draft')]}"/>
+                                <field name="city"
+                                       placeholder="City"
+                                       class="o_address_city"
+                                       attrs="{'readonly': [('state','!=','01_draft')]}"/>
+                                <span style="margin-left:1px;margin-right:6px">-</span>
+                                <field name="state_id"
+                                       placeholder="Province" 
+                                       class="o_address_state" 
+                                       options="{'no_quick_create':True,
+                                                 'no_create_edit':True,
+                                                 'no_open':True}"
+                                       attrs="{'readonly': [('state','!=','01_draft')]}"/>
+                            </div>
+                            <label for="president_id"
+                                   string="President / Secretary"/>
+                            <div name="div_risponsible_persons" 
+                                 class="o_address_format">
+                                <field name="president_id"
+                                       string="President"
+                                       options="{'no_quick_create':True,
+                                                'no_create_edit':True}"
+                                       attrs="{'invisible':[('is_wua_portal_user','=',True)],
+                                               'readonly': [('state','=','04_finished')]}"/>
+                                <field name="president_id_portaluser"
+                                       string="President"
+                                       style="pointer-events:none"
+                                       attrs="{'invisible':[('is_wua_portal_user','=',False)]}"/>
+                                <br/>
+                                <field name="secretary_id"
+                                       string="Secretary"
+                                       options="{'no_quick_create':True,
+                                                'no_create_edit':True}"
+                                       attrs="{'invisible':[('is_wua_portal_user','=',True)],
+                                               'readonly': [('state','=','04_finished')]}"/>
+                                <field name="secretary_id_portaluser"
+                                       string="Secretary"
+                                       style="pointer-events:none"
+                                       attrs="{'invisible':[('is_wua_portal_user','=',False)]}"/>
+                            </div>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="page_public_notes"
+                                  string="Notes">
+                                <field name="public_notes"/>
+                            </page>
+                            <page name="page_internal_notes"
+                                  string="Notes (private)"
+                                  groups="base_wua.group_wua_user">
+                                <field name="internal_notes"/>
+                            </page>
+                            <page name="page_publication_text"
+                                  string="Publication Text"
+                                  groups="base_wua.group_wua_user">
+                                <header>
+                                    <button name="action_preview_publication_text" type="object" class="btn btn-link oe_read_only"
+                                        string="PREVIEW" icon="fa-eye" style="margin-top:4px; margin-bottom:4px;"/>
+                                </header>
+                                <field name="publication_text"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"
+                           groups="base_wua.group_wua_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_assembly_view_tree" model="ir.ui.view">
+        <field name="name">Assemblies (tree view)</field>
+        <field name="model">wua.assembly</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_assembly_assembly_view_tree"
+                  default_order="assembly_date desc">
+                <field name="assembly_date"
+                       string="Date"/>
+                <field name="issue"
+                       string="Issue"/>
+                <field name="public_notes_text"
+                       string="Notes"/>
+                <field name="state"
+                       string="State"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_assembly_view_search" model="ir.ui.view">
+        <field name="name">Assemblies (search view)</field>
+        <field name="model">wua.assembly</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="assembly_date"
+                       string="Date"/>
+                <field name="issue"
+                       string="Issue"/>
+                <field name="public_notes_text"
+                       string="Notes"/>
+                <filter string="Current Year"
+                        name="current_year"
+                        domain="[('current_year', '=', True)]"/>
+                <separator/>
+                <filter string="State: Draft"
+                        name="state_draft"
+                        domain="[('state','=','01_draft')]"/>
+                <filter string="State: Called"
+                        name="state_called"
+                        domain="[('state','=','02_called')]"/>
+                <filter string="State: In progress"
+                        name="state_in_progress"
+                        domain="[('state','=','03_in_progress')]"/>
+                <filter string="State: Finished"
+                        name="state_finished"
+                        domain="[('state','=','04_finished')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="President"
+                            name="grouped_president_id"
+                     context="{'group_by':'president_id'}"/>
+                    <filter string="Secretary"
+                            name="grouped_secretary_id"
+                     context="{'group_by':'secretary_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_assembly_view_kanban" model="ir.ui.view">
+        <field name="name">Assemblies (kanban view)</field>
+        <field name="model">wua.assembly</field>
+        <field name="arch" type="xml">
+            <kanban class="o_event_kanban_view">
+                <field name="assembly_date"/>
+                <field name="issue"/>
+                <field name="first_hour_hhmm"/>
+                <field name="state"/>
+                <field name="city"/>
+                <field name="state_id"/>
+                <field name="public_notes_text"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} o_event_left">
+                                <div class="o_day"><t t-esc="record.assembly_date.raw_value.getDate()"/></div>
+                                <div>
+                                    <t t-esc="moment(record.assembly_date.raw_value).format('MMM').toUpperCase()"/>
+                                    <t t-esc="record.assembly_date.raw_value.getFullYear()"/>
+                                </div>
+                                <div><t t-esc="record.first_hour_hhmm.raw_value"/></div>
+                            </div>
+                            <div class="o_event_right">
+                                <h4><field name="issue"/></h4>
+                                <div>
+                                    <i class="fa fa-map-marker" style="margin-left:1px;margin-right:7px"/>
+                                    <field name="city" style="margin-right:5px"/>
+                                    (<field name="state_id"/>)<br/>
+                                    <t t-if="record.public_notes_text.raw_value">
+                                        <i class="fa fa-info-circle" style="margin-right:5px"/>
+                                        <field name="public_notes_text"/><br/>
+                                    </t>
+                                    <br/>
+                                    <t t-if="record.state.raw_value == '01_draft'">
+                                        <i class="fa fa-pencil fa-lg" style="color:#ACACAC"/>
+                                    </t>
+                                    <t t-if="record.state.raw_value != '01_draft'">
+                                        <i class="fa fa-pencil"/>
+                                    </t>
+                                    <i class="fa fa-angle-right" style="margin-left:5px;margin-right:5px"/>
+                                    <t t-if="record.state.raw_value == '02_called'">
+                                        <i class="fa fa-bullhorn fa-lg" style="color:#BCBA9B"/>
+                                    </t>
+                                    <t t-if="record.state.raw_value != '02_called'">
+                                        <i class="fa fa-bullhorn"/>
+                                    </t>
+                                    <i class="fa fa-angle-right" style="margin-left:5px;margin-right:5px"/>
+                                    <t t-if="record.state.raw_value == '03_in_progress'">
+                                        <i class="fa fa-spinner fa-lg" style="color:#C3B088"/>
+                                    </t>
+                                    <t t-if="record.state.raw_value != '03_in_progress'">
+                                        <i class="fa fa-spinner"/>
+                                    </t>
+                                    <i class="fa fa-angle-right" style="margin-left:5px;margin-right:5px"/>
+                                    <t t-if="record.state.raw_value == '04_finished'">
+                                        <i class="fa fa-gavel fa-lg" style="color:#93B5B9"/>
+                                    </t>
+                                    <t t-if="record.state.raw_value != '04_finished'">
+                                        <i class="fa fa-gavel"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="wua_assembly_action"
+            model="ir.actions.act_window">
+        <field name="name">Assemblies</field>
+        <field name="res_model">wua.assembly</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'kanban',
+                        'view_id': ref('wua_assembly_view_kanban')}),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_assembly_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_assembly_view_form')})]"/>
+        <field name="search_view_id" ref="wua_assembly_view_search"/>
+        <field name="context">{"search_default_current_year": True,}</field>
+    </record>
+
+    <menuitem id="assembly_menu"
+              name="Assemblies"
+              parent="base_wua_assembly.assemblies_menu"
+              sequence="1"
+              action="wua_assembly_action"
+              groups="base_wua.group_wua_user,base_wua.group_wua_portal_user"/>
+
+</odoo>

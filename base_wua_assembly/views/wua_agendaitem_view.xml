@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_agendaitem_particular_view_form" model="ir.ui.view">
+        <field name="name">Agenda Items (form view)</field>
+        <field name="model">wua.agendaitem</field>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <field name="approved" invisible="1"/>
+                <field name="type" invisible="1"/>
+                <header>
+                    <field name="assembly_state"
+                           widget="statusbar"
+                           statusbar_visible="01_draft,02_called,03_in_progress,04_finished"/>
+                </header>
+                <sheet>
+                    <div class="oe_title" style="display:inline-block">
+                        <h1>
+                            <field name="icon_approved"
+                                   widget="image" class="oe_read_only"
+                                   style="margin-bottom:-4px;margin-right:12px"
+                                   attrs="{'invisible': [('icon_approved','=',False)]}"/>
+                            <span>ITEM N.</span>
+                            <field name="number"
+                                   style="margin-left:10px;width:60px"
+                                   attrs="{'readonly':[('assembly_state','=','04_finished')]}"/>
+                        </h1>
+                    </div>
+                        <div name="section_description"
+                             class="panel-body"
+                             style="background:#fbfbfb;border-color:#cccccc;border-width:1px;border-style:solid;margin:0 auto">
+                            <field name="description" nolabel="1"
+                                   style="margin-top:5px"
+                                   attrs="{'readonly':[('assembly_state','=','04_finished')]}"/>
+                        </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <div name="title_master_data_left" colspan="2"
+                                style="text-align:center">
+                                <span style="font-weight:bold;">
+                                TYPE OF VOTING
+                                </span>
+                            </div>
+                            <hr colspan="2" style="margin-right:10px;margin-bottom:34px"/>
+                            <div name="type_of_voting" colspan="2"
+                                 style="margin-bottom:10px">
+                                <field name="type_01_not_voteable"
+                                       nolabel="1"
+                                       style="margin-left:40px"
+                                       attrs="{'readonly':[('assembly_state','=','04_finished')]}"/>
+                                <span style="margin-left:5px">There is no vote</span><br/>
+                                <field name="type_02_yes_or_no"
+                                       nolabel="1"
+                                       style="margin-left:40px;margin-top:5px"
+                                       attrs="{'readonly':[('assembly_state','=','04_finished')]}"/>
+                                <span style="margin-left:5px">Vote yes or no</span><br/>
+                                <field name="type_03_options"
+                                       nolabel="1"
+                                       style="margin-left:40px;margin-top:5px"
+                                       attrs="{'readonly':[('assembly_state','=','04_finished')]}"/>
+                                <span style="margin-left:5px">Vote one of several options</span>
+                            </div>
+                        </group>
+                        <group name="master_data_right">
+                            <div name="title_master_data_right" colspan="2"
+                                style="text-align:center">
+                                <span style="font-weight:bold"
+                                      attrs="{'invisible':['|',('assembly_state','=','01_draft'),('assembly_state','=','02_called')]}">
+                                TOTAL VOTES AND RESULT
+                                </span>
+                                <span style="font-weight:bold"
+                                      attrs="{'invisible':['|',('assembly_state','=','03_in_progress'),('assembly_state','=','04_finished')]}">
+                                TOTAL VOTES
+                                </span>
+                            </div>
+                            <hr colspan="2" style="margin-bottom:11px"
+                                attrs="{'invisible': ['|',('assembly_state','=','01_draft'),('assembly_state','=','02_called')]}"/>
+                            <hr colspan="2" style="margin-bottom:26px"
+                                attrs="{'invisible': ['|',('assembly_state','=','03_in_progress'),('assembly_state','=','04_finished')]}"/>
+                            <div name="total_votes" colspan="2"
+                                 style="text-align:center">
+                                <h1 attrs="{'invisible': [('type','=','01_not_voteable')]}">
+                                    <field name="count_total"/>
+                                </h1>
+                                <h4 attrs="{'invisible': [('type','!=','01_not_voteable')]}"
+                                    style="margin-top:30px">
+                                    <span>(not applicable)</span>
+                                </h4>
+                                <h4 attrs="{'invisible':['|',('assembly_state','=','01_draft'),('assembly_state','=','02_called')]}">
+                                    <span class="text-success oe_read_only"
+                                        attrs="{'invisible': ['|',('approved','=','02_no'),('approved','=','03_not_applicable')]}">
+                                        APPROVED
+                                    </span>
+                                    <span class="text-danger oe_read_only"
+                                        attrs="{'invisible':['|',('approved','=','01_yes'),('approved','=','03_not_applicable')]}">
+                                        REJECTED
+                                    </span>
+                                    <span class="text-success oe_read_only"
+                                        attrs="{'invisible': [('type','!=','03_options')]}">
+                                        <field name="chosen_option"/>
+                                    </span>
+                                </h4>
+                            </div>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="page_vote_count"
+                                  string="Vote Count">
+                                <div name="div_vote_count_no_data"
+                                     style="margin-top:20px"
+                                     attrs="{'invisible':[('type','!=','01_not_voteable')]}">
+                                    <span style="font-weight:bold">
+                                    ( not applicable )
+                                    </span>
+                                </div>
+                                <group name="group_vote_count_yes_no" col="4"
+                                       attrs="{'invisible':[('type','!=','02_yes_or_no')]}">
+                                    <group name="group_vote_count_left" colspan="2">
+                                        <field name="count_yes"
+                                               string="Affirmative votes"
+                                               style="width:60px"
+                                               attrs="{'readonly':[('assembly_state','!=','03_in_progress')]}"/>
+                                        <field name="count_no"
+                                               string="Negative votes"
+                                               style="width:60px"
+                                               attrs="{'readonly':[('assembly_state','!=','03_in_progress')]}"/>
+                                    </group>
+                                    <group name="group_vote_count_right" colspan="2">
+                                        <field name="count_abstention"
+                                               string="Abstentions"
+                                               style="width:60px"
+                                               attrs="{'readonly':[('assembly_state','!=','03_in_progress')]}"/>
+                                        <field name="count_null"
+                                               string="Null votes"
+                                               style="width:60px"
+                                               attrs="{'readonly':[('assembly_state','!=','03_in_progress')]}"/>
+                                    </group>
+                                </group>
+                                <div name="div_option_ids"
+                                     class="panel-body"
+                                     style="background:#f9f9f9;border-color:#cccccc;border-width:1px;border-style:solid;margin:0 auto;margin-left:40px;margin-right:40px;margin-top:20px;margin-bottom:20px"
+                                     attrs="{'invisible':[('type','!=','03_options')]}">
+                                    <field name="option_ids" nolabel="1"
+                                           class="oe_edit_only"
+                                           attrs="{'readonly':[('assembly_state','=','04_finished')]}"
+                                           context="{'tree_view_ref':'base_wua_assembly.wua_agendaitemoption_particular_view_tree'}"/>
+                                    <field name="option_ids_readonly" nolabel="1"
+                                           class="oe_read_only"
+                                           context="{'tree_view_ref':'base_wua_assembly.wua_agendaitemoption_particular_view_tree'}"
+                                           style="pointer-events:none"/>
+                                </div>
+                            </page>
+                            <page name="page_final_summary"
+                                  string="Final Summary">
+                                <field name="final_summary"
+                                       attrs="{'readonly':[('assembly_state','!=','03_in_progress')]}"/>
+                            </page>
+                            <page name="page_internal_notes" nolabel="1"
+                                  string="Notes (private)"
+                                  groups="base_wua.group_wua_user">
+                                <field name="internal_notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"
+                           groups="base_wua.group_wua_user"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_agendaitem_particular_view_tree" model="ir.ui.view">
+        <field name="name">Agenda Items (tree view)</field>
+        <field name="model">wua.agendaitem</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_assembly_agendaitem_view_tree"
+                  default_order="number">
+                <field name="number"
+                       string=""/>
+                <field name="description"
+                       string="Assemb. Item"/>
+                <field name="count_yes"
+                       string="Yes"/>
+                <field name="count_no"
+                       string="No"/>
+                <field name="count_abstention"
+                       string="Abs."/>
+                <field name="count_null"
+                       string="Nul."/>
+                <field name="count_total"
+                       string="Total"/>
+                <field name="icon_approved"
+                       widget="image" string=" "/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_agendaitem_particular_view_search" model="ir.ui.view">
+        <field name="name">Agenda Items (search view)</field>
+        <field name="model">wua.agendaitem</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="description"/>
+                <filter string="Approved Item: Yes"
+                        name="approved_yes"
+                        domain="[('approved','=','01_yes')]"/>
+                <filter string="Approved Item: No"
+                        name="approved_no"
+                        domain="[('approved','=','02_no')]"/>
+                <filter string="Approved Item: Not applicable (multiple options)"
+                        name="approved_not_applicable"
+                        domain="[('approved','=','03_not_applicable')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_agendaitemoption_particular_view_form" model="ir.ui.view">
+        <field name="name">Options (form view)</field>
+        <field name="model">wua.agendaitem.option</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="option"/>
+                    <field name="count_option"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_agendaitemoption_particular_view_tree" model="ir.ui.view">
+        <field name="name">Options (tree view)</field>
+        <field name="model">wua.agendaitem.option</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom"
+                  class="o_base_wua_assembly_agendaitem_option_view_tree"
+                  default_order="sequence">
+                <field name="assembly_state" invisible="1"/>
+                <field name="sequence" widget="handle"/>
+                <field name="option"
+                       string="Option / Candidature"/>
+                <field name="count_option"
+                       string="Votes"
+                       attrs="{'readonly':[('assembly_state','!=','03_in_progress')]}"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>
