@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_vegetationindex_config_settings_view_form"
+            model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.assembly.configuration</field>
+        <field name="arch" type="xml">
+            <form string="Assenblies Settings"
+                  class="oe_form_configuration">
+                <header>
+                    <button string="Apply" type="object" name="execute"
+                     class="oe_highlight"/>
+                    <button string="Cancel" type="object" name="cancel"
+                     class="oe_link"/>
+                </header>
+                <group string="Default Address"
+                       name="defaultaddress_configuration_group">
+                    <field name="assembly_street" string="Street"/>
+                    <field name="assembly_zip" string="ZIP Code"
+                           style="width:100px"/>
+                    <field name="assembly_city" string="City"
+                           style="width:200px"/>
+                    <field name="assembly_state_id" string="Province"
+                           style="width:200px"
+                           options="{'no_quick_create':True,
+                                     'no_create_edit':True,
+                                     'no_open':True}"/>
+                    <field name="assembly_country_id" string="Country"
+                           style="width:200px"
+                           options="{'no_quick_create':True,
+                                     'no_create_edit':True,
+                                     'no_open':True}"/>
+                </group>
+                <group string="Responsible Persons"
+                       name="responsiblepersons_configuration_group">
+                    <field name="assembly_president_id" string="President"
+                           style="width:200px"
+                           options="{'no_quick_create':True,
+                                     'no_create_edit':True}"/>
+                    <field name="assembly_secretary_id" string="Secretary"
+                           style="width:200px"
+                           options="{'no_quick_create':True,
+                                     'no_create_edit':True}"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_assembly_configuration_action"
+            model="ir.actions.act_window">
+        <field name="name">Configure assemblies</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">wua.assembly.configuration</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+    <menuitem id="parameters_menu"
+              name="Parameters"
+              parent="configuration_menu"
+              sequence="1"
+              action="wua_assembly_configuration_action"
+              groups="base.group_system"/>
+
+</odoo>

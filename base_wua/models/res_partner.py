@@ -206,6 +206,7 @@ class ResPartner(models.Model):
 
     legalrep_id = fields.Many2one(
         string='Person acting as legal representative',
+        comodel_name='res.partner',
         store=True,
         compute='_compute_legalrep_id',
         index=True)
