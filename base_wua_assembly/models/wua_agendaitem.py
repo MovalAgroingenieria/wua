@@ -262,7 +262,7 @@ class WuaAgendaitem(models.Model):
                 option_ids_readonly = record.option_ids
             record.option_ids_readonly = option_ids_readonly
 
-    @api.depends('option_ids')
+    @api.depends('option_ids', 'option_ids.count_option')
     def _compute_chosen_option_id(self):
         for record in self:
             chosen_option_id = None
