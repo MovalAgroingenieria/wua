@@ -13,6 +13,18 @@
             <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
         </record>
 
+        <record id="rule_wua_delegationvote_group_wua_portal_user" model="ir.rule">
+            <field name="name">Rule for Wua Portal User on delegation votes</field>
+            <field name="model_id" ref="model_wua_delegationvote"/>
+            <field name="domain_force">
+                ['|', ('grantor_id','=',user.partner_id.id),
+                 '|', ('grantor_id.child_ids','=',user.partner_id.id),
+                 '|', ('receiver_id','=',user.partner_id.id),
+                      ('receiver_id.child_ids','=',user.partner_id.id)]
+            </field>
+            <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
+        </record>
+
     </data>
 
 </odoo>

@@ -27,6 +27,7 @@
         "views/wua_assembly_view.xml",
         "views/wua_agendaitem_view.xml",
         "views/wua_attendance_view.xml",
+        "views/wua_delegationvote_view.xml",
     ],
     "installable": True,
     "post_init_hook": "post_init_hook",

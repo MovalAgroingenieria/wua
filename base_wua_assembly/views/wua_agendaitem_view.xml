@@ -154,7 +154,7 @@
                             <page name="page_final_summary"
                                   string="Final Summary">
                                 <field name="final_summary"
-                                       attrs="{'readonly':[('assembly_state','!=','03_in_progress')]}"/>
+                                       attrs="{'readonly':['|',('assembly_state','=','01_draft'),('assembly_state','=','02_called')]}"/>
                             </page>
                             <page name="page_internal_notes" nolabel="1"
                                   string="Notes (private)"
