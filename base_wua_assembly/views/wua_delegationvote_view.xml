@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_delegationvote_particular_view_form" model="ir.ui.view">
+        <field name="name">Delegations of vote (form view)</field>
+        <field name="model">wua.delegationvote</field>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <field name="id" invisible="1"/>
+                <field name="assembly_state" invisible="1"/>
+                <header>
+                    <button name="action_go_to_state_02_validated"
+                            type="object" string="Validate"
+                            style="width: 105px;"
+                            class="oe_highlight"
+                            attrs="{'invisible': ['|',('assembly_state','!=','02_called'),('state','=','02_validated')]}"
+                            groups="base_wua.group_wua_user"
+                            confirm="This action will change the delegation of votes to the 'Validated' state. Proceed?"/>
+                    <button name="action_return_to_state_01_draft"
+                            type="object" string="Cancel"
+                            style="width: 105px;"
+                            attrs="{'invisible': ['|',('assembly_state','!=','02_called'),('state','=','01_draft')]}"
+                            groups="base_wua.group_wua_user"
+                            confirm="This action will return the delegation of votes to the 'Draft' state. Proceed?"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="01_draft,02_validated"/>
+                </header>                
+                <sheet>
+                    <div class="oe_title">
+                        <label for="grantor_id" string="Grantor:"/>
+                        <h1>
+                             <field name="grantor_id"
+                                    style="margin-top:5px;"
+                                    options="{'no_quick_create':True,
+                                              'no_create_edit':True}"
+                                    attrs="{'readonly': ['|',('id','>',0),('assembly_state','=','04_finished')]}"/>
+                        </h1>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="receiver_id"
+                                   string="Receiver"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly': ['|',('id','>',0),('assembly_state','=','04_finished')]}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="transferred_votes"
+                                   string="Transferred Votes"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="page_notes"
+                                  string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_delegationvote_particular_view_tree" model="ir.ui.view">
+        <field name="name">Delegations of vote (tree view)</field>
+        <field name="model">wua.delegationvote</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_assembly_delegationvote_view_tree"
+                  default_order="grantor_id">
+                <field name="grantor_id"
+                       string="Grantor"
+                       widget="many2one_unclickable"/>
+                <field name="receiver_id"
+                       string="Receiver"
+                       widget="many2one_unclickable"/>
+                <field name="transferred_votes"
+                       string="Transferred Votes"/>
+                <field name="state"
+                       string="State"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_delegationvote_particular_view_search" model="ir.ui.view">
+        <field name="name">Delegations of (search view)</field>
+        <field name="model">wua.delegationvote</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="grantor_id"/>
+                <field name="receiver_id"/>
+                <filter string="State: Draft"
+                        name="state_draft"
+                        domain="[('state','=','01_draft')]"/>
+                <filter string="State: Validated"
+                        name="state_validated"
+                        domain="[('state','=','02_validated')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_validate_delegations_of_vote" model="ir.actions.server">
+        <field name="name">Validate</field>
+        <field name="model_id" ref="model_wua_delegationvote"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.delegationvote'].validate_delegations_of_vote(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_validate_delegations_of_vote" model="ir.values">
+        <field name="name">Validate</field>
+        <field name="model">wua.delegationvote</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_delegations_of_vote'))"/>
+    </record>
+
+    <record id="wua_cancel_delegations_of_vote" model="ir.actions.server">
+        <field name="name">Cancel</field>
+        <field name="model_id" ref="model_wua_delegationvote"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.delegationvote'].cancel_delegations_of_vote(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_cancel_delegations_of_vote" model="ir.values">
+        <field name="name">Cancel</field>
+        <field name="model">wua.delegationvote</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_delegations_of_vote'))"/>
+    </record>
+
+</odoo>

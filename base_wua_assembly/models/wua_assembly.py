@@ -234,6 +234,11 @@ class WuaAssembly(models.Model):
         string='Number of attendances',
         compute='_compute_number_of_attendances',)
 
+    delegationvote_ids = fields.One2many(
+        string='Delegations of vote',
+        comodel_name='wua.delegationvote',
+        inverse_name='assembly_id',)
+
     number_of_delegations = fields.Integer(
         string='Number of delegations of vote',
         compute='_compute_number_of_delegations',)
@@ -341,9 +346,8 @@ class WuaAssembly(models.Model):
     def _compute_number_of_delegations(self):
         for record in self:
             number_of_delegations = 0
-            # Provisional
-            # if record.delegationvote_ids:
-            #     number_of_delegations = len(record.delegationvote_ids)
+            if record.delegationvote_ids:
+                number_of_delegations = len(record.delegationvote_ids)
             record.number_of_delegations = number_of_delegations
 
     @api.multi
@@ -641,7 +645,28 @@ class WuaAssembly(models.Model):
         return act_window
 
     @api.multi
-    def action_get_delegations(self):
+    def action_get_delegationvotes(self):
         self.ensure_one()
-        # Provisional
-        print 'action_get_delegations'
+        current_assembly = self
+        id_tree_view = self.env.ref(
+            'base_wua_assembly.wua_delegationvote_particular_view_tree').id
+        id_form_view = self.env.ref(
+            'base_wua_assembly.wua_delegationvote_particular_view_form').id
+        search_view = self.env.ref(
+            'base_wua_assembly.wua_delegationvote_particular_view_search')
+        custom_context = \
+            {'default_assembly_id': current_assembly.id}
+        suffix_title = current_assembly._get_state_clarification()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Delegations of vote') + ' ' + suffix_title,
+            'res_model': 'wua.delegationvote',
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': [search_view.id],
+            'target': 'current',
+            'domain': [('assembly_id', '=', current_assembly.id)],
+            'context': custom_context,
+            }
+        return act_window

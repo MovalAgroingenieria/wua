@@ -6,3 +6,4 @@ from . import wua_assembly_config_settings
 from . import wua_assembly
 from . import wua_agendaitem
 from . import wua_attendance
+from . import wua_delegationvote

@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-06 13:54+0000\n"
-"PO-Revision-Date: 2023-03-06 13:54+0000\n"
+"POT-Creation-Date: 2023-03-07 17:01+0000\n"
+"PO-Revision-Date: 2023-03-07 17:01+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
+msgid "<span class=\"o_stat_text\">Delegations</span>"
+msgstr "<span class=\"o_stat_text\">Delegacions</span>"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
@@ -99,6 +104,12 @@ msgid "<span>ITEM N.</span>"
 msgstr "<span>Punt n.</span>"
 
 #. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:134
+#, python-format
+msgid "A partner cannot give their votes if they have already received votes from other partners."
+msgstr "Un soci no pot cedir els vots si ja ha rebut vots daltres socis."
+
+#. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_agendaitem_particular_view_tree
 msgid "Abs."
 msgstr "Abs."
@@ -132,7 +143,7 @@ msgid "Agenda Item of an assembly"
 msgstr "Punt de l'ordre del dia"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:589
+#: code:addons/base_wua_assembly/models/wua_assembly.py:593
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_agendaitem_ids
 #, python-format
 msgid "Agenda Items"
@@ -186,6 +197,7 @@ msgstr "Assemblees"
 #: model:ir.model,name:base_wua_assembly.model_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_agendaitem_assembly_id
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_assembly_id
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_assembly_id
 msgid "Assembly"
 msgstr "Assemblea"
 
@@ -202,6 +214,7 @@ msgstr "Identificador d'assemblea"
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_agendaitem_assembly_state
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_agendaitem_option_assembly_state
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_assembly_state
 msgid "Assembly State"
 msgstr "Estat de l'assemblea"
 
@@ -226,7 +239,7 @@ msgid "Attendances"
 msgstr "Assistències"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:610
+#: code:addons/base_wua_assembly/models/wua_assembly.py:614
 #, python-format
 msgid "CALLED"
 msgstr "CONVOCADA"
@@ -234,17 +247,20 @@ msgstr "CONVOCADA"
 #. module: base_wua_assembly
 #: selection:wua.agendaitem,assembly_state:0
 #: selection:wua.assembly,state:0
+#: selection:wua.delegationvote,assembly_state:0
 msgid "Called"
 msgstr "Convocada"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:630
+#: code:addons/base_wua_assembly/models/wua_assembly.py:634
 #, python-format
 msgid "Calls"
 msgstr "Citacions"
 
 #. module: base_wua_assembly
+#: model:ir.actions.server,name:base_wua_assembly.wua_cancel_delegations_of_vote
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_vegetationindex_config_settings_view_form
 msgid "Cancel"
 msgstr "Cancel·la"
@@ -306,6 +322,7 @@ msgstr "País"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_configuration_create_uid
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_create_uid
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_create_uid
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_create_uid
 msgid "Created by"
 msgstr "Creat per"
 
@@ -316,6 +333,7 @@ msgstr "Creat per"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_configuration_create_date
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_create_date
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_create_date
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_create_date
 msgid "Created on"
 msgstr "Creat el"
 
@@ -326,7 +344,7 @@ msgid "Current Year"
 msgstr "Any actual"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:608
+#: code:addons/base_wua_assembly/models/wua_assembly.py:612
 #, python-format
 msgid "DRAFT"
 msgstr "ESBORRANY"
@@ -355,6 +373,23 @@ msgid "Default Address"
 msgstr "Adreça (valors per defecte)"
 
 #. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_name
+msgid "Delegation Identifier"
+msgstr "Identificador de delegació de votació"
+
+#. module: base_wua_assembly
+#: model:ir.model,name:base_wua_assembly.model_wua_delegationvote
+msgid "Delegation of vote in assamblies"
+msgstr "Delegació de vots en assemblees"
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_assembly.py:662
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_delegationvote_ids
+#, python-format
+msgid "Delegations of vote"
+msgstr "Delegacions de vots"
+
+#. module: base_wua_assembly
 #: model:ir.model,name:base_wua_assembly.model_wizard_preview_publicationtext
 msgid "Dialog box to show the preview of the publication text"
 msgstr "Quadre de diàleg per mostrar la previsualització del text de citació"
@@ -366,6 +401,7 @@ msgstr "Quadre de diàleg per mostrar la previsualització del text de citació"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_configuration_display_name
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_display_name
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_display_name
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_display_name
 msgid "Display Name"
 msgstr "Mostrar Nom"
 
@@ -377,17 +413,19 @@ msgstr "Posició"
 #. module: base_wua_assembly
 #: selection:wua.agendaitem,assembly_state:0
 #: selection:wua.assembly,state:0
+#: selection:wua.delegationvote,assembly_state:0
+#: selection:wua.delegationvote,state:0
 msgid "Draft"
 msgstr "Esborrany"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:421
+#: code:addons/base_wua_assembly/models/wua_assembly.py:425
 #, python-format
 msgid "ERROR IN TEMPLATE"
 msgstr "ERROR A LA PLANTILLA"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:614
+#: code:addons/base_wua_assembly/models/wua_assembly.py:618
 #, python-format
 msgid "FINISHED"
 msgstr "FINALITZADA"
@@ -406,6 +444,7 @@ msgstr "Finalitzar"
 #. module: base_wua_assembly
 #: selection:wua.agendaitem,assembly_state:0
 #: selection:wua.assembly,state:0
+#: selection:wua.delegationvote,assembly_state:0
 msgid "Finished"
 msgstr "Finished"
 
@@ -421,6 +460,17 @@ msgid "First hour (as hh:mm)"
 msgstr "1ª convocatòria (hh:mm)"
 
 #. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_grantor_id
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_tree
+msgid "Grantor"
+msgstr "Soci que dóna"
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+msgid "Grantor:"
+msgstr "Soci que dóna:"
+
+#. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_search
 msgid "Group By"
 msgstr "Agrupar per"
@@ -432,11 +482,12 @@ msgstr "Agrupar per"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_configuration_id
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_id
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_id
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_id
 msgid "ID"
 msgstr "ID"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:612
+#: code:addons/base_wua_assembly/models/wua_assembly.py:616
 #, python-format
 msgid "IN PROGRESS"
 msgstr "EN CURS"
@@ -449,6 +500,7 @@ msgstr "Icon for voting result"
 #. module: base_wua_assembly
 #: selection:wua.agendaitem,assembly_state:0
 #: selection:wua.assembly,state:0
+#: selection:wua.delegationvote,assembly_state:0
 msgid "In progress"
 msgstr "En curs"
 
@@ -483,16 +535,35 @@ msgid "It is not possible to choose multiple types of voting."
 msgstr "No es permet triar diversos tipus de votació alhora."
 
 #. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:160
+#, python-format
+msgid "It is only allowed to create a delegation of vote in 'CALLED' state."
+msgstr "Només es permet dur a terme delegacions de vot quan l'assemblea es troba a l'estat 'CONVOCADA'."
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:169
+#, python-format
+msgid "It is only allowed to delete a delegation of vote in 'CALLED' state."
+msgstr "Només es permet suprimir delegacions de vot quan l'assemblea es troba a l'estat 'CONVOCADA'."
+
+#. module: base_wua_assembly
 #: code:addons/base_wua_assembly/models/wua_agendaitem.py:393
 #, python-format
 msgid "It is only allowed to delete an agenda item in 'DRAFT' state."
 msgstr "Només es permet suprimir un punt de l'ordre del dia si l'assemblea es troba en estat 'ESBORRANY'."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:498
+#: code:addons/base_wua_assembly/models/wua_assembly.py:502
 #, python-format
 msgid "It is only allowed to delete an assembly in 'DRAFT' state."
 msgstr "Només es permet eliminar una assemblea si aquesta es troba en estat 'ESBORRANY'."
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:192
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:207
+#, python-format
+msgid "It is only possible to validate or cancel voting delegations when the assembly is in the 'CALLED' state."
+msgstr "Només és possible validar o cancel·lar delegacions de vot quan l'assemblea es troba a l'estat 'CONVOCADA'."
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_agendaitem_number
@@ -506,6 +577,7 @@ msgstr "Nº punt"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly___last_update
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_configuration___last_update
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance___last_update
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote___last_update
 msgid "Last Modified on"
 msgstr "Última modificació el "
 
@@ -516,6 +588,7 @@ msgstr "Última modificació el "
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_configuration_write_uid
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_write_uid
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_write_uid
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_write_uid
 msgid "Last Updated by"
 msgstr "Última actualització per"
 
@@ -526,6 +599,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_configuration_write_date
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_write_date
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_write_date
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_write_date
 msgid "Last Updated on"
 msgstr "Última actualització el"
 
@@ -552,11 +626,13 @@ msgid "Not voteable"
 msgstr "No votable"
 
 #. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_notes
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_search
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_tree
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
 msgid "Notes"
-msgstr "Notes públiques"
+msgstr "Notes"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_agendaitem_particular_view_form
@@ -666,7 +742,7 @@ msgid "Preview of publication text"
 msgstr "Previsualització de la citació"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:566
+#: code:addons/base_wua_assembly/models/wua_assembly.py:570
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wizard_preview_publicationtext_publication_text_preview
 #: model:ir.ui.view,arch_db:base_wua_assembly.wizard_preview_publicationtext_view_form
 #, python-format
@@ -696,6 +772,13 @@ msgstr "Notes públiques (com a text)"
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
 msgid "Publication Text"
 msgstr "Citació"
+
+#. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_receiver_id
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_tree
+msgid "Receiver"
+msgstr "Soci que rep"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_vegetationindex_config_settings_view_form
@@ -740,7 +823,9 @@ msgstr "Iniciar"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_state
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_state
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_tree
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_tree
 msgid "State"
 msgstr "Estat"
 
@@ -756,6 +841,7 @@ msgstr "Estat: Convocada"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_search
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_search
 msgid "State: Draft"
 msgstr "Estat: Esborrany"
 
@@ -770,6 +856,11 @@ msgid "State: In progress"
 msgstr "Estat: En curs"
 
 #. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_search
+msgid "State: Validated"
+msgstr "Estat: Validat"
+
+#. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_configuration_assembly_street
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_street
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
@@ -778,7 +869,7 @@ msgid "Street"
 msgstr "Carrer"
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:431
+#: code:addons/base_wua_assembly/models/wua_assembly.py:435
 #, python-format
 msgid "The assembly date must be after the convocation date."
 msgstr "La data assemblea ha de ser posterior a la de citació."
@@ -787,6 +878,18 @@ msgstr "La data assemblea ha de ser posterior a la de citació."
 #: sql_constraint:wua.assembly:0
 msgid "The first hour must be a value less than 24."
 msgstr "L'hora de la 1ª convocatòria ha de ser un valor entre 00:00 i 23:59."
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:150
+#, python-format
+msgid "The grantor and the receiver cannot be the same."
+msgstr "El cedent i el receptor no poden ser el mateix soci."
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:128
+#, python-format
+msgid "The grantor must be a owner with votes."
+msgstr "El cedent ha de ser propietari i tenir vots."
 
 #. module: base_wua_assembly
 #: sql_constraint:wua.agendaitem:0
@@ -824,12 +927,18 @@ msgid "The number of votes of an option must be a value greater than or equal to
 msgstr "El nombre de vots d'una opció ha de ser un valor més gran o igual que 0."
 
 #. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:143
+#, python-format
+msgid "The receiver must be a owner."
+msgstr "El receptor ha de ser propietari."
+
+#. module: base_wua_assembly
 #: sql_constraint:wua.assembly:0
 msgid "The second hour must be a value less than 24."
 msgstr "L'hora de la 2ª convocatòria ha de ser un valor entre 00:00 i 23:59."
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_assembly.py:439
+#: code:addons/base_wua_assembly/models/wua_assembly.py:443
 #, python-format
 msgid "The second hour must be after the first hour."
 msgstr "La 2ª convocatòria ha de ser posterior a la 1ª."
@@ -850,9 +959,19 @@ msgid "There is already a similar attendance record."
 msgstr "Ja heu introduït un registre d'assistència amb el mateix codi."
 
 #. module: base_wua_assembly
+#: sql_constraint:wua.delegationvote:0
+msgid "There is already a similar delegation record."
+msgstr "El cedent ja havia delegat els seus vots per aquesta assemblea."
+
+#. module: base_wua_assembly
 #: sql_constraint:wua.agendaitem.option:0
 msgid "There is already a similar option."
 msgstr "Ja heu introduït una opció amb el mateix codi."
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+msgid "This action will change the delegation of votes to the 'Validated' state. Proceed?"
+msgstr "Si confirmeu aquesta acció, la delegació de vots passarà a l'estat 'Validada'. Voleu continuar?"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
@@ -868,6 +987,11 @@ msgstr "Si confirmeu aquesta acció, l'assemblea passarà a l'estat 'Finalitzada
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
 msgid "This action will change to the 'In progress' state. Proceed?"
 msgstr "Si confirmeu aquesta acció, l'assemblea passarà a l'estat 'En curs'. Voleu continuar?"
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+msgid "This action will return the delegation of votes to the 'Draft' state. Proceed?"
+msgstr "Aquesta acció suposarà que la delegació de vots torni a l'estat 'Esborrany'. Voleu continuar?"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
@@ -901,6 +1025,13 @@ msgid "Total votes"
 msgstr "Vots totals"
 
 #. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_transferred_votes
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_tree
+msgid "Transferred Votes"
+msgstr "Vots transferits"
+
+#. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_agendaitem_type
 msgid "Type of agenda item"
 msgstr "Tipus de punt"
@@ -919,6 +1050,17 @@ msgstr "Tipus: No votable"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_agendaitem_type_02_yes_or_no
 msgid "Type: Yes/No"
 msgstr "Tipus: Sí/No"
+
+#. module: base_wua_assembly
+#: model:ir.actions.server,name:base_wua_assembly.wua_validate_delegations_of_vote
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+msgid "Validate"
+msgstr "Validar"
+
+#. module: base_wua_assembly
+#: selection:wua.delegationvote,state:0
+msgid "Validated"
+msgstr "Validat"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_agendaitem_particular_view_form
@@ -952,6 +1094,13 @@ msgstr "Sí"
 #: selection:wua.agendaitem,type:0
 msgid "Yes/No"
 msgstr "Sí/No"
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:186
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:201
+#, python-format
+msgid "You do not have permission to execute this action."
+msgstr "No teniu permís per executar aquesta operació."
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_vegetationindex_config_settings_view_form
