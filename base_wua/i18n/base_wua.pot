@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-13 12:33+0000\n"
-"PO-Revision-Date: 2023-02-13 12:33+0000\n"
+"POT-Creation-Date: 2023-03-07 12:03+0000\n"
+"PO-Revision-Date: 2023-03-07 12:03+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -200,6 +200,11 @@ msgid "<span>County:</span>"
 msgstr ""
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<span>Email:</span>"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_report_document
 msgid "<span>Farm Property:</span>"
 msgstr ""
@@ -227,6 +232,11 @@ msgstr ""
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_report_document
 msgid "<span>Min. Elevation:</span>"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<span>Mobile:</span>"
 msgstr ""
 
 #. module: base_wua
@@ -262,7 +272,13 @@ msgid "<span>Parcel report [</span>"
 msgstr ""
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<span>Phone:</span>"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>Printing date:</span>"
 msgstr ""
@@ -270,6 +286,11 @@ msgstr ""
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_report_document
 msgid "<span>Rural Location:</span>"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<span>TIN:</span>"
 msgstr ""
 
 #. module: base_wua
@@ -367,6 +388,11 @@ msgstr ""
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<strong>Leased&amp;nbsp;parcels</strong>"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+msgid "<strong>Legal&amp;nbsp;representative</strong>"
 msgstr ""
 
 #. module: base_wua
@@ -523,7 +549,7 @@ msgstr ""
 
 #. module: base_wua
 #. openerp-web
-#: code:addons/base_wua/static/src/js/list_view.js:18
+#: code:addons/base_wua/static/src/js/list_view.js:19
 #, python-format
 msgid "Archive"
 msgstr ""
@@ -1176,7 +1202,7 @@ msgstr ""
 
 #. module: base_wua
 #. openerp-web
-#: code:addons/base_wua/static/src/js/list_view.js:20
+#: code:addons/base_wua/static/src/js/list_view.js:21
 #, python-format
 msgid "Delete"
 msgstr ""
@@ -1187,12 +1213,14 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivationplan_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_farmproperty_description
+#: model:ir.model.fields,field_description:base_wua.field_wua_hydraulicsector_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_irrigationsystem_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_mastertable_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_concessionlink_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_parceltag_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_productionmethod_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_rurallocation_description
+#: model:ir.model.fields,field_description:base_wua.field_wua_soiltype_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_waterreservoir_description
 msgid "Description"
@@ -1200,7 +1228,7 @@ msgstr ""
 
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wizard_change_parcel_name
-msgid "Dialog box to change the parcel name (code)"
+msgid "Dialog box to change the parcel name (code), with irrigation infrastructure"
 msgstr ""
 
 #. module: base_wua
@@ -1415,7 +1443,7 @@ msgstr ""
 
 #. module: base_wua
 #. openerp-web
-#: code:addons/base_wua/static/src/js/list_view.js:17
+#: code:addons/base_wua/static/src/js/list_view.js:18
 #, python-format
 msgid "Export"
 msgstr ""
@@ -1456,7 +1484,7 @@ msgstr ""
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_056
-msgid "Flowers and ornamentals"
+msgid "Flores"
 msgstr ""
 
 #. module: base_wua
@@ -1650,6 +1678,11 @@ msgstr ""
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_081
 msgid "Hop"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_069
+msgid "Hortalizas (No tomate)"
 msgstr ""
 
 #. module: base_wua
@@ -2366,7 +2399,7 @@ msgid "Onion"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:470
+#: code:addons/base_wua/models/res_partner.py:471
 #, python-format
 msgid "Only one legal representative is allowed."
 msgstr ""
@@ -2572,7 +2605,7 @@ msgstr ""
 #. module: base_wua
 #: code:addons/base_wua/controllers/partner.py:43
 #: code:addons/base_wua/controllers/partner.py:75
-#: code:addons/base_wua/models/res_partner.py:628
+#: code:addons/base_wua/models/res_partner.py:629
 #: code:addons/base_wua/models/wua_parcel.py:1611
 #: model:ir.actions.act_window,name:base_wua.res_partner_partnerlink_action
 #: model:ir.actions.act_window,name:base_wua.wua_parcel_action
@@ -2811,6 +2844,11 @@ msgstr ""
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_report_document
 msgid "Printed"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_parcel_report_document
+msgid "Printing date:"
 msgstr ""
 
 #. module: base_wua
@@ -3243,14 +3281,14 @@ msgid "The \"URL GIS Viewer WMS\" parameter or \"URL GIS Viewer WFS\" are not po
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:521
-#: code:addons/base_wua/models/res_partner.py:543
+#: code:addons/base_wua/models/res_partner.py:522
+#: code:addons/base_wua/models/res_partner.py:544
 #, python-format
 msgid "The VAT code (TIN) already exists."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:457
+#: code:addons/base_wua/models/res_partner.py:458
 #, python-format
 msgid "The VAT number [%s] for partner [%s] is invalid."
 msgstr ""
@@ -3382,14 +3420,14 @@ msgid "The orientation must be a value between 0 and 360 degrees."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:516
-#: code:addons/base_wua/models/res_partner.py:531
+#: code:addons/base_wua/models/res_partner.py:517
+#: code:addons/base_wua/models/res_partner.py:532
 #, python-format
 msgid "The partner code already exists."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:436
+#: code:addons/base_wua/models/res_partner.py:437
 #, python-format
 msgid "The partner code must be a positive value."
 msgstr ""
@@ -3553,7 +3591,7 @@ msgstr ""
 
 #. module: base_wua
 #. openerp-web
-#: code:addons/base_wua/static/src/js/list_view.js:19
+#: code:addons/base_wua/static/src/js/list_view.js:20
 #, python-format
 msgid "Unarchive"
 msgstr ""
@@ -3617,11 +3655,6 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_subparcel_view_search
 msgid "Variety"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_069
-msgid "Vegetables"
 msgstr ""
 
 #. module: base_wua

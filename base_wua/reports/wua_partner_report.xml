@@ -111,12 +111,99 @@
                                                         </t>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <t t-set="printing_date" t-value="o.env['wua.parcel'].transform_date_to_locale(
+                                                        datetime.datetime.now().date().strftime('%Y-%m-%d'), lang=o.lang)"/>
+                                                    <td><span>Printing date:</span></td>
+                                                    <td class="text-right">
+                                                        <strong><span t-esc="printing_date"/></strong>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Legal representative data -->
+                        <t t-if="o.with_legalrep and o.legalrep_id">
+
+                            <div name="legalrep_id_data">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-balance-scale"/></div>
+                                            <div style="float: left; display: inline;"><strong>Legal&amp;nbsp;representative</strong></div>
+                                       </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-balance-scale"/></div>
+                                            <div style="float: left; display: inline;"><strong>Legal&amp;nbsp;representative</strong></div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="row" style="margin-top: 4px;">
+                                    <div class="col-xs-12" style="display: table;">
+                                        <div style="width: 50%; display: table-cell;">
+                                            <t t-if="o.legalrep_id.name">
+                                                <strong><span t-field="o.legalrep_id.name"/></strong>
+                                            <br/>
+                                            </t>
+                                            <t t-if="o.legalrep_id.street_type_show or o.legalrep_id.street or o.legalrep_id.street_num or o.legalrep_id.street2">
+                                                <t t-if="o.legalrep_id.street_type_show"><span t-field="o.legalrep_id.street_type_show"/></t>
+                                                <t t-if="o.legalrep_id.street"><span t-field="o.legalrep_id.street"/></t>
+                                                <t t-if="o.legalrep_id.street_num"><span t-field="o.legalrep_id.street_num"/></t>
+                                                <t t-if="o.legalrep_id.street2"><span t-field="o.legalrep_id.street2"/></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="o.legalrep_id.city or o.legalrep_id.zip">
+                                                <t t-if="o.legalrep_id.city"><span t-field="o.legalrep_id.city"/></t>
+                                                <t t-if="o.legalrep_id.zip"><span>-&amp;nbsp;</span><span t-field="o.legalrep_id.zip"/></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="o.legalrep_id.state_id or o.legalrep_id.country_id">
+                                                <t t-if="o.legalrep_id.state_id"><span t-field="o.legalrep_id.state_id"/></t>
+                                                <t t-if="o.legalrep_id.country_id"><span>-&amp;nbsp;</span><span t-field="o.legalrep_id.country_id"></span></t>
+                                                <br/>
+                                            </t>
+                                        </div>
+                                        <div style="display: table-cell; padding-left: 32px;">
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <t t-if="o.legalrep_id.vat">
+                                                        <tr>
+                                                            <td><span>TIN:</span></td>
+                                                            <td class="text-right"><span t-field="o.legalrep_id.vat"/></td>
+                                                        </tr>
+                                                    </t>
+                                                    <t t-if="o.legalrep_id.email">
+                                                        <tr>
+                                                            <td><span>Email:</span></td>
+                                                            <td class="text-right"><span t-field="o.legalrep_id.email"/></td>
+                                                        </tr>
+                                                    </t>
+                                                    <t t-if="o.legalrep_id.phone">
+                                                        <tr>
+                                                            <td><span>Phone:</span></td>
+                                                            <td class="text-right"><span t-field="o.legalrep_id.phone"/></td>
+                                                        </tr>
+                                                     </t>
+                                                    <t t-if="o.legalrep_id.mobile">
+                                                        <tr>
+                                                            <td><span>Mobile:</span></td>
+                                                            <td class="text-right"><span t-field="o.legalrep_id.mobile"/></td>
+                                                        </tr>
+                                                    </t>
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
 
                         <!-- Parcels data -->
                         <div name="wua_partnerlinks_ids" style="margin-top: 20px;">

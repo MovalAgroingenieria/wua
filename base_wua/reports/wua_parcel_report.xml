@@ -15,12 +15,20 @@
                 <t t-call="base_wua_report.wua_external_layout">
                     <div class="page">
 
-                    <!-- Vars -->
-                    <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <!-- Vars -->
+                        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="printing_date" t-value="o.transform_date_to_locale(
+                            datetime.datetime.now().date().strftime('%Y-%m-%d'), lang=o.partner_id.lang)"/>
+
+                        <!-- Printing date -->
+                        <div name="printing_date" class="text-right" style="margin: 0px; padding: 0px;">
+                            <span>Printing date: <strong><span t-esc="printing_date"/></strong></span>
+                        </div>
 
                         <!-- Title -->
                         <div name="title" class="text-center">
-                            <h4><strong>
+                            <h4 style="margin-top:0px; padding-top:0px;">
+                                <strong>
                                     <span>Parcel report [</span>
                                     <t t-if="o.name"><span t-field="o.name"></span></t>
                                     <span>]</span>
