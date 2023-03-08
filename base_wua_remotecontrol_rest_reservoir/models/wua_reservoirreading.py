@@ -93,8 +93,9 @@ class WuaReservoirreading(models.Model):
             reading_time = datetime.datetime.now().strftime(
                 '%Y-%m-%d %H:%M:%S'),
             for reservoirreading in reservoirreadings:
+                reservoir_id = reservoirreading['reservoir_id']
                 reservoir_data = {
-                    'reservoir_id': reservoirreading['reservoir_id'],
+                    'reservoir_id': reservoir_id,
                     'reading_time': reading_time,
                     'from_import': False,
                     }
@@ -102,8 +103,11 @@ class WuaReservoirreading(models.Model):
                     reservoir_data['volume_entered'] = \
                         reservoirreading['value']
                 else:
+                    reservoir_obj = self.env['wua.reservoir'].browse(
+                        reservoir_id)
                     reservoir_data['height'] = \
-                        reservoirreading['value'] * conversion_factor
+                        reservoirreading['value'] * conversion_factor - \
+                        reservoir_obj.height_correction
                 self.create(reservoir_data)
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)

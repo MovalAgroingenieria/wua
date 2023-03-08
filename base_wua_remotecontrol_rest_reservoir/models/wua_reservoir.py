@@ -18,6 +18,17 @@ class WuaReservoir(models.Model):
         [],
         string='Type of telecontrol associated')
 
+    height_correction = fields.Float(
+        string='Height correction for readings',
+        digits=(32, 2),
+        defaut=0.0)
+
+    _sql_constraints = [
+        ('valid_height_correction',
+         'CHECK (valid_height_correction >= 0)',
+         'The height correction must be zero or positive.'),
+        ]
+
     @api.multi
     def _compute_remotecontrol_enabled(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
