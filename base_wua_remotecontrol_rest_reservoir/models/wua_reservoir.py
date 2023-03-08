@@ -21,7 +21,8 @@ class WuaReservoir(models.Model):
     height_correction = fields.Float(
         string='Height correction for readings',
         digits=(32, 2),
-        defaut=0.0)
+        defaut=0.0,
+        required=True,)
 
     _sql_constraints = [
         ('valid_height_correction',
