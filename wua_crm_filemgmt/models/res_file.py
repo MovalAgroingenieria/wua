@@ -162,7 +162,11 @@ class ResFile(models.Model):
     def action_generate_parcels_shp(self):
         for record in self:
             parcels = record.parcellink_ids.mapped(lambda x: x.parcel_id)
-            result = parcels.generate_parcel_shp()
+            main_partner = None
+            partnerlinks = record.partnerlink_ids.filtered(lambda x: x.is_main)
+            if (len(partnerlinks) == 1):
+                main_partner = partnerlinks[0]
+            result = parcels.generate_parcel_shp(main_partner)
             attachment_obj = self.sudo().env['ir.attachment']
             parcel_label = _('Parcels')
             current_date = datetime.now()

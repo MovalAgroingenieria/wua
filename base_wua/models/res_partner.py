@@ -622,7 +622,7 @@ class ResPartner(models.Model):
     def action_generate_parcel_shp(self):
         self.ensure_one()
         parcels_of_partner = self.partnerlink_ids.mapped(lambda x: x.parcel_id)
-        result = parcels_of_partner.generate_parcel_shp()
+        result = parcels_of_partner.generate_parcel_shp(self)
         # get base url
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
         attachment_obj = self.sudo().env['ir.attachment']

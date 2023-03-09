@@ -49,6 +49,9 @@ class WuaParcel(models.Model):
     _img_step_y = 9
     _grid_font = "DejaVuSans-Bold.ttf"
 
+    # SHP generation
+    _parcels_fields_to_retrieve = ['name', 'area_gis', 'cadastral']
+
     _changed_partners = []
 
     @api.model_cr
@@ -1564,8 +1567,12 @@ class WuaParcel(models.Model):
             # Added to make sure some parcels are stored
             self.env.cr.commit()
 
+    def _process_zip_shp_result(self, parcel_shp, partner_id):
+        # HOOK: To be inherited by children
+        return parcel_shp
+
     @api.multi
-    def generate_parcel_shp(self):
+    def generate_parcel_shp(self, partner_id=None):
         url_gis_viewer_wfs = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_wfs')
         if (not url_gis_viewer_wfs):
@@ -1578,7 +1585,8 @@ class WuaParcel(models.Model):
         wfs_request_headers = {"Content-Type": "text/plain;charset=UTF-8"}
         wfs_request_content = '<GetFeature service="WFS" version="2.0.0" ' + \
             'outputFormat="shapezip"><Query typeName="parcel" ' + \
-            'propertyname="name,area_gis,cadastral">'
+            'propertyname="' + ','.join(self._parcels_fields_to_retrieve) +  \
+            '">'
         parcel_filter = '<Filter>'
         if (len(parcels) > 1):
             parcel_filter += '<or>'
@@ -1595,6 +1603,8 @@ class WuaParcel(models.Model):
             url_gis_viewer_wfs, headers=wfs_request_headers,
             data=wfs_request_content)
         parcel_shp = io.BytesIO(parcel_shp_response.content)
+        if (partner_id):
+            parcel_shp = self._process_zip_shp_result(parcel_shp, partner_id)
         result = base64.b64encode(parcel_shp.getvalue())
         return result
 

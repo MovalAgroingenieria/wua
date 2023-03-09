@@ -29,7 +29,7 @@ class PartnerShpController(http.Controller):
                     [('partner_code', '=', partner)])
                 parcels_of_partner = partner.partnerlink_ids.mapped(
                     lambda x: x.parcel_id)
-                parcel_shp = parcels_of_partner.generate_parcel_shp()
+                parcel_shp = parcels_of_partner.generate_parcel_shp(partner)
                 if parcel_shp:
                     _logger = logging.getLogger(name_partner_model)
                     _logger.info('Parcel SHP requested from http-get, '
@@ -66,7 +66,7 @@ class PartnerShpController(http.Controller):
             ip_remote_addr = request.httprequest.environ['REMOTE_ADDR']
             parcels_of_partner = partner.partnerlink_ids.mapped(
                 lambda x: x.parcel_id)
-            parcel_shp = parcels_of_partner.generate_parcel_shp()
+            parcel_shp = parcels_of_partner.generate_parcel_shp(partner)
             if parcel_shp:
                 _logger = logging.getLogger(name_partner_model)
                 _logger.info('Parcel SHP requested from http-get. '

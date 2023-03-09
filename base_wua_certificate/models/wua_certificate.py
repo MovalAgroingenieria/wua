@@ -575,7 +575,8 @@ class WuaCertificate(models.Model):
                 for record in self:
                     parcels_of_certificate = record.certificateparcel_ids.\
                         mapped(lambda x: x.parcel_id)
-                    result = parcels_of_certificate.generate_parcel_shp()
+                    result = parcels_of_certificate.generate_parcel_shp(
+                        record.partner_id)
                     zip_file.writestr(
                         record.name.replace('/', '-') + '.zip',
                         base64.b64decode(result))
@@ -586,7 +587,8 @@ class WuaCertificate(models.Model):
         else:
             parcels_of_certificate = self.certificateparcel_ids.mapped(
                 lambda x: x.parcel_id)
-            result = parcels_of_certificate.generate_parcel_shp()
+            result = parcels_of_certificate.generate_parcel_shp(
+                self.partner_id)
             filename = self.name.replace('/', '-') + '.zip'
         attachment_obj = self.sudo().env['ir.attachment']
         # Attachment info to create
