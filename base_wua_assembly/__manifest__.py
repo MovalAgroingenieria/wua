@@ -28,6 +28,7 @@
         "views/wua_agendaitem_view.xml",
         "views/wua_attendance_view.xml",
         "views/wua_delegationvote_view.xml",
+        "reports/wua_delegationvote_report.xml",
     ],
     "installable": True,
     "post_init_hook": "post_init_hook",

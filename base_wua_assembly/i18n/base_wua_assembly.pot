@@ -6,14 +6,41 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-07 17:01+0000\n"
-"PO-Revision-Date: 2023-03-07 17:01+0000\n"
+"POT-Creation-Date: 2023-03-09 13:26+0000\n"
+"PO-Revision-Date: 2023-03-09 13:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_report_document
+msgid "(TIN:"
+msgstr ""
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:31
+#, python-format
+msgid "<div style=\"text-align: justify;\">Mr. <b>{{ grantor.name }}</b> with Community Member No. <b>{{ grantor.partner_code }}</b>, by virtue of the provisions of the perminent articles of the Statutes of the {{ assembly.president_id.company_id.name }}, <b>AUTHORIZE</b>:<br><br>Mr. <b>{{ receiver.name }}</b> to represent him at the {{ assembly.issue }} of this Water Association Community, which will take place on the next {{ assembly_day }} of {{ assembly_month }} of {{ assembly_year }}.<br><br><div style=\"text-align: center;\"><br>The Authorized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Communard<br><br><br><br><br>VAT {{ receiver.vat }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VAT {{ grantor.vat }}<br><br><b>THE COMMUNITY SECRETARY</b><br><br><br><br>VAT {{ assembly.secretary_id.vat }}<br></div></div>"
+msgstr ""
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:63
+#, python-format
+msgid "<p><b>NOTE</b>: By virtue of the pertinent Statutes, the Authorizations must be submitted to the Irrigation Community, for its verification and legitimation by the Secretary of the Community. Failure to comply with this rule will invalidate any Authorization.</p>"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_report_document
+msgid "<span class=\"fa fa-cut\"/>\n"
+"                            <span style=\"color: lightgrey;\">\n"
+"                                -------------------------------------------------------------------\n"
+"                                            &amp;nbsp;Copy for Community&amp;nbsp;\n"
+"                                -------------------------------------------------------------------\n"
+"                            </span>"
+msgstr ""
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_form
@@ -90,7 +117,31 @@ msgid "<span>ITEM N.</span>"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:134
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+msgid "<span>This field allows jinja2 variables {{ object.attribute }}.\n"
+"                                          The available objects are assembly, grantor and receiver.\n"
+"                                    </span>"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+msgid "<span>This field allows jinja2 variables {{ object.attribute }}.\n"
+"                                          The only available object is assembly.\n"
+"                                    </span>"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_report_document
+msgid "<strong>DRAFT</strong>"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_report_document
+msgid "<strong>Delegation&amp;nbsp;vote</strong>"
+msgstr ""
+
+#. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:199
 #, python-format
 msgid "A partner cannot give their votes if they have already received votes from other partners."
 msgstr ""
@@ -369,10 +420,30 @@ msgid "Delegation of vote in assamblies"
 msgstr ""
 
 #. module: base_wua_assembly
+#: model:ir.actions.report.xml,name:base_wua_assembly.wua_delegationvote_report
+msgid "Delegation vote"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_delegation_vote_footer_text
+msgid "Delegation vote footer text"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_delegation_vote_main_text
+msgid "Delegation vote main text"
+msgstr ""
+
+#. module: base_wua_assembly
 #: code:addons/base_wua_assembly/models/wua_assembly.py:662
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_delegationvote_ids
 #, python-format
 msgid "Delegations of vote"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.model,name:base_wua_assembly.model_wizard_preview_delegationvotetext
+msgid "Dialog box to show the preview of the delegation vote text"
 msgstr ""
 
 #. module: base_wua_assembly
@@ -406,6 +477,8 @@ msgstr ""
 
 #. module: base_wua_assembly
 #: code:addons/base_wua_assembly/models/wua_assembly.py:425
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:322
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:345
 #, python-format
 msgid "ERROR IN TEMPLATE"
 msgstr ""
@@ -521,13 +594,13 @@ msgid "It is not possible to choose multiple types of voting."
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:160
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:225
 #, python-format
 msgid "It is only allowed to create a delegation of vote in 'CALLED' state."
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:169
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:234
 #, python-format
 msgid "It is only allowed to delete a delegation of vote in 'CALLED' state."
 msgstr ""
@@ -545,8 +618,8 @@ msgid "It is only allowed to delete an assembly in 'DRAFT' state."
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:192
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:207
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:277
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:292
 #, python-format
 msgid "It is only possible to validate or cancel voting delegations when the assembly is in the 'CALLED' state."
 msgstr ""
@@ -767,6 +840,16 @@ msgid "Receiver"
 msgstr ""
 
 #. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_rendered_delegation_vote_footer_text
+msgid "Rendered delegation vote footer text"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_rendered_delegation_vote_main_text
+msgid "Rendered delegation vote main text"
+msgstr ""
+
+#. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_vegetationindex_config_settings_view_form
 msgid "Responsible Persons"
 msgstr ""
@@ -855,6 +938,11 @@ msgid "Street"
 msgstr ""
 
 #. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_form
+msgid "Text"
+msgstr ""
+
+#. module: base_wua_assembly
 #: code:addons/base_wua_assembly/models/wua_assembly.py:435
 #, python-format
 msgid "The assembly date must be after the convocation date."
@@ -866,13 +954,13 @@ msgid "The first hour must be a value less than 24."
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:150
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:215
 #, python-format
 msgid "The grantor and the receiver cannot be the same."
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:128
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:193
 #, python-format
 msgid "The grantor must be a owner with votes."
 msgstr ""
@@ -913,7 +1001,7 @@ msgid "The number of votes of an option must be a value greater than or equal to
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:143
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:208
 #, python-format
 msgid "The receiver must be a owner."
 msgstr ""
@@ -1082,8 +1170,8 @@ msgid "Yes/No"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:186
-#: code:addons/base_wua_assembly/models/wua_delegationvote.py:201
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:271
+#: code:addons/base_wua_assembly/models/wua_delegationvote.py:286
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr ""

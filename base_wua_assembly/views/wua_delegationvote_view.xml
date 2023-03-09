@@ -52,6 +52,28 @@
                     </group>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
+                            <page name="page_delegationvote_text" string="Text">
+                                <br/>
+                                <label for="delegation_vote_main_text" class="oe_edit_only"/>
+                                <field name="delegation_vote_main_text" class="oe_edit_only"
+                                    attrs="{'readonly': [('state','=','02_validated')]}"/>
+                                <div class="oe_edit_only text-muted text-right" style="margin-top: 0px;">
+                                    <span>This field allows jinja2 variables {{ object.attribute }}.
+                                          The available objects are assembly, grantor and receiver.
+                                    </span>
+                                </div>
+                                <field name="rendered_delegation_vote_main_text" class="oe_read_only"/>
+                                <br/><br/>
+                                <label for="delegation_vote_footer_text" class="oe_edit_only"/>
+                                <field name="delegation_vote_footer_text" class="oe_edit_only"
+                                    attrs="{'readonly': [('state','=','02_validated')]}"/>
+                                <div class="oe_edit_only text-muted text-right" style="margin-top: 0px;">
+                                    <span>This field allows jinja2 variables {{ object.attribute }}.
+                                          The only available object is assembly.
+                                    </span>
+                                </div>
+                                <field name="rendered_delegation_vote_footer_text" class="oe_read_only"/>
+                            </page>
                             <page name="page_notes"
                                   string="Notes">
                                 <field name="notes"/>

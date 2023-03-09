@@ -2,6 +2,9 @@
 # Copyright 2023 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from datetime import datetime
+from jinja2 import Template, TemplateError
+from babel import dates
 from odoo import models, fields, api, exceptions, _
 
 
@@ -23,6 +26,52 @@ class WuaDelegationvote(models.Model):
             if current_assembly:
                 resp = current_assembly.state
         return resp
+
+    def _default_delegation_vote_main_text(self):
+        delegation_vote_main_text = _(
+            '<div style="text-align: justify;">Mr. <b>{{ grantor.name }}</b> '
+            'with Community Member No. <b>{{ grantor.partner_code }}</b>, by '
+            'virtue of the provisions of the perminent articles of the Statut'
+            'es of the {{ assembly.president_id.company_id.name }}, <b>AUTHOR'
+            'IZE</b>:<br><br>Mr. <b>{{ receiver.name }}</b> to represent him '
+            'at the {{ assembly.issue }} of this Water Association Community,'
+            ' which will take place on the next {{ assembly_day }} of {{ asse'
+            'mbly_month }} of {{ assembly_year }}.<br><br><div style="text-al'
+            'ign: center;"><br>The Authorized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
+            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
+            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp; The Communard<br><br><br><br><br>VAT {{ receiver.vat '
+            '}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
+            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VAT'
+            ' {{ grantor.vat }}<br><br><b>THE COMMUNITY SECRETARY</b><br><br>'
+            '<br><br>VAT {{ assembly.secretary_id.vat }}<br></div></div>')
+        last_record = self.env['wua.delegationvote'].search(
+            [], order='write_date desc', limit=1)
+        if last_record and last_record.delegation_vote_main_text:
+            delegation_vote_main_text = last_record.delegation_vote_main_text
+        return delegation_vote_main_text
+
+    def _default_delegation_vote_footer_text(self):
+        delegation_vote_footer_text = _(
+            '<p><b>NOTE</b>: By virtue of the pertinent Statutes, the Authori'
+            'zations must be submitted to the Irrigation Community, for its v'
+            'erification and legitimation by the Secretary of the Community. '
+            'Failure to comply with this rule will invalidate any Authorizati'
+            'on.</p>')
+        last_record = self.env['wua.delegationvote'].search(
+            [], order='write_date desc', limit=1)
+        if last_record and last_record.delegation_vote_footer_text:
+            delegation_vote_footer_text = \
+                last_record.delegation_vote_footer_text
+        return delegation_vote_footer_text
 
     assembly_id = fields.Many2one(
         string='Assembly',
@@ -84,6 +133,22 @@ class WuaDelegationvote(models.Model):
 
     notes = fields.Html(
         string='Notes',)
+
+    delegation_vote_main_text = fields.Html(
+        string='Delegation vote main text',
+        default=_default_delegation_vote_main_text,)
+
+    rendered_delegation_vote_main_text = fields.Html(
+        string='Rendered delegation vote main text',
+        compute="_compute_rendered_delegation_vote_main_text",)
+
+    delegation_vote_footer_text = fields.Html(
+        string='Delegation vote footer text',
+        default=_default_delegation_vote_footer_text,)
+
+    rendered_delegation_vote_footer_text = fields.Html(
+        string='Rendered delegation vote footer text',
+        compute="_compute_rendered_delegation_vote_footer_text",)
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -181,6 +246,26 @@ class WuaDelegationvote(models.Model):
         self.ensure_one()
         self.state = '01_draft'
 
+    @api.multi
+    def _compute_rendered_delegation_vote_main_text(self):
+        for record in self:
+            rendered_delegation_vote_main_text = ''
+            if record.delegation_vote_main_text:
+                rendered_delegation_vote_main_text = \
+                    record._get_rendered_delegation_vote_main_text()
+            record.rendered_delegation_vote_main_text = \
+                rendered_delegation_vote_main_text
+
+    @api.multi
+    def _compute_rendered_delegation_vote_footer_text(self):
+        for record in self:
+            rendered_delegation_vote_footer_text = ''
+            if record.delegation_vote_footer_text:
+                rendered_delegation_vote_footer_text = \
+                    record._get_rendered_delegation_vote_footer_text()
+            record.rendered_delegation_vote_footer_text = \
+                rendered_delegation_vote_footer_text
+
     def validate_delegations_of_vote(self, active_delegations_of_vote):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):
             raise exceptions.UserError(_(
@@ -210,3 +295,53 @@ class WuaDelegationvote(models.Model):
                     'the \'CALLED\' state.'))
             if delegation_of_vote.state == '02_validated':
                 delegation_of_vote.action_return_to_state_01_draft()
+
+    def _get_rendered_delegation_vote_main_text(self):
+        resp = ''
+        lang = self.env.context['lang']
+        if not lang:
+            lang = 'en_US'
+        try:
+            if self.assembly_id.assembly_date:
+                date_of_assembly = datetime.strptime(
+                    self.assembly_id.assembly_date, '%Y-%m-%d')
+                template = Template(self.delegation_vote_main_text)
+                resp = template.render(
+                    assembly=self.assembly_id,
+                    grantor=self.grantor_id,
+                    receiver=self.receiver_id,
+                    assembly_day=dates.format_date(
+                        date_of_assembly, 'd', locale=lang),
+                    assembly_month=dates.format_date(
+                        date_of_assembly, 'LLLL', locale=lang),
+                    assembly_year=dates.format_date(
+                        date_of_assembly, 'Y', locale=lang),)
+        except TemplateError as e:
+            resp = '<p style="text-align:center;color:red;">' + \
+                '<b><font style="font-size: 14px;">' + \
+                _('ERROR IN TEMPLATE') + '</font></b></p>' + \
+                '<p><br>' + e.message + '</p>'
+        return resp
+
+    def _get_rendered_delegation_vote_footer_text(self):
+        resp = ''
+        lang = self.env.context['lang']
+        if not lang:
+            lang = 'en_US'
+        try:
+            if self.assembly_id.assembly_date:
+                date_of_assembly = datetime.strptime(
+                    self.assembly_id.assembly_date, '%Y-%m-%d')
+                template = Template(self.delegation_vote_footer_text)
+                resp = template.render(
+                    assembly=self.assembly_id,
+                    assembly_day=dates.format_date(
+                        date_of_assembly, 'd', locale=lang),
+                    assembly_month=dates.format_date(
+                        date_of_assembly, 'LLLL', locale=lang),)
+        except TemplateError as e:
+            resp = '<p style="text-align:center;color:red;">' + \
+                '<b><font style="font-size: 14px;">' + \
+                _('ERROR IN TEMPLATE') + '</font></b></p>' + \
+                '<p><br>' + e.message + '</p>'
+        return resp
