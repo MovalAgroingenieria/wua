@@ -6,10 +6,10 @@
         <field name="model">wua.flowmeter</field>
         <field name="inherit_id" ref="base_wua_remotecontrol_rest_infrastructure.wua_flowmeter_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='do_import_flowreadings_from_flowmeter']" position="after">
+            <xpath expr="//button[@name='do_import_flowreadings_from_flowmeter']" position="replace">
                 <field name="telecontrol_associated" invisible="1"/>
                 <button name="do_import_flowreadings_from_flowmeter_seinon" type="object"
-                    string="Get flowreidings" icon="fa-rss" groups="base_wua.group_wua_manager"
+                    string="Get flowreadings" icon="fa-rss" groups="base_wua.group_wua_manager"
                     attrs="{'invisible': ['|', '|',
                         ('remotecontrol_enabled','=',False),
                         ('telecontrol_associated', '!=', 'seinon'),

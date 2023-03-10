@@ -5,6 +5,7 @@
 import logging
 import requests
 import json
+import math
 from datetime import datetime
 from datetime import timedelta
 import pytz
@@ -28,7 +29,7 @@ class WuaFlowmeter(models.Model):
             _logger = logging.getLogger(self.__class__.__name__)
             _logger.info(prefix_message + '... ' + str(self.name))
             message += _('Flow reading from %s') % str(self.name)
-            data_flowreadings, flag_error, error_messages = \
+            data_flowreadings, init_reading, flag_error, error_messages = \
                 self.do_import_flowreadings_seinon()
             if flag_error:
                 _logger.warning(
@@ -40,7 +41,7 @@ class WuaFlowmeter(models.Model):
                     _('Error getting flow readings: %s') % error_messages
             elif data_flowreadings and len(data_flowreadings) > 0:
                 created_records = self._create_flowreading_seinon(
-                    self.id, data_flowreadings)
+                    self.id, data_flowreadings, init_reading)
                 _logger.info(_('Created records %s') % created_records)
                 message += '<br/>' + _('Created records %s') % created_records
         act_window = {
@@ -54,7 +55,7 @@ class WuaFlowmeter(models.Model):
         return act_window
 
     def do_import_flowreadings_seinon(self):
-        flag_error = ff = fi = False
+        flag_error = ff = fi = init_reading = False
         error_messages = ""
         accumulated_vol_sum = 0
         data_flowreadings = None
@@ -78,7 +79,15 @@ class WuaFlowmeter(models.Model):
                 error_messages += \
                     _('Error getting device and measurement ids. ')
             if data_ok:
+                local_timezone = pytz.timezone('Europe/Madrid')
                 # Initial (last_reading) and end (current_date) dates.
+                # Current date rounded 15min
+                current_date_raw = datetime.strptime(datetime.now().strftime(
+                    '%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')
+                offset = local_timezone.utcoffset(current_date_raw)
+                current_date_tz = current_date_raw + offset
+                current_date = self._round_time_15_min(current_date_tz)
+                # Last record
                 last_measurement_time = False
                 last_reading = self.env['wua.flowreading'].search(
                     [('flowmeter_id', '=', self.id)],
@@ -87,28 +96,37 @@ class WuaFlowmeter(models.Model):
                 if last_measurement_time:
                     last_measurement_time_raw = datetime.strptime(
                         last_measurement_time, '%Y-%m-%d %H:%M:%S')
-                    local_timezone = pytz.timezone('Europe/Madrid')
                     offset = \
                         local_timezone.utcoffset(last_measurement_time_raw)
                     last_measurement_time = last_measurement_time_raw + offset
-                current_date = datetime.now()
-                if current_date.date() == last_measurement_time.date():
+                    last_measurement_time = self._round_time_15_min(
+                        last_measurement_time)
+                else:
+                    # Get one month by default
+                    delta = timedelta(days=30)
+                    last_measurement_time = current_date - delta
+                    init_reading = True
+                # Check if data is newer that last in database
+                if current_date == last_measurement_time:
                     flag_error = True
-                    error_messages += _('Data of the same day. ')
+                    error_messages += _('Data overlap. ')
                 else:
                     ff = str(current_date.day).zfill(2) + '/' + \
                         str(current_date.month).zfill(2) + '/' + \
                         str(current_date.year)
+                    hf = str(current_date.hour).zfill(2) + ':' + \
+                        str(current_date.minute).zfill(2)
                     if last_measurement_time:
                         fi = str(last_measurement_time.day).zfill(2) + '/' + \
                             str(last_measurement_time.month).zfill(2) + '/' + \
                             str(last_measurement_time.year)
+                        hi = str(last_measurement_time.hour).zfill(2) + ':' + \
+                            str(last_measurement_time.minute).zfill(2)
                     else:
                         fi = ff
                 # Calls to API
-                outputrest_instantaneous_flow = None
                 accumulated_flow_ok = False
-                if ff and fi:
+                if ff and fi and hf and hi:
                     url_accumulated_flow = url_energymonitoring_rest + '?Q=' \
                         + url_energymonitoring_rest_password + '&CP=' + \
                         url_energymonitoring_rest_username + '&IDPTO=' + \
@@ -132,15 +150,23 @@ class WuaFlowmeter(models.Model):
                 # API response processing
                 data_flowreadings = []
                 if accumulated_flow_ok:
-                    accumulated_vol_sum = self._process_outputrest(
-                        outputrest_accumulated_flow, ff)
+                    first_moment_queried = datetime.strptime(
+                        fi + ' ' + hi + ':00', '%d/%m/%Y %H:%M:%S')
+                    last_moment_queried = datetime.strptime(
+                        ff + ' ' + hf + ':00', '%d/%m/%Y %H:%M:%S')
+                    last_moment_raw, accumulated_vol_sum = \
+                        self._process_outputrest(
+                            outputrest_accumulated_flow, first_moment_queried,
+                            last_moment_queried)
+                    last_moment_localized = last_moment_raw - offset
+                    last_moment = last_moment_localized.strftime(
+                        '%Y-%m-%d %H:%M:%S')
                     consumed_vol = last_reading.volume + accumulated_vol_sum
-                    data_flowreadings.append(
-                        [current_date, consumed_vol])
+                    data_flowreadings.append([last_moment, consumed_vol])
                 else:
                     flag_error = True
                     error_messages += 'Error processing API response data. '
-        return data_flowreadings, flag_error, error_messages
+        return data_flowreadings, init_reading, flag_error, error_messages
 
     def _get_device_and_measurement_accumulated_flow(self, pumpgroup):
         accumulated_flow_deviceid = \
@@ -150,40 +176,55 @@ class WuaFlowmeter(models.Model):
         return (accumulated_flow_deviceid,
                 accumulated_flow_measurementid)
 
-    def _process_outputrest(self, outputrest_accumulated_flow, ff):
+    def _process_outputrest(
+            self, outputrest_accumulated_flow, first_moment_queried,
+            last_moment_queried):
         if (outputrest_accumulated_flow and
                 len(outputrest_accumulated_flow.values()[0]) > 0):
             accumulated_vol_sum = 0.0
             for accumulated_flow in outputrest_accumulated_flow.values()[0]:
-                # Do not get current date data
-                moment_date = accumulated_flow['moment'].split(' ')[0]
-                if moment_date != ff:
-                    volume = False
+                if len(accumulated_flow['moment']) == 10:
+                    moment = accumulated_flow['moment'] + ' 00:00:00'
+                else:
+                    moment = accumulated_flow['moment']
+                moment = datetime.strptime(moment, '%d/%m/%Y %H:%M:%S')
+                if (moment >= first_moment_queried and
+                        moment <= last_moment_queried):
+                    last_moment = moment
                     if accumulated_flow['data'] != 'null':
                         # Transform L --> m3
                         volume = float(accumulated_flow['data']) / 1000
                         # Apply conversion factor
                         volume = volume / self.conversion_factor
                         accumulated_vol_sum += volume
-            return accumulated_vol_sum
+            return last_moment, accumulated_vol_sum
 
-    def _create_flowreading_seinon(self, flowmeter_id, data_flowreadings):
+    def _round_time_15_min(self, time_raw):
+        delta = timedelta(minutes=15)
+        roundTo = delta.total_seconds()
+        seconds = (time_raw - time_raw.min).seconds
+        rounding = (seconds+roundTo/2) // roundTo * roundTo
+        rounded_time = time_raw + timedelta(0, rounding-seconds)
+        return rounded_time
+
+    def _create_flowreading_seinon(
+            self, flowmeter_id, data_flowreadings, init_reading):
         if len(data_flowreadings) > 0:
             created_records = []
             flowreading_model = self.env['wua.flowreading']
             for flowreading in data_flowreadings:
                 if flowreading:
-                    reading_time = flowreading[0].strftime('%Y-%m-%d %H:%M:%S')
                     record_data = {
                         'flowmeter_id': flowmeter_id,
-                        'reading_time': reading_time,
+                        'reading_time': flowreading[0],
                         'volume': flowreading[1],
                         'instant_flow': 0,
-                        'initialization_reading': False,
+                        'initialization_reading': init_reading,
                         'from_import': False,
                         'validated': False}
                     flowreading_model.create(record_data)
                     created_records.append(record_data)
+                    init_reading = False
             return created_records
 
     def do_import_flowreadings_from_flowmeters_cron(self):
