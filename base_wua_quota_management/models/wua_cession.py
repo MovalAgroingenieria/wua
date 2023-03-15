@@ -72,6 +72,16 @@ class WuaCession(models.Model):
             resp = proposed_superproduct_id
         return resp
 
+    # If configured cession with draft state, ensure draft at creation
+    # Else alwyas validated
+    def _default_cession_state(self):
+        resp = '01_validated'
+        draft_available = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'draft_cession_allow')
+        if (draft_available):
+            resp = '00_draft'
+        return resp
+
     def _default_quota_id(self):
         resp = 0
         proposed_quota_id = self.env.context.get('quota_id', False)
@@ -125,6 +135,20 @@ class WuaCession(models.Model):
         required=True,
         index=True,
         ondelete='restrict')
+
+    cession_state = fields.Selection(
+        selection=[
+            ('00_draft', 'Draft'),
+            ('01_validated', 'Validated'),
+        ],
+        string='Cession State',
+        index=True,
+        default=_default_cession_state,
+        track_visibility='onchange')
+
+    state_change_available = fields.Boolean(
+        string='State change Available',
+        compute='_compute_state_change_available')
 
     reason = fields.Char(
         string='Reason',
@@ -244,6 +268,78 @@ class WuaCession(models.Model):
                     record.quota_id.accumulated_input
             record.quota_accumulated_input = \
                 quota_accumulated_input
+
+    @api.multi
+    def validate_cession(self):
+        self.ensure_one()
+        # Apply cession data
+        if (self.cession_state != '01_validated'):
+            self._apply_cession_of_partner(self)
+            self._compute_receiver_quota_id()
+            self.cession_state = '01_validated'
+
+    @api.multi
+    def cancel_cession(self):
+        self.ensure_one()
+        if (self.cession_state != '00_draft'):
+            # Remove Quota movements
+            implied_quotas = []
+            quota = self.quota_id
+            receiver_quota = self.receiver_quota_id
+            if quota and quota.hydricmovement_ids:
+                implied_quotas.append(quota)
+            if receiver_quota and receiver_quota.hydricmovement_ids:
+                implied_quotas.append(receiver_quota)
+            # Remove related hydricmovements
+            self.env['wua.hydricmovement'].search([
+                '|', ('cession_id', '=', self.id),
+                ('source_cession_id', '=', self.id)
+            ]).with_context(force_unlink=True).unlink()
+            # After remove, recalculate quotas and in case necessary
+            # Remove quota
+            ids_of_quotas_to_delete = []
+            for quota in implied_quotas:
+                if len(quota.hydricmovement_ids) > 0:
+                    self.env['wua.quota'].refresh_quota(quota)
+                else:
+                    ids_of_quotas_to_delete.append(quota.id)
+            if ids_of_quotas_to_delete:
+                # Before remove, unset the quotas from self.
+                if (self.quota_id.id in ids_of_quotas_to_delete):
+                    self.quota_id = None
+                if (self.receiver_quota_id.id in ids_of_quotas_to_delete):
+                    self.receiver_quota_id = None
+                self.env['wua.quota'].browse(ids_of_quotas_to_delete).\
+                    with_context(force_unlink=True).unlink()
+            self.cession_state = '00_draft'
+
+    def validate_cessions(self, active_cessions):
+        if (not self.env.user.has_group(
+                'base_wua_quota_management.group_wua_quota_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        cessions = self.env['wua.cession'].browse(active_cessions)
+        for cession in cessions:
+            if cession.cession_state != '01_validated':
+                cession.validate_cession()
+
+    def cancel_cessions(self, active_cessions):
+        if (not self.env.user.has_group(
+                'base_wua_quota_management.group_wua_quota_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        cessions = self.env['wua.cession'].browse(active_cessions)
+        cessions = self.env['wua.cession'].browse(active_cessions)
+        for cession in cessions:
+            if cession.cession_state != '00_draft':
+                cession.cancel_cession()
+
+    @api.multi
+    def _compute_state_change_available(self):
+        draft_cession_allow = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'draft_cession_allow')
+        for record in self:
+            record.state_change_available = draft_cession_allow
 
     @api.multi
     def _compute_quota_accumulated_consumption(self):
@@ -412,8 +508,10 @@ class WuaCession(models.Model):
     @api.model
     def create(self, vals):
         new_cession = super(WuaCession, self).create(vals)
-        self._apply_cession_of_partner(new_cession)
-        new_cession._compute_receiver_quota_id()
+        # Only apply quota on creation if the
+        if (new_cession.cession_state == '01_validated'):
+            self._apply_cession_of_partner(new_cession)
+            new_cession._compute_receiver_quota_id()
         return new_cession
 
     @api.model
@@ -442,6 +540,23 @@ class WuaCession(models.Model):
                 node.set('modifiers',
                          '{"readonly": true, "required": true}')
             res['arch'] = etree.tostring(doc)
+        draft_available = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'draft_cession_allow')
+        # Hide action depending on the parameter validate / cancel
+        if not draft_available:
+            validate_button = self.env.ref(
+                'base_wua_quota_management.wua_validate_cessions').id \
+                or False
+            cancel_button = self.env.ref(
+                'base_wua_quota_management.wua_cancel_cessions').id \
+                or False
+            action_buttons = res.get('toolbar', {}).get('action', [])
+            actions_to_remove = []
+            for button in action_buttons:
+                if button['id'] in [validate_button, cancel_button]:
+                    actions_to_remove.append(button)
+            for action_remove in actions_to_remove:
+                res['toolbar']['action'].remove(action_remove)
         return res
 
     @api.multi
@@ -476,12 +591,14 @@ class WuaCession(models.Model):
     def unlink(self):
         implied_quotas = []
         for record in self:
-            quota = record.quota_id
-            receiver_quota = record.receiver_quota_id
-            if quota and quota.hydricmovement_ids:
-                implied_quotas.append(quota)
-            if receiver_quota and receiver_quota.hydricmovement_ids:
-                implied_quotas.append(receiver_quota)
+            # Only recompute quotas if the
+            if (record.cession_state == '01_validated'):
+                quota = record.quota_id
+                receiver_quota = record.receiver_quota_id
+                if quota and quota.hydricmovement_ids:
+                    implied_quotas.append(quota)
+                if receiver_quota and receiver_quota.hydricmovement_ids:
+                    implied_quotas.append(receiver_quota)
         resp = super(WuaCession, self).unlink()
         ids_of_quotas_to_delete = []
         for quota in implied_quotas:

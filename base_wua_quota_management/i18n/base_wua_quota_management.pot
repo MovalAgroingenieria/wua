@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-02 15:21+0000\n"
-"PO-Revision-Date: 2023-03-02 15:21+0000\n"
+"POT-Creation-Date: 2023-03-15 10:34+0000\n"
+"PO-Revision-Date: 2023-03-15 10:34+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -488,8 +488,19 @@ msgid "Agricultural Seasons"
 msgstr ""
 
 #. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_quotas_config_settings.py:53
+#, python-format
+msgid "All cessions must be validated."
+msgstr ""
+
+#. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "All quotas and hydric movements (including individual inputs and cessions) WILL BE DELETED. Are you sure you want to do this operation?"
+msgstr ""
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotas_configuration_draft_cession_allow
+msgid "Allow Draft State on Cessions"
 msgstr ""
 
 #. module: base_wua_quota_management
@@ -708,6 +719,11 @@ msgid "Cancel"
 msgstr ""
 
 #. module: base_wua_quota_management
+#: model:ir.actions.server,name:base_wua_quota_management.wua_cancel_cessions
+msgid "Cancel Cession"
+msgstr ""
+
+#. module: base_wua_quota_management
 #: model:ir.ui.menu,name:base_wua_quota_management.individualinput_category_menu
 msgid "Cat. (indiv. inputs)"
 msgstr ""
@@ -754,6 +770,22 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_cession_id
 #, python-format
 msgid "Cession"
+msgstr ""
+
+#. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_cession_view_form
+msgid "Cession Cancel"
+msgstr ""
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession_cession_state
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_cession_view_search
+msgid "Cession State"
+msgstr ""
+
+#. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_cession_view_form
+msgid "Cession Validate"
 msgstr ""
 
 #. module: base_wua_quota_management
@@ -1171,6 +1203,7 @@ msgid "Display Name"
 msgstr ""
 
 #. module: base_wua_quota_management
+#: selection:wua.cession,cession_state:0
 #: selection:wua.quotaperiod,state:0
 msgid "Draft"
 msgstr ""
@@ -2626,6 +2659,11 @@ msgid "Quota Manager"
 msgstr ""
 
 #. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotas_config_settings_view_form
+msgid "Quota Operations"
+msgstr ""
+
+#. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:478
 #: model:ir.model,name:base_wua_quota_management.model_wua_quotaperiod
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_compensatorytransfers_quotaperiod_name
@@ -2803,7 +2841,7 @@ msgstr ""
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/res_partner.py:55
 #: code:addons/base_wua_quota_management/models/wua_agriculturalseason.py:180
-#: code:addons/base_wua_quota_management/models/wua_cession.py:505
+#: code:addons/base_wua_quota_management/models/wua_cession.py:622
 #: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:434
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:504
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:425
@@ -3054,6 +3092,11 @@ msgid "State"
 msgstr ""
 
 #. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession_state_change_available
+msgid "State change Available"
+msgstr ""
+
+#. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_search
 msgid "State: Configured"
 msgstr ""
@@ -3146,7 +3189,7 @@ msgid "The Water Order Number must be greater than 0."
 msgstr ""
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_cession.py:363
+#: code:addons/base_wua_quota_management/models/wua_cession.py:459
 #, python-format
 msgid "The available balance is not sufficient."
 msgstr ""
@@ -3157,7 +3200,7 @@ msgid "The average delay in days between the confirmation of the customer order 
 msgstr ""
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_cession.py:347
+#: code:addons/base_wua_quota_management/models/wua_cession.py:443
 #, python-format
 msgid "The balance of chosen partner is zero o negative."
 msgstr ""
@@ -3193,7 +3236,7 @@ msgid "The effective factor must be greater than 0 and less than or equal to 1."
 msgstr ""
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_cession.py:339
+#: code:addons/base_wua_quota_management/models/wua_cession.py:435
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:355
 #, python-format
 msgid "The instant of this input is not within the chosen quota period."
@@ -3223,7 +3266,7 @@ msgid "The provision cannot be zero."
 msgstr ""
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_cession.py:305
+#: code:addons/base_wua_quota_management/models/wua_cession.py:401
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:321
 #, python-format
 msgid "The quota period is not within the chosen agricultural season."
@@ -3247,7 +3290,7 @@ msgid "The reference of hydric movement does not exist"
 msgstr ""
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_cession.py:301
+#: code:addons/base_wua_quota_management/models/wua_cession.py:397
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:317
 #, python-format
 msgid "The state of quota period must be 'generated'."
@@ -3259,7 +3302,7 @@ msgid "The superproduct code must be a positive value."
 msgstr ""
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_cession.py:319
+#: code:addons/base_wua_quota_management/models/wua_cession.py:415
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:335
 #, python-format
 msgid "The superproduct is not enrolled in the chosen quota period."
@@ -3272,7 +3315,7 @@ msgid "The superproducts of origin and destination cannot be the same."
 msgstr ""
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_cession.py:355
+#: code:addons/base_wua_quota_management/models/wua_cession.py:451
 #, python-format
 msgid "The transferor and the receiver can not be the same partner."
 msgstr ""
@@ -3485,6 +3528,16 @@ msgstr ""
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_uom_id
 msgid "Unit of Measure"
+msgstr ""
+
+#. module: base_wua_quota_management
+#: model:ir.actions.server,name:base_wua_quota_management.wua_validate_cessions
+msgid "Validate Cession"
+msgstr ""
+
+#. module: base_wua_quota_management
+#: selection:wua.cession,cession_state:0
+msgid "Validated"
 msgstr ""
 
 #. module: base_wua_quota_management
@@ -3712,6 +3765,8 @@ msgid "You can only delete a quota period if it is in draft or configured state.
 msgstr ""
 
 #. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_cession.py:319
+#: code:addons/base_wua_quota_management/models/wua_cession.py:329
 #: code:addons/base_wua_quota_management/models/wua_waterconnection.py:93
 #: code:addons/base_wua_quota_management/models/wua_waterconnection.py:102
 #, python-format

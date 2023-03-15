@@ -7,6 +7,25 @@
         <field name="arch" type="xml">
             <form duplicate="0">
                 <field name="id" invisible="1"/>
+                <field name="state_change_available" invisible="1"/>
+                <header>
+                     <button name="cancel_cession"
+                            type="object" string="Cession Cancel"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            groups="base_wua_quota_management.group_wua_quota_manager"
+                            attrs="{'invisible':['|', '|', ('id','=',False), ('state_change_available', '=', False), ('cession_state', '=', '00_draft')]}"/>
+                     <button name="validate_cession"
+                            type="object" string="Cession Validate"
+                            class="oe_read_only"
+                            style="width: 105px;"
+                            groups="base_wua_quota_management.group_wua_quota_manager"
+                            attrs="{'invisible':['|', '|', ('id','=',False), ('state_change_available', '=', False), ('cession_state', '=', '01_validated')]}"/>
+                     <field name="cession_state"
+                            widget="statusbar"
+                            attrs="{'invisible':['|', ('id','=',False), ('state_change_available', '=', False)]}"
+                            statusbar_visible="00_draft,01_validated"/>
+                </header>
                 <sheet>
                     <div class="panel-body text-center" style="background:#ededed;border-radius:4px;border-color:#696969;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:8px;margin-bottom:5px"><h2>CESSION</h2></div>
                     <group name="master_data" col="5">
@@ -97,6 +116,7 @@
                 <field name="receiver_partner_id"/>
                 <field name="reason"/>
                 <field name="volume"/>
+                <field name="cession_state" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -132,10 +152,49 @@
                     <filter string="Receiver Partner"
                             name="grouped_receiver_partner"
                      context="{'group_by':'receiver_partner_id'}"/>
+                    <filter string="Cession State"
+                            name="grouped_cession_state"
+                     context="{'group_by':'cession_state'}"/>
                 </group>
             </search>
         </field>
     </record>
+
+    <record id="wua_validate_cessions" model="ir.actions.server">
+      <field name="name">Validate Cession</field>
+      <field name="model_id" ref="model_wua_cession"/>
+      <field name="state">code</field>
+      <field name="code">
+          if context.get('active_ids'):
+              action = env['wua.cession'].validate_cessions(context['active_ids'])
+      </field>
+  </record>
+
+  <record id="wua_action_validate_cessions" model="ir.values">
+      <field name="name">Validate</field>
+      <field name="model">wua.cession</field>
+      <field name="key">action</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_cessions'))"/>
+  </record>
+
+  <record id="wua_cancel_cessions" model="ir.actions.server">
+      <field name="name">Cancel Cession</field>
+      <field name="model_id" ref="model_wua_cession"/>
+      <field name="state">code</field>
+      <field name="code">
+          if context.get('active_ids'):
+              action = env['wua.cession'].cancel_cessions(context['active_ids'])
+      </field>
+  </record>
+
+  <record id="wua_action_cancel_cessions" model="ir.values">
+      <field name="name">Cancel Cession</field>
+      <field name="model">wua.cession</field>
+      <field name="key">action</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_cessions'))"/>
+  </record>
 
     <record id="wua_cession_action"
             model="ir.actions.act_window">

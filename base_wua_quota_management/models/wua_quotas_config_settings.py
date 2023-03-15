@@ -2,7 +2,7 @@
 # Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaQuotasConfiguration(models.TransientModel):
@@ -22,6 +22,10 @@ class WuaQuotasConfiguration(models.TransientModel):
         help='Apply superproduct sorting of quota periods to calculate '
              'the irrigation reports consumptions')
 
+    draft_cession_allow = fields.Boolean(
+        string='Allow Draft State on Cessions',
+        default=False)
+
     show_aggregated_quotas = fields.Boolean(
         string='Show aggregated quotas',
         default=False,
@@ -36,8 +40,18 @@ class WuaQuotasConfiguration(models.TransientModel):
                            'sorted_irrigationreport_quotas',
                            self.sorted_irrigationreport_quotas)
         values.set_default('wua.quotas.configuration',
+                           'draft_cession_allow',
+                           self.draft_cession_allow)
+        values.set_default('wua.quotas.configuration',
                            'show_aggregated_quotas',
                            self.show_aggregated_quotas)
+        # If not allowed change of states, all cessions must be validated
+        if (not self.draft_cession_allow):
+            cessions_draft = self.env['wua.cession'].search(
+                [('cession_state', '!=', '01_validated')])
+            if (len(cessions_draft) > 0):
+                raise exceptions.UserError(_(
+                    'All cessions must be validated.'))
         if self.show_aggregated_quotas:
             active_menu = True
         else:
