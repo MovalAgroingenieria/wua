@@ -66,6 +66,9 @@
                             <field name="volume" colspan="3"
                                    attrs="{'readonly':[('id','>',0), ('cession_state', '=', '01_validated')]}"/>
                             <div colspan="1"></div>
+                            <field name="finish_date" colspan="3"
+                                   attrs="{'readonly':[('id','>',0), ('cession_state', '=', '01_validated')]}"/>
+                            <div colspan="1"></div>
                             <field name="reason" colspan="4"/>
                         </group>
                         <group name="master_data_right"
@@ -117,6 +120,10 @@
                 <field name="reason"/>
                 <field name="volume"/>
                 <field name="cession_state" invisible="1"/>
+                <field name="cession_ended" invisible="1"/>
+                <field name="close_to_end_cession" invisible="1"/>
+                <field name="finish_date" invisible="1"
+                    bg_color="red:cession_ended == True; orange:close_to_end_cession == True;"/>
             </tree>
         </field>
     </record>

@@ -25,6 +25,7 @@
         "data/wua_superproduct_data.xml",
         "data/wua_individualinput_category_data.xml",
         "data/wua_parcel_refreshflag_cron.xml",
+        "data/wua_cession_cron.xml",
         "wizard/wizard_generate_quotaperiods_view.xml",
         "wizard/wizard_set_activeagriculturalseason_view.xml",
         "wizard/wizard_recalculate_quotas_view.xml",

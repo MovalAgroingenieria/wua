@@ -160,6 +160,10 @@ class WuaCession(models.Model):
         required=True,
         index=True)
 
+    finish_date = fields.Date(
+        string='Cession Finish Date',
+        index=True)
+
     volume = fields.Float(
         string='Volume (m³)',
         digits=(32, 2),
@@ -217,6 +221,19 @@ class WuaCession(models.Model):
         ondelete='cascade',
         compute='_compute_receiver_quota_id')
 
+    days_until_cession_ends = fields.Integer(
+        string='Days until cession ends',
+        compute='_compute_days_until_cession_ends',
+        search='_search_days_until_cession_ends')
+
+    close_to_end_cession = fields.Boolean(
+        string='Cession is close to end',
+        compute='_compute_close_to_end_cession',)
+
+    cession_ended = fields.Boolean(
+        string='Cession has ended',
+        compute='_compute_cession_ended',)
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
@@ -268,6 +285,47 @@ class WuaCession(models.Model):
                     record.quota_id.accumulated_input
             record.quota_accumulated_input = \
                 quota_accumulated_input
+
+    # Closed to end == Not ended and days less than parameter
+    @api.multi
+    def _compute_close_to_end_cession(self):
+        warning_days = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'days_cession_notice')
+        for record in self:
+            close_to_end_cession = False
+            if warning_days > 0 and record.finish_date:
+                close_to_end_cession = (
+                    record.days_until_cession_ends > 0 and
+                    record.days_until_cession_ends <= warning_days)
+            record.close_to_end_cession = close_to_end_cession
+
+    @api.multi
+    def _compute_cession_ended(self):
+        for record in self:
+            cession_ended = False
+            if record.finish_date:
+                cession_ended = (record.days_until_cession_ends <= 0)
+            record.cession_ended = cession_ended
+
+    @api.multi
+    def _compute_days_until_cession_ends(self):
+        for record in self:
+            days_until_cession_ends = 0
+            if record.finish_date:
+                current_date = datetime.date.today()
+                finish_date = fields.Date.from_string(record.finish_date)
+                days_until_cession_ends = (
+                    finish_date - current_date).days
+            record.days_until_cession_ends = days_until_cession_ends
+
+    def _search_days_until_cession_ends(self, operator, value):
+        date_today = datetime.date.today()
+        new_operator = operator
+        cessions = self.env['wua.cession'].search(
+            [('finish_date', '!=', None),
+             ('finish_date', new_operator, date_today +
+              datetime.timedelta(days=value))])
+        return ([('id', 'in', [x.id for x in cessions])])
 
     @api.multi
     def validate_cession(self):
@@ -558,6 +616,78 @@ class WuaCession(models.Model):
             for action_remove in actions_to_remove:
                 res['toolbar']['action'].remove(action_remove)
         return res
+
+    def _compute_html_table_cession(self, cession_ids):
+        ceding_label = _('Ceding')
+        receiver_label = _('Receiver')
+        superproduct_label = _('Superproduct')
+        finish_date_label = _('Cession Finish Date')
+        html_table = '''
+            <table>
+                <tbody>
+                    <tr style='border-bottom: 1px solid #ddd;
+                               padding-bottom: 2px'>
+                        <td style="padding-right: 5px;">{ceding}</td>
+                        <td style="padding-right: 5px;">{receiver}</td>
+                        <td style="padding-right: 5px;">{superproduct}</td>
+                        <td style="padding-right: 5px;">{finish_date}</td>
+                    </tr>
+        '''.format(
+            ceding=ceding_label.encode('utf-8'),
+            receiver=receiver_label.encode('utf-8'),
+            superproduct=superproduct_label.encode('utf-8'),
+            finish_date=finish_date_label.encode('utf-8'))
+        html_table = html_table + u''.join(cession_ids.mapped(
+            lambda x: '<tr style="border-bottom: 1px solid #ddd; ' +
+            'padding-bottom: 2px; color: ' + (
+                'orange' if x.close_to_end_cession else 'red') +
+            ';">' +
+            '<td style="padding-right: 5px;">' + x.partner_id.name +
+            '</td><td style="padding-right: 5px;">' +
+            x.receiver_partner_id.name + '</td>' +
+            '<td style="padding-right: 5px;">' + x.superproduct_id.name +
+            '</td><td>' + x.finish_date + '</td></tr>')).encode('utf-8')
+        html_table = html_table + """
+                </tbody>
+            </table>
+        """
+        return html_table
+
+    @api.model
+    def notify_cessions_status_mail(self, mail_vals={}):
+        date_today = datetime.date.today()
+        warning_days = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'days_cession_notice')
+        limit_date = (date_today - datetime.timedelta(days=warning_days)).\
+            strftime('%Y-%m-%d')
+        active_ags = self.env['wua.agriculturalseason'].search(
+            [('active_agriculturalseason', '=', True)])
+        quotaperiod = False
+        if (active_ags and len(active_ags) == 1):
+            quotaperiod = self.env['wua.quotaperiod'].search([
+                ('state', '=', 'generated'),
+                ('is_closed', '=', False),
+                ('agriculturalseason_id', '=', active_ags.id),
+            ])
+        if (quotaperiod and len(quotaperiod) > 0):
+            cessions_to_send = self.env['wua.cession'].search([
+                ('cession_state', '=', '01_validated'),
+                ('finish_date', '!=', False),
+                ('quotaperiod_id', '=', quotaperiod[0].id),
+                ('finish_date', '>=', limit_date)], order="finish_date desc")
+            if (len(cessions_to_send) > 0):
+                body_msg = self._compute_html_table_cession(cessions_to_send)
+                company_sender = cessions_to_send[0].partner_id.company_id
+                default_vals = {
+                    'subject': _('Cession Status'),
+                    'body_html': body_msg,
+                    'auto_delete': True,
+                    'email_from': company_sender.name + ' <' +
+                    company_sender.email + '>'
+                }
+                default_vals.update(mail_vals)
+                mail_id = self.env['mail.mail'].sudo().create(default_vals)
+                mail_id.sudo().send()
 
     @api.multi
     def name_get(self):

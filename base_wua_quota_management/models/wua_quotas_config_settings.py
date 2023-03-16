@@ -26,6 +26,12 @@ class WuaQuotasConfiguration(models.TransientModel):
         string='Allow Draft State on Cessions',
         default=False)
 
+    days_cession_notice = fields.Integer(
+        string='Nº days until cession notice',
+        default=15,
+        help='Number of days until the end of the cession in which notice '
+             'is given')
+
     show_aggregated_quotas = fields.Boolean(
         string='Show aggregated quotas',
         default=False,
@@ -45,6 +51,9 @@ class WuaQuotasConfiguration(models.TransientModel):
         values.set_default('wua.quotas.configuration',
                            'show_aggregated_quotas',
                            self.show_aggregated_quotas)
+        values.set_default('wua.quotas.configuration',
+                           'days_cession_notice',
+                           self.days_cession_notice)
         # If not allowed change of states, all cessions must be validated
         if (not self.draft_cession_allow):
             cessions_draft = self.env['wua.cession'].search(
