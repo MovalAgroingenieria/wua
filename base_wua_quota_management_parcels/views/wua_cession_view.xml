@@ -11,14 +11,14 @@
                 <field name="parcel_id" colspan="4"
                        string="Parcel"
                        options="{'no_quick_create':True, 'no_create_edit':True}"
-                       attrs="{'readonly':[('id','>',0)]}"/>
+                       attrs="{'readonly':[('id','>',0), ('cession_state', '=', '01_validated')]}"/>
             </xpath>
             <xpath expr="//field[@name='receiver_partner_id']"
                    position="after">
                 <field name="receiver_parcel_id" colspan="4"
                        string="Parcel"
                        options="{'no_quick_create':True, 'no_create_edit':True}"
-                       attrs="{'readonly':[('id','>',0)]}"/>
+                       attrs="{'readonly':[('id','>',0), ('cession_state', '=', '01_validated')]}"/>
             </xpath>
         </field>
     </record>
