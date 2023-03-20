@@ -508,6 +508,12 @@ class ResPartner(models.Model):
             if len(vals['vat']) > 0:
                 normalized_vat = vals['vat'].strip().upper()
                 vals.update({'vat': normalized_vat})
+        if ('vat_wua_legalrep' in vals and
+           isinstance(vals['vat_wua_legalrep'], basestring)):
+            if len(vals['vat_wua_legalrep']) > 0:
+                normalized_vat_wua_legalrep = \
+                    vals['vat_wua_legalrep'].strip().upper()
+                vals.update({'vat_wua_legalrep': normalized_vat_wua_legalrep})
         new_partner = super(ResPartner, self).create(vals)
         if 'partner_code' in vals:
             if set_is_wua_partner:
@@ -536,6 +542,12 @@ class ResPartner(models.Model):
             if len(vals['vat']) > 0:
                 normalized_vat = vals['vat'].strip().upper()
                 vals.update({'vat': normalized_vat})
+        if ('vat_wua_legalrep' in vals and
+           isinstance(vals['vat_wua_legalrep'], basestring)):
+            if len(vals['vat_wua_legalrep']) > 0:
+                normalized_vat_wua_legalrep = \
+                    vals['vat_wua_legalrep'].strip().upper()
+                vals.update({'vat_wua_legalrep': normalized_vat_wua_legalrep})
         if len(self) == 1:
             if self.id and normalized_vat != '' and \
                not self.parent_id.id and self.partner_code > 0:

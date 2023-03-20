@@ -63,17 +63,6 @@
                                 <span class="o_stat_text">Items</span>
                             </div>
                         </button>
-                        <button name="action_get_attendances_calls"
-                                type="object" class="oe_stat_button"
-                                icon="fa-bullhorn"
-                                attrs="{'invisible': [('state','=','01_draft')]}">
-                            <div class="o_form_field o_stat_info">
-                                <span class="o_stat_value">
-                                    <field name="number_of_attendances"/>
-                                </span>
-                                <span class="o_stat_text">Partners</span>
-                            </div>
-                        </button>
                         <button name="action_get_delegationvotes"
                                 type="object" class="oe_stat_button"
                                 icon="fa-hand-o-right"
@@ -83,6 +72,39 @@
                                     <field name="number_of_delegations"/>
                                 </span>
                                 <span class="o_stat_text">Delegations</span>
+                            </div>
+                        </button>
+                        <button name="action_get_representations"
+                                type="object" class="oe_stat_button"
+                                icon="fa-user-o"
+                                attrs="{'invisible': [('state','=','01_draft')]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_representations"/>
+                                </span>
+                                <span class="o_stat_text">Represent.</span>
+                            </div>
+                        </button>
+                        <button name="action_get_attendances_calls"
+                                type="object" class="oe_stat_button"
+                                icon="fa-bullhorn"
+                                attrs="{'invisible': [('state','!=','02_called')]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_attendances"/>
+                                </span>
+                                <span class="o_stat_text">Summoned</span>
+                            </div>
+                        </button>
+                        <button name="action_get_attendances"
+                                type="object" class="oe_stat_button"
+                                icon="fa-envelope-o"
+                                attrs="{'invisible': ['|',('state','=','01_draft'),('state','=','02_called')]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_attendances_in_assembly"/>
+                                </span>
+                                <span class="o_stat_text">Participants</span>
                             </div>
                         </button>
                     </div>
@@ -181,7 +203,8 @@
                                     <button name="action_preview_publication_text" type="object" class="btn btn-link oe_read_only"
                                         string="PREVIEW" icon="fa-eye" style="margin-top:4px; margin-bottom:4px;"/>
                                 </header>
-                                <field name="publication_text"/>
+                                <field name="publication_text" class="oe_edit_only"/>
+                                <field name="rendered_publication_text" class="oe_read_only"/>
                             </page>
                         </notebook>
                     </group>

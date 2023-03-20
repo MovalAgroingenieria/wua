@@ -48,6 +48,7 @@
         "html_field_in_tree_view",
         "report_qr",
         "web_domain_field",
+        "contacts",
     ],
     "data": [
         "security/security.xml",

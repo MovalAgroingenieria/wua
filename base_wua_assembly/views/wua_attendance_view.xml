@@ -27,4 +27,86 @@
         </field>
     </record>
 
+    <record id="wua_attendance_particular_view_form" model="ir.ui.view">
+        <field name="name">Attendances (form view)</field>
+        <field name="model">wua.attendance</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0" duplicate="false">
+                <field name="assembly_state" invisible="1"/>
+                <script>
+                    $(document).ready(function(){
+                    $(".btn.btn-primary.btn-sm.o_form_button_save").hide();
+                    $(".btn.btn-default.btn-sm.o_form_button_cancel").hide();
+                    $(".fa.fa-chevron-left.btn.btn-icon.o_pager_previous").hide();
+                    $(".fa.fa-chevron-right.btn.btn-icon.o_pager_next").hide();
+                    });
+                </script>
+                <sheet>
+                    <group> name="master_data">
+                        <group name="master_data_left">
+                            <field name="present" style="margin-top=30px"/>
+                        </group>
+                        <group name="master_data_right">
+                            <h4><field name="participant_name" nolabel="1"/></h4>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="confirm_present_value" type="object"
+                     string="C O N F I R M"
+                     attrs="{'invisible': [('assembly_state','!=','03_in_progress')]}"
+                     groups="base_wua.group_wua_manager"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_attendance_particular_view_tree" model="ir.ui.view">
+        <field name="name">Attendances (tree view)</field>
+        <field name="model">wua.attendance</field>
+        <field name="arch" type="xml">
+            <tree string="Attendances"
+                  class="o_base_wua_assembly_attendance_view_tree"
+                  create="false" delete="false"
+                  default_order="participant_name">
+                <field name="vat_participant"
+                       string="Attendee TIN"/>
+                <field name="participant_name"
+                       string="Attendee Name"/>
+                <field name="represented_partner"
+                       string="Represents..."/>
+                <field name="votes_owned"
+                       string="Own Votes"/>
+                <field name="votes_delegation"
+                       string="Transf. Votes"/>
+                <field name="votes_total"
+                       string="Total Votes"
+                       sum="Total Votes"/>
+                <field name="icon_present"
+                       widget="image" string=" "/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_attendance_particular_view_search" model="ir.ui.view">
+        <field name="name">Attendances (search view)</field>
+        <field name="model">wua.attendance</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="vat_participant"
+                       string="TIN of the participant"/>
+                <field name="participant_name"
+                       String="Participant"/>
+                <field name="partner_id"
+                       String="Related Company"/>
+                <filter string="Present: Yes"
+                        name="present_yes"
+                        domain="[('present','=',True)]"/>
+                <filter string="Present: No"
+                        name="present_no"
+                        domain="[('present','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
 </odoo>
