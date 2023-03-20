@@ -133,13 +133,13 @@ class WuaIrrigationditch(models.Model):
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_early_shutdown_time',
-         'CHECK (early_shutdown_time > = 0)',
+         'CHECK (early_shutdown_time >= 0)',
          'The early shutdown time must be a value zero or positive.'),
         ('valid_wateringduration_area_ratio',
-         'CHECK (wateringduration_area_ratio > = 0)',
+         'CHECK (wateringduration_area_ratio >= 0)',
          'The watering dur. x area ratio must be a value zero or positive.'),
         ('valid_water_flow',
-         'CHECK (water_flow > = 0)',
+         'CHECK (water_flow >= 0)',
          'The water flow must be a value zero or positive.')]
 
     @api.multi

@@ -272,7 +272,7 @@ class WuaWatering(models.Model):
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Watering.'),
-        ('positive_number', 'number > 0',
+        ('positive_number', 'CHECK (number > 0)',
          'The watering number must be a positive value.'),
         ]
 

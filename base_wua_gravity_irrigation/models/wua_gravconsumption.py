@@ -258,7 +258,8 @@ class WuaGravconsumption(models.Model):
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Gravity Consumption.'),
-        ('non_negative_duration', 'watering_duration >= 0',
+        ('non_negative_duration',
+         'CHECK (watering_duration >= 0)',
          'The duration must be a non-negative value.'),
         ('incompatible_states',
          "CHECK (state != 'executed' OR cancelled = False)",

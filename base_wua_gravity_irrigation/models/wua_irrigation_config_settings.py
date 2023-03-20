@@ -17,7 +17,8 @@ class WuaIrrigationConfiguration(models.TransientModel):
         help="The number of previous days allowed to start a watering.")
 
     _sql_constraints = [
-        ('early_start_days_positive', 'watering_allow_early_start > 0',
+        ('early_start_days_positive',
+         'CHECK (watering_allow_early_start > 0)',
          'The days for early start must be a positive value.'),
         ]
 
