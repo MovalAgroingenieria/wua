@@ -153,7 +153,7 @@ class WuaWatermeter(models.Model):
                 waterconnection_id = filtered_waterconnections[0].id
             record.waterconnection_id = waterconnection_id
 
-    @api.depends('waterconnection_id')
+    @api.depends('waterconnection_id', 'waterconnection_id.irrigationshed_id')
     def _compute_irrigationshed_id(self):
         for record in self:
             irrigationshed_id = None
@@ -162,7 +162,7 @@ class WuaWatermeter(models.Model):
                     record.waterconnection_id.irrigationshed_id
             record.irrigationshed_id = irrigationshed_id
 
-    @api.depends('waterconnection_id')
+    @api.depends('waterconnection_id', 'waterconnection_id.hydraulicsector_id')
     def _compute_hydraulicsector_id(self):
         for record in self:
             hydraulicsector_id = None
