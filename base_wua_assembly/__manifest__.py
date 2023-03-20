@@ -28,6 +28,7 @@
         "views/wua_agendaitem_view.xml",
         "views/wua_attendance_view.xml",
         "views/wua_delegationvote_view.xml",
+        "views/wua_representation_view.xml",
         "reports/wua_delegationvote_report.xml",
     ],
     "installable": True,

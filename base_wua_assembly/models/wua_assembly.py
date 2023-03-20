@@ -85,6 +85,9 @@ class WuaAssembly(models.Model):
             'y a las {{ assembly.second_hour_hhmm }} en segunda, ' + \
             '{% else %},{% endif %} de acuerdo con el siguiente ' + \
             '<b>ORDEN DEL DÍA</b>:<br></p>'
+        last_record = self.search([], order='write_date desc', limit=1)
+        if last_record and last_record.publication_text:
+            resp = last_record.publication_text
         return resp
 
     assembly_date = fields.Date(
@@ -216,6 +219,11 @@ class WuaAssembly(models.Model):
         compute_sudo=True,
         compute='_compute_is_wua_portal_user')
 
+    is_wua_manager = fields.Boolean(
+        string='WUA manager',
+        compute_sudo=True,
+        compute='_compute_is_wua_manager')
+
     agendaitem_ids = fields.One2many(
         string='Agenda Items',
         comodel_name='wua.agendaitem',
@@ -234,6 +242,10 @@ class WuaAssembly(models.Model):
         string='Number of attendances',
         compute='_compute_number_of_attendances',)
 
+    number_of_attendances_in_assembly = fields.Integer(
+        string='Number of attendances (in assembly)',
+        compute='_compute_number_of_attendances_in_assembly',)
+
     delegationvote_ids = fields.One2many(
         string='Delegations of vote',
         comodel_name='wua.delegationvote',
@@ -242,6 +254,15 @@ class WuaAssembly(models.Model):
     number_of_delegations = fields.Integer(
         string='Number of delegations of vote',
         compute='_compute_number_of_delegations',)
+
+    representation_ids = fields.One2many(
+        string='Representations',
+        comodel_name='wua.representation',
+        inverse_name='assembly_id',)
+
+    number_of_representations = fields.Integer(
+        string='Number of representations',
+        compute='_compute_number_of_representations',)
 
     current_year = fields.Boolean(
         string='Current Year',
@@ -327,6 +348,13 @@ class WuaAssembly(models.Model):
             record.is_wua_portal_user = is_wua_portal_user
 
     @api.multi
+    def _compute_is_wua_manager(self):
+        is_wua_manager = self.env.user.has_group(
+            'base_wua.group_wua_manager')
+        for record in self:
+            record.is_wua_manager = is_wua_manager
+
+    @api.multi
     def _compute_number_of_agendaitems(self):
         for record in self:
             number_of_agendaitems = 0
@@ -343,12 +371,32 @@ class WuaAssembly(models.Model):
             record.number_of_attendances = number_of_attendances
 
     @api.multi
+    def _compute_number_of_attendances_in_assembly(self):
+        for record in self:
+            number_of_attendances_in_assembly = 0
+            if record.attendance_ids:
+                for attendance in record.attendance_ids:
+                    if attendance.votes_total > 0:
+                        number_of_attendances_in_assembly = \
+                            number_of_attendances_in_assembly + 1
+            record.number_of_attendances_in_assembly = \
+                number_of_attendances_in_assembly
+
+    @api.multi
     def _compute_number_of_delegations(self):
         for record in self:
             number_of_delegations = 0
             if record.delegationvote_ids:
                 number_of_delegations = len(record.delegationvote_ids)
             record.number_of_delegations = number_of_delegations
+
+    @api.multi
+    def _compute_number_of_representations(self):
+        for record in self:
+            number_of_representations = 0
+            if record.representation_ids:
+                number_of_representations = len(record.representation_ids)
+            record.number_of_representations = number_of_representations
 
     @api.multi
     def _compute_current_year(self):
@@ -401,7 +449,7 @@ class WuaAssembly(models.Model):
             rendered_publication_text = ''
             if record.publication_text:
                 rendered_publication_text = \
-                    record._get_rendered_publication_text()
+                    record.sudo()._get_rendered_publication_text()
             record.rendered_publication_text = rendered_publication_text
 
     def _get_rendered_publication_text(self):
@@ -522,11 +570,13 @@ class WuaAssembly(models.Model):
     @api.multi
     def action_go_to_state_03_in_progress(self):
         self.ensure_one()
+        self.generate_attendances(final_list=True)
         self.state = '03_in_progress'
 
     @api.multi
     def action_return_to_state_02_called(self):
         self.ensure_one()
+        self.generate_attendances()
         self.state = '02_called'
 
     @api.multi
@@ -545,11 +595,11 @@ class WuaAssembly(models.Model):
         self.attendance_ids.unlink()
 
     @api.multi
-    def generate_attendances(self):
+    def generate_attendances(self, final_list=False):
         self.ensure_one()
         self.reset_attendances()
         partners = self.env['res.partner'].search(
-            [('is_wua_partner', '=', True)])
+            [('is_wua_partner', '=', True), ('is_owner', '=', True)])
         if partners:
             model_wua_attendance = self.env['wua.attendance']
             for partner in partners:
@@ -561,6 +611,44 @@ class WuaAssembly(models.Model):
                     'partner_id': partner_id,
                     'votes_owned': votes_owned,
                     })
+            if final_list:
+                # Delegations of vote
+                for delegationvote in (self.delegationvote_ids or []):
+                    if delegationvote.state == '01_draft':
+                        continue
+                    grantor_attendance = model_wua_attendance.search(
+                        [('assembly_id', '=', self.id),
+                         ('partner_id', '=', delegationvote.grantor_id.id)])
+                    receiver_attendance = model_wua_attendance.search(
+                        [('assembly_id', '=', self.id),
+                         ('partner_id', '=', delegationvote.receiver_id.id)])
+                    if grantor_attendance and receiver_attendance:
+                        grantor_attendance = grantor_attendance[0]
+                        receiver_attendance = receiver_attendance[0]
+                        votes_delegation = \
+                            delegationvote.grantor_id.number_of_votes
+                        grantor_attendance.write({
+                            'votes_delegation': -votes_delegation,
+                            'receiver_id': receiver_attendance.partner_id.id,
+                            })
+                        receiver_attendance.write({
+                            'votes_delegation': votes_delegation,
+                            })
+                # Final test: is the TIN present?
+                attendances_without_vat = model_wua_attendance.search(
+                    [('assembly_id', '=', self.id),
+                     ('votes_total', '>', 0),
+                     ('vat_participant', '=', False)])
+                if attendances_without_vat:
+                    names_without_vat = ''
+                    for attendance in attendances_without_vat:
+                        names_without_vat = names_without_vat + '\n' + \
+                            attendance.participant_id.name
+                    error_message = _('The next participants does not '
+                                      'have TIN assigned (assigning a '
+                                      'TIN is required):')
+                    raise exceptions.UserError(
+                        error_message + '\n' + names_without_vat)
 
     @api.multi
     def action_preview_publication_text(self):
@@ -620,6 +708,60 @@ class WuaAssembly(models.Model):
         return resp
 
     @api.multi
+    def action_get_delegationvotes(self):
+        self.ensure_one()
+        current_assembly = self
+        id_tree_view = self.env.ref(
+            'base_wua_assembly.wua_delegationvote_particular_view_tree').id
+        id_form_view = self.env.ref(
+            'base_wua_assembly.wua_delegationvote_particular_view_form').id
+        search_view = self.env.ref(
+            'base_wua_assembly.wua_delegationvote_particular_view_search')
+        custom_context = \
+            {'default_assembly_id': current_assembly.id}
+        suffix_title = current_assembly._get_state_clarification()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Delegations of vote') + ' ' + suffix_title,
+            'res_model': 'wua.delegationvote',
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': [search_view.id],
+            'target': 'current',
+            'domain': [('assembly_id', '=', current_assembly.id)],
+            'context': custom_context,
+            }
+        return act_window
+
+    @api.multi
+    def action_get_representations(self):
+        self.ensure_one()
+        current_assembly = self
+        id_tree_view = self.env.ref(
+            'base_wua_assembly.wua_representation_particular_view_tree').id
+        id_form_view = self.env.ref(
+            'base_wua_assembly.wua_representation_particular_view_form').id
+        search_view = self.env.ref(
+            'base_wua_assembly.wua_representation_particular_view_search')
+        custom_context = \
+            {'default_assembly_id': current_assembly.id}
+        suffix_title = current_assembly._get_state_clarification()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Representations') + ' ' + suffix_title,
+            'res_model': 'wua.representation',
+            'view_type': 'form',
+            'view_mode': 'form,tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': [search_view.id],
+            'target': 'current',
+            'domain': [('assembly_id', '=', current_assembly.id)],
+            'context': custom_context,
+            }
+        return act_window
+
+    @api.multi
     def action_get_attendances_calls(self):
         self.ensure_one()
         current_assembly = self
@@ -645,28 +787,28 @@ class WuaAssembly(models.Model):
         return act_window
 
     @api.multi
-    def action_get_delegationvotes(self):
+    def action_get_attendances(self):
         self.ensure_one()
         current_assembly = self
         id_tree_view = self.env.ref(
-            'base_wua_assembly.wua_delegationvote_particular_view_tree').id
+            'base_wua_assembly.wua_attendance_particular_view_tree').id
         id_form_view = self.env.ref(
-            'base_wua_assembly.wua_delegationvote_particular_view_form').id
+            'base_wua_assembly.wua_attendance_particular_view_form').id
         search_view = self.env.ref(
-            'base_wua_assembly.wua_delegationvote_particular_view_search')
-        custom_context = \
-            {'default_assembly_id': current_assembly.id}
-        suffix_title = current_assembly._get_state_clarification()
+            'base_wua_assembly.wua_attendance_particular_view_search')
         act_window = {
             'type': 'ir.actions.act_window',
-            'name': _('Delegations of vote') + ' ' + suffix_title,
-            'res_model': 'wua.delegationvote',
+            'name': _('LIST OF ATTENDEES'),
+            'res_model': 'wua.attendance',
             'view_type': 'form',
             'view_mode': 'form,tree',
             'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
             'search_view_id': [search_view.id],
             'target': 'current',
-            'domain': [('assembly_id', '=', current_assembly.id)],
-            'context': custom_context,
+            'domain': [('assembly_id', '=', current_assembly.id),
+                       ('potential_attendee', '=', True)],
+            'limit': 10000000,
             }
+        if self.is_wua_manager and self.state == '03_in_progress':
+            act_window['flags'] = {'initial_mode': 'edit'}
         return act_window

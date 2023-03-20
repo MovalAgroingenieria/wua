@@ -8,9 +8,9 @@ from babel import dates
 from odoo import models, fields, api, exceptions, _
 
 
-class WuaDelegationvote(models.Model):
-    _name = 'wua.delegationvote'
-    _description = 'Delegation of vote in assamblies'
+class WuaRepresentation(models.Model):
+    _name = 'wua.representation'
+    _description = 'Agent of a partner in assamblies'
     _order = 'name'
 
     SIZE_ASSEMBLY_NAME = 10
@@ -27,13 +27,13 @@ class WuaDelegationvote(models.Model):
                 resp = current_assembly.state
         return resp
 
-    def _default_delegation_vote_main_text(self):
-        delegation_vote_main_text = _(
-            '<div style="text-align: justify;">Mr. <b>{{ grantor.name }}</b> '
-            'with Community Member No. <b>{{ grantor.partner_code }}</b>, by '
+    def _default_representation_main_text(self):
+        representation_main_text = _(
+            '<div style="text-align: justify;">Mr. <b>{{ partner.name }}</b> '
+            'with Community Member No. <b>{{ partner.partner_code }}</b>, by '
             'virtue of the provisions of the perminent articles of the Statut'
             'es of the {{ assembly.president_id.company_id.name }}, <b>AUTHOR'
-            'IZE</b>:<br><br>Mr. <b>{{ receiver.name }}</b> to represent him '
+            'IZE</b>:<br><br>Mr. <b>{{ agent.name }}</b> to represent him '
             'at the {{ assembly.issue }} of this Water Association Community,'
             ' which will take place on the next {{ assembly_day }} of {{ asse'
             'mbly_month }} of {{ assembly_year }}.<br><br><div style="text-al'
@@ -44,34 +44,35 @@ class WuaDelegationvote(models.Model):
             'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
             '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
             'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
-            'bsp;&nbsp; The Communard<br><br><br><br><br>VAT {{ receiver.vat '
-            '}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
-            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
-            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
-            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VAT'
-            ' {{ grantor.vat }}<br><br><b>THE COMMUNITY SECRETARY</b><br><br>'
-            '<br><br>VAT {{ assembly.secretary_id.vat }}<br></div></div>')
-        last_record = self.env['wua.delegationvote'].search(
+            'bsp;&nbsp; The Communard<br><br><br><br><br>VAT {{ agent.vat_w'
+            'ua_legalrep}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb'
+            'sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&'
+            'nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp'
+            ';&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb'
+            'sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&'
+            'nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp'
+            ';&nbsp; VAT {{ partner.vat }}<br><br><b>THE COMMUNITY SECRETARY<'
+            '/b><br><br><br><br>VAT {{ assembly.secretary_id.vat }}<br></div>'
+            '</div>')
+        last_record = self.env['wua.representation'].search(
             [], order='write_date desc', limit=1)
-        if last_record and last_record.delegation_vote_main_text:
-            delegation_vote_main_text = last_record.delegation_vote_main_text
-        return delegation_vote_main_text
+        if last_record and last_record.representation_main_text:
+            representation_main_text = last_record.representation_main_text
+        return representation_main_text
 
-    def _default_delegation_vote_footer_text(self):
-        delegation_vote_footer_text = _(
+    def _default_representation_footer_text(self):
+        representation_footer_text = _(
             '<p><b>NOTE</b>: By virtue of the pertinent Statutes, the Authori'
             'zations must be submitted to the Irrigation Community, for its v'
             'erification and legitimation by the Secretary of the Community. '
             'Failure to comply with this rule will invalidate any Authorizati'
             'on.</p>')
-        last_record = self.env['wua.delegationvote'].search(
+        last_record = self.env['wua.representation'].search(
             [], order='write_date desc', limit=1)
-        if last_record and last_record.delegation_vote_footer_text:
-            delegation_vote_footer_text = \
-                last_record.delegation_vote_footer_text
-        return delegation_vote_footer_text
+        if last_record and last_record.representation_footer_text:
+            representation_footer_text = \
+                last_record.representation_footer_text
+        return representation_footer_text
 
     assembly_id = fields.Many2one(
         string='Assembly',
@@ -80,8 +81,8 @@ class WuaDelegationvote(models.Model):
         required=True,
         ondelete='cascade',)
 
-    grantor_id = fields.Many2one(
-        string='Grantor',
+    partner_id = fields.Many2one(
+        string='Partner',
         comodel_name='res.partner',
         domain=[('is_wua_partner', '=', True),
                 ('is_owner', '=', True),
@@ -90,16 +91,15 @@ class WuaDelegationvote(models.Model):
         required=True,
         ondelete='restrict',)
 
-    receiver_id = fields.Many2one(
-        string='Receiver',
+    agent_id = fields.Many2one(
+        string='Agent',
         comodel_name='res.partner',
-        domain=[('is_wua_partner', '=', True), ('is_owner', '=', True)],
         index=True,
         required=True,
         ondelete='restrict',)
 
     name = fields.Char(
-        string='Delegation Identifier',
+        string='Representation Identifier',
         size=SIZE_ASSEMBLY_NAME + SIZE_PARTNER_CODE + 1,
         store=True,
         index=True,
@@ -134,36 +134,36 @@ class WuaDelegationvote(models.Model):
     notes = fields.Html(
         string='Notes',)
 
-    delegation_vote_main_text = fields.Html(
-        string='Delegation vote main text',
-        default=_default_delegation_vote_main_text,)
+    representation_main_text = fields.Html(
+        string='Representation main text',
+        default=_default_representation_main_text,)
 
-    rendered_delegation_vote_main_text = fields.Html(
-        string='Rendered delegation vote main text',
-        compute="_compute_rendered_delegation_vote_main_text",)
+    rendered_representation_main_text = fields.Html(
+        string='Rendered representation main text',
+        compute="_compute_rendered_representation_main_text",)
 
-    delegation_vote_footer_text = fields.Html(
-        string='Delegation vote footer text',
-        default=_default_delegation_vote_footer_text,)
+    representation_footer_text = fields.Html(
+        string='Representation footer text',
+        default=_default_representation_footer_text,)
 
-    rendered_delegation_vote_footer_text = fields.Html(
-        string='Rendered delegation vote footer text',
-        compute="_compute_rendered_delegation_vote_footer_text",)
+    rendered_representation_footer_text = fields.Html(
+        string='Rendered representation footer text',
+        compute="_compute_rendered_representation_footer_text",)
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
-         'There is already a similar delegation record.'),
+         'There is already a similar representation.'),
         ]
 
     @api.depends('assembly_id', 'assembly_id.name',
-                 'grantor_id', 'grantor_id.partner_code')
+                 'partner_id', 'partner_id.partner_code')
     def _compute_name(self):
         for record in self:
             name = ''
             if (record.assembly_id and record.assembly_id.name and
-               record.grantor_id and record.grantor_id.partner_code):
+               record.partner_id and record.partner_id.partner_code):
                 name = record.assembly_id.name + '-' + \
-                    str(record.grantor_id.partner_code).zfill(
+                    str(record.partner_id.partner_code).zfill(
                         self.SIZE_PARTNER_CODE)
             record.name = name
 
@@ -175,64 +175,56 @@ class WuaDelegationvote(models.Model):
                 assembly_state = record.assembly_id.state
             record.assembly_state = assembly_state
 
-    @api.depends('grantor_id')
+    @api.depends('partner_id')
     def _compute_transferred_votes(self):
         for record in self:
             transferred_votes = 0
-            if record.grantor_id and record.grantor_id.number_of_votes > 0:
-                transferred_votes = record.grantor_id.number_of_votes
+            if record.partner_id and record.partner_id.number_of_votes > 0:
+                transferred_votes = record.partner_id.number_of_votes
             record.transferred_votes = transferred_votes
 
     @api.multi
-    def _compute_rendered_delegation_vote_main_text(self):
+    def _compute_rendered_representation_main_text(self):
         for record in self:
-            rendered_delegation_vote_main_text = ''
-            if record.delegation_vote_main_text:
-                rendered_delegation_vote_main_text = \
-                    record.sudo()._get_rendered_delegation_vote_main_text()
-            record.rendered_delegation_vote_main_text = \
-                rendered_delegation_vote_main_text
+            rendered_representation_main_text = ''
+            if record.representation_main_text:
+                rendered_representation_main_text = \
+                    record.sudo()._get_rendered_representation_main_text()
+            record.rendered_representation_main_text = \
+                rendered_representation_main_text
 
     @api.multi
-    def _compute_rendered_delegation_vote_footer_text(self):
+    def _compute_rendered_representation_footer_text(self):
         for record in self:
-            rendered_delegation_vote_footer_text = ''
-            if record.delegation_vote_footer_text:
-                rendered_delegation_vote_footer_text = \
-                    record.sudo()._get_rendered_delegation_vote_footer_text()
-            record.rendered_delegation_vote_footer_text = \
-                rendered_delegation_vote_footer_text
+            rendered_representation_footer_text = ''
+            if record.representation_footer_text:
+                rendered_representation_footer_text = \
+                    record.sudo()._get_rendered_representation_footer_text()
+            record.rendered_representation_footer_text = \
+                rendered_representation_footer_text
 
-    @api.constrains('grantor_id')
-    def _check_grantor(self):
+    @api.constrains('partner_id')
+    def _check_partner_id(self):
         for record in self:
-            if ((not record.grantor_id.is_wua_partner) or
-               (not record.grantor_id.is_owner) or
-               record.grantor_id.number_of_votes == 0):
+            if ((not record.partner_id.is_wua_partner) or
+               (not record.partner_id.is_owner) or
+               record.partner_id.number_of_votes == 0):
                 raise exceptions.UserError(
-                    _('The grantor must be a owner with votes.'))
-            delegations_to_grantor = self.env['wua.delegationvote'].search(
-                [('assembly_id', '=', record.assembly_id.id),
-                 ('receiver_id', '=', record.grantor_id.id)])
-            if delegations_to_grantor:
-                raise exceptions.UserError(
-                    _('A partner cannot give their votes if they have '
-                      'already received votes from other partners.'))
+                    _('The partner must be a owner with votes.'))
 
-    @api.constrains('receiver_id')
-    def _check_receiver(self):
+    @api.constrains('agent_id')
+    def _check_agent_id(self):
         for record in self:
-            if ((not record.receiver_id.is_wua_partner) or
-               (not record.receiver_id.is_owner)):
-                raise exceptions.UserError(
-                    _('The receiver must be a owner.'))
+            if ((not record.agent_id.parent_id) or
+               (record.agent_id.parent_id != record.partner_id)):
+                raise exceptions.UserError(_('The agent is not a contact '
+                                             'associated with the partner.'))
 
-    @api.constrains('grantor_id', 'receiver_id')
-    def _check_grantor_and_receiver(self):
-        for record in self:
-            if record.grantor_id == record.receiver_id:
-                raise exceptions.UserError(
-                    _('The grantor and the receiver cannot be the same.'))
+    @api.onchange('partner_id')
+    def _onchange_partner_id(self):
+        if self.partner_id:
+            return {'domain':
+                    {'agent_id': [('parent_id', '=', self.partner_id.id)]}}
 
     @api.model
     def create(self, vals):
@@ -243,18 +235,18 @@ class WuaDelegationvote(models.Model):
                 self.env['wua.assembly'].browse(current_assembly_id)
             if current_assembly and current_assembly.state != '02_called':
                 raise exceptions.UserError(_('It is only allowed to create '
-                                             'a delegation of vote '
+                                             'a representation '
                                              'in \'CALLED\' state.'))
-        return super(WuaDelegationvote, self).create(vals)
+        return super(WuaRepresentation, self).create(vals)
 
     @api.multi
     def unlink(self):
         for record in self:
             if record.assembly_state != '02_called':
                 raise exceptions.UserError(_('It is only allowed to delete '
-                                             'a delegation of vote '
+                                             'a representation '
                                              'in \'CALLED\' state.'))
-        super(WuaDelegationvote, self).unlink()
+        super(WuaRepresentation, self).unlink()
 
     @api.multi
     def action_go_to_state_02_validated(self):
@@ -266,37 +258,37 @@ class WuaDelegationvote(models.Model):
         self.ensure_one()
         self.state = '01_draft'
 
-    def validate_delegations_of_vote(self, active_delegations_of_vote):
+    def validate_representations(self, active_representations):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):
             raise exceptions.UserError(_(
                 'You do not have permission to execute this action.'))
-        delegations_of_vote = \
-            self.env['wua.delegationvote'].browse(active_delegations_of_vote)
-        for delegation_of_vote in delegations_of_vote:
-            if (delegation_of_vote.assembly_state != '02_called'):
+        representations = \
+            self.env['wua.representation'].browse(active_representations)
+        for representation in representations:
+            if (representation.assembly_state != '02_called'):
                 raise exceptions.UserError(_(
-                    'It is only possible to validate or cancel voting '
-                    'delegations when the assembly is in '
+                    'It is only possible to validate or cancel '
+                    'representations when the assembly is in '
                     'the \'CALLED\' state.'))
-            if delegation_of_vote.state == '01_draft':
-                delegation_of_vote.action_go_to_state_02_validated()
+            if representation.state == '01_draft':
+                representation.action_go_to_state_02_validated()
 
-    def cancel_delegations_of_vote(self, active_delegations_of_vote):
+    def cancel_representations(self, active_representations):
         if (not self.env.user.has_group('base_wua.group_wua_manager')):
             raise exceptions.UserError(_(
                 'You do not have permission to execute this action.'))
-        delegations_of_vote = \
-            self.env['wua.delegationvote'].browse(active_delegations_of_vote)
-        for delegation_of_vote in delegations_of_vote:
-            if (delegation_of_vote.assembly_state != '02_called'):
+        representations = \
+            self.env['wua.representation'].browse(active_representations)
+        for representation in representations:
+            if (representation.assembly_state != '02_called'):
                 raise exceptions.UserError(_(
-                    'It is only possible to validate or cancel voting '
-                    'delegations when the assembly is in '
+                    'It is only possible to validate or cancel '
+                    'representations when the assembly is in '
                     'the \'CALLED\' state.'))
-            if delegation_of_vote.state == '02_validated':
-                delegation_of_vote.action_return_to_state_01_draft()
+            if representation.state == '02_validated':
+                representation.action_return_to_state_01_draft()
 
-    def _get_rendered_delegation_vote_main_text(self):
+    def _get_rendered_representation_main_text(self):
         resp = ''
         lang = self.env.context['lang']
         if not lang:
@@ -305,11 +297,11 @@ class WuaDelegationvote(models.Model):
             if self.assembly_id.assembly_date:
                 date_of_assembly = datetime.strptime(
                     self.assembly_id.assembly_date, '%Y-%m-%d')
-                template = Template(self.delegation_vote_main_text)
+                template = Template(self.representation_main_text)
                 resp = template.render(
                     assembly=self.assembly_id,
-                    grantor=self.grantor_id,
-                    receiver=self.receiver_id,
+                    partner=self.partner_id,
+                    agent=self.agent_id,
                     assembly_day=dates.format_date(
                         date_of_assembly, 'd', locale=lang),
                     assembly_month=dates.format_date(
@@ -323,7 +315,7 @@ class WuaDelegationvote(models.Model):
                 '<p><br>' + e.message + '</p>'
         return resp
 
-    def _get_rendered_delegation_vote_footer_text(self):
+    def _get_rendered_representation_footer_text(self):
         resp = ''
         lang = self.env.context['lang']
         if not lang:
@@ -332,7 +324,7 @@ class WuaDelegationvote(models.Model):
             if self.assembly_id.assembly_date:
                 date_of_assembly = datetime.strptime(
                     self.assembly_id.assembly_date, '%Y-%m-%d')
-                template = Template(self.delegation_vote_footer_text)
+                template = Template(self.representation_footer_text)
                 resp = template.render(
                     assembly=self.assembly_id,
                     assembly_day=dates.format_date(

@@ -125,8 +125,7 @@
                 </page>
             </notebook>
             <xpath expr="//field[@name='child_ids']//form//field[@name='title']" position="before">
-                <field name="vat_wua_legalrep" string="TIN"
-                       attrs="{'invisible':[('type', '!=', 'wua_legalrep')]}"/>
+                <field name="vat_wua_legalrep" string="TIN"/>
             </xpath>
             <xpath expr="//img[@t-att-src='_s + &quot;/base/static/src/img/money.png&quot;']" position="after">
                 <img t-if="record.type.raw_value === 'wua_legalrep'" t-att-src='"/base_wua/static/img/lawyer.png"'/>
