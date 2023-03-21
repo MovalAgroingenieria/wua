@@ -807,7 +807,6 @@ class WuaAssembly(models.Model):
             'target': 'current',
             'domain': [('assembly_id', '=', current_assembly.id),
                        ('potential_attendee', '=', True)],
-            'limit': 10000000,
             }
         if self.is_wua_manager and self.state == '03_in_progress':
             act_window['flags'] = {'initial_mode': 'edit'}

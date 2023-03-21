@@ -2,6 +2,7 @@
 # Copyright 2023 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import locale
 from datetime import datetime
 from jinja2 import Template, TemplateError
 from babel import dates
@@ -238,6 +239,25 @@ class WuaRepresentation(models.Model):
                                              'a representation '
                                              'in \'CALLED\' state.'))
         return super(WuaRepresentation, self).create(vals)
+
+    @api.multi
+    def name_get(self):
+        result = []
+        default_locale = locale.setlocale(locale.LC_TIME)
+        is_english = ('lang' in self.env.context and
+                      self.env.context['lang'] == 'en_US')
+        for record in self:
+            try:
+                if is_english:
+                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                assembly_date_str = datetime.strptime(
+                    record.assembly_id.assembly_date,
+                    '%Y-%m-%d').strftime('%x')
+            finally:
+                locale.setlocale(locale.LC_TIME, default_locale)
+            name = assembly_date_str + ' (' + record.partner_id.name + ')'
+            result.append((record.id, name))
+        return result
 
     @api.multi
     def unlink(self):

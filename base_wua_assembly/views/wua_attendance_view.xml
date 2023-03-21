@@ -41,8 +41,8 @@
                     $(".fa.fa-chevron-right.btn.btn-icon.o_pager_next").hide();
                     });
                 </script>
-                <sheet>
-                    <group> name="master_data">
+                <!-- <sheet> -->
+                    <group name="master_data">
                         <group name="master_data_left">
                             <field name="present" style="margin-top=30px"/>
                         </group>
@@ -50,13 +50,38 @@
                             <h4><field name="participant_name" nolabel="1"/></h4>
                         </group>
                     </group>
-                </sheet>
-                <footer>
+                    <!-- <div class="col-md-12 text-center">
+                        <button name="confirm_present_value" type="object"
+                         string="C O N F I R M"
+                         class="btn-primary"
+                         attrs="{'invisible': [('assembly_state','!=','03_in_progress')]}"
+                         groups="base_wua.group_wua_manager"/>
+                    </div> -->
+                    
+                    <footer style="text-align:center">
+
+                        <button name="confirm_present_value" type="object"
+                         string="C O N F I R M"
+                         class="btn-primary"
+                         attrs="{'invisible': [('assembly_state','!=','03_in_progress')]}"
+                         groups="base_wua.group_wua_manager"/>
+
+                        
+                    </footer>
+                    
+                <!-- </sheet> -->
+
+                <!-- <footer class="col-md-12 text-center">
+                    
+                    <div class="col-md-12 text-center">
+                    
                     <button name="confirm_present_value" type="object"
                      string="C O N F I R M"
+                     class="btn-primary"
                      attrs="{'invisible': [('assembly_state','!=','03_in_progress')]}"
                      groups="base_wua.group_wua_manager"/>
-                </footer>
+                    </div>
+                </footer> -->
             </form>
         </field>
     </record>
@@ -69,21 +94,20 @@
                   class="o_base_wua_assembly_attendance_view_tree"
                   create="false" delete="false"
                   default_order="participant_name">
+                <field name="icon_present"
+                       widget="image" string=" "/>
                 <field name="vat_participant"
                        string="Attendee TIN"/>
                 <field name="participant_name"
                        string="Attendee Name"/>
                 <field name="represented_partner"
                        string="Represents..."/>
-                <field name="votes_owned"
+                <!-- <field name="votes_owned"
                        string="Own Votes"/>
                 <field name="votes_delegation"
-                       string="Transf. Votes"/>
+                       string="Transf. Votes"/> -->
                 <field name="votes_total"
-                       string="Total Votes"
-                       sum="Total Votes"/>
-                <field name="icon_present"
-                       widget="image" string=" "/>
+                       string="Total Votes"/>
             </tree>
         </field>
     </record>
