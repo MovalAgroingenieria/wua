@@ -5,7 +5,7 @@
 import base64
 import locale
 from datetime import datetime
-from odoo import models, fields, api, modules
+from odoo import models, fields, api, modules, _
 
 
 class WuaAttendance(models.Model):
@@ -104,9 +104,20 @@ class WuaAttendance(models.Model):
         string='Present',
         default=False,)
 
+    attendance_signature = fields.Binary(
+        string='Signature')
+
     icon_present = fields.Binary(
         string='Icon for the attendance',
         compute='_compute_icon_present')
+
+    participant_image = fields.Binary(
+        string='Participant Image',
+        compute='_compute_participant_image')
+
+    html_attendance_title = fields.Html(
+        string='Attendance Title',
+        compute='_compute_html_attendance_title')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -208,22 +219,70 @@ class WuaAttendance(models.Model):
             record.icon_present = icon_present
 
     @api.multi
+    def _compute_participant_image(self):
+        for record in self:
+            participant_image = None
+            if record.participant_id:
+                participant_image = record.participant_id.image_medium
+            record.participant_image = participant_image
+
+    @api.multi
+    def _compute_html_attendance_title(self):
+        try:
+            settings = self.env['res.backend.settings'].search([])
+            report_color = str(settings[0].report_motive_color)
+        except Exception:
+            report_color = '#696969'
+        for record in self:
+            html_attendance_title = ''
+            if record.name:
+                label_title = _('VOTES')
+                header = '<div class="text-center" ' + \
+                         'style="margin-top:8px"><b>' + label_title + \
+                         '</b></div>'
+                body = '<div class="text-center"><h1>' + \
+                    str(record.votes_total) + '</h1></div>'
+                html_attendance_title = \
+                    '<div class="panel-body text-left" ' + \
+                    'style="background:#f4f6f6;' + \
+                    'border-color: ' + report_color + '; border-width:1px;' + \
+                    'border-style:solid;padding-top:0px;' + \
+                    'padding-bottom:0px;' + \
+                    'margin-left:120px;margin-right:120px">' + \
+                    header + body + '</div>'
+            record.html_attendance_title = html_attendance_title
+
+    @api.multi
+    def write(self, vals):
+        if 'attendance_signature' in vals:
+            if vals['attendance_signature']:
+                vals['present'] = True
+            else:
+                vals['present'] = False
+        super(WuaAttendance, self).write(vals)
+        return True
+
+    @api.multi
     def name_get(self):
         result = []
-        default_locale = locale.setlocale(locale.LC_TIME)
-        is_english = ('lang' in self.env.context and
-                      self.env.context['lang'] == 'en_US')
-        for record in self:
-            try:
-                if is_english:
-                    locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                assembly_date_str = datetime.strptime(
-                    record.assembly_id.assembly_date,
-                    '%Y-%m-%d').strftime('%x')
-            finally:
-                locale.setlocale(locale.LC_TIME, default_locale)
-            name = assembly_date_str + ' (' + record.participant_name + ')'
-            result.append((record.id, name))
+        if self.env.context.get('show_only_participant', False):
+            for record in self:
+                result.append((record.id, record.participant_name))
+        else:
+            default_locale = locale.setlocale(locale.LC_TIME)
+            is_english = ('lang' in self.env.context and
+                          self.env.context['lang'] == 'en_US')
+            for record in self:
+                try:
+                    if is_english:
+                        locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                    assembly_date_str = datetime.strptime(
+                        record.assembly_id.assembly_date,
+                        '%Y-%m-%d').strftime('%x')
+                finally:
+                    locale.setlocale(locale.LC_TIME, default_locale)
+                name = assembly_date_str + ' (' + record.participant_name + ')'
+                result.append((record.id, name))
         return result
 
     def _get_agent_of_participant(self, assembly, partner):

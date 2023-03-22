@@ -798,7 +798,7 @@ class WuaAssembly(models.Model):
             'base_wua_assembly.wua_attendance_particular_view_search')
         act_window = {
             'type': 'ir.actions.act_window',
-            'name': _('LIST OF ATTENDEES'),
+            'name': _('ATTENDEES'),
             'res_model': 'wua.attendance',
             'view_type': 'form',
             'view_mode': 'form,tree',
@@ -807,6 +807,7 @@ class WuaAssembly(models.Model):
             'target': 'current',
             'domain': [('assembly_id', '=', current_assembly.id),
                        ('potential_attendee', '=', True)],
+            'context': {'show_only_participant': True},
             }
         if self.is_wua_manager and self.state == '03_in_progress':
             act_window['flags'] = {'initial_mode': 'edit'}
