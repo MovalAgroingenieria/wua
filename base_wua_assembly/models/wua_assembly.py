@@ -635,20 +635,20 @@ class WuaAssembly(models.Model):
                             'votes_delegation': votes_delegation,
                             })
                 # Final test: is the TIN present?
-                attendances_without_vat = model_wua_attendance.search(
-                    [('assembly_id', '=', self.id),
-                     ('votes_total', '>', 0),
-                     ('vat_participant', '=', False)])
-                if attendances_without_vat:
-                    names_without_vat = ''
-                    for attendance in attendances_without_vat:
-                        names_without_vat = names_without_vat + '\n' + \
-                            attendance.participant_id.name
-                    error_message = _('The next participants does not '
-                                      'have TIN assigned (assigning a '
-                                      'TIN is required):')
-                    raise exceptions.UserError(
-                        error_message + '\n' + names_without_vat)
+                # attendances_without_vat = model_wua_attendance.search(
+                #     [('assembly_id', '=', self.id),
+                #      ('votes_total', '>', 0),
+                #      ('vat_participant', '=', False)])
+                # if attendances_without_vat:
+                #     names_without_vat = ''
+                #     for attendance in attendances_without_vat:
+                #         names_without_vat = names_without_vat + '\n' + \
+                #             attendance.participant_id.name
+                #     error_message = _('The next participants does not '
+                #                       'have TIN assigned (assigning a '
+                #                       'TIN is required):')
+                #     raise exceptions.UserError(
+                #         error_message + '\n' + names_without_vat)
 
     @api.multi
     def action_preview_publication_text(self):
