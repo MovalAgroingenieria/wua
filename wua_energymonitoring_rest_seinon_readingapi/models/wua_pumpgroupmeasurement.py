@@ -277,9 +277,10 @@ class WuaPumpgroupmeasurement(models.Model):
            suction_pressure_key in suction_pressure_dict):
             suction_pressure_values = \
                 suction_pressure_dict[suction_pressure_key]
-        if instantaneous_flow_key in instantaneous_flow_dict:
+        if instantaneous_flow_key and instantaneous_flow_dict:
+            key_returned_by_api = list(instantaneous_flow_dict.keys())[0]
             instantaneous_flow_values = \
-                instantaneous_flow_dict[instantaneous_flow_key]
+                instantaneous_flow_dict[key_returned_by_api]
         if consumed_power_key in consumed_power_dict:
             consumed_power_values = \
                 consumed_power_dict[consumed_power_key]

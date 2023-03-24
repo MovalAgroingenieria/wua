@@ -13,9 +13,11 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_energymonitoring_rest", ],
+        "base_wua_energymonitoring_rest",
+    ],
     "data": [
-        "views/wua_infrastructure_config_settings_view.xml", ],        
+        "views/wua_infrastructure_config_settings_view.xml",
+    ],
     "installable": True,
     "application": False,
 }
