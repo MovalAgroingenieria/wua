@@ -59,6 +59,18 @@ class WuaGravconsumption(models.Model):
         compute='_compute_wateringrequest_suffix'
     )
 
+    overdue = fields.Boolean(
+        string='Overdue',
+        compute='_compute_overdue')
+
+    @api.multi
+    def _compute_overdue(self):
+        for record in self:
+            overdue = False
+            if record.parcel_id and record.parcel_id.overdue:
+                overdue = True
+            record.overdue = overdue
+
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None,
                    orderby=False, lazy=True):
