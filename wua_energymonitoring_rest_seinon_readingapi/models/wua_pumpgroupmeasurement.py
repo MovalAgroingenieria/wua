@@ -15,7 +15,7 @@ class WuaPumpgroupmeasurement(models.Model):
     _inherit = 'wua.pumpgroupmeasurement'
 
     FACTOR_PRESSURE = 10.33
-    FACTOR_FLOW = 3.6
+    # FACTOR_FLOW = 3.6
 
     # Specialization
     def _import_measurements(self, pumpgroup):
@@ -46,14 +46,15 @@ class WuaPumpgroupmeasurement(models.Model):
              consumed_energy_deviceid, impulsion_pressure_measurementid,
              suction_pressure_measurementid, instantaneous_flow_measurementid,
              consumed_power_measurementid, consumed_energy_measurementid,
-             default_suction_pressure) = self._get_devices_and_measurements(
-                 pumpgroup)
+             default_suction_pressure, instantaneous_flow_conversion_factor) = \
+                self._get_devices_and_measurements(pumpgroup)
             data_ok = (impulsion_pressure_deviceid and
                        instantaneous_flow_deviceid and
                        consumed_power_deviceid and
                        impulsion_pressure_measurementid and
                        instantaneous_flow_measurementid and
-                       consumed_power_measurementid)
+                       consumed_power_measurementid and
+                       instantaneous_flow_conversion_factor)
             if data_ok:
                 # Initial and end dates.
                 fixed_suction_pressure = False
@@ -203,7 +204,8 @@ class WuaPumpgroupmeasurement(models.Model):
                         outputrest_instantaneous_flow,
                         outputrest_consumed_power,
                         outputrest_consumed_energy,
-                        default_suction_pressure)
+                        default_suction_pressure,
+                        instantaneous_flow_conversion_factor)
                     measurements = \
                         self._convert_list_of_tuples_to_dict(measurements)
                 else:
@@ -263,7 +265,8 @@ class WuaPumpgroupmeasurement(models.Model):
                             consumed_energy_key, impulsion_pressure_dict,
                             suction_pressure_dict, instantaneous_flow_dict,
                             consumed_power_dict, consumed_energy_dict,
-                            suction_pressure_default):
+                            suction_pressure_default,
+                            instantaneous_flow_conversion_factor):
         # Get the dictionaries with measurement data.
         impulsion_pressure_values = None
         suction_pressure_values = None
@@ -353,7 +356,8 @@ class WuaPumpgroupmeasurement(models.Model):
                 instantaneous_flow = float(instantaneous_flow)
             except:
                 instantaneous_flow = 0
-            instantaneous_flow = instantaneous_flow * self.FACTOR_FLOW
+            instantaneous_flow = \
+                instantaneous_flow * instantaneous_flow_conversion_factor
             consumed_energy = 0
             if consumed_energy_values:
                 consumed_energy = \
@@ -477,6 +481,8 @@ class WuaPumpgroupmeasurement(models.Model):
             pumpgroup.consumed_energy_measurementid
         default_suction_pressure = \
             pumpgroup.default_suction_pressure
+        instantaneous_flow_conversion_factor = \
+            pumpgroup.instantaneous_flow_conversion_factor
         return (impulsion_pressure_deviceid,
                 suction_pressure_deviceid,
                 instantaneous_flow_deviceid,
@@ -487,4 +493,5 @@ class WuaPumpgroupmeasurement(models.Model):
                 instantaneous_flow_measurementid,
                 consumed_power_measurementid,
                 consumed_energy_measurementid,
-                default_suction_pressure)
+                default_suction_pressure,
+                instantaneous_flow_conversion_factor)

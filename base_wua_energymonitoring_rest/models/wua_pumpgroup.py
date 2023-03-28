@@ -126,6 +126,11 @@ class WuaPumpgroup(models.Model):
         string='Energy Monitoring enabled',
         compute='_compute_energymonitoring_enabled')
 
+    instantaneous_flow_conversion_factor = fields.Float(
+        string="Conversion factor",
+        digits=(32, 4),
+        default=3.6)
+
     @api.depends('impulsion_pressure_deviceid',
                  'impulsion_pressure_measurementid',
                  'instantaneous_flow_deviceid',
