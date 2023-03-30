@@ -2587,22 +2587,23 @@ class WuaParcel(models.Model):
         password = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_password')
         if url and username and password:
-            credentials = username + "-" + password
-            credentials = credentials.ljust(32)
-            current_datetime = pytz.utc.localize(datetime.datetime.now())
-            current_datetime = current_datetime.astimezone(
-                pytz.timezone('Europe/Madrid'))
-            current_datetime = str(current_datetime)[:16].replace(' ', 'T')
-            minimum = int(current_datetime[14:])
-            if minimum < 30:
-                minimum = '00'
-            else:
-                minimum = '30'
-            iv = current_datetime[:14] + minimum
-            aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
-            cipher_text = aes_encryptor.encrypt(credentials)
-            cipher_text = cipher_text.encode('base64')
-            url = url + '?' + 'arg=' + cipher_text
+            if (not self.env.user.has_group('base_wua.group_wua_portal_user')):
+                credentials = username + "-" + password
+                credentials = credentials.ljust(32)
+                current_datetime = pytz.utc.localize(datetime.datetime.now())
+                current_datetime = current_datetime.astimezone(
+                    pytz.timezone('Europe/Madrid'))
+                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+                minimum = int(current_datetime[14:])
+                if minimum < 30:
+                    minimum = '00'
+                else:
+                    minimum = '30'
+                iv = current_datetime[:14] + minimum
+                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
+                cipher_text = aes_encryptor.encrypt(credentials)
+                cipher_text = cipher_text.encode('base64')
+                url = url + '?' + 'arg=' + cipher_text
             return {
                 'type': 'ir.actions.act_url',
                 'url': url,
