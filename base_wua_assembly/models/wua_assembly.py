@@ -16,7 +16,7 @@ class WuaAssembly(models.Model):
     _order = 'assembly_date desc'
 
     SIZE_ISSUE = 75
-    SIZE_NAME = 10
+    SIZE_NAME = 19
 
     def _default_street(self):
         resp = ''
@@ -246,6 +246,10 @@ class WuaAssembly(models.Model):
         string='Number of attendances (in assembly)',
         compute='_compute_number_of_attendances_in_assembly',)
 
+    number_of_ballotpapers_in_assembly = fields.Integer(
+        string='Number of ballot papers (in assembly)',
+        compute='_compute_number_of_ballotpapers_in_assembly',)
+
     delegationvote_ids = fields.One2many(
         string='Delegations of vote',
         comodel_name='wua.delegationvote',
@@ -286,12 +290,15 @@ class WuaAssembly(models.Model):
          'The second hour must be a value less than 24.'),
         ]
 
-    @api.depends('assembly_date')
+    @api.depends('assembly_date', 'first_hour')
     def _compute_name(self):
         for record in self:
             name = ''
-            if record.assembly_date:
-                name = record.assembly_date
+            if record.assembly_date and record.first_hour >= 0:
+                name = record.assembly_date + 'T' + \
+                    str(int((record.first_hour))).zfill(2) + ':' + \
+                    str(int(round((record.first_hour % 1) * 60))).zfill(2) + \
+                    ':00'
             record.name = name
 
     @api.multi
@@ -381,6 +388,12 @@ class WuaAssembly(models.Model):
                             number_of_attendances_in_assembly + 1
             record.number_of_attendances_in_assembly = \
                 number_of_attendances_in_assembly
+
+    @api.multi
+    def _compute_number_of_ballotpapers_in_assembly(self):
+        for record in self:
+            record.number_of_ballotpapers_in_assembly = \
+                record.number_of_attendances_in_assembly
 
     @api.multi
     def _compute_number_of_delegations(self):
@@ -783,6 +796,28 @@ class WuaAssembly(models.Model):
             'domain': [('assembly_id', '=', current_assembly.id)],
             'context': custom_context,
             'limit': 10000000,
+            }
+        return act_window
+
+    @api.multi
+    def action_get_ballotpapers(self):
+        self.ensure_one()
+        current_assembly = self
+        id_tree_view = self.env.ref(
+            'base_wua_assembly.wua_attendance_ballotpaper_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_assembly.wua_attendance_ballotpaper_view_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('BALLOT PAPERS'),
+            'res_model': 'wua.attendance',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree')],
+            'search_view_id': [search_view.id],
+            'target': 'current',
+            'domain': [('assembly_id', '=', current_assembly.id),
+                       ('potential_attendee', '=', True)],
             }
         return act_window
 

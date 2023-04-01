@@ -14,7 +14,7 @@ class WuaDelegationvote(models.Model):
     _description = 'Delegation of vote in assamblies'
     _order = 'name'
 
-    SIZE_ASSEMBLY_NAME = 10
+    SIZE_ASSEMBLY_NAME = 19
     SIZE_PARTNER_CODE = 6
 
     def _default_assembly_state(self):
@@ -263,7 +263,8 @@ class WuaDelegationvote(models.Model):
                     '%Y-%m-%d').strftime('%x')
             finally:
                 locale.setlocale(locale.LC_TIME, default_locale)
-            name = assembly_date_str + ' (' + record.grantor_id.name + ')'
+            name = assembly_date_str + ' (' + \
+                record.sudo().grantor_id.name + ')'
             result.append((record.id, name))
         return result
 

@@ -14,7 +14,7 @@ class WuaAgendaitem(models.Model):
     _inherit = 'mail.thread'
     _order = 'name'
 
-    SIZE_ASSEMBLYCODE = 10
+    SIZE_ASSEMBLYCODE = 19
     SIZE_NUMERICSUFFIX = 4
 
     def _default_number(self):

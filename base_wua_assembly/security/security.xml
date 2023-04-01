@@ -3,6 +3,16 @@
 
     <data noupdate="0">
 
+        <record id="group_wua_assembly_manager" model="res.groups">
+            <field name="name">Assembly Manager</field>
+            <field name="category_id"
+                ref="base.module_category_water_users_associations"/>
+            <field name="implied_ids"
+                eval="[(4, ref('base_wua.group_wua_manager'))]"/>
+            <field name="users"
+                eval="[(4, ref('base.user_root'))]"/>
+        </record>
+
         <record id="rule_wua_attendance_group_wua_portal_user" model="ir.rule">
             <field name="name">Rule for Wua Portal User on attendances</field>
             <field name="model_id" ref="model_wua_attendance"/>

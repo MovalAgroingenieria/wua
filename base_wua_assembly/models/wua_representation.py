@@ -14,7 +14,7 @@ class WuaRepresentation(models.Model):
     _description = 'Agent of a partner in assamblies'
     _order = 'name'
 
-    SIZE_ASSEMBLY_NAME = 10
+    SIZE_ASSEMBLY_NAME = 19
     SIZE_PARTNER_CODE = 6
 
     def _default_assembly_state(self):

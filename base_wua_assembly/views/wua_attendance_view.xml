@@ -142,4 +142,35 @@
         </field>
     </record>
 
+    <record id="wua_attendance_ballotpaper_view_tree" model="ir.ui.view">
+        <field name="name">Ballot Papers (tree view)</field>
+        <field name="model">wua.attendance</field>
+        <field name="arch" type="xml">
+            <tree string="Ballot Papers"
+                  class="o_base_wua_assembly_ballotpaper_view_tree"
+                  create="false" delete="false"
+                  default_order="participant_name">
+                <field name="vat_participant"
+                       string="Attendee TIN"/>
+                <field name="participant_name"
+                       string="Attendee Name"/>
+                <field name="votes_total"
+                       string="Total Votes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_attendance_ballotpaper_view_search" model="ir.ui.view">
+        <field name="name">Ballot Papers (search view)</field>
+        <field name="model">wua.attendance</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="vat_participant"
+                       string="TIN of the participant"/>
+                <field name="participant_name"
+                       String="Participant"/>
+            </search>
+        </field>
+    </record>
+
 </odoo>

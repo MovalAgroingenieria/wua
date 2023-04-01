@@ -13,7 +13,7 @@ class WuaAttendance(models.Model):
     _description = 'Attendance of a partner to an assembly'
     _order = 'name'
 
-    SIZE_ASSEMBLY_NAME = 10
+    SIZE_ASSEMBLY_NAME = 19
     SIZE_PARTNER_CODE = 6
 
     assembly_id = fields.Many2one(

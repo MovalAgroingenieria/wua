@@ -13,39 +13,39 @@
                             style="width: 105px;"
                             class="oe_highlight"
                             attrs="{'invisible': [('state','!=','01_draft')]}"
-                            groups="base_wua.group_wua_user"
+                            groups="base_wua_assembly.group_wua_assembly_manager"
                             confirm="This action will change to the 'Called' state. Proceed?"/>
                     <button name="action_return_to_state_01_draft"
                             type="object" string="Cancel"
                             style="width: 105px;"
                             attrs="{'invisible': [('state','!=','02_called')]}"
-                            groups="base_wua.group_wua_user"
+                            groups="base_wua_assembly.group_wua_assembly_manager"
                             confirm="This action will return to the 'Draft' state. Proceed?"/>
                     <button name="action_go_to_state_03_in_progress"
                             type="object" string="Start"
                             style="width: 105px;"
                             class="oe_highlight"
                             attrs="{'invisible': [('state','!=','02_called')]}"
-                            groups="base_wua.group_wua_user"
+                            groups="base_wua_assembly.group_wua_assembly_manager"
                             confirm="This action will change to the 'In progress' state. Proceed?"/>
                     <button name="action_return_to_state_02_called"
                             type="object" string="Cancel"
                             style="width: 105px;"
                             attrs="{'invisible': [('state','!=','03_in_progress')]}"
-                            groups="base_wua.group_wua_user"
+                            groups="base_wua_assembly.group_wua_assembly_manager"
                             confirm="This action will return to the 'Called' state. IMPORTANT: The possible results of voting and the attendance signatures will be eliminated. Proceed?"/>
                     <button name="action_go_to_state_04_finished"
                             type="object" string="Finish"
                             style="width: 105px;"
                             class="oe_highlight"
                             attrs="{'invisible': [('state','!=','03_in_progress')]}"
-                            groups="base_wua.group_wua_user"
+                            groups="base_wua_assembly.group_wua_assembly_manager"
                             confirm="This action will change to the 'Finished' state. Proceed?"/>
                     <button name="action_return_to_state_03_in_progress"
                             type="object" string="Cancel"
                             style="width: 105px;"
                             attrs="{'invisible': [('state','!=','04_finished')]}"
-                            groups="base_wua.group_wua_user"
+                            groups="base_wua_assembly.group_wua_assembly_manager"
                             confirm="This action will return to the 'In progress' state. Proceed?"/>
                     <field name="state"
                            widget="statusbar"
@@ -94,6 +94,18 @@
                                     <field name="number_of_attendances"/>
                                 </span>
                                 <span class="o_stat_text">Summoned</span>
+                            </div>
+                        </button>
+                        <button name="action_get_ballotpapers"
+                                type="object" class="oe_stat_button"
+                                icon="fa-envelope-o"
+                                attrs="{'invisible': ['|',('state','=','01_draft'),('state','=','02_called')]}"
+                                groups="base_wua.group_wua_user">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="number_of_ballotpapers_in_assembly"/>
+                                </span>
+                                <span class="o_stat_text">Ballot P.</span>
                             </div>
                         </button>
                         <button name="action_get_attendances"
