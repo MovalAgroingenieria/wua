@@ -165,6 +165,20 @@ class WuaAgendaitem(models.Model):
     final_summary = fields.Html(
         string='Final Summary',)
 
+    total_votes_less_than_possible_votes = fields.Boolean(
+        string='Total-votes value less than possible-votes value',
+        default=False,
+        compute='_compute_total_votes_less_than_possible_votes',)
+
+    total_votes_greather_than_possible_votes = fields.Boolean(
+        string='Total-votes value greather than possible-votes value',
+        default=False,
+        compute='_compute_total_votes_greather_than_possible_votes',)
+
+    warning_message = fields.Char(
+        string='Warning Message',
+        compute='_compute_warning_message',)
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'There is already a similar agenda item.'),
@@ -282,6 +296,53 @@ class WuaAgendaitem(models.Model):
                 chosen_option = record.chosen_option_id.option
             record.chosen_option = chosen_option
 
+    @api.multi
+    def _compute_total_votes_less_than_possible_votes(self):
+        for record in self:
+            total_votes_less_than_possible_votes = False
+            if (record.assembly_state == '03_in_progress' and
+               record.type != '01_not_voteable'):
+                number_of_possible_votes = \
+                    record.assembly_id.number_of_possible_votes
+                total_votes = record.count_total
+                if (total_votes > 0 and
+                   total_votes < number_of_possible_votes):
+                    total_votes_less_than_possible_votes = True
+            record.total_votes_less_than_possible_votes = \
+                total_votes_less_than_possible_votes
+
+    @api.multi
+    def _compute_total_votes_greather_than_possible_votes(self):
+        for record in self:
+            total_votes_greather_than_possible_votes = False
+            if (record.assembly_state == '03_in_progress' and
+               record.type != '01_not_voteable'):
+                number_of_possible_votes = \
+                    record.assembly_id.number_of_possible_votes
+                total_votes = record.count_total
+                if (total_votes > 0 and
+                   total_votes > number_of_possible_votes):
+                    total_votes_greather_than_possible_votes = True
+            record.total_votes_greather_than_possible_votes = \
+                total_votes_greather_than_possible_votes
+
+    @api.multi
+    def _compute_warning_message(self):
+        for record in self:
+            warning_message = ''
+            if record.total_votes_less_than_possible_votes:
+                warning_message = _('The number of total votes') + \
+                    ' (' + str(record.count_total) + ') ' + \
+                    _('is less than the number of possible votes') + ' (' + \
+                    str(record.assembly_id.number_of_possible_votes) + ')'
+            if record.total_votes_greather_than_possible_votes:
+                warning_message = _('The number of total votes') + ' (' + \
+                    str(record.count_total) + ') ' + \
+                    _('is GREATHER than the number of possible votes') + \
+                    ' (' + str(record.assembly_id.number_of_possible_votes) + \
+                    ')'
+            record.warning_message = warning_message
+
     @api.constrains('type_01_not_voteable', 'type_02_yes_or_no',
                     'type_03_options')
     def _check_type(self):
@@ -366,24 +427,29 @@ class WuaAgendaitem(models.Model):
     @api.multi
     def name_get(self):
         result = []
-        default_locale = locale.setlocale(locale.LC_TIME)
-        is_english = ('lang' in self.env.context and
-                      self.env.context['lang'] == 'en_US')
-        for record in self:
-            name = ''
-            if record.assembly_id and record.number:
-                try:
-                    if is_english:
-                        locale.setlocale(locale.LC_TIME, 'en_US.utf8')
-                    assembly_date_str = datetime.datetime.strptime(
-                        record.assembly_id.assembly_date,
-                        '%Y-%m-%d').strftime('%x')
-                finally:
-                    locale.setlocale(locale.LC_TIME, default_locale)
-                name = assembly_date_str + ' (' + \
-                    record.assembly_id.issue + '), ' + \
-                    _('item') + ' ' + str(record.number)
-            result.append((record.id, name))
+        if self.env.context.get('show_only_itemnumber', False):
+            for record in self:
+                result.append((record.id,
+                               _('Item') + ' ' + str(record.number)))
+        else:
+            default_locale = locale.setlocale(locale.LC_TIME)
+            is_english = ('lang' in self.env.context and
+                          self.env.context['lang'] == 'en_US')
+            for record in self:
+                name = ''
+                if record.assembly_id and record.number:
+                    try:
+                        if is_english:
+                            locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                        assembly_date_str = datetime.datetime.strptime(
+                            record.assembly_id.assembly_date,
+                            '%Y-%m-%d').strftime('%x')
+                    finally:
+                        locale.setlocale(locale.LC_TIME, default_locale)
+                    name = assembly_date_str + ' (' + \
+                        record.assembly_id.issue + '), ' + \
+                        _('item') + ' ' + str(record.number)
+                result.append((record.id, name))
         return result
 
     @api.multi

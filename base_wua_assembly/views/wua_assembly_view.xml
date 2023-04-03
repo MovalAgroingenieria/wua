@@ -195,6 +195,14 @@
                                        style="pointer-events:none"
                                        attrs="{'invisible':[('is_wua_portal_user','=',False)]}"/>
                             </div>
+                            <field name="number_of_attendances_with_signature"
+                                   string="Attendees"
+                                   attrs="{'invisible': ['|',('state','=','01_draft'),('state','=','02_called')]}"
+                                   groups="base_wua.group_wua_user"/>
+                            <field name="number_of_possible_votes"
+                                   string="Possible Votes"
+                                   attrs="{'invisible': ['|',('state','=','01_draft'),('state','=','02_called')]}"
+                                   groups="base_wua.group_wua_user"/>
                         </group>
                     </group>
                     <group name="slave_data">

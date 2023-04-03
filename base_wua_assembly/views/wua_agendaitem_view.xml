@@ -8,6 +8,8 @@
             <form duplicate="false">
                 <field name="approved" invisible="1"/>
                 <field name="type" invisible="1"/>
+                <field name="total_votes_less_than_possible_votes" invisible="1"/>
+                <field name="total_votes_greather_than_possible_votes" invisible="1"/>
                 <header>
                     <field name="assembly_state"
                            widget="statusbar"
@@ -103,6 +105,21 @@
                             </div>
                         </group>
                     </group>
+                    <div name="warning_total_votes_not_equal_possible_votes"
+                         style="text-align:center"
+                         attrs="{'invisible':[('total_votes_less_than_possible_votes','=',False),('total_votes_greather_than_possible_votes','=',False)]}"
+                         groups="base_wua.group_wua_user">
+                        <h4 attrs="{'invisible':[('total_votes_less_than_possible_votes','=',False)]}">
+                            <u>N O T E</u>
+                        </h4>
+                        <h4 class="blink_text"
+                            attrs="{'invisible':[('total_votes_greather_than_possible_votes','=',False)]}">
+                            <u>¡ W A R N I N G !</u>
+                        </h4>
+                        <span style="display: inline-block">
+                            <b><field name="warning_message"/></b>
+                        </span>
+                    </div>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
                             <page name="page_vote_count"
