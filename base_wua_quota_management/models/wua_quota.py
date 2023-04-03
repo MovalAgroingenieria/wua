@@ -18,6 +18,9 @@ class WuaQuota(models.Model):
     MAX_SIZE_SUPERPRODUCT_CODE = 6
     MAX_SIZE_NAME = 12 + MAX_SIZE_PARTNER_CODE + MAX_SIZE_SUPERPRODUCT_CODE
     MAX_SIZE_NAME_QUOTAPERIOD = 10
+    # Inherit to avoid water_flow of
+    # irrigationditch parcels on gravconsumptions
+    USE_IRRIGATIONDITCH_WATER_FLOW = True
 
     quotaperiod_id = fields.Many2one(
         string='Quota Period',
@@ -632,7 +635,7 @@ class WuaQuota(models.Model):
             self, quotaperiod, wateringperiod, superproduct, parcel,
             watering_duration, gravconsumption, reduction_factor=1):
         volume_perunittime = 0
-        if parcel.irrigationditch_id:
+        if parcel.irrigationditch_id and self.USE_IRRIGATIONDITCH_WATER_FLOW:
             volume_perunittime = parcel.irrigationditch_id.water_flow
         if volume_perunittime == 0:
             default_volume_perunitime = \
