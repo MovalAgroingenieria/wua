@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="wua_waterconnection_readings_report"
+        string="Waterconnection readings"
+        model="wizard.print.readings"
+        report_type="qweb-pdf"
+        file="base_wua_pressurized_irrigation.wua_waterconnection_reading_report_document"
+        name="base_wua_pressurized_irrigation.wua_waterconnection_reading_report_document"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <template id="wua_waterconnection_reading_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+
+                        <!-- Vars -->
+                        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+
+                        <!-- Title -->
+                        <div name="title" class="text-center">
+                            <h4 style="margin-top:0px; padding-top:0px;">
+                                <strong>Waterconnection readings report</strong>
+                            </h4>
+                        </div>
+
+                        <!-- Waterconnection data -->
+                        <div name="waterconnection_data" style="margin-top:20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Waterconnection</strong>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Waterconnection</strong>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="display: table-cell;">
+                                        <table name="waterconnection_main" class="table-condensed" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_waterconnection">
+                                                    <td><span><b>Waterconnection</b></span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.waterconnection_id.name">
+                                                            <span t-field="o.waterconnection_id.name"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_watermeter_id">
+                                                    <td><span><b>Watermeter</b></span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.waterconnection_id.watermeter_id">
+                                                            <span t-field="o.waterconnection_id.watermeter_id"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 40px;">
+                                        <table name="waterconnection_secondary" class="table-condensed" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_irrigationshed_id">
+                                                    <td><span><b>Irrigation shed</b></span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.waterconnection_id.irrigationshed_id">
+                                                            <span t-field="o.waterconnection_id.irrigationshed_id"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_hydraulicsector_id">
+                                                    <td><span><b>Hydraulic sector</b></span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.waterconnection_id.hydraulicsector_id">
+                                                            <span t-field="o.waterconnection_id.hydraulicsector_id"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Readings -->
+                        <div name="readings_data" style="margin-top:20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Readings</strong>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Readings</strong>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="col-xs-12" style="display: table;">
+                                <div style="display: table-cell;">
+                                    <table class="table-condensed" style="width:60%;">
+                                        <tbody>
+                                            <tr name="tr_from">
+                                                <td><span><b>From</b></span></td>
+                                                <td class="text-right">
+                                                <span t-field="o.initial_date"/></td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div style="display: table-cell; padding-left: 40px;">
+                                    <table class="table-condensed" style="width:52%;">
+                                        <tbody>
+                                            <tr name="tr_to">
+                                                <td><span><b>To</b></span></td>
+                                                <td class="text-right"><span t-field="o.end_date"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <br/>
+                            <table class="table table-striped" style="width:100%;">
+                                <thead>
+                                    <th name="th_readingtime">Time</th>
+                                    <th name="th_volume" class="text-right">Value (m³)</th>
+                                    <th name="th_pc_volume_real" class="text-right">Cons. Real (m³)</th>
+                                    <th name="th_init_reading" class="text-center">Init. Reading</th>
+                                    <th name="th_validated" class="text-center">Validated</th>
+                                    <th name="th_presconsumption">Consumption</th>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.reading_ids" t-as="wr">
+                                        <tr>
+                                           <td name="td_readingtime"><span t-field="wr.reading_time"/></td>
+                                           <td name="td_volume" class="text-right"><span t-field="wr.volume"/></td>
+                                           <td name="td_pc_volume_real" class="text-right"><span t-field="wr.presconsumption_volume_real"/></td>
+                                           <td name="td_init_reading" class="text-center">
+                                               <t t-if="wr.initialization_reading">
+                                                   <span class="fa fa-check"/>
+                                                </t>
+                                            </td>
+                                           <td name="td_validated" class="text-center">
+                                               <t t-if="wr.validated">
+                                                   <span class="fa fa-check"/>
+                                                </t>
+                                            </td>
+                                            <td name="td_presconsumption"><span t-field="wr.presconsumption_id"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div><!--end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

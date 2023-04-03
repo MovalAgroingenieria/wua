@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_print_readings_view_form" model="ir.ui.view">
+        <field name="name">Wizard to print watermeter readings</field>
+        <field name="model">wizard.print.readings</field>
+        <field name="arch" type="xml">
+            <form string="Print watermeter readings">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '450px'});
+                        $('.modal-dialog').css({'height': '420px'});
+                    });
+                </script>
+                <group name="body">
+                    <field name="waterconnection_id" invisible="1"/>
+                    <field name="initial_date"/>
+                    <field name="end_date"/>
+                    <field name="num_readings_to_print"/>
+                </group>
+                <footer>
+                    <button name="print_selected_period"
+                            type="object"
+                            string="Print"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_print_readings"
+        name="Print readings"
+        res_model="wizard.print.readings"
+        src_model="wua.waterconnection"
+        view_mode="form"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+
+</odoo>
