@@ -268,6 +268,14 @@ class WuaAssembly(models.Model):
         string='Number of representations',
         compute='_compute_number_of_representations',)
 
+    number_of_attendances_with_signature = fields.Integer(
+        string='Number of confirmed attendances',
+        compute='_compute_number_of_attendances_with_signature',)
+
+    number_of_possible_votes = fields.Integer(
+        string='Number of possible votes',
+        compute='_compute_number_of_possible_votes',)
+
     current_year = fields.Boolean(
         string='Current Year',
         compute='_compute_current_year',
@@ -410,6 +418,32 @@ class WuaAssembly(models.Model):
             if record.representation_ids:
                 number_of_representations = len(record.representation_ids)
             record.number_of_representations = number_of_representations
+
+    @api.multi
+    def _compute_number_of_attendances_with_signature(self):
+        for record in self:
+            number_of_attendances_with_signature = 0
+            if record.attendance_ids:
+                attendances_with_signature = filter(
+                    lambda x: x['present'],
+                    record.attendance_ids)
+                number_of_attendances_with_signature = \
+                    len(attendances_with_signature)
+            record.number_of_attendances_with_signature = \
+                number_of_attendances_with_signature
+
+    @api.multi
+    def _compute_number_of_possible_votes(self):
+        for record in self:
+            number_of_possible_votes = 0
+            if record.attendance_ids:
+                attendances_with_signature = filter(
+                    lambda x: x['present'],
+                    record.attendance_ids)
+                if attendances_with_signature:
+                    number_of_possible_votes = \
+                        sum(x.votes_total for x in attendances_with_signature)
+            record.number_of_possible_votes = number_of_possible_votes
 
     @api.multi
     def _compute_current_year(self):
@@ -687,8 +721,14 @@ class WuaAssembly(models.Model):
         search_view = self.env.ref(
             'base_wua_assembly.wua_agendaitem_particular_view_search')
         custom_context = \
-            {'default_assembly_id': current_assembly.id}
+            {'default_assembly_id': current_assembly.id,
+             'show_only_itemnumber': True, }
         suffix_title = current_assembly._get_state_clarification()
+        if (current_assembly.state == '03_in_progress' or
+           current_assembly.state == '04_finished'):
+            suffix_title = suffix_title + ' - ' + \
+                str(current_assembly.number_of_possible_votes) + ' ' + \
+                _('possible votes') + ' -'
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Agenda Items') + ' ' + suffix_title,
@@ -731,7 +771,8 @@ class WuaAssembly(models.Model):
         search_view = self.env.ref(
             'base_wua_assembly.wua_delegationvote_particular_view_search')
         custom_context = \
-            {'default_assembly_id': current_assembly.id}
+            {'default_assembly_id': current_assembly.id,
+             'show_only_grantor': True, }
         suffix_title = current_assembly._get_state_clarification()
         act_window = {
             'type': 'ir.actions.act_window',
@@ -758,7 +799,8 @@ class WuaAssembly(models.Model):
         search_view = self.env.ref(
             'base_wua_assembly.wua_representation_particular_view_search')
         custom_context = \
-            {'default_assembly_id': current_assembly.id}
+            {'default_assembly_id': current_assembly.id,
+             'show_only_partner': True, }
         suffix_title = current_assembly._get_state_clarification()
         act_window = {
             'type': 'ir.actions.act_window',
