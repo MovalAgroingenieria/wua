@@ -34,6 +34,8 @@
         "data/wua_irrigation_config_settings_data.xml",
         "reports/wua_watermeter_report.xml",
         "data/wua_infrastructure_config_settings_data.xml",
+        "wizard/wizard_print_readings_view.xml",
+        "reports/wua_waterconnection_readings_report.xml",
     ],
     "installable": True,
     "application": True,

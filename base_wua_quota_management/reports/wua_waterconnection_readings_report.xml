@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="wua_waterconnection_reading_report_document" inherit_id="base_wua_pressurized_irrigation.wua_waterconnection_reading_report_document">
+        <xpath expr="//div[@name='readings_data']" position="after">
+
+            <!-- Hydric movements -->
+            <div name="hydric_movements_data" style="margin-top:20px;">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                            <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list-ol"/></div>
+                            <div style="float: left; display: inline;">
+                                <strong>Hydric&amp;nbsp;movements</strong>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                            <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list-ol"/></div>
+                            <div style="float: left; display: inline;">
+                                <strong>Hydric&amp;nbsp;movements</strong>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <t t-set="hydrimovs_grouped_by_consumption" t-value="[]"/>
+                <t t-foreach="o.reading_ids" t-as="r">
+                    <t t-set="hydrimovs_grouped_by_consumption"
+                        t-value="hydrimovs_grouped_by_consumption + [[r.presconsumption_id.display_name, r.presconsumption_id.hydricmovement_ids]]"/>
+                </t>
+                <table class="table" style="width:100%;">
+                    <thead>
+                        <th name="th_presconsumption">Consumption</th>
+                        <th name="th_partner">Partner</th>
+                        <th name="th_date">Date</th>
+                        <th name="th_superproduct">Superproduct</th>
+                        <th name="th_accounting_volume" class="text-right">Volume (m³)</th>
+                        <th name="th_balance" class="text-right">Balance (m³)</th>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="hydrimovs_grouped_by_consumption" t-as="hmg">
+                            <t t-set="consumption" t-value="hmg[0]"/>
+                            <t t-set="num_of_hydricmovs" t-value="len(hmg[1])"/>
+                            <t t-set="counter" t-value="0"/>
+                            <t t-foreach="hmg[1]" t-as="hm">
+                                <t t-set="counter" t-value="counter + 1"/>
+                                <t t-if="counter == 1">
+                                    <tr>
+                                        <td name="td_presconsumption" t-att-rowspan="num_of_hydricmovs" style="vertical-align: middle; page-break-inside: avoid;">
+                                            <span t-esc="consumption"/>
+                                        </td>
+                                        <td name="td_partner"><span t-field="hm.partner_id"/></td>
+                                        <td name="td_date"><span t-field="hm.event_time"/></td>
+                                        <td name="td_superproduct"><span t-field="hm.superproduct_id"/></td>
+                                        <td name="td_accounting_volume" class="text-right"><span t-field="hm.accounting_volume"/></td>
+                                        <td name="td_balance" class="text-right"><span t-field="hm.balance"/></td>
+                                    </tr>
+                                </t>
+                                <t t-else="">
+                                    <td name="td_partner"><span t-field="hm.partner_id"/></td>
+                                    <td name="td_date"><span t-field="hm.event_time"/></td>
+                                    <td name="td_superproduct"><span t-field="hm.superproduct_id"/></td>
+                                    <td name="td_accounting_volume" class="text-right"><span t-field="hm.accounting_volume"/></td>
+                                    <td name="td_balance" class="text-right"><span t-field="hm.balance"/></td>
+                                </t>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
