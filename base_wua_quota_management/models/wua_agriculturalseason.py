@@ -113,10 +113,10 @@ class WuaAgriculturalseason(models.Model):
         if len(self) == 1:
             if (('initial_date' in vals or 'end_date' in vals) and
                self.quotaperiod_ids):
-                    raise exceptions.ValidationError(_(
-                        'If the agricultural season has any quota period, '
-                        'then it is not possible to change its initial or '
-                        'end dates.'))
+                raise exceptions.ValidationError(_(
+                    'If the agricultural season has any quota period, '
+                    'then it is not possible to change its initial or '
+                    'end dates.'))
             resp = super(WuaAgriculturalseason, self).write(vals)
             if 'active_agriculturalseason' in vals:
                 self._update_active_flag_in_slave_models(

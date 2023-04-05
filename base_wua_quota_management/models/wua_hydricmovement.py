@@ -169,6 +169,12 @@ class WuaHydricmovement(models.Model):
         readonly=True,
         ondelete='cascade')
 
+    wateringrequest_id = fields.Many2one(
+        string='Watering Request',
+        comodel_name='wua.wateringrequest',
+        store=True,
+        compute='_compute_wateringrequest_id',)
+
     irrigationreport_id = fields.Many2one(
         string='Irrigation Report',
         comodel_name='wua.irrigationreport',
@@ -345,6 +351,16 @@ class WuaHydricmovement(models.Model):
         for record in self:
             description = self._get_description(record)
             record.description = description
+
+    @api.depends('gravconsumption_id', 'gravconsumption_id.wateringrequest_id')
+    def _compute_wateringrequest_id(self):
+        for record in self:
+            wateringrequest_id = None
+            if (record.gravconsumption_id and
+                    record.gravconsumption_id.wateringrequest_id):
+                wateringrequest_id = record.gravconsumption_id.\
+                    wateringrequest_id
+            record.wateringrequest_id = wateringrequest_id
 
     @api.constrains('type')
     def _check_reference_id(self):

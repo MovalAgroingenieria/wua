@@ -25,7 +25,8 @@
                         </div>
                     </div>
                     <div name="buttons" class="oe_button_box">
-                        <span class="oe_edit_only"
+                        <span name="sign_warning"
+                              class="oe_edit_only"
                               style="color:Red;font-weight: bold;"
                               attrs="{'invisible':['|',('is_portal_user','=',False),('signature_image','!=',False)]}">
                                 NOTICE: It will be necessary to sign
@@ -53,7 +54,7 @@
                             <field name="irrigationditch_id" class="oe_edit_only"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
-                                   attrs="{'invisible': 
+                                   attrs="{'invisible':
                                            [('is_open','=',False)]}"/>
                         </group>
                         <group name="master_data_right">
@@ -71,7 +72,7 @@
                                   string="Requested Subparcels">
                                 <field name="gravconsumption_ids"
                                        attrs="{'readonly':
-                                               [('is_open','=',False)]}">                                       
+                                               [('is_open','=',False)]}">
                                     <tree class="o_base_wua_gravity_irrigation_gravconsumption_view_tree_notebook"
                                           editable="bottom"
                                           colors="red:cancelled==True">
@@ -110,12 +111,12 @@
                             </page>
                             <page name="signature_page" string="Signature">
                                 <field name="signature_image" widget="signature"/>
-                            </page>                        
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
-                            </page>                        
+                            </page>
                         </notebook>
-                    </group>                    
+                    </group>
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"
@@ -123,7 +124,7 @@
                     <field name="message_ids"
                            widget="mail_thread"
                            groups="base_wua.group_wua_user"/>
-                </div>                
+                </div>
             </form>
         </field>
     </record>
@@ -181,7 +182,7 @@
                      context="{'group_by':'partner_id'}"/>
                     <filter string="User"
                      name="user"
-                     context="{'group_by':'user_id'}"/>                                          
+                     context="{'group_by':'user_id'}"/>
                 </group>
             </search>
         </field>
@@ -255,7 +256,7 @@
         <field name="view_id" ref="wua_wateringrequest_view_tree"/>
         <field name="search_view_id"
          ref="wua_wateringrequest_view_search"/>
-        <field name="context">{'search_default_isopen': 1}</field>         
+        <field name="context">{'search_default_isopen': 1}</field>
     </record>
 
     <menuitem id="wua_wateringrequest_menu"

@@ -52,6 +52,7 @@
         "views/wua_individualinput_category_view.xml",
         "views/wua_presconsumption_view.xml",
         "views/wua_gravconsumption_view.xml",
+        "views/wua_wateringrequest_view.xml",
         "views/wua_irrigationreport_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_infrastructure_config_settings_view.xml",
