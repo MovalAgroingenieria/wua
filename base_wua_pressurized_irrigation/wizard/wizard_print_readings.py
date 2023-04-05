@@ -36,6 +36,7 @@ class WizardPrintReadings(models.TransientModel):
     num_readings_to_print = fields.Integer(
         readonly=True,
         string='Readings to print',
+        compute="_compute_num_readings_to_print",
         help="Number of reading to be printed.")
 
     reading_ids = fields.One2many(
@@ -43,10 +44,20 @@ class WizardPrintReadings(models.TransientModel):
         comodel_name='wua.reading',
         compute="_compute_reading_ids")
 
-    # @api.multi
-    # def _compute_waterconnection_id(self):
-    #     for record in self:
-    #         record.waterconnection_id = self.env.context['active_id']
+    @api.multi
+    def _compute_num_readings_to_print(self):
+        if self.initial_date and self.end_date:
+            if self.initial_date > self.end_date:
+                raise exceptions.UserError(
+                    _('Incorrect dates, the initial date is before the end '
+                      'date.'))
+            waterconnection_id = self.env.context['active_id']
+            num_readings_to_print = len(self.env['wua.reading'].search([
+                ('reading_time', '>=', self.initial_date),
+                ('reading_time', '<=', self.end_date),
+                ('waterconnection_id', '=', waterconnection_id)]))
+            for record in self:
+                record.num_readings_to_print = num_readings_to_print
 
     @api.multi
     def _compute_reading_ids(self):

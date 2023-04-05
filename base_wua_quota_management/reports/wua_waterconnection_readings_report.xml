@@ -40,18 +40,18 @@
                     </thead>
                     <tbody>
                         <t t-foreach="hydrimovs_grouped_by_consumption" t-as="hmg">
-                            <t t-set="consumption" t-value="hmg[0]"/>
+                            <t t-set="consumption" t-value="hmg[0][:-9]"/>
                             <t t-set="num_of_hydricmovs" t-value="len(hmg[1])"/>
                             <t t-set="counter" t-value="0"/>
                             <t t-foreach="hmg[1]" t-as="hm">
                                 <t t-set="counter" t-value="counter + 1"/>
                                 <t t-if="counter == 1">
-                                    <tr>
+                                    <tr style="vertical-align: middle; page-break-inside: avoid;">
                                         <td name="td_presconsumption" t-att-rowspan="num_of_hydricmovs" style="vertical-align: middle; page-break-inside: avoid;">
                                             <span t-esc="consumption"/>
                                         </td>
                                         <td name="td_partner"><span t-field="hm.partner_id"/></td>
-                                        <td name="td_date"><span t-field="hm.event_time"/></td>
+                                        <td name="td_date"><span t-field="hm.event_time" t-options="{'format': 'dd/MM/YYYY'}"/></td>
                                         <td name="td_superproduct"><span t-field="hm.superproduct_id"/></td>
                                         <td name="td_accounting_volume" class="text-right"><span t-field="hm.accounting_volume"/></td>
                                         <td name="td_balance" class="text-right"><span t-field="hm.balance"/></td>
@@ -59,7 +59,7 @@
                                 </t>
                                 <t t-else="">
                                     <td name="td_partner"><span t-field="hm.partner_id"/></td>
-                                    <td name="td_date"><span t-field="hm.event_time"/></td>
+                                    <td name="td_date"><span t-field="hm.event_time" t-options="{'format': 'dd/MM/YYYY'}"/></td>
                                     <td name="td_superproduct"><span t-field="hm.superproduct_id"/></td>
                                     <td name="td_accounting_volume" class="text-right"><span t-field="hm.accounting_volume"/></td>
                                     <td name="td_balance" class="text-right"><span t-field="hm.balance"/></td>
