@@ -447,12 +447,12 @@ class WuaHydricmovement(models.Model):
             resp = True
         else:
             if type not in self.INPUT_TYPES:
-                resp = self._is_consumption_for_new_types()
+                resp = self._is_consumption_for_new_types(type)
         return resp
 
     # Hook for new hydric-movement types in other modules (it is called
     # from the "_compute_is_consumption" method)
-    def _is_consumption_for_new_types(self):
+    def _is_consumption_for_new_types(self, type):
         return False
 
     def _get_description(self, hydricmovement):
