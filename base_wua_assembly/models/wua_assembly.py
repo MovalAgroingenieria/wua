@@ -679,7 +679,9 @@ class WuaAssembly(models.Model):
                             'receiver_id': receiver_attendance.partner_id.id,
                             })
                         receiver_attendance.write({
-                            'votes_delegation': votes_delegation,
+                            'votes_delegation':
+                                receiver_attendance.votes_delegation +
+                                votes_delegation,
                             })
                 # Final test: is the TIN present?
                 # attendances_without_vat = model_wua_attendance.search(
