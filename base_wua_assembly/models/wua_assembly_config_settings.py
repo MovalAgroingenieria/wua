@@ -41,6 +41,11 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
         domain=[('is_wua_user', '=', True)],
         required=True,)
 
+    vat_required = fields.Boolean(
+        string='TIN required',
+        default=False,
+        required=True,)
+
     @api.onchange('assembly_state_id')
     def _onchange_assembly_state_id(self):
         if not self.assembly_country_id:
@@ -74,3 +79,5 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
         values.set_default('wua.assembly.configuration',
                            'assembly_secretary_id',
                            self.assembly_secretary_id.id)
+        values.set_default('wua.assembly.configuration',
+                           'vat_required', self.vat_required)
