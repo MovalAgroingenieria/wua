@@ -25,6 +25,7 @@
 
     <template id="report_wua_certificate_document">
         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+        <t t-set="use_intersected_area" t-value="o.env['ir.values'].get_default('wua.configuration', 'use_intersected_area')"/>
         <div name="full_report">
             <div class="row" name="section_master">
                 <!-- Title -->
@@ -104,8 +105,14 @@
                             <td align="left"><span t-field="l.parcel_id"/></td>
                             <td align="center"><span t-field="l.cadastral_reference"/></td>
                             <td align="right">
-                                <span t-field="l.area_official"/>
-                                <t t-set="total_area_official" t-value="total_area_official + l.area_official"/>
+                                <t t-if="use_intersected_area">
+                                    <span t-field="l.area_intersected_perimeter"/>
+                                    <t t-set="total_area_official" t-value="total_area_official + l.area_intersected_perimeter"/>
+                                </t>
+                                <t t-else="">
+                                    <span t-field="l.area_official"/>
+                                    <t t-set="total_area_official" t-value="total_area_official + l.area_official"/>
+                                </t>
                              </td>
                             <td align="right"><span t-field="l.ownership_percentage"/></td>
                             <td align="right"><span t-field="l.water_costs_percentage"/></td>
@@ -176,7 +183,12 @@
                                             <tr>
                                                 <td><strong>Area</strong></td>
                                                 <td class="text-right">
-                                                    <span t-field="p.area_official"/>
+                                                    <t t-if="use_intersected_area">
+                                                        <span t-field="p.area_intersected_perimeter"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-field="p.area_official"/>
+                                                    </t>
                                                     <span><t t-esc="measurement_unit"/></span>
                                                 </td>
                                             </tr>
@@ -245,7 +257,12 @@
                                             <tr>
                                                 <td><strong>Area</strong></td>
                                                 <td class="text-right">
-                                                    <span t-field="p.area_official"/>
+                                                    <t t-if="use_intersected_area">
+                                                        <span t-field="p.area_intersected_perimeter"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <span t-field="p.area_official"/>
+                                                    </t>
                                                     <span><t t-esc="measurement_unit"/></span>
                                                 </td>
                                             </tr>

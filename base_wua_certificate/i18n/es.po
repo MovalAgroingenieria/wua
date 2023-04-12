@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-04 15:25+0000\n"
-"PO-Revision-Date: 2022-12-04 15:25+0000\n"
+"POT-Creation-Date: 2023-04-12 14:01+0000\n"
+"PO-Revision-Date: 2023-04-12 14:01+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -68,11 +68,6 @@ msgstr "4 mapas por página"
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
 msgid "<b><font style=\"font-size: 14px;\">{{ certificate.name_of_signer.upper() }}, SECRETARY OF {{ partner.company_id.name.upper() }}</font></b>"
 msgstr "<b><font style=\"font-size: 14px;\">{{ certificate.name_of_signer.upper() }}, SECRETARIO DE LA {{ partner.company_id.name.upper() }}</font></b>"
-
-#. module: base_wua_certificate
-#: model:wua.certificate.type,final_paragraph:base_wua_certificate.certificatetype_no_variation
-msgid "<b><u>ADVERTENCIA</u></b>"
-msgstr "<b><u>ADVERTENCIA</u></b>"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
@@ -275,6 +270,11 @@ msgid "Activate this parameter to allow portal users to request certificates"
 msgstr "Activar para permitir que los usuarios de portal (oficina electrónica) puedan solicitar un certificado"
 
 #. module: base_wua_certificate
+#: model:ir.model.fields,help:base_wua_certificate.field_wua_configuration_use_intersected_area
+msgid "Activate this parameter to use the intersected area on the certificates instead of the official area"
+msgstr "Activar este parámetro para utilizar el área de intersección en los certificados en lugar del área oficial"
+
+#. module: base_wua_certificate
 #: model:ir.model.fields,help:base_wua_certificate.field_wua_configuration_only_parcels_as_main
 msgid "Add to the certificate the parcel only if the partner is the main partner of the parcel"
 msgstr "Incluir en el certificado sólo aquellas parcelas de las que se sea regante"
@@ -283,11 +283,6 @@ msgstr "Incluir en el certificado sólo aquellas parcelas de las que se sea rega
 #: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
 msgid "Aerial image not found"
 msgstr "No se ha encontrado la imagen aérea"
-
-#. module: base_wua_certificate
-#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "Aerial photo of each plot is accompanied on the last page of this certificate."
-msgstr "Se acompaña foto aérea de cada parcela en la última página de este certificado."
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
@@ -349,6 +344,11 @@ msgstr "Pulse sobre 'Aceptar' para confirmar la realización de esta operación.
 #: model:ir.ui.view,arch_db:base_wua_certificate.report_wua_certificate_document
 msgid "Area ("
 msgstr "Área ("
+
+#. module: base_wua_certificate
+#: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_parcel_area_intersected_perimeter
+msgid "Area intersected with the perimeter"
+msgstr "Área intersección"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_certificateparcel_ids
@@ -464,7 +464,7 @@ msgstr "Certificado: ${object.reference_number}, de ${object.partner_id.company_
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/res_partner.py:70
-#: code:addons/base_wua_certificate/models/wua_certificate.py:583
+#: code:addons/base_wua_certificate/models/wua_certificate.py:584
 #: code:addons/base_wua_certificate/models/wua_certificate_type.py:195
 #: model:ir.actions.act_window,name:base_wua_certificate.wua_certificate_action
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_certificate_ids
@@ -494,7 +494,7 @@ msgstr "Compañías"
 #. module: base_wua_certificate
 #: model:ir.model,name:base_wua_certificate.model_wua_configuration
 msgid "Configuration of base_wua module"
-msgstr "Configuración del  módulo base_wua"
+msgstr "Configuración del módulo base_wua"
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/res_partner.py:97
@@ -533,6 +533,11 @@ msgstr "Current User"
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_tree
 msgid "Date"
 msgstr "Fecha"
+
+#. module: base_wua_certificate
+#: model:ir.model.fields,field_description:base_wua_certificate.field_res_users_date_now
+msgid "Date now"
+msgstr "Fecha ahora"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_date_of_issue
@@ -601,11 +606,6 @@ msgstr "ERROR"
 #, python-format
 msgid "ERROR IN TEMPLATE"
 msgstr "ERROR EN LA PLANTILLA"
-
-#. module: base_wua_certificate
-#: model:wua.certificate.type,final_paragraph:base_wua_certificate.certificatetype_no_variation
-msgid "El certificado otorgado a <b>{{ partner.name }}</b> carecerá de validez jurídica si no está firmado digitalmente. Esta firma digital tiene que ser accesible desde cualquier visor PDF homologado.<br>"
-msgstr "El certificado otorgado a <b>{{ partner.name }}</b> carecerá de validez jurídica si no está firmado digitalmente. Esta firma digital tiene que ser accesible desde cualquier visor PDF homologado.<br>"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_one_partner_view_tree
@@ -786,7 +786,7 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:655
+#: code:addons/base_wua_certificate/models/wua_certificate.py:657
 #, python-format
 msgid "Mail with certificate"
 msgstr "Correo con certificado"
@@ -961,7 +961,7 @@ msgstr "Nombre de la empresa"
 #. module: base_wua_certificate
 #: model:ir.model,name:base_wua_certificate.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Socio"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
@@ -1164,6 +1164,16 @@ msgid "Types of certificate"
 msgstr "Tipos de certificado"
 
 #. module: base_wua_certificate
+#: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_use_intersected_area
+msgid "Use intersected Area on Certificates"
+msgstr "Uso de área intersección en Certificados"
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
+msgid "Use intersected area"
+msgstr "Usar área intersección"
+
+#. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_display_view_form
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_form
 msgid "User Notes"
@@ -1237,26 +1247,26 @@ msgid "With mail template"
 msgstr "Con plantilla de correo"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:657
+#: code:addons/base_wua_certificate/models/wua_certificate.py:659
 #, python-format
 msgid "for the partner"
 msgstr "para el socio"
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/wua_certificate.py:376
-#: code:addons/base_wua_certificate/models/wua_certificate.py:907
+#: code:addons/base_wua_certificate/models/wua_certificate.py:918
 #, python-format
 msgid "ha"
 msgstr "ha"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:669
+#: code:addons/base_wua_certificate/models/wua_certificate.py:671
 #, python-format
 msgid "send error"
 msgstr "Error en el envío"
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:659
+#: code:addons/base_wua_certificate/models/wua_certificate.py:661
 #, python-format
 msgid "sent successfully"
 msgstr "Enviado correctamente"

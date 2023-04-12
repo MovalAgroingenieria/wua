@@ -49,6 +49,12 @@ class WuaConfiguration(models.TransientModel):
         help='For public creation of certificates based on HTTP-GET '
              'requests, restriction to clientes from a IP address')
 
+    use_intersected_area = fields.Boolean(
+        string='Use intersected Area on Certificates',
+        default=False,
+        help='Activate this parameter to use the intersected area on the '
+             'certificates instead of the official area')
+
     @api.multi
     def set_default_values(self):
         super(WuaConfiguration, self).set_default_values()
@@ -71,6 +77,9 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration',
                            'max_pending_certificates',
                            self.max_pending_certificates)
+        values.set_default('wua.configuration',
+                           'use_intersected_area',
+                           self.use_intersected_area)
         values.set_default('wua.configuration',
                            'ip_remote_address',
                            self.ip_remote_address)

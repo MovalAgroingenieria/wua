@@ -178,6 +178,8 @@ class WizardCreateCertificate(models.TransientModel):
                 fields_of_new_certificateparcel = {
                     'certificate_id': new_certificate.id,
                     'parcel_id': partnerlink.parcel_id.id,
+                    'area_intersected_perimeter':
+                        partnerlink.parcel_id.area_intersected_perimeter,
                     'cadastral_reference':
                         partnerlink.parcel_id.cadastral_reference,
                     'area_official': partnerlink.parcel_id.area_official,
