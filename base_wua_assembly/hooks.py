@@ -30,6 +30,8 @@ def post_init_hook(cr, registry):
                        'assembly_president_id', 1)
     values.set_default('wua.assembly.configuration',
                        'assembly_secretary_id', 1)
+    values.set_default('wua.assembly.configuration',
+                       'vat_required', False)
 
 
 def uninstall_hook(cr, registry):
@@ -42,7 +44,8 @@ def uninstall_hook(cr, registry):
             (name='assembly_street' OR name='assembly_zip' OR
             name='assembly_city' OR name='assembly_state_id' OR
             name='assembly_country_id' OR name='assembly_president_id' OR
-            name='assembly_secretary_id')""")
+            name='assembly_secretary_id' OR
+            name='vat_required')""")
         env.cr.commit()
     except Exception:
         env.cr.rollback()
