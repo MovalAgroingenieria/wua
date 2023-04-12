@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="action_wua_assembly_attendance_report"
+            string="Assembly Attendees"
+            model="wua.assembly"
+            report_type="qweb-pdf"
+            name="base_wua_assembly.report_wua_assembly_attendance"
+            paperformat="base_wua_report.paperformat_wua_reports"
+            groups="base_wua.group_wua_user"/>
+
+    <template id="report_wua_assembly_attendance">
+        <t t-call="report.html_container">
+            <t t-call="base_wua_report.wua_external_layout">
+                <div class="page">
+                    <t t-foreach="docs" t-as="o">
+                        <t t-call="base_wua_assembly.report_wua_assembly_attendance_document"/>
+                        <p style="page-break-after:always;"></p>
+                    </t>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_assembly_attendance_document">
+        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+        <div name="section_master" class="text-center">
+            <h4 style="margin-top:0px; padding-top:0px;">
+                <strong><span t-field="o.issue"/></strong>
+            </h4>
+            <div>
+                <span>(</span>
+                <span t-field="o.assembly_date" t-options="{'format': 'dd/MM/YYYY'}"/>
+                <span>-</span>
+                <span t-field="o.city"/>,
+                <span t-field="o.state_id"/>
+                <span>)</span>
+            </div>
+        </div>
+        <div name="section_detail" style="margin-top:20px;">
+            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                <t t-if="report_style == 'light'">
+                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
+                        <div style="float: left; display: inline;">
+                            <strong>Attendees List</strong>
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
+                        <div style="float: left; display: inline;">
+                            <strong>Attendees List</strong>
+                        </div>
+                    </div>
+                </t>
+            </div>
+            <table class="table table-striped" style="width:100%;">
+                <thead>
+                    <th name="th_vat_participant">Attendee TIN</th>
+                    <th name="th_participant_name">Attendee Name</th>
+                </thead>
+                <t t-if="o.state == '03_in_progress' or o.state == '04_finished'">
+                    <tbody>
+                        <t t-foreach="o.attendance_ids" t-as="attendance">
+                            <tr>
+                                <td name="td_vat_participant"><span t-field="attendance.vat_participant"/></td>
+                                <td name="td_participant_name"><span t-field="attendance.participant_name"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </t>
+            </table>
+        </div>
+    </template>
+
+</odoo>
