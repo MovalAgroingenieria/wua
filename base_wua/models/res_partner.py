@@ -211,6 +211,9 @@ class ResPartner(models.Model):
         compute='_compute_legalrep_id',
         index=True)
 
+    date_now = fields.Datetime(
+        default=datetime.datetime.now())
+
     _sql_constraints = [
         ('valid_parcel_owner_number',
          'CHECK (parcel_owner_number >= 0)',
