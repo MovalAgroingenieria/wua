@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-30 10:01+0000\n"
-"PO-Revision-Date: 2023-03-30 10:01+0000\n"
+"POT-Creation-Date: 2023-04-12 11:38+0000\n"
+"PO-Revision-Date: 2023-04-12 11:38+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -47,7 +47,7 @@ msgid "(image of"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1208
+#: code:addons/base_wua/models/wua_parcel.py:1307
 #, python-format
 msgid ", please, contact the community to regularize your situation"
 msgstr ""
@@ -581,6 +581,22 @@ msgstr ""
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_area_measurement_type
 msgid "Area Unit Type"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_configuration_is_area_intersected_calculated
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_is_area_intersected_computed
+msgid "Area intersected is calculated"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_area_intersected_perimeter
+msgid "Area intersected with the perimeter"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_area_intersected_perimeter_static
+msgid "Area intersected with the perimeter (Stored)"
 msgstr ""
 
 #. module: base_wua
@@ -1313,13 +1329,13 @@ msgid "Empty Cadastral Code."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1023
+#: code:addons/base_wua/models/wua_parcel.py:1079
 #, python-format
 msgid "Empty Cadastral Parcel."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1007
+#: code:addons/base_wua/models/wua_parcel.py:1063
 #, python-format
 msgid "Empty Cadastral Polygon."
 msgstr ""
@@ -1355,7 +1371,7 @@ msgid "Empty Value."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:987
+#: code:addons/base_wua/models/wua_parcel.py:1043
 #: code:addons/base_wua/wizard/wizard_change_parcel_name.py:38
 #, python-format
 msgid "Empty parcel code."
@@ -1370,6 +1386,11 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "Ends (days)"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.model.fields,help:base_wua.field_wua_configuration_is_area_intersected_calculated
+msgid "Ensure that the intersected area is calculated with Postgis"
 msgstr ""
 
 #. module: base_wua
@@ -1870,7 +1891,7 @@ msgid "Is a company (marked)"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1557
+#: code:addons/base_wua/models/wua_parcel.py:1656
 #, python-format
 msgid "It is not possible to create the files of SHP."
 msgstr ""
@@ -1997,7 +2018,7 @@ msgid "Lease is close to end"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1197
+#: code:addons/base_wua/models/wua_parcel.py:1296
 #, python-format
 msgid "Lease of parcel"
 msgstr ""
@@ -2211,6 +2232,11 @@ msgid "Name of partner param in the GIS viewer url"
 msgstr ""
 
 #. module: base_wua
+#: model:ir.model.fields,help:base_wua.field_wua_configuration_intersection_perimeter_table
+msgid "Name of the Table used for the calculus of the intersected area of parcels"
+msgstr ""
+
+#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_098
 msgid "Nectarines"
 msgstr ""
@@ -2237,7 +2263,7 @@ msgid "No SHP: The user must be a portal user, or it is not possible to obtain S
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1583
+#: code:addons/base_wua/models/wua_parcel.py:1682
 #, python-format
 msgid "No parcel with gis relation."
 msgstr ""
@@ -2264,6 +2290,10 @@ msgstr ""
 
 #. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_url_gis_viewer
+msgid "Note: Valid URL of the related gis viewer"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_url_gis_viewer_wfs
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_url_gis_viewer_wms
 msgid "Note: nameval must be a parameter"
@@ -2400,13 +2430,13 @@ msgid "Only one legal representative is allowed."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3113
+#: code:addons/base_wua/models/wua_parcel.py:3212
 #, python-format
 msgid "Only one usufructuary per parcel."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3106
+#: code:addons/base_wua/models/wua_parcel.py:3205
 #, python-format
 msgid "Only owners can be usufructuaries."
 msgstr ""
@@ -2601,7 +2631,7 @@ msgstr ""
 #: code:addons/base_wua/controllers/partner.py:43
 #: code:addons/base_wua/controllers/partner.py:75
 #: code:addons/base_wua/models/res_partner.py:641
-#: code:addons/base_wua/models/wua_parcel.py:1621
+#: code:addons/base_wua/models/wua_parcel.py:1720
 #: model:ir.actions.act_window,name:base_wua.res_partner_partnerlink_action
 #: model:ir.actions.act_window,name:base_wua.wua_parcel_action
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_parcel_ids
@@ -2701,8 +2731,8 @@ msgid "Partners"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1358
-#: code:addons/base_wua/models/wua_parcel.py:2044
+#: code:addons/base_wua/models/wua_parcel.py:1457
+#: code:addons/base_wua/models/wua_parcel.py:2143
 #, python-format
 msgid "Partners: the sum of all percentages must be 100, or there are repeated partners."
 msgstr ""
@@ -2770,6 +2800,11 @@ msgid "Pepper for paprika"
 msgstr ""
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_configuration_intersection_perimeter_table
+msgid "Perimeter Table"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_legalrep_id
 #: model:ir.model.fields,field_description:base_wua.field_res_users_legalrep_id
 msgid "Person acting as legal representative"
@@ -2829,6 +2864,12 @@ msgstr ""
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_wua_portal_user_can_edit
 msgid "Portal User can edit"
+msgstr ""
+
+#. module: base_wua
+#: code:addons/base_wua/models/wua_config_settings.py:288
+#, python-format
+msgid "Postgis Extension not created"
 msgstr ""
 
 #. module: base_wua
@@ -3020,7 +3061,7 @@ msgid "Rustic Parcel"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:997
+#: code:addons/base_wua/models/wua_parcel.py:1053
 #, python-format
 msgid "Rustic Parcel: Cadastral Sector not valid."
 msgstr ""
@@ -3058,7 +3099,7 @@ msgid "Second Initial Code"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1043
+#: code:addons/base_wua/models/wua_parcel.py:1099
 #, python-format
 msgid "Sector, polygon or parcel is empty."
 msgstr ""
@@ -3263,14 +3304,14 @@ msgid "Tenant"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1579
+#: code:addons/base_wua/models/wua_parcel.py:1678
 #, python-format
 msgid "The \"URL GIS Viewer WFS\" parameter is not populated."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:776
-#: code:addons/base_wua/models/wua_parcel.py:1706
+#: code:addons/base_wua/models/wua_parcel.py:832
+#: code:addons/base_wua/models/wua_parcel.py:1805
 #, python-format
 msgid "The \"URL GIS Viewer WMS\" parameter or \"URL GIS Viewer WFS\" are not populated."
 msgstr ""
@@ -3310,19 +3351,19 @@ msgid "The cadastral area must be a value zero or positive."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1029
+#: code:addons/base_wua/models/wua_parcel.py:1085
 #, python-format
 msgid "The cadastral parcel must be a positive value."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1013
+#: code:addons/base_wua/models/wua_parcel.py:1069
 #, python-format
 msgid "The cadastral polygon must be a positive value."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1076
+#: code:addons/base_wua/models/wua_parcel.py:1132
 #, python-format
 msgid "The cadastral reference already exists."
 msgstr ""
@@ -3341,7 +3382,7 @@ msgid "The code of the link-to-partners, subparcels and other dependent entities
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1537
+#: code:addons/base_wua/models/wua_parcel.py:1636
 #, python-format
 msgid "The database has no GIS layers, or the \"Path of frompgtoshp\" parameter is not populated."
 msgstr ""
@@ -3368,13 +3409,13 @@ msgid "The gis area must be a value zero or positive."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1206
+#: code:addons/base_wua/models/wua_parcel.py:1305
 #, python-format
 msgid "The lease of the parcel"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1038
+#: code:addons/base_wua/models/wua_parcel.py:1094
 #, python-format
 msgid "The length of the cadastral reference is not correct."
 msgstr ""
@@ -3438,10 +3479,16 @@ msgid "The second initial code for partners must be a value zero or positive."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1347
-#: code:addons/base_wua/models/wua_parcel.py:2032
+#: code:addons/base_wua/models/wua_parcel.py:1446
+#: code:addons/base_wua/models/wua_parcel.py:2131
 #, python-format
 msgid "The sum of subparcel areas must be the parcel official area."
+msgstr ""
+
+#. module: base_wua
+#: code:addons/base_wua/models/wua_config_settings.py:296
+#, python-format
+msgid "The table does not exists"
 msgstr ""
 
 #. module: base_wua
@@ -3559,15 +3606,15 @@ msgid "Two digits of the official cadastral code."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1365
-#: code:addons/base_wua/models/wua_parcel.py:2049
+#: code:addons/base_wua/models/wua_parcel.py:1464
+#: code:addons/base_wua/models/wua_parcel.py:2148
 #, python-format
 msgid "Two or more lessees is not allowed."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1370
-#: code:addons/base_wua/models/wua_parcel.py:2053
+#: code:addons/base_wua/models/wua_parcel.py:1469
+#: code:addons/base_wua/models/wua_parcel.py:2152
 #, python-format
 msgid "Two or more partners as manager are not allowed, or there is no manager."
 msgstr ""
@@ -3727,7 +3774,7 @@ msgid "Walnut"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1075
+#: code:addons/base_wua/models/wua_parcel.py:1131
 #, python-format
 msgid "Warning"
 msgstr ""
@@ -3880,16 +3927,18 @@ msgid "Zucchini"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1183
-#: code:addons/base_wua/models/wua_parcel.py:1192
+#: code:addons/base_wua/models/wua_parcel.py:1282
+#: code:addons/base_wua/models/wua_parcel.py:1291
 #, python-format
 msgid "ha"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1132
-#: code:addons/base_wua/models/wua_parcel.py:1139
-#: code:addons/base_wua/models/wua_parcel.py:2877
+#: code:addons/base_wua/models/wua_parcel.py:1188
+#: code:addons/base_wua/models/wua_parcel.py:1197
+#: code:addons/base_wua/models/wua_parcel.py:1207
+#: code:addons/base_wua/models/wua_parcel.py:1214
+#: code:addons/base_wua/models/wua_parcel.py:2976
 #, python-format
 msgid "hectares"
 msgstr ""
@@ -3900,7 +3949,7 @@ msgid "in has"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1207
+#: code:addons/base_wua/models/wua_parcel.py:1306
 #, python-format
 msgid "will end on"
 msgstr ""

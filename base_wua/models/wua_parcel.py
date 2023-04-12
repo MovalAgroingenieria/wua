@@ -212,6 +212,21 @@ class WuaParcel(models.Model):
         store=True,
         compute='_compute_area_official_hec')
 
+    area_intersected_perimeter = fields.Float(
+        string='Area intersected with the perimeter',
+        digits=(32, 4),
+        compute='_compute_area_intersected_perimeter',
+        store=False,)
+
+    is_area_intersected_computed = fields.Boolean(
+        string='Area intersected is calculated',
+        default=False,)
+
+    area_intersected_perimeter_static = fields.Float(
+        string='Area intersected with the perimeter (Stored)',
+        digits=(32, 4),
+        default=0.0,)
+
     leased_parcel = fields.Boolean(
         string='Leased Parcel',
         default=False,
@@ -607,6 +622,47 @@ class WuaParcel(models.Model):
     def _compute_date_now(self):
         for record in self:
             record.date_now = datetime.datetime.now()
+
+    @api.multi
+    def _compute_area_intersected_perimeter(self):
+        area_intersected_calculated = self.env['ir.values'].get_default(
+            'wua.configuration', 'is_area_intersected_calculated')
+        intersection_perimeter_table = self.env['ir.values'].get_default(
+            'wua.configuration', 'intersection_perimeter_table')
+        # If parameter is True, postgis calculus
+        for record in self:
+            area_intersected_perimeter = 0
+            # If caclulated, execute query to database
+            if (area_intersected_calculated and intersection_perimeter_table):
+                self.env.cr.execute(
+                    """
+                    SELECT (postgis.ST_AREA(postgis.ST_Intersection(
+                        geom, (SELECT geom FROM public.""" +
+                    intersection_perimeter_table + """))) * 0.0001) / (
+                        CASE
+                            WHEN (SELECT substring(value from '[0-9]+'
+                                )::INTEGER AS
+                                value FROM ir_values WHERE name LIKE
+                                'area_measurement_type' LIMIT 1) = 1
+                            THEN
+                                (SELECT substring(
+                                    value from'[0-9]+\\.[0-9]+')::FLOAT
+                                AS value FROM ir_values WHERE name LIKE
+                                'area_measurement_equivalence' LIMIT 1)
+                            ELSE 1
+                        END
+                        ) AS area
+                    FROM public.wua_gis_parcel
+                    WHERE name ='""" + record.name + """'
+                    """)
+                query_results = self.env.cr.dictfetchall()
+                if query_results and query_results[0].get('area') is not None:
+                    area_intersected_perimeter = query_results[0].get('area')
+            # If not calculated, get the static value
+            else:
+                area_intersected_perimeter = record.\
+                    area_intersected_perimeter_static
+            record.area_intersected_perimeter = area_intersected_perimeter
 
     @api.multi
     def _compute_days_until_lease_ends(self):
@@ -1130,6 +1186,25 @@ class WuaParcel(models.Model):
                                 self.__class__.area_gis.string)
                         node.set('string', original_label +
                                  ' (' + _('hectares') + ')')
+                    for node in doc.xpath(
+                            "//field[@name='area_intersected_perimeter']"):
+                        original_label = \
+                            self.sudo().get_value_from_translation(
+                                'base_wua',
+                                self.__class__.
+                                area_intersected_perimeter.string)
+                        node.set('string', original_label +
+                                 ' (' + _('hectares') + ')')
+                    for node in doc.xpath(
+                            "//field[@name='area_intersected_perimeter_"
+                            "static']"):
+                        original_label = \
+                            self.sudo().get_value_from_translation(
+                                'base_wua',
+                                self.__class__.
+                                area_intersected_perimeter.string)
+                        node.set('string', original_label +
+                                 ' (' + _('hectares') + ')')
                 for node in doc.xpath("//field[@name='area_official']"):
                     original_label = \
                         self.sudo().get_value_from_translation(
@@ -1146,6 +1221,30 @@ class WuaParcel(models.Model):
                             self.sudo().get_value_from_translation(
                                 'base_wua',
                                 self.__class__.area_gis.string)
+                        posBracket = original_label.find(' (')
+                        if posBracket != -1:
+                            original_label = original_label[:posBracket]
+                        node.set('string', original_label +
+                                 area_measurement_name)
+                    for node in doc.xpath("//field[@name='area_intersected_"
+                                          "perimeter']"):
+                        original_label = \
+                            self.sudo().get_value_from_translation(
+                                'base_wua',
+                                self.__class__.
+                                area_intersected_perimeter.string)
+                        posBracket = original_label.find(' (')
+                        if posBracket != -1:
+                            original_label = original_label[:posBracket]
+                        node.set('string', original_label +
+                                 area_measurement_name)
+                    for node in doc.xpath("//field[@name='area_intersected_"
+                                          "perimeter_static']"):
+                        original_label = \
+                            self.sudo().get_value_from_translation(
+                                'base_wua',
+                                self.__class__.
+                                area_intersected_perimeter.string)
                         posBracket = original_label.find(' (')
                         if posBracket != -1:
                             original_label = original_label[:posBracket]

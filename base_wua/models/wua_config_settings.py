@@ -2,7 +2,7 @@
 # Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _, exceptions
 
 
 class WuaConfiguration(models.TransientModel):
@@ -81,7 +81,7 @@ class WuaConfiguration(models.TransientModel):
     url_gis_viewer = fields.Char(
         string='GIS Viewer URL',
         size=255,
-        help="Note: nameval must be a parameter")
+        help="Note: Valid URL of the related gis viewer")
 
     url_gis_viewer_wms = fields.Char(
         string='GIS Viewer WMS URL',
@@ -129,6 +129,17 @@ class WuaConfiguration(models.TransientModel):
         size=255,
         help='Path of program "frompgtoshp" ' +
              '(generate SHP from PostgreSql database)')
+
+    is_area_intersected_calculated = fields.Boolean(
+        string='Area intersected is calculated',
+        default=False,
+        help='Ensure that the intersected area is calculated with Postgis')
+
+    intersection_perimeter_table = fields.Char(
+        string='Perimeter Table',
+        size=255,
+        help='Name of the Table used for the calculus of the intersected '
+             'area of parcels')
 
     second_initial_partner_code = fields.Integer(
         string='Second Initial Code',
@@ -263,3 +274,45 @@ class WuaConfiguration(models.TransientModel):
                            self.notice_leased_days)
         values.set_default('wua.configuration', 'mail_leaser_address',
                            self.mail_leaser_address)
+        values.set_default('wua.configuration',
+                           'is_area_intersected_calculated',
+                           self.is_area_intersected_calculated)
+        values.set_default('wua.configuration', 'intersection_perimeter_table',
+                           self.intersection_perimeter_table)
+        # If is gonna be calculated, then check postgis and table selected
+        # exists
+        if self.is_area_intersected_calculated:
+            postgis_exists = self.env['wua.parcel'].\
+                check_extension_and_schema_postgis_created()
+            if (not postgis_exists):
+                raise exceptions.UserError(_('Postgis Extension not created'))
+            self.env.cr.execute(
+                """
+                SELECT EXISTS(SELECT * FROM information_schema.tables
+                WHERE table_name='""" +
+                self.intersection_perimeter_table + """')
+                """)
+            if not self.env.cr.fetchone()[0]:
+                raise exceptions.UserError(_('The table does not exists'))
+            # Update boolean field of parcels
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_parcel
+                    SET is_area_intersected_computed = TRUE
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+        else:
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_parcel
+                    SET is_area_intersected_computed = FALSE
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
