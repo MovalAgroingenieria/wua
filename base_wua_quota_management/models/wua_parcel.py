@@ -105,8 +105,8 @@ class WuaParcel(models.Model):
                     qplp.parcel_id = %s""", (current_date,
                                              current_date, record.id))
                 query_results = self.env.cr.dictfetchall()
-                if (query_results and query_results[0].get('count') is not None
-                   and query_results[0].get('count') > 0):
+                if (query_results and query_results[0].get('count') is not
+                        None and query_results[0].get('count') > 0):
                     selected_for_current_quotaperiod = True
             record.selected_for_current_quotaperiod = \
                 selected_for_current_quotaperiod
