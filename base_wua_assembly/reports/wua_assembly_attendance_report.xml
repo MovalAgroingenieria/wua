@@ -60,14 +60,27 @@
                 <thead>
                     <th name="th_vat_participant">Attendee TIN</th>
                     <th name="th_participant_name">Attendee Name</th>
+                    <th name="th_represented_partner">Represents...</th>
+                    <th name="th_votes_total" class="text-center">Total Votes</th>
+                    <th name="th_attendance_signature" class="text-center">Signature</th>
                 </thead>
                 <t t-if="o.state == '03_in_progress' or o.state == '04_finished'">
                     <tbody>
                         <t t-foreach="o.attendance_ids" t-as="attendance">
-                            <tr>
-                                <td name="td_vat_participant"><span t-field="attendance.vat_participant"/></td>
-                                <td name="td_participant_name"><span t-field="attendance.participant_name"/></td>
-                            </tr>
+                            <t t-if="attendance.potential_attendee">
+                                <tr>
+                                    <td name="td_vat_participant"><span t-field="attendance.vat_participant"/></td>
+                                    <td name="td_participant_name"><span t-field="attendance.participant_name"/></td>
+                                    <td name="td_represented_partner"><span t-field="attendance.represented_partner"/></td>
+                                    <td name="td_votes_total" class="text-center"><span t-field="attendance.votes_total"/></td>
+                                    <t t-if="attendance.attendance_signature">
+                                        <td name="td_attendance_signature" class="text-center" style="max-width: 75px; max-height: 75px;"><span t-field="attendance.attendance_signature" t-field-options='{"widget": "image"}'/></td>
+                                    </t>
+                                    <t t-else="">
+                                        <td name="td_attendance_signature_none" class="text-center"></td>
+                                    </t>
+                                </tr>
+                            </t>
                         </t>
                     </tbody>
                 </t>

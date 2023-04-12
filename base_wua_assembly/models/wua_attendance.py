@@ -11,7 +11,7 @@ from odoo import models, fields, api, modules, _
 class WuaAttendance(models.Model):
     _name = 'wua.attendance'
     _description = 'Attendance of a partner to an assembly'
-    _order = 'name'
+    _order = 'participant_name'
 
     SIZE_ASSEMBLY_NAME = 19
     SIZE_PARTNER_CODE = 6
