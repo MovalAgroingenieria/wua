@@ -89,8 +89,7 @@ class WuaParcel(models.Model):
     def _compute_selected_for_current_quotaperiod(self):
         for record in self:
             selected_for_current_quotaperiod = False
-            self.partnerlink_ids.__class__._fired_onchange_partner = False
-            self.partnerlink_ids.__class__._fired_onchange_watercosts = False
+            self.partnerlink_ids.__class__._fired_onchange_partnerlink = False
             current_date = datetime.today().strftime('%Y-%m-%d')
             if record.id > 0:
                 self.env.cr.execute("""
@@ -115,16 +114,15 @@ class WuaParcel(models.Model):
 class WuaParcelPartnerlink(models.Model):
     _inherit = 'wua.parcel.partnerlink'
 
-    _fired_onchange_partner = False
-    _fired_onchange_watercosts = False
+    _fired_onchange_partnerlink = False
 
     @api.onchange('partner_id')
     def _onchange_partner(self):
-        if (self.parcel_id.selected_for_current_quotaperiod and
+        if ((not self.__class__._fired_onchange_partnerlink) and
            self.partner_id and
-           self.water_costs_percentage and
-           (not self.__class__._fired_onchange_partner)):
-            self.__class__._fired_onchange_partner = True
+           self.water_costs_percentage > 0 and
+           self.parcel_id.selected_for_current_quotaperiod):
+            self.__class__._fired_onchange_partnerlink = True
             warning_title = _('IMPORTANT WARNING:')
             warning_text = _('A change has been detected in the partners '
                              'that take charge of the water costs. Consider '
@@ -135,10 +133,10 @@ class WuaParcelPartnerlink(models.Model):
 
     @api.onchange('water_costs_percentage')
     def _onchange_watercosts(self):
-        if (self.parcel_id.selected_for_current_quotaperiod and
+        if ((not self.__class__._fired_onchange_partnerlink) and
            self.partner_id and
-           (not self.__class__._fired_onchange_watercosts)):
-            self.__class__._fired_onchange_watercosts = True
+           self.parcel_id.selected_for_current_quotaperiod):
+            self.__class__._fired_onchange_partnerlink = True
             warning_title = _('IMPORTANT WARNING:')
             warning_text = _('A change in the percentage of water costs of '
                              'the parcel has been detected. Consider making '
