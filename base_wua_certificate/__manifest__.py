@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association: Certificate Management",
     "summary": "Certificate management for any water users association",
-    "version": '10.0.1.1.1',
+    "version": '10.0.1.1.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

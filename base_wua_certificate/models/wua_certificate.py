@@ -672,6 +672,26 @@ class WuaCertificate(models.Model):
                 _logger.info(preffix_message + suffix_message)
         return resp
 
+    # Auxiliar method to be inherit and extended
+    def _get_fields_of_new_certificate(new_certificate, partnerlink):
+        return {
+            'certificate_id': new_certificate.id,
+            'parcel_id': partnerlink.parcel_id.id,
+            'area_intersected_perimeter':
+                partnerlink.parcel_id.area_intersected_perimeter,
+            'area_gis':
+                partnerlink.parcel_id.area_gis,
+            'cadastral_reference':
+                partnerlink.parcel_id.cadastral_reference,
+            'area_official': partnerlink.parcel_id.area_official,
+            'ownership_percentage': partnerlink.ownership_percentage,
+            'water_costs_percentage':
+                partnerlink.water_costs_percentage,
+            'other_costs_percentage':
+                partnerlink.other_costs_percentage,
+            'is_main': partnerlink.irrigation_partner,
+        }
+
     @api.model
     def get_validated_certificate(self, identification, cert_type=1,
                                   is_portal_user=True, pdf_file=''):
@@ -745,21 +765,9 @@ class WuaCertificate(models.Model):
                  (certificatetype.include_parcel_if_payer and
                  partnerlink.profile == 'P'))
             if add_parcel:
-                fields_of_new_certificateparcel = {
-                    'certificate_id': new_certificate.id,
-                    'parcel_id': partnerlink.parcel_id.id,
-                    'area_intersected_perimeter':
-                        partnerlink.parcel_id.area_intersected_perimeter,
-                    'cadastral_reference':
-                        partnerlink.parcel_id.cadastral_reference,
-                    'area_official': partnerlink.parcel_id.area_official,
-                    'ownership_percentage': partnerlink.ownership_percentage,
-                    'water_costs_percentage':
-                        partnerlink.water_costs_percentage,
-                    'other_costs_percentage':
-                        partnerlink.other_costs_percentage,
-                    'is_main': partnerlink.irrigation_partner,
-                    }
+                fields_of_new_certificateparcel = self.\
+                    _get_fields_of_new_certificate(
+                        new_certificate, partnerlink)
                 model_wua_certificate_parcel.create(
                     fields_of_new_certificateparcel)
         # Get the PDF.
@@ -841,6 +849,11 @@ class WuaCertificateParcel(models.Model):
         digits=(32, 4),
         default=0)
 
+    area_gis = fields.Float(
+        string='GIS Area',
+        digits=(32, 4),
+        default=0)
+
     ownership_percentage = fields.Float(
         string='Ownership %',
         digits=(5, 2),
@@ -897,7 +910,7 @@ class WuaCertificateParcel(models.Model):
     def _onchange_parcel_id(self):
         (cadastral_reference, area_official, ownership_percentage,
          water_costs_percentage, other_costs_percentage,
-         area_intersected_perimeter) = \
+         area_intersected_perimeter, area_gis) = \
             self._get_partnerlink_data(self.certificate_id.partner_id,
                                        self.parcel_id)
         self.cadastral_reference = cadastral_reference
@@ -906,6 +919,7 @@ class WuaCertificateParcel(models.Model):
         self.water_costs_percentage = water_costs_percentage
         self.other_costs_percentage = other_costs_percentage
         self.area_intersected_perimeter = area_intersected_perimeter
+        self.area_gis = area_gis
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
@@ -918,6 +932,8 @@ class WuaCertificateParcel(models.Model):
             area_measurement_name = _('ha')
             area_measurement_type = self.env['ir.values'].get_default(
                 'wua.configuration', 'area_measurement_type')
+            intersection_management = self.env['ir.values'].get_default(
+                'wua.configuration', 'intersection_management')
             use_intersected_area = self.env['ir.values'].get_default(
                 'wua.configuration', 'use_intersected_area')
             if area_measurement_type == 1:
@@ -931,6 +947,12 @@ class WuaCertificateParcel(models.Model):
                         'base_wua_certificate',
                         self.__class__.area_official.string)
                 node.set('string', original_label + suffix_area)
+            for node in doc.xpath("//field[@name='area_gis']"):
+                original_label = \
+                    self.env['wua.certificate']._get_value_from_translation(
+                        'base_wua_certificate',
+                        self.__class__.area_gis.string)
+                node.set('string', original_label + suffix_area)
             for node in doc.xpath("//field[@name='area_intersected_"
                                   "perimeter']"):
                 original_label = \
@@ -938,7 +960,7 @@ class WuaCertificateParcel(models.Model):
                         'base_wua_certificate',
                         self.__class__.area_intersected_perimeter.string)
                 node.set('string', original_label + suffix_area)
-                if (not use_intersected_area):
+                if (not use_intersected_area or not intersection_management):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"tree_invisible": true}')
             res['arch'] = etree.tostring(doc)
@@ -951,6 +973,7 @@ class WuaCertificateParcel(models.Model):
         water_costs_percentage = 0
         other_costs_percentage = 0
         area_intersected_perimeter = 0
+        area_gis = 0
         if partner and parcel:
             partnerlinks = self.env['wua.parcel.partnerlink'].search(
                 [('partner_id', '=', partner.id),
@@ -959,6 +982,7 @@ class WuaCertificateParcel(models.Model):
                 cadastral_reference = parcel.cadastral_reference
                 area_official = parcel.area_official
                 area_intersected_perimeter = parcel.area_intersected_perimeter
+                area_gis = parcel.area_gis
                 partnerlink_data = partnerlinks[0]
                 ownership_percentage = \
                     partnerlink_data.ownership_percentage
@@ -968,4 +992,4 @@ class WuaCertificateParcel(models.Model):
                     partnerlink_data.other_costs_percentage
         return (cadastral_reference, area_official, ownership_percentage,
                 water_costs_percentage, other_costs_percentage,
-                area_intersected_perimeter)
+                area_intersected_perimeter, area_gis)

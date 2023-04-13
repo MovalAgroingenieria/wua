@@ -25,7 +25,7 @@
 
     <template id="report_wua_certificate_document">
         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
-        <t t-set="use_intersected_area" t-value="o.env['ir.values'].get_default('wua.configuration', 'use_intersected_area')"/>
+        <t t-set="use_intersected_area" t-value="o.env['ir.values'].get_default('wua.configuration', 'use_intersected_area') and o.env['ir.values'].get_default('wua.configuration', 'intersection_management')"/>
         <div name="full_report">
             <div class="row" name="section_master">
                 <!-- Title -->

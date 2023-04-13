@@ -6,7 +6,13 @@
         <field name="model">wua.configuration</field>
         <field name="inherit_id" ref="base_wua.wua_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='polling_system_group']" position="after">
+              <xpath expr="//field[@name='intersection_perimeter_table']" position="after">
+                     <field name="use_intersected_area"
+                            string="Use intersected area on certificates"
+                            style="width:100px"
+                            attrs="{'invisible':[('intersection_management','!=',True)]}"/>
+              </xpath>
+              <xpath expr="//group[@name='intersection_management_group']" position="after">
                 <group name="certificate_parameters"
                        string="Certificate Management">
                     <field name="sequence_certificate_code_id"
@@ -32,9 +38,6 @@
                            attrs="{'invisible':[('allowed_request_for_portal_user','=',False)]}"/>
                     <field name="ip_remote_address"
                            string="Allowed remote IP"
-                           style="width:100px"/>
-                     <field name="use_intersected_area"
-                           string="Use intersected area"
                            style="width:100px"/>
                 </group>
             </xpath>
