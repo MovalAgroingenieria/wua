@@ -637,7 +637,7 @@ class WuaParcel(models.Model):
                 self.env.cr.execute(
                     """
                     SELECT (postgis.ST_AREA(postgis.ST_Intersection(
-                        geom, (SELECT geom FROM public.""" +
+                        geom, (SELECT postgis.ST_Union(geom) FROM public.""" +
                     intersection_perimeter_table + """))) * 0.0001) / (
                         CASE
                             WHEN (SELECT substring(value from '[0-9]+'
@@ -1209,17 +1209,6 @@ class WuaParcel(models.Model):
                                 area_intersected_perimeter.string)
                         node.set('string', original_label +
                                  ' (' + _('hectares') + ')')
-                    # Remove field of area_intersections when
-                    # intersection_management is not setted
-                    if (not intersection_management):
-                        for node in doc.xpath(
-                            "//field[@name='area_intersected_"
-                                "perimeter_static']"):
-                            node.getparent().remove(node)
-                        for node in doc.xpath(
-                            "//field[@name='area_intersected_"
-                                "perimeter']"):
-                            node.getparent().remove(node)
                 for node in doc.xpath("//field[@name='area_official']"):
                     original_label = \
                         self.sudo().get_value_from_translation(
@@ -1265,6 +1254,17 @@ class WuaParcel(models.Model):
                             original_label = original_label[:posBracket]
                         node.set('string', original_label +
                                  area_measurement_name)
+                    # Remove field of area_intersections when
+                    # intersection_management is not setted
+                    if (not intersection_management):
+                        for node in doc.xpath(
+                            "//field[@name='area_intersected_"
+                                "perimeter_static']"):
+                            node.getparent().remove(node)
+                        for node in doc.xpath(
+                            "//field[@name='area_intersected_"
+                                "perimeter']"):
+                            node.getparent().remove(node)
                 for node in doc.xpath("//field[@name='area_official']"):
                     original_label = \
                         self.sudo().get_value_from_translation(

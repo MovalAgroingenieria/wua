@@ -673,7 +673,7 @@ class WuaCertificate(models.Model):
         return resp
 
     # Auxiliar method to be inherit and extended
-    def _get_fields_of_new_certificate(new_certificate, partnerlink):
+    def _get_fields_of_new_certificate(self, new_certificate, partnerlink):
         return {
             'certificate_id': new_certificate.id,
             'parcel_id': partnerlink.parcel_id.id,
