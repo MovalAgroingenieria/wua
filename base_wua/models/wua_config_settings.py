@@ -130,6 +130,11 @@ class WuaConfiguration(models.TransientModel):
         help='Path of program "frompgtoshp" ' +
              '(generate SHP from PostgreSql database)')
 
+    intersection_management = fields.Boolean(
+        string='Intersection Management',
+        default=False,
+        help='Enable the management of parcel area intersections')
+
     is_area_intersected_calculated = fields.Boolean(
         string='Area intersected is calculated',
         default=False,
@@ -275,13 +280,17 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration', 'mail_leaser_address',
                            self.mail_leaser_address)
         values.set_default('wua.configuration',
+                           'intersection_management',
+                           self.intersection_management)
+        values.set_default('wua.configuration',
                            'is_area_intersected_calculated',
                            self.is_area_intersected_calculated)
         values.set_default('wua.configuration', 'intersection_perimeter_table',
                            self.intersection_perimeter_table)
         # If is gonna be calculated, then check postgis and table selected
         # exists
-        if self.is_area_intersected_calculated:
+        if (self.is_area_intersected_calculated and
+                self.intersection_management):
             postgis_exists = self.env['wua.parcel'].\
                 check_extension_and_schema_postgis_created()
             if (not postgis_exists):

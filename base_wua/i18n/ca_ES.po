@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-12 11:39+0000\n"
-"PO-Revision-Date: 2023-04-12 11:39+0000\n"
+"POT-Creation-Date: 2023-04-13 07:16+0000\n"
+"PO-Revision-Date: 2023-04-13 07:16+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -47,7 +47,7 @@ msgid "(image of"
 msgstr "(imatge de"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1307
+#: code:addons/base_wua/models/wua_parcel.py:1313
 #, python-format
 msgid ", please, contact the community to regularize your situation"
 msgstr ", si us plau, contacte con la comunidad para regularizar su situación"
@@ -1220,9 +1220,10 @@ msgid "Date To"
 msgstr "Data fins a"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_res_partner_date_now
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_date_now
 msgid "Date now"
-msgstr "Date now"
+msgstr "Data ara"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_aerial_img_date
@@ -1405,6 +1406,11 @@ msgstr "Valor en blanc"
 #, python-format
 msgid "Empty parcel code."
 msgstr "Codi de parcel·la en blanc"
+
+#. module: base_wua
+#: model:ir.model.fields,help:base_wua.field_wua_configuration_intersection_management
+msgid "Enable the management of parcel area intersections"
+msgstr "Habilitar la gestió de les interseccions de parcel·les"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_050
@@ -1850,6 +1856,12 @@ msgid "Internal Notes"
 msgstr "Notes internes"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_configuration_intersection_management
+#: model:ir.ui.view,arch_db:base_wua.wua_config_settings_view_form
+msgid "Intersection Management"
+msgstr "Gestió d'interseccions"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_polling_system_interval
 msgid "Interval (m2)"
 msgstr "Interval (m²)"
@@ -1870,7 +1882,7 @@ msgstr "Intervals (m²)"
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_subparcel_view_search
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_search
 msgid "Irrigation Partner"
-msgstr "Soci de reg"
+msgstr "Regant"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_irrigationsystem_name
@@ -1921,7 +1933,7 @@ msgid "Is a company (marked)"
 msgstr "És una empresa (marcat)"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1656
+#: code:addons/base_wua/models/wua_parcel.py:1662
 #, python-format
 msgid "It is not possible to create the files of SHP."
 msgstr "No és possible crear els fitxers dels SHP."
@@ -2048,7 +2060,7 @@ msgid "Lease is close to end"
 msgstr "El lloguer està a prop del final"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1296
+#: code:addons/base_wua/models/wua_parcel.py:1302
 #, python-format
 msgid "Lease of parcel"
 msgstr "Arrendament de parcel·la"
@@ -2293,7 +2305,7 @@ msgid "No SHP: The user must be a portal user, or it is not possible to obtain S
 msgstr "No SHP: l'usuari ha de ser un usuari del portal, o no és possible obtenir SHP fora del programa principal."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1682
+#: code:addons/base_wua/models/wua_parcel.py:1688
 #, python-format
 msgid "No parcel with gis relation."
 msgstr "No hi ha parcel·les amb enllaç GIS."
@@ -2454,19 +2466,19 @@ msgid "Onion"
 msgstr "Cebolla"
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:471
+#: code:addons/base_wua/models/res_partner.py:474
 #, python-format
 msgid "Only one legal representative is allowed."
 msgstr "Només es permet un representant legal."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3212
+#: code:addons/base_wua/models/wua_parcel.py:3218
 #, python-format
 msgid "Only one usufructuary per parcel."
 msgstr "Només un usufructuari per parcel·la."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3205
+#: code:addons/base_wua/models/wua_parcel.py:3211
 #, python-format
 msgid "Only owners can be usufructuaries."
 msgstr "Només els propietaris poden ser usufructuaris."
@@ -2660,8 +2672,8 @@ msgstr "Parce·la:"
 #. module: base_wua
 #: code:addons/base_wua/controllers/partner.py:43
 #: code:addons/base_wua/controllers/partner.py:75
-#: code:addons/base_wua/models/res_partner.py:641
-#: code:addons/base_wua/models/wua_parcel.py:1720
+#: code:addons/base_wua/models/res_partner.py:644
+#: code:addons/base_wua/models/wua_parcel.py:1726
 #: model:ir.actions.act_window,name:base_wua.res_partner_partnerlink_action
 #: model:ir.actions.act_window,name:base_wua.wua_parcel_action
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_parcel_ids
@@ -2761,8 +2773,8 @@ msgid "Partners"
 msgstr "Socis"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1457
-#: code:addons/base_wua/models/wua_parcel.py:2143
+#: code:addons/base_wua/models/wua_parcel.py:1463
+#: code:addons/base_wua/models/wua_parcel.py:2149
 #, python-format
 msgid "Partners: the sum of all percentages must be 100, or there are repeated partners."
 msgstr "Socis: la suma de tots els percentatges ha de ser 100, o bé hi ha socis repetits"
@@ -2897,7 +2909,7 @@ msgid "Portal User can edit"
 msgstr "Usuaris de portal poden editar"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_config_settings.py:288
+#: code:addons/base_wua/models/wua_config_settings.py:297
 #, python-format
 msgid "Postgis Extension not created"
 msgstr "L'extensió Postgis no s'ha creat"
@@ -3334,27 +3346,27 @@ msgid "Tenant"
 msgstr "Arrendatari"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1678
+#: code:addons/base_wua/models/wua_parcel.py:1684
 #, python-format
 msgid "The \"URL GIS Viewer WFS\" parameter is not populated."
 msgstr "El paràmetre \" URL GIS Viewer WFS \" no es reuneixen."
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:832
-#: code:addons/base_wua/models/wua_parcel.py:1805
+#: code:addons/base_wua/models/wua_parcel.py:1811
 #, python-format
 msgid "The \"URL GIS Viewer WMS\" parameter or \"URL GIS Viewer WFS\" are not populated."
 msgstr "El paràmetre \" URL GIS Viewer WMS \" o \" URL GIS Viewer WFS \" no es reuneixen."
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:528
-#: code:addons/base_wua/models/res_partner.py:556
+#: code:addons/base_wua/models/res_partner.py:531
+#: code:addons/base_wua/models/res_partner.py:559
 #, python-format
 msgid "The VAT code (TIN) already exists."
 msgstr "El codi VAT (TIN) ja existeix"
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:458
+#: code:addons/base_wua/models/res_partner.py:461
 #, python-format
 msgid "The VAT number [%s] for partner [%s] is invalid."
 msgstr "The VAT number [%s] for partner [%s] is invalid."
@@ -3412,7 +3424,7 @@ msgid "The code of the link-to-partners, subparcels and other dependent entities
 msgstr "El codi dels enllaços a socis, subparcel·les i resta d'entitats dependents també serà modificat"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1636
+#: code:addons/base_wua/models/wua_parcel.py:1642
 #, python-format
 msgid "The database has no GIS layers, or the \"Path of frompgtoshp\" parameter is not populated."
 msgstr "La base de dades no té capes GIS, o el paràmetre \"Ruta frompgtoshp\" no s'ha indicat."
@@ -3439,7 +3451,7 @@ msgid "The gis area must be a value zero or positive."
 msgstr "L'àrea GIS ha de ser un valor 0 o positiu"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1305
+#: code:addons/base_wua/models/wua_parcel.py:1311
 #, python-format
 msgid "The lease of the parcel"
 msgstr "El lloguer de la parcel·la"
@@ -3486,14 +3498,14 @@ msgid "The orientation must be a value between 0 and 360 degrees."
 msgstr "L'orientació ha de ser un valor entre 0 i 360 graus"
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:523
-#: code:addons/base_wua/models/res_partner.py:538
+#: code:addons/base_wua/models/res_partner.py:526
+#: code:addons/base_wua/models/res_partner.py:541
 #, python-format
 msgid "The partner code already exists."
 msgstr "El codi de soci ja existeix"
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:437
+#: code:addons/base_wua/models/res_partner.py:440
 #, python-format
 msgid "The partner code must be a positive value."
 msgstr "El codi de soci ha de ser un valor positiu"
@@ -3509,14 +3521,14 @@ msgid "The second initial code for partners must be a value zero or positive."
 msgstr "El valor inicial per a la codificació alternativa ha de ser un valor zero o positiu."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1446
-#: code:addons/base_wua/models/wua_parcel.py:2131
+#: code:addons/base_wua/models/wua_parcel.py:1452
+#: code:addons/base_wua/models/wua_parcel.py:2137
 #, python-format
 msgid "The sum of subparcel areas must be the parcel official area."
 msgstr "La suma de les àrees de les subparcel·les ha de coincidir amb l'àrea declarada"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_config_settings.py:296
+#: code:addons/base_wua/models/wua_config_settings.py:305
 #, python-format
 msgid "The table does not exists"
 msgstr "La taula no existeix"
@@ -3636,15 +3648,15 @@ msgid "Two digits of the official cadastral code."
 msgstr "Dos dígits del codi cadastral oficial"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1464
-#: code:addons/base_wua/models/wua_parcel.py:2148
+#: code:addons/base_wua/models/wua_parcel.py:1470
+#: code:addons/base_wua/models/wua_parcel.py:2154
 #, python-format
 msgid "Two or more lessees is not allowed."
 msgstr "No es permet més d'un llogater."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1469
-#: code:addons/base_wua/models/wua_parcel.py:2152
+#: code:addons/base_wua/models/wua_parcel.py:1475
+#: code:addons/base_wua/models/wua_parcel.py:2158
 #, python-format
 msgid "Two or more partners as manager are not allowed, or there is no manager."
 msgstr "No s'ha triat cap regant, o bé s'ha designat a més d'un."
@@ -3957,18 +3969,18 @@ msgid "Zucchini"
 msgstr "Calabacín"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1282
-#: code:addons/base_wua/models/wua_parcel.py:1291
+#: code:addons/base_wua/models/wua_parcel.py:1288
+#: code:addons/base_wua/models/wua_parcel.py:1297
 #, python-format
 msgid "ha"
 msgstr "ha"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1188
-#: code:addons/base_wua/models/wua_parcel.py:1197
-#: code:addons/base_wua/models/wua_parcel.py:1207
-#: code:addons/base_wua/models/wua_parcel.py:1214
-#: code:addons/base_wua/models/wua_parcel.py:2976
+#: code:addons/base_wua/models/wua_parcel.py:1192
+#: code:addons/base_wua/models/wua_parcel.py:1201
+#: code:addons/base_wua/models/wua_parcel.py:1211
+#: code:addons/base_wua/models/wua_parcel.py:1229
+#: code:addons/base_wua/models/wua_parcel.py:2982
 #, python-format
 msgid "hectares"
 msgstr "hectàrees"
@@ -3979,7 +3991,7 @@ msgid "in has"
 msgstr "Equivalència en has"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1306
+#: code:addons/base_wua/models/wua_parcel.py:1312
 #, python-format
 msgid "will end on"
 msgstr "acabarà"

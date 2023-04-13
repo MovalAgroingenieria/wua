@@ -1160,6 +1160,9 @@ class WuaParcel(models.Model):
             doc = etree.XML(res['arch'])
             area_measurement_type = self.env['ir.values'].get_default(
                 'wua.configuration', 'area_measurement_type')
+            # Show / Hide intersection info
+            intersection_management = self.env['ir.values'].get_default(
+                'wua.configuration', 'intersection_management')
             area_measurement_name = ''
             # Show / Hide lease info
             leased_dates_required = self.env['ir.values'].get_default(
@@ -1179,6 +1182,7 @@ class WuaParcel(models.Model):
                 area_measurement_name = area_measurement_name.decode('utf_8')
             else:
                 if view_type == 'form':
+                    # Add default hectareas to other fields
                     for node in doc.xpath("//field[@name='area_gis']"):
                         original_label = \
                             self.sudo().get_value_from_translation(
@@ -1205,6 +1209,17 @@ class WuaParcel(models.Model):
                                 area_intersected_perimeter.string)
                         node.set('string', original_label +
                                  ' (' + _('hectares') + ')')
+                    # Remove field of area_intersections when
+                    # intersection_management is not setted
+                    if (not intersection_management):
+                        for node in doc.xpath(
+                            "//field[@name='area_intersected_"
+                                "perimeter_static']"):
+                            node.getparent().remove(node)
+                        for node in doc.xpath(
+                            "//field[@name='area_intersected_"
+                                "perimeter']"):
+                            node.getparent().remove(node)
                 for node in doc.xpath("//field[@name='area_official']"):
                     original_label = \
                         self.sudo().get_value_from_translation(
@@ -1259,15 +1274,6 @@ class WuaParcel(models.Model):
                     if posBracket != -1:
                         original_label = original_label[:posBracket]
                     node.set('string', original_label + area_measurement_name)
-            # else:
-            #    for node in doc.xpath("//field[@name='area_official_hec']"):
-            #        node.set('invisible', '1')
-            #        if view_type == 'tree':
-            #            node.set('modifiers',
-            #                     '{"readonly": true, "tree_invisible": true}')
-            #        else:
-            #            node.set('modifiers',
-            #                     '{"readonly": true, "invisible": true}')
             res['arch'] = etree.tostring(doc)
         return res
 

@@ -29,6 +29,19 @@
                     <field name="polling_system_intervals" style="width:100%"
                      attrs="{'invisible':[('polling_system_type','!=',3)]}"/>
                 </group>
+                <group string="Intersection Management" name="intersection_management_group">
+                    <field name="intersection_management"/>
+                    <field name="is_area_intersected_calculated"
+                            attrs="{
+                                'invisible':[('intersection_management','!=',True)]}"/>
+                    <field name="intersection_perimeter_table"
+                           style="width: 230px;"
+                           attrs="{
+                                'invisible':['|', ('intersection_management','!=',True),
+                                                  ('is_area_intersected_calculated','!=',True)],
+                                'required':[('intersection_management','=',True),
+                                            ('is_area_intersected_calculated','=',True)]}"/>
+                </group>
                 <group string="Partners">
                     <field name="second_initial_partner_code" style="width:100px"/>
                 </group>
@@ -46,11 +59,6 @@
                     <field name="ip_remote_address_for_shp"
                            string="Allowed remote IP for SHP generation"/>
                     <field name="path_frompgtoshp"/>
-                    <field name="is_area_intersected_calculated"/>
-                    <field name="intersection_perimeter_table"
-                           attrs="{
-                                'invisible':[('is_area_intersected_calculated','!=',True)],
-                                'required':[('is_area_intersected_calculated','=',True)]}"/>
                 </group>
                 <group string="WUA Portal Users">
                     <field name="wua_portal_user_can_edit"/>
