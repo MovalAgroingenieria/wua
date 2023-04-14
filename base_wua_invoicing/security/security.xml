@@ -11,8 +11,8 @@
         </record>
 
     </data>
-    
-    <data noupdate="0">
+
+    <data noupdate="1">
 
         <record id="rule_account_invoice_group_wua_portal_user" model="ir.rule">
             <field name="name">Rule for Wua Portal User on invoices</field>
@@ -31,10 +31,10 @@
                 ['|', ('invoice_id.partner_id','=',user.partner_id.id),
                       ('invoice_id.partner_id.child_ids','=',user.partner_id.id)]
             </field>
-            
+
             <field name="groups" eval="[(4, ref('base_wua.group_wua_portal_user'))]"/>
         </record>
 
     </data>
-    
+
 </odoo>
