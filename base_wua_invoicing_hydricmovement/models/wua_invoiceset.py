@@ -317,7 +317,7 @@ class WuaInvoicesetLine(models.Model):
                         'invoiceset_id': None,
                         'invoiced_hydricmovement': False
                     })
-                    return super(WuaInvoicesetLine, self).unlink()
+        return super(WuaInvoicesetLine, self).unlink()
 
     @api.multi
     def action_select_linked_items(self):
