@@ -94,9 +94,9 @@
                             <th class="text-left">Land Parcel</th>
                             <th class="text-center">Cadastral Reference</th>
                             <th class="text-right">Area (<span><t t-esc="measurement_unit"/></span>)</th>
-                            <th class="text-right">Ownership %</th>
-                            <th class="text-right">Water Costs %</th>
-                            <th class="text-right">Other Costs %</th>
+                            <th name="th_ownership_percentage" class="text-right">Ownership %</th>
+                            <th name="th_water_costs_percentage" class="text-right">Water Costs %</th>
+                            <th name="th_other_costs_percentage" class="text-right">Other Costs %</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,9 +114,9 @@
                                     <t t-set="total_area_official" t-value="total_area_official + l.area_official"/>
                                 </t>
                              </td>
-                            <td align="right"><span t-field="l.ownership_percentage"/></td>
-                            <td align="right"><span t-field="l.water_costs_percentage"/></td>
-                            <td align="right"><span t-field="l.other_costs_percentage"/></td>
+                            <td name="td_ownership_percentage" align="right"><span t-field="l.ownership_percentage"/></td>
+                            <td name="td_water_costs_percentage" align="right"><span t-field="l.water_costs_percentage"/></td>
+                            <td name="td_other_costs_percentage" align="right"><span t-field="l.other_costs_percentage"/></td>
                         </tr>
                         <tr name="total_area">
                             <td></td>
