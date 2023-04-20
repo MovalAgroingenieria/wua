@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="action_wua_attendance_calls_report"
+            string="Assembly Attendance Calls"
+            model="wua.assembly"
+            report_type="qweb-pdf"
+            name="base_wua_assembly.wua_attendance_calls_report"
+            file="base_wua_assembly.wua_attendance_calls_report"
+            paperformat="base_wua_report.paperformat_wua_reports"
+            groups="base_wua.group_wua_user"
+            attachment="'Attendace_calls_report-' + object.issue + '.pdf'"/>
+
+    <!-- Avoid reload from attached files -->
+    <record id="base_wua_assembly.action_wua_attendance_calls_report" model="ir.actions.report.xml">
+        <field name="attachment_use" eval="False"/>
+    </record>
+
+    <template id="wua_attendance_calls_report">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_assembly.wua_attendance_calls_report_document"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="wua_attendance_calls_report_document">
+        <t t-if="o.attendance_ids">
+            <t t-foreach="o.attendance_ids" t-as="attendance">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+
+                        <!-- Vars -->
+                        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+
+                        <!-- Title -->
+                        <div name="title" class="text-center">
+                            <h4 style="margin-top:0px; padding-top:0px;">
+                                <strong>Assembly citation</strong>
+                            </h4>
+                            <div name="assembly_name">
+                                <span>[</span><span t-field="o.issue"/><span>]</span>
+                            </div>
+                        </div>
+
+                        <div name="wua_partner_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                        <div style="float: left; display: inline;"><strong>Participant</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
+                                        <div style="float: left; display: inline;"><strong>Participant</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="display: table-cell;">
+                                        <table name="partner_main_data" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_name">
+                                                    <td><span>Name:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="attendance.participant_name">
+                                                            <span t-field="attendance.participant_name"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_vat">
+                                                    <td><span>VAT:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="attendance.vat_participant">
+                                                            <span t-field="attendance.vat_participant"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 40px;">
+                                        <table name="partner_vote_data" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_votes_owned">
+                                                    <td><span>Votes owned:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="attendance.votes_owned">
+                                                            <span t-field="attendance.votes_owned"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_votes_delegation">
+                                                    <td><span>Votes delegation:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="attendance.votes_delegation">
+                                                            <span t-field="attendance.votes_delegation"/>
+                                                        </t>
+                                                        <t t-else=""><span>0</span></t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_votes_total">
+                                                    <td><span>Votes total:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="attendance.votes_total">
+                                                            <span t-field="attendance.votes_total"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <div name="assembly_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-gavel"/></div>
+                                        <div style="float: left; display: inline;"><strong>Assembly</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-gavel"/></div>
+                                        <div style="float: left; display: inline;"><strong>Assembly</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="display: table-cell;">
+                                        <table name="assembly_main_data" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_issue">
+                                                    <td><span>Issue:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.issue">
+                                                            <span t-field="o.issue"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_assembly_date">
+                                                    <td><span>Date:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.assembly_date">
+                                                            <span t-field="o.assembly_date"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_first_hour">
+                                                    <td><span>First hour:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.first_hour">
+                                                            <span t-field="o.first_hour"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_second_hour">
+                                                    <td><span>Second hour:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.second_hour">
+                                                            <span t-field="o.second_hour"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 40px;">
+                                        <table name="assembly_vote_data" style="width:90%;">
+                                            <tbody>
+                                                <tr name="tr_number_of_agendaitems">
+                                                    <td><span>Num. agendaitems:</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.number_of_agendaitems"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_number_of_attendances_with_signature">
+                                                    <td><span>Attendees:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.number_of_attendances_with_signature">
+                                                            <span t-field="o.number_of_attendances_with_signature"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_number_of_possible_votes">
+                                                    <td><span>Possible Votes:</span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.number_of_possible_votes">
+                                                            <span t-field="o.number_of_possible_votes"/>
+                                                        </t>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div name="citation_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                                        <div style="float: left; display: inline;"><strong>Citation</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-file-text-o"/></div>
+                                        <div style="float: left; display: inline;"><strong>Citation</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div style="margin-top: 4px;">
+                                <t t-if="o.rendered_publication_text">
+                                    <span t-field="o.rendered_publication_text"></span>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div name="agendaitem_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-list-ol"/></div>
+                                        <div style="float: left; display: inline;"><strong>Agenda&amp;nbsp;items</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-list-ol"/></div>
+                                        <div style="float: left; display: inline;"><strong>Agenda&amp;nbsp;items</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div style="margin-top: 4px;">
+                                <t t-if="o.agendaitem_ids">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th name="th_number" class="text-center" width="4%"/>
+                                                <th name="th_description" width="82%">Description</th>
+                                                <th name="th_type" width="14%">Type</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="o.agendaitem_ids" t-as="item">
+                                                <td name="td_number" class="text-center"><span t-field="item.number"/></td>
+                                                <td name="th_description"><span t-field="item.description"/></td>
+                                                <td name="th_type"><span t-field="item.type"/></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div name="approved_data" style="margin-top: 32px; page-break-inside: avoid;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                                        <div style="float: left; display: inline;"><strong>Approved</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
+                                        <div style="float: left; display: inline;"><strong>Approved</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div name="current_date_n_place" class="text-right">
+                                <t t-if="request.env.user.company_id.city">
+                                    <span t-esc="request.env.user.company_id.city"/>,
+                                </t>
+                                <t t-else=""/>
+                                <span t-field="o.date_now" t-options="{'format': 'dd MMMM YYYY'}"/>
+                            </div>
+                            <div name="signatures" class="row" style="border: 1px solid lightgrey; margin: 2px 1px; page-break-inside: avoid;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="border-right: 1px solid lightgrey; width: 50%; display: table-cell;">
+                                        <p style="margin-left: -8px; margin-top: 2px; margin-bottom: 0px;">
+                                            <span><b>THE PRESIDENT</b></span>
+                                        </p>
+                                        <t t-if="o.president_id.signature_image">
+                                            <div class="text-center">
+                                                <img style="max-width: 380px;" t-attf-src="data:image/*;base64,{{o.president_id.signature_image}}"/>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <p>&amp;nbsp;</p><p>&amp;nbsp;</p><p>&amp;nbsp;</p>
+                                        </t>
+                                        <p>
+                                            <span>Sgd.:</span>
+                                            <t t-if="o.president_id">
+                                                <span t-field="o.president_id"/>
+                                            </t>
+                                        </p>
+                                    </div>
+                                    <div style="width: 50%; display: table-cell; padding: 0px 8px;">
+                                        <p style="margin-top: 2px; margin-bottom: 0px">
+                                            <span><b>THE SECRETARY</b></span>
+                                        </p>
+                                        <t t-if="o.secretary_id.signature_image">
+                                            <div class="text-center">
+                                                <img style="max-width: 380px;" t-attf-src="data:image/*;base64,{{o.secretary_id.signature_image}}"/>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <p>&amp;nbsp;</p><p>&amp;nbsp;</p><p>&amp;nbsp;</p>
+                                        </t>
+                                        <p>
+                                            <span>Sgd.:</span>
+                                            <t t-if="o.secretary_id">
+                                                <span t-field="o.secretary_id"/>
+                                            </t>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Force new page -->
+                        <p style="page-break-after:always;"/>
+
+                    </div> <!-- En page -->
+
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

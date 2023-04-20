@@ -6,6 +6,7 @@ import datetime
 import locale
 from jinja2 import Template, TemplateError
 from babel import dates
+from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
 
@@ -288,6 +289,9 @@ class WuaAssembly(models.Model):
     rendered_publication_text = fields.Html(
         string='Preview of publication text',
         compute='_compute_rendered_publication_text',)
+
+    date_now = fields.Datetime(
+        default=datetime.datetime.now())
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -619,12 +623,14 @@ class WuaAssembly(models.Model):
         self.ensure_one()
         self.generate_attendances(final_list=True)
         self.state = '03_in_progress'
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def action_return_to_state_02_called(self):
         self.ensure_one()
         self.generate_attendances()
         self.state = '02_called'
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def action_go_to_state_04_finished(self):
@@ -894,3 +900,26 @@ class WuaAssembly(models.Model):
         if self.is_wua_manager and self.state == '03_in_progress':
             act_window['flags'] = {'initial_mode': 'edit'}
         return act_window
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaAssembly, self).fields_view_get(
+            view_id=view_id, view_type=view_type,
+            toolbar=toolbar, submenu=submenu)
+        if self.env.context.get('params'):
+            current_assembly = self.env['wua.assembly'].browse(
+                self.env.context.get('params')['id'])
+        else:
+            current_assembly = False
+        if view_type == 'form' or view_type == 'list':
+            if current_assembly and current_assembly.state != '03_in_progress':
+                print_reports_to_remove = [
+                    'base_wua_assembly.action_wua_attendance_calls_report']
+                print_reports = res.get('toolbar', {}).get('print', [])
+                print_reports_to_show = []
+                for print_report in print_reports:
+                    if print_report['xml_id'] not in print_reports_to_remove:
+                        print_reports_to_show.append(print_report)
+                res['toolbar']['print'] = print_reports_to_show
+        return res
