@@ -31,6 +31,7 @@
         "views/wua_representation_view.xml",
         "reports/wua_delegationvote_report.xml",
         "reports/wua_assembly_attendance_report.xml",
+        "reports/wua_assembly_attendance_with_signature_report.xml",
     ],
     "installable": True,
     "post_init_hook": "post_init_hook",

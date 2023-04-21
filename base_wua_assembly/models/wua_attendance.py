@@ -11,7 +11,7 @@ from odoo import models, fields, api, modules, _
 class WuaAttendance(models.Model):
     _name = 'wua.attendance'
     _description = 'Attendance of a partner to an assembly'
-    _order = 'participant_name'
+    _order = 'assembly_id, participant_name'
 
     SIZE_ASSEMBLY_NAME = 19
     SIZE_PARTNER_CODE = 6
@@ -72,6 +72,12 @@ class WuaAttendance(models.Model):
         index=True,
         store=True,
         compute='_compute_vat_participant',)
+
+    vat_partner = fields.Char(
+        string='TIN of partner',
+        index=True,
+        store=True,
+        compute='_compute_vat_partner',)
 
     represented_partner = fields.Char(
         string='Represented Partner',
@@ -175,6 +181,14 @@ class WuaAttendance(models.Model):
                 else:
                     vat_participant = record.participant_id.vat_wua_legalrep
             record.vat_participant = vat_participant
+
+    @api.depends('partner_id')
+    def _compute_vat_partner(self):
+        for record in self:
+            vat_partner = ''
+            if record.partner_id and record.partner_id.vat:
+                vat_partner = record.partner_id.vat
+            record.vat_partner = vat_partner
 
     @api.multi
     def _compute_represented_partner(self):

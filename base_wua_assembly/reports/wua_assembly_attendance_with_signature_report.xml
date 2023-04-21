@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <report id="action_wua_assembly_attendance_report"
-            string="Assembly Attendees (everyone)"
+    <report id="action_wua_assembly_attendance_with_signature_report"
+            string="Assembly Attendees (only presents)"
             model="wua.assembly"
             report_type="qweb-pdf"
-            name="base_wua_assembly.report_wua_assembly_attendance"
+            name="base_wua_assembly.report_wua_assembly_attendance_with_signature"
             paperformat="base_wua_report.paperformat_wua_reports"
             groups="base_wua.group_wua_user"/>
 
-    <template id="report_wua_assembly_attendance">
+    <template id="report_wua_assembly_attendance_with_signature">
         <t t-call="report.html_container">
             <t t-call="base_wua_report.wua_external_layout">
                 <div class="page">
                     <t t-foreach="docs" t-as="o">
-                        <t t-call="base_wua_assembly.report_wua_assembly_attendance_document"/>
+                        <t t-call="base_wua_assembly.report_wua_assembly_attendance_with_signature_document"/>
                         <p style="page-break-after:always;"></p>
                     </t>
                 </div>
@@ -22,7 +22,7 @@
         </t>
     </template>
 
-    <template id="report_wua_assembly_attendance_document">
+    <template id="report_wua_assembly_attendance_with_signature_document">
         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
         <div name="section_master" class="text-center">
             <h4 style="margin-top:0px; padding-top:0px;">
@@ -33,6 +33,14 @@
                 <span>-</span>
                 <span t-field="o.city"/>,
                 <span t-field="o.state_id"/>
+            </div>
+            <div style="margin-top:20px">
+                <span>(</span>
+                <span>number of attendees:</span>
+                <span t-field="o.number_of_attendances_with_signature"/>
+                <span>, number of votes:</span>
+                <span t-field="o.number_of_possible_votes"/>
+                <span>)</span>
             </div>
         </div>
         <div name="section_detail" style="margin-top:20px;">
@@ -64,7 +72,7 @@
                 </thead>
                 <t t-if="o.state == '03_in_progress' or o.state == '04_finished'">
                     <tbody>
-                        <t t-foreach="o.attendance_ids" t-as="attendance">
+                        <t t-foreach="o.attendance_ids.filtered(lambda x: x.present == True)" t-as="attendance">
                             <t t-if="attendance.potential_attendee">
                                 <tr>
                                     <td name="td_vat_participant"><span t-field="attendance.vat_participant"/></td>

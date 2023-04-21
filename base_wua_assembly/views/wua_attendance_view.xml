@@ -173,4 +173,84 @@
         </field>
     </record>
 
+    <record id="wua_attendance_raw_view_tree" model="ir.ui.view">
+        <field name="name">Attendances (raw tree view)</field>
+        <field name="model">wua.attendance</field>
+        <field name="arch" type="xml">
+            <tree string="Attendances (raw tree)"
+                  create="false" delete="false"
+                  default_order="participant_name">
+                <field name="assembly_id"
+                       string="Assembly"/>
+                <field name="vat_participant"
+                       string="TIN of attendee"/>
+                <field name="participant_name"
+                       string="Attendee Name"/>
+                <field name="vat_partner"
+                       string="TIN of partner"/>
+                <field name="partner_id"
+                       string="Real Partner"/>
+                <field name="votes_owned"
+                       string="Own Votes"/>
+                <field name="votes_delegation"
+                       string="Votes by delegation"/>
+                <field name="votes_total"
+                       string="Total Votes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_attendance_raw_view_search" model="ir.ui.view">
+        <field name="name">Attendances (raw search view)</field>
+        <field name="model">wua.attendance</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="assembly_id"
+                       string="Assembly"/>
+                <field name="vat_participant"
+                       string="TIN of participant"/>
+                <field name="participant_name"
+                       String="Participant"/>
+                <field name="vat_partner"
+                       string="TIN of partner"/>
+                <field name="partner_id"
+                       String="Real Partner"/>
+                <filter string="Present: Yes"
+                        name="present_yes"
+                        domain="[('present','=',True)]"/>
+                <filter string="Present: No"
+                        name="present_no"
+                        domain="[('present','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Assembly"
+                            name="grouped_assembly_id"
+                     context="{'group_by':'assembly_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_raw_attendances_action"
+            model="ir.actions.act_window">
+        <field name="name">Attendances (all data)</field>
+        <field name="res_model">wua.attendance</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_attendance_raw_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_attendance_particular_view_form')})]"/>
+        <field name="search_view_id" ref="wua_attendance_raw_view_search"/>
+        <field name="context">{"search_default_grouped_assembly_id": True,}</field>
+    </record>
+
+    <menuitem id="raw_attendances_menu"
+              name="Attendances (all data)"
+              parent="technical_menu"
+              sequence="1"
+              action="wua_raw_attendances_action"
+              groups="base_wua.group_wua_manager"/>
+
 </odoo>
