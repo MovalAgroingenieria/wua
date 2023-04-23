@@ -157,6 +157,7 @@ class WuaParcelSigpaclink(models.Model):
             ('FY', 'FY - FRUTALES'),
             ('IM', 'IM - IMPRODUCTIVOS'),
             ('IV', 'IV - INVERNADEROS Y CULTIVOS BAJO PLASTICO'),
+            ('MT', 'MT - MATORRAL'),
             ('OC', 'OC - ASOCIACIÓN OLIVAR-CÍTRICOS'),
             ('OF', 'OF - OLIVAR - FRUTAL'),
             ('OV', 'OV - OLIVAR'),
