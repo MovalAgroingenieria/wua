@@ -6,7 +6,6 @@ import datetime
 import locale
 from jinja2 import Template, TemplateError
 from babel import dates
-from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
 
@@ -611,12 +610,14 @@ class WuaAssembly(models.Model):
             new_data.update({'convocation_date': fields.datetime.now()})
         self.write(new_data)
         self.generate_attendances()
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def action_return_to_state_01_draft(self):
         self.ensure_one()
         self.state = '01_draft'
         self.reset_attendances()
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def action_go_to_state_03_in_progress(self):
@@ -907,13 +908,13 @@ class WuaAssembly(models.Model):
         res = super(WuaAssembly, self).fields_view_get(
             view_id=view_id, view_type=view_type,
             toolbar=toolbar, submenu=submenu)
+        current_assembly = False
         if self.env.context.get('params'):
-            current_assembly = self.env['wua.assembly'].browse(
-                self.env.context.get('params')['id'])
-        else:
-            current_assembly = False
+            if 'id' in self.env.context.get('params'):
+                current_assembly = self.env['wua.assembly'].browse(
+                    self.env.context.get('params')['id'])
         if view_type == 'form' or view_type == 'list':
-            if current_assembly and current_assembly.state != '03_in_progress':
+            if current_assembly and current_assembly.state != '02_called':
                 print_reports_to_remove = [
                     'base_wua_assembly.action_wua_attendance_calls_report']
                 print_reports = res.get('toolbar', {}).get('print', [])
