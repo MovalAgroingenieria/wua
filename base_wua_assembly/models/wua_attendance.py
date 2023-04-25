@@ -125,6 +125,10 @@ class WuaAttendance(models.Model):
         string='Attendance Title',
         compute='_compute_html_attendance_title')
 
+    assignors = fields.Html(
+        string='Assignors',
+        compute='_compute_assignors')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'There is already a similar attendance record.'),
@@ -265,6 +269,28 @@ class WuaAttendance(models.Model):
                     'margin-left:120px;margin-right:120px">' + \
                     header + body + '</div>'
             record.html_attendance_title = html_attendance_title
+
+    @api.multi
+    def _compute_assignors(self):
+        model_wua_delegationvote = self.env['wua.delegationvote']
+        for record in self:
+            assignors = ''
+            delegationvotes_of_attendance = \
+                model_wua_delegationvote.search(
+                    [('assembly_id', '=', record.assembly_id.id),
+                     ('receiver_id', '=', record.partner_id.id),
+                     ('state', '=', '02_validated')])
+            if delegationvotes_of_attendance:
+                raw_list = []
+                for delegationvote in delegationvotes_of_attendance:
+                    raw_list.append(
+                        delegationvote.grantor_id.name + ' (' +
+                        str(delegationvote.grantor_id.number_of_votes) + ')')
+                sorted_list = sorted(raw_list)
+                for item in sorted_list:
+                    assignors = assignors + item + '<br/>'
+                assignors = assignors[:-5]
+            record.assignors = assignors
 
     @api.multi
     def write(self, vals):
