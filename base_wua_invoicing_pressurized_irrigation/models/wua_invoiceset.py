@@ -341,10 +341,10 @@ class WuaInvoiceset(models.Model):
         resp = waterconnection_label + ' ' + \
             presconsumption.waterconnection_id.name + '. ' + \
             initial_reading_label + ': ' + reading_initial_time + ' ' + \
-            '(' + '{0:.0f}'.format(initial_volume) + ' m3). ' + \
+            '(' + '{0:.0f}'.format(initial_volume) + _(' m³). ') + \
             final_reading_label + ': ' + reading_end_time + ' ' + \
-            '(' + '{0:.0f}'.format(end_volume) + ' m3). ' + \
-            consumption_label + ': ' + '{0:.0f}'.format(volume) + ' m3'
+            '(' + '{0:.0f}'.format(end_volume) + _(' m³). ') + \
+            consumption_label + ': ' + '{0:.0f}'.format(volume) + _(' m³')
         return resp
 
     def add_to_invoice_data_line_ref_to_other_types(
@@ -358,7 +358,8 @@ class WuaInvoiceset(models.Model):
             data['parcel_id'] = invoice_data_line['key2']
         return data
 
-    def group_invoice_details(self, invoice_details):
+    def get_invoice_details_to_group(self, invoice_details):
+        invoice_details_to_group = []
         invoicing_based_on_wc = \
             self.env['ir.values'].get_default(
                 'wua.invoicing.configuration',
@@ -367,23 +368,28 @@ class WuaInvoiceset(models.Model):
             self.env['ir.values'].get_default(
                 'wua.invoicing.configuration',
                 'group_detail_lines_of_wc_if_same_payer')
-        invoice_details_categ07 = filter(
-            lambda x: x['categ_code'] == 7, invoice_details)
-        invoice_details_categ10 = filter(
-            lambda x: x['categ_code'] == 10, invoice_details)
-        group_details_categ07_by_wc = \
+        invoice_details_to_group_by_wc = filter(
+            lambda x: x['categ_code'] in [7],
+            invoice_details)
+        invoice_details_to_group_by_wc_same_payer = filter(
+            lambda x: x['categ_code'] in [10], invoice_details)
+        group_details_by_wc = \
             (invoicing_based_on_wc and
-             invoice_details_categ07)
-        group_details_categ10_by_wc = \
-            (invoice_details_categ10 and
+             invoice_details_to_group_by_wc)
+        group_details_by_wc_same_payer = \
+            (invoice_details_to_group_by_wc_same_payer and
              group_detail_lines_of_wc_if_same_payer)
-        invoice_details_to_group = []
-        if group_details_categ07_by_wc:
+        if group_details_by_wc:
             invoice_details_to_group = invoice_details_to_group + \
-                invoice_details_categ07
-        if group_details_categ10_by_wc:
+                invoice_details_to_group_by_wc
+        if group_details_by_wc_same_payer:
             invoice_details_to_group = invoice_details_to_group + \
-                invoice_details_categ10
+                invoice_details_to_group_by_wc_same_payer
+        return invoice_details_to_group
+
+    def group_invoice_details(self, invoice_details):
+        invoice_details_to_group = self.get_invoice_details_to_group(
+            invoice_details)
         if invoice_details_to_group:
             invoice_details_not_grouped = \
                 [x for x in invoice_details

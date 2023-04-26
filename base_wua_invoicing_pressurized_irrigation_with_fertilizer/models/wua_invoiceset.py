@@ -334,29 +334,20 @@ class WuaInvoiceset(models.Model):
             data['parcel_id'] = invoice_data_line['key2']
         return data
 
-    def group_invoice_details(self, invoice_details):
-        group_details_categ7_12_by_wc = False
-        invoice_details_categ7_12 = filter(
-            lambda x: x['categ_code'] == 12 or x['categ_code'] == 7,
+    # If invoicing based on wc, fertconsumption on same griup as
+    # presconsumption
+    def get_invoice_details_to_group(self, invoice_details):
+        invoice_details_to_group = super(WuaInvoiceset, self).\
+            get_invoice_details_to_group(invoice_details)
+        invoicing_based_on_wc = self.env['ir.values'].\
+            get_default('wua.invoicing.configuration', 'invoicing_based_on_wc')
+        invoice_details_categ7 = filter(
+            lambda x: x['categ_code'] in [12],
             invoice_details)
-        if (invoice_details_categ7_12 and self.env['ir.values'].get_default(
-           'wua.invoicing.configuration', 'invoicing_based_on_wc')):
-            group_details_categ7_12_by_wc = True
-        if group_details_categ7_12_by_wc:
-            invoice_details_not_categ7_12 = \
-                [x for x in invoice_details
-                 if x not in invoice_details_categ7_12]
-            invoices_data_grouped_by_wc = self.group_invoice_details_by_wc(
-                invoice_details_categ7_12)
-            if invoice_details_not_categ7_12:
-                return invoices_data_grouped_by_wc + \
-                    super(WuaInvoiceset, self).group_invoice_details(
-                        invoice_details_not_categ7_12)
-            else:
-                return invoices_data_grouped_by_wc
-        else:
-            return super(WuaInvoiceset, self).group_invoice_details(
-                invoice_details)
+        if (invoicing_based_on_wc and invoice_details_categ7):
+            invoice_details_to_group = invoice_details_to_group + \
+                invoice_details_categ7
+        return invoice_details_to_group
 
     def after_calculate_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_calculate_invoiceset(invoiceset)

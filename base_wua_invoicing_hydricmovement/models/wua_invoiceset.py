@@ -120,6 +120,27 @@ class WuaInvoiceset(models.Model):
             invoice_details_categ14.append(result)
         return invoice_details_categ14
 
+    # If invoicing based on wc, fertconsumption on same griup as
+    # presconsumption
+    def get_invoice_details_to_group(self, invoice_details):
+        invoice_details_to_group = super(WuaInvoiceset, self).\
+            get_invoice_details_to_group(invoice_details)
+        grouped_hydricmovements = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration',
+                'invoicing_hydricmovement_grouped_by_wc')
+        # Hydricmovement ONLY related to presconsumption
+        # hmove == 14 and key1 == waterconnection_id ?
+        # hmove == 14 and hydricmovement-_id.type == pres_consumption
+        invoice_details_categ14 = filter(
+            lambda x: x['categ_code'] in [14] and
+            self.env['wua.hydricmovement'].browse(x['hydricmovement_id']).
+            type == 'pres_consumption', invoice_details)
+        if (grouped_hydricmovements and invoice_details_categ14):
+            invoice_details_to_group = invoice_details_to_group + \
+                invoice_details_categ14
+        return invoice_details_to_group
+
     def add_to_invoice_data_line_ref_to_other_types(
             self, categ_code, invoice_data_line, data):
         if categ_code != 14:
