@@ -100,6 +100,10 @@ class WuaParcel(models.Model):
         string='Supply suspended',
         default=False)
 
+    number_of_waterpayers = fields.Integer(
+        string='Number of water payers',
+        compute='_compute_number_of_waterpayers')
+
     @api.depends('irrigationpoint_ids')
     def _compute_number_of_irrigationpoints(self):
         if len(self) == 1:
@@ -184,6 +188,19 @@ class WuaParcel(models.Model):
                     track_subparcel_irrigationgate_ids[:-2]
             record.track_subparcel_irrigationgate_ids = \
                 track_subparcel_irrigationgate_ids
+
+    @api.multi
+    def _compute_number_of_waterpayers(self):
+        for record in self:
+            number_of_waterpayers = 0
+            self.env.cr.execute("""
+                SELECT COUNT(*) FROM wua_parcel_partnerlink
+                WHERE active AND parcel_id=%s AND
+                water_costs_percentage > 0""", (record.id,))
+            query_results = self.env.cr.dictfetchall()
+            if query_results and query_results[0].get('count') is not None:
+                number_of_waterpayers = query_results[0].get('count')
+            record.number_of_waterpayers = number_of_waterpayers
 
     @api.model
     def create(self, vals):

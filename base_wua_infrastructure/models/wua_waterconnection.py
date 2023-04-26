@@ -104,6 +104,11 @@ class WuaWaterconnection(models.Model):
         string='GIS Viewer',
         compute='_compute_gis_viewer_link')
 
+    some_parcel_several_waterpayers = fields.Boolean(
+        string='Some parcel with several water payers',
+        compute='_compute_some_parcel_several_waterpayers',
+        search='_search_some_parcel_several_waterpayers')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_position',
@@ -193,6 +198,36 @@ class WuaWaterconnection(models.Model):
             if not url_for_record:
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
+
+    @api.multi
+    def _compute_some_parcel_several_waterpayers(self):
+        model_wua_parcel_irrigationpoint = \
+            self.env['wua.parcel.irrigationpoint']
+        for record in self:
+            some_parcel_several_waterpayers = False
+            irrigationpoints = model_wua_parcel_irrigationpoint.search(
+                [('waterconnection_id', '=', record.id)])
+            for irrigationpoint in (irrigationpoints or []):
+                parcel = irrigationpoint.parcel_id
+                if parcel.number_of_waterpayers > 1:
+                    some_parcel_several_waterpayers = True
+                    break
+            record.some_parcel_several_waterpayers = \
+                some_parcel_several_waterpayers
+
+    @api.model
+    def _search_some_parcel_several_waterpayers(self, operator, value):
+        record_ids = []
+        operator_of_filter = 'in'
+        get_wc_with_some_parcel_several_waterpayers = \
+            (operator == '=' and value)
+        if (not get_wc_with_some_parcel_several_waterpayers):
+            operator_of_filter = 'not in'
+        waterconnections = self.search([])
+        for waterconnection in (waterconnections or []):
+            if waterconnection.some_parcel_several_waterpayers:
+                record_ids.append(waterconnection.id)
+        return ([('id', operator_of_filter, record_ids)])
 
     @api.constrains('name')
     def _check_name(self):
