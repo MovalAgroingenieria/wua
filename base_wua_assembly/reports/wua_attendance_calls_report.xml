@@ -134,17 +134,9 @@
                             </div>
                             <div class="row" style="margin-top: 4px;">
                                 <div class="col-xs-12" style="display: table;">
-                                    <div style="display: table-cell;">
+                                    <div style="display: table-cell; min-width:320px;">
                                         <table name="assembly_main_data" style="width:90%;">
                                             <tbody>
-                                                <tr name="tr_issue">
-                                                    <td><span>Issue:</span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.issue">
-                                                            <span t-field="o.issue"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
                                                 <tr name="tr_assembly_date">
                                                     <td><span>Date:</span></td>
                                                     <td class="text-right">
@@ -157,7 +149,8 @@
                                                     <td><span>First hour:</span></td>
                                                     <td class="text-right">
                                                         <t t-if="o.first_hour">
-                                                            <span t-field="o.first_hour"/>
+                                                            <t t-esc="'%02d:%02d' % (int(o.first_hour), o.first_hour % 1 * 60)" />
+
                                                         </t>
                                                     </td>
                                                 </tr>
@@ -165,40 +158,29 @@
                                                     <td><span>Second hour:</span></td>
                                                     <td class="text-right">
                                                         <t t-if="o.second_hour">
-                                                            <span t-field="o.second_hour"/>
+                                                            <t t-esc="'%02d:%02d' % (int(o.second_hour), o.second_hour % 1 * 60)" />
                                                         </t>
                                                     </td>
                                                 </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div style="display: table-cell; padding-left: 40px;">
-                                        <table name="assembly_vote_data" style="width:90%;">
-                                            <tbody>
                                                 <tr name="tr_number_of_agendaitems">
                                                     <td><span>Num. agendaitems:</span></td>
                                                     <td class="text-right">
                                                         <span t-field="o.number_of_agendaitems"/>
                                                     </td>
                                                 </tr>
-                                                <tr name="tr_number_of_attendances_with_signature">
-                                                    <td><span>Attendees:</span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.number_of_attendances_with_signature">
-                                                            <span t-field="o.number_of_attendances_with_signature"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                                <tr name="tr_number_of_possible_votes">
-                                                    <td><span>Possible Votes:</span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.number_of_possible_votes">
-                                                            <span t-field="o.number_of_possible_votes"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
                                             </tbody>
                                         </table>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 40px;">
+                                        <div style="margin-bottom:8px;">Place of celebration:</div>
+                                        <div name="address" style="margin-left: 16px;">
+                                            <t t-if="o.street"><span t-field="o.street"/></t><br/>
+                                            <t t-if="o.city"><span t-field="o.city"/></t>
+                                            <t t-if="o.state_id">
+                                                <span> - </span>
+                                                <span t-field="o.state_id"/>
+                                            </t>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
