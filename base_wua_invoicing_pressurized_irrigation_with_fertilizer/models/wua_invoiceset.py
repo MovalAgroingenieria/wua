@@ -341,12 +341,12 @@ class WuaInvoiceset(models.Model):
             get_invoice_details_to_group(invoice_details)
         invoicing_based_on_wc = self.env['ir.values'].\
             get_default('wua.invoicing.configuration', 'invoicing_based_on_wc')
-        invoice_details_categ7 = filter(
+        invoice_details_categ12 = filter(
             lambda x: x['categ_code'] in [12],
             invoice_details)
-        if (invoicing_based_on_wc and invoice_details_categ7):
+        if (invoicing_based_on_wc and invoice_details_categ12):
             invoice_details_to_group = invoice_details_to_group + \
-                invoice_details_categ7
+                invoice_details_categ12
         return invoice_details_to_group
 
     def after_calculate_invoiceset(self, invoiceset):

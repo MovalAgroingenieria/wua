@@ -71,10 +71,12 @@ class WuaInvoiceset(models.Model):
         if (invoice_detail['categ_code'] == 5 or
            invoice_detail['categ_code'] == 7 or
            invoice_detail['categ_code'] == 10 or
+           invoice_detail['categ_code'] == 12 or
            invoice_detail['categ_code'] == 14):
             waterconnection_id = invoice_detail['key1']
             if (invoice_detail['categ_code'] == 7 or
                invoice_detail['categ_code'] == 10 or
+               invoice_detail['categ_code'] == 12 or
                invoice_detail['categ_code'] == 14):
                 is_watercosts = True
         return waterconnection_id, is_watercosts
