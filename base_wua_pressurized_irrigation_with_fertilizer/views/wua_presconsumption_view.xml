@@ -7,21 +7,18 @@
         <field name="inherit_id"
                ref="base_wua_pressurized_irrigation.wua_presconsumption_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='master_data']"
-                   position="before">
-                   <div name="buttons" class="oe_button_box">
-                       <button name="action_see_fertconsumptions"
-                               type="object"
-                               class="oe_stat_button"
-                               icon="fa-moval-leaf-npk"
-                               groups="base_wua.group_wua_user">
-                               <div class="o_form_field o_stat_info">
-                                 <span class="o_stat_text">
-                                     <field name="number_of_fertconsumptions"/> uses of <br/>fertilizer
-                                 </span>
-                               </div>
-                       </button>
-                   </div>
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <button name="action_see_fertconsumptions"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-moval-leaf-npk"
+                        groups="base_wua.group_wua_user">
+                    <div class="o_form_field o_stat_info">
+                      <span class="o_stat_text">
+                          <field name="number_of_fertconsumptions"/> uses of <br/>fertilizer
+                      </span>
+                    </div>
+                </button>
             </xpath>
         </field>
     </record>
