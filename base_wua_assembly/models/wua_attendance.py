@@ -129,6 +129,10 @@ class WuaAttendance(models.Model):
         string='Assignors',
         compute='_compute_assignors')
 
+    compressed_assignors = fields.Html(
+        string='Assignors (compressed)',
+        compute='_compute_compressed_assignors')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'There is already a similar attendance record.'),
@@ -291,6 +295,38 @@ class WuaAttendance(models.Model):
                     assignors = assignors + item + '<br/>'
                 assignors = assignors[:-5]
             record.assignors = assignors
+
+    @api.multi
+    def _compute_compressed_assignors(self):
+        model_wua_delegationvote = self.env['wua.delegationvote']
+        for record in self:
+            compressed_assignors = ''
+            delegationvotes_of_attendance = \
+                model_wua_delegationvote.search(
+                    [('assembly_id', '=', record.assembly_id.id),
+                     ('receiver_id', '=', record.partner_id.id),
+                     ('state', '=', '02_validated')])
+            if delegationvotes_of_attendance:
+                raw_list = []
+                for delegationvote in delegationvotes_of_attendance:
+                    raw_list.append(
+                        delegationvote.grantor_id.name + ' (' +
+                        str(delegationvote.grantor_id.number_of_votes) + ')')
+                sorted_list = sorted(raw_list)
+                num_item = 0
+                for item in sorted_list:
+                    num_item = num_item + 1
+                    if (num_item % 4) == 0:
+                        compressed_assignors = \
+                            compressed_assignors + item + ', <br/>'
+                    else:
+                        compressed_assignors = \
+                            compressed_assignors + item + ', '
+                if (num_item % 4) == 0:
+                    compressed_assignors = compressed_assignors[:-7]
+                else:
+                    compressed_assignors = compressed_assignors[:-2]
+            record.compressed_assignors = compressed_assignors
 
     @api.multi
     def write(self, vals):

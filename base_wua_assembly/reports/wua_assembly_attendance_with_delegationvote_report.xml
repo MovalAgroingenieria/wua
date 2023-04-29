@@ -62,13 +62,14 @@
                     </div>
                 </t>
             </div>
+            <small>
             <table class="table table-striped" style="width:100%;">
                 <thead>
                     <th name="th_vat_participant">Attendee TIN</th>
                     <th name="th_participant_name">Attendee Name</th>
                     <th name="th_represented_partner">Represents...</th>
                     <th name="th_votes_total" class="text-center">Votes</th>
-                    <th name="th_assignors">Delegated Votes</th>
+                    <th name="th_compressed_assignors">Delegated Votes</th>
                     <th name="th_attendance_signature" class="text-center">Attendee Signature</th>
                 </thead>
                 <t t-if="o.state == '03_in_progress' or o.state == '04_finished'">
@@ -80,7 +81,7 @@
                                     <td name="td_participant_name"><span t-field="attendance.participant_name"/></td>
                                     <td name="td_represented_partner"><span t-field="attendance.represented_partner"/></td>
                                     <td name="td_votes_total" class="text-center"><span t-field="attendance.votes_total"/></td>
-                                    <td name="td_assignors"><span t-field="attendance.assignors"/></td>
+                                    <td name="td_compressed_assignors"><span t-field="attendance.compressed_assignors"/></td>
                                     <t t-if="attendance.attendance_signature">
                                         <td name="td_attendance_signature" class="text-center" style="max-width: 125px; max-height: 125px;"><span t-field="attendance.attendance_signature" t-field-options='{"widget": "image"}'/></td>
                                     </t>
@@ -93,6 +94,7 @@
                     </tbody>
                 </t>
             </table>
+            </small>
         </div>
     </template>
 
