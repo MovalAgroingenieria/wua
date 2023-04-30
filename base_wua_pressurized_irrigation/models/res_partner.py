@@ -22,6 +22,10 @@ class ResPartnerWaterconnection(models.Model):
         comodel_name='wua.watermeter',
         related='waterconnection_id.watermeter_id',)
 
+    volume_real = fields.Float(
+        string='Consumption (m³)',
+        digits=(32, 4),)
+
     @api.model_cr
     def init(self):
         self.env.cr.execute("""
@@ -37,15 +41,21 @@ class ResPartnerWaterconnection(models.Model):
                 CREATE OR REPLACE VIEW res_partner_waterconnection AS (
                 SELECT row_number() OVER() AS id, a.* FROM (
                     SELECT wpp1.partner_id, wpi1.waterconnection_id,
-                    ww1.last_reading_time, ww1.last_reading_value
+                    ww1.last_reading_time, ww1.last_reading_value,
+                    wpc1.volume_real
                     FROM
-                    wua_parcel_irrigationpoint wpi1 INNER JOIN
-                    wua_waterconnection ww1 ON ww1.id = wpi1.waterconnection_id
-                    INNER JOIN wua_parcel_partnerlink wpp1 ON wpp1.parcel_id =
-                    wpi1.parcel_id WHERE wpi1.type='WC' AND ww1.watermeter_id
-                    IS NOT NULL
+                    wua_parcel_irrigationpoint wpi1
+                    INNER JOIN  wua_waterconnection ww1
+                    ON ww1.id = wpi1.waterconnection_id
+                    INNER JOIN wua_parcel_partnerlink wpp1
+                    ON wpp1.parcel_id = wpi1.parcel_id
+                    LEFT JOIN wua_presconsumption wpc1
+                    ON wpc1.waterconnection_id = ww1.id
+                    AND wpc1.reading_end_time = ww1.last_reading_time
+                    WHERE wpi1.type='WC' AND ww1.watermeter_id IS NOT NULL
                     GROUP BY  wpp1.partner_id, wpi1.waterconnection_id,
-                    ww1.last_reading_time, ww1.last_reading_value
+                    ww1.last_reading_time, ww1.last_reading_value,
+                    wpc1.volume_real
                 ) a )
                 """)
         except Exception:
