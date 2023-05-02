@@ -480,9 +480,8 @@ class WuaReadingperiodLine(models.Model):
                             rpl_irrigationshed.irrigationshed_id.
                                 waterconnection_ids):
                             number_of_waterconnections = \
-                                number_of_waterconnections + len(
-                                    rpl_irrigationshed.irrigationshed_id.
-                                    waterconnection_ids)
+                                number_of_waterconnections + \
+                                rpl_irrigationshed.number_of_waterconnections
             record.number_of_waterconnections = number_of_waterconnections
 
     @api.depends('readingperiodlineirrigationshed_ids',
