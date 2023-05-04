@@ -20,6 +20,8 @@
         "base_wua_remotecontrol_rest", ],
     "data": [
         "security/ir.model.access.csv",
+        "data/wua_flowreading_cron.xml",
+        "data/wua_waterpipeflowreading_cron.xml",
         "views/resources.xml",
         "views/wua_negative_flowreading_view.xml",
         "views/wua_flowreading_view.xml",
