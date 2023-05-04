@@ -83,8 +83,9 @@ class WuaFlowreading(models.Model):
                             'instant_flow': instant_flow,
                         })
                 # Hydrants
-                hydrants = self.env['wua.reading'].get_iris_from_hidroconta(
-                    url_remotecontrol_rest, jsessionid)
+                hydrants = self.env['wua.reading'].\
+                    get_hydrants_from_hidroconta(url_remotecontrol_rest,
+                                                 jsessionid)
                 for hydrant in hydrants:
                     installationId = int(hydrant['installationId'])
                     if installationId == installation_identifier:
