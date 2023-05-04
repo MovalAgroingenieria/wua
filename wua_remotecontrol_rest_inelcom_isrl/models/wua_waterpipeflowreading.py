@@ -56,60 +56,70 @@ class WuaWaterpipeflowreading(models.Model):
         waterpipeflowreadings = []
         error_message = ''
         error_flowmeters = []
-        url_open_session = url_remotecontrol_rest + '/sesiones'
-        auth_data = {
-            'usuario': url_remotecontrol_rest_username,
-            'clave': url_remotecontrol_rest_password,
-            }
-        headers_data = {
-            'content-type': 'application/json',
-            }
         tries = 0
-        # Dict with the key = flowmeter.onelcom_id of all
+        # Dict with the key = flowmeter.inelcom_id of all
         # flowmeters
         fm_dict = dict(
             ('{flowmeter_inelcom_id}'.format(
                 flowmeter_inelcom_id=fm.inelcom_id.encode('utf-8')
             ), fm)
             for fm in self.env['wua.flowmeter'].search([
-                ('telecontrol_rest_associated', '=', 'inelcom')])
+                ('telecontrol_rest_associated', '=', 'inelcom'),
+                ('inelcom_flowmeter_type', '=', '01_hydrant')])
         )
-        while (not waterpipeflowreadings and
-               tries < self.MAX_NUMBER_OF_RETRIES):
-            if (tries > 0):
-                time.sleep(self.SECONDS_TO_SLEEP)
-            tries += 1
-            resprest = requests.post(url_open_session,
-                                     data=json.dumps(auth_data),
-                                     headers=headers_data)
-            if resprest.status_code == 200 and resprest.text:
-                id_session = resprest.text
-                for sector in list_of_data:
-                    url_get_watermeters = url_remotecontrol_rest + \
-                        '/hidrantes/contadores?sesion=' + id_session + \
-                        '&sector=' + str(sector)
-                    resprest = requests.get(url_get_watermeters)
-                    if resprest.status_code == 200:
-                        outputrest = json.loads(resprest.text)
-                        resp_sector_ok = outputrest['codError'] == 0
-                        if resp_sector_ok:
-                            for flowmeter_info in \
-                                    outputrest['listaContadores']:
-                                fm_id = flowmeter_info['nombreContador'].\
-                                    encode('utf-8')
-                                if (fm_id in fm_dict):
-                                    flowmeter = fm_dict[fm_id].name
-                                    volume = flowmeter_info['valor'] / 1000.0
-                                    waterpipeflowreadings.append({
-                                        'flowmeter': flowmeter,
-                                        'volume': volume,
-                                        'instant_flow': 0.0
-                                        })
-                        else:
-                            error_message = error_message + '. ' + \
-                                outputrest['textoError']
-            if error_message != '':
-                error_message = error_message[2:]
+        fm_dict_by_head = {}
+        # Prepare dict with format:
+        # {irrigationhead_id: { location: {measure_name : flowmeter} } }
+        for fm in self.env['wua.flowmeter'].search([
+                ('telecontrol_rest_associated', '=', 'inelcom'),
+                ('inelcom_flowmeter_type', '=', '02_head')]):
+            head_id = fm.inelcom_irrigation_head_id
+            head_location = fm.inelcom_irrigation_head_location
+            fm_dict_by_head.setdefault(head_id, {}).\
+                setdefault(head_location, {})
+            flow_magnitude = fm.inelcom_flow_magnitude
+            reading_magnitude = fm.inelcom_cumulative_reading_magnitude
+            if (flow_magnitude):
+                fm_dict_by_head[head_id][head_location][flow_magnitude] = fm
+            if (reading_magnitude):
+                fm_dict_by_head[head_id][head_location][reading_magnitude] = fm
+        some_fm_on_hydrant = (len(fm_dict) > 0)
+        some_fm_on_head = (len(fm_dict_by_head) > 0)
+        if (some_fm_on_hydrant or some_fm_on_head):
+            while (not waterpipeflowreadings and
+                    tries < self.MAX_NUMBER_OF_RETRIES):
+                if (tries > 0):
+                    time.sleep(self.SECONDS_TO_SLEEP)
+                tries += 1
+                # Get session
+                id_session = self.env['wua.reading'].open_connection_inelcom(
+                    url_remotecontrol_rest, url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                if id_session:
+                    if (some_fm_on_hydrant):
+                        # Get flowreadings on hydrants
+                        for sector in list_of_data:
+                            frs_hydrant, frs_error_message = self.env[
+                                'wua.flowreading'].\
+                                get_flowreadings_on_hydrants(
+                                    url_remotecontrol_rest, id_session,
+                                    fm_dict, sector)
+                            # Concatenate data from sectors
+                            waterpipeflowreadings = waterpipeflowreadings + \
+                                frs_hydrant
+                            error_message = error_message + frs_error_message
+                    if (some_fm_on_head):
+                        # Get flowreadings on heads
+                        frs_head, frs_error_message = self.\
+                            get_flowreadings_on_heads(
+                                url_remotecontrol_rest, id_session,
+                                fm_dict_by_head)
+                        # Concatenate data from sectors
+                        waterpipeflowreadings = waterpipeflowreadings + \
+                            frs_head
+                        error_message = error_message + frs_error_message
+                    if error_message != '':
+                        error_message = error_message[2:]
         return [waterpipeflowreadings, error_message, error_flowmeters]
 
     # Hook that will be implemeneted on every telecontrol

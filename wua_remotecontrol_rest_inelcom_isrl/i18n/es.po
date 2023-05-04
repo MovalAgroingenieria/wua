@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-14 16:38+0000\n"
-"PO-Revision-Date: 2022-12-14 16:38+0000\n"
+"POT-Creation-Date: 2023-05-04 14:31+0000\n"
+"PO-Revision-Date: 2023-05-04 14:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,16 @@ msgstr " No ha sido posible obtener la información. "
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_url_remotecontrol_rest_inelcom
 msgid "API REST URL"
 msgstr "URL del API REST"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_last_api_response_cabezales
+msgid "API Raw Response for endpoint /cabezales/medidas"
+msgstr "API Raw Response for endpoint /cabezales/medidas"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_last_api_response_hidrantes
+msgid "API Raw Response for endpoint /hidrantes/medidas"
+msgstr "API Raw Response for endpoint /hidrantes/medidas"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_hydrant_analog
@@ -78,6 +88,11 @@ msgid "Configuration of irrigation with type of water"
 msgstr "Configuración de riego con tipo de agua"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_cumulative_reading_magnitude
+msgid "Cumulative reading magnitude"
+msgstr "Magnitud lectura acumulada"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_flowreading
 msgid "Entity (flow reading)"
 msgstr "Elemento (lectura caudalímetro)"
@@ -123,6 +138,12 @@ msgid "Entity (waterpipe flow reading)"
 msgstr "Elemento (lectura en ramal)"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_flow_magnitude
+msgid "Flow magnitude"
+msgstr "Magnitud caudal"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: selection:wua.flowmeter,inelcom_flowmeter_type:0
 #: selection:wua.pressuresensor,inelcom_pressuresensor_type:0
 msgid "Hydrant"
 msgstr "Hidrante"
@@ -179,19 +200,27 @@ msgid "Inelcom code"
 msgstr "Código INELCOM"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_flowmeter_type
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_pressuresensor_type
 msgid "Inelcom type"
 msgstr "Tipo INELCOM"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: selection:wua.flowmeter,inelcom_flowmeter_type:0
 #: selection:wua.pressuresensor,inelcom_pressuresensor_type:0
 msgid "Irrigation Head"
 msgstr "Cabecera"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_irrigation_head_id
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_irrigation_head_id
 msgid "Irrigation Head ID"
 msgstr "ID Cabecera"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_irrigation_head_location
+msgid "Location inside Head"
+msgstr "Sitio dentro de cabezal"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.actions.server,name:wua_remotecontrol_rest_inelcom_isrl.wua_remotecontrol_application_inelcom_action
@@ -237,13 +266,13 @@ msgid "Source: Moval Regadío"
 msgstr "Origen: Moval Regadío"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_reading.py:22
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_reading.py:86
 #, python-format
 msgid "The remote control is not enabled."
 msgstr "El telecontrol no está activo."
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_reading.py:27
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_reading.py:91
 #, python-format
 msgid "There is not a URL for the remote control application."
 msgstr "No existe URL para la aplicación de telecontrol."
