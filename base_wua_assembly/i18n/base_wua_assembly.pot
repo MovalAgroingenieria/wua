@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-26 10:04+0000\n"
-"PO-Revision-Date: 2023-04-26 10:04+0000\n"
+"POT-Creation-Date: 2023-05-04 10:41+0000\n"
+"PO-Revision-Date: 2023-05-04 10:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,6 +22,7 @@ msgstr ""
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_report_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_report_document
 msgid "(TIN:"
 msgstr ""
 
@@ -34,7 +35,7 @@ msgstr ""
 #. module: base_wua_assembly
 #: code:addons/base_wua_assembly/models/wua_representation.py:32
 #, python-format
-msgid "<div style=\"text-align: justify;\">Mr. <b>{{ partner.name }}</b> with Community Member No. <b>{{ partner.partner_code }}</b>, by virtue of the provisions of the perminent articles of the Statutes of the {{ assembly.president_id.company_id.name }}, <b>AUTHORIZE</b>:<br><br>Mr. <b>{{ agent.name }}</b> to represent him at the {{ assembly.issue }} of this Water Association Community, which will take place on the next {{ assembly_day }} of {{ assembly_month }} of {{ assembly_year }}.<br><br><div style=\"text-align: center;\"><br>The Authorized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The Communard<br><br><br><br><br>VAT {{ agent.vat_wua_legalrep}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VAT {{ partner.vat }}<br><br><b>THE COMMUNITY SECRETARY</b><br><br><br><br>VAT {{ assembly.secretary_id.vat }}<br></div></div>"
+msgid "<div style=\"text-align: justify;\">Mr. <b>{{ partner.name }}</b> with Community Member No. <b>{{ partner.partner_code }}</b>, by virtue of the provisions of the perminent articles of the Statutes of the {{ assembly.president_id.company_id.name }}, <b>AUTHORIZE</b>:<br><br>Mr. <b>{{ agent.name }}</b> to represent him at the {{ assembly.issue }} of this Water Association Community, which will take place on the next {{ assembly_day }} of {{ assembly_month }} of {{ assembly_year }}.<br><br><div style=\"text-align: center;\"><br>The Authorized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Communard<br><br><br><br><br>VAT {{ agent.vat_wua_legalrep }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VAT {{ partner.vat }}<br><br><b>THE COMMUNITY SECRETARY</b><br><br><br><br>VAT {{ assembly.secretary_id.vat }}<br></div></div>"
 msgstr ""
 
 #. module: base_wua_assembly
@@ -46,6 +47,7 @@ msgstr ""
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_report_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_report_document
 msgid "<span class=\"fa fa-cut\"/>\n"
 "                            <span style=\"color: lightgrey;\">\n"
 "                                -------------------------------------------------------------------\n"
@@ -267,6 +269,7 @@ msgstr ""
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_report_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_report_document
 msgid "<strong>DRAFT</strong>"
 msgstr ""
 
@@ -278,6 +281,11 @@ msgstr ""
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_calls_report_document
 msgid "<strong>Participant</strong>"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_report_document
+msgid "<strong>Representation</strong>"
 msgstr ""
 
 #. module: base_wua_assembly
@@ -461,6 +469,11 @@ msgstr ""
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_assignors
 msgid "Assignors"
+msgstr ""
+
+#. module: base_wua_assembly
+#: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_compressed_assignors
+msgid "Assignors (compressed)"
 msgstr ""
 
 #. module: base_wua_assembly
@@ -1308,6 +1321,11 @@ msgid "Representation main text"
 msgstr ""
 
 #. module: base_wua_assembly
+#: model:ir.actions.report.xml,name:base_wua_assembly.wua_representation_report
+msgid "Representation report"
+msgstr ""
+
+#. module: base_wua_assembly
 #: code:addons/base_wua_assembly/models/wua_assembly.py:819
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_representation_ids
 #, python-format
@@ -1711,7 +1729,7 @@ msgid "Type: Yes/No"
 msgstr ""
 
 #. module: base_wua_assembly
-#: code:addons/base_wua_assembly/models/wua_attendance.py:257
+#: code:addons/base_wua_assembly/models/wua_attendance.py:261
 #, python-format
 msgid "VOTES"
 msgstr ""
