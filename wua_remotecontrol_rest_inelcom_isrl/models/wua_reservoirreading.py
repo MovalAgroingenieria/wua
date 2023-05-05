@@ -25,15 +25,16 @@ class WuaReservoirreading(models.Model):
 
     def _transform_value_to_bar(self, value, unit):
         volume = False
+        conversion_factor = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'conversion_factor_bar_to_meters'
+        )
         # Meters to bar
-        if (unit in ['m', 'metros']):
-            volume = value / 10.33
+        if (unit in ['m', 'metros', 'mca']):
+            volume = value / conversion_factor
         # bar to bar
         elif (unit in ['bar', 'bares']):
             volume = value
-        # mca to bar
-        elif (unit in ['mca']):
-            volume = value / 10.2
         return volume
 
     def get_reservoirreadings_on_hydrants(
