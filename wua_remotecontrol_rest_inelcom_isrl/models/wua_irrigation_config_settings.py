@@ -64,6 +64,12 @@ class WuaIrrigationConfiguration(models.TransientModel):
     import_from_flowmeter_inelcom = fields.Boolean(
         string='Import from flow meter')
 
+    import_from_reservoir_readings_inelcom = fields.Boolean(
+        string='Import from reservoir readings')
+
+    import_from_reservoir_inelcom = fields.Boolean(
+        string='Import from reservoir')
+
     last_api_response_hidrantes = fields.Char(
         string='API Raw Response for endpoint /hidrantes/medidas')
 
@@ -157,4 +163,13 @@ class WuaIrrigationConfiguration(models.TransientModel):
         inelcom_can_impport = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'import_from_flowmeter_inelcom')
+        return other_can_import or inelcom_can_impport
+
+    def import_from_reservoir_any(self):
+        other_can_import = super(WuaIrrigationConfiguration, self).\
+            import_from_reservoir_any()
+        # GET inelcom config
+        inelcom_can_impport = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_from_reservoir_inelcom')
         return other_can_import or inelcom_can_impport

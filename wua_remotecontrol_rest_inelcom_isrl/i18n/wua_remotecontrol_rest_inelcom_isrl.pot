@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-04 14:30+0000\n"
-"PO-Revision-Date: 2023-05-04 14:30+0000\n"
+"POT-Creation-Date: 2023-05-05 10:53+0000\n"
+"PO-Revision-Date: 2023-05-05 10:53+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -38,16 +38,19 @@ msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_hydrant_analog
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_reservoir_inelcom_hydrant_analog
 msgid "Analog Measurement"
 msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: selection:wua.pressuresensor,inelcom_hydrant_analog:0
+#: selection:wua.reservoir,inelcom_hydrant_analog:0
 msgid "Analog Measurement 1"
 msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: selection:wua.pressuresensor,inelcom_hydrant_analog:0
+#: selection:wua.reservoir,inelcom_hydrant_analog:0
 msgid "Analog Measurement 2"
 msgstr ""
 
@@ -89,6 +92,7 @@ msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_cumulative_reading_magnitude
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_reservoir_inelcom_cumulative_reading_magnitude
 msgid "Cumulative reading magnitude"
 msgstr ""
 
@@ -145,6 +149,7 @@ msgstr ""
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: selection:wua.flowmeter,inelcom_flowmeter_type:0
 #: selection:wua.pressuresensor,inelcom_pressuresensor_type:0
+#: selection:wua.reservoir,inelcom_reservoir_type:0
 msgid "Hydrant"
 msgstr ""
 
@@ -184,6 +189,16 @@ msgid "Import from readings"
 msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_from_reservoir_inelcom
+msgid "Import from reservoir"
+msgstr ""
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_from_reservoir_readings_inelcom
+msgid "Import from reservoir readings"
+msgstr ""
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_from_waterpipe_readings_inelcom
 msgid "Import from water pipe readings"
 msgstr ""
@@ -196,29 +211,34 @@ msgstr ""
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_id
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_id
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_reservoir_inelcom_id
 msgid "Inelcom code"
 msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_flowmeter_type
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_pressuresensor_type
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_reservoir_inelcom_reservoir_type
 msgid "Inelcom type"
 msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: selection:wua.flowmeter,inelcom_flowmeter_type:0
 #: selection:wua.pressuresensor,inelcom_pressuresensor_type:0
+#: selection:wua.reservoir,inelcom_reservoir_type:0
 msgid "Irrigation Head"
 msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_irrigation_head_id
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_irrigation_head_id
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_reservoir_inelcom_irrigation_head_id
 msgid "Irrigation Head ID"
 msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_irrigation_head_location
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_reservoir_inelcom_irrigation_head_location
 msgid "Location inside Head"
 msgstr ""
 
@@ -250,6 +270,16 @@ msgstr ""
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.ui.view,arch_db:wua_remotecontrol_rest_inelcom_isrl.wua_irrigation_config_settings_view_form
 msgid "Remote Control INELCOM"
+msgstr ""
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_reservoir
+msgid "Reservoir"
+msgstr ""
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_reservoirreading
+msgid "Reservoir Reading"
 msgstr ""
 
 #. module: wua_remotecontrol_rest_inelcom_isrl

@@ -13,3 +13,5 @@ from . import wua_flowreading
 from . import wua_waterpipeflowreading
 from . import wua_pressuresensor
 from . import wua_pressuresensormeasurement
+from . import wua_reservoir
+from . import wua_reservoirreading
