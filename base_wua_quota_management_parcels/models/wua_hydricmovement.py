@@ -100,7 +100,8 @@ class WuaHydricmovement(models.Model):
                    'where qpp.quotaperiod_id = ' + str(quotaperiod_id) + ' '
                    'and qpp.superproduct_id = ' + str(superproduct_id) + ' '
                    'and pl.partner_id = ' + str(partner_id) + ' '
-                   'and pl.area_official_water_costs_net > 0')
+                   'and pl.area_official_water_costs_net > 0 '
+                   'AND pl.active')
         sql_statement = \
             self._refine_sql_for_create_hydricmovement_for_each_parcel(
                 hydricmovement, def_sql)
@@ -148,6 +149,8 @@ class WuaHydricmovement(models.Model):
                     'where qpp.quotaperiod_id = ' + str(quotaperiod_id) + ' '
                     'and qpp.superproduct_id = ' + str(superproduct_id) + ' '
                     'and pl.partner_id = ' + str(partner_id) + ' '
+                    'AND pl.active '
+                    'AND ip.active '
                     'and pl.area_official_water_costs_net > 0' + ' '
                     'and ip.waterconnection_id = ' + str(waterconnection_id))
         return resp
