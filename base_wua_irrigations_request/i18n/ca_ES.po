@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-25 14:01+0000\n"
-"PO-Revision-Date: 2022-04-25 14:01+0000\n"
+"POT-Creation-Date: 2023-05-09 06:18+0000\n"
+"PO-Revision-Date: 2023-05-09 06:18+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,7 @@ msgid "(TIN:"
 msgstr "(NIF:"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:455
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:458
 #, python-format
 msgid "<b>Notes from irrigations request:</b><br\\>"
 msgstr "<b>Notes de petició de regs:</b><br\\>"
@@ -166,10 +166,10 @@ msgstr "<strong>Sol·licitud&amp;nbsp;de&amp;nbsp;regs</strong>"
 #. module: base_wua_irrigations_request
 #: model:ir.ui.view,arch_db:base_wua_irrigations_request.report_wua_irrigations_request_document
 msgid "<strong>Partner</strong>"
-msgstr "<strong>Nº Soci</strong>"
+msgstr "<strong>Soci</strong>"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:409
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:412
 #, python-format
 msgid "A portal user cannot modify a validated irrigations request."
 msgstr "Un usuari del portal no pot modificar una sol·licitud de reg validada."
@@ -211,6 +211,12 @@ msgstr "Cancel·lat"
 #, python-format
 msgid "Cannot delete an irrigationreport associated to an irrigationsrequest."
 msgstr "No es pot suprimir un informe de reg associat a una sol·licitud de reg."
+
+#. module: base_wua_irrigations_request
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:311
+#, python-format
+msgid "Cannot reset irrigationsrequest of non active agriculturalseason."
+msgstr "No es pot passar a esborrany una petició de regs d'una campanya no activa."
 
 #. module: base_wua_irrigations_request
 #: model:ir.model,name:base_wua_irrigations_request.model_wua_irrigation_configuration
@@ -255,12 +261,17 @@ msgstr "Element (categoria de producte)"
 #. module: base_wua_irrigations_request
 #: model:ir.model,name:base_wua_irrigations_request.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
 
 #. module: base_wua_irrigations_request
 #: model:ir.model,name:base_wua_irrigations_request.model_wua_irrigationsrequest
 msgid "Entity (irrigations request)"
 msgstr "Element (sol·licitud de regs)"
+
+#. module: base_wua_irrigations_request
+#: model:ir.model,name:base_wua_irrigations_request.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Element (parcel·la)"
 
 #. module: base_wua_irrigations_request
 #: sql_constraint:wua.irrigationsrequest:0
@@ -288,7 +299,7 @@ msgid "Intake"
 msgstr "Captació"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:429
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:432
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_irrigationreport_ids
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_parcel_irrigationsrequest_ids
 #, python-format
@@ -334,17 +345,17 @@ msgstr "No és possible validar la sol·licitud."
 #. module: base_wua_irrigations_request
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: base_wua_irrigations_request
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Darrera Actualització per"
 
 #. module: base_wua_irrigations_request
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera Actualització el"
 
 #. module: base_wua_irrigations_request
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_mapped_to_irrigationreport
@@ -425,11 +436,6 @@ msgid "Parcel"
 msgstr "Parcel·la"
 
 #. module: base_wua_irrigations_request
-#: model:ir.model,name:base_wua_irrigations_request.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcels (integrated GIS)"
-
-#. module: base_wua_irrigations_request
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_partner_id
 #: model:ir.ui.view,arch_db:base_wua_irrigations_request.wua_irrigationsrequest_view_search
 msgid "Partner"
@@ -468,7 +474,7 @@ msgid "Signature"
 msgstr "Signatura"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:313
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:316
 #, python-format
 msgid "Some associated irrigation report is already validated. It is not possible to return the draft state."
 msgstr "Alguns informes de reg associats ja estan validats. No és possible retornar l'estat d'esborrany."
@@ -489,7 +495,7 @@ msgid "The number of irrigations must be a value greater than zero."
 msgstr "El nombre de regs ha de ser un valor superior a zero."
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:349
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:352
 #, python-format
 msgid "The partner must be the irrigator of the parcel."
 msgstr "El soci ha de ser el regant de la parcel·la."
@@ -543,7 +549,7 @@ msgstr "Volum de reg per unitat de superfície"
 #. module: base_wua_irrigations_request
 #: model:ir.model,name:base_wua_irrigations_request.model_wua_irrigationreport
 msgid "WUA Irrigation Report"
-msgstr "Part de Reg CR"
+msgstr "Part de Reg"
 
 #. module: base_wua_irrigations_request
 #: model:ir.model.fields,field_description:base_wua_irrigations_request.field_wua_irrigationsrequest_product_id
@@ -551,24 +557,24 @@ msgid "Water Type"
 msgstr "Tipus d'aigua"
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:395
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:404
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:398
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:407
 #, python-format
 msgid "You do not have permission to edit an irrigations request."
 msgstr "No teniu permís per editar una sol·licitud de reg."
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:477
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:487
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:497
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:507
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:480
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:490
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:500
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:510
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No teniu permís per executar aquesta acció."
 
 #. module: base_wua_irrigations_request
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:374
-#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:441
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:377
+#: code:addons/base_wua_irrigations_request/models/wua_irrigationsrequest.py:444
 #, python-format
 msgid "ha"
 msgstr "ha"

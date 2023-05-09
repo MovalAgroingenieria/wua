@@ -305,18 +305,21 @@ class WuaIrrigationsrequest(models.Model):
     def reset_irrigationsrequest(self):
         self.ensure_one()
         request = self
-        if request.state == 'validated':
-            if request.irrigationreport_ids:
-                for report in request.irrigationreport_ids:
-                    if report.state == 'validated':
-                        raise exceptions.UserError(
-                            _('Some associated irrigation report is already '
-                              'validated. It is not possible to return the '
-                              'draft state.'))
-                    associated_report = self.env['wua.irrigationreport'].\
-                        browse(report.id)
-                    associated_report.with_context(
-                        {'resetting': True}).unlink()
+        if request.state == 'validated' and request.irrigationreport_ids:
+            if (not request.agriculturalseason_id.active_agriculturalseason):
+                raise exceptions.UserError(
+                    _('Cannot reset irrigationsrequest of non active '
+                      'agriculturalseason.'))
+            for report in request.irrigationreport_ids:
+                if report.state == 'validated':
+                    raise exceptions.UserError(
+                        _('Some associated irrigation report is already '
+                          'validated. It is not possible to return the '
+                          'draft state.'))
+                associated_report = self.env['wua.irrigationreport'].\
+                    browse(report.id)
+                associated_report.with_context(
+                    {'resetting': True}).unlink()
             request.state = 'draft'
 
     @api.multi
