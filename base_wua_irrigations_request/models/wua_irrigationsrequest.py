@@ -293,6 +293,10 @@ class WuaIrrigationsrequest(models.Model):
         self.ensure_one()
         request = self
         if request.state == 'draft' and (not request.cancelled):
+            if (not request.agriculturalseason_id.active_agriculturalseason):
+                raise exceptions.UserError(
+                    _('Cannot validate irrigationsrequest of non active '
+                      'agriculturalseason.'))
             # Ids list of new irrigationreports
             new_irrigationreports = self._add_irrigation_reports_from_request(
                 request)
