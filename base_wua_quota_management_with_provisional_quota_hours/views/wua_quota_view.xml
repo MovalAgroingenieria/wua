@@ -52,4 +52,40 @@
         </field>
     </record>
 
+    <!-- QUOTA Aggregated -->
+
+    <record id="wua_quota_aggregatevalue_view_tree" model="ir.ui.view">
+        <field name="name">Quotas Aggregate (tree view)</field>
+        <field name="model">wua.quota.aggregatevalue</field>
+        <field name="inherit_id" ref="base_wua_quota_management_with_provisional_quota.wua_quota_aggregatevalue_view_tree"/>
+        <field name="arch" type="xml">
+             <xpath expr="//field[@name='provisional_extra_consumption']" position="replace"/>
+             <xpath expr="//field[@name='provisional_balance']" position="replace"/>
+        </field>
+    </record>
+
+    <record id="wua_quota_aggregatevalue_view_tree_2" model="ir.ui.view">
+        <field name="name">Quotas Aggregate (tree view)</field>
+        <field name="model">wua.quota.aggregatevalue</field>
+        <field name="inherit_id" ref="base_wua_quota_management.wua_quota_aggregatevalue_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='balance']" position="after">
+                <field name="provisional_extra_consumption" string="Extra consumptions (m³)"/>
+                <field name="provisional_balance" string="Provisional balance (m³)"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_quota_aggregatevalue_view_tree_3" model="ir.ui.view">
+        <field name="name">Quotas Aggregate (tree view)</field>
+        <field name="model">wua.quota.aggregatevalue</field>
+        <field name="inherit_id" ref="base_wua_quota_management_hours.wua_quota_aggregatevalue_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='balance_hours']" position="after">
+                <field name="provisional_extra_consumption_hours"/>
+                <field name="provisional_balance_hours"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
