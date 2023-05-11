@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="wua_cron_import_tankconsumption_global_action" model="ir.cron">
+            <field name="name">Get-Tankconsumptions Service</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">months</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+            <field name="model">wua.tankconsumption</field>
+            <field name="function">do_import_tankconsumptions</field>
+            <field name="active" eval="False"/>
+        </record>
+
+    </data>
+
+</odoo>

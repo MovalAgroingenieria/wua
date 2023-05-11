@@ -180,7 +180,6 @@ class WuaTankconsumption(models.Model):
                 error_message = _(' It is not possible to get the '
                                   'tankconsumptions. ')
         return [tankconsumptions, error_message, error_tanks]
-        return None, '', None
 
     def refine_tankconsumptions(self, tankconsumptions):
         resp = []

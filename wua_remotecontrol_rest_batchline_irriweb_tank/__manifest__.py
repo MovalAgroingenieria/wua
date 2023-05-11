@@ -8,7 +8,7 @@
     "summary": "In a water users association, interface of Moval Regadio "
                "with the control remote BATCHLINE IRRIWEB, based on "
                "a REST API for Tanks consumptions retrieval",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -18,6 +18,7 @@
         "wua_remotecontrol_rest_batchline_irriweb", ],
     "data": [
         "data/wua_irrigation_config_settings_data.xml",
+        "data/wua_tankconsumption_cron.xml",
         "wizard/wizard_scheduling_tank_view.xml",
         "views/res_partner_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
