@@ -117,3 +117,37 @@ class WuaQuota(models.Model):
                 'limit': 10000000,
                 }
             return act_window
+
+
+class WuaQuotaAggregatevalue(models.Model):
+    _inherit = 'wua.quota.aggregatevalue'
+
+    provisional_extra_consumption = fields.Float(
+        string='Extra-Consumption (provisional)',
+        digits=(32, 2),
+        compute='_compute_provisional_extra_consumption')
+
+    provisional_balance = fields.Float(
+        string='Balance (provisional)',
+        digits=(32, 2),
+        compute='_compute_provisional_balance')
+
+    @api.multi
+    def _compute_provisional_extra_consumption(self):
+        for record in self:
+            provisional_extra_consumption = 0
+            if (record.quotaperiod_id.of_active_agriculturalseason and
+               record.quotaperiod_id.state == 'generated' and
+               self.env['wua.quota']._is_last_generated_quotaperiod(
+                    record.quotaperiod_id)):
+                for quota in record.partner_id.quota_ids:
+                    provisional_extra_consumption += quota.\
+                        provisional_extra_consumption
+            record.provisional_extra_consumption = \
+                provisional_extra_consumption
+
+    @api.multi
+    def _compute_provisional_balance(self):
+        for record in self:
+            record.provisional_balance = \
+                record.balance - record.provisional_extra_consumption
