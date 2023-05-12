@@ -341,11 +341,14 @@ class WuaReservoir(models.Model):
         ('valid_interior_slope_hv',
          'CHECK (interior_slope_hv >= 0)',
          'The Interior slope must be zero or positive.'),
-        ('to_vol_coef_a_positive', 'CHECK (to_vol_coef_a >= 0)',
+        # Remove restriction 2023/05/12
+        # IDEA: Remove this and add migration script to remove database
+        # restriction
+        ('to_vol_coef_a_positive', 'CHECK (TRUE)',
          'Vol. coefficient A must be a positive number'),
-        ('to_vol_coef_b_positive', 'CHECK (to_vol_coef_b >= 0)',
+        ('to_vol_coef_b_positive', 'CHECK (TRUE)',
          'Vol. coefficient B must be a positive number'),
-        ('to_vol_coef_c_positive', 'CHECK (to_vol_coef_c >= 0)',
+        ('to_vol_coef_c_positive', 'CHECK (TRUE)',
          'Vol. coefficient C must be a positive number'),
         ]
 
