@@ -201,7 +201,7 @@
                                     </div>
                                 </t>
                             </div>
-                            <div style="margin-top: 4px;">
+                            <div name="publication_text" style="margin-top: 4px;">
                                 <t t-if="o.rendered_publication_text">
                                     <span t-field="o.rendered_publication_text"></span>
                                 </t>
@@ -310,7 +310,11 @@
                                 </div>
                             </div>
                         </div>
-
+                        <t t-if="o.rendered_final_paragraph">
+                            <div name="final_paragraph" style="margin-top: 32px;">
+                                <span t-field="o.rendered_final_paragraph"></span>
+                            </div>
+                        </t>
                         <!-- Force new page -->
                         <p style="page-break-after:always;"/>
 

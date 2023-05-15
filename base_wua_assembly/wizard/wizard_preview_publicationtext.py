@@ -16,9 +16,14 @@ class WizardPreviewPublicationtext(models.TransientModel):
     def default_get(self, var_fields):
         publication_text_preview = ''
         assembly_id = self.env.context['active_id']
+        show_final_paragraph = self.env.context.get(
+            'show_final_paragraph', False)
         assembly = self.env['wua.assembly'].browse(assembly_id)
         if assembly_id:
-            publication_text_preview = assembly.rendered_publication_text
+            if show_final_paragraph:
+                publication_text_preview = assembly.rendered_final_paragraph
+            else:
+                publication_text_preview = assembly.rendered_publication_text
         return {
             'publication_text_preview': publication_text_preview,
             }

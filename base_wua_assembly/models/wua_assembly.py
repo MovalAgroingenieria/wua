@@ -75,19 +75,17 @@ class WuaAssembly(models.Model):
         return resp
 
     def _default_publication_text(self):
-        resp = '<p>{{ assembly.issue }} de la ' + \
-            '{{ assembly.president_id.company_id.name }}, que tendrá ' + \
-            'lugar el próximo día {{ assembly_day }} de ' + \
-            '{{ assembly_month }}, en {{ assembly.street }} ' + \
-            '({{ assembly.city }}, {{ assembly.state_id.name }}), a las ' + \
-            '{{ assembly.first_hour_hhmm }} horas' + \
-            '{% if assembly.second_hour %} en primera convocatoria, ' + \
-            'y a las {{ assembly.second_hour_hhmm }} en segunda, ' + \
-            '{% else %},{% endif %} de acuerdo con el siguiente ' + \
-            '<b>ORDEN DEL DÍA</b>:<br></p>'
-        last_record = self.search([], order='write_date desc', limit=1)
-        if last_record and last_record.publication_text:
-            resp = last_record.publication_text
+        resp = _(
+            '<p>{{ assembly.issue }} of the '
+            '{{ assembly.president_id.company_id.name }}, which will '
+            'take place on {{ assembly_month }} '
+            '{{ assembly_day }}, at {{ assembly.street }} '
+            '({{ assembly.city }}, {{ assembly.state_id.name }}), at '
+            '{{ assembly.first_hour_hhmm }}'
+            '{% if assembly.second_hour %} in the first call, '
+            'and at {{ assembly.second_hour_hhmm }} in second, '
+            '{% else %},{% endif %} according to the following '
+            '<b>AGENDA</b>:<br></p>')
         return resp
 
     assembly_date = fields.Date(
@@ -214,6 +212,10 @@ class WuaAssembly(models.Model):
         default=_default_publication_text,
         translate=True,)
 
+    final_paragraph = fields.Html(
+        string='Final Paragraph',
+        translate=True,)
+
     is_wua_portal_user = fields.Boolean(
         string='WUA portal user',
         compute_sudo=True,
@@ -288,6 +290,10 @@ class WuaAssembly(models.Model):
     rendered_publication_text = fields.Html(
         string='Preview of publication text',
         compute='_compute_rendered_publication_text',)
+
+    rendered_final_paragraph = fields.Html(
+        string='Preview of final paragraph',
+        compute='_compute_rendered_final_paragraph',)
 
     date_now = fields.Datetime(
         default=datetime.datetime.now())
@@ -499,10 +505,19 @@ class WuaAssembly(models.Model):
             rendered_publication_text = ''
             if record.publication_text:
                 rendered_publication_text = \
-                    record.sudo()._get_rendered_publication_text()
+                    record.sudo()._get_rendered_text()
             record.rendered_publication_text = rendered_publication_text
 
-    def _get_rendered_publication_text(self):
+    @api.model
+    def _compute_rendered_final_paragraph(self):
+        for record in self:
+            rendered_final_paragraph = ''
+            if record.final_paragraph:
+                rendered_final_paragraph = \
+                    record.sudo()._get_rendered_text(publication_text=False)
+            record.rendered_final_paragraph = rendered_final_paragraph
+
+    def _get_rendered_text(self, publication_text=True):
         resp = ''
         lang = self.env.context['lang']
         if not lang:
@@ -510,7 +525,10 @@ class WuaAssembly(models.Model):
         try:
             date_of_assembly = datetime.datetime.strptime(self.assembly_date,
                                                           '%Y-%m-%d')
-            template = Template(self.publication_text)
+            text_to_render = self.publication_text
+            if not publication_text:
+                text_to_render = self.final_paragraph
+            template = Template(text_to_render)
             resp = template.render(
                 assembly=self,
                 assembly_day=dates.format_date(date_of_assembly,
@@ -719,6 +737,20 @@ class WuaAssembly(models.Model):
             'src_model': 'wua.assembly',
             'view_mode': 'form',
             'target': 'new'
+            }
+        return act_window
+
+    @api.multi
+    def action_preview_final_paragraph(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Preview of the final paragraph of the assembly convocation'),
+            'res_model': 'wizard.preview.publicationtext',
+            'src_model': 'wua.assembly',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'show_final_paragraph': True},
             }
         return act_window
 
