@@ -628,7 +628,6 @@ class WuaAssembly(models.Model):
             new_data.update({'convocation_date': fields.datetime.now()})
         self.write(new_data)
         self.generate_attendances()
-        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def action_return_to_state_01_draft(self):
@@ -642,14 +641,12 @@ class WuaAssembly(models.Model):
         self.ensure_one()
         self.generate_attendances(final_list=True)
         self.state = '03_in_progress'
-        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def action_return_to_state_02_called(self):
         self.ensure_one()
         self.generate_attendances()
         self.state = '02_called'
-        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def action_go_to_state_04_finished(self):
@@ -927,32 +924,10 @@ class WuaAssembly(models.Model):
             'search_view_id': [search_view.id],
             'target': 'current',
             'domain': [('assembly_id', '=', current_assembly.id),
-                       ('potential_attendee', '=', True)],
+                       ('potential_attendee', '=', True),
+                       ('votes_total', '>', 0)],
             'context': {'show_only_participant': True},
             }
         if self.is_wua_manager and self.state == '03_in_progress':
             act_window['flags'] = {'initial_mode': 'edit'}
         return act_window
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
-                        submenu=False):
-        res = super(WuaAssembly, self).fields_view_get(
-            view_id=view_id, view_type=view_type,
-            toolbar=toolbar, submenu=submenu)
-        current_assembly = False
-        if self.env.context.get('params'):
-            if 'id' in self.env.context.get('params'):
-                current_assembly = self.env['wua.assembly'].browse(
-                    self.env.context.get('params')['id'])
-        if view_type == 'form' or view_type == 'list':
-            if current_assembly and current_assembly.state != '02_called':
-                print_reports_to_remove = [
-                    'base_wua_assembly.action_wua_attendance_calls_report']
-                print_reports = res.get('toolbar', {}).get('print', [])
-                print_reports_to_show = []
-                for print_report in print_reports:
-                    if print_report['xml_id'] not in print_reports_to_remove:
-                        print_reports_to_show.append(print_report)
-                res['toolbar']['print'] = print_reports_to_show
-        return res
