@@ -634,7 +634,6 @@ class WuaAssembly(models.Model):
         self.ensure_one()
         self.state = '01_draft'
         self.reset_attendances()
-        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.multi
     def action_go_to_state_03_in_progress(self):
