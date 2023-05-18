@@ -50,33 +50,24 @@
                             </div>
                         </t>
                     </div>
+
                     <div class="row" style="margin-top: 4px;">
                         <div class="col-xs-12" style="display: table;">
-                            <div style="display: table-cell;">
-                                <table name="partner_main_data" style="width:90%;">
+                            <div style="width: 50%; display: table-cell;">
+                                <table name="partner_vote_data" style="width:90%;">
                                     <tbody>
-                                        <tr name="tr_name">
-                                            <td><span>Name:</span></td>
-                                            <td class="text-right">
+                                        <tr name="tr_name_and_vat">
+                                            <td>
                                                 <t t-if="o.partner_id.name">
                                                     <span t-field="o.partner_id.name"/> [<span t-field="o.partner_id.partner_code"/>]
                                                 </t>
                                             </td>
-                                        </tr>
-                                        <tr name="tr_vat">
-                                            <td><span>VAT:</span></td>
                                             <td class="text-right">
                                                 <t t-if="o.partner_id.vat">
                                                     <span t-field="o.partner_id.vat"/>
                                                 </t>
                                             </td>
                                         </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div style="display: table-cell; padding-left: 40px;">
-                                <table name="partner_vote_data" style="width:90%;">
-                                    <tbody>
                                         <tr name="tr_votes_owned">
                                             <td><span>Votes owned:</span></td>
                                             <td class="text-right">
@@ -104,6 +95,29 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                            </div>
+                            <div style="display: table-cell; padding-left: 32px;">
+                                <t t-if="o.partner_id.name">
+                                    <strong><span t-field="o.partner_id.name"/></strong>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.street_type_show or o.partner_id.street or o.partner_id.street_num or o.partner_id.street2">
+                                    <t t-if="o.partner_id.street_type_show"><span t-field="o.partner_id.street_type_show"/></t>
+                                    <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t>
+                                    <t t-if="o.partner_id.street_num"><span t-field="o.partner_id.street_num"/></t>
+                                    <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.city or o.partner_id.zip">
+                                    <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
+                                    <t t-if="o.partner_id.zip"><span>-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.state_id or o.partner_id.country_id">
+                                    <t t-if="o.partner_id.state_id"><span t-field="o.partner_id.state_id"/></t>
+                                    <t t-if="o.partner_id.country_id"><span>-&amp;nbsp;</span><span t-field="o.partner_id.country_id"></span></t>
+                                    <br/>
+                                </t>
                             </div>
                         </div>
                     </div>
@@ -225,7 +239,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr t-foreach="o.assembly_id.agendaitem_ids" t-as="item">
+                                    <tr t-foreach="o.assembly_id.agendaitem_ids" t-as="item"
+                                        style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
                                         <td name="td_number" class="text-center"><span t-field="item.number"/></td>
                                         <td name="th_description"><span t-field="item.description"/></td>
                                         <td name="th_type"><span t-field="item.type"/></td>
