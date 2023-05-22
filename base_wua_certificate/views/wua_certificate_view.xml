@@ -36,6 +36,16 @@
                                 <field name="final_paragraph"/>
                             </page>
                             <page name="parcels_page" string="Parcels">
+                                <header>
+                                    <button name="action_include_all_parcels" type="object" class="btn btn-link"
+                                        attrs="{'invisible': [('state','!=','01_draft')]}"
+                                        string="Include all parcels" icon="fa-check"
+                                        style="margin-top:2px; margin-bottom:2px;"/>
+                                    <button name="action_exclude_all_parcels" type="object" class="btn btn-link"
+                                        attrs="{'invisible': [('state','!=','01_draft')]}"
+                                        string="Exclude all parcels" icon="fa-times"
+                                        style="margin-top:2px; margin-bottom:2px;"/>
+                                </header>
                                 <field name="certificateparcel_ids"
                                        context="{'tree_view_ref':
                                        'base_wua_certificate.wua_certificate_parcel_view_tree'}"/>
@@ -398,6 +408,16 @@
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
                             <page name="parcels_page" string="Parcels">
+                                <header>
+                                    <button name="action_include_all_parcels" type="object" class="btn btn-link"
+                                        attrs="{'invisible': [('state','!=','01_draft')]}"
+                                        string="Include all parcels" icon="fa-check"
+                                        style="margin-top:2px; margin-bottom:2px;"/>
+                                    <button name="action_exclude_all_parcels" type="object" class="btn btn-link"
+                                        attrs="{'invisible': [('state','!=','01_draft')]}"
+                                        string="Exclude all parcels" icon="fa-times"
+                                        style="margin-top:2px; margin-bottom:2px;"/>
+                                </header>
                                 <field name="certificateparcel_ids"
                                        attrs="{'readonly':
                                                 [('state','!=','01_draft')]}"

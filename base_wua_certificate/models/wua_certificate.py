@@ -672,6 +672,22 @@ class WuaCertificate(models.Model):
                 _logger.info(preffix_message + suffix_message)
         return resp
 
+    @api.multi
+    def action_exclude_all_parcels(self):
+        for record in self:
+            if (len(record.certificateparcel_ids) > 0):
+                record.certificateparcel_ids.write({
+                    'included_in_certificate': False,
+                })
+
+    @api.multi
+    def action_include_all_parcels(self):
+        for record in self:
+            if (len(record.certificateparcel_ids) > 0):
+                record.certificateparcel_ids.write({
+                    'included_in_certificate': True,
+                })
+
     # Auxiliar method to be inherit and extended
     def _get_fields_of_new_certificate(self, new_certificate, partnerlink):
         return {
