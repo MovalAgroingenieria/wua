@@ -2747,6 +2747,13 @@ class WuaParcel(models.Model):
             formated_date_str = date_parsed.strftime(lang_model.date_format)
         return formated_date_str
 
+    @api.model
+    def is_html_field_filled(self, html_field):
+        filled = False
+        if html_field and tools.html2plaintext(html_field).strip():
+            filled = True
+        return filled
+
 
 class WuaParcelSubparcel(models.Model):
     _name = 'wua.parcel.subparcel'
