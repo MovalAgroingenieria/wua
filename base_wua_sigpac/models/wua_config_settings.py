@@ -8,7 +8,7 @@ import subprocess
 import logging
 from odoo import models, fields, api, tools, exceptions, _
 
-DEF_INT_PERC = 5
+DEF_INT_PERC = 5.0
 
 
 class WuaConfiguration(models.TransientModel):
@@ -24,9 +24,10 @@ class WuaConfiguration(models.TransientModel):
         help='Names of the official shapefiles of SIGPAC (separated by '
              'commas)')
 
-    sigpac_minimum_intersection_percentage = fields.Integer(
+    sigpac_minimum_intersection_percentage = fields.Float(
         string='Minimum intersection percentage',
         default=DEF_INT_PERC,
+        digits=(32, 4),
         required=True,
         help='Minimum intersection percentage allowed for parcels and SIGPAC '
              'enclosures')

@@ -6,7 +6,7 @@
     "name": "Water Users Association: SIGPAC Integration",
     "summary": "In a water users association, integration of the SIGPAC "
                "enclosures, and creation of a spatial link with the parcels.",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
