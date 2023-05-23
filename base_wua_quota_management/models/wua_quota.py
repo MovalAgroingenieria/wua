@@ -514,6 +514,10 @@ class WuaQuota(models.Model):
             parcels_data.append(msg)
         return '\n'.join(parcels_data)
 
+    # Added for be inherited by the provisional quota
+    def _get_available_quota(self, quota):
+        return quota.balance
+
     # For client classes (pressurized consumptions...)
     def create_hydricmovements_presconsumption(self, presconsumption):
         # Add check to know if the waterconnection has all the
@@ -661,7 +665,7 @@ class WuaQuota(models.Model):
                      ('partner_id', '=', partner.id)])
                 if quota:
                     quota = quota[0]
-                    available_quota = quota.balance
+                    available_quota = self._get_available_quota(quota)
                     event_time = datetime.datetime.strptime(
                         wateringperiod.initial_date, '%Y-%m-%d')
                     event_time = \
