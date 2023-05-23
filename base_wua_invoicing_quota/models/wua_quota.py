@@ -32,6 +32,12 @@ class WuaQuota(models.Model):
         compute='_compute_invoiced',
         default=False,)
 
+    # NEEDED FOR fields.Monetary
+    currency_id = fields.Many2one(
+        comodel_name='res.currency',
+        string='Currency',
+        compute='_compute_currency_id')
+
     @api.depends('invoiceline_ids',
                  'invoiceline_ids.price_subtotal')
     def _compute_sum_price_subtotal(self):
@@ -58,6 +64,14 @@ class WuaQuota(models.Model):
     def _compute_invoiced(self):
         for record in self:
             record.invoiced = record.number_of_invoicing_processes > 0
+
+    @api.depends('partner_id')
+    def _compute_currency_id(self):
+        for record in self:
+            currency_id = None
+            if (record.partner_id):
+                currency_id = record.partner_id.currency_id
+            record.currency_id = currency_id
 
     @api.multi
     def action_see_invoice_lines(self):

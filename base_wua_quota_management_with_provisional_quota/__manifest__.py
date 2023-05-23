@@ -22,6 +22,7 @@
         "views/wua_particularpresconsumption_view.xml",
         "reports/wua_partner_quota_individualinput_report.xml",
         "reports/wua_partner_quota_report.xml",
+        "reports/quota_report.xml",
     ],
     "installable": True,
     "application": False,

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Wua partner quota report (droplist menu) -->
+    <!-- Wua partner quotas report (droplist menu) -->
     <report
         id="wua_partner_quota_report"
-        string="Quota report"
+        string="Quotas report"
         model="res.partner"
         report_type="qweb-pdf"
         file="base_wua_quota_management.wua_partner_quota_report_document"
@@ -26,7 +26,7 @@
 
                         <!-- Report title -->
                         <div name="title" class="text-center" style="font-size: 16px;">
-                            <strong>Quota report</strong>
+                            <strong>Quotas report</strong>
                             <t t-if="agriculturalseason">
                                 <span>&amp;nbsp; [</span>
                                 <t t-esc="agriculturalseason.description"/>
@@ -135,7 +135,7 @@
                                 </t>
                             </div>
                             <!-- Get quota periods -->
-                            <t t-if="agriculturalseason">                            
+                            <t t-if="agriculturalseason">
                                 <t t-set="quota_periodes" t-value="o.get_quotaperiod_of_agriculturalseason(agriculturalseason.id)"/>
                                 <t t-foreach="quota_periodes" t-as="p">
                                     <div name="period_title" class="text-center" style="margin-top:10px;">
@@ -157,8 +157,8 @@
                                                 <t t-set="total_input" t-value="0.0"/>
                                                 <t t-set="total_consumption" t-value="0.0"/>
                                                 <t t-set="total_balance" t-value="0.0"/>
-                                                <t t-foreach="quotas" t-as="q" style="page-break-inside: avoid;">
-                                                    <tr>
+                                                <t t-foreach="quotas" t-as="q">
+                                                    <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
                                                        <td name="td_superproduct">
                                                            <span t-field="q.superproduct_id"/>
                                                        </td>
@@ -176,7 +176,7 @@
                                                        </td>
                                                     </tr>
                                                 </t>
-                                                <tr>
+                                                <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
                                                    <td></td>
                                                    <td name="td_total_input" class="text-right">
                                                       <strong><t t-esc="total_input" t-options='{"widget": "float", "precision": 2}'/></strong>
@@ -219,8 +219,8 @@
                                     <th name="th_volume" class="text-right">Volume (m<sup>3</sup>)</th>
                                 </thead>
                                 <tbody>
-                                    <t t-foreach="hydricmovements" t-as="h" style="page-break-inside: avoid;">
-                                        <tr>
+                                    <t t-foreach="hydricmovements" t-as="h">
+                                        <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
                                            <td name="td_superproduct">
                                                <span t-field="h.superproduct_id"/>
                                            </td>

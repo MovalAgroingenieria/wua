@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-18 06:54+0000\n"
-"PO-Revision-Date: 2020-06-18 06:54+0000\n"
+"POT-Creation-Date: 2023-05-23 10:09+0000\n"
+"PO-Revision-Date: 2023-05-23 10:09+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,11 @@ msgstr "<span class=\"o_stat_text\">\n"
 "                            </span>"
 
 #. module: base_wua_invoicing_quota
+#: model:ir.ui.view,arch_db:base_wua_invoicing_quota.quota_report_document
+msgid "<span>Invoiced Amount</span>"
+msgstr "<span>Import</span>"
+
+#. module: base_wua_invoicing_quota
 #: model:ir.actions.server,name:base_wua_invoicing_quota.wua_add_quota_to_invoiceset
 msgid "Add to invoice set"
 msgstr "Afegir al lot"
@@ -32,7 +37,7 @@ msgstr "Afegir al lot"
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_balance
 msgid "Balance"
-msgstr "Saldo pendent"
+msgstr "Balanç pendent"
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_account_invoice_amount_untaxed_categ13
@@ -40,10 +45,10 @@ msgid "C13: Quotas"
 msgstr "C13: Quotas"
 
 #. module: base_wua_invoicing_quota
-#: code:addons/base_wua_invoicing_quota/models/wua_invoicing_config_settings.py:28
+#: code:addons/base_wua_invoicing_quota/models/wua_invoicing_config_settings.py:36
 #, python-format
 msgid "Cannot change value of \"invoicing of negative balance\", because exists some invoiced quota."
-msgstr "No es pot canviar el valor de \" Facturació de balanços negatius \ ", per que hi ha algun quota facturat."
+msgstr "No es pot canviar el valor de \" Facturació de balanços negatius  \", per que hi ha algun quota facturat."
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model,name:base_wua_invoicing_quota.model_wua_invoicing_configuration
@@ -64,6 +69,11 @@ msgstr "Creat per"
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_create_date
 msgid "Created on"
 msgstr "Creat el"
+
+#. module: base_wua_invoicing_quota
+#: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_quota_currency_id
+msgid "Currency"
+msgstr "Moneda"
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_display_name
@@ -92,6 +102,7 @@ msgstr "Element (línia de lot de factures)"
 
 #. module: base_wua_invoicing_quota
 #: code:addons/base_wua_invoicing_quota/models/wua_invoiceset.py:180
+#: code:addons/base_wua_invoicing_quota/models/wua_quotaperiod.py:23
 #, python-format
 msgid "Error when updating records."
 msgstr "Error a l'actualitzar registres."
@@ -99,7 +110,7 @@ msgstr "Error a l'actualitzar registres."
 #. module: base_wua_invoicing_quota
 #: model:ir.ui.view,arch_db:base_wua_invoicing_quota.wua_invoiceset_line_quota_view_search
 msgid "Group By"
-msgstr "Agrupa Per"
+msgstr "Agrupar per"
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_id
@@ -114,7 +125,7 @@ msgstr "Si no està actiu, només estaran disponibles per facturar, quotas el ba
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_accumulated_input
 msgid "Inputs"
-msgstr "Inputs"
+msgstr "Insums"
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model,name:base_wua_invoicing_quota.model_account_invoice
@@ -127,7 +138,7 @@ msgid "Invoice Line"
 msgstr "Línia de factura"
 
 #. module: base_wua_invoicing_quota
-#: code:addons/base_wua_invoicing_quota/models/wua_quota.py:70
+#: code:addons/base_wua_invoicing_quota/models/wua_quota.py:86
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_quota_invoiceline_ids
 #, python-format
 msgid "Invoice Lines"
@@ -159,7 +170,7 @@ msgstr "Facturat: Sí"
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_quota_number_of_invoicing_processes
 msgid "Invoicing Processes"
-msgstr "Nº vegades facturat"
+msgstr "Nº facturacions"
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoicing_configuration_invoicing_of_negative_balance
@@ -206,6 +217,7 @@ msgid "Quota"
 msgstr "Quota"
 
 #. module: base_wua_invoicing_quota
+#: model:ir.model,name:base_wua_invoicing_quota.model_wua_quotaperiod
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_quotaperiod_id
 msgid "Quota Period"
 msgstr "Període de quota"
@@ -250,3 +262,4 @@ msgstr "Volum basat en quotas"
 #: model:product.template,name:base_wua_invoicing_quota.product_13
 msgid "Water of quotas"
 msgstr "Aigua de quotas"
+

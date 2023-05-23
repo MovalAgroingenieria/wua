@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="quota_report_document" inherit_id="base_wua_quota_management.quota_report_document">
+        <xpath expr="//tr[@name='tr_printing_date']" position="before">
+            <tr name="tr_empty_4"><td>&amp;nbsp;</td></tr>
+            <tr name="tr_empty_5"><td>&amp;nbsp;</td></tr>
+        </xpath>
+        <xpath expr="//tr[@name='tr_accumulated_consumption']" position="after">
+            <tr name="tr_provisional_extra_consumption">
+                <td><span>Extra C. (provisional)</span></td>
+                <td class="text-right">
+                    <span t-field="o.provisional_extra_consumption"/>
+                    <span>m³</span>
+                </td>
+            </tr>
+            <tr name="tr_provisional_balance">
+                <td><span>Balance (provisional)</span></td>
+                <td class="text-right">
+                    <span t-field="o.provisional_balance"/>
+                    <span>m³</span>
+                </td>
+            </tr>
+        </xpath>
+    </template>
+
+</odoo>

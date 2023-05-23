@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-18 06:55+0000\n"
-"PO-Revision-Date: 2020-06-18 06:55+0000\n"
+"POT-Creation-Date: 2023-05-23 10:10+0000\n"
+"PO-Revision-Date: 2023-05-23 10:10+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -25,6 +25,11 @@ msgstr "<span class=\"o_stat_text\">\n"
 "                            </span>"
 
 #. module: base_wua_invoicing_quota
+#: model:ir.ui.view,arch_db:base_wua_invoicing_quota.quota_report_document
+msgid "<span>Invoiced Amount</span>"
+msgstr "<span>Importe</span>"
+
+#. module: base_wua_invoicing_quota
 #: model:ir.actions.server,name:base_wua_invoicing_quota.wua_add_quota_to_invoiceset
 msgid "Add to invoice set"
 msgstr "Añadir al lote"
@@ -40,7 +45,7 @@ msgid "C13: Quotas"
 msgstr "C13: Cupos"
 
 #. module: base_wua_invoicing_quota
-#: code:addons/base_wua_invoicing_quota/models/wua_invoicing_config_settings.py:28
+#: code:addons/base_wua_invoicing_quota/models/wua_invoicing_config_settings.py:36
 #, python-format
 msgid "Cannot change value of \"invoicing of negative balance\", because exists some invoiced quota."
 msgstr "No se puede cambiar el valor de \"Facturación de balances negativos\", por que existe algún cupo facturado."
@@ -66,6 +71,11 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: base_wua_invoicing_quota
+#: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_quota_currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: base_wua_invoicing_quota
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
@@ -73,25 +83,26 @@ msgstr "Nombre a mostrar"
 #. module: base_wua_invoicing_quota
 #: model:ir.model,name:base_wua_invoicing_quota.model_product_category
 msgid "Entity (WUA Product Category)"
-msgstr "Elemento (categoría de productos)"
+msgstr "Elemento (categoría de producto)"
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model,name:base_wua_invoicing_quota.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Elemento (Plantilla de Producto C.R.)"
+msgstr "Elemento (plantilla producto)"
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model,name:base_wua_invoicing_quota.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Elemento (lote)"
+msgstr "Elemento (lote de facturas)"
 
 #. module: base_wua_invoicing_quota
 #: model:ir.model,name:base_wua_invoicing_quota.model_wua_invoiceset_line
 msgid "Entity (line of a WUA invoice set)"
-msgstr "Elemento (línea de lote de facturas)"
+msgstr "Elemento (línea de lote)"
 
 #. module: base_wua_invoicing_quota
 #: code:addons/base_wua_invoicing_quota/models/wua_invoiceset.py:180
+#: code:addons/base_wua_invoicing_quota/models/wua_quotaperiod.py:23
 #, python-format
 msgid "Error when updating records."
 msgstr "Error al actualizar los registros."
@@ -124,10 +135,10 @@ msgstr "Factura"
 #. module: base_wua_invoicing_quota
 #: model:ir.model,name:base_wua_invoicing_quota.model_account_invoice_line
 msgid "Invoice Line"
-msgstr "Línea de Factura"
+msgstr "Línea de factura"
 
 #. module: base_wua_invoicing_quota
-#: code:addons/base_wua_invoicing_quota/models/wua_quota.py:70
+#: code:addons/base_wua_invoicing_quota/models/wua_quota.py:86
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_quota_invoiceline_ids
 #, python-format
 msgid "Invoice Lines"
@@ -206,6 +217,7 @@ msgid "Quota"
 msgstr "Cupo"
 
 #. module: base_wua_invoicing_quota
+#: model:ir.model,name:base_wua_invoicing_quota.model_wua_quotaperiod
 #: model:ir.model.fields,field_description:base_wua_invoicing_quota.field_wua_invoiceset_line_quota_quotaperiod_id
 msgid "Quota Period"
 msgstr "Período de cupo"
@@ -250,3 +262,4 @@ msgstr "Volumen basado en cupos"
 #: model:product.template,name:base_wua_invoicing_quota.product_13
 msgid "Water of quotas"
 msgstr "Agua de cupos"
+

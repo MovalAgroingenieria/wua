@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="quota_report_document" inherit_id="base_wua_quota_management.quota_report_document">
+        <!-- Quota fields -->
+        <xpath expr="//tr[@name='tr_accumulated_input']" position="replace">
+            <tr name="tr_accumulated_input">
+                <td><span>Inputs</span></td>
+                <td class="text-right">
+                    <span t-field="o.accumulated_input_vol_hours"/>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//tr[@name='tr_accumulated_consumption']" position="replace">
+            <tr name="tr_accumulated_consumption">
+                <td><span>Consumptions</span></td>
+                <td class="text-right">
+                    <span t-field="o.accumulated_consumption_vol_hours"/>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//tr[@name='tr_balance']" position="replace">
+            <tr name="tr_balance">
+                <td><span>Balance</span></td>
+                <td class="text-right">
+                    <span t-field="o.balance_vol_hours"/>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//tr[@name='tr_negative_balance']" position="replace">
+            <tr name="tr_negative_balance">
+                <td><span>Balance</span></td>
+                <td class="text-right">
+                    <span style="color:red;" t-field="o.negative_balance_vol_hours"/>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//tr[@name='tr_average_daily_consumption']" position="replace">
+            <tr name="tr_average_daily_consumption">
+                <td><span>Cons./Day</span></td>
+                <td class="text-right">
+                    <span t-field="o.average_daily_consumption_vol_hours"/>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//tr[@name='tr_estimated_consumption']" position="replace">
+            <tr name="tr_estimated_consumption">
+                <td><span>Estim. Cons.</span></td>
+                <td class="text-right">
+                    <span t-field="o.estimated_consumption_vol_hours"/>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//tr[@name='tr_estimated_balance']" position="replace">
+            <tr name="tr_estimated_balance">
+                <td><span>Estim. Ending Bal.</span></td>
+                <td class="text-right">
+                    <span t-field="o.estimated_balance_vol_hours"/>
+                </td>
+            </tr>
+        </xpath>
+        <!-- Hydric movements fields -->
+        <xpath expr="//th[@name='th_balance']" position="after">
+            <th name="th_volume_hours" class="text-right">Volume (hours)</th>
+            <th name="th_balance_hours" class="text-right">Balance (hours)</th>
+        </xpath>
+        <xpath expr="//td[@name='td_balance_red']" position="after">
+            <td name="td_accounting_volume_hours_red" class="text-right">
+                <span t-field="h.accounting_volume_hours"/>
+            </td>
+            <td name="td_balance_hours_red" class="text-right">
+                <span t-field="h.balance_hours"/>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='td_balance_blue']" position="after">
+            <td name="td_accounting_volume_hours_blue" class="text-right">
+                <span t-field="h.accounting_volume_hours"/>
+            </td>
+            <td name="td_balance_hours_blue" class="text-right">
+                <span t-field="h.balance_hours"/>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>

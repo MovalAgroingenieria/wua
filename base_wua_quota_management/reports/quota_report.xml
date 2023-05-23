@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Quota report (droplist menu) -->
+    <report
+        id="quota_report"
+        string="Quota report"
+        model="wua.quota"
+        report_type="qweb-pdf"
+        file="base_wua_quota_management.quota_report_document"
+        name="base_wua_quota_management.quota_report_document"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <!-- Quota report -->
+    <template id="quota_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+
+                    <!-- Set variables -->
+                    <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                    <t t-set="printing_date" t-value="o.env['wua.parcel'].transform_date_to_locale(
+                        datetime.datetime.now().date().strftime('%Y-%m-%d'), lang=o.partner_id.lang)"/>
+
+                    <div class="page">
+
+                        <!-- Report title -->
+                        <div name="title" class="text-center" style="font-size: 16px;">
+                            <strong>Quota report</strong>
+                            <t t-if="o.name">
+                                <div>
+                                    <span>[</span>
+                                    <span style="color: grey;" t-field="o.display_name"/>
+                                    <span>&amp;nbsp;]</span>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Quota main data -->
+                        <div name="quota_main_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                        <div style="float: left; display: inline;"><strong>Quota</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-quotas"/></div>
+                                        <div style="float: left; display: inline;"><strong>Quota</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="width: 50%; display: table-cell;">
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                                <tr name="tr_partner">
+                                                    <td><span>Partner wua</span></td>
+                                                    <td class="text-right"><span t-field="o.partner_id"/></td>
+                                                </tr>
+                                                <tr name="tr_agriculturalseason">
+                                                    <td><span>Agricultural Season</span></td>
+                                                    <td class="text-right"><span t-field="o.agriculturalseason_id.description"/></td>
+                                                </tr>
+                                                <tr name="tr_quotaperiod">
+                                                    <td>
+                                                        <span>Quota period</span>
+                                                        <t t-if="o.is_current_quotaperiod">
+                                                            <span style="color: grey;">(current)</span>
+                                                        </t>
+                                                    </td>
+                                                    <td class="text-right"><span t-field="o.quotaperiod_id"/></td>
+                                                </tr>
+                                                <tr name="tr_superproduct">
+                                                    <td><span>Superproduct</span></td>
+                                                    <td class="text-right"><span t-field="o.superproduct_id"/></td>
+                                                </tr>
+                                                <tr name="tr_empty_0"><td>&amp;nbsp;</td></tr>
+                                                <t t-if="o.is_current_quotaperiod">
+                                                    <tr name="tr_empty_1"><td>&amp;nbsp;</td></tr>
+                                                    <tr name="tr_empty_2"><td>&amp;nbsp;</td></tr>
+                                                    <tr name="tr_empty_3"><td>&amp;nbsp;</td></tr>
+                                                </t>
+                                                <tr name="tr_printing_date">
+                                                    <td><span>Printing date</span></td>
+                                                    <td class="text-right">
+                                                        <span t-esc="printing_date"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 32px;">
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                                <tr name="tr_accumulated_input">
+                                                    <td><span>Inputs</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.accumulated_input"/>
+                                                        <span>m³</span>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_accumulated_consumption">
+                                                    <td><span>Consumptions</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.accumulated_consumption"/>
+                                                        <span>m³</span>
+                                                    </td>
+                                                </tr>
+                                                <t t-if="o.balance &gt; 0">
+                                                    <tr name="tr_balance">
+                                                        <td><span>Balance</span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.balance"/>
+                                                            <span>m³</span>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.balance &lt;= 0">
+                                                    <tr name="tr_negative_balance">
+                                                        <td><span>Balance</span></td>
+                                                        <td class="text-right" style="color:red;">
+                                                            <span t-field="o.negative_balance"/>
+                                                            <span>m³</span>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <tr name="tr_available_quota_percentage_with_suffix">
+                                                    <td><span>% Avail. Quota</span></td>
+                                                    <td class="text-right"><span t-field="o.available_quota_percentage_with_suffix"/></td>
+                                                </tr>
+                                                <tr name="tr_average_daily_consumption">
+                                                    <td><span>Cons./Day</span></td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.average_daily_consumption"/>
+                                                        <span>m³</span>
+                                                    </td>
+                                                </tr>
+                                                <t t-if="o.is_current_quotaperiod">
+                                                    <tr name="tr_number_of_days_elapsed_and_pending">
+                                                        <td><span>Elapsed-Pending</span></td>
+                                                        <td class="text-right"><span t-field="o.number_of_days_elapsed_and_pending"/></td>
+                                                    </tr>
+                                                    <tr name="tr_estimated_consumption">
+                                                        <td><span>Estim. Cons.</span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.estimated_consumption"/>
+                                                            <span>m³</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr name="tr_estimated_balance">
+                                                        <td><span>Estim. Ending Bal.</span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.estimated_balance"/>
+                                                            <span>m³</span>
+                                                        </td>
+                                                    </tr>
+                                                    <tr name="tr_expected_date_for_zero_balance">
+                                                        <td><span>Exp. 0 balance date</span></td>
+                                                        <td class="text-right"><span t-field="o.expected_date_for_zero_balance"/></td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hydric movements data -->
+                        <div name="wua_hydricmovements_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-list-ol"/></div>
+                                        <div style="float: left; display: inline;"><strong>Hydric&amp;nbsp;movements</strong></div>
+                                   </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;"><span class="fa fa-list-ol"/></div>
+                                        <div style="float: left; display: inline;"><strong>Hydric&amp;nbsp;movements</strong></div>
+                                    </div>
+                                </t>
+                            </div>
+                            <table class="table" style="width:100%;">
+                                <thead>
+                                    <th name="th_input_arrow"></th>
+                                    <th name="th_date" class="text-center">Date</th>
+                                    <th name="th_description">Description</th>
+                                    <th name="th_volume" class="text-right">Volume (m³)</th>
+                                    <th name="th_balance" class="text-right">Balance (m³)</th>
+                                    <th name="th_output_arrow"></th>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.hydricmovement_ids" t-as="h" style="page-break-inside: avoid;">
+                                        <t t-if="h.is_consumption">
+                                            <tr style="color:orangered;">
+                                                <td name="td_input_arrow_red" class="text-center"/>
+                                                <td name="td_date_red" class="text-center">
+                                                    <span t-field="h.event_time" t-field-options="{'format': 'dd/MM/yyyy'}"/>
+                                                </td>
+                                                <td name="td_description_red">
+                                                    <span t-field="h.description"/>
+                                                </td>
+                                                <td name="td_volume_red" class="text-right">
+                                                    <span t-field="h.accounting_volume"/>
+                                                </td>
+                                                <td name="td_balance_red" class="text-right">
+                                                    <span t-field="h.balance"/>
+                                                </td>
+                                                <td name="td_output_arrow_red" class="text-center">
+                                                    <span class="fa fa-arrow-right"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-else="">
+                                            <tr style="color:royalblue;">
+                                                <td name="td_input_arrow_blue" class="text-center">
+                                                    <span class="fa fa-arrow-right"/>
+                                                </td>
+                                                <td name="td_date_blue" class="text-center">
+                                                    <span t-field="h.event_time" t-field-options="{'format': 'dd/MM/yyyy'}"/>
+                                                </td>
+                                                <td name="td_description_blue">
+                                                    <span t-field="h.description"/>
+                                                </td>
+                                                <td name="td_volume_blue" class="text-right">
+                                                    <span t-field="h.accounting_volume"/>
+                                                </td>
+                                                <td name="td_balance_blue" class="text-right">
+                                                    <span t-field="h.balance"/>
+                                                </td>
+                                                <td name="td_output_arrow_blue" class="text-center"/>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Show notes if filled -->
+                        <t t-if="o.env['wua.parcel'].is_html_field_filled(o.notes)">
+                            <div name="section_notes" style="page-break-inside: avoid;">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-pencil-square-o"/></div>
+                                            <div style="float: left; display: inline;"><strong>Notes</strong></div>
+                                    </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-pencil-square-o"/></div>
+                                            <div style="float: left; display: inline;"><strong>Notes</strong></div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div><span t-field="o.notes"/></div>
+                            </div>
+                        </t>
+
+                    </div><!-- end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

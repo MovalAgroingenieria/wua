@@ -21,7 +21,8 @@
         'views/account_invoice_view.xml',
         'views/wua_invoiceset_view.xml',
         'views/wua_quota_view.xml',
-        'views/wua_invoicing_config_settings_view.xml'
+        'views/wua_invoicing_config_settings_view.xml',
+        'reports/quota_report.xml',
     ],
     "installable": True,
     "application": True,
