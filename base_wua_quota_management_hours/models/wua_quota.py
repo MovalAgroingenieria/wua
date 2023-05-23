@@ -230,6 +230,10 @@ class WuaQuotaAggregatevalue(models.Model):
         string='Balance (hours)',
         compute='_compute_balance_hours')
 
+    estimated_consumption_hours = fields.Char(
+        string='Estimated Consumptions (hours)',
+        compute='_compute_estimated_consumption_hours')
+
     estimated_balance_hours = fields.Char(
         string='Estimated balance (hours)',
         compute='_compute_estimated_balance_hours')
@@ -261,3 +265,10 @@ class WuaQuotaAggregatevalue(models.Model):
             record.estimated_balance_hours = \
                 self.env['wua.quota'].transform_to_quota_hours_format(
                     record.estimated_balance)
+
+    @api.depends('estimated_consumption')
+    def _compute_estimated_consumption_hours(self):
+        for record in self:
+            record.estimated_consumption_hours = \
+                self.env['wua.quota'].transform_to_quota_hours_format(
+                    record.estimated_consumption)
