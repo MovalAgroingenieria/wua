@@ -17,6 +17,7 @@
     ],
     "data": [
         "views/wua_cession_view.xml",
+        "views/wua_individualinput_view.xml",
         "views/wua_quota_view.xml",
         "reports/wua_partner_quota_individualinput_report.xml",
         "reports/wua_partner_quota_report.xml",

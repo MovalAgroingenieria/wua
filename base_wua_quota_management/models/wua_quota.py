@@ -891,9 +891,11 @@ class WuaQuota(models.Model):
                              ('superproduct_id', '=', superproduct_id),
                              ('partner_id', '=', partner_id)])
                         if current_quota:
+                            current_quota_balance = self._get_available_quota(
+                                current_quota)
                             current_quota = current_quota[0]
-                            if (current_quota.balance >= remaining_volume or
-                               current_pos == max_for):
+                            if (current_quota_balance >= remaining_volume or
+                                    current_pos == max_for):
                                 new_hydric_consumptions.append({
                                     'quotaperiod_id': quotaperiod_id,
                                     'superproduct_id': superproduct_id,
@@ -903,16 +905,17 @@ class WuaQuota(models.Model):
                                     })
                                 remaining_volume = 0
                             else:
-                                if current_quota.balance > 0:
+                                if (self._get_available_quota(current_quota) >
+                                        0):
                                     new_hydric_consumptions.append({
                                         'quotaperiod_id': quotaperiod_id,
                                         'superproduct_id': superproduct_id,
                                         'partner_id': partner_id,
-                                        'volume': current_quota.balance,
+                                        'volume': current_quota_balance,
                                         'pos': current_pos - 1,
                                         })
                                     remaining_volume = remaining_volume - \
-                                        current_quota.balance
+                                        current_quota_balance
                             if remaining_volume == 0:
                                 break
                         current_pos = current_pos + 1
@@ -956,7 +959,9 @@ class WuaQuota(models.Model):
                              ('partner_id', '=', partner_id)])
                         if current_quota:
                             current_quota = current_quota[0]
-                            if (current_quota.balance >= remaining_volume or
+                            current_quota_balance = self._get_available_quota(
+                                current_quota)
+                            if (current_quota_balance >= remaining_volume or
                                current_pos == max_for):
                                 new_hydric_consumptions.append({
                                     'quotaperiod_id': quotaperiod_id,
@@ -967,16 +972,16 @@ class WuaQuota(models.Model):
                                     })
                                 remaining_volume = 0
                             else:
-                                if current_quota.balance > 0:
+                                if current_quota_balance > 0:
                                     new_hydric_consumptions.append({
                                         'quotaperiod_id': quotaperiod_id,
                                         'superproduct_id': superproduct_id,
                                         'partner_id': partner_id,
-                                        'volume': current_quota.balance,
+                                        'volume': current_quota_balance,
                                         'pos': current_pos - 1,
                                         })
                                     remaining_volume = remaining_volume - \
-                                        current_quota.balance
+                                        current_quota_balance
                             if remaining_volume == 0:
                                 break
                         current_pos = current_pos + 1

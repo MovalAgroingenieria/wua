@@ -3,6 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import locale
+from babel.numbers import format_decimal
 from odoo import models, fields, api, _
 
 
@@ -17,7 +19,41 @@ class WuaQuota(models.Model):
     provisional_balance = fields.Float(
         string='Balance (provisional)',
         digits=(32, 2),
-        compute='_compute_provisional_balance')
+        compute='_compute_provisional_balance',
+        search='_search_provisional_balance',
+        )
+
+    provisional_available_quota_percentage = fields.Float(
+        string='% Avail. Quota (provisional)',
+        digits=(32, 2),
+        compute='_compute_provisional_available_quota_percentage')
+
+    provisional_available_quota_percentage_with_suffix = fields.Char(
+        string='% Avail. Quota (provisional with suffix)',
+        compute='_compute_provisional_available_quota_percentage_with_suffix')
+
+    @api.depends('accumulated_input', 'accumulated_consumption',
+                 'provisional_extra_consumption')
+    def _compute_provisional_available_quota_percentage(self):
+        for record in self:
+            provisional_available_quota_percentage = 0
+            accumulated_input = record.accumulated_input
+            accumulated_consumption = record.accumulated_consumption + \
+                record.provisional_extra_consumption
+            if (accumulated_input > 0 and
+               accumulated_consumption < accumulated_input):
+                provisional_available_quota_percentage = \
+                    100 - ((accumulated_consumption / accumulated_input) * 100)
+            record.provisional_available_quota_percentage = \
+                provisional_available_quota_percentage
+
+    @api.multi
+    def _compute_provisional_available_quota_percentage_with_suffix(self):
+        for record in self:
+            record.provisional_available_quota_percentage_with_suffix = \
+                format_decimal(record.provisional_available_quota_percentage,
+                               format='0.00',
+                               locale=self.env.context['lang']) + ' %'
 
     @api.multi
     def _compute_provisional_extra_consumption(self):
@@ -36,6 +72,127 @@ class WuaQuota(models.Model):
         for record in self:
             record.provisional_balance = \
                 record.balance - record.provisional_extra_consumption
+
+    # Override to use the provisional quota
+    @api.multi
+    def _compute_average_daily_consumption(self):
+        for record in self:
+            average_daily_consumption = 0
+            quotaperiod = record.quotaperiod_id
+            accumulated_consumption = record.accumulated_consumption
+            if (accumulated_consumption > 0 and
+               quotaperiod.state == 'generated' and
+               quotaperiod.number_of_days_elapsed > 0):
+                average_daily_consumption = (
+                    (accumulated_consumption +
+                     record.provisional_extra_consumption) /
+                    quotaperiod.number_of_days_elapsed)
+            record.average_daily_consumption = average_daily_consumption
+
+    # Override to use the provisional quota
+    @api.multi
+    def _compute_estimated_balance(self):
+        for record in self:
+            record.estimated_balance = \
+                (record.provisional_balance - record.estimated_consumption)
+
+    # Override to use the provisional quota
+    @api.multi
+    def _compute_expected_date_for_zero_balance(self):
+        for record in self:
+            expected_date = ""
+            if (record.provisional_balance > 0 and
+                record.average_daily_consumption > 0 and
+                record.number_of_days_pending > 0 and
+                    record.quotaperiod_id):
+                date_now = datetime.datetime.now()
+                days_until_end_balance = round(
+                    (record.provisional_balance /
+                     record.average_daily_consumption), 0)
+                if int(days_until_end_balance) > 0:
+                    expected_date = date_now + \
+                        datetime.timedelta(days=days_until_end_balance)
+                    quotaperiod_id_end_date = datetime.datetime.strptime(
+                        record.quotaperiod_id.end_date, '%Y-%m-%d')
+                    if quotaperiod_id_end_date < expected_date:
+                        expected_date = quotaperiod_id_end_date
+            record.expected_date_for_zero_balance = expected_date
+
+    @api.multi
+    def name_get(self):
+        result = []
+        default_locale = locale.setlocale(locale.LC_TIME)
+        is_english = self.env.context['lang'] == 'en_US'
+        for record in self:
+            partner_name = record.partner_id.name + \
+                ' [' + str(record.partner_id.partner_code) + ']'
+            if self.env.context.get('show_only_partner_data', False):
+                name = partner_name + ' (' + _('quota') + ': ' + \
+                    '{0:.2f}'.format(round(record.provisional_balance, 2)) + \
+                    ')'
+            else:
+                try:
+                    if is_english:
+                        locale.setlocale(locale.LC_TIME, 'en_US.utf8')
+                    initial_date_str = datetime.datetime.strptime(
+                        record.quotaperiod_id.initial_date,
+                        '%Y-%m-%d').strftime('%x')
+                    end_date_str = datetime.datetime.strptime(
+                        record.quotaperiod_id.end_date,
+                        '%Y-%m-%d').strftime('%x')
+                finally:
+                    locale.setlocale(locale.LC_TIME, default_locale)
+                superproduct_name = record.superproduct_id.name
+                name = initial_date_str + ' - ' + end_date_str + \
+                    ' (' + superproduct_name.lower() + '), ' + partner_name
+            result.append((record.id, name))
+        return result
+
+    def _search_provisional_balance(self, operator, value):
+        # IDEA: Probably more efficient way
+        query_for_retrieval = """
+        SELECT wq3.id
+        FROM wua_quota wq3 LEFT JOIN (
+            SELECT b.quota_id, SUM(b.volume_real) as extra_consumption
+            FROM (
+                SELECT wq1.id AS quota_id, wp1.volume_real
+                FROM wua_quota wq1
+                LEFT JOIN (
+                SELECT DISTINCT ON (wh1.id) wh1.id, quota_id, event_time
+                FROM wua_hydricmovement wh1
+                WHERE wh1.type = 'pres_consumption'
+                ORDER BY wh1.id, event_time DESC
+                ) a ON a.quota_id = wq1.id
+                INNER JOIN wua_quotaperiod wqp1 ON wq1.quotaperiod_id = wqp1.id
+                LEFT JOIN wua_particularpresconsumption wp1 ON
+                    wp1.superproduct_id = wq1.superproduct_id
+                    AND wq1.partner_id = wp1.partner_id
+                    AND wp1.reading_end_time >= (CASE
+                        WHEN a.event_time IS NOT NULL THEN a.event_time
+                        ELSE wqp1.initial_date + interval '1 seconds' END)
+                    AND wp1.reading_end_time < wqp1.end_date +
+                        interval '1 days'
+                WHERE wq1.of_active_agriculturalseason
+                AND wqp1.state = 'generated'
+                AND wp1.validated
+                GROUP BY wq1.id, wp1.volume_real, wp1.id
+            ) b
+            GROUP BY b.quota_id) c ON c.quota_id = wq3.id
+        """
+        filter_query = """
+            WHERE (wq3.balance - (
+                CASE
+                    WHEN c.extra_consumption IS NOT NULL THEN
+                    c.extra_consumption
+                    ELSE 0
+                END))
+        """
+        filter_query = filter_query + ' ' + operator + ' ' + str(value)
+        result_query = query_for_retrieval + filter_query
+        self.env.cr.execute(result_query)
+        # Get only the ids
+        quotas = [quota_data[0] for quota_data in self.env.cr.fetchall()]
+        return ([('id', 'in', quotas)])
 
     def _is_last_generated_quotaperiod(self, quotaperiod):
         resp = False
@@ -132,6 +289,26 @@ class WuaQuotaAggregatevalue(models.Model):
         digits=(32, 2),
         compute='_compute_provisional_balance')
 
+    provisional_available_quota_percentage = fields.Float(
+        string='% Avail. Quota (provisional)',
+        digits=(32, 2),
+        compute='_compute_provisional_available_quota_percentage')
+
+    @api.depends('accumulated_input', 'accumulated_consumption',
+                 'provisional_extra_consumption')
+    def _compute_provisional_available_quota_percentage(self):
+        for record in self:
+            provisional_available_quota_percentage = 0
+            accumulated_input = record.accumulated_input
+            accumulated_consumption = record.accumulated_consumption + \
+                record.provisional_extra_consumption
+            if (accumulated_input > 0 and
+               accumulated_consumption < accumulated_input):
+                provisional_available_quota_percentage = \
+                    100 - ((accumulated_consumption / accumulated_input) * 100)
+            record.provisional_available_quota_percentage = \
+                provisional_available_quota_percentage
+
     @api.multi
     def _compute_provisional_extra_consumption(self):
         for record in self:
@@ -151,3 +328,48 @@ class WuaQuotaAggregatevalue(models.Model):
         for record in self:
             record.provisional_balance = \
                 record.balance - record.provisional_extra_consumption
+
+    # Override to use the
+    @api.multi
+    def _compute_average_daily_consumption(self):
+        for record in self:
+            average_daily_consumption = 0
+            quotaperiod = record.quotaperiod_id
+            accumulated_consumption = record.accumulated_consumption
+            if (accumulated_consumption > 0 and
+               quotaperiod.state == 'generated' and
+               quotaperiod.number_of_days_elapsed > 0):
+                average_daily_consumption = (
+                    (accumulated_consumption +
+                        record.provisional_extra_consumption) /
+                    quotaperiod.number_of_days_elapsed)
+            record.average_daily_consumption = average_daily_consumption
+
+    # Override to use the provisional quota
+    @api.multi
+    def _compute_estimated_balance(self):
+        for record in self:
+            record.estimated_balance = \
+                (record.provisional_balance - record.estimated_consumption)
+
+    # Override to use the provisional quota
+    @api.multi
+    def _compute_expected_date_for_zero_balance(self):
+        for record in self:
+            expected_date = ""
+            if (record.provisional_balance > 0 and
+                record.average_daily_consumption > 0 and
+                record.number_of_days_pending > 0 and
+                    record.quotaperiod_id):
+                date_now = datetime.datetime.now()
+                days_until_end_balance = round(
+                    (record.provisional_balance /
+                     record.average_daily_consumption), 0)
+                if int(days_until_end_balance) > 0:
+                    expected_date = date_now + \
+                        datetime.timedelta(days=days_until_end_balance)
+                    quotaperiod_id_end_date = datetime.datetime.strptime(
+                        record.quotaperiod_id.end_date, '%Y-%m-%d')
+                    if quotaperiod_id_end_date < expected_date:
+                        expected_date = quotaperiod_id_end_date
+            record.expected_date_for_zero_balance = expected_date
