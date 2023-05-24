@@ -18,6 +18,7 @@
     "data": [
         "security/ir.model.access.csv",
         "views/resources.xml",
+        "views/wua_cession_view.xml",
         "views/wua_quota_view.xml",
         "views/wua_particularpresconsumption_view.xml",
         "reports/wua_partner_quota_individualinput_report.xml",

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_cession_view_form" model="ir.ui.view">
+        <field name="name">Cessions (form view)</field>
+        <field name="model">wua.cession</field>
+        <field name="inherit_id" ref="base_wua_quota_management_with_provisional_quota.wua_cession_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='quota_provisional_balance']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='quota_provisional_extra_consumption']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='quota_negative_balance_vol_hours']" position="after">
+                <field name="quota_provisional_extra_consumption_vol_hours"/>
+                <field name="quota_provisional_balance_vol_hours"/>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

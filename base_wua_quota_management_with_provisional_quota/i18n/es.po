@@ -6,14 +6,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-23 11:36+0000\n"
-"PO-Revision-Date: 2023-05-23 11:36+0000\n"
+"POT-Creation-Date: 2023-05-24 10:12+0000\n"
+"PO-Revision-Date: 2023-05-24 10:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_quota_management_with_provisional_quota
+#: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_quota_provisional_available_quota_percentage_with_suffix
+msgid "% Avail. Quota (provisional with suffix)"
+msgstr "Cupo provisional"
+
+#. module: base_wua_quota_management_with_provisional_quota
+#: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_quota_provisional_available_quota_percentage
+msgid "% Avail. Quota (provisional)"
+msgstr "% Cupo provisional"
 
 #. module: base_wua_quota_management_with_provisional_quota
 #: model:ir.ui.view,arch_db:base_wua_quota_management_with_provisional_quota.quota_report_document
@@ -43,11 +53,17 @@ msgid "<span>m<sup>3</sup></span>"
 msgstr "<span>m<sup>3</sup></span>"
 
 #. module: base_wua_quota_management_with_provisional_quota
+#: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_cession_quota_provisional_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_individualinput_quota_provisional_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_quota_aggregatevalue_provisional_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_quota_provisional_balance
 msgid "Balance (provisional)"
 msgstr "Saldo provisional"
+
+#. module: base_wua_quota_management_with_provisional_quota
+#: model:ir.model,name:base_wua_quota_management_with_provisional_quota.model_wua_cession
+msgid "Cession"
+msgstr "Cesión"
 
 #. module: base_wua_quota_management_with_provisional_quota
 #: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_particularpresconsumption_controlpresconsumption_id
@@ -91,7 +107,7 @@ msgid "Extra Cons. (provisional)"
 msgstr "Consumos extra"
 
 #. module: base_wua_quota_management_with_provisional_quota
-#: code:addons/base_wua_quota_management_with_provisional_quota/models/wua_quota.py:110
+#: code:addons/base_wua_quota_management_with_provisional_quota/models/wua_quota.py:266
 #, python-format
 msgid "Extra Consumptions"
 msgstr "Consumos extra"
@@ -107,6 +123,7 @@ msgid "Extra consumptions (m<sup>3</sup>)"
 msgstr "Consumos extra (m<sup>3</sup>)"
 
 #. module: base_wua_quota_management_with_provisional_quota
+#: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_cession_quota_provisional_extra_consumption
 #: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_individualinput_quota_provisional_extra_consumption
 #: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_quota_aggregatevalue_provisional_extra_consumption
 #: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_quota_provisional_extra_consumption
@@ -195,6 +212,18 @@ msgid "Superproduct"
 msgstr "Supraproducto"
 
 #. module: base_wua_quota_management_with_provisional_quota
+#: code:addons/base_wua_quota_management_with_provisional_quota/models/wua_cession.py:33
+#, python-format
+msgid "The available balance is not sufficient."
+msgstr "El saldo disponible no es suficiente."
+
+#. module: base_wua_quota_management_with_provisional_quota
+#: code:addons/base_wua_quota_management_with_provisional_quota/models/wua_cession.py:26
+#, python-format
+msgid "The balance of chosen partner is zero o negative."
+msgstr "El salo del socio seleccionado es cero o negativo."
+
+#. module: base_wua_quota_management_with_provisional_quota
 #: model:ir.ui.view,arch_db:base_wua_quota_management_with_provisional_quota.wua_particularpresconsumption_with_total_view_tree
 msgid "Total Volume (m³)"
 msgstr "Volumen total (m³)"
@@ -219,6 +248,12 @@ msgstr "Toma"
 #: model:ir.model.fields,field_description:base_wua_quota_management_with_provisional_quota.field_wua_particularpresconsumption_product_id
 msgid "Water Type"
 msgstr "Tipo de agua"
+
+#. module: base_wua_quota_management_with_provisional_quota
+#: code:addons/base_wua_quota_management_with_provisional_quota/models/wua_quota.py:129
+#, python-format
+msgid "quota"
+msgstr "cupo"
 
 #. module: base_wua_quota_management_with_provisional_quota
 #: model:ir.model,name:base_wua_quota_management_with_provisional_quota.model_wua_quota_aggregatevalue
