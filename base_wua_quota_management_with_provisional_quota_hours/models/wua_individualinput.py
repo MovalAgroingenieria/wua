@@ -13,7 +13,7 @@ class WuaIndividualinput(models.Model):
         compute='_compute_quota_provisional_extra_consumption_hours')
 
     quota_provisional_extra_consumption_vol_hours = fields.Char(
-        string='Extra consumptions (hours)',
+        string='Extra consumptions',
         compute='_compute_quota_provisional_extra_consumption_vol_hours')
 
     quota_provisional_balance_hours = fields.Char(
