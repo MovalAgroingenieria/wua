@@ -38,7 +38,7 @@
                                     <tr>
                                       <t t-if="is_based_on_wc">
                                         <th style="width: 15%;">Water Connection</th>
-                                        <th style="width: 16%;">Water Meter</th>
+                                        <th name= "th_watermeter_based_on_wc" style="width: 16%;">Water Meter</th>
                                         <th id="th-initial-time-date-label">Initial time date</th>
                                         <th id="th-final-time-date-label">Final time date</th>
                                         <th class="text-right">Initial Reading</th>
@@ -49,7 +49,7 @@
                                       </t>
                                       <t t-else="">
                                         <th id="th-water-connection-label">Water Connection</th>
-                                        <th>Water Meter</th>
+                                        <th name= "th_watermeter">Water Meter</th>
                                         <th id="th-initial-time-label">Initial time</th>
                                         <th id="th-final-time-label">Final time</th>
                                         <th class="text-right">Initial Reading</th>
@@ -87,7 +87,7 @@
                                           <td>
                                               <span t-esc="c['waterconnection']"/>
                                           </td>
-                                          <td>
+                                          <td name= "td_watermeter_based_on_wc">
                                               <span t-esc="c['watermeter']"/>
                                           </td>
                                           <td>
@@ -128,7 +128,7 @@
                                           <td id="td-water-connection-value">
                                               <span t-esc="c['waterconnection']"/>
                                           </td>
-                                          <td>
+                                          <td name= "td_watermeter">
                                               <span t-esc="c['watermeter']"/>
                                           </td>
                                           <td id="td-reading-initial-time-value">
