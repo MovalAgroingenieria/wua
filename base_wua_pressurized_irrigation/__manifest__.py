@@ -17,6 +17,9 @@
     "data": [
         "security/ir.model.access.csv",
         "wizard/wizard_remove_readings_view.xml",
+        "data/wua_irrigation_config_settings_data.xml",
+        "data/wua_negative_reading_notice_mail.xml",
+        "data/wua_negative_reading_notice_action.xml",
         "views/resources.xml",
         "views/res_partner_view.xml",
         "views/wua_watermeter_view.xml",
@@ -31,7 +34,6 @@
         "views/wua_irrigation_config_settings_view.xml",
         "views/wua_infrastructure_config_settings_view.xml",
         "reports/wua_parcel_report.xml",
-        "data/wua_irrigation_config_settings_data.xml",
         "reports/wua_watermeter_report.xml",
         "data/wua_infrastructure_config_settings_data.xml",
         "wizard/wizard_print_readings_view.xml",

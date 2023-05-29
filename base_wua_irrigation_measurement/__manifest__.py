@@ -19,6 +19,8 @@
         "security/ir.model.access.csv",
         "wizard/wizard_remove_flowmeter_readings_view.xml",
         "views/resources.xml",
+        "data/wua_negative_flowreading_notice_mail.xml",
+        "data/wua_negative_flowreading_notice_action.xml",
         "views/wua_agriculturalseason_view.xml",
         "views/wua_flowreading_view.xml",
         "views/wua_intakeconsumption_view.xml",

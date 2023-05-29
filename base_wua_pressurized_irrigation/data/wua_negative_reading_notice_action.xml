@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record model="ir.actions.server" id="action_send_email_on_negative_reading">
+            <field name="name">Enviar correo electrónico en lectura negativa</field>
+            <field name="model_id" ref="model_wua_negative_reading"/>
+            <field name="state">code</field>
+            <field name="code">
+            <![CDATA[
+if record:
+    template = env.ref('base_wua_pressurized_irrigation.email_template_negative_reading')
+    template.sudo().send_mail(record.id, force_send=True)
+True]]>
+            </field>
+        </record>
+
+        <record model="base.action.rule" id="action_rule_send_email_on_negative_reading">
+            <field name="name">Regla de acción para enviar correo electrónico en lectura negativa</field>
+            <field name="sequence">10</field>
+            <field name="model_id" ref="model_wua_negative_reading"/>
+            <field name="server_action_ids" eval="[(6, 0, [ref('action_send_email_on_negative_reading')])]"/>
+            <field name="kind">on_create</field>
+            <field name="domain_force">[]</field>
+            <field name="active">False</field>
+        </record>
+
+    </data>
+
+</odoo>

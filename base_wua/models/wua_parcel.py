@@ -48,6 +48,7 @@ class WuaParcel(models.Model):
     _img_step_x = 7
     _img_step_y = 9
     _grid_font = "DejaVuSans-Bold.ttf"
+    _aerial_img_format = 'image/jpeg'
 
     # SHP generation
     _parcels_fields_to_retrieve = ['name', 'area_gis', 'cadastral']
@@ -894,7 +895,8 @@ class WuaParcel(models.Model):
                             layers=['pnoa_date'],
                             srs=crs, bbox=bbox, size=(width, height),
                             info_format='application/json',
-                            format='image/jpeg', xy=(width/2, height/2))
+                            format=self._aerial_img_format,
+                            xy=(width/2, height/2))
                         data_pnoa_parsed = json.loads(data_pnoa.read())
                         date = data_pnoa_parsed['features'][0][
                             'properties']['FECHA']
@@ -905,7 +907,7 @@ class WuaParcel(models.Model):
                             layers=record._aerial_img_layers,
                             styles=record._aerial_img_layers_styles,
                             srs=crs, bbox=bbox, size=(width, height),
-                            format='image/jpeg', transparent=True,
+                            format=self._aerial_img_format, transparent=True,
                             SLD_BODY=sld_body)
                         image = io.BytesIO(img.read())
                         base64_img = base64.b64encode(image.getvalue())
@@ -1873,7 +1875,8 @@ class WuaParcel(models.Model):
                             layers=['pnoa_date'],
                             srs=crs, bbox=bbox, size=(width, height),
                             info_format='application/json',
-                            format='image/jpeg', xy=(width/2, height/2))
+                            format=self._aerial_img_format,
+                            xy=(width/2, height/2))
                         data_pnoa_parsed = json.loads(data_pnoa.read())
                         date = data_pnoa_parsed['features'][0][
                             'properties']['FECHA']
@@ -1884,8 +1887,8 @@ class WuaParcel(models.Model):
                             layers=record._aerial_img_layers,
                             styles=record._aerial_img_layers_styles,
                             srs=crs, bbox=bbox, size=(width, height),
-                            format='image/jpeg', transparent=True,
-                            SLD_BODY=sld_body)
+                            format=self._aerial_img_format,
+                            transparent=True, SLD_BODY=sld_body)
                         image = io.BytesIO(img.read())
                         base64_img = base64.b64encode(image.getvalue())
                         # GET SCALE:
