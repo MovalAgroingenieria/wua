@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_notificationset_view_form" model="ir.ui.view">
+        <field name="name">res.notificationset.inherited.view.form</field>
+        <field name="model">res.notificationset</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notificationset_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='creation_date']" position="after">
+                <field name="create_letter"
+                       string="Output Register"
+                       attrs="{'readonly': [('state','!=','01_draft')]}"/>
+                <field name="file_id"
+                       string="Associated File"
+                       options="{'no_quick_create':True}"
+                       attrs="{'readonly': [('state','!=','01_draft')]}"
+                       readonly="context.get('from_files',False)"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notificationset_view_tree" model="ir.ui.view">
+        <field name="name">res.notificationset.inherited.view.tree</field>
+        <field name="model">res.notificationset</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notificationset_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='notificationset_type_id']" position="after">
+                <field name="file_id"
+                       string="Associated File"
+                       invisible="context.get('from_files',False)"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notificationset_view_search" model="ir.ui.view">
+        <field name="name">res.notificationset.inherited.view.search</field>
+        <field name="model">res.notificationset</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notificationset_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="file_id"
+                       string="Associated File"
+                       invisible="context.get('from_files',False)"/>
+            </xpath>
+            <xpath expr="//filter[@name='grouped_notificationset_type_id']" position="after">
+                <filter string="Associated File"
+                        name="grouped_file_id"
+                        context="{'group_by':'file_id'}"
+                        invisible="context.get('from_files',False)"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

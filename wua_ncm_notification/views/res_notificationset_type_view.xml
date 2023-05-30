@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_notificationset_type_view_form" model="ir.ui.view">
+        <field name="name">res.notificationset.type.inherited.view.form</field>
+        <field name="model">res.notificationset.type</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notificationset_type_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='include_partner_if_customer']" position="before">
+                <field name="include_partner_if_wua"
+                       nolabel="1" style="margin-top:10px"
+                       attrs="{'readonly': [('is_standard','=',True)]}"/>
+                <span>The contact is a WUA partner</span><br/>
+            </xpath>
+            <xpath expr="//field[@name='include_partner_if_customer']" position="attributes">
+                <attribute name="style">margin-top:0px</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notificationset_type_view_tree" model="ir.ui.view">
+        <field name="name">res.notificationset.type.inherited.view.tree</field>
+        <field name="model">res.notificationset.type</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notificationset_type_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='include_partner_if_customer']" position="before">
+                <field name="include_partner_if_wua"
+                       string="WUA Partners"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notificationset_type_view_search" model="ir.ui.view">
+        <field name="name">res.notificationset.type.inherited.view.search</field>
+        <field name="model">res.notificationset.type</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notificationset_type_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='include_partner_if_customer']" position="before">
+                <filter string="WUA Partners"
+                        name="include_partner_if_wua"
+                        domain="[('include_partner_if_wua', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

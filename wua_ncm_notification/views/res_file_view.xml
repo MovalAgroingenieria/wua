@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_file_view_form" model="ir.ui.view">
+        <field name="name">res.file.inherited.view.form</field>
+        <field name="model">res.file</field>
+        <field name="inherit_id" ref="crm_filemgmt.res_file_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_get_file_registers']" position="after">
+                <button name="action_get_notificationsets"
+                        type="object" class="oe_stat_button"
+                        icon="fa-envelope-o"
+                        groups="ncm_notifmgmt.group_ncm_manager"
+                        attrs="{'invisible': [('number_of_notificationsets','=',0)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="number_of_notificationsets"/>
+                        </span>
+                        <span class="o_stat_text">Notif. Sets</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

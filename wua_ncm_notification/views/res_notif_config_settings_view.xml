@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_notif_config_settings_view_form"
+            model="ir.ui.view">
+        <field name="name">res.notif.config.settings.inherited.view.form</field>
+        <field name="model">res.notif.config.settings</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notif_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_notificationset_type_id']" position="after">
+                <field name="with_letter"
+                       string="Update output register"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
