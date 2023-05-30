@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_notification_draft_view_tree" model="ir.ui.view">
+        <field name="name">res.notification.draft.inherited.view.tree</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_draft_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='customer']" position="before">
+                <field name="is_wua_partner"
+                       string="WUA Partner"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notification_draft_view_search" model="ir.ui.view">
+        <field name="name">res.notification.draft.inherited.view.search</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_draft_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="file_id"
+                       string="Associated File"/>
+            </xpath>
+            <xpath expr="//filter[@name='customer']" position="before">
+                <filter string="WUA Partner"
+                        name="is_wua_partner"
+                        domain="[('is_wua_partner', '=', True)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='grouped_parent_id']" position="before">
+                <filter string="Associated File"
+                        name="grouped_file_id"
+                 context="{'group_by':'file_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notification_generated_view_tree" model="ir.ui.view">
+        <field name="name">res.notification.generated.inherited.view.tree</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_generated_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='customer']" position="before">
+                <field name="is_wua_partner"
+                       string="WUA Partner"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notification_generated_view_search" model="ir.ui.view">
+        <field name="name">res.notification.generated.inherited.view.search</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_generated_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="file_id"
+                       string="Associated File"/>
+            </xpath>
+            <xpath expr="//filter[@name='customer']" position="before">
+                <filter string="WUA Partner"
+                        name="is_wua_partner"
+                        domain="[('is_wua_partner', '=', True)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='grouped_parent_id']" position="before">
+                <filter string="Associated File"
+                        name="grouped_file_id"
+                 context="{'group_by':'file_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notification_view_form" model="ir.ui.view">
+        <field name="name">res.notification.inherited.view.form</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='customer']" position="before">
+                <field name="is_wua_partner"
+                       string="WUA Partner"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notification_view_tree" model="ir.ui.view">
+        <field name="name">res.notification.inherited.view.tree</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='customer']" position="before">
+                <field name="is_wua_partner"
+                       string="WUA Partner"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notification_view_search" model="ir.ui.view">
+        <field name="name">res.notification.inherited.view.search</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="file_id"
+                       string="Associated File"/>
+            </xpath>
+            <xpath expr="//filter[@name='customer']" position="before">
+                <filter string="WUA Partner"
+                        name="is_wua_partner"
+                        domain="[('is_wua_partner', '=', True)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='grouped_parent_id']" position="before">
+                <filter string="Associated File"
+                        name="grouped_file_id"
+                 context="{'group_by':'file_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notification_generated_particular_view_tree" model="ir.ui.view">
+        <field name="name">res.notification.generated.particular.inherited.view.tree</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_generated_particular_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='notificationset_id']" position="after">
+                <field name="file_id"
+                       string="Associated File"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_notification_generated_particular_view_search" model="ir.ui.view">
+        <field name="name">res.notification.generated.particular.inherited.view.search</field>
+        <field name="model">res.notification</field>
+        <field name="inherit_id" ref="ncm_notifmgmt.res_notification_generated_particular_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='issue']" position="after">
+                <field name="file_id"
+                       string="Associated File"/>
+            </xpath>
+            <xpath expr="//filter[@name='sent_no']" position="after">
+                <group expand="0" string="Group By">
+                    <filter string="Associated File"
+                            name="grouped_file_id"
+                     context="{'group_by':'file_id'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

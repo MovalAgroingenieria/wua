@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_letter_form_view" model="ir.ui.view">
+        <field name="name">res.letter.inherited.form.view</field>
+        <field name="model">res.letter</field>
+        <field name="inherit_id" ref="crm_filemgmt.res_letter_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='file_id']" position="after">
+                <field name="notification_id"
+                       string="Notification"
+                       attrs="{'invisible': [('notification_id','=',False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_letter_filter" model="ir.ui.view">
+        <field name="name">res.letter.inherited.filter</field>
+        <field name="model">res.letter</field>
+        <field name="inherit_id" ref="crm_lettermgmt.res_letter_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='pending']" position="after">
+                <filter string="From a notification"
+                        name="from_notification"
+                        domain="[('notification_id', '!=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
