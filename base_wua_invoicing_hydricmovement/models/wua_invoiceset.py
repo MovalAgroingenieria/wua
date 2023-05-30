@@ -331,13 +331,13 @@ class WuaInvoicesetLine(models.Model):
             for line_hydricmovement in record.line_hydricmovement_ids:
                 hydricmovement_ids.append(
                     line_hydricmovement.hydricmovement_id.id)
-                if hydricmovement_ids:
-                    hydricmovements = self.env['wua.hydricmovement'].browse(
-                        hydricmovement_ids)
-                    hydricmovements.write({
-                        'invoiceset_id': None,
-                        'invoiced_hydricmovement': False
-                    })
+            if hydricmovement_ids:
+                hydricmovements = self.env['wua.hydricmovement'].browse(
+                    hydricmovement_ids)
+                hydricmovements.write({
+                    'invoiceset_id': None,
+                    'invoiced_hydricmovement': False
+                })
         return super(WuaInvoicesetLine, self).unlink()
 
     @api.multi
