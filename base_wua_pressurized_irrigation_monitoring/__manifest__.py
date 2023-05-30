@@ -13,6 +13,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
+        "base_action_rule",
         "base_wua_remotecontrol_rest",
         "web_widget_bokeh_chart", ],
     "data": [
