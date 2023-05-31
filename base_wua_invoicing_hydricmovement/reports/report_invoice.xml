@@ -31,7 +31,7 @@
                             <table class="table table-condensed">
                                 <thead>
                                     <tr>
-                                        <th>Water Connection</th>
+                                        <th name="th_waterconnection">Water Connection</th>
                                         <th class="text-center">Date initial time</th>
                                         <th class="text-center">Date final time</th>
                                         <th class="text-center">Initial Reading</th>
@@ -45,7 +45,7 @@
                                       <tr t-foreach="consumptions_hydricmov" t-as="c">
                                           <t t-set="reading_initial_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_initial_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y')"/>
                                           <t t-set="reading_end_time" t-value="context_timestamp(datetime.datetime.strptime(c['reading_end_time'],'%Y-%m-%d %H:%M:%S')).strftime('%d/%m/%y')"/>
-                                          <td><span t-esc="c['waterconnection']"/></td>
+                                          <td name="td_waterconnection"><span t-esc="c['waterconnection']"/></td>
                                           <td class="text-center"><span t-esc="reading_initial_time"/></td>
                                           <td class="text-center"><span t-esc="reading_end_time"/></td>
                                           <td class="text-right">
