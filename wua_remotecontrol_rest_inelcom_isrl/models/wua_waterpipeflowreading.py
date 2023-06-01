@@ -110,7 +110,8 @@ class WuaWaterpipeflowreading(models.Model):
                             error_message = error_message + frs_error_message
                     if (some_fm_on_head):
                         # Get flowreadings on heads
-                        frs_head, frs_error_message = self.\
+                        frs_head, frs_error_message = self.env[
+                            'wua.flowreading'].\
                             get_flowreadings_on_heads(
                                 url_remotecontrol_rest, id_session,
                                 fm_dict_by_head)

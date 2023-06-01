@@ -20,7 +20,7 @@ class WuaReservoir(models.Model):
 
     height_correction = fields.Float(
         string='Height correction for readings',
-        digits=(32, 2),
+        digits=(32, 4),
         defaut=0.0,
         required=True,)
 
