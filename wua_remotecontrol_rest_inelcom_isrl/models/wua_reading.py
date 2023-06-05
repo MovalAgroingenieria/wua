@@ -40,7 +40,7 @@ class WuaReading(models.Model):
 
     # Api Call INELCOM to get /cabezales/medidas response as RAW text
     def get_cabezales_medidas_from_inelcom(self, url_remotecontrol_rest,
-                                           id_session, margin=30):
+                                           id_session, margin=120):
         response = False
         tz = pytz.timezone('Europe/Madrid')
         current_time = datetime.now(tz)

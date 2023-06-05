@@ -53,7 +53,7 @@ class WuaReservoir(models.Model):
         prefix_message = _('Remote Control: Starting reading in '
                            'reservoir')
         _logger = logging.getLogger(self.__class__.__name__)
-        _logger.info(prefix_message + '... ' + str(self.name))
+        _logger.info(prefix_message + u'... ' + self.name)
         model_reservoirreading = self.env['wua.reservoirreading']
         data_reservoirreadings = \
             model_reservoirreading.do_import_reservoirreadings(
