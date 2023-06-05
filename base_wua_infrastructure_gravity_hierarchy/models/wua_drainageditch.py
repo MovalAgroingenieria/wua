@@ -278,7 +278,22 @@ class WuaDrainageditch(models.Model):
                  'parcel_23_ids', 'parcel_24_ids',
                  'parcel_25_ids', 'parcel_26_ids',
                  'parcel_27_ids', 'parcel_28_ids',
-                 'parcel_29_ids', 'parcel_30_ids')
+                 'parcel_29_ids', 'parcel_30_ids',
+                 'parcel_01_ids.active', 'parcel_02_ids.active',
+                 'parcel_03_ids.active', 'parcel_04_ids.active',
+                 'parcel_05_ids.active', 'parcel_06_ids.active',
+                 'parcel_07_ids.active', 'parcel_08_ids.active',
+                 'parcel_09_ids.active', 'parcel_10_ids.active',
+                 'parcel_11_ids.active', 'parcel_12_ids.active',
+                 'parcel_13_ids.active', 'parcel_14_ids.active',
+                 'parcel_15_ids.active', 'parcel_16_ids.active',
+                 'parcel_17_ids.active', 'parcel_18_ids.active',
+                 'parcel_19_ids.active', 'parcel_20_ids.active',
+                 'parcel_21_ids.active', 'parcel_22_ids.active',
+                 'parcel_23_ids.active', 'parcel_24_ids.active',
+                 'parcel_25_ids.active', 'parcel_26_ids.active',
+                 'parcel_27_ids.active', 'parcel_28_ids.active',
+                 'parcel_29_ids.active', 'parcel_30_ids.active')
     def _compute_number_of_parcels(self):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
