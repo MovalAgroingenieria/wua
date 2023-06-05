@@ -21,7 +21,7 @@ def post_init_hook(cr, registry):
         env.ref('ncm_notifmgmt.notificationset_type_all')
     if notificationset_type_all:
         notificationset_type_all.include_partner_if_wua = False
-    # Initialize the "default_notificationset_type_id" param (Many2one)
+    # Initialize the "default_notificationset_type_id" param (Many2one).
     default_notificationset_type_id = 0
     try:
         default_notificationset_type_id = env.ref(
@@ -32,6 +32,9 @@ def post_init_hook(cr, registry):
         values.set_default('res.notif.config.settings',
                            'default_notificationset_type_id',
                            default_notificationset_type_id)
+    # Initialize the "background_process" param.
+    values.set_default('res.notif.config.settings',
+                       'background_process', True)
     # Assignement of "group_ncm_manager" group to all WUA managers.
     group_ncm_manager = env.ref('ncm_notifmgmt.group_ncm_manager')
     users = env['res.users'].search([])

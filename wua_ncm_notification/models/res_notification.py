@@ -11,7 +11,6 @@ class ResNotification(models.Model):
     is_wua_partner = fields.Boolean(
         string='Is a WUA partner',
         store=True,
-        index=True,
         compute='_compute_is_wua_partner',)
 
     file_id = fields.Many2one(
@@ -31,6 +30,32 @@ class ResNotification(models.Model):
         string='Associated Letter',
         comodel_name='res.letter',
         compute='_compute_letter_id',)
+
+    number_of_votes = fields.Integer(
+        string="Number of votes",
+        store=True,
+        compute='_compute_number_of_votes',)
+
+    parcel_owner_number = fields.Integer(
+        string="Parcels, as owner",
+        store=True,
+        compute='_compute_parcel_owner_number',)
+
+    parcel_owner_area_hec = fields.Float(
+        string="Area, as owner (hectares)",
+        store=True,
+        compute='_compute_parcel_owner_area_hec',)
+
+    parcel_lessee_number = fields.Integer(
+        string="Parcels, as lessee",
+        store=True,
+        compute='_compute_parcel_lessee_number',)
+
+    parcel_lessee_area_hec = fields.Float(
+        string="Area, as lessee (hectares)",
+        digits=(32, 4),
+        store=True,
+        compute='_compute_parcel_lessee_area_hec',)
 
     @api.depends('partner_id')
     def _compute_is_wua_partner(self):
@@ -55,6 +80,46 @@ class ResNotification(models.Model):
             if record.letter_ids and len(record.letter_ids) == 1:
                 letter_id = record.letter_ids[0]
             record.letter_id = letter_id
+
+    @api.depends('partner_id')
+    def _compute_number_of_votes(self):
+        for record in self:
+            number_of_votes = 0
+            if record.partner_id:
+                number_of_votes = record.partner_id.number_of_votes
+            record.number_of_votes = number_of_votes
+
+    @api.depends('partner_id')
+    def _compute_parcel_owner_number(self):
+        for record in self:
+            parcel_owner_number = 0
+            if record.partner_id:
+                parcel_owner_number = record.partner_id.parcel_owner_number
+            record.parcel_owner_number = parcel_owner_number
+
+    @api.depends('partner_id')
+    def _compute_parcel_owner_area_hec(self):
+        for record in self:
+            parcel_owner_area_hec = 0
+            if record.partner_id:
+                parcel_owner_area_hec = record.partner_id.parcel_owner_area_hec
+            record.parcel_owner_area_hec = parcel_owner_area_hec
+
+    @api.depends('partner_id')
+    def _compute_parcel_lessee_number(self):
+        for record in self:
+            parcel_lessee_number = 0
+            if record.partner_id:
+                parcel_lessee_number = record.partner_id.parcel_lessee_number
+            record.parcel_lessee_number = parcel_lessee_number
+
+    @api.depends('partner_id')
+    def _compute_parcel_lessee_area_hec(self):
+        for record in self:
+            parcel_lessee_area_hec = 0
+            if record.partner_id:
+                parcel_lessee_area_hec = record.partner_id.parcel_lessee_area_hec
+            record.parcel_lessee_area_hec = parcel_lessee_area_hec
 
     @api.multi
     def write(self, vals):

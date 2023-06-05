@@ -6,9 +6,29 @@
         <field name="model">res.notification</field>
         <field name="inherit_id" ref="ncm_notifmgmt.res_notification_draft_view_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='customer']" position="before">
-                <field name="is_wua_partner"
-                       string="WUA Partner"/>
+            <xpath expr="//field[@name='email']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='customer']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='supplier']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='internal_user']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="number_of_votes"
+                       string="N. Votes"/>
+                <field name="parcel_owner_number"
+                       string="N. Parcels (owner)"/>
+                <field name="parcel_owner_area_hec"
+                       string="Area -ha- (owner)"/>
+                <field name="parcel_lessee_number"
+                       string="N. Parcels (lessee)"/>
+                <field name="parcel_lessee_area_hec"
+                       string="Area -ha- (lessee)"/>
             </xpath>
         </field>
     </record>

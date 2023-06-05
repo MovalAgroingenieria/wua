@@ -34,3 +34,39 @@ class ResNotificationset(models.Model):
            self.notificationset_type_id.include_partner_if_wua):
             resp.append(('is_wua_partner', '=', True))
         return resp
+
+    # (from hook)
+    def _gn_get_additional_fields(self):
+        resp = super(ResNotificationset, self)._gn_get_additional_fields()
+        return resp + 'is_wua_partner, number_of_votes, ' + \
+            'parcel_owner_number, parcel_owner_area_hec, ' + \
+            'parcel_lessee_number, parcel_lessee_area_hec, '
+
+    # (from hook)
+    def _gn_get_additional_values(self):
+        resp = super(ResNotificationset, self)._gn_get_additional_values()
+        return resp + 'rp.is_wua_partner, rp.number_of_votes, ' + \
+            'rp.parcel_owner_number, rp.parcel_owner_area_hec, ' + \
+            'rp.parcel_lessee_number, rp.parcel_lessee_area_hec, '
+
+    # (from hook)
+    def _gm_get_where_clause_or_condition(self, notificationset_type):
+        resp = \
+            super(ResNotificationset, self)._gm_get_where_clause_or_condition(
+                notificationset_type)
+        if notificationset_type.include_partner_if_wua:
+            if not resp:
+                resp = 'rp.is_wua_partner'
+            else:
+                resp = resp + ' OR rp.is_wua_partner'
+        return resp
+
+    # (from hook)
+    def _gn_final_process(self, notificationset):
+        if notificationset.file_id:
+            self.env.cr.execute(
+                'UPDATE res_notification ' +
+                'SET file_id = ' + str(notificationset.file_id.id) + ' ' +
+                'WHERE notificationset_id = ' + str(notificationset.id))
+            self.env.cr.commit()
+            self.env.invalidate_all()
