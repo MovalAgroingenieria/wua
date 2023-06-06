@@ -153,6 +153,7 @@
                             <t t-if="o.parcel_img_coordinate_grid">
                                 <t t-set="parcel_img_to_use" t-value="p.parcel_id.aerial_img_with_grid_current"/>
                             </t>
+                            <span name="span_hook_before_fist_parcel_check" style="display: none;"/>
                             <t t-if="parcel_img_to_use">
                                 <div name="aerial_image" class="text-center" style="border: 1px solid black; padding: 1% 0%;">
                                     <img t-attf-src="data:image/png;base64, #{parcel_img_to_use}" style="max-width: 824px; max-height: 824px;"/>
@@ -274,6 +275,7 @@
                                     </table>
                                 </div>
                                 <div name="parcel_aerial_image" class="text-center">
+                                    <span name="span_hook_before_second_parcel_check" style="display: none;"/>
                                     <t t-if="parcel_img_to_use">
                                         <img t-attf-src="data:image/png;base64, #{parcel_img_to_use}" style="max-width: 408px; max-height: 408px;"/>
                                     </t>
