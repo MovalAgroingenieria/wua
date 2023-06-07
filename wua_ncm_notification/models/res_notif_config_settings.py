@@ -12,9 +12,15 @@ class ResNotifConfigSettings(models.TransientModel):
         string='Create a output letter automatically',
         default=False,)
 
+    hide_address = fields.Boolean(
+        string='Hide the address of partner in envelope',
+        default=False,)
+
     @api.multi
     def set_default_values(self):
         super(ResNotifConfigSettings, self).set_default_values()
         values = self.env['ir.values'].sudo()
         values.set_default('res.notif.config.settings',
                            'with_letter', self.with_letter)
+        values.set_default('res.notif.config.settings',
+                           'hide_address', self.hide_address)

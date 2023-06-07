@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <template id="report_res_notification_document" inherit_id="ncm_notifmgmt.report_res_notification_document">
+        <xpath expr="//div[@name='section_rendered_fields']" position="before">
+            <t t-set="show_address" t-value="not request.env['ir.values'].get_default('res.notif.config.settings', 'hide_address')"/>
+            <t t-if="show_address">
+                <div name="wua_partner_data">
+                    <div class="row" style="font-size:14;">
+                        <div name="wua_partner_data_frame" class="col-xs-12" style="display:table;margin-top:48px;margin-bottom:24px">
+                            <div name="wua_partner_data_left" style="width:50%;display:table-cell;">
+                            </div>
+                            <div name="wua_partner_data_right" style="display:table-cell;padding-left:96px;">
+                                <t t-if="o.partner_id.name">
+                                    <strong><span t-field="o.partner_id.name"/></strong>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.street_type_show or o.partner_id.street or o.partner_id.street_num or o.partner_id.street2">
+                                    <t t-if="o.partner_id.street_type_show"><span t-field="o.partner_id.street_type_show"/></t>
+                                    <t t-if="o.partner_id.street"><span t-field="o.partner_id.street"/></t>
+                                    <t t-if="o.partner_id.street_num"><span t-field="o.partner_id.street_num"/></t>
+                                    <t t-if="o.partner_id.street2"><span t-field="o.partner_id.street2"/></t>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.city or o.partner_id.zip">
+                                    <t t-if="o.partner_id.city"><span t-field="o.partner_id.city"/></t>
+                                    <t t-if="o.partner_id.zip"><span>-&amp;nbsp;</span><span t-field="o.partner_id.zip"/></t>
+                                    <br/>
+                                </t>
+                                <t t-if="o.partner_id.state_id or o.partner_id.country_id">
+                                    <t t-if="o.partner_id.state_id"><span t-field="o.partner_id.state_id"/></t>
+                                    <t t-if="o.partner_id.country_id"><span>-&amp;nbsp;</span><span t-field="o.partner_id.country_id"></span></t>
+                                    <br/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
