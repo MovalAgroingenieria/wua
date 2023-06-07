@@ -3,7 +3,7 @@
     
     <template id="report_res_notification_document" inherit_id="ncm_notifmgmt.report_res_notification_document">
         <xpath expr="//div[@name='section_rendered_fields']" position="before">
-            <t t-set="show_address" t-value="not request.env['ir.values'].get_default('res.notif.config.settings', 'hide_address')"/>
+            <t t-set="show_address" t-value="not o.env['ir.values'].get_default('res.notif.config.settings', 'hide_address')"/>
             <t t-if="show_address">
                 <div name="wua_partner_data">
                     <div class="row" style="font-size:14;">
