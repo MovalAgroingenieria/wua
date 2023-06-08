@@ -9,3 +9,4 @@ from . import wizard_massive_individualinputs
 from . import wizard_provision_parcel
 from . import wizard_provision_partner
 from . import wizard_massive_compensatorytransfers
+from . import wizard_massive_cancelnegativebalances

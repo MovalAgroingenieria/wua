@@ -633,6 +633,19 @@ class WuaQuotaperiod(models.Model):
         return act_window
 
     @api.multi
+    def action_apply_massive_cancelnegativebalances(self):
+        self.ensure_one()
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Massive cancellation of negative balances'),
+            'res_model': 'wizard.massive.cancelnegativebalances',
+            'src_model': 'wua.quotaperiod',
+            'view_mode': 'form',
+            'target': 'new'
+            }
+        return act_window
+
+    @api.multi
     def action_get_quotaperiod_aggregate_quotas(self):
         self.ensure_one()
         if not self.quotaperiod_aggregatequotas:

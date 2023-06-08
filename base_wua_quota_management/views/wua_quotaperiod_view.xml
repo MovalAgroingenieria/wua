@@ -161,6 +161,19 @@
                                     ['|',('state','!=','generated'),
                                      ('of_active_agriculturalseason','=',False)]}"
                             groups="base.group_system"/>
+                    <span style="display: inline-block;padding-left: 12px;"
+                            attrs="{'invisible':
+                                    ['|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"/>
+                    <button name="action_apply_massive_cancelnegativebalances"
+                            type="object" string="Cancel Negatives"
+                            icon="fa-circle-o"
+                            class="oe_read_only"
+                            style="width: 165px;"
+                            attrs="{'invisible':
+                                    ['|',('state','!=','generated'),
+                                     ('of_active_agriculturalseason','=',False)]}"
+                            groups="base.group_system"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="draft,configured,generated"/>
