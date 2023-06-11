@@ -109,6 +109,16 @@ class WuaWaterconnection(models.Model):
         compute='_compute_some_parcel_several_waterpayers',
         search='_search_some_parcel_several_waterpayers')
 
+    number_of_waterpayers = fields.Integer(
+        string='Number of water payers',
+        default=0,
+        compute='_compute_number_of_waterpayers')
+
+    several_waterpayers = fields.Boolean(
+        string='With several water payers',
+        compute='_compute_several_waterpayers',
+        search='_search_several_waterpayers')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_position',
@@ -228,6 +238,62 @@ class WuaWaterconnection(models.Model):
             if waterconnection.some_parcel_several_waterpayers:
                 record_ids.append(waterconnection.id)
         return ([('id', operator_of_filter, record_ids)])
+
+    @api.multi
+    def _compute_number_of_waterpayers(self):
+        for record in self:
+            number_of_waterpayers = 0
+            self.env.cr.execute("""
+                select count(*) from
+                  (select distinct ip.waterconnection_id, rp.id
+                   from wua_parcel_irrigationpoint ip
+                   inner join wua_parcel_partnerlink pl on
+                   pl.parcel_id = ip.parcel_id
+                   inner join res_partner rp on
+                   rp.id = pl.partner_id
+                   where ip.waterconnection_id = %s and
+                   pl.water_costs_percentage > 0 and
+                   ip.active) water_payers""", (record.id,))
+            query_results = self.env.cr.dictfetchall()
+            if query_results and query_results[0].get('count') is not None:
+                number_of_waterpayers = query_results[0].get('count')
+            record.number_of_waterpayers = number_of_waterpayers
+
+    @api.multi
+    def _compute_several_waterpayers(self):
+        for record in self:
+            several_waterpayers = False
+            if record.number_of_waterpayers > 1:
+                several_waterpayers = True
+            record.several_waterpayers = several_waterpayers
+
+    @api.model
+    def _search_several_waterpayers(self, operator, value):
+        record_ids = []
+        filter_is_several_waterpayers = \
+            (operator == '=' and value)
+        sql_statement = \
+            'select waterconnection_id from ' + \
+            '(select distinct ip.waterconnection_id, rp.id ' + \
+            'from wua_parcel_irrigationpoint ip ' + \
+            'inner join wua_parcel_partnerlink pl ' + \
+            'on pl.parcel_id = ip.parcel_id ' + \
+            'inner join res_partner rp ' + \
+            'on rp.id = pl.partner_id ' + \
+            'where ip.waterconnection_id is not null and ' + \
+            'pl.water_costs_percentage > 0 ' + \
+            'and ip.active) water_payers ' + \
+            'group by waterconnection_id'
+        if filter_is_several_waterpayers:
+            sql_statement = sql_statement + ' having count(*) > 1'
+        else:
+            sql_statement = sql_statement + ' having count(*) <= 1'
+        self.env.cr.execute(sql_statement)
+        query_results = self.env.cr.dictfetchall()
+        if query_results:
+            for row in query_results:
+                record_ids.append(row.get('waterconnection_id'))
+        return ([('id', 'in', record_ids)])
 
     @api.constrains('name')
     def _check_name(self):

@@ -20,6 +20,9 @@
                     <group name="master_data" col="9">
                         <group name="master_data_image" colspan="3">
                             <field name="image" widget="image" class="oe_img_259_160"/>
+                            <field name="number_of_waterpayers"
+                                   string="Water Payers"
+                                   attrs="{'invisible':[('number_of_waterpayers','=',0)]}"/>
                         </group>
                         <group name="master_data_fields" colspan="6" col="4">
                             <field name="irrigationshed_id"/>
@@ -106,6 +109,13 @@
                 <field name="irrigationshed_id"/>
                 <field name="hydraulicsector_id"/>
                 <separator/>
+                <filter string="Several water payers: Yes"
+                 name="several_waterpayers_yes"
+                 domain="[('several_waterpayers','=',True)]"/>
+                <filter string="Several water payers: No"
+                 name="several_waterpayers_no"
+                 domain="[('several_waterpayers','=',False)]"/>
+                <separator/>
                 <filter string="Some parcel with several water payers"
                  name="some_parcel_several_waterpayers_yes"
                  domain="[('some_parcel_several_waterpayers','=',True)]"/>
@@ -151,6 +161,8 @@
                                 <strong><field name="name"/></strong>
                                 <ul>
                                     <li t-if="record.position.raw_value" class="o_text_overflow">Position: <field name="position"/></li>
+                                    <br/>
+                                    <li t-if="record.number_of_waterpayers.raw_value" class="o_text_overflow">Water Payers: <field name="number_of_waterpayers"/></li>
                                     <br/>
                                     <li t-if="record.description.raw_value" class="o_text_overflow"><field name="description"/></li>
                                     <li t-if="record.total_affected_area_official" class="o_text_overflow">Area: <field name="total_affected_area_official"/></li>

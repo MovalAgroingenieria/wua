@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-26 21:29+0000\n"
-"PO-Revision-Date: 2023-04-26 21:29+0000\n"
+"POT-Creation-Date: 2023-06-11 06:43+0000\n"
+"PO-Revision-Date: 2023-06-11 06:43+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -241,7 +241,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_total_affected_area_official
@@ -311,7 +311,7 @@ msgid "Duplicated hydraulic order."
 msgstr "Nº orden hidráulico duplicado."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:247
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:313
 #, python-format
 msgid "Duplicated position."
 msgstr "Posición duplicada."
@@ -343,7 +343,7 @@ msgstr "Punto de suministro en blanco."
 #: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:260
 #: code:addons/base_wua_infrastructure/models/wua_irrigationgate.py:169
 #: code:addons/base_wua_infrastructure/models/wua_irrigationshed.py:242
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:236
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:302
 #, python-format
 msgid "Empty Value."
 msgstr "Valor en blanco."
@@ -376,7 +376,7 @@ msgstr "Elemento (caseta)"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
+msgstr "Elemento (parcela)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection
@@ -845,7 +845,7 @@ msgstr "Caseta"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última modificación el"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_write_uid
@@ -873,7 +873,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_date
 msgid "Last Updated on"
-msgstr "Última actualización el"
+msgstr "Última actualización en"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_parcel_rural_location_county
@@ -963,6 +963,7 @@ msgstr "Nº tomas"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_number_of_waterpayers
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_number_of_waterpayers
 msgid "Number of water payers"
 msgstr "Nº de pagadores de agua"
 
@@ -1048,7 +1049,7 @@ msgstr "Socio"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Socio"
+msgstr "Partner of a WUA"
 
 #. module: base_wua_infrastructure
 #: model:ir.actions.server,name:base_wua_infrastructure.res_partner_irrigationpoints_action
@@ -1121,6 +1122,16 @@ msgstr "Sector"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_zone_view_tree
 msgid "Sectors"
 msgstr "Sectores"
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
+msgid "Several water payers: No"
+msgstr "Varios pagadores de agua: No"
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
+msgid "Several water payers: Yes"
+msgstr "Varios pagadores de agua: Sí"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_some_parcel_several_waterpayers
@@ -1265,7 +1276,7 @@ msgid "This irrigation gate is present in some parcels: It is not possible to ch
 msgstr "El tablacho está presente el alguna parcela, y por ello no es posible cambiar su acequia (primero habría que eliminar el punto de suministro)."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:283
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:349
 #, python-format
 msgid "This water connection is present in some parcels: It is not possible to change the irrigation shed."
 msgstr "La toma está presente en alguna parcela, y por ello no es posible cambiar su caseta (primero habría que eliminar el punto de suministro)."
@@ -1319,6 +1330,16 @@ msgstr "Tomas:"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_water_flow
 msgid "Water Flow (liters/sec)"
 msgstr "Módulo de riego (litros/seg)"
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_form
+msgid "Water Payers"
+msgstr "Pagadores de agua"
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_kanban
+msgid "Water Payers:"
+msgstr "Pagadores de agua:"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_gravityfed_irrigation_right
@@ -1409,6 +1430,11 @@ msgstr "Con bombeo"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_kanban
 msgid "With pumping:"
 msgstr "Con bombeo:"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_several_waterpayers
+msgid "With several water payers"
+msgstr "Con varios pagadores de agua"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_gis_viewer_x
