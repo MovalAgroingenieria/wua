@@ -96,6 +96,10 @@ class ResPartnerWaterconnection(models.Model):
         string='Waterconnection',
         comodel_name='wua.waterconnection',)
 
+    description = fields.Char(
+        string='Description',
+        related='waterconnection_id.description')
+
     @api.model_cr
     def init(self):
         self.env.cr.execute("""
