@@ -100,7 +100,7 @@ class WuaWaterpipeconsumption(models.Model):
     @api.model
     def _regenerate_presconsumption_ids(
             self, wpconsumption, error_margin_for_sync_consumptions):
-        wpconsumption.write({'presconsumption_ids': [(5)]})
+        wpconsumption.write({'presconsumption_ids': [(6, 0, [])]})
         implied_irrigationsheds = self._get_irrigationsheds(
             wpconsumption.waterpipe_id)
         if implied_irrigationsheds:
