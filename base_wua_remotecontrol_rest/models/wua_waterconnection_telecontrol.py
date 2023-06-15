@@ -14,6 +14,11 @@ class WuaWaterconnectionTelecontrol(models.Model):
     MAX_SIZE_NAME = 52
     MAX_COUNT_HIST = 24
 
+    # Variable to extend
+    PRETTY_ERROR_WATERMETER_DICT = {}
+    # Variable to extend
+    PRETTY_ERROR_VALVE_DICT = {}
+
     data_time = fields.Datetime(
         string='Capture Date',
         required=True)
@@ -37,6 +42,24 @@ class WuaWaterconnectionTelecontrol(models.Model):
 
     valve_scheduled = fields.Boolean(
         string='Valve Scheluded',)
+
+    valve_error = fields.Boolean(
+        string='Valve With Error',
+        default=False)
+
+    valve_error_msg = fields.Char(
+        string='Valve Error',
+        size=254,
+        default='')
+
+    watermeter_error = fields.Boolean(
+        string='Watermeter With Error',
+        default=False)
+
+    watermeter_error_msg = fields.Char(
+        string='Watermeter Error',
+        size=254,
+        default='')
 
     name = fields.Char(
         string='Telecontrol Data',
@@ -64,6 +87,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
             'last_waterflow': telecontrol_info.waterflow,
             'last_valve_open': telecontrol_info.valve_open,
             'last_valve_scheduled': telecontrol_info.valve_scheduled,
+            'last_valve_error': telecontrol_info.valve_error,
+            'last_valve_error_msg': telecontrol_info.valve_error_msg,
+            'last_watermeter_error': telecontrol_info.watermeter_error,
+            'last_watermeter_error_msg': telecontrol_info.watermeter_error_msg,
         })
         return telecontrol_info
 
@@ -121,10 +148,22 @@ class WuaWaterconnectionTelecontrol(models.Model):
             if filtered_waterconnection:
                 waterconnection = filtered_waterconnection[0]
                 conversion_factor = waterconnection.conversion_factor
+                valve_error_msg = info['valve_error_msg']
+                if valve_error_msg in self.PRETTY_ERROR_VALVE_DICT:
+                    valve_error_msg = self.PRETTY_ERROR_VALVE_DICT[
+                        valve_error_msg]
+                watermeter_error_msg = info['watermeter_error_msg']
+                if watermeter_error_msg in self.PRETTY_ERROR_WATERMETER_DICT:
+                    watermeter_error_msg = self.PRETTY_ERROR_WATERMETER_DICT[
+                        watermeter_error_msg]
                 refined_wc_info = {
                     'waterconnection_id': waterconnection.id,
                     'valve_open': info['valve_open'],
                     'valve_scheduled': info['valve_scheduled'],
+                    'valve_error': info['valve_error'],
+                    'valve_error_msg': valve_error_msg,
+                    'watermeter_error': info['watermeter_error'],
+                    'watermeter_error_msg': watermeter_error_msg,
                     'total_volume': info['total_volume'],
                     'waterflow': info['waterflow'] / conversion_factor,
                     'data_time': info['data_time'],
@@ -145,6 +184,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     'waterflow': info['waterflow'],
                     'valve_open': info['valve_open'],
                     'valve_scheduled': info['valve_scheduled'],
+                    'valve_error': info['valve_error'],
+                    'valve_error_msg': info['valve_error_msg'],
+                    'watermeter_error': info['watermeter_error'],
+                    'watermeter_error_msg': info['watermeter_error_msg'],
                     'waterconnection_id': info['waterconnection_id'],
                 }
                 if (wc.telecontrol_ids and len(wc.telecontrol_ids) > 0):

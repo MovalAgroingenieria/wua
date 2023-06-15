@@ -47,6 +47,24 @@ class WuaWaterconnection(models.Model):
     last_data_time = fields.Datetime(
         string='Last Capture Date',)
 
+    last_valve_error = fields.Boolean(
+        string='Valve With Error',
+        default=False)
+
+    last_valve_error_msg = fields.Char(
+        string='Valve Error',
+        size=254,
+        default='')
+
+    last_watermeter_error = fields.Boolean(
+        string='Watermeter With Error',
+        default=False)
+
+    last_watermeter_error_msg = fields.Char(
+        string='Watermeter Error',
+        size=254,
+        default='')
+
     html_last_telecontrol_info = fields.Html(
         string='Telecontrol Info',
         compute='_compute_html_last_telecontrol_info')
@@ -122,6 +140,21 @@ class WuaWaterconnection(models.Model):
         resp = ''
         label_date = _('Capture Date')
         label_total_volume = _('Total')
+        label_valve_state = _('Valve state:')
+        valve_state_color = 'green'
+        valve_state = _('OK')
+        if (self.last_valve_error):
+            valve_state = _('Error')
+            valve_state = valve_state + ' (' + self.last_valve_error_msg + ')'
+            valve_state_color = 'red'
+        label_watermeter_state = _('Watermeter state:')
+        watermeter_state_color = 'green'
+        watermeter_state = _('OK')
+        if (self.last_watermeter_error):
+            watermeter_state = _('Error')
+            watermeter_state = watermeter_state + ' (' + \
+                self.last_watermeter_error_msg + ')'
+            watermeter_state_color = 'red'
         last_total_volume = self.env['wua.parcel'].transform_float_to_locale(
             self.last_total_volume, 4)
         label_waterflow = _('Waterflow')
@@ -132,6 +165,10 @@ class WuaWaterconnection(models.Model):
         else:
             label_valve_open = _('Valve Open: No')
         if (self.last_valve_scheduled):
+            label_valve_scheduled = _('Valve Scheduled: Yes')
+        else:
+            label_valve_scheduled = _('Valve Scheduled: No')
+        if (self.last_valve_error):
             label_valve_scheduled = _('Valve Scheduled: Yes')
         else:
             label_valve_scheduled = _('Valve Scheduled: No')
@@ -156,9 +193,12 @@ class WuaWaterconnection(models.Model):
             ': ' + str(last_total_volume) + u' (m³)' + '</span>' + \
             '<span style="padding-right: 2px;">' + label_waterflow + ': ' + \
             str(last_waterflow) + ' (l/s)' + '</span>' + \
+            '<span style="color: ' + watermeter_state_color + '">' + \
+            label_watermeter_state + ' ' + watermeter_state + '</span>' + \
             '<span style="padding-right: 2px;">' + label_valve_open + \
             '</span><span>' + label_valve_scheduled + \
-            '</span>' + '</div>'
+            '</span><span style="color: ' + valve_state_color + '">' + \
+            label_valve_state + ' ' + valve_state + '</span>' + '</div>'
         resp = '<div class="panel-body text-left" ' + \
                'style="' + \
                'color: ' + info_color + ';">' + \

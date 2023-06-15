@@ -95,6 +95,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             valve_open = wm['estado_real'] != 'cerrada'
                             valve_scheduled = wm['estado_real'] != \
                                 wm['estado_debido']
+                            valve_error = False
+                            valve_error_msg = ''
+                            watermeter_error = False
+                            watermeter_error_msg = ''
                             date_time_read = datetime.strptime(
                                 wm['f_ultima_comunicacion'],
                                 '%Y-%m-%dT%H:%M:%S')
@@ -108,6 +112,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                 'waterflow': waterflow,
                                 'valve_open': valve_open,
                                 'valve_scheduled': valve_scheduled,
+                                'valve_error': valve_error,
+                                'valve_error_msg': valve_error_msg,
+                                'watermeter_error': watermeter_error,
+                                'watermeter_error_msg': watermeter_error_msg,
                                 'data_time': date_time_read.strftime(
                                     '%Y-%m-%d %H:%M:%S'),
                             })

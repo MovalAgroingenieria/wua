@@ -15,14 +15,15 @@
                         icon="fa-calendar"
                         attrs="{'invisible':
                                 [('html_scheduling_frame','=',False)]}"
-                        groups="base_wua.group_wua_manager,base_wua.group_wua_portal_user"/>                   
-            </xpath>        
-            <xpath expr="//group[@name='master_data']" position="after">
-                <field name="html_readings_frame" widget="html"
-                       attrs="{'invisible':
-                               [('html_readings_frame','=',False)]}"/>
-            </xpath>        
+                        groups="base_wua.group_wua_manager,base_wua.group_wua_portal_user"/>
+            </xpath>
             <xpath expr="//page[@name='notes_page']" position="before">
+                <page name="irriweb_consumptions_page"
+                      string="IrriWEB Readings"
+                      attrs="{'invisible':
+                               [('html_readings_frame','=',False)]}">
+                    <field name="html_readings_frame" widget="html"/>
+                </page>
                 <page name="irriweb_consumptions_page"
                       string="IrriWEB Consumptions"
                       attrs="{'invisible':

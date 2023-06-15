@@ -107,6 +107,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     valve_scheduled = True
                                 else:
                                     valve_scheduled = False
+                                valve_error = False
+                                valve_error_msg = ''
+                                watermeter_error = False
+                                watermeter_error_msg = ''
                                 date = hydrant['counter']['lastStatusLocal']
                                 data_time = datetime.datetime.strptime(
                                     date, '%d/%m/%Y %H:%M:%S')
@@ -122,6 +126,11 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     'valve_open': valve_open,
                                     'valve_scheduled': valve_scheduled,
                                     'data_time': data_time,
+                                    'valve_error': valve_error,
+                                    'valve_error_msg': valve_error_msg,
+                                    'watermeter_error': watermeter_error,
+                                    'watermeter_error_msg':
+                                        watermeter_error_msg,
                                 })
             self.close_connection(url_remotecontrol_rest, jsessionid)
         return [wc_all_info, error_message]

@@ -135,6 +135,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             wm_dict[wm_name].waterconnection_id):
                         wc = wm_dict[wm_name].waterconnection_id
                         if (wc and wc.name):
+                            valve_error = False
+                            valve_error_msg = ''
+                            watermeter_error = False
+                            watermeter_error_msg = ''
                             wc_all_info_dict[wc.name] = {
                                 'waterconnection': wc.name,
                                 'total_volume': reading['value'],
@@ -142,6 +146,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                 'valve_open': False,
                                 'valve_scheduled': False,
                                 'data_time': data_time,
+                                'valve_error': valve_error,
+                                'valve_error_msg': valve_error_msg,
+                                'watermeter_error': watermeter_error,
+                                'watermeter_error_msg': watermeter_error_msg,
                             }
                 for flow in flows_response:
                     code_values = flow['name'].split('_')

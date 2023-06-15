@@ -81,12 +81,20 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     lambda x: x.position ==
                                     wc_info['numToma']).name
                             waterflow = wc_info['caudal']
+                            valve_error = False
+                            valve_error_msg = ''
+                            watermeter_error = False
+                            watermeter_error_msg = ''
                             wc_all_info.append({
                                 'waterconnection': waterconnection,
                                 'total_volume': 0,
                                 'waterflow': waterflow,
                                 'valve_open': False,
                                 'valve_scheduled': False,
+                                'valve_error': valve_error,
+                                'valve_error_msg': valve_error_msg,
+                                'watermeter_error': watermeter_error,
+                                'watermeter_error_msg': watermeter_error_msg,
                                 'data_time': date_time_now.strftime(
                                     '%Y-%m-%d %H:%M:%S'),
                             })

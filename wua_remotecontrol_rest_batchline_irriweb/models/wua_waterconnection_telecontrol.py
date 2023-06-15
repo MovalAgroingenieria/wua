@@ -89,6 +89,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     waterflow = wc_info['Caudal']
                     valve_open = wc_info['ValvulaAbierta']
                     valve_scheduled = wc_info['ModoAuto']
+                    valve_error = False
+                    valve_error_msg = ''
+                    watermeter_error = False
+                    watermeter_error_msg = ''
                     date = wc_info['Fecha']
                     data_time = datetime.datetime.strptime(
                         date, '%Y-%m-%dT%H:%M:%S')
@@ -104,6 +108,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         'valve_open': valve_open,
                         'valve_scheduled': valve_scheduled,
                         'data_time': data_time,
+                        'valve_error': valve_error,
+                        'valve_error_msg': valve_error_msg,
+                        'watermeter_error': watermeter_error,
+                        'watermeter_error_msg': watermeter_error_msg,
                     })
             else:
                 error_message = _(' It is not possible to get the info. ')

@@ -46,7 +46,7 @@ class WuaWaterconnection(models.Model):
                     'allow-pointer-lock allow-same-origin" ' + \
                     'id="iframe_readings" scrolling="no" ' + \
                     'marginheight="0" marginwidth="0" ' + \
-                    'src="' + url + '" ' + \
+                    'loading=lazy src="' + url + '" ' + \
                     'frameborder="0" height="' + str(height) + '" ' + \
                     'width="' + str(width) + '"' + \
                     '></iframe>'
@@ -74,7 +74,7 @@ class WuaWaterconnection(models.Model):
                     'allow-pointer-lock allow-same-origin" ' + \
                     'id="iframe_consumptions" scrolling="no" ' + \
                     'marginheight="0" marginwidth="0" ' + \
-                    'src="' + url + '" ' + \
+                    'loading=lazy src="' + url + '" ' + \
                     'frameborder="0" height="' + str(height) + '" ' + \
                     'width="' + str(width) + '"' + \
                     '></iframe></p>'
