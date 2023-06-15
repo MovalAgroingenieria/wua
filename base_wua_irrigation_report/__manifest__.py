@@ -7,7 +7,7 @@
     "summary": "In a water users association, management of "
                "irrigation reports",
     "description": "",
-    "version": "10.0.1.1.2",
+    "version": "10.0.1.1.3",
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
