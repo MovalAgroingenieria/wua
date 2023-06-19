@@ -6,14 +6,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-30 16:47+0000\n"
-"PO-Revision-Date: 2023-04-30 16:47+0000\n"
+"POT-Creation-Date: 2023-06-19 06:14+0000\n"
+"PO-Revision-Date: 2023-06-19 06:14+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_pressurized_irrigation
+#: model:mail.template,body_html:base_wua_pressurized_irrigation.email_template_negative_reading
+msgid "\n"
+"                \n"
+"                <p>Se ha creado una lectura negativa con los siguientes detalles:</p>\n"
+"                <ul>\n"
+"                    <li>Identificador del elemento: ${object.name}</li>\n"
+"                    <li>Volumen: ${object.volume} m³</li>\n"
+"                    <li>Diferencia con respecto al último consumo: ${object.presconsumption_volume} m³</li>\n"
+"                </ul>\n"
+"                <p>Por favor, revise el registro y tome las medidas necesarias.</p>\n"
+"                \n"
+"            "
+msgstr "\n"
+"                \n"
+"                <p>Se ha creado una lectura negativa con los siguientes detalles:</p>\n"
+"                <ul>\n"
+"                    <li>Identificador del elemento: ${object.name}</li>\n"
+"                    <li>Volumen: ${object.volume} m³</li>\n"
+"                    <li>Diferencia con respecto al último consumo: ${object.presconsumption_volume} m³</li>\n"
+"                </ul>\n"
+"                <p>Por favor, revise el registro y tome las medidas necesarias.</p>\n"
+"                \n"
+"            "
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_technical_sheet_report_document
@@ -167,7 +192,7 @@ msgstr "Valors agregats"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_pressuresensormeasurement_view_search
 msgid "Agricultural Season"
-msgstr "Campaña"
+msgstr "Campanya"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_agriculturalseason_action
@@ -245,14 +270,14 @@ msgstr "Configuració del mòdul base_wua_infrastructure_primary"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_irrigation_configuration
-msgid "Configuration of irrigation with type of fertilizer"
-msgstr "Configuration of irrigation with type of fertilizer"
+msgid "Configuration of irrigation with type of water"
+msgstr "Configuració de reg amb tipus d'aigua"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_tree
 msgid "Cons. Adj. Value (m3)"
-msgstr "Cons. Adj. Valor (m3)"
+msgstr "Cons. Adj. Valor (m³)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_reading_report_document
@@ -263,13 +288,13 @@ msgstr "Consum real (m³)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_tree
 msgid "Cons. Real Value (m3)"
-msgstr "Cons. Valor Real (m3)"
+msgstr "Cons. Valor Real (m³)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_tree
 msgid "Cons. Value (m3)"
-msgstr "Cons. Valor (m3)"
+msgstr "Consum brut (m³)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_form
@@ -399,12 +424,12 @@ msgstr "Electromagnètic"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_agriculturalseason_view_tree
 msgid "End Date"
-msgstr "Data finalització"
+msgstr "Data final"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_negative_reading
@@ -447,6 +472,11 @@ msgid "Entity (water meter)"
 msgstr "Element (comptador)"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation.action_send_email_on_negative_reading
+msgid "Enviar correo electrónico en lectura negativa"
+msgstr "Enviar correo electrónico en lectura negativa"
+
+#. module: base_wua_pressurized_irrigation
 #: sql_constraint:wua.presconsumption:0
 msgid "Existing Consumption."
 msgstr "Consum existent."
@@ -480,7 +510,7 @@ msgstr "Final Value (m³)"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_assign_start
 msgid "From"
-msgstr "De"
+msgstr "Des del"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_with_gis_pressuresensor
@@ -503,7 +533,7 @@ msgstr "Visor GIS"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_volume
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_presconsumption_volume
 msgid "Gross Value (m³)"
-msgstr "Gross Value (m³)"
+msgstr "Valor brut (m³)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
@@ -583,7 +613,7 @@ msgstr "Data inici"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_initial_volume
 msgid "Initial Value (m³)"
-msgstr "Initial Value (m³)"
+msgstr "Lec. inicial, m³"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_initialization_reading
@@ -631,7 +661,7 @@ msgstr "Irrigation point of a parcel (WC)"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement_is_last_measurement
 msgid "Last Measurement"
-msgstr "Últim mesurament"
+msgstr "Darrera mesurament"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings___last_update
@@ -643,7 +673,7 @@ msgstr "Últim mesurament"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm___last_update
 msgid "Last Modified on"
-msgstr "Darrera modificació feta el"
+msgstr "Última modificació el "
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_is_last_reading
@@ -707,7 +737,7 @@ msgstr "Última actualització el"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_last_measurement_time
 msgid "Last measurement"
-msgstr "Últim mesurament"
+msgstr "Darrera mesurament"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_last_measurement_pressure
@@ -723,6 +753,11 @@ msgstr "Darrera lectura"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_parcel_report_document
 msgid "Last reading date"
 msgstr "Data darrera lectura"
+
+#. module: base_wua_pressurized_irrigation
+#: model:mail.template,subject:base_wua_pressurized_irrigation.email_template_negative_reading
+msgid "Lectura negativa creada - ${object.name}"
+msgstr "Lectura negativa creada - ${object.name}"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_reading_report_document
@@ -744,7 +779,7 @@ msgstr "Mesures"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_watermeter_model
 msgid "Model"
-msgstr "Model"
+msgstr "Modelo"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
@@ -985,12 +1020,12 @@ msgstr "Lectures per imprimir"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_volume_real
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_presconsumption_volume_real
 msgid "Real Value (m³)"
-msgstr "Real Value (m³)"
+msgstr "Valor real (m³)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_serial_number
 msgid "Serial Number"
-msgstr "Nº sèrie"
+msgstr "Núm. de sèrie"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.show_pressuresensormeasurements
@@ -1110,7 +1145,7 @@ msgstr "Data"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_assign_end
 msgid "To"
-msgstr "Per"
+msgstr "a"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_form
@@ -1140,7 +1175,7 @@ msgstr "Sense definir"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
 msgid "Valid"
-msgstr "Valid"
+msgstr "Vàlid"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_one_waterconnection_view_tree
@@ -1169,6 +1204,11 @@ msgid "Validated"
 msgstr "Validat"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_validated
+msgid "Validated Consumption"
+msgstr "Consum validat"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_one_waterconnection_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 msgid "Validated Consumption: No"
@@ -1179,6 +1219,11 @@ msgstr "Validat: No"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 msgid "Validated Consumption: Yes"
 msgstr "Validat: Sí"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_validated
+msgid "Validated Reading"
+msgstr "Lecture validat"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
