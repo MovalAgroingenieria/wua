@@ -25,13 +25,38 @@
         </field>
     </record>
 
+    <record id="res_partner_waterconnection_view_kanban" model="ir.ui.view">
+        <field name="name">Partner Waterconnections (tree view)</field>
+        <field name="model">res.partner.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.res_partner_waterconnection_view_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='oe_kanban_details']" position="after">
+                <hr style="margin:2px; padding:0px; clear:both;"/>
+                <div style="display: flex; justify-content: space-around;">
+                    <a name="action_see_readings" type="object" style="margin-left: 4;">
+                        <span class="fa fa-list" title="Gráficas"/>
+                        <span>Graphs</span>
+                    </a>
+                    <a name="action_see_consumptions" type="object" style="margin-left: 4;">
+                        <span class="fa-moval-irrigation" title="Consumptions"/>
+                        <span>Consumptions</span>
+                    </a>
+                    <a name="action_see_scheduling" type="object" style="margin-left: 4;">
+                        <span class="fa fa-calendar" title="Databases"/>
+                        <span>Schedule</span>
+                    </a>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_partner_form" model="ir.ui.view">
         <field name="name">Partners (form view)</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base_wua_infrastructure.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='%(base_wua_infrastructure.res_partner_irrigationpoints_action)d']" position="attributes">
-                 <attribute name="groups">base_wua.group_wua_user</attribute>
+                <attribute name="groups">base_wua.group_wua_user</attribute>
             </xpath>
         </field>
     </record>
