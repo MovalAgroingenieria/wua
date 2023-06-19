@@ -64,6 +64,9 @@ class ResPartner(models.Model):
         id_search_view = \
             self.env.ref('base_wua_infrastructure.'
                          'res_partner_waterconnection_view_search').id
+        id_kanban_view = \
+            self.env.ref('base_wua_infrastructure.'
+                         'res_partner_waterconnection_view_kanban').id
         waterconnections = self.sudo().get_value_from_translation(
             'base_wua_infrastructure',
             'Waterconnections')
@@ -75,7 +78,8 @@ class ResPartner(models.Model):
             'res_model': 'res.partner.waterconnection',
             'view_type': 'form',
             'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_search_view, 'search')],
+            'views': [(id_tree_view, 'tree'), (id_search_view, 'search'),
+                      (id_kanban_view, 'kanban')],
             'target': 'current',
             'context': context,
             'domain': condition,
@@ -125,3 +129,35 @@ class ResPartnerWaterconnection(models.Model):
                 """)
         except Exception:
             self.env.cr.rollback()
+
+    def action_show_partner_id(self):
+        self.ensure_one()
+        id_form_view = self.env.ref(
+            'base_wua.view_partner_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Partners'),
+            'res_model': 'res.partner',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'views': [(id_form_view, 'form')],
+            'target': 'current',
+            'res_id': self.partner_id.id
+            }
+        return act_window
+
+    def action_show_waterconnection_id(self):
+        self.ensure_one()
+        id_form_view = self.env.ref(
+            'base_wua_infrastructure.wua_waterconnection_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Waterconnection'),
+            'res_model': 'wua.waterconnection',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'views': [(id_form_view, 'form')],
+            'target': 'current',
+            'res_id': self.waterconnection_id.id
+            }
+        return act_window

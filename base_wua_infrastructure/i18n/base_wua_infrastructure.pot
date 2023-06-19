@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-11 06:42+0000\n"
-"PO-Revision-Date: 2023-06-11 06:42+0000\n"
+"POT-Creation-Date: 2023-06-19 06:12+0000\n"
+"PO-Revision-Date: 2023-06-19 06:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -263,6 +263,7 @@ msgid "Delay Time (min)"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_description
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_description
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_description
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_description
@@ -277,7 +278,6 @@ msgid "Dialog box to change the parcel name (code), with irrigation infrastructu
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_display_name
@@ -567,7 +567,6 @@ msgid "Hydraulic sectors of zone"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_id
@@ -721,7 +720,6 @@ msgid "Irrigation Model Type"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_partner_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_partner_id
 msgid "Irrigation Partner"
 msgstr ""
@@ -825,7 +823,6 @@ msgid "Irrigationshed"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration___last_update
@@ -1041,6 +1038,12 @@ msgstr ""
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner
 msgid "Partner of a WUA"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: code:addons/base_wua_infrastructure/models/res_partner.py:139
+#, python-format
+msgid "Partners"
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -1284,6 +1287,11 @@ msgid "Type"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.res_partner_waterconnection_view_kanban
+msgid "WC Image"
+msgstr ""
+
+#. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
 #: selection:wua.parcel.irrigationpoint,type:0
@@ -1359,12 +1367,13 @@ msgid "Water connection"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_waterconnection_id
+#: code:addons/base_wua_infrastructure/models/res_partner.py:155
+#, python-format
 msgid "Waterconnection"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/res_partner.py:71
+#: code:addons/base_wua_infrastructure/models/res_partner.py:74
 #, python-format
 msgid "Waterconnections"
 msgstr ""

@@ -60,6 +60,44 @@
         </field>
     </record>
 
+    <record id="res_partner_waterconnection_view_kanban" model="ir.ui.view">
+        <field name="name">Partner Waterconnections (kanban view)</field>
+        <field name="model">res.partner.waterconnection</field>
+        <field name="arch" type="xml">
+            <kanban create="false" edit="false" delete="false"
+                    class="o_base_wua_infrastructure_rest_partner_waterconnection_view_kanban">
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="o_kanban_card_content">
+                            <h4>
+                                <a name="action_show_waterconnection_id" type="object">
+                                    <span class="fa fa-moval-water-counter" title="Waterconnection"/>
+                                    <field name="waterconnection_id"/>
+                                </a>
+                            </h4>
+                            <div class="o_kanban_image">
+                                <img t-att-src="&quot;/base_wua_infrastructure/static/img/waterconnection.png&quot;"
+                                    alt="WC Image"/>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <div name="description_div" t-if="record.description.raw_value" style="white-space:nowrap; max-width: 94%;">
+                                    <span class="fa fa-file-text-o" title="Description"/>
+                                    <field name="description"/>
+                                </div>
+                                <div name="partner_div" invisible="not context.get('is_wua_user',False)" style="white-space:nowrap; max-width: 98%;">
+                                    <a name="action_show_partner_id" type="object">
+                                        <span class="fa fa-user-circle-o" title="Parter WUA"/>
+                                        <field name="partner_id"/>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="res_partner_waterconnection_view_search" model="ir.ui.view">
         <field name="name">Partner Waterconnections (search view)</field>
         <field name="model">res.partner.waterconnection</field>
