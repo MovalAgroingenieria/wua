@@ -25,7 +25,8 @@
         'views/wua_intake_view.xml',
         'views/wua_invoiceset_view.xml',
         'views/wua_irrigationreport_view.xml',
-        'views/wua_invoicing_config_settings_view.xml'
+        'views/wua_invoicing_config_settings_view.xml',
+        'reports/irrigation_distribution_report.xml',
     ],
     "post_init_hook": "post_init_hook",
     "installable": True,

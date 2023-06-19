@@ -30,6 +30,8 @@
         "views/wua_irrigation_config_settings_view.xml",
         "reports/report_wua_irrigationreport.xml",
         "views/wua_parcel_view.xml",
+        "wizards/wizard_irrigation_distribution_report.xml",
+        "reports/irrigation_distribution_report.xml",
     ],
     "installable": True,
     "application": True,

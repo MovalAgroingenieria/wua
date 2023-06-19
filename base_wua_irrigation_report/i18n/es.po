@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-04 09:16+0000\n"
-"PO-Revision-Date: 2023-01-04 09:16+0000\n"
+"POT-Creation-Date: 2023-06-21 09:30+0000\n"
+"PO-Revision-Date: 2023-06-21 09:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,12 +31,17 @@ msgid "(*) The notes will be printed in irrigation report"
 msgstr "(*) Las notas se imprimirán en el parte de riego."
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wizard_irrigation_distribution_report
+msgid "<b>Note: All irrigation report reports between the dates are selected.</b>"
+msgstr "<b>Nota: Todos los partes de riego entre las dos fechas son seleccionados.</b>"
+
+#. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_form
 msgid "<span class=\"o_stat_text\">\n"
 "                                        reports\n"
 "                                    </span>"
 msgstr "<span class=\"o_stat_text\">\n"
-"                                        partes de riego\n"
+"                                        Partes de riego\n"
 "                                    </span>"
 
 #. module: base_wua_irrigation_report
@@ -46,7 +51,7 @@ msgid "<span class=\"o_stat_text\">\n"
 "                                reports\n"
 "                            </span>"
 msgstr "<span class=\"o_stat_text\">\n"
-"                                partes de riego\n"
+"                                Partes de riego\n"
 "                            </span>"
 
 #. module: base_wua_irrigation_report
@@ -159,6 +164,11 @@ msgid "<span>User signature</span>"
 msgstr "<span>Firma usuario</span>"
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
+msgid "<span>Volume (m³)</span>"
+msgstr "<span>Volumen (m³)</span>"
+
+#. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
 msgid "<span>to </span>"
 msgstr "<span>hasta </span>"
@@ -184,9 +194,19 @@ msgid "<strong>Irrigation Report</strong>"
 msgstr "<strong>Parte de Riego</strong>"
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
+msgid "<strong>Irrigation distribution report</strong>"
+msgstr "<strong>Informe distribución de riego</strong>"
+
+#. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
 msgid "<strong>Irrigation&amp;nbsp;Report</strong>"
 msgstr "<strong>Parte&amp;nbsp;de&amp;nbsp;Riego</strong>"
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
+msgid "<strong>Irrigation&amp;nbsp;Reports</strong>"
+msgstr "<strong>Partes&amp;nbsp;de&amp;nbsp;Riego</strong>"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
@@ -218,14 +238,15 @@ msgstr "Campañas"
 
 #. module: base_wua_irrigation_report
 #: model:ir.actions.server,name:base_wua_irrigation_report.wua_cancel_irrigationreports
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wizard_irrigation_distribution_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
 msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigation_configuration
-msgid "Configuration of irrigation with type of water"
-msgstr "Configuración de riego con tipo de agua"
+msgid "Configuration of irrigation with type of fertilizer"
+msgstr "Configuración del riego con tipo de fertilizante"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_conversion_factor
@@ -233,11 +254,13 @@ msgid "Conversion Factor"
 msgstr "Factor de conversión"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_create_uid
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_create_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_create_date
 msgid "Created on"
 msgstr "Creado el"
@@ -275,6 +298,12 @@ msgid "Description"
 msgstr "Descripción"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model,name:base_wua_irrigation_report.model_wizard_irrigation_distribution_report
+msgid "Dialog box to print Irrigation distribution report"
+msgstr "Diálogo para la impresión del informe de distribución de riego"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_display_name
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
@@ -291,6 +320,7 @@ msgid "Enable possibility to set a different volume time equivalence on each irr
 msgstr "Habilitar la posibilidad de establecer una equivalencia volumen/tiempo en cada parte de riego"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_end_date
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_tree
 msgid "End Date"
 msgstr "Fecha finalización"
@@ -301,14 +331,19 @@ msgid "End Time"
 msgstr "Fecha fin"
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
+msgid "End time"
+msgstr "Fecha fin"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,help:base_wua_irrigation_report.field_wua_irrigation_configuration_data_in_hours
 msgid "Enter the water amount of a irrigation report as a hour-value (if not, as a m³-value)"
-msgstr "Introduce la cantidad de agua de un parte de riego mediante horas (si no, como valor en m³)"
+msgstr "Para indicar el valor del riego en horas (la alternativa es indicarlo en m³)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Elemento (Campaña)"
+msgstr "Elemento (campaña)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_intake
@@ -327,8 +362,9 @@ msgstr "El código de riego ya existe."
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_end_volume
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
 msgid "Final Value (m³)"
-msgstr "Lec. final, m³"
+msgstr "Lec. final (m³)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence_ls
@@ -352,23 +388,35 @@ msgstr "Agrupar por"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_hours
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
 msgid "Hours"
 msgstr "Horas"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_id
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_id
 msgid "ID"
 msgstr "ID"
 
 #. module: base_wua_irrigation_report
+#: code:addons/base_wua_irrigation_report/wizards/wizard_irrigation_distribution_report.py:107
+#: code:addons/base_wua_irrigation_report/wizards/wizard_irrigation_distribution_report.py:121
+#: code:addons/base_wua_irrigation_report/wizards/wizard_irrigation_distribution_report.py:146
+#, python-format
+msgid "Incorrect dates,                the initial date is before the end date."
+msgstr "Fechas incorrectas, la fecha de fin es anterior a la fecha de inicio."
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_initial_date
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_tree
 msgid "Initial Date"
 msgstr "Fecha inicio"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_initial_volume
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
 msgid "Initial Value (m³)"
-msgstr "Lec. inicial, m³"
+msgstr "Lec. inicial (m³)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_intake_id
@@ -402,21 +450,29 @@ msgid "Irrigation Worker"
 msgstr "Regador"
 
 #. module: base_wua_irrigation_report
+#: model:ir.actions.report.xml,name:base_wua_irrigation_report.irrigation_distribution_report
+msgid "Irrigation distribution report"
+msgstr "Informe distribución de riego"
+
+#. module: base_wua_irrigation_report
 #: model:ir.actions.report.xml,name:base_wua_irrigation_report.action_report_wua_irrigationreport
 msgid "Irrigation report"
 msgstr "Parte de Riego"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report___last_update
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_write_uid
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_write_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
@@ -448,9 +504,24 @@ msgid "Notes"
 msgstr "Notas"
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
+msgid "Num."
+msgstr "Nº"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_num_irrigations_reports
+msgid "Num. of selected reports"
+msgstr "Nº partes seleccionados"
+
+#. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
 msgid "Number"
 msgstr "Número"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,help:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_num_irrigations_reports
+msgid "Number of irrigations reports to be added to report."
+msgstr "Número de partes de riego para añadir al informe."
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_of_active_agriculturalseason
@@ -469,11 +540,13 @@ msgstr "Importe vencido que debe este cliente."
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_parcel_id
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
 msgid "Parcel"
 msgstr "Parcela"
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
 msgid "Partner"
 msgstr "Socio"
@@ -484,9 +557,20 @@ msgid "Partner of a WUA"
 msgstr "Socio"
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wizard_irrigation_distribution_report
+msgid "Print"
+msgstr "Imprimir"
+
+#. module: base_wua_irrigation_report
+#: model:ir.actions.act_window,name:base_wua_irrigation_report.action_print_irrigation_distribution_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wizard_irrigation_distribution_report
+msgid "Print irrigation distribution report"
+msgstr "Imprimir informe de distribución de riego"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_real
 msgid "Real Volume (m³)"
-msgstr "Volumen Real (m³)"
+msgstr "Volumen real (m³)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_name
@@ -501,12 +585,22 @@ msgstr "Nº Riego"
 #. module: base_wua_irrigation_report
 #: model:ir.ui.menu,name:base_wua_irrigation_report.base_wua_irrigationreport_menu
 msgid "Reports"
-msgstr "Partes"
+msgstr "Informes"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_irrigationreport_ids
+msgid "Selected reports"
+msgstr "Partes seleccionados"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigation_configuration_hours_sexagesimal
 msgid "Sexagesimal Hours"
 msgstr "En formato HH:MM"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_show_selected_reports
+msgid "Show selected reports"
+msgstr "Mostrar partes seleccionados"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_partner_signature
@@ -517,7 +611,12 @@ msgstr "Firma"
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_report_initial_time
 msgid "Start Time"
-msgstr "Fecha de inicio"
+msgstr "Fecha inicio"
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
+msgid "Start time"
+msgstr "Fecha inicio"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_state
@@ -545,7 +644,7 @@ msgid "The custom flow be 0 or a greater number"
 msgstr "El caudal específico deber ser mayor o igual a 0"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:487
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:498
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr "Las fechas del parte están fuera de la campaña activa."
@@ -588,6 +687,11 @@ msgstr "Hay partes de riego validados en esta campaña, y, por tanto, no es posi
 "Antes sería necesario poner todos los partes de la campaña en estado \"borrador\"."
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_total_volume
+msgid "Total Volume (m³)"
+msgstr "Volumen total (m³)"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_user_id
 msgid "User"
 msgstr "Usuario"
@@ -615,6 +719,11 @@ msgid "Values of hour in the HH:MM format (if not, as decimal format)"
 msgstr "Para indicar las horas en formato sexagesimal (la alternativa es utilizar el formato decimal)"
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_tree_wizard
+msgid "Volume"
+msgstr "Volumen"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_agriculturalseason_volume_time_equivalence
 msgid "Volume per hour (m³)"
 msgstr "Volumen por hora (m³)"
@@ -627,7 +736,7 @@ msgstr "Volumen, en m³, equivalente a 1 hora"
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_irrigationreport
 msgid "WUA Irrigation Report"
-msgstr "Parte de Riego"
+msgstr "Parte de Riego WUA"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_partner_id
@@ -655,8 +764,8 @@ msgid "Without Irrigation Worker"
 msgstr "Sin regador"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:617
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:627
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:628
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:638
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene suficientes permisos para ejecutar esta acción."

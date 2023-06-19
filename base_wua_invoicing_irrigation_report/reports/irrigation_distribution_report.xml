@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="irrigation_distribution_report_report_document" inherit_id="base_wua_irrigation_report.irrigation_distribution_report_report_document">
+        <xpath expr="//th[@name='th_parcel']" position="after">
+            <th name="th_product">Product</th>
+        </xpath>
+        <xpath expr="//td[@name='td_parcel']" position="after">
+            <td name="td_product">
+                <span t-field="ir.product_id"/>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_irrigation_distribution_report" model="ir.ui.view">
+        <field name="name">Wizard to print irrigation distribution report</field>
+        <field name="model">wizard.irrigation.distribution.report</field>
+        <field name="arch" type="xml">
+            <form string="Print irrigation distribution report">
+                <div><b>Note: All irrigation report reports between the dates are selected.</b></div>
+                <br/>
+                <group name="main_data">
+                    <group>
+                        <field name="initial_date"/>
+                        <field name="end_date"/>
+                    </group>
+                    <group>
+                        <field name="num_irrigations_reports"/>
+                        <field name="show_selected_reports"/>
+                        <div></div>
+                    </group>
+                </group>
+                <field name="irrigationreport_ids" attrs="{'invisible': [('show_selected_reports','=', False)]}" nolabel="1"
+                    context="{'tree_view_ref': 'base_wua_irrigation_report.wua_irrigationreport_view_tree_wizard'}"/>
+                <footer>
+                    <button name="print_irrigation_distribution_report"
+                        type="object" string="Print" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_print_irrigation_distribution_report"
+        name="Print irrigation distribution report"
+        res_model="wizard.irrigation.distribution.report"
+        src_model="wua.irrigationreport"
+        key2="client_action_multi"
+        view_mode="form"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+
+</odoo>

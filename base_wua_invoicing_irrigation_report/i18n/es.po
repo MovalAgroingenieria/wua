@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-30 16:27+0000\n"
-"PO-Revision-Date: 2022-11-30 16:27+0000\n"
+"POT-Creation-Date: 2023-06-21 09:51+0000\n"
+"PO-Revision-Date: 2023-06-21 09:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,7 @@ msgstr "<span>Precio</span>"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_invoicing_irrigation_report.report_wua_irrigationreport_document
 msgid "<span>Product</span>"
-msgstr "<span>Producto</span>"
+msgstr "<span>Tipo de agua</span>"
 
 #. module: base_wua_invoicing_irrigation_report
 #: sql_constraint:wua.irrigationreport:0
@@ -41,8 +41,8 @@ msgid "Add to invoice set"
 msgstr "Añadir al lote"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:110
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:122
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:111
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:123
 #, python-format
 msgid "An invoiced irrigation report cannot return to draft status."
 msgstr "Un parte de riego facturado no puede volver al estado borrador."
@@ -109,12 +109,12 @@ msgstr "Fecha fin"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_product_category
 msgid "Entity (WUA Product Category)"
-msgstr "Elemento (Categoría de producto)"
+msgstr "Entity (WUA Product Category)"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Elemento (Plantilla de producto)"
+msgstr "Entity (WUA Product Template)"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_intake
@@ -124,12 +124,12 @@ msgstr "Elemento (captación)"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Elemento (lote)"
+msgstr "Elemento (lote de facturas)"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_invoiceset_line
 msgid "Entity (line of a WUA invoice set)"
-msgstr "Elemento (línea de lote de facturas)"
+msgstr "Elemento (línea de lote)"
 
 #. module: base_wua_invoicing_irrigation_report
 #: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:333
@@ -189,7 +189,7 @@ msgstr "Factura"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_account_invoice_line
 msgid "Invoice Line"
-msgstr "Línea de factura"
+msgstr "Linea de Factura"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_invoiceline_ids
@@ -295,14 +295,9 @@ msgid "Line"
 msgstr "Linea"
 
 #. module: base_wua_invoicing_irrigation_report
-#: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_partner_id
-msgid "Partner"
-msgstr "Socio"
-
-#. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Socio"
+msgstr "Partner of a WUA"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_invoicing_irrigation_report.view_partner_form
@@ -313,6 +308,11 @@ msgstr "Modo de pago"
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_price_unit
 msgid "Price (m³)"
 msgstr "Precio (m³)"
+
+#. module: base_wua_invoicing_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_invoicing_irrigation_report.irrigation_distribution_report_report_document
+msgid "Product"
+msgstr "Producto"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_irrigationreport_readings_data_in_detail
@@ -375,6 +375,11 @@ msgid "WUA Irrigation Report"
 msgstr "Parte de Riego WUA"
 
 #. module: base_wua_invoicing_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_partner_id
+msgid "WUA Partner"
+msgstr "Socio"
+
+#. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_intake_product_id
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_product_id
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_product_id
@@ -386,10 +391,10 @@ msgstr "Tipo de agua"
 #. module: base_wua_invoicing_irrigation_report
 #: model:product.template,name:base_wua_invoicing_irrigation_report.product_11
 msgid "Water of irrigation reports"
-msgstr "Agua de Parte de Riego"
+msgstr "Water of irrigation reports"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:116
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:117
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene suficientes permisos para realizar esta acción."
@@ -403,5 +408,5 @@ msgstr "albarán nº "
 #. module: base_wua_invoicing_irrigation_report
 #: model:product.uom,name:base_wua_invoicing_irrigation_report.product_uom_m3
 msgid "m3"
-msgstr "m³"
+msgstr "m3"
 

@@ -117,6 +117,23 @@
         </field>
     </record>
 
+    <record id="wua_irrigationreport_view_tree_wizard" model="ir.ui.view">
+        <field name="name">Irrigation Reports Wizard (tree view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_irrigationreport_irrigationreport_view_tree_wizard">
+                <field name="irrigationreport_number"/>
+                <field name="partner_id"/>
+                <field name="parcel_id"/>
+                <field name="report_initial_time"/>
+                <field name="report_end_time"/>
+                <field name="hours" digits="[32, 2]" widget="float_time"/>
+                <field name="volume_real" string="Volume"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="wua_irrigationreport_view_search" model="ir.ui.view">
         <field name="name">Irrigation Reports (search view)</field>
         <field name="model">wua.irrigationreport</field>

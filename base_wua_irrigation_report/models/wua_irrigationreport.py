@@ -421,6 +421,17 @@ class WuaIrrigationReport(models.Model):
                         "//field[@name='volume_time_equivalence_ls']"):
                     node.set('invisible', '1')
                     node.set('modifiers', '{"invisible": true}')
+            # Hide wizard Irrigation distribution in form view
+            actions_to_remove = \
+                ['base_wua_irrigation_report.'
+                 'action_print_irrigation_distribution_report']
+            actions_menu = res.get('toolbar', {}).get('action', [])
+            actions_to_show = []
+            if actions_menu:
+                for action_menu in actions_menu:
+                    if action_menu['xml_id'] not in actions_to_remove:
+                        actions_to_show.append(action_menu)
+                res['toolbar']['action'] = actions_to_show
             res['arch'] = etree.tostring(doc)
         if view_type == 'tree':
             doc = etree.XML(res['arch'])

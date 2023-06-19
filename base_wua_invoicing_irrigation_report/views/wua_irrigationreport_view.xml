@@ -48,6 +48,17 @@
         </field>
     </record>
 
+    <record id="wua_irrigationreport_view_tree_wizard" model="ir.ui.view">
+        <field name="name">Irrigation Reports Wizard (tree view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_irrigation_report.wua_irrigationreport_view_tree_wizard"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']" position="after">
+                <field name="product_id"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="wua_irrigationreport_view_search" model="ir.ui.view">
         <field name="name">Irrigation Reports (search view)</field>
         <field name="model">wua.irrigationreport</field>
