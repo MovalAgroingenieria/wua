@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_quota_view_form" model="ir.ui.view">
+        <field name="name">Quotas (form view)</field>
+        <field name="model">wua.quota</field>
+        <field name="inherit_id"
+               ref="base_wua_quota_management_with_provisional_quota.wua_quota_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_get_particularpresconsumptions']"
+                   position="after">
+                <button name="action_get_controlhydricmovements"
+                        type="object" class="oe_stat_button"
+                        icon="fa-monitoring-control"
+                        attrs="{'invisible':[('provisional_extra_consumption','=',0)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Hydric Mov.</span>
+                        <span class="o_stat_text">(extra)</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//button[@name='action_get_particularpresconsumptions']"
+                   position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
