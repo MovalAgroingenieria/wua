@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-22 11:05+0000\n"
-"PO-Revision-Date: 2022-06-22 11:05+0000\n"
+"POT-Creation-Date: 2023-06-21 14:55+0000\n"
+"PO-Revision-Date: 2023-06-21 14:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,7 +36,7 @@ msgid "(TIN:"
 msgstr "(NIF:"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:342
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:378
 #, python-format
 msgid "<b>Notes from report request:</b><br\\>"
 msgstr "<b>Notas de la petición:</b><br\\>"
@@ -168,7 +168,7 @@ msgid "<strong>Report&amp;nbsp;request</strong>"
 msgstr "<strong>Petición&amp;nbsp;Parte&amp;nbsp;de&amp;nbsp;Riego</strong>"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:333
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:362
 #, python-format
 msgid "A portal user cannot modify a validated report request."
 msgstr "Un usuario de portal no puede modificar una Petición validada."
@@ -194,6 +194,11 @@ msgid "C A N C E L L E D"
 msgstr "C A N C E L A D O"
 
 #. module: base_wua_irrigation_report_request
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_calendar_display_name
+msgid "Calendar Display Name"
+msgstr "Nombre a mostrar en el calendario"
+
+#. module: base_wua_irrigation_report_request
 #: model:ir.actions.server,name:base_wua_irrigation_report_request.wua_cancel_reportrequests
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_form
 msgid "Cancel"
@@ -206,9 +211,15 @@ msgid "Cancelled"
 msgstr "Cancelada"
 
 #. module: base_wua_irrigation_report_request
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:368
+#, python-format
+msgid "Cannot change request date of a validated report request "
+msgstr "No se puede modificar la fecha de solicitud de una petición de riego validada."
+
+#. module: base_wua_irrigation_report_request
 #: model:ir.model,name:base_wua_irrigation_report_request.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuration of irrigation with type of water"
+msgstr "Configuración de riego con tipo de agua"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_create_uid
@@ -218,7 +229,7 @@ msgstr "Creado por"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_is_portal_user
 msgid "Created by the partner"
-msgstr "Creada por el socio"
+msgstr "Creada por el regante"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_create_date
@@ -248,12 +259,17 @@ msgstr "Elemento (categoría de producto)"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model,name:base_wua_irrigation_report_request.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Elemento (campaña)"
+msgstr "Elemento (Campaña)"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model,name:base_wua_irrigation_report_request.model_wua_reportrequest
 msgid "Entity (irrigation-report request)"
 msgstr "Elemento (Petición parte de riego)"
+
+#. module: base_wua_irrigation_report_request
+#: model:ir.model,name:base_wua_irrigation_report_request.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Entity (parcel)"
 
 #. module: base_wua_irrigation_report_request
 #: sql_constraint:wua.reportrequest:0
@@ -266,7 +282,9 @@ msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: base_wua_irrigation_report_request
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:215
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_hours
+#, python-format
 msgid "Hours"
 msgstr "Horas"
 
@@ -305,7 +323,7 @@ msgid "Irrigation report request"
 msgstr "Petición parte de riego"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:223
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:250
 #, python-format
 msgid "It is not possible to validate the request: the indicated type of water does not appear in any intake."
 msgstr "No es posible validar la petición: el tipo de agua indicada no aparece asociada a ninguna captación."
@@ -313,7 +331,7 @@ msgstr "No es posible validar la petición: el tipo de agua indicada no aparece 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest___last_update
 msgid "Last Modified on"
-msgstr "Última modificación en"
+msgstr "Última actualización por"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_write_uid
@@ -323,7 +341,7 @@ msgstr "Última actualización por"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_write_date
 msgid "Last Updated on"
-msgstr "Última actualización en"
+msgstr "Última actualización el"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_mapped_to_irrigationreport
@@ -399,12 +417,6 @@ msgid "Parcel"
 msgstr "Parcela"
 
 #. module: base_wua_irrigation_report_request
-#: model:ir.model,name:base_wua_irrigation_report_request.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcelas (integradas GIS)"
-
-#. module: base_wua_irrigation_report_request
-#: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_partner_id
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_search
 msgid "Partner"
 msgstr "Socio"
@@ -427,6 +439,7 @@ msgstr "Reactivar"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_irrigationreport_reportrequest_id
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_calendar
 msgid "Report Request"
 msgstr "Petición de parte"
 
@@ -436,6 +449,7 @@ msgstr "Petición de parte"
 #: model:ir.actions.act_window,name:base_wua_irrigation_report_request.wua_reportrequest_action
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_irrigationreport_reportrequest_ids
 #: model:ir.ui.menu,name:base_wua_irrigation_report_request.reportrequest_menu
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report_request.wua_reportrequest_view_pivot
 #, python-format
 msgid "Report Requests"
 msgstr "Peticiones de parte"
@@ -448,7 +462,7 @@ msgstr "Código petición de parte"
 #. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_request_date
 msgid "Request Date"
-msgstr "Fecha solicitud"
+msgstr "Fecha de solicitud"
 
 #. module: base_wua_irrigation_report_request
 #: model:ir.actions.server,name:base_wua_irrigation_report_request.wua_reset_reportrequests
@@ -472,13 +486,13 @@ msgid "Text for request report"
 msgstr "Texto para la peticiones de riego"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:237
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:264
 #, python-format
 msgid "The associated irrigation report is already validated. It is not possible to return the draft state."
 msgstr "El parte de riego asociado a esta petición ya ha sido validado. No es posible volver al estado borrador."
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:274
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:301
 #, python-format
 msgid "The partner must be the irrigator of the parcel."
 msgstr "El socio debe ser el regante de la parcela."
@@ -520,22 +534,27 @@ msgid "WUA Irrigation Report"
 msgstr "Parte de Riego WUA"
 
 #. module: base_wua_irrigation_report_request
+#: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_partner_id
+msgid "WUA Partner"
+msgstr "Socio"
+
+#. module: base_wua_irrigation_report_request
 #: model:ir.model.fields,field_description:base_wua_irrigation_report_request.field_wua_reportrequest_product_id
 msgid "Water Type"
 msgstr "Tipo de agua"
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:320
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:329
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:347
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:357
 #, python-format
 msgid "You do not have permission to edit a report request."
 msgstr "No tiene permisos para editar la petición de parte."
 
 #. module: base_wua_irrigation_report_request
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:362
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:371
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:380
-#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:389
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:398
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:407
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:416
+#: code:addons/base_wua_irrigation_report_request/models/wua_reportrequest.py:425
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene permisos para ejecutar esta acción."

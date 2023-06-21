@@ -151,6 +151,11 @@ class WuaReportrequest(models.Model):
         compute='_compute_credit_overdue',
         help="Overdue amount this customer owes you.")
 
+    calendar_display_name = fields.Char(
+        string="Calendar Display Name",
+        compute="_compute_calendar_display_name"
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing report request name.')
         ]
@@ -195,6 +200,26 @@ class WuaReportrequest(models.Model):
             if (record.partner_id and record.currency_id):
                 credit_overdue = record.partner_id.credit_overdue
             record.credit_overdue = credit_overdue
+
+    @api.multi
+    def _compute_calendar_display_name(self):
+        data_in_hours = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'data_in_hours')
+        hours_sexagesimal = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'hours_sexagesimal')
+        for record in self:
+            fields_to_concatenate = []
+            if (record.partner_id):
+                fields_to_concatenate.append(record.partner_id.display_name)
+            if (data_in_hours):
+                fields_to_concatenate.append(record.hours + ' ' + _('Hours'))
+            else:
+                volume_parsed = self.env['wua.parcel'].\
+                    transform_float_to_locale(record.volume, 1)
+                fields_to_concatenate.append(volume_parsed + u' (m³)')
+            if (record.product_id):
+                fields_to_concatenate.append(record.product_id.display_name)
+            record.calendar_display_name = ' - '.join(fields_to_concatenate)
 
     @api.multi
     def name_get(self):
@@ -325,15 +350,24 @@ class WuaReportrequest(models.Model):
 
     @api.multi
     def write(self, vals):
-        if len(self) == 1 and self.is_portal_user:
-            if (not self.env['ir.values'].get_default(
-               'wua.configuration', 'wua_portal_user_can_edit')):
+        if len(self) == 1:
+            if (self.is_portal_user):
+                if (not self.env['ir.values'].get_default(
+                        'wua.configuration', 'wua_portal_user_can_edit')):
+                    raise exceptions.UserError(_(
+                        'You do not have permission to edit a report '
+                        'request.'))
+                if ('state' in vals and vals['state'] == 'validated' or
+                        'state' not in vals and self.state == 'validated'):
+                    raise exceptions.UserError(_(
+                        'A portal user cannot modify a validated report '
+                        'request.'))
+            # Check request_date doesn't change after validated
+            if ('request_date' in vals and self.state == 'validated' and
+                    self.request_date != vals['request_date']):
                 raise exceptions.UserError(_(
-                    'You do not have permission to edit a report request.'))
-            if ('state' in vals and vals['state'] == 'validated' or
-               'state' not in vals and self.state == 'validated'):
-                raise exceptions.UserError(_(
-                    'A portal user cannot modify a validated report request.'))
+                    'Cannot change request date of a validated report request '
+                ))
         return super(WuaReportrequest, self).write(vals)
 
     def _add_irrigation_report_from_request(self, request):
