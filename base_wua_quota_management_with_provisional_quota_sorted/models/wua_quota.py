@@ -17,8 +17,6 @@ class WuaQuota(models.Model):
     # For client classes (control consumptions...)
     def create_controlhydricmovements_presconsumption(self,
                                                       controlpresconsumption):
-        # Provisional
-        print 'create_controlhydricmovements_presconsumption'
         waterconnection = controlpresconsumption.waterconnection_id
         volume = controlpresconsumption.volume_real
         quotaperiod = self._get_quotaperiod(
