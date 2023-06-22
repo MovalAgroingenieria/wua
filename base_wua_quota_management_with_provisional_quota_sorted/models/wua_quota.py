@@ -17,6 +17,8 @@ class WuaQuota(models.Model):
     # For client classes (control consumptions...)
     def create_controlhydricmovements_presconsumption(self,
                                                       controlpresconsumption):
+        # Provisional
+        print 'create_controlhydricmovements_presconsumption'
         waterconnection = controlpresconsumption.waterconnection_id
         volume = controlpresconsumption.volume_real
         quotaperiod = self._get_quotaperiod(
@@ -217,31 +219,33 @@ class WuaQuota(models.Model):
                 select event_time from wua_hydricmovement
                 where type = 'pres_consumption' and
                 quotaperiod_id = %s and
-                partner_id = %s and
-                superproduct_id = %s order by event_time desc
-                limit 1""", (quotaperiod.id, partner.id, superproduct.id,))
+                partner_id = %s
+                order by event_time desc
+                limit 1""", (quotaperiod.id, partner.id,))
             query_results = self.env.cr.dictfetchall()
+            lower_time_extra_consumptions = quotaperiod.initial_date + \
+                ' 00:00:00'
             if (query_results and
                query_results[0].get('event_time') is not None):
                 lower_time_extra_consumptions = \
                     query_results[0].get('event_time')
-                # 3. Get the accumulated volume of control hydric-movements
-                #    with "event_time" greather than
-                #    "lower_time_extra_consumptions".
-                self.env.cr.execute("""
-                    select coalesce(sum(volume), 0) as volume
-                    from wua_controlhydricmovement
-                    where quotaperiod_id = %s and
-                    partner_id = %s and
-                    superproduct_id = %s and
-                    type = 'pres_consumption' and
-                    event_time > %s""", (quotaperiod.id, partner.id,
-                                         superproduct.id,
-                                         lower_time_extra_consumptions))
-                query_results = self.env.cr.dictfetchall()
-                if (query_results and
-                   query_results[0].get('volume') is not None):
-                    resp = query_results[0].get('volume')
+            # 3. Get the accumulated volume of control hydric-movements
+            #    with "event_time" greather than
+            #    "lower_time_extra_consumptions".
+            self.env.cr.execute("""
+                select coalesce(sum(volume), 0) as volume
+                from wua_controlhydricmovement
+                where quotaperiod_id = %s and
+                partner_id = %s and
+                superproduct_id = %s and
+                type = 'pres_consumption' and
+                event_time > %s""", (quotaperiod.id, partner.id,
+                                     superproduct.id,
+                                     lower_time_extra_consumptions))
+            query_results = self.env.cr.dictfetchall()
+            if (query_results and
+               query_results[0].get('volume') is not None):
+                resp = query_results[0].get('volume')
         return resp
 
     @api.multi
@@ -276,7 +280,8 @@ class WuaQuota(models.Model):
             quotaperiod.end_date, '%Y-%m-%d') + datetime.timedelta(days=1)
         last_hydricmovement_of_pressurized_irrigation = \
             self.env['wua.hydricmovement'].search(
-                [('quota_id', '=', quota.id),
+                [('quotaperiod_id', '=', quota.quotaperiod_id.id),
+                 ('partner_id', '=', quota.partner_id.id),
                  ('type', '=', 'pres_consumption')],
                 order='event_time desc', limit=1)
         if last_hydricmovement_of_pressurized_irrigation:
