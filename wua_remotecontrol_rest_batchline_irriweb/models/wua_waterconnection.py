@@ -42,17 +42,17 @@ class WuaWaterconnection(models.Model):
                 url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
-                body = '<iframe sandbox="allow-scripts allow-forms ' + \
+                record.html_readings_frame = \
+                    '<p style="text-align:center;margin-top:2px;' + \
+                    'margin-left:1px;margin-right:1px; overflow: auto;">' + \
+                    '<iframe sandbox="allow-scripts allow-forms ' + \
                     'allow-pointer-lock allow-same-origin" ' + \
                     'id="iframe_readings" scrolling="no" ' + \
                     'marginheight="0" marginwidth="0" ' + \
                     'loading=lazy src="' + url + '" ' + \
                     'frameborder="0" height="' + str(height) + '" ' + \
                     'width="' + str(width) + '"' + \
-                    '></iframe>'
-                record.html_readings_frame = \
-                    '<div class="panel-body text-center">' + \
-                    body + '</div>'
+                    '></iframe></p>'
             else:
                 record.html_readings_frame = ''
 
