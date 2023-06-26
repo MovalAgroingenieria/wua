@@ -149,6 +149,7 @@ class WuaInvoiceset(models.Model):
                              categ_code, invoice_data_line, data)
         data['waterconnection_id'] = invoice_data_line['key1']
         data['presconsumption_id'] = invoice_data_line['key2']
+        data['hydricmovement_id'] = invoice_data_line['hydricmovement_id']
         return data
 
     def after_cancel_invoiceset(self, invoiceset):
