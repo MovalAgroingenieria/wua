@@ -24,6 +24,12 @@ class WuaWateringrequest(models.Model):
             partner = partners.browse(user.partner_id.id)
             if partner.is_wua_partner:
                 resp = partner.id
+            else:
+                parent_partner = False
+                if partner.parent_id:
+                    parent_partner = partner.parent_id
+                if parent_partner and parent_partner.is_wua_partner:
+                    resp = parent_partner.id
         return resp
 
     wateringperiod_id = fields.Many2one(
@@ -201,6 +207,12 @@ class WuaWateringrequest(models.Model):
                 partner = partners.browse(user.partner_id.id)
                 if partner.is_wua_partner:
                     is_portal_user = True
+                else:
+                    parent_partner = False
+                    if partner.parent_id:
+                        parent_partner = partner.parent_id
+                    if parent_partner and parent_partner.is_wua_partner:
+                        is_portal_user = True
             record.is_portal_user = is_portal_user
 
     @api.depends('partner_id')
