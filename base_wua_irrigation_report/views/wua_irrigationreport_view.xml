@@ -39,9 +39,9 @@
                                              'no_create_edit':True}"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="report_initial_time"
-                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                                   attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="report_end_time"
-                                   attrs="{'readonly': [('id', '>', 0)]}"/>
+                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             <field name="partner_id"
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
