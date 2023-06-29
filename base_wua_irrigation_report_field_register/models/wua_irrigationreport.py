@@ -128,6 +128,12 @@ class WuaIrrigationReport(models.Model):
             epoch_end_time = (datetime.datetime.strptime(
                 irrigationreport.report_end_time, '%Y-%m-%d %H:%M:%S') -
                 datetime.datetime(1970, 1, 1)).total_seconds() * 1000
+        # CHeck if irrigationreport have parcel id associated
+        parcel_id = -1
+        parcel_name = ''
+        if (irrigationreport.parcel_id):
+            parcel_id = irrigationreport.parcel_id.id
+            parcel_name = irrigationreport.parcel_id.name
         partner_signature = irrigationreport.partner_signature
         # Format for dataURL
         if (partner_signature):
@@ -153,6 +159,8 @@ class WuaIrrigationReport(models.Model):
             'id': irrigationreport.id,
             'partner': irrigationreport.partner_id.id,
             'partner_name': irrigationreport.partner_id.name,
+            'parcel': parcel_id,
+            'parcel_name': parcel_name,
             'partner_signature': partner_signature,
             'intake': irrigationreport.intake_id.id,
             'intake_name': irrigationreport.intake_id.name,
@@ -177,41 +185,37 @@ class WuaIrrigationReport(models.Model):
         }
 
     @api.model
-    def create_field_irrigationreport(
-            self, watering_element_type, watering_element_id,
-            irrigationreport_writer_id,
-            initial_date, end_date, conversion_factor,
-            volume_time_equivalence, volume_time_equivalence_ls,
-            partner_id, intake_id, notes='', partner_signature='',
-            irrigationreport_img=''):
+    def create_field_irrigationreport(self, data):
         vals = {}
         # Get the real type from
-        vals[self._possible_types_id[watering_element_type]] = \
-            watering_element_id
-        vals['irrigationreport_writer_id'] = irrigationreport_writer_id
-        vals['user_id'] = irrigationreport_writer_id
-        vals['partner_id'] = partner_id
+        vals[self._possible_types_id[data['watering_element_type']]] = \
+            data['watering_element_id']
+        vals['irrigationreport_writer_id'] = data['irrigationreport_writer_id']
+        vals['user_id'] = data['irrigationreport_writer_id']
+        vals['partner_id'] = data['partner_id']
+        if (data['parcel_id'] > 0):
+            vals['parcel_id'] = data['parcel_id']
         # Initial date and end date must be on epoch format
         initial_date_formatted = datetime.datetime.fromtimestamp(
-            initial_date, pytz.utc)
+            data['initial_date'], pytz.utc)
         initial_date_str = initial_date_formatted.strftime('%Y-%m-%d %H:%M:%S')
         end_date_formatted = datetime.datetime.fromtimestamp(
-            end_date, pytz.utc)
+            data['end_date'], pytz.utc)
         end_date_str = end_date_formatted.strftime('%Y-%m-%d %H:%M:%S')
         vals['report_initial_time'] = initial_date_str
         vals['report_end_time'] = end_date_str
-        vals['conversion_factor'] = conversion_factor
-        vals['volume_time_equivalence'] = volume_time_equivalence
-        vals['volume_time_equivalence_ls'] = volume_time_equivalence_ls
-        difference_time = end_date_formatted - initial_date_formatted
+        vals['conversion_factor'] = data['conversion_factor']
+        vals['volume_time_equivalence'] = data['volume_time_equivalence']
+        vals['volume_time_equivalence_ls'] = data['volume_time_equivalence_ls']
+        difference_time = end_date_formatted - data['initial_date_formatted']
         # 3600.0 To getting a float result of hours
         vals['hours'] = difference_time.days * 24 + \
             difference_time.seconds / 3600.0
-        vals['notes'] = notes
-        if (partner_signature):
-            vals['partner_signature'] = partner_signature
-        if (irrigationreport_img):
-            vals['irrigationreport_img'] = irrigationreport_img
+        vals['notes'] = data['notes']
+        if (data['partner_signature']):
+            vals['partner_signature'] = data['partner_signature']
+        if (data['irrigationreport_img']):
+            vals['irrigationreport_img'] = data['irrigationreport_img']
         has_default_intake = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'has_default_field_irrigationreport_intake_id')
@@ -220,7 +224,7 @@ class WuaIrrigationReport(models.Model):
                 'wua.irrigation.configuration',
                 'default_field_irrigationreport_intake_id')
         else:
-            vals['intake_id'] = intake_id
+            vals['intake_id'] = data['intake_id']
         # Get default water from the default intake water
         intake_obj = self.env['wua.intake'].browse(vals['intake_id'])
         vals['product_id'] = intake_obj.product_id.id
@@ -230,32 +234,30 @@ class WuaIrrigationReport(models.Model):
         return self.format_irrigationreport(new_irrigationreport)
 
     @api.model
-    def update_field_irrigationreport(
-        self, irrigationreport_id, end_date, conversion_factor,
-            volume_time_equivalence, volume_time_equivalence_ls, hours,
-            intake_id, notes, partner_signature, irrigationreport_img):
+    def update_field_irrigationreport(self, data):
         vals = {}
         irrigationreport = self.env['wua.irrigationreport'].browse(
-            irrigationreport_id)
-        vals['notes'] = notes
-        if (partner_signature):
-            vals['partner_signature'] = partner_signature
-        if (irrigationreport_img):
-            vals['irrigationreport_img'] = irrigationreport_img
+            data['irrigationreport_id'])
+        vals['notes'] = data['notes']
+        if (data['partner_signature']):
+            vals['partner_signature'] = data['partner_signature']
+        if (data['irrigationreport_img']):
+            vals['irrigationreport_img'] = data['irrigationreport_img']
         if (irrigationreport.state == 'draft'):
-            vals['hours'] = hours
-            vals['conversion_factor'] = conversion_factor
-            vals['volume_time_equivalence'] = volume_time_equivalence
-            vals['volume_time_equivalence_ls'] = volume_time_equivalence_ls
+            vals['hours'] = data['hours']
+            vals['conversion_factor'] = data['conversion_factor']
+            vals['volume_time_equivalence'] = data['volume_time_equivalence']
+            vals['volume_time_equivalence_ls'] = data[
+                'volume_time_equivalence_ls']
             end_date_formatted = datetime.datetime.fromtimestamp(
-                end_date, pytz.utc)
+                data['end_date'], pytz.utc)
             end_date_str = end_date_formatted.strftime('%Y-%m-%d %H:%M:%S')
             vals['report_end_time'] = end_date_str
             has_default_intake = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration',
                 'has_default_field_irrigationreport_intake_id')
             if (not has_default_intake):
-                vals['intake_id'] = intake_id
+                vals['intake_id'] = data['intake_id']
                 # Get default water from the default intake water
                 intake_obj = self.env['wua.intake'].browse(vals['intake_id'])
                 vals['product_id'] = intake_obj.product_id.id
