@@ -25,13 +25,6 @@
                 <!-- Vars -->
                 <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
-                <div name="title" class="text-center" style="margin-top:0px; padding-top:0px;">
-                    <div style="display:inline-blok">
-                        <strong style="font-size: 1.2em;">Assembly citation:</strong>
-                        <span t-field="o.assembly_id.issue"/>
-                    </div>
-                </div>
-
                 <div name="wua_partner_data">
                     <div class="row" style="margin-top: 24px;">
                         <div class="col-xs-12" style="display: table;">
@@ -65,6 +58,18 @@
                     </div>
                 </div>
 
+                <div>&amp;nbsp;</div>
+                <div>&amp;nbsp;</div>
+                <div>&amp;nbsp;</div>
+                <div>&amp;nbsp;</div>
+
+                <div name="title" class="text-center">
+                    <div style="display:inline-blok;font-size: 1.2em;">
+                        <strong>Convocation:</strong>
+                        <span t-field="o.assembly_id.issue"/>
+                    </div>
+                </div>
+
                 <div name="citation_data">
                     <div name="publication_text" style="margin-top: 24px;">
                         <t t-if="o.assembly_id.rendered_publication_text">
@@ -83,7 +88,9 @@
                                         <td name="td_number" width="4%" class="text-center" style="border: 0;">
                                             <span t-field="item.number"/><span>.-</span>
                                         </td>
-                                        <td name="th_description" style="border: 0;"><span t-field="item.description"/></td>
+                                        <td name="th_description" align="justify" style="border: 0;">
+                                            <span t-field="item.description"/>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
