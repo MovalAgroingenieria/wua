@@ -12,7 +12,7 @@ class WuaIrrigationReport(models.Model):
 
     _FIELDS_FOR_HMOVEMENT_CALCULUS = [
         'initial_volume', 'end_volume', 'hours', 'adjustement_volume',
-        'product_id']
+        'product_id', 'report_end_time']
 
     hydricmovement_ids = fields.One2many(
         string='Hydric Consumptions',
