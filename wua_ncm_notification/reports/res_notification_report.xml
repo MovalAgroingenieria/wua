@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
+
     <template id="report_res_notification_document" inherit_id="ncm_notifmgmt.report_res_notification_document">
         <xpath expr="//div[@name='section_rendered_fields']" position="before">
             <t t-set="show_address" t-value="not o.env['ir.values'].get_default('res.notif.config.settings', 'hide_address')"/>
@@ -39,5 +39,36 @@
             </t>
         </xpath>
     </template>
+
+    <template id="dynamic_template_caller">
+        <t t-if="o.notificationset_id.notificationset_type_id.attach_report_id.report_name">
+            <t t-if="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_partner_report_document'">
+                <t t-call="base_wua.wua_partner_report_document"/>
+            </t>
+            <t t-elif="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_lessor_report_document'">
+                <t t-call="base_wua.wua_lessor_report_document"/>
+            </t>
+            <t t-elif="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_partner_report_document_consent'">
+                <t t-call="base_wua.wua_partner_report_document_consent"/>
+            </t>
+            <t t-elif="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_tenant_report_document'">
+                <t t-call="base_wua.wua_tenant_report_document"/>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_res_notification" inherit_id="ncm_notifmgmt.report_res_notification">
+        <xpath expr="//t[@name='t_call_notification_external_lyout']" position="after">
+            <!-- Store old_docs variable before calling new report, maybe not necessary but just in case -->
+            <t t-set="old_docs" t-value="docs"/>
+            <!-- Set new docs as partner_id (Maybe other value future) -->
+            <t t-set="docs" t-value="o.partner_id"/>
+            <!-- Call report attached report -->
+            <t t-call="wua_ncm_notification.dynamic_template_caller"/>
+            <!-- Restore old docs -->
+            <t t-set="docs" t-value="old_docs"/>
+        </xpath>
+    </template>
+
 
 </odoo>

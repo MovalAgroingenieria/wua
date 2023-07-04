@@ -19,6 +19,13 @@ class ResNotificationsetType(models.Model):
     include_partner_if_supplier = fields.Boolean(
         default=False,)
 
+    attach_report_id = fields.Many2one(
+        string='Report to Attach',
+        comodel_name='ir.actions.report.xml',
+        domain=[('model', '=', 'res.partner')],
+        index=True,
+        ondelete='restrict',)
+
     def _get_a_partner(self):
         resp = None
         conditions = []
