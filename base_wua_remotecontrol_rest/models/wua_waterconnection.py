@@ -168,10 +168,6 @@ class WuaWaterconnection(models.Model):
             label_valve_scheduled = _('Valve Scheduled: Yes')
         else:
             label_valve_scheduled = _('Valve Scheduled: No')
-        if (self.last_valve_error):
-            label_valve_scheduled = _('Valve Scheduled: Yes')
-        else:
-            label_valve_scheduled = _('Valve Scheduled: No')
         info_color = 'unset'
         if (self.last_data_time):
             data_time = datetime.datetime.strptime(
