@@ -462,7 +462,7 @@ class WuaDrainageditch(models.Model):
     def name_get(self):
         result = []
         from_parcel_form_view = False
-        if request.__dict__ and 'httprequest' in request.__dict__:
+        if request and request.__dict__ and 'httprequest' in request.__dict__:
             httprequest = str(request.__dict__['httprequest'])
             if httprequest.find('call_kw/wua.parcel') != -1:
                 from_parcel_form_view = True
