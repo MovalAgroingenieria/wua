@@ -19,7 +19,7 @@
                     <div class="page">
 
                         <!-- Vars -->
-                        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
                         <!-- Partner data -->
                         <div name="wua_partner_data">
@@ -196,7 +196,7 @@
                                                             <td class="text-right"><span t-field="o.legalrep_id.mobile"/></td>
                                                         </tr>
                                                     </t>
-                                                    
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -261,8 +261,8 @@
 
                         <!-- Info -->
                         <div name="info" style="page-break-inside: avoid">
-                            <t t-set="informative_clauses" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_informative_clauses')"/>
-    
+                            <t t-set="informative_clauses" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_informative_clauses')"/>
+
                             <t t-if="informative_clauses and consent != True">
                                 <div name="info_div" style="margin-top: 20px;">
                                     <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
@@ -290,7 +290,7 @@
 
                         <!-- Consent -->
                         <div name="info" style="page-break-inside: avoid">
-                            <t t-set="consent_clauses" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_consent_clauses')"/>
+                            <t t-set="consent_clauses" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_consent_clauses')"/>
                             <t t-if="consent_clauses and consent == True">
                                 <div name="info_div" style="margin-top: 20px;">
                                     <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">

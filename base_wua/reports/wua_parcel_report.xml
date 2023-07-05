@@ -16,7 +16,7 @@
                     <div class="page">
 
                         <!-- Vars -->
-                        <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
                         <t t-set="printing_date" t-value="o.transform_date_to_locale(
                             datetime.datetime.now().date().strftime('%Y-%m-%d'), lang=o.partner_id.lang)"/>
 
@@ -291,7 +291,7 @@
                                                         <span t-field="o.area_gis"/>
                                                         <span><t t-esc="measurement_unit"/></span>
                                                     </td>
-                                                    
+
                                                 </tr>
                                                 <tr name="tr_rurallocation">
                                                     <td><span>Rural Location:</span></td>
@@ -377,7 +377,7 @@
                         </div>
 
                         <!-- Info -->
-                        <t t-set="informative_clauses" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_informative_clauses')"/>
+                        <t t-set="informative_clauses" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_informative_clauses')"/>
 
                         <t t-if="informative_clauses">
                             <div name="info_div" style="margin-top: 20px;">

@@ -23,7 +23,7 @@
         <div class="page">
 
             <!-- Vars -->
-            <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+            <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
             <!-- Title -->
             <div name="title" class="text-center">
@@ -303,10 +303,10 @@
                             <p style="margin-left: -8px; margin-top: 2px; margin-bottom: 0px;">
                                 <span>Place and date</span>
                             </p>
-                            <t t-if="request.env.user.company_id.city and request.env.user.company_id.state_id.name">
+                            <t t-if="o.env.user.company_id.city and o.env.user.company_id.state_id.name">
                                 <p class="text-center" style="margin-top: 4px;">
-                                    <span t-esc="request.env.user.company_id.city"/>
-                                    (<span t-esc="request.env.user.company_id.state_id.name"/>),
+                                    <span t-esc="o.env.user.company_id.city"/>
+                                    (<span t-esc="o.env.user.company_id.state_id.name"/>),
                                     <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/><br/>
                                     <span style="font-size: 10px;" t-esc="context_timestamp(datetime.datetime.now()).strftime('%H:%M:%S')"/>
                                 </p>

@@ -5,7 +5,7 @@
 
         <!-- Replace full document -->
         <xpath expr="//div[@class='row']" position="replace">
-            <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+            <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
             <!-- Customize address -->
             <div name="overdue_address">

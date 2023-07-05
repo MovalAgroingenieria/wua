@@ -45,10 +45,10 @@
         <div class="page">
 
             <!-- Vars -->
-            <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
-            <t t-set="data_in_hours" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'data_in_hours')"/>
-            <t t-set="hours_sexagesimal" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'hours_sexagesimal')"/>
-            <t t-set="info_request_report" t-value="request.env['ir.values'].get_default('wua.irrigation.configuration', 'info_request_report')"/>
+            <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+            <t t-set="data_in_hours" t-value="o.env['ir.values'].get_default('wua.irrigation.configuration', 'data_in_hours')"/>
+            <t t-set="hours_sexagesimal" t-value="o.env['ir.values'].get_default('wua.irrigation.configuration', 'hours_sexagesimal')"/>
+            <t t-set="info_request_report" t-value="o.env['ir.values'].get_default('wua.irrigation.configuration', 'info_request_report')"/>
             <t t-set="company" t-value="o.partner_id.company_id.sudo()"></t>
 
             <div name="header_1" style="margin-bottom: 12px;">

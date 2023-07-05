@@ -20,7 +20,7 @@
                     <!-- Set global variables -->
                     <t t-set="agriculturalseason" t-value="o.get_agriculturalseason_id()"/>
                     <t t-set="hydricmovements" t-value="o.get_partner_active_agriculturalseason_hydricmovements()"/>
-                    <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                    <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
                     <div class="page">
 
@@ -240,7 +240,7 @@
                         </div>
 
                         <!-- Info -->
-                        <t t-set="informative_clauses" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_informative_clauses')"/>
+                        <t t-set="informative_clauses" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_informative_clauses')"/>
 
                         <t t-if="informative_clauses">
                             <div name="info_div" style="margin-top: 20px;">

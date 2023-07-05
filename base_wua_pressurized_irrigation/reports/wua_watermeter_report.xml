@@ -31,7 +31,7 @@
             <t t-foreach="docs" t-as="o">
                 <div class="page" style="border: 2px solid lightgrey; padding: 4px;">
                     <!-- Vars -->
-                    <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                    <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
                     <!-- Title -->
                     <div name="title">
@@ -88,7 +88,7 @@
                                 </div>
                                 <div class="text-center">
                                     <div style="font-size: 0.3px; margin-bottom: 2px;">&amp;nbsp;</div>
-                                    <img t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' % 
+                                    <img t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' %
                                     (o._get_or_generate_watermeter_link(), 3, 4, 0, 1)"/>
                                 </div>
                             </div>
