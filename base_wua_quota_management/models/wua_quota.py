@@ -39,7 +39,7 @@ class WuaQuota(models.Model):
         ondelete='restrict')
 
     partner_id = fields.Many2one(
-        string='Partner',
+        string='Partner WUA',
         comodel_name='res.partner',
         required=True,
         index=True,
@@ -1219,7 +1219,7 @@ class WuaQuotaAggregatevalue(models.Model):
         index=True)
 
     partner_id = fields.Many2one(
-        string='Partner',
+        string='Partner WUA',
         comodel_name='res.partner',
         index=True)
 

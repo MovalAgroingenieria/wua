@@ -54,7 +54,7 @@ class WuaHydricmovement(models.Model):
         compute='_compute_quotaperiod_id')
 
     partner_id = fields.Many2one(
-        string='Partner',
+        string='Partner WUA',
         comodel_name='res.partner',
         store=True,
         index=True,

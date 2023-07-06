@@ -35,6 +35,8 @@
                                    options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                                    attrs="{'readonly':[('id','>',0)]}"/>
+                            <field name="massive_assignment_id" colspan="4"
+                                   attrs="{'invisible':[('massive_assignment_id','=',False)]}"/>
                             <field name="event_time" colspan="3"
                                    attrs="{'readonly':[('id','>',0)]}"/>
                             <div colspan="1"></div>
@@ -132,7 +134,7 @@
                     <filter string="Category"
                             name="grouped_category"
                      context="{'group_by':'category_id'}"/>
-                    <filter string="Partner"
+                    <filter string="Partner WUA"
                             name="grouped_partner"
                      context="{'group_by':'partner_id'}"/>
                 </group>

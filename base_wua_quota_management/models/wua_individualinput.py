@@ -121,7 +121,7 @@ class WuaIndividualinput(models.Model):
         default=_default_superproduct_id)
 
     partner_id = fields.Many2one(
-        string='Partner',
+        string='Partner WUA',
         comodel_name='res.partner',
         required=True,
         index=True,
@@ -209,6 +209,12 @@ class WuaIndividualinput(models.Model):
         string='Balance',
         digits=(32, 2),
         compute='_compute_quota_negative_balance')
+
+    massive_assignment_id = fields.Many2one(
+        string='Assignment',
+        comodel_name='wua.individualinput.massive.assignment',
+        readonly=True,
+        ondelete='restrict',)
 
     notes = fields.Html(string='Notes')
 
@@ -470,6 +476,12 @@ class WuaIndividualinput(models.Model):
         implied_quotas = []
         for record in self:
             quota = record.quota_id
+            if record.massive_assignment_id and not self.env.context.get(
+                    'deleting_from_assignment_cancel', False):
+                raise exceptions.UserError(_(
+                    'It is not possible to delete an individual input, '
+                    'associated with a massive assignment, cancel the '
+                    'assignment instead.'))
             if quota and quota.hydricmovement_ids:
                 hydric_outputs = filter(
                     lambda x: x['is_consumption'] is True and

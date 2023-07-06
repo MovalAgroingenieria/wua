@@ -49,6 +49,7 @@
         "views/wua_hydricmovement_view.xml",
         "views/wua_superproduct_dashboard_view.xml",
         "views/wua_individualinput_view.xml",
+        "views/wua_individualinput_massive_assignment_view.xml",
         "views/wua_cession_view.xml",
         "views/wua_individualinput_category_view.xml",
         "views/wua_presconsumption_view.xml",

@@ -25,7 +25,7 @@ class WizardProvisionPartner(models.TransientModel):
         return [('id', 'in', valid_quotaperiod_ids)]
 
     partner_id = fields.Many2one(
-        string='Partner',
+        string='Partner WUA',
         comodel_name='res.partner',
         readonly=True,)
 
