@@ -42,7 +42,7 @@
 
     <template id="dynamic_template_caller">
         <t t-if="o.notificationset_id.notificationset_type_id.attach_report_id.report_name">
-            <t t-if="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_partner_report_document'">
+            <t name="dynamic_tamplate_caller_if_hook" t-if="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_partner_report_document'">
                 <t t-call="base_wua.wua_partner_report_document"/>
             </t>
             <t t-elif="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_lessor_report_document'">
