@@ -370,6 +370,12 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
         default=0,
         required=True,)
 
+    effective_volume = fields.Float(
+        string='Effective Volume (m³)',
+        digits=(32, 2),
+        store=True,
+        compute='_compute_effective_volume')
+
     assignment_id = fields.Many2one(
         string="Massive Assignment",
         comodel_name='wua.individualinput.massive.assignment',
@@ -380,6 +386,12 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
         comodel_name='res.partner',
         required=True,
         ondelete='restrict',)
+
+    category_id = fields.Many2one(
+        string='Categ.',
+        comodel_name='wua.individualinput.category',
+        related='assignment_id.category_id',
+        store=True,)
 
     reason = fields.Char(
         string='Reason',
@@ -403,3 +415,12 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
                     self.MAX_SIZE_PARTNER_CODE) + '-' + \
                     record.assignment_id.name
                 record.name = name
+
+    @api.depends('volume', 'category_id', 'category_id.effective_factor')
+    def _compute_effective_volume(self):
+        for record in self:
+            effective_volume = record.volume
+            if record.category_id:
+                effective_volume = \
+                    effective_volume * record.category_id.effective_factor
+            record.effective_volume = effective_volume

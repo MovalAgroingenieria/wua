@@ -7,3 +7,4 @@ from . import wua_quota
 from . import wua_hydricmovement
 from . import wua_cession
 from . import wua_individualinput
+from . import wua_individualinput_massive_assignment
