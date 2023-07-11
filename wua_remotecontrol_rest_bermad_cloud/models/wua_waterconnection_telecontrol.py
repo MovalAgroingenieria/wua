@@ -103,56 +103,58 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     for wm in watermeters or []:
                         # Idea, maybe unit name == irrigationshed and wm index
                         # == position
-                        waterconnection = unit_data[unit_id][wm['index']][
-                            'name']
-                        total_volume = wm['totalizer'] / 1000.0
-                        waterflow = wm['flow']
-                        # Check flow unit, needs to transform to l/s
-                        if (remotecontrol_data['project_data'][
-                                'flow_units'] == 'M3H'):
-                            waterflow = waterflow / 3.6
-                        valve_error = False
-                        valve_error_msg = ''
-                        watermeter_error = False
-                        watermeter_error_msg = ''
-                        if (wm['error']):
-                            watermeter_error = True
-                            watermeter_error_msg = wm['error']
-                        # Check Valve Info (Should be only one)
-                        valve_open = False
-                        # Active valves of the watermeter
-                        wm_valves = filter(
-                            lambda x: x['status'] == 'ACTIVE',
-                            unit_data[unit_id][wm['index']]['valves'])
-                        if (wm_valves and len(wm_valves) > 0):
-                            # Get the valve index on watermeter and search
-                            # Index on all valves
-                            valve_index = wm_valves[0]['index']
-                            valve = filter(
-                                lambda x: x['index'] == valve_index,
-                                valves)
-                            # If valve, check if close
-                            if (valve and len(valve) > 0):
-                                valve_open = valve[0]['state'] != 'close'
-                                if (valve[0]['error']):
-                                    valve_error = True
-                                    valve_error_msg = valve[0]['error']
-                        # TODO: Check programs variable and the valve
-                        # associated
-                        valve_scheduled = False
-                        wc_all_info.append({
-                            'waterconnection': waterconnection,
-                            'total_volume': total_volume,
-                            'waterflow': waterflow,
-                            'valve_open': valve_open,
-                            'valve_scheduled': valve_scheduled,
-                            'valve_error': valve_error,
-                            'valve_error_msg': valve_error_msg,
-                            'watermeter_error': watermeter_error,
-                            'watermeter_error_msg': watermeter_error_msg,
-                            'data_time': date_time_now.strftime(
-                                '%Y-%m-%d %H:%M:%S'),
-                        })
+                        unit = unit_data[unit_id]
+                        wm_index = wm['index']
+                        if (wm_index in unit):
+                            waterconnection = unit[wm_index]['name']
+                            total_volume = wm['totalizer'] / 1000.0
+                            waterflow = wm['flow']
+                            # Check flow unit, needs to transform to l/s
+                            if (remotecontrol_data['project_data'][
+                                    'flow_units'] == 'M3H'):
+                                waterflow = waterflow / 3.6
+                            valve_error = False
+                            valve_error_msg = ''
+                            watermeter_error = False
+                            watermeter_error_msg = ''
+                            if (wm['error']):
+                                watermeter_error = True
+                                watermeter_error_msg = wm['error']
+                            # Check Valve Info (Should be only one)
+                            valve_open = False
+                            # Active valves of the watermeter
+                            wm_valves = filter(
+                                lambda x: x['status'] == 'ACTIVE',
+                                unit[wm_index]['valves'])
+                            if (wm_valves and len(wm_valves) > 0):
+                                # Get the valve index on watermeter and search
+                                # Index on all valves
+                                valve_index = wm_valves[0]['index']
+                                valve = filter(
+                                    lambda x: x['index'] == valve_index,
+                                    valves)
+                                # If valve, check if close
+                                if (valve and len(valve) > 0):
+                                    valve_open = valve[0]['state'] != 'close'
+                                    if (valve[0]['error']):
+                                        valve_error = True
+                                        valve_error_msg = valve[0]['error']
+                            # TODO: Check programs variable and the valve
+                            # associated
+                            valve_scheduled = False
+                            wc_all_info.append({
+                                'waterconnection': waterconnection,
+                                'total_volume': total_volume,
+                                'waterflow': waterflow,
+                                'valve_open': valve_open,
+                                'valve_scheduled': valve_scheduled,
+                                'valve_error': valve_error,
+                                'valve_error_msg': valve_error_msg,
+                                'watermeter_error': watermeter_error,
+                                'watermeter_error_msg': watermeter_error_msg,
+                                'data_time': date_time_now.strftime(
+                                    '%Y-%m-%d %H:%M:%S'),
+                            })
         else:
             error_message = _(' It is not possible to get the info. ')
         return [wc_all_info, error_message]

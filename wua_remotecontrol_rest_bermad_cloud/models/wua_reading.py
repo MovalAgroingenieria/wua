@@ -168,12 +168,15 @@ class WuaReading(models.Model):
                     for wm in watermeters or []:
                         # Idea, maybe unit name == irrigationshed and wm index
                         # == position
-                        watermeter = unit_data[unit_id][wm['index']]['name']
-                        volume = wm['totalizer'] / 1000.0
-                        readings.append({
-                            'watermeter': watermeter,
-                            'volume': volume,
-                            })
+                        unit = unit_data[unit_id]
+                        wm_index = wm['index']
+                        if (wm_index in unit):
+                            watermeter = unit[wm_index]['name']
+                            volume = wm['totalizer'] / 1000.0
+                            readings.append({
+                                'watermeter': watermeter,
+                                'volume': volume,
+                                })
         if error_message != '':
             error_message = error_message[2:]
         return [readings, error_message, error_watermeters]
