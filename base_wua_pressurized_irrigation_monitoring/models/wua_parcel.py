@@ -769,8 +769,8 @@ class WuaParcelSubparcel(models.Model):
                     parsed_response = ElementTree.fromstring(
                         response.getvalue())
                     ns = parsed_response[0].tag.split('}')[0] + '}'
-                    parcel_member = parsed_response.find(ns + 'featureMember')
-                    parcel_envelop = parcel_member[0][0][0]
+                    parcel_member = parsed_response.find(ns + 'boundedBy')
+                    parcel_envelop = parcel_member[0]
                     crs = parcel_envelop.attrib['srsName']
                     lowerCorner = [float(n) for n in (parcel_envelop.find(
                         ns + 'lowerCorner').text).split(' ')]
