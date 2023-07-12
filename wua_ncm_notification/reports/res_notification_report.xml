@@ -57,7 +57,15 @@
         </t>
     </template>
 
+    <record id="ncm_notifmgmt.action_res_notification_report" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
+    </record>
+
     <template id="report_res_notification" inherit_id="ncm_notifmgmt.report_res_notification">
+        <xpath expr="//t[@name='t_call_notification_external_lyout']" position="attributes">
+            <attribute name='t-call'>base_wua_report.wua_external_layout</attribute>
+        </xpath>
+
         <xpath expr="//t[@name='t_call_notification_external_lyout']" position="after">
             <!-- Store old_docs variable before calling new report, maybe not necessary but just in case -->
             <t t-set="old_docs" t-value="docs"/>
@@ -69,6 +77,4 @@
             <t t-set="docs" t-value="old_docs"/>
         </xpath>
     </template>
-
-
 </odoo>

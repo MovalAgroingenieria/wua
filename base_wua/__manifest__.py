@@ -49,6 +49,7 @@
         "report_qr",
         "web_domain_field",
         "contacts",
+        "base_report_rml_footer_html"
     ],
     "data": [
         "security/security.xml",
