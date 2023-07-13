@@ -51,9 +51,13 @@ class WuaWateringrequest(models.Model):
                     balance = self.env['wua.parcel'].transform_float_to_locale(
                         quota.balance, 2)
                     balance = balance + _(' m³')
+                    color_to_use = 'unset'
                     if quota.balance < 0:
-                        balance = '<span style="color:red">' + balance + \
-                            '</span>'
+                        color_to_use = 'red'
+                    elif quota.balance > 0:
+                        color_to_use = 'blue'
+                    balance = '<span style="color:' + color_to_use + '">' + \
+                        balance + '</span>'
                     body = body + '<br/>' + superproduct + ' : ' + balance
                 resp = '<div class="panel-body text-left" ' + \
                        'style="background:#f4f6f6;border-radius:4px;' + \

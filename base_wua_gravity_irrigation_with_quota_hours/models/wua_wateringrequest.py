@@ -33,9 +33,13 @@ class WuaWateringrequest(models.Model):
                             quota.balance)
                     balance_hours = balance_hours + _(' hours')
                     balance = balance + ' | ' + balance_hours
+                    color_to_use = 'unset'
                     if quota.balance < 0:
-                        balance = '<span style="color:red">' + balance + \
-                            '</span>'
+                        color_to_use = 'red'
+                    elif quota.balance > 0:
+                        color_to_use = 'blue'
+                    balance = '<span style="color:' + color_to_use + '">' + \
+                        balance + '</span>'
                     body = body + '<br/>' + superproduct + ' : ' + balance
                 resp = '<div class="panel-body text-left" ' + \
                        'style="background:#f4f6f6;border-radius:4px;' + \
