@@ -25,6 +25,17 @@
                 </header>
                 <sheet>
                     <div class="panel-body text-center" style="background:#ededed;border-radius:4px;border-color:#696969;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:8px;margin-bottom:5px"><h2>INDIVIDUAL INPUT MASSIVE ASSIGNMENT</h2></div>
+                    <div style="text-align:right;margin-right: 40px;margin-top: 15px;" attrs="{'invisible':[('state','!=','01_executed')]}" class="oe_button_box" name="button_box">
+                        <button name="action_show_individualinputs"
+                                type="object" class="oe_stat_button"
+                                icon="fa-list-ol">
+
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Individual</span>
+                                <span class="o_stat_text">Inputs</span>
+                            </div>
+                        </button>
+                    </div>
                     <group name="master_data" col="5">
                         <group name="master_data_left"
                                colspan="3" col="4">
@@ -51,17 +62,9 @@
                         </group>
                         <group name="master_data_right"
                                colspan="2"
-                               style="text-align:right;">
-                            <div attrs="{'invisible':[('state','!=','01_executed')]}" class="oe_button_box" name="button_box">
-                                <button name="action_show_individualinputs"
-                                        type="object" class="oe_stat_button"
-                                        icon="fa-list-ol">
-                                    <div class="o_form_field o_stat_info">
-                                        <span class="o_stat_text">Individual</span>
-                                        <span class="o_stat_text">Inputs</span>
-                                    </div>
-                                </button>
-                            </div>
+                               col="4">
+                            <field name='total_volume' colspan="4"/>
+                            <field name='total_effective_volume' colspan="4"/>
                         </group>
                     </group>
                     <group name="slave_data">
@@ -110,6 +113,7 @@
                        string="Date" widget="date"/>
                 <field name="category_id"/>
                 <field name="reason"/>
+                <field name='total_effective_volume'/>
             </tree>
         </field>
     </record>

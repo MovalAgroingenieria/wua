@@ -6,11 +6,28 @@
         <field name="model">wua.individualinput.massive.assignment</field>
         <field name="inherit_id" ref="base_wua_quota_management.wua_individualinput_massive_assignmnet_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='total_effective_volume']" position="before">
+                <field name="total_volume_hours" colspan="4"/>
+                 <br colspan="4"/>
+            </xpath>
+            <xpath expr="//field[@name='total_effective_volume']" position="after">
+                <field name="total_effective_volume_hours" colspan="4"/>
+            </xpath>
             <xpath expr="//field[@name='effective_volume']" position="after">
-                <field name="effective_volume_hours"/>
+                <field name="effective_volume_hours" colspan="4"/>
             </xpath>
         </field>
     </record>
 
+    <record id="wua_individualinput_massive_assignment_view_tree" model="ir.ui.view">
+        <field name="name">Individual Input Massive Assignments (tree view)</field>
+        <field name="model">wua.individualinput.massive.assignment</field>
+        <field name="inherit_id" ref="base_wua_quota_management.wua_individualinput_massive_assignment_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='total_effective_volume']" position="after">
+                <field name="total_effective_volume_hours"/>
+            </xpath>
+        </field>
+    </record>
 
 </odoo>

@@ -19,7 +19,7 @@ consumptions to update each quota. When a negative value for a quota is
 reached, the program informs users and, in certain cases, stops water
 consumption.
 
-Functionality:  
+Functionality:
 
 * Grouping of water-products in hydric superproducts.
 * Management of quota periods.
@@ -47,6 +47,7 @@ Contributors
 
 * Alberto Hernández <ahernandez@moval.es>
 * Eduardo Iniesta <einiesta@moval.es>
+* Jesús Martínez <jmartinez@moval.es>
 * Miguel Mora <mmora@moval.es>
 * Juanu Sandoval <jsandoval@moval.es>
 * Salvador Sánchez <ssanchez@moval.es>

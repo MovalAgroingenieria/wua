@@ -160,10 +160,39 @@ class WuaIndividualinputMassiveAssignment(models.Model):
 
     notes = fields.Html(string='Notes')
 
+    total_volume = fields.Float(
+        string='Total Volume (m³)',
+        compute='_compute_total_volume',
+    )
+
+    total_effective_volume = fields.Float(
+        string='Total Effective Volume (m³)',
+        compute='_compute_total_effective_volume',
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Individual Input Massive Assignment.'),
-        ]
+    ]
+
+    @api.depends('assignment_line_ids',
+                 'assignment_line_ids.effective_volume')
+    def _compute_total_effective_volume(self):
+        for record in self:
+            total_effective_volume = 0
+            if (record.assignment_line_ids):
+                total_effective_volume = \
+                    sum(record.assignment_line_ids.mapped('effective_volume'))
+            record.total_effective_volume = total_effective_volume
+
+    @api.depends('assignment_line_ids', 'assignment_line_ids.volume')
+    def _compute_total_volume(self):
+        for record in self:
+            total_volume = 0
+            if (record.assignment_line_ids):
+                total_volume = \
+                    sum(record.assignment_line_ids.mapped('volume'))
+            record.total_volume = total_volume
 
     @api.depends('agriculturalseason_id')
     def _compute_of_active_agriculturalseason(self):
