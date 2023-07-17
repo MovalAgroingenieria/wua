@@ -6,11 +6,22 @@ var Model = require('web.DataModel');
 var core = require('web.core');
 
 ListView.include({
+    // Get Context of the action
+    init: function (parent, action) {
+        this.odoo_context = action.context;
+        return this._super.apply(this, arguments);
+    },
     render_buttons: function() {
         this._super.apply(this, arguments);
         if (this.$buttons) {
+            var fromShortcut = this.odoo_context &&
+                this.odoo_context.from_shortcut;
             var btn = this.$buttons.find('.button_import_reservoirreadings');
-            btn.on('click', this.proxy('do_button_import_reservoirreadings'));
+            if (fromShortcut) {
+                btn.hide();
+            } else {
+                btn.on('click', this.proxy('do_button_import_reservoirreadings'));
+            }
         }
     },
     do_button_import_reservoirreadings: function() {

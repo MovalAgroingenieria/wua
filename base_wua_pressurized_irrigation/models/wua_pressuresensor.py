@@ -210,7 +210,8 @@ class WuaPressuresensor(models.Model):
             'domain': [('id', 'in', self.pressuresensormeasurement_ids.ids)],
             'context': {'default_pressuresensor_id': self.id,
                         'search_default_of_active_agriculturalseason': True,
-                        "graph_mode": "line", },
+                        "graph_mode": "line",
+                        'from_shortcut': 1, },
             }
         return act_window
 

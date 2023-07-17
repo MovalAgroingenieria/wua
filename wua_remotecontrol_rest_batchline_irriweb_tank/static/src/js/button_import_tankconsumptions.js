@@ -5,11 +5,22 @@ odoo.define('wua_remotecontrol_rest_batchline_irriweb_tank.button_import_tankcon
     const core = require('web.core');
 
     ListView.include({
+      // Get Context of the action
+      init: function (parent, action) {
+        this.odoo_context = action.context;
+        return this._super.apply(this, arguments);
+      },
       render_buttons() {
         this._super.apply(this, arguments);
         if (this.$buttons) {
-          const btn = this.$buttons.find('.button_import_tankconsumptions');
-          btn.on('click', this.proxy('do_button_import_tankconsumptions'));
+            var fromShortcut = this.odoo_context &&
+                this.odoo_context.from_shortcut;
+            const btn = this.$buttons.find('.button_import_tankconsumptions');
+            if (fromShortcut) {
+                btn.hide();
+            } else {
+                btn.on('click', this.proxy('do_button_import_tankconsumptions'));
+            }
         }
       },
       do_button_import_tankconsumptions() {

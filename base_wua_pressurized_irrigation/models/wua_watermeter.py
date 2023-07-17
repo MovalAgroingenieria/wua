@@ -210,6 +210,7 @@ class WuaWatermeter(models.Model):
             'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
+            'context': {'from_shortcut': 1},
             'target': 'current',
             }
         return act_window

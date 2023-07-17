@@ -6,11 +6,24 @@ var Model = require('web.DataModel');
 var core = require('web.core');
 
 ListView.include({
+    // Get Context of the action
+    init: function (parent, action) {
+        this.odoo_context = action.context;
+        return this._super.apply(this, arguments);
+    },
     render_buttons: function() {
         this._super.apply(this, arguments);
         if (this.$buttons) {
+            // Check if comes from other model shortcut  and in that case
+            // don't show button, because confuses (All readings)
+            var fromShortcut = this.odoo_context &&
+                this.odoo_context.from_shortcut;
             var btn = this.$buttons.find('.button_import_flowreadings');
-            btn.on('click', this.proxy('do_button_import_flowreadings'));
+            if (fromShortcut) {
+                btn.hide();
+            } else {
+                btn.on('click', this.proxy('do_button_import_flowreadings'));
+            }
         }
     },
     do_button_import_flowreadings: function() {
@@ -36,7 +49,7 @@ ListView.include({
                                      ' ' + suffix_negative_flowreadings;
                 }
                 if (error_message != '') {
-                    result_message = result_message + '\n\n' + 
+                    result_message = result_message + '\n\n' +
                                      title_error_message + ': ' +
                                      error_message;
                 }

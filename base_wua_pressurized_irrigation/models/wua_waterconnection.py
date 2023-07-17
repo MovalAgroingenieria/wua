@@ -198,5 +198,6 @@ class WuaWaterconnection(models.Model):
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
+            'context': {'from_shortcut': 1},
             }
         return act_window
