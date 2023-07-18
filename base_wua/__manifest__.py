@@ -89,6 +89,7 @@
         "reports/wua_partner_report_consent.xml",
         "reports/wua_tenant_report.xml",
         "reports/wua_lessor_report.xml",
+        "reports/wua_owner_report.xml",
     ],
     "installable": True,
     "application": True,

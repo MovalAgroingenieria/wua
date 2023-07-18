@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-05 13:44+0000\n"
-"PO-Revision-Date: 2023-07-05 13:44+0000\n"
+"POT-Creation-Date: 2023-07-18 07:15+0000\n"
+"PO-Revision-Date: 2023-07-18 07:15+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,7 @@ msgstr ""
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "&amp;nbsp;"
@@ -24,6 +25,7 @@ msgstr "&amp;nbsp;"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "(NIF:&amp;nbsp;"
@@ -41,6 +43,7 @@ msgstr "(No hi ha cap subparcel·la associada a aquesta parcel·la)"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "(image of"
@@ -60,12 +63,17 @@ msgstr "0:gris, 1:verd, 2:groc, 3:taronja, 4:vermell, 5:porpra, 6:blau, 7:cian, 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_volume_time_equivalence
 msgid "1 hour, in m3"
-msgstr "1 hora, en m³"
+msgstr "1 hores, en m3"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<b>Total leased area:</b>"
 msgstr "<b>Àrea total arrendada:</b>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "<b>Total owned area:</b>&amp;ensp;"
+msgstr "<b>Superfície total propietat:</b>&amp;ensp;"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
@@ -162,12 +170,18 @@ msgid "<span class=\"o_stat_text\">Subparcels</span>"
 msgstr "<span class=\"o_stat_text\">Subparcel·les</span>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "<span>&amp;nbsp;/&amp;nbsp;</span>"
+msgstr "<span>&amp;nbsp;/&amp;nbsp;</span>"
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>(*) The owner with the highest percentage of ownership is chosen as the owner.</span>"
 msgstr "<span>(*) Es tria com a propietari el que té més percentatge de propietat.</span>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>-&amp;nbsp;</span>"
@@ -279,6 +293,11 @@ msgid "<span>Number of leased parcels:</span>"
 msgstr "<span>Nombre de parcel·les arrendades:</span>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "<span>Number of owned parcels:</span>"
+msgstr "<span>Nombre de parcel·les en propietat:</span>"
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 msgid "<span>Number of parcels:</span>"
 msgstr "<span>Nombre de parcel·les:</span>"
@@ -290,6 +309,7 @@ msgstr "<span>Nombre de parcel·les arrendades:</span>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>Number of votes:</span>"
@@ -307,6 +327,7 @@ msgstr "<span>Telèfon:</span>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>Printing date:</span>"
@@ -328,6 +349,11 @@ msgid "<span>This partner has no leased parcels.</span>"
 msgstr "<span>Aquest soci no té parcel·les arrendades.</span>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "<span>This partner has no owned parcels.</span>"
+msgstr "<span>Aquest soci no té parcel·les propietat.</span>"
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 msgid "<span>This partner has no rented parcels.</span>"
 msgstr "<span>Aquest soci no té parcel·les arrendades.</span>"
@@ -341,6 +367,11 @@ msgstr "<span>Àrea total:</span>"
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>Total leased area:</span>"
 msgstr "<span>Àrea total arrendada:</span>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "<span>Total owned area:</span>"
+msgstr "<span>Superfície total propietat:</span>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
@@ -364,6 +395,7 @@ msgstr "<span>Amb vots:</span>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>Wua partner code:</span>"
@@ -393,6 +425,7 @@ msgstr "<strong>Àrees&amp;nbsp;i&amp;nbsp;atributs&amp;nbsp;físics</strong>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<strong>Cadastral reference</strong>"
@@ -430,7 +463,23 @@ msgid "<strong>Lessor</strong>"
 msgstr "<strong>Arrendador</strong>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "<strong>Owned area</strong>"
+msgstr "<strong>Zona de propietat</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "<strong>Owned&amp;nbsp;parcels</strong>"
+msgstr "<strong>Parcel·les&amp;nbsp;de&amp;nbsp;propietat</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "<strong>Owner</strong>"
+msgstr "<strong>Propietari</strong>"
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<strong>Parcel</strong>"
@@ -530,6 +579,7 @@ msgstr "Imatge aèria: Sí"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "Aerial image not found"
@@ -581,7 +631,7 @@ msgstr "Albaricoquero"
 #: code:addons/base_wua/static/src/js/list_view.js:19
 #, python-format
 msgid "Archive"
-msgstr "Arxivar"
+msgstr "Arxiu"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
@@ -1266,7 +1316,7 @@ msgstr "Delete"
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivationplan_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_farmproperty_description
-#: model:ir.model.fields,field_description:base_wua.field_wua_hydraulicsector_description
+#: model:ir.model.fields,field_description:base_wua.field_wua_hydraulicsector_description_10850
 #: model:ir.model.fields,field_description:base_wua.field_wua_irrigationsystem_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_mastertable_description
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_concessionlink_description
@@ -1438,7 +1488,7 @@ msgstr "Assegureu-vos que l'àrea intersecada es calcula amb Postgis"
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Element (parcel·la)"
+msgstr "Entitat (parcel·la)"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_051
@@ -1574,7 +1624,7 @@ msgstr "Des"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_area_gis
 msgid "GIS Area"
-msgstr "Àrea GIS:"
+msgstr "Àrea GIS"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_with_gis_parcel
@@ -2587,6 +2637,16 @@ msgid "Other woody crops"
 msgstr "Otros cultivos leñosos"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "Owned Area ("
+msgstr "Àrea de propietat ("
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+msgid "Owned percentage"
+msgstr "Percentatge de propietat"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_owner_id
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_partnerlink_view_search
@@ -2633,6 +2693,7 @@ msgstr "Paràmetres"
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_cadastral_parcel
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_subparcel_view_search
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_technical_concessionlinks_view_search
@@ -3929,6 +3990,11 @@ msgstr "Aromáticas leñosas"
 #: model:ir.actions.report.xml,name:base_wua.wua_lessor_report
 msgid "Wua lessor report"
 msgstr "Informe arrendador"
+
+#. module: base_wua
+#: model:ir.actions.report.xml,name:base_wua.wua_owner_report
+msgid "Wua owner report"
+msgstr "Informe del propietari"
 
 #. module: base_wua
 #: model:ir.actions.report.xml,name:base_wua.wua_parcel_report
