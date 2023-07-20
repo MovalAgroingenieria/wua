@@ -115,7 +115,7 @@ class WuaParcel(models.Model):
                         node.set('string', original_label +
                                  ' (' + _('hectares') + ')')
                     for node in doc.xpath(
-                                    "//field[@name='area_unproductive']"):
+                            "//field[@name='area_unproductive']"):
                         original_label = \
                             self.sudo().get_value_from_translation(
                                 'base_wua_parcel_areas',
@@ -165,7 +165,7 @@ class WuaParcel(models.Model):
                         node.set('string', original_label +
                                  area_measurement_name)
                     for node in doc.xpath(
-                                    "//field[@name='area_unproductive']"):
+                            "//field[@name='area_unproductive']"):
                         original_label = \
                             self.sudo().get_value_from_translation(
                                 'base_wua_parcel_areas',

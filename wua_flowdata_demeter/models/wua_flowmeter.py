@@ -27,20 +27,22 @@ class WuaFlowmeter(models.Model):
         url, username, passwd = self._connection_params_demeter()
         demeter_flowmeters = self._get_demeter_flowmeters()
         if demeter_flowmeters:
-            for demeter_flowmeter in (demeter_flowmeters or []):
-                data_found = False
-                if demeter_flowmeter.id == self.id:
-                    time, flow, data_found = self._get_telecontrol_data(
-                        url, username, passwd, demeter_flowmeter)
-                if data_found:
-                    self._create_record(demeter_flowmeter.id, time, flow)
+            flow_data = self._get_telecontrol_data(
+                url, username, passwd, demeter_flowmeters, self.id)
+            if len(flow_data) > 0:
+                for data in flow_data:
+                    flowmeter_id = data['flowmeter_id']
+                    flowmeter = data['flowmeter']
+                    time = data['time']
+                    flow = data['flow']
+                    self._create_record(flowmeter_id, time, flow)
                     _logger.info('Flowdata inserting data: %s, %s, %s l/s' %
-                                 (demeter_flowmeter.name, time, flow))
+                                 (flowmeter, time, flow))
                     flow_str = str(round(flow, 4))
                     time_str = datetime.datetime.strftime(
                         time, '%d/%m/%Y %H:%M:%S')
                     message_01 = \
-                        _('Flow data from %s') % demeter_flowmeter.name
+                        _('Flow data from %s') % flowmeter
                     message_02 = _('Time')
                     message_03 = _('Flow')
                     message = '<center>' + message_01 + '</center><br>' + \
@@ -62,14 +64,17 @@ class WuaFlowmeter(models.Model):
         url, username, passwd = self._connection_params_demeter()
         demeter_flowmeters = self._get_demeter_flowmeters()
         if demeter_flowmeters:
-            for demeter_flowmeter in (demeter_flowmeters or []):
-                _logger.info(_('Flowdata getting data from flowmeter %s') %
-                             demeter_flowmeter.name)
-                data_found = False
-                time, flow, data_found = self._get_telecontrol_data(
-                    url, username, passwd, demeter_flowmeter)
-                if data_found:
-                    self._create_record(demeter_flowmeter.id, time, flow)
+            flow_data = self._get_telecontrol_data(
+                url, username, passwd, demeter_flowmeters, False)
+            if len(flow_data) > 0:
+                for data in flow_data:
+                    flowmeter_id = data['flowmeter_id']
+                    flowmeter = data['flowmeter']
+                    time = data['time']
+                    flow = data['flow']
+                    self._create_record(flowmeter_id, time, flow)
+                    _logger.info('Flowdata inserting data: %s, %s, %s l/s' %
+                                 (flowmeter, time, flow))
 
     def _connection_params_demeter(self):
         enable_remotecontrol = url_remotecontrol_rest = \
@@ -100,22 +105,110 @@ class WuaFlowmeter(models.Model):
                 url_remotecontrol_rest_password)
 
     def _get_demeter_flowmeters(self):
-        demeter_flowmeters = []
-        current_flowmeters = self.env['wua.flowmeter'].search(
-            [('telecontrol_associated', '=', 'demeter'),
-             ('flowmeter_analogic_name', '!=', False),
-             ('state', '=', 'active')])
-        for flowmeter in current_flowmeters:
-            demeter_flowmeters.append(flowmeter)
+        demeter_flowmeters = dict(
+            ('{flowmeter_name}'.format(
+                flowmeter_name=fm.flowmeter_analogic_name
+            ), fm)
+            for fm in self.env['wua.flowmeter'].search(
+                [('telecontrol_associated', '=', 'demeter'),
+                 ('flowmeter_analogic_name', '!=', False),
+                 ('state', '=', 'active')])
+        )
         return demeter_flowmeters
 
-    def _get_telecontrol_data(self, url, username, passwd, demeter_flowmeter):
+    def _get_telecontrol_data(self, url, username, passwd, demeter_flowmeters,
+                              flowmeter_search_id=False):
         _logger = logging.getLogger(self.__class__.__name__)
-        time = flow = data_found = False
+        fm_dict = demeter_flowmeters
+        flow_data = []
+        installation_identifier = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'installation_identifier')
         jsessionid = self.env['wua.flowreading'].open_connection_hidroconta(
             url, username, passwd)
-        if jsessionid:
-            resprest = requests.request(
+        if jsessionid and installation_identifier:
+            # Counters
+            counters = self.env['wua.reading'].\
+                get_counters_from_hidroconta(url, jsessionid)
+            for counter in counters:
+                installationId = int(counter['installationId'])
+                flowmeter_name = counter['code'].encode('utf-8', 'ignore')
+                counter['code'].encode('utf-8', 'ignore')
+                if (installationId == installation_identifier and
+                        flowmeter_name in fm_dict):
+                    flowmeter = fm_dict[flowmeter_name].name
+                    flowmeter_id = fm_dict[flowmeter_name].id
+                    # Only search some flowmeter
+                    if (not flowmeter_search_id or
+                            flowmeter_search_id == flowmeter_id):
+                        time = datetime.datetime.now()
+                        flow = counter['flow']
+                        flow_data.append({
+                            'flowmeter': flowmeter,
+                            'flowmeter_id': flowmeter_id,
+                            'time': time,
+                            'flow': flow,
+                        })
+                        time_log = datetime.datetime.strftime(
+                            time, "%Y-%m-%d %H:%M:%S")
+                        log_msg = _('New flow data: time: %s, flow: %s') % \
+                            (time_log, str(flow))
+                        _logger.info(log_msg)
+            # Iris
+            iris = self.env['wua.reading'].\
+                get_iris_from_hidroconta(url, jsessionid)
+            for counter in iris:
+                installationId = int(counter['installationId'])
+                flowmeter_name = counter['code'].encode('utf-8', 'ignore')
+                counter['code'].encode('utf-8', 'ignore')
+                if (installationId == installation_identifier and
+                        flowmeter_name in fm_dict):
+                    flowmeter = fm_dict[flowmeter_name].name
+                    flowmeter_id = fm_dict[flowmeter_name].id
+                    # Only search some flowmeter
+                    if (not flowmeter_search_id or
+                            flowmeter_search_id == flowmeter_id):
+                        time = datetime.datetime.now()
+                        flow = counter['flow']
+                        flow_data.append({
+                            'flowmeter': flowmeter,
+                            'flowmeter_id': flowmeter_id,
+                            'time': time,
+                            'flow': flow,
+                        })
+                        time_log = datetime.datetime.strftime(
+                            time, "%Y-%m-%d %H:%M:%S")
+                        log_msg = _('New flow data: time: %s, flow: %s') % \
+                            (time_log, str(flow))
+                        _logger.info(log_msg)
+            # Hydrants
+            hydrants = self.env['wua.reading'].\
+                get_hydrants_from_hidroconta(url, jsessionid)
+            for hydrant in hydrants:
+                installationId = int(counter['installationId'])
+                flowmeter_name = hydrant['counter']['code'].encode(
+                    'utf-8', 'ignore')
+                if (installationId == installation_identifier and
+                        flowmeter_name in fm_dict):
+                    flowmeter = fm_dict[flowmeter_name].name
+                    flowmeter_id = fm_dict[flowmeter_name].id
+                    # Only search some flowmeter
+                    if (not flowmeter_search_id or
+                            flowmeter_search_id == flowmeter_id):
+                        time = datetime.datetime.now()
+                        flow = hydrant['counter']['flow']
+                        flow_data.append({
+                            'flowmeter': flowmeter,
+                            'flowmeter_id': flowmeter_id,
+                            'time': time,
+                            'flow': flow,
+                        })
+                        time_log = datetime.datetime.strftime(
+                            time, "%Y-%m-%d %H:%M:%S")
+                        log_msg = _('New flow data: time: %s, flow: %s') % \
+                            (time_log, str(flow))
+                        _logger.info(log_msg)
+            # Get analog Inputs > Counters
+            resprest_analog = requests.request(
                 'POST', url + '/search',
                 headers={
                     'Content-Type': 'application/json',
@@ -123,33 +216,34 @@ class WuaFlowmeter(models.Model):
                 data=json.dumps({
                     'type': ['analogInputs'],
                     'state': 'enabled'}))
-            installation_identifier = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'installation_identifier')
-            if resprest.status_code == 200 and installation_identifier:
-                counters = json.loads(resprest.text)
-                flowmeter_name = \
-                    demeter_flowmeter.flowmeter_analogic_name.encode('utf-8')
-                found_counters = []
+            if resprest_analog.status_code == 200:
+                counters = json.loads(resprest_analog.text)
                 for counter in counters:
-                    counter_name = counter['code'].encode('utf-8')
-                    if counter_name == flowmeter_name:
-                        found_counters.append(counter)
-                for counter in found_counters:
                     installationId = int(counter['installationId'])
-                    counter_name = counter['code'].encode('utf-8')
+                    flowmeter_name = counter['code'].encode('utf-8', 'ignore')
                     if (installationId == installation_identifier and
-                            counter_name == flowmeter_name):
-                        # Flow is already in l/s
-                        flow = counter['value']
-                        time = datetime.datetime.now()
-                        time_log = datetime.datetime.strftime(
-                            time, "%Y-%m-%d %H:%M:%S")
-                        data_found = True
-                        log_msg = _('New flow data: time: %s, flow: %s') % \
-                            (time_log, str(flow))
-                        _logger.info(log_msg)
+                            flowmeter_name in fm_dict):
+                        flowmeter = fm_dict[flowmeter_name].name
+                        flowmeter_id = fm_dict[flowmeter_name].id
+                        # Only search some flowmeter
+                        if (not flowmeter_search_id or
+                                flowmeter_search_id == flowmeter_id):
+                            time = datetime.datetime.now()
+                            flow = counter['value']
+                            flow_data.append({
+                                'flowmeter': flowmeter,
+                                'flowmeter_id': flowmeter_id,
+                                'time': time,
+                                'flow': flow,
+                            })
+                            time_log = datetime.datetime.strftime(
+                                time, "%Y-%m-%d %H:%M:%S")
+                            log_msg = \
+                                _('New flow data: time: %s, flow: %s') % \
+                                (time_log, str(flow))
+                            _logger.info(log_msg)
             self.env['wua.flowreading'].close_connection(url, jsessionid)
-        return time, flow, data_found
+        return flow_data
 
     def _create_record(self, flowmeter_id, time, flow):
         flowdata = {
