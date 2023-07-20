@@ -54,6 +54,15 @@
             <t t-elif="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_tenant_report_document'">
                 <t t-call="base_wua.wua_tenant_report_document"/>
             </t>
+            <t t-elif="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'base_wua.wua_owner_report_document'">
+                <t t-call="base_wua.wua_owner_report_document"/>
+            </t>
+            <t t-elif="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'account.report_overdue'">
+                <t t-call="account.report_overdue"/>
+            </t>
+            <t t-elif="o.notificationset_id.notificationset_type_id.attach_report_id.report_name == 'account.report_agedpartnerbalance'">
+                <t t-call="account.report_agedpartnerbalance"/>
+            </t>
         </t>
     </template>
 
