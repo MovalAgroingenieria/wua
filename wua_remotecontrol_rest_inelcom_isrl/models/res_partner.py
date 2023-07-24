@@ -13,6 +13,7 @@ class ResPartner(models.Model):
         'partner_code', 'firstname', 'lastname', 'lastname2', 'vat', 'email',
         'street', 'city', 'state', 'country', 'zip', 'phone', 'mobile'
     ]
+    REQUEST_TIMEOUT = 20
 
     # Implemented hook
     def populate_data_for_send_new_partner_inelcom(self, vals):
@@ -72,45 +73,51 @@ class ResPartner(models.Model):
         headers_data = {
             'content-type': 'application/json',
             }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            url_send_new_partner = url_remotecontrol_rest + \
-                '/regantes/' + str(data['partner_code']) + \
-                '?sesion=' + id_session
-            payload_data = {
-                'nombre': data['firstname'],
-                'apellido1': data['lastname'],
-                'apellido2': data['lastname2'],
-                'nif': data['vat'],
-                'direccion': data['street'],
-                'localidad': data['city'],
-                'municipio': '',
-                'provincia': data['state'],
-                'pais': data['country'],
-                'codPostal': data['zip'],
-                'cuentaFact': '',
-                'telf1': data['phone'],
-                'telf2': data['mobile'],
-                'email': data['email'],
-                'juntaLocal': '',
-                'cooperativa': '',
-                'observaciones': _('Source: Moval Regadío'),
-                'factPendientes': 'NO',
-                }
-            resprest = requests.post(url_send_new_partner,
-                                     data=json.dumps(payload_data),
-                                     headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
-                resp = outputrest['resultado'] == 'OK'
-                if not resp:
-                    error_message = outputrest['detalleError']
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
+                url_send_new_partner = url_remotecontrol_rest + \
+                    '/regantes/' + str(data['partner_code']) + \
+                    '?sesion=' + id_session
+                payload_data = {
+                    'nombre': data['firstname'],
+                    'apellido1': data['lastname'],
+                    'apellido2': data['lastname2'],
+                    'nif': data['vat'],
+                    'direccion': data['street'],
+                    'localidad': data['city'],
+                    'municipio': '',
+                    'provincia': data['state'],
+                    'pais': data['country'],
+                    'codPostal': data['zip'],
+                    'cuentaFact': '',
+                    'telf1': data['phone'],
+                    'telf2': data['mobile'],
+                    'email': data['email'],
+                    'juntaLocal': '',
+                    'cooperativa': '',
+                    'observaciones': _('Source: Moval Regadío'),
+                    'factPendientes': 'NO',
+                    }
+                resprest = requests.post(url_send_new_partner,
+                                         data=json.dumps(payload_data),
+                                         headers=headers_data,
+                                         timeout=self.REQUEST_TIMEOUT)
+                if resprest.status_code == 200:
+                    outputrest = json.loads(resprest.text)
+                    resp = outputrest['resultado'] == 'OK'
+                    if not resp:
+                        error_message = outputrest['detalleError']
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_partner_on_creation_telecontrol(self, new_partner, vals):
@@ -188,46 +195,51 @@ class ResPartner(models.Model):
         headers_data = {
             'content-type': 'application/json',
             }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            url_update_partner = url_remotecontrol_rest + \
-                '/regantes/' + str(data['partner_code']) + \
-                '?sesion=' + id_session
-            payload_data = {
-                'nuevoNSocio': '',
-                'nombre': data['firstname'],
-                'apellido1': data['lastname'],
-                'apellido2': data['lastname2'],
-                'nif': data['vat'],
-                'direccion': data['street'],
-                'localidad': data['city'],
-                'municipio': '',
-                'provincia': data['state'],
-                'pais': data['country'],
-                'codPostal': data['zip'],
-                'cuentaFact': data['acc_number'],
-                'telf1': data['phone'],
-                'telf2': data['mobile'],
-                'email': data['email'],
-                'juntaLocal': '',
-                'cooperativa': '',
-                'observaciones': observ,
-                'factPendientes': pending_inv,
-                }
-            resprest = requests.put(url_update_partner,
-                                    data=json.dumps(payload_data),
-                                    headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
-                resp = outputrest['resultado'] == 'OK'
-                if not resp:
-                    error_message = outputrest['detalleError']
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
+                url_update_partner = url_remotecontrol_rest + \
+                    '/regantes/' + str(data['partner_code']) + \
+                    '?sesion=' + id_session
+                payload_data = {
+                    'nuevoNSocio': '',
+                    'nombre': data['firstname'],
+                    'apellido1': data['lastname'],
+                    'apellido2': data['lastname2'],
+                    'nif': data['vat'],
+                    'direccion': data['street'],
+                    'localidad': data['city'],
+                    'municipio': '',
+                    'provincia': data['state'],
+                    'pais': data['country'],
+                    'codPostal': data['zip'],
+                    'cuentaFact': data['acc_number'],
+                    'telf1': data['phone'],
+                    'telf2': data['mobile'],
+                    'email': data['email'],
+                    'juntaLocal': '',
+                    'cooperativa': '',
+                    'observaciones': observ,
+                    'factPendientes': pending_inv,
+                    }
+                resprest = requests.put(url_update_partner,
+                                        data=json.dumps(payload_data),
+                                        headers=headers_data)
+                if resprest.status_code == 200:
+                    outputrest = json.loads(resprest.text)
+                    resp = outputrest['resultado'] == 'OK'
+                    if not resp:
+                        error_message = outputrest['detalleError']
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_partner_on_write_telecontrol(self, vals):
@@ -258,24 +270,29 @@ class ResPartner(models.Model):
         headers_data = {
             'content-type': 'application/json',
             }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            url_delete_partner = url_remotecontrol_rest + \
-                '/regantes/' + str(data['partner_code']) + \
-                '?sesion=' + id_session
-            resprest = requests.delete(url_delete_partner,
-                                       headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
-                resp = outputrest['resultado'] == 'OK'
-                if not resp:
-                    error_message = outputrest['detalleError']
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
+                url_delete_partner = url_remotecontrol_rest + \
+                    '/regantes/' + str(data['partner_code']) + \
+                    '?sesion=' + id_session
+                resprest = requests.delete(url_delete_partner,
+                                           headers=headers_data)
+                if resprest.status_code == 200:
+                    outputrest = json.loads(resprest.text)
+                    resp = outputrest['resultado'] == 'OK'
+                    if not resp:
+                        error_message = outputrest['detalleError']
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def unlink_partner_on_unlink_telecontrol(self):
@@ -303,91 +320,13 @@ class ResPartner(models.Model):
         headers_data = {
             'content-type': 'application/json',
             }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            url_update_partner = url_remotecontrol_rest + \
-                '/regantes/' + str(data['partner_code']) + \
-                '?sesion=' + id_session
-            resprest = requests.get(url_update_partner)
-            exists_partner_in_remotecontrol = resprest.text != ''
-            payload_data = {
-                'nuevoNSocio': '',
-                'nombre': data['firstname'],
-                'apellido1': data['lastname'],
-                'apellido2': data['lastname2'],
-                'nif': data['vat'],
-                'direccion': data['street'],
-                'localidad': data['city'],
-                'municipio': '',
-                'provincia': data['state'],
-                'pais': data['country'],
-                'codPostal': data['zip'],
-                'cuentaFact': data['acc_number'],
-                'telf1': data['phone'],
-                'telf2': data['mobile'],
-                'email': data['email'],
-                'juntaLocal': '',
-                'cooperativa': '',
-                'observaciones': observ,
-                'factPendientes': pending_inv,
-                }
-            if exists_partner_in_remotecontrol:
-                resprest = requests.put(url_update_partner,
-                                        data=json.dumps(payload_data),
-                                        headers=headers_data)
-            else:
-                del payload_data['nuevoNSocio']
-                resprest = requests.post(url_update_partner,
-                                         data=json.dumps(payload_data),
-                                         headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
-                resp = outputrest['resultado'] == 'OK'
-                if not resp:
-                    error_message = outputrest['detalleError']
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
-        return resp, error_message
-
-    def create_partner_on_synchronize_telecontrol(self):
-        super(ResPartner, self).create_partner_on_synchronize_telecontrol()
-        self.create_partner_on_syncrhonize('inelcom')
-
-    # Implemented hook
-    def synchronize_partners_inelcom(
-        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password, list_of_data):
-        partners_ok = []
-        partners_not_ok = []
-        url_open_session = url_remotecontrol_rest + '/sesiones'
-        auth_data = {
-            'usuario': url_remotecontrol_rest_username,
-            'clave': url_remotecontrol_rest_password,
-            }
-        headers_data = {
-            'content-type': 'application/json',
-            }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            for data in list_of_data:
-                observ = _('Source: Moval Regadío')
-                observ_archived_preffix = _('Archived Data')
-                current_partner = self.env['res.partner'].with_context(
-                    active_test=False).search(
-                        [('partner_code', '=', data['partner_code'])])
-                record_archived = not current_partner.active
-                if record_archived:
-                    observ = observ_archived_preffix + '. ' + observ
-                pending_inv = 'NO'
-                if data['with_credit_overdue']:
-                    pending_inv = 'SI'
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
                 url_update_partner = url_remotecontrol_rest + \
                     '/regantes/' + str(data['partner_code']) + \
                     '?sesion=' + id_session
@@ -422,17 +361,107 @@ class ResPartner(models.Model):
                     del payload_data['nuevoNSocio']
                     resprest = requests.post(url_update_partner,
                                              data=json.dumps(payload_data),
-                                             headers=headers_data)
+                                             headers=headers_data,
+                                             timeout=self.REQUEST_TIMEOUT)
                 if resprest.status_code == 200:
                     outputrest = json.loads(resprest.text)
                     resp = outputrest['resultado'] == 'OK'
-                    if resp:
-                        partners_ok.append(data['partner_code'])
+                    if not resp:
+                        error_message = outputrest['detalleError']
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
+        return resp, error_message
+
+    def create_partner_on_synchronize_telecontrol(self):
+        super(ResPartner, self).create_partner_on_synchronize_telecontrol()
+        self.create_partner_on_syncrhonize('inelcom')
+
+    # Implemented hook
+    def synchronize_partners_inelcom(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
+        partners_ok = []
+        partners_not_ok = []
+        url_open_session = url_remotecontrol_rest + '/sesiones'
+        auth_data = {
+            'usuario': url_remotecontrol_rest_username,
+            'clave': url_remotecontrol_rest_password,
+            }
+        headers_data = {
+            'content-type': 'application/json',
+            }
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
+                for data in list_of_data:
+                    observ = _('Source: Moval Regadío')
+                    observ_archived_preffix = _('Archived Data')
+                    current_partner = self.env['res.partner'].with_context(
+                        active_test=False).search(
+                            [('partner_code', '=', data['partner_code'])])
+                    record_archived = not current_partner.active
+                    if record_archived:
+                        observ = observ_archived_preffix + '. ' + observ
+                    pending_inv = 'NO'
+                    if data['with_credit_overdue']:
+                        pending_inv = 'SI'
+                    url_update_partner = url_remotecontrol_rest + \
+                        '/regantes/' + str(data['partner_code']) + \
+                        '?sesion=' + id_session
+                    resprest = requests.get(url_update_partner)
+                    exists_partner_in_remotecontrol = resprest.text != ''
+                    payload_data = {
+                        'nuevoNSocio': '',
+                        'nombre': data['firstname'],
+                        'apellido1': data['lastname'],
+                        'apellido2': data['lastname2'],
+                        'nif': data['vat'],
+                        'direccion': data['street'],
+                        'localidad': data['city'],
+                        'municipio': '',
+                        'provincia': data['state'],
+                        'pais': data['country'],
+                        'codPostal': data['zip'],
+                        'cuentaFact': data['acc_number'],
+                        'telf1': data['phone'],
+                        'telf2': data['mobile'],
+                        'email': data['email'],
+                        'juntaLocal': '',
+                        'cooperativa': '',
+                        'observaciones': observ,
+                        'factPendientes': pending_inv,
+                        }
+                    if exists_partner_in_remotecontrol:
+                        resprest = requests.put(url_update_partner,
+                                                data=json.dumps(payload_data),
+                                                headers=headers_data)
                     else:
-                        partners_not_ok.append(data['partner_code'])
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
+                        del payload_data['nuevoNSocio']
+                        resprest = requests.post(url_update_partner,
+                                                 data=json.dumps(payload_data),
+                                                 headers=headers_data,
+                                                 timeout=self.REQUEST_TIMEOUT)
+                    if resprest.status_code == 200:
+                        outputrest = json.loads(resprest.text)
+                        resp = outputrest['resultado'] == 'OK'
+                        if resp:
+                            partners_ok.append(data['partner_code'])
+                        else:
+                            partners_not_ok.append(data['partner_code'])
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
         return partners_ok, partners_not_ok
 
     def create_partners_on_synchronize_telecontrol(self, active_partners):

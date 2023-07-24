@@ -27,12 +27,16 @@ class ResPartner(models.Model):
         headers_data = {
             'content-type': 'application/json',
         }
-        resprest = requests.post(url_open_session,
-                                 data=auth_data,
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            outputrest = json.loads(resprest.text)
-            resp = outputrest['access_token']
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=auth_data,
+                                     headers=headers_data)
+            if resprest.status_code == 200 and resprest.text:
+                outputrest = json.loads(resprest.text)
+                resp = outputrest['access_token']
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     # Implemented hook
@@ -71,39 +75,43 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
-        token, error_message = self.get_token(
-            url_remotecontrol_rest,
-            url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if token:
-            url_send_new_partner = url_remotecontrol_rest + \
-                '/api/regantes'
-            headers_data = {
-                'authorization': 'bearer ' + token,
-                'content-type': 'application/json',
-            }
-            if (not data['vat']):
-                data['vat'] = '-'
-            payload_data = {
-                'Identificador': data['partner_code'],
-                'NIF': data['vat'],
-                'Nombre': data['firstname'],
-                'Apellido1': data['lastname'],
-                'Apellido2': data['lastname2'],
-                'Email': data['email'],
-                'DeudaPendiente': False,
-            }
-            resprest = requests.put(url_send_new_partner,
-                                    data=json.dumps(payload_data),
-                                    headers=headers_data)
-            if resprest.status_code == 201:
-                resp = True
-                error_message = ''
-            elif resprest.status_code == 200:
-                resp = False
-                error_message = _('User already exists, info updated')
-            else:
-                error_message = resprest.text
+        try:
+            token, error_message = self.get_token(
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if token:
+                url_send_new_partner = url_remotecontrol_rest + \
+                    '/api/regantes'
+                headers_data = {
+                    'authorization': 'bearer ' + token,
+                    'content-type': 'application/json',
+                }
+                if (not data['vat']):
+                    data['vat'] = '-'
+                payload_data = {
+                    'Identificador': data['partner_code'],
+                    'NIF': data['vat'],
+                    'Nombre': data['firstname'],
+                    'Apellido1': data['lastname'],
+                    'Apellido2': data['lastname2'],
+                    'Email': data['email'],
+                    'DeudaPendiente': False,
+                }
+                resprest = requests.put(url_send_new_partner,
+                                        data=json.dumps(payload_data),
+                                        headers=headers_data)
+                if resprest.status_code == 201:
+                    resp = True
+                    error_message = ''
+                elif resprest.status_code == 200:
+                    resp = False
+                    error_message = _('User already exists, info updated')
+                else:
+                    error_message = resprest.text
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_partner_on_creation_telecontrol(self, new_partner, vals):
@@ -147,34 +155,38 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
-        token, error_message = self.get_token(
-            url_remotecontrol_rest,
-            url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if token:
-            url_send_update_partner = url_remotecontrol_rest + \
-                '/api/regantes'
-            headers_data = {
-                'authorization': 'bearer ' + token,
-                'content-type': 'application/json',
-            }
-            if (not data['vat']):
-                data['vat'] = '-'
-            payload_data = {
-                'Identificador': data['partner_code'],
-                'NIF': data['vat'],
-                'Nombre': data['firstname'],
-                'Apellido1': data['lastname'],
-                'Apellido2': data['lastname2'],
-                'Email': data['email'],
-                'DeudaPendiente': data['with_credit_overdue'],
-            }
-            resprest = requests.put(url_send_update_partner,
-                                    data=json.dumps(payload_data),
-                                    headers=headers_data)
-            if resprest.status_code == 200 or resprest.status_code == 201:
-                resp = True
-                error_message = ''
+        try:
+            token, error_message = self.get_token(
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if token:
+                url_send_update_partner = url_remotecontrol_rest + \
+                    '/api/regantes'
+                headers_data = {
+                    'authorization': 'bearer ' + token,
+                    'content-type': 'application/json',
+                }
+                if (not data['vat']):
+                    data['vat'] = '-'
+                payload_data = {
+                    'Identificador': data['partner_code'],
+                    'NIF': data['vat'],
+                    'Nombre': data['firstname'],
+                    'Apellido1': data['lastname'],
+                    'Apellido2': data['lastname2'],
+                    'Email': data['email'],
+                    'DeudaPendiente': data['with_credit_overdue'],
+                }
+                resprest = requests.put(url_send_update_partner,
+                                        data=json.dumps(payload_data),
+                                        headers=headers_data)
+                if resprest.status_code == 200 or resprest.status_code == 201:
+                    resp = True
+                    error_message = ''
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_partner_on_write_telecontrol(self, vals):
@@ -197,25 +209,29 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
-        token, error_message = self.get_token(
-            url_remotecontrol_rest,
-            url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if token:
-            url_remove_partner = url_remotecontrol_rest + \
-                '/api/regantes/' + str(data['partner_code'])
-            headers_data = {
-                'authorization': 'bearer ' + token,
-                'content-type': 'application/json',
-            }
-            resprest = requests.delete(url_remove_partner,
-                                       headers=headers_data)
-            if resprest.status_code == 200:
-                resp = True
-                error_message = ''
-            else:
-                resp = False
-                error_message = resprest.text
+        try:
+            token, error_message = self.get_token(
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if token:
+                url_remove_partner = url_remotecontrol_rest + \
+                    '/api/regantes/' + str(data['partner_code'])
+                headers_data = {
+                    'authorization': 'bearer ' + token,
+                    'content-type': 'application/json',
+                }
+                resprest = requests.delete(url_remove_partner,
+                                           headers=headers_data)
+                if resprest.status_code == 200:
+                    resp = True
+                    error_message = ''
+                else:
+                    resp = False
+                    error_message = resprest.text
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def unlink_partner_on_unlink_telecontrol(self):
@@ -227,61 +243,18 @@ class ResPartner(models.Model):
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
             url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
-        token, error_message = self.get_token(
-            url_remotecontrol_rest,
-            url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if token:
-            url_update_partner = url_remotecontrol_rest + \
-                '/api/regantes/'
-            headers_data = {
-                'authorization': 'bearer ' + token,
-                'content-type': 'application/json',
-            }
-            if (not data['vat']):
-                data['vat'] = '-'
-            payload_data = {
-                'Identificador': data['partner_code'],
-                'NIF': data['vat'],
-                'Nombre': data['firstname'],
-                'Apellido1': data['lastname'],
-                'Apellido2': data['lastname2'],
-                'Email': data['email'],
-                'DeudaPendiente': data['with_credit_overdue'],
-            }
-            resprest = requests.put(url_update_partner,
-                                    data=json.dumps(payload_data),
-                                    headers=headers_data)
-            if resprest.status_code == 200 or resprest.status_code == 201:
-                resp = True
-                error_message = ''
-            else:
-                resp = False
-                error_message = resprest.text
-        return resp, error_message
-
-    def create_partner_on_synchronize_telecontrol(self):
-        super(ResPartner, self).create_partner_on_synchronize_telecontrol()
-        self.create_partner_on_syncrhonize('batchline')
-
-    # Implemented hook
-    def synchronize_partners_batchline(
-        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password, list_of_data):
-        partners_ok = []
-        partners_not_ok = []
-        token, error_message = self.get_token(
-            url_remotecontrol_rest,
-            url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if token:
-            url_update_partner = url_remotecontrol_rest + \
-                '/api/regantes/'
-            headers_data = {
-                'authorization': 'bearer ' + token,
-                'content-type': 'application/json',
-            }
-            for data in list_of_data:
+        try:
+            token, error_message = self.get_token(
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if token:
+                url_update_partner = url_remotecontrol_rest + \
+                    '/api/regantes/'
+                headers_data = {
+                    'authorization': 'bearer ' + token,
+                    'content-type': 'application/json',
+                }
                 if (not data['vat']):
                     data['vat'] = '-'
                 payload_data = {
@@ -297,10 +270,60 @@ class ResPartner(models.Model):
                                         data=json.dumps(payload_data),
                                         headers=headers_data)
                 if resprest.status_code == 200 or resprest.status_code == 201:
-                    partners_ok.append(data['partner_code'])
+                    resp = True
+                    error_message = ''
                 else:
-                    partners_not_ok.append(data['partner_code'])
-                pass
+                    resp = False
+                    error_message = resprest.text
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
+        return resp, error_message
+
+    def create_partner_on_synchronize_telecontrol(self):
+        super(ResPartner, self).create_partner_on_synchronize_telecontrol()
+        self.create_partner_on_syncrhonize('batchline')
+
+    # Implemented hook
+    def synchronize_partners_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
+        partners_ok = []
+        partners_not_ok = []
+        try:
+            token, error_message = self.get_token(
+                url_remotecontrol_rest,
+                url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if token:
+                url_update_partner = url_remotecontrol_rest + \
+                    '/api/regantes/'
+                headers_data = {
+                    'authorization': 'bearer ' + token,
+                    'content-type': 'application/json',
+                }
+                for data in list_of_data:
+                    if (not data['vat']):
+                        data['vat'] = '-'
+                    payload_data = {
+                        'Identificador': data['partner_code'],
+                        'NIF': data['vat'],
+                        'Nombre': data['firstname'],
+                        'Apellido1': data['lastname'],
+                        'Apellido2': data['lastname2'],
+                        'Email': data['email'],
+                        'DeudaPendiente': data['with_credit_overdue'],
+                    }
+                    resprest = requests.put(url_update_partner,
+                                            data=json.dumps(payload_data),
+                                            headers=headers_data)
+                    if resprest.status_code == 200 or resprest.status_code == 201:
+                        partners_ok.append(data['partner_code'])
+                    else:
+                        partners_not_ok.append(data['partner_code'])
+                    pass
+        except Exception:
+            pass
         return partners_ok, partners_not_ok
 
     def create_partners_on_synchronize_telecontrol(self, active_partners):

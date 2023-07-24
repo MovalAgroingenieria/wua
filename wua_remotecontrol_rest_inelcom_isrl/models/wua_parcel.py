@@ -14,6 +14,7 @@ class WuaParcel(models.Model):
         'name', 'partnerlink_ids', 'rurallocation_id', 'irrigationpointwc_ids',
         'area_official', 'county_id', 'hydraulicsector_id', 'cadastral_parcel',
         'cadastral_polygon']
+    REQUEST_TIMEOUT = 10
 
     # Implemented hook
     def populate_data_for_send_new_parcel_inelcom(self, vals):
@@ -74,37 +75,43 @@ class WuaParcel(models.Model):
         headers_data = {
             'content-type': 'application/json',
             }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            url_send_new_parcel = url_remotecontrol_rest + \
-                '/parcelas/' + data['name'] + \
-                '?sesion=' + id_session + '&uso=1'
-            payload_data = {
-                'codigosContadores': data['watermeters'],
-                'localidad': data['county'],
-                'poligono': data['cadastral_polygon'],
-                'parcela': data['cadastral_parcel'],
-                'sector': data['hydraulicsector'],
-                'paraje': data['rurallocation'],
-                'superficie': data['area_official_hec'],
-                'unidad': data['area_unit'],
-                'regante': data['partner_code'],
-                'observaciones': _('Source: Moval Regadío'),
-                }
-            resprest = requests.post(url_send_new_parcel,
-                                     data=json.dumps(payload_data),
-                                     headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
-                resp = outputrest['resultado'] == 'OK'
-                if not resp:
-                    error_message = outputrest['detalleError']
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
+                url_send_new_parcel = url_remotecontrol_rest + \
+                    '/parcelas/' + data['name'] + \
+                    '?sesion=' + id_session + '&uso=1'
+                payload_data = {
+                    'codigosContadores': data['watermeters'],
+                    'localidad': data['county'],
+                    'poligono': data['cadastral_polygon'],
+                    'parcela': data['cadastral_parcel'],
+                    'sector': data['hydraulicsector'],
+                    'paraje': data['rurallocation'],
+                    'superficie': data['area_official_hec'],
+                    'unidad': data['area_unit'],
+                    'regante': data['partner_code'],
+                    'observaciones': _('Source: Moval Regadío'),
+                    }
+                resprest = requests.post(url_send_new_parcel,
+                                         data=json.dumps(payload_data),
+                                         headers=headers_data,
+                                         timeout=self.REQUEST_TIMEOUT)
+                if resprest.status_code == 200:
+                    outputrest = json.loads(resprest.text)
+                    resp = outputrest['resultado'] == 'OK'
+                    if not resp:
+                        error_message = outputrest['detalleError']
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
@@ -170,37 +177,42 @@ class WuaParcel(models.Model):
         headers_data = {
             'content-type': 'application/json',
             }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            url_update_parcel = url_remotecontrol_rest + \
-                '/parcelas/' + data['name'] + \
-                '?sesion=' + id_session + '&uso=1'
-            payload_data = {
-                'codigosContadores': data['watermeters'],
-                'localidad': data['county'],
-                'poligono': data['cadastral_polygon'],
-                'parcela': data['cadastral_parcel'],
-                'sector': data['hydraulicsector'],
-                'paraje': data['rurallocation'],
-                'superficie': data['area_official_hec'],
-                'unidad': data['area_unit'],
-                'regante': data['partner_code'],
-                'observaciones': observ,
-                }
-            resprest = requests.put(url_update_parcel,
-                                    data=json.dumps(payload_data),
-                                    headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
-                resp = outputrest['resultado'] == 'OK'
-                if not resp:
-                    error_message = outputrest['detalleError']
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
+                url_update_parcel = url_remotecontrol_rest + \
+                    '/parcelas/' + data['name'] + \
+                    '?sesion=' + id_session + '&uso=1'
+                payload_data = {
+                    'codigosContadores': data['watermeters'],
+                    'localidad': data['county'],
+                    'poligono': data['cadastral_polygon'],
+                    'parcela': data['cadastral_parcel'],
+                    'sector': data['hydraulicsector'],
+                    'paraje': data['rurallocation'],
+                    'superficie': data['area_official_hec'],
+                    'unidad': data['area_unit'],
+                    'regante': data['partner_code'],
+                    'observaciones': observ,
+                    }
+                resprest = requests.put(url_update_parcel,
+                                        data=json.dumps(payload_data),
+                                        headers=headers_data)
+                if resprest.status_code == 200:
+                    outputrest = json.loads(resprest.text)
+                    resp = outputrest['resultado'] == 'OK'
+                    if not resp:
+                        error_message = outputrest['detalleError']
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_parcel_on_write_telecontrol(self, vals):
@@ -231,24 +243,29 @@ class WuaParcel(models.Model):
         headers_data = {
             'content-type': 'application/json',
             }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            url_delete_parcel = url_remotecontrol_rest + \
-                '/parcelas/' + data['name'] + \
-                '?sesion=' + id_session + '&uso=1'
-            resprest = requests.delete(url_delete_parcel,
-                                       headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
-                resp = outputrest['resultado'] == 'OK'
-                if not resp:
-                    error_message = outputrest['detalleError']
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
+                url_delete_parcel = url_remotecontrol_rest + \
+                    '/parcelas/' + data['name'] + \
+                    '?sesion=' + id_session + '&uso=1'
+                resprest = requests.delete(url_delete_parcel,
+                                           headers=headers_data)
+                if resprest.status_code == 200:
+                    outputrest = json.loads(resprest.text)
+                    resp = outputrest['resultado'] == 'OK'
+                    if not resp:
+                        error_message = outputrest['detalleError']
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def unlink_parcel_on_unlink_telecontrol(self):
@@ -273,76 +290,13 @@ class WuaParcel(models.Model):
         headers_data = {
             'content-type': 'application/json',
             }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            url_update_parcel = url_remotecontrol_rest + \
-                '/parcelas/' + data['name'] + \
-                '?sesion=' + id_session + '&uso=1'
-            resprest = requests.get(url_update_parcel)
-            exists_parcel_in_remotecontrol = resprest.text != ''
-            payload_data = {
-                'codigosContadores': data['watermeters'],
-                'localidad': data['county'],
-                'poligono': data['cadastral_polygon'],
-                'parcela': data['cadastral_parcel'],
-                'superficie': data['area_official_hec'],
-                'unidad': data['area_unit'],
-                'regante': data['partner_code'],
-                'observaciones': observ,
-                }
-            if exists_parcel_in_remotecontrol:
-                resprest = requests.put(url_update_parcel,
-                                        data=json.dumps(payload_data),
-                                        headers=headers_data)
-            else:
-                resprest = requests.post(url_update_parcel,
-                                         data=json.dumps(payload_data),
-                                         headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
-                resp = outputrest['resultado'] == 'OK'
-                if not resp:
-                    error_message = outputrest['detalleError']
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
-        return resp, error_message
-
-    def create_parcel_on_synchronize_telecontrol(self):
-        super(WuaParcel, self).create_parcel_on_synchronize_telecontrol()
-        self.create_parcel_on_syncrhonize('inelcom')
-
-    # Implemented hook
-    def synchronize_parcels_inelcom(
-        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password, list_of_data):
-        parcels_ok = []
-        parcels_not_ok = []
-        url_open_session = url_remotecontrol_rest + '/sesiones'
-        auth_data = {
-            'usuario': url_remotecontrol_rest_username,
-            'clave': url_remotecontrol_rest_password,
-            }
-        headers_data = {
-            'content-type': 'application/json',
-            }
-        resprest = requests.post(url_open_session,
-                                 data=json.dumps(auth_data),
-                                 headers=headers_data)
-        if resprest.status_code == 200 and resprest.text:
-            id_session = resprest.text
-            for data in list_of_data:
-                observ = _('Source: Moval Regadío')
-                observ_archived_preffix = _('Archived Data')
-                current_parcel = self.env['wua.parcel'].with_context(
-                    active_test=False).search(
-                        [('name', '=', data['name'])])
-                record_archived = not current_parcel.active
-                if record_archived:
-                    observ = observ_archived_preffix + '. ' + observ
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
                 url_update_parcel = url_remotecontrol_rest + \
                     '/parcelas/' + data['name'] + \
                     '?sesion=' + id_session + '&uso=1'
@@ -365,17 +319,91 @@ class WuaParcel(models.Model):
                 else:
                     resprest = requests.post(url_update_parcel,
                                              data=json.dumps(payload_data),
-                                             headers=headers_data)
+                                             headers=headers_data,
+                                             timeout=self.REQUEST_TIMEOUT)
                 if resprest.status_code == 200:
                     outputrest = json.loads(resprest.text)
                     resp = outputrest['resultado'] == 'OK'
-                    if resp:
-                        parcels_ok.append(data['name'])
+                    if not resp:
+                        error_message = outputrest['detalleError']
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
+            error_message = _('Telecontrol Error')
+        return resp, error_message
+
+    def create_parcel_on_synchronize_telecontrol(self):
+        super(WuaParcel, self).create_parcel_on_synchronize_telecontrol()
+        self.create_parcel_on_syncrhonize('inelcom')
+
+    # Implemented hook
+    def synchronize_parcels_inelcom(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
+        parcels_ok = []
+        parcels_not_ok = []
+        url_open_session = url_remotecontrol_rest + '/sesiones'
+        auth_data = {
+            'usuario': url_remotecontrol_rest_username,
+            'clave': url_remotecontrol_rest_password,
+            }
+        headers_data = {
+            'content-type': 'application/json',
+            }
+        try:
+            resprest = requests.post(url_open_session,
+                                     data=json.dumps(auth_data),
+                                     headers=headers_data,
+                                     timeout=self.REQUEST_TIMEOUT)
+            if resprest.status_code == 200 and resprest.text:
+                id_session = resprest.text
+                for data in list_of_data:
+                    observ = _('Source: Moval Regadío')
+                    observ_archived_preffix = _('Archived Data')
+                    current_parcel = self.env['wua.parcel'].with_context(
+                        active_test=False).search(
+                            [('name', '=', data['name'])])
+                    record_archived = not current_parcel.active
+                    if record_archived:
+                        observ = observ_archived_preffix + '. ' + observ
+                    url_update_parcel = url_remotecontrol_rest + \
+                        '/parcelas/' + data['name'] + \
+                        '?sesion=' + id_session + '&uso=1'
+                    resprest = requests.get(url_update_parcel)
+                    exists_parcel_in_remotecontrol = resprest.text != ''
+                    payload_data = {
+                        'codigosContadores': data['watermeters'],
+                        'localidad': data['county'],
+                        'poligono': data['cadastral_polygon'],
+                        'parcela': data['cadastral_parcel'],
+                        'superficie': data['area_official_hec'],
+                        'unidad': data['area_unit'],
+                        'regante': data['partner_code'],
+                        'observaciones': observ,
+                        }
+                    if exists_parcel_in_remotecontrol:
+                        resprest = requests.put(url_update_parcel,
+                                                data=json.dumps(payload_data),
+                                                headers=headers_data)
                     else:
-                        parcels_not_ok.append(data['name'])
-            url_close_session = url_remotecontrol_rest + \
-                '/sesiones/' + id_session
-            resprest = requests.delete(url_close_session)
+                        resprest = requests.post(url_update_parcel,
+                                                 data=json.dumps(payload_data),
+                                                 headers=headers_data,
+                                                 timeout=self.REQUEST_TIMEOUT)
+                    if resprest.status_code == 200:
+                        outputrest = json.loads(resprest.text)
+                        resp = outputrest['resultado'] == 'OK'
+                        if resp:
+                            parcels_ok.append(data['name'])
+                        else:
+                            parcels_not_ok.append(data['name'])
+                url_close_session = url_remotecontrol_rest + \
+                    '/sesiones/' + id_session
+                resprest = requests.delete(url_close_session)
+        except Exception as e:
+            resp = False
         return parcels_ok, parcels_not_ok
 
     def create_parcels_on_synchronize_telecontrol(self, active_parcels,

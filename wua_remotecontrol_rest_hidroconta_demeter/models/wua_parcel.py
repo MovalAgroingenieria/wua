@@ -49,60 +49,66 @@ class WuaParcel(models.Model):
             return True, ''
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            resprest = requests.request(
-                'GET', url_remotecontrol_rest + '/owners?' +
-                'param=censusId&value=' + str(data['partner_code']),
-                headers={
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                    },
-                data={})
-            if resprest.status_code == 200:
-                exists_partner_in_remotecontrol = resprest.text != '[]'
-                if exists_partner_in_remotecontrol:
-                    owners = json.loads(resprest.text)
-                    if len(owners) > 1:
-                        error_message = _('There are several owners with ' +
-                                          'the same code')
+        try:
+            jsessionid = self.env['wua.reading'].open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
+                resprest = requests.request(
+                    'GET', url_remotecontrol_rest + '/owners?' +
+                    'param=censusId&value=' + str(data['partner_code']),
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Cookie': 'JSESSIONID=' + jsessionid
+                        },
+                    data={})
+                if resprest.status_code == 200:
+                    exists_partner_in_remotecontrol = resprest.text != '[]'
+                    if exists_partner_in_remotecontrol:
+                        owners = json.loads(resprest.text)
+                        if len(owners) > 1:
+                            error_message = _('There are several owners ' +
+                                              'with the same code')
+                        else:
+                            ownerId = owners[0]['ownerId']
+                            hydrant_ids = []
+                            for wc_code in data['waterconnection_codes']:
+                                resprest = requests.request(
+                                    'GET', url_remotecontrol_rest +
+                                    '/hydrants?' +
+                                    'param=code&value=\'' + wc_code + '\'',
+                                    headers={
+                                        'Content-Type': 'application/json',
+                                        'Cookie': 'JSESSIONID=' + jsessionid
+                                        },
+                                    data={})
+                                if (resprest.status_code == 200 and
+                                        resprest.text != '[]'):
+                                    hydrants = json.loads(resprest.text)
+                                    hydrantId = hydrants[0]['elementId']
+                                    hydrant_ids.append(hydrantId)
+                            resp = True
+                            for hydrantId in (hydrant_ids or []):
+                                resprest = requests.request(
+                                    'PUT', url_remotecontrol_rest +
+                                    '/hydrants/' +
+                                    'field/ownerId/' + str(hydrantId),
+                                    headers={
+                                        'Content-Type': 'application/json',
+                                        'Cookie': 'JSESSIONID=' + jsessionid
+                                        },
+                                    data=json.dumps({'value': ownerId}))
+                                if resprest.status_code != 200:
+                                    resp = False
+                                    error_message = resprest.text
+                                    break
                     else:
-                        ownerId = owners[0]['ownerId']
-                        hydrant_ids = []
-                        for wc_code in data['waterconnection_codes']:
-                            resprest = requests.request(
-                                'GET', url_remotecontrol_rest + '/hydrants?' +
-                                'param=code&value=\'' + wc_code + '\'',
-                                headers={
-                                    'Content-Type': 'application/json',
-                                    'Cookie': 'JSESSIONID=' + jsessionid
-                                    },
-                                data={})
-                            if (resprest.status_code == 200 and
-                               resprest.text != '[]'):
-                                hydrants = json.loads(resprest.text)
-                                hydrantId = hydrants[0]['elementId']
-                                hydrant_ids.append(hydrantId)
-                        resp = True
-                        for hydrantId in (hydrant_ids or []):
-                            resprest = requests.request(
-                                'PUT', url_remotecontrol_rest + '/hydrants/' +
-                                'field/ownerId/' + str(hydrantId),
-                                headers={
-                                    'Content-Type': 'application/json',
-                                    'Cookie': 'JSESSIONID=' + jsessionid
-                                    },
-                                data=json.dumps({'value': ownerId}))
-                            if resprest.status_code != 200:
-                                resp = False
-                                error_message = resprest.text
-                                break
-                else:
-                    error_message = _('The partner does not exists')
-            self.env['wua.reading'].close_connection(
-                url_remotecontrol_rest, jsessionid)
+                        error_message = _('The partner does not exists')
+                self.env['wua.reading'].close_connection(
+                    url_remotecontrol_rest, jsessionid)
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
@@ -212,41 +218,45 @@ class WuaParcel(models.Model):
             return True, ''
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            hydrant_ids = []
-            for wc_code in data['waterconnection_codes']:
-                resprest = requests.request(
-                    'GET', url_remotecontrol_rest + '/hydrants?' +
-                    'param=code&value=\'' + wc_code + '\'',
-                    headers={
-                        'Content-Type': 'application/json',
-                        'Cookie': 'JSESSIONID=' + jsessionid
-                        },
-                    data={})
-                if (resprest.status_code == 200 and
-                   resprest.text != '[]'):
-                    hydrants = json.loads(resprest.text)
-                    hydrantId = hydrants[0]['elementId']
-                    hydrant_ids.append(hydrantId)
-            resp = True
-            for hydrantId in (hydrant_ids or []):
-                resprest = requests.request(
-                    'PUT', url_remotecontrol_rest + '/hydrants/' +
-                    'field/ownerId/' + str(hydrantId),
-                    headers={
-                        'Content-Type': 'application/json',
-                        'Cookie': 'JSESSIONID=' + jsessionid
-                        },
-                    data=json.dumps({'value': 0}))
-                if resprest.status_code != 200:
-                    resp = False
-                    error_message = resprest.text
-                    break
-            self.env['wua.reading'].close_connection(
-                url_remotecontrol_rest, jsessionid)
+        try:
+            jsessionid = self.env['wua.reading'].open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
+                hydrant_ids = []
+                for wc_code in data['waterconnection_codes']:
+                    resprest = requests.request(
+                        'GET', url_remotecontrol_rest + '/hydrants?' +
+                        'param=code&value=\'' + wc_code + '\'',
+                        headers={
+                            'Content-Type': 'application/json',
+                            'Cookie': 'JSESSIONID=' + jsessionid
+                            },
+                        data={})
+                    if (resprest.status_code == 200 and
+                            resprest.text != '[]'):
+                        hydrants = json.loads(resprest.text)
+                        hydrantId = hydrants[0]['elementId']
+                        hydrant_ids.append(hydrantId)
+                resp = True
+                for hydrantId in (hydrant_ids or []):
+                    resprest = requests.request(
+                        'PUT', url_remotecontrol_rest + '/hydrants/' +
+                        'field/ownerId/' + str(hydrantId),
+                        headers={
+                            'Content-Type': 'application/json',
+                            'Cookie': 'JSESSIONID=' + jsessionid
+                            },
+                        data=json.dumps({'value': 0}))
+                    if resprest.status_code != 200:
+                        resp = False
+                        error_message = resprest.text
+                        break
+                self.env['wua.reading'].close_connection(
+                    url_remotecontrol_rest, jsessionid)
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def unlink_parcel_on_unlink_telecontrol(self):
@@ -273,65 +283,70 @@ class WuaParcel(models.Model):
             url_remotecontrol_rest_password, list_of_data):
         parcels_ok = []
         parcels_not_ok = []
-        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            for data in list_of_data:
-                resprest = requests.request(
-                    'GET', url_remotecontrol_rest + '/owners?' +
-                    'param=censusId&value=' + str(data['partner_code']),
-                    headers={
-                        'Content-Type': 'application/json',
-                        'Cookie': 'JSESSIONID=' + jsessionid
-                        },
-                    data={})
-                if resprest.status_code == 200:
-                    exists_partner_in_remotecontrol = resprest.text != '[]'
-                    if exists_partner_in_remotecontrol:
-                        owners = json.loads(resprest.text)
-                        if len(owners) > 1:
-                            parcels_not_ok.append(data['parcel_code'])
-                        else:
-                            ownerId = owners[0]['ownerId']
-                            hydrant_ids = []
-                            for wc_code in data['waterconnection_codes']:
-                                resprest = requests.request(
-                                    'GET', url_remotecontrol_rest +
-                                    '/hydrants?' +
-                                    'param=code&value=\'' + wc_code + '\'',
-                                    headers={
-                                        'Content-Type': 'application/json',
-                                        'Cookie': 'JSESSIONID=' + jsessionid
-                                        },
-                                    data={})
-                                if (resprest.status_code == 200 and
-                                   resprest.text != '[]'):
-                                    hydrants = json.loads(resprest.text)
-                                    hydrantId = hydrants[0]['elementId']
-                                    hydrant_ids.append(hydrantId)
-                            update_hydrants_ok = True
-                            for hydrantId in (hydrant_ids or []):
-                                resprest = requests.request(
-                                    'PUT', url_remotecontrol_rest +
-                                    '/hydrants/' +
-                                    'field/ownerId/' + str(hydrantId),
-                                    headers={
-                                        'Content-Type': 'application/json',
-                                        'Cookie': 'JSESSIONID=' + jsessionid
-                                        },
-                                    data=json.dumps({'value': ownerId}))
-                                if resprest.status_code != 200:
-                                    update_hydrants_ok = False
-                                    break
-                            if update_hydrants_ok:
-                                parcels_ok.append(data['parcel_code'])
-                            else:
+        try:
+            jsessionid = self.env['wua.reading'].open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
+                for data in list_of_data:
+                    resprest = requests.request(
+                        'GET', url_remotecontrol_rest + '/owners?' +
+                        'param=censusId&value=' + str(data['partner_code']),
+                        headers={
+                            'Content-Type': 'application/json',
+                            'Cookie': 'JSESSIONID=' + jsessionid
+                            },
+                        data={})
+                    if resprest.status_code == 200:
+                        exists_partner_in_remotecontrol = resprest.text != '[]'
+                        if exists_partner_in_remotecontrol:
+                            owners = json.loads(resprest.text)
+                            if len(owners) > 1:
                                 parcels_not_ok.append(data['parcel_code'])
-                    else:
-                        parcels_not_ok.append(data['parcel_code'])
-            self.env['wua.reading'].close_connection(
-                url_remotecontrol_rest, jsessionid)
+                            else:
+                                ownerId = owners[0]['ownerId']
+                                hydrant_ids = []
+                                for wc_code in data['waterconnection_codes']:
+                                    resprest = requests.request(
+                                        'GET', url_remotecontrol_rest +
+                                        '/hydrants?' +
+                                        'param=code&value=\'' + wc_code + '\'',
+                                        headers={
+                                            'Content-Type': 'application/json',
+                                            'Cookie': 'JSESSIONID=' +
+                                            jsessionid
+                                            },
+                                        data={})
+                                    if (resprest.status_code == 200 and
+                                            resprest.text != '[]'):
+                                        hydrants = json.loads(resprest.text)
+                                        hydrantId = hydrants[0]['elementId']
+                                        hydrant_ids.append(hydrantId)
+                                update_hydrants_ok = True
+                                for hydrantId in (hydrant_ids or []):
+                                    resprest = requests.request(
+                                        'PUT', url_remotecontrol_rest +
+                                        '/hydrants/' +
+                                        'field/ownerId/' + str(hydrantId),
+                                        headers={
+                                            'Content-Type': 'application/json',
+                                            'Cookie': 'JSESSIONID=' +
+                                            jsessionid
+                                            },
+                                        data=json.dumps({'value': ownerId}))
+                                    if resprest.status_code != 200:
+                                        update_hydrants_ok = False
+                                        break
+                                if update_hydrants_ok:
+                                    parcels_ok.append(data['parcel_code'])
+                                else:
+                                    parcels_not_ok.append(data['parcel_code'])
+                        else:
+                            parcels_not_ok.append(data['parcel_code'])
+                self.env['wua.reading'].close_connection(
+                    url_remotecontrol_rest, jsessionid)
+        except Exception:
+            pass
         return parcels_ok, parcels_not_ok
 
     def create_parcels_on_synchronize_telecontrol(self, active_parcels,

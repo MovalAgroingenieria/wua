@@ -14,6 +14,7 @@ class ResPartner(models.Model):
         'street', 'street_num', 'zip', 'city', 'state_id', 'country_id',
         'phone', 'mobile', 'email'
     ]
+    REQUEST_TIMEOUT = 20
 
     # Implemented hook
     def populate_data_for_send_new_partner_hidroconta(self, vals):
@@ -90,34 +91,38 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            resprest = requests.request(
-                'GET', url_remotecontrol_rest + '/owners?' +
-                'param=censusId&value=' + str(data['censusId']),
-                headers={
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                    },
-                data={})
-            if resprest.status_code == 200 and resprest.text != '[]':
-                error_message = _('The partner already exists')
-            else:
+        try:
+            jsessionid = self.env['wua.reading'].open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
                 resprest = requests.request(
-                    'POST', url_remotecontrol_rest + '/owners',
+                    'GET', url_remotecontrol_rest + '/owners?' +
+                    'param=censusId&value=' + str(data['censusId']),
                     headers={
                         'Content-Type': 'application/json',
                         'Cookie': 'JSESSIONID=' + jsessionid
                         },
-                    data=json.dumps(data))
-                if resprest.status_code == 201:
-                    resp = True
+                    data={})
+                if resprest.status_code == 200 and resprest.text != '[]':
+                    error_message = _('The partner already exists')
                 else:
-                    error_message = resprest.text
-            self.env['wua.reading'].close_connection(
-                url_remotecontrol_rest, jsessionid)
+                    resprest = requests.request(
+                        'POST', url_remotecontrol_rest + '/owners',
+                        headers={
+                            'Content-Type': 'application/json',
+                            'Cookie': 'JSESSIONID=' + jsessionid
+                            },
+                        data=json.dumps(data))
+                    if resprest.status_code == 201:
+                        resp = True
+                    else:
+                        error_message = resprest.text
+                self.env['wua.reading'].close_connection(
+                    url_remotecontrol_rest, jsessionid)
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_partner_on_creation_telecontrol(self, new_partner, vals):
@@ -200,42 +205,46 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data, record_archived=False):
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            resprest = requests.request(
-                'GET', url_remotecontrol_rest + '/owners?' +
-                'param=censusId&value=' + str(data['censusId']),
-                headers={
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                    },
-                data={})
-            if resprest.status_code == 200 and resprest.text == '[]':
-                error_message = _('The partner does not exists')
-            else:
-                ownerId = 0
-                owners = json.loads(resprest.text)
-                if len(owners) > 1:
-                    error_message = _('There are several owners with the ' +
-                                      'same code')
+        try:
+            jsessionid = self.env['wua.reading'].open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
+                resprest = requests.request(
+                    'GET', url_remotecontrol_rest + '/owners?' +
+                    'param=censusId&value=' + str(data['censusId']),
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Cookie': 'JSESSIONID=' + jsessionid
+                        },
+                    data={})
+                if resprest.status_code == 200 and resprest.text == '[]':
+                    error_message = _('The partner does not exists')
                 else:
-                    ownerId = owners[0]['ownerId']
-                    data['ownerId'] = ownerId
-                    resprest = requests.request(
-                        'PUT', url_remotecontrol_rest + '/owners',
-                        headers={
-                            'Content-Type': 'application/json',
-                            'Cookie': 'JSESSIONID=' + jsessionid
-                            },
-                        data=json.dumps(data))
-                    if resprest.status_code == 200:
-                        resp = True
+                    ownerId = 0
+                    owners = json.loads(resprest.text)
+                    if len(owners) > 1:
+                        error_message = _('There are several owners with ' +
+                                          'the same code')
                     else:
-                        error_message = resprest.text
-            self.env['wua.reading'].close_connection(
-                url_remotecontrol_rest, jsessionid)
+                        ownerId = owners[0]['ownerId']
+                        data['ownerId'] = ownerId
+                        resprest = requests.request(
+                            'PUT', url_remotecontrol_rest + '/owners',
+                            headers={
+                                'Content-Type': 'application/json',
+                                'Cookie': 'JSESSIONID=' + jsessionid
+                                },
+                            data=json.dumps(data))
+                        if resprest.status_code == 200:
+                            resp = True
+                        else:
+                            error_message = resprest.text
+                self.env['wua.reading'].close_connection(
+                    url_remotecontrol_rest, jsessionid)
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_partner_on_write_telecontrol(self, vals):
@@ -258,39 +267,43 @@ class ResPartner(models.Model):
             url_remotecontrol_rest_password, data):
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            resprest = requests.request(
-                'GET', url_remotecontrol_rest + '/owners?' +
-                'param=censusId&value=' + str(data['partner_code']),
-                headers={
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                    },
-                data={})
-            if resprest.status_code == 200 and resprest.text == '[]':
-                error_message = _('The partner does not exists')
-            else:
-                ownerId = 0
-                owners = json.loads(resprest.text)
-                if len(owners) > 1:
-                    error_message = _('There are several owners with the ' +
-                                      'same code')
+        try:
+            jsessionid = self.env['wua.reading'].open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
+                resprest = requests.request(
+                    'GET', url_remotecontrol_rest + '/owners?' +
+                    'param=censusId&value=' + str(data['partner_code']),
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Cookie': 'JSESSIONID=' + jsessionid
+                        },
+                    data={})
+                if resprest.status_code == 200 and resprest.text == '[]':
+                    error_message = _('The partner does not exists')
                 else:
-                    ownerId = owners[0]['ownerId']
-                    resp = True
-                    resprest = requests.request(
-                        'DELETE', url_remotecontrol_rest + '/owners/' +
-                        str(ownerId),
-                        headers={
-                            'Content-Type': 'application/json',
-                            'Cookie': 'JSESSIONID=' + jsessionid
-                            },
-                        data={})
-            self.env['wua.reading'].close_connection(
-                url_remotecontrol_rest, jsessionid)
+                    ownerId = 0
+                    owners = json.loads(resprest.text)
+                    if len(owners) > 1:
+                        error_message = _('There are several owners with ' +
+                                          'same code')
+                    else:
+                        ownerId = owners[0]['ownerId']
+                        resp = True
+                        resprest = requests.request(
+                            'DELETE', url_remotecontrol_rest + '/owners/' +
+                            str(ownerId),
+                            headers={
+                                'Content-Type': 'application/json',
+                                'Cookie': 'JSESSIONID=' + jsessionid
+                                },
+                            data={})
+                self.env['wua.reading'].close_connection(
+                    url_remotecontrol_rest, jsessionid)
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def unlink_partner_on_unlink_telecontrol(self):
@@ -304,71 +317,11 @@ class ResPartner(models.Model):
             data, record_archived=False):
         resp = False
         error_message = ''
-        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            resprest = requests.request(
-                'GET', url_remotecontrol_rest + '/owners?' +
-                'param=censusId&value=' + str(data['censusId']),
-                headers={
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                    },
-                data={})
-            if resprest.status_code == 200:
-                exists_partner_in_remotecontrol = resprest.text != '[]'
-                if not exists_partner_in_remotecontrol:
-                    resprest = requests.request(
-                        'POST', url_remotecontrol_rest + '/owners',
-                        headers={
-                            'Content-Type': 'application/json',
-                            'Cookie': 'JSESSIONID=' + jsessionid
-                            },
-                        data=json.dumps(data))
-                    if resprest.status_code == 201:
-                        resp = True
-                    else:
-                        error_message = resprest.text
-                else:
-                    ownerId = 0
-                    owners = json.loads(resprest.text)
-                    if len(owners) > 1:
-                        error_message = _('There are several owners with the' +
-                                          ' same code')
-                    else:
-                        ownerId = owners[0]['ownerId']
-                        data['ownerId'] = ownerId
-                        resprest = requests.request(
-                            'PUT', url_remotecontrol_rest + '/owners',
-                            headers={
-                                'Content-Type': 'application/json',
-                                'Cookie': 'JSESSIONID=' + jsessionid
-                                },
-                            data=json.dumps(data))
-                        if resprest.status_code == 200:
-                            resp = True
-                        else:
-                            error_message = resprest.text
-            self.env['wua.reading'].close_connection(
-                url_remotecontrol_rest, jsessionid)
-        return resp, error_message
-
-    def create_partner_on_synchronize_telecontrol(self):
-        super(ResPartner, self).create_partner_on_synchronize_telecontrol()
-        self.create_partner_on_syncrhonize('hidroconta')
-
-    # Implemented hook
-    def synchronize_partners_hidroconta(
-        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password, list_of_data):
-        partners_ok = []
-        partners_not_ok = []
-        jsessionid = self.env['wua.reading'].open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            for data in list_of_data:
+        try:
+            jsessionid = self.env['wua.reading'].open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
                 resprest = requests.request(
                     'GET', url_remotecontrol_rest + '/owners?' +
                     'param=censusId&value=' + str(data['censusId']),
@@ -388,14 +341,15 @@ class ResPartner(models.Model):
                                 },
                             data=json.dumps(data))
                         if resprest.status_code == 201:
-                            partners_ok.append(data['censusId'])
+                            resp = True
                         else:
-                            partners_not_ok.append(data['censusId'])
+                            error_message = resprest.text
                     else:
                         ownerId = 0
                         owners = json.loads(resprest.text)
                         if len(owners) > 1:
-                            partners_not_ok.append(data['censusId'])
+                            error_message = _('There are several owners ' +
+                                              'with the same code')
                         else:
                             ownerId = owners[0]['ownerId']
                             data['ownerId'] = ownerId
@@ -407,11 +361,77 @@ class ResPartner(models.Model):
                                     },
                                 data=json.dumps(data))
                             if resprest.status_code == 200:
+                                resp = True
+                            else:
+                                error_message = resprest.text
+                self.env['wua.reading'].close_connection(
+                    url_remotecontrol_rest, jsessionid)
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
+        return resp, error_message
+
+    def create_partner_on_synchronize_telecontrol(self):
+        super(ResPartner, self).create_partner_on_synchronize_telecontrol()
+        self.create_partner_on_syncrhonize('hidroconta')
+
+    # Implemented hook
+    def synchronize_partners_hidroconta(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password, list_of_data):
+        partners_ok = []
+        partners_not_ok = []
+        try:
+            jsessionid = self.env['wua.reading'].open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
+                for data in list_of_data:
+                    resprest = requests.request(
+                        'GET', url_remotecontrol_rest + '/owners?' +
+                        'param=censusId&value=' + str(data['censusId']),
+                        headers={
+                            'Content-Type': 'application/json',
+                            'Cookie': 'JSESSIONID=' + jsessionid
+                            },
+                        data={})
+                    if resprest.status_code == 200:
+                        exists_partner_in_remotecontrol = resprest.text != '[]'
+                        if not exists_partner_in_remotecontrol:
+                            resprest = requests.request(
+                                'POST', url_remotecontrol_rest + '/owners',
+                                headers={
+                                    'Content-Type': 'application/json',
+                                    'Cookie': 'JSESSIONID=' + jsessionid
+                                    },
+                                data=json.dumps(data))
+                            if resprest.status_code == 201:
                                 partners_ok.append(data['censusId'])
                             else:
                                 partners_not_ok.append(data['censusId'])
-            self.env['wua.reading'].close_connection(
-                url_remotecontrol_rest, jsessionid)
+                        else:
+                            ownerId = 0
+                            owners = json.loads(resprest.text)
+                            if len(owners) > 1:
+                                partners_not_ok.append(data['censusId'])
+                            else:
+                                ownerId = owners[0]['ownerId']
+                                data['ownerId'] = ownerId
+                                resprest = requests.request(
+                                    'PUT', url_remotecontrol_rest + '/owners',
+                                    headers={
+                                        'Content-Type': 'application/json',
+                                        'Cookie': 'JSESSIONID=' + jsessionid
+                                        },
+                                    data=json.dumps(data))
+                                if resprest.status_code == 200:
+                                    partners_ok.append(data['censusId'])
+                                else:
+                                    partners_not_ok.append(data['censusId'])
+                self.env['wua.reading'].close_connection(
+                    url_remotecontrol_rest, jsessionid)
+        except Exception:
+            pass
         return partners_ok, partners_not_ok
 
     def create_partners_on_synchronize_telecontrol(self, active_partners):

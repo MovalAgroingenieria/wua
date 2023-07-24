@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models, api
+from odoo import models, api, _
 
 
 class WuaParcel(models.Model):
@@ -27,46 +27,50 @@ class WuaParcel(models.Model):
         url_remotecontrol_rest_password = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'url_remotecontrol_rest_password_icr')
-        if (installations_identifier):
-            installations_identifier = installations_identifier.split(',')
-        if (installations_identifier and client_identifier and
-                url_remotecontrol_rest and url_remotecontrol_rest_username and
-                url_remotecontrol_rest_password):
-            jwt = self.open_connection_icr(
-                url_remotecontrol_rest, url_remotecontrol_rest_username,
-                url_remotecontrol_rest_password
-            )
-            if jwt:
-                installation_index = 0
-                owner_found = False
-                # Get the owner id and the the installation associated
-                while (installation_index < len(installations_identifier) and
-                        not owner_found):
-                    # Check where the
-                    installation_identifier = \
-                        installations_identifier[installation_index]
-                    url_owners = url_remotecontrol_rest + '/clients/' + \
-                        str(client_identifier) + '/installations/' + \
-                        str(installation_identifier) + '/tags/?' + \
-                        'items_per_page=1000000&filter=name:\'' + wm + \
-                        '_PROPIETARIO$\':contains'
-                    headers = {
-                        'Authorization': 'Bearer ' + jwt,
-                    }
-                    resprest = requests.request(
-                        'GET', url_owners,
-                        headers=headers,
-                        data={}
-                    )
-                    if resprest.ok and resprest.text:
-                        response = json.loads(resprest.text)['results']
-                        if response and response[0]:
-                            # Set the ID and the client identifier found and
-                            # stop the search
-                            tag_id = (
-                                str(installation_identifier),
-                                str(response[0]['id']))
-                    installation_index += 1
+        try:
+            if (installations_identifier):
+                installations_identifier = installations_identifier.split(',')
+            if (installations_identifier and client_identifier and
+                    url_remotecontrol_rest and
+                    url_remotecontrol_rest_username and
+                    url_remotecontrol_rest_password):
+                jwt = self.open_connection_icr(
+                    url_remotecontrol_rest, url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password
+                )
+                if jwt:
+                    installation_index = 0
+                    owner_found = False
+                    # Get the owner id and the the installation associated
+                    while (installation_index < len(installations_identifier) and
+                            not owner_found):
+                        # Check where the
+                        installation_identifier = \
+                            installations_identifier[installation_index]
+                        url_owners = url_remotecontrol_rest + '/clients/' + \
+                            str(client_identifier) + '/installations/' + \
+                            str(installation_identifier) + '/tags/?' + \
+                            'items_per_page=1000000&filter=name:\'' + wm + \
+                            '_PROPIETARIO$\':contains'
+                        headers = {
+                            'Authorization': 'Bearer ' + jwt,
+                        }
+                        resprest = requests.request(
+                            'GET', url_owners,
+                            headers=headers,
+                            data={}
+                        )
+                        if resprest.ok and resprest.text:
+                            response = json.loads(resprest.text)['results']
+                            if response and response[0]:
+                                # Set the ID and the client identifier found
+                                # and stop the search
+                                tag_id = (
+                                    str(installation_identifier),
+                                    str(response[0]['id']))
+                        installation_index += 1
+        except Exception:
+            pass
         return tag_id
 
     # Implemented hook
@@ -90,10 +94,8 @@ class WuaParcel(models.Model):
                 waterconnection = self.env['wua.waterconnection'].browse(
                     data_of_irrigationpointwc['waterconnection_id'])
                 if waterconnection:
-                    waterconnection_tag_id = self._get_owner_tag_id(
+                    waterconnection_tag_ids.append(
                         waterconnection.watermeter_id.name)
-                    if (waterconnection_tag_id):
-                        waterconnection_tag_ids.append(waterconnection_tag_id)
             if partner_name and waterconnection_tag_ids:
                 resp = {
                     'partner_name': partner_name,
@@ -112,30 +114,38 @@ class WuaParcel(models.Model):
         error_message = ''
         client_identifier = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'client_identifier')
-        if (client_identifier):
-            jwt = self.open_connection_icr(
-                url_remotecontrol_rest, url_remotecontrol_rest_username,
-                url_remotecontrol_rest_password
-            )
-            if jwt:
-                headers = {
-                    'Authorization': 'Bearer ' + jwt,
-                    'Content-Type': 'application/json'
-                }
-                payload = json.dumps({
-                    'value': data['partner_name']
-                })
-                for (installation_identifier, tag_id) in \
-                        data['waterconnection_tag_ids']:
-                    url_update = url_remotecontrol_rest + '/clients/' + \
-                        str(client_identifier) + '/installations/' + \
-                        str(installation_identifier) + '/tags/' + tag_id + \
-                        '/value'
-                    response = requests.request('PUT', url_update,
-                                                headers=headers, data=payload)
-                    resp = response.ok
-                    if (not resp):
-                        error_message = str(response.status_code)
+        try:
+            if (client_identifier):
+                jwt = self.open_connection_icr(
+                    url_remotecontrol_rest, url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password
+                )
+                if jwt:
+                    headers = {
+                        'Authorization': 'Bearer ' + jwt,
+                        'Content-Type': 'application/json'
+                    }
+                    payload = json.dumps({
+                        'value': data['partner_name']
+                    })
+                    for (tag_id) in \
+                            data['waterconnection_tag_ids']:
+                        installation_identifier, waterconnection_tag_id = self._get_owner_tag_id(tag_id)
+                        if (installation_identifier and waterconnection_tag_id):
+                            url_update = url_remotecontrol_rest + \
+                                '/clients/' + \
+                                str(client_identifier) + '/installations/' + \
+                                str(installation_identifier) + '/tags/' + \
+                                waterconnection_tag_id + '/value'
+                            response = requests.request('PUT', url_update,
+                                                        headers=headers, \
+                                                            data=payload)
+                            resp = response.ok
+                            if (not resp):
+                                error_message = str(response.status_code)
+        except Exception:
+            resp = False
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
@@ -201,10 +211,9 @@ class WuaParcel(models.Model):
         waterconnection_tag_ids = []
         for irrigationpointwc in parcel.irrigationpointwc_ids:
             waterconnection = irrigationpointwc.waterconnection_id
-            waterconnection_tag_id = self._get_owner_tag_id(
-                waterconnection.watermeter_id.name)
-            if (waterconnection_tag_id):
-                waterconnection_tag_ids.append(waterconnection_tag_id)
+            if waterconnection:
+                waterconnection_tag_ids.append(
+                 waterconnection.watermeter_id.name)
             if partner_name and waterconnection_tag_ids:
                 resp = {
                     'parcel_code': parcel.name,
@@ -240,10 +249,9 @@ class WuaParcel(models.Model):
             waterconnection_tag_ids = []
             for irrigationpointwc in parcel.irrigationpointwc_ids:
                 waterconnection = irrigationpointwc.waterconnection_id
-                waterconnection_tag_id = self._get_owner_tag_id(
-                    waterconnection.watermeter_id.name)
-                if (waterconnection_tag_id):
-                    waterconnection_tag_ids.append(waterconnection_tag_id)
+                if waterconnection:
+                    waterconnection_tag_ids.append(
+                     waterconnection.watermeter_id.name)
                 if waterconnection_tag_ids:
                     resp = {
                         'partner_name': '',
