@@ -16,6 +16,7 @@
     "data": [
         "views/wua_irrigation_config_settings_view.xml",
         "data/wua_irrigation_config_settings_data.xml",
+        "data/wua_waterpipe_consumption_hydric_refresh_cron.xml",
         "views/resources.xml",
         "views/wua_waterpipeconsumption_view.xml",
         "views/wua_agriculturalseason_view.xml",

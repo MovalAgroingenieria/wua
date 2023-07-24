@@ -76,6 +76,13 @@ class WuaWaterpipeconsumption(models.Model):
                 record.refresh_hydric_efficiency()
 
     @api.multi
+    def refresh_hydric_efficiency_all(self):
+        records = self.env['wua.waterpipeconsumption'].search([])
+        if records:
+            for record in records:
+                record.refresh_hydric_efficiency()
+
+    @api.multi
     def populate_network_efficiency(self):
         error_margin_for_sync_consumptions = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
