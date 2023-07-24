@@ -47,7 +47,7 @@ class WuaPressuresensormeasurement(models.Model):
         # pressure sensors
         ps_hydrant_dict = dict(
             ('{pressuresensor_name}'.format(
-                pressuresensor_name=ps.inelcom_id
+                pressuresensor_name=ps.inelcom_id.encode('utf-8')
             ), ps)
             for ps in self.env['wua.pressuresensor'].search(
                 [('telecontrol_associated', '=', 'inelcom'),
@@ -77,7 +77,8 @@ class WuaPressuresensormeasurement(models.Model):
                     if resp_measurement_ok:
                         for measurement_info in outputrest:
                             # Check if codHidrante exists on MR
-                            pressuresensor = measurement_info['codHidrante']
+                            pressuresensor = measurement_info['codHidrante'].\
+                                encode('utf-8')
                             if (pressuresensor in ps_hydrant_dict):
                                 analog_measurement = ''
                                 # If exists, check if pressure measurement is
