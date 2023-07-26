@@ -13,7 +13,7 @@ class WuaParcel(models.Model):
     _remotecontrol_parcel_fields_inelcom = [
         'name', 'partnerlink_ids', 'rurallocation_id', 'irrigationpointwc_ids',
         'area_official', 'county_id', 'hydraulicsector_id', 'cadastral_parcel',
-        'cadastral_polygon']
+        'cadastral_polygon', 'subparcel_ids']
     REQUEST_TIMEOUT = 10
 
     # Implemented hook
@@ -47,6 +47,16 @@ class WuaParcel(models.Model):
             if 'rurallocation_id' in vals:
                 rurallocation = self.get_rurallocation_of_vals(
                     vals['rurallocation_id'])
+            crop_type = ''
+            if 'subparcel_ids' in vals:
+                crop_type = self.get_crop_type_of_vals(
+                    vals['subparcel_ids']
+                )
+            variety = ''
+            if 'subparcel_ids' in vals:
+                variety = self.get_variety_of_vals(
+                    vals['subparcel_ids']
+                )
             resp = {
                 'name': name,
                 'watermeters': watermeters,
@@ -58,7 +68,9 @@ class WuaParcel(models.Model):
                 'partner_code': partner_code,
                 'hydraulicsector': hydraulicsector,
                 'rurallocation': rurallocation,
-                }
+                'crop_type': crop_type,
+                'variety': variety,
+            }
         return resp
 
     # Implemented hook
@@ -95,8 +107,10 @@ class WuaParcel(models.Model):
                     'superficie': data['area_official_hec'],
                     'unidad': data['area_unit'],
                     'regante': data['partner_code'],
+                    'tipoCultivo': data['crop_type'],
+                    'variedad': data['variety'],
                     'observaciones': _('Source: Moval Regadío'),
-                    }
+                }
                 resprest = requests.post(url_send_new_parcel,
                                          data=json.dumps(payload_data),
                                          headers=headers_data,
@@ -145,6 +159,14 @@ class WuaParcel(models.Model):
             rurallocation = ''
             if parcel.rurallocation_id:
                 rurallocation = parcel.rurallocation_id.name
+            crop_type = ''
+            variety = ''
+            if parcel.subparcel_ids:
+                subparcel = parcel.subparcel_ids[0]
+                if subparcel.cultivation_id:
+                    crop_type = subparcel.cultivation_id.name
+                if subparcel.cultivationvariety_id:
+                    variety = subparcel.cultivationvariety_id.name
             resp = {
                 'name': name,
                 'watermeters': watermeters,
@@ -156,7 +178,9 @@ class WuaParcel(models.Model):
                 'partner_code': partner_code,
                 'hydraulicsector': hydraulicsector,
                 'rurallocation': rurallocation,
-                }
+                'crop_type': crop_type,
+                'variety': variety,
+            }
         return resp
 
     # Implemented hook
@@ -197,6 +221,8 @@ class WuaParcel(models.Model):
                     'superficie': data['area_official_hec'],
                     'unidad': data['area_unit'],
                     'regante': data['partner_code'],
+                    'tipoCultivo': data['crop_type'],
+                    'variedad': data['variety'],
                     'observaciones': observ,
                     }
                 resprest = requests.put(url_update_parcel,
@@ -310,8 +336,10 @@ class WuaParcel(models.Model):
                     'superficie': data['area_official_hec'],
                     'unidad': data['area_unit'],
                     'regante': data['partner_code'],
+                    'tipoCultivo': data['crop_type'],
+                    'variedad': data['variety'],
                     'observaciones': observ,
-                    }
+                }
                 if exists_parcel_in_remotecontrol:
                     resprest = requests.put(url_update_parcel,
                                             data=json.dumps(payload_data),
@@ -381,8 +409,10 @@ class WuaParcel(models.Model):
                         'superficie': data['area_official_hec'],
                         'unidad': data['area_unit'],
                         'regante': data['partner_code'],
+                        'tipoCultivo': data['crop_type'],
+                        'variedad': data['variety'],
                         'observaciones': observ,
-                        }
+                    }
                     if exists_parcel_in_remotecontrol:
                         resprest = requests.put(url_update_parcel,
                                                 data=json.dumps(payload_data),
@@ -471,6 +501,24 @@ class WuaParcel(models.Model):
         if rurallocation_id:
             resp = self.env['wua.rurallocation'].browse(
                 rurallocation_id).name
+        return resp
+
+    def get_crop_type_of_vals(self, subparcel_ids):
+        resp = ''
+        for subparcel_id in subparcel_ids:
+            if subparcel_id[2] and 'cultivation_id' in subparcel_id[2]:
+                resp = self.env['wua.cultivation'].browse(
+                    subparcel_id[2]['cultivation_id']).name
+                print('HOLAHOLA')
+        return resp
+
+    def get_variety_of_vals(self, subparcel_ids):
+        resp = ''
+        for subparcel_id in subparcel_ids:
+            if subparcel_id[2] and 'cultivationvariety_id' in subparcel_id[2]:
+                resp = self.env['wua.cultivation.variety'].browse(
+                    subparcel_id[2]['cultivationvariety_id']).name
+                break
         return resp
 
     def get_val(self, vals, key):
