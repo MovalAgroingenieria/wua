@@ -109,7 +109,7 @@ class WuaParcel(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -210,7 +210,7 @@ class WuaParcel(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -263,7 +263,7 @@ class WuaParcel(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -329,7 +329,7 @@ class WuaParcel(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -402,7 +402,7 @@ class WuaParcel(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
         return parcels_ok, parcels_not_ok
 

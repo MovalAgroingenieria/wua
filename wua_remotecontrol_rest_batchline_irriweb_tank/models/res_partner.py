@@ -152,7 +152,7 @@ class ResPartner(models.Model):
                     error_message = resprest.text
         except Exception:
             resp = False
-            error_message =_('Telecontrol Error')
+            error_message = _('Telecontrol Error')
         return resp, error_message
 
     # Implemented hook
@@ -285,7 +285,8 @@ class ResPartner(models.Model):
                     resprest = requests.put(url_update_partner,
                                             data=json.dumps(payload_data),
                                             headers=headers_data)
-                    if resprest.status_code == 200 or resprest.status_code == 201:
+                    if resprest.status_code == 200 or resprest.status_code == \
+                            201:
                         partners_ok.append(data['partner_code'])
                     else:
                         partners_not_ok.append(data['partner_code'])

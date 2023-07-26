@@ -42,8 +42,8 @@ class WuaParcel(models.Model):
                     installation_index = 0
                     owner_found = False
                     # Get the owner id and the the installation associated
-                    while (installation_index < len(installations_identifier) and
-                            not owner_found):
+                    while (installation_index <
+                           len(installations_identifier) and not owner_found):
                         # Check where the
                         installation_identifier = \
                             installations_identifier[installation_index]
@@ -130,16 +130,18 @@ class WuaParcel(models.Model):
                     })
                     for (tag_id) in \
                             data['waterconnection_tag_ids']:
-                        installation_identifier, waterconnection_tag_id = self._get_owner_tag_id(tag_id)
-                        if (installation_identifier and waterconnection_tag_id):
+                        installation_identifier, waterconnection_tag_id = \
+                            self._get_owner_tag_id(tag_id)
+                        if (installation_identifier and
+                                waterconnection_tag_id):
                             url_update = url_remotecontrol_rest + \
                                 '/clients/' + \
                                 str(client_identifier) + '/installations/' + \
                                 str(installation_identifier) + '/tags/' + \
                                 waterconnection_tag_id + '/value'
                             response = requests.request('PUT', url_update,
-                                                        headers=headers, \
-                                                            data=payload)
+                                                        headers=headers,
+                                                        data=payload)
                             resp = response.ok
                             if (not resp):
                                 error_message = str(response.status_code)
@@ -213,7 +215,7 @@ class WuaParcel(models.Model):
             waterconnection = irrigationpointwc.waterconnection_id
             if waterconnection:
                 waterconnection_tag_ids.append(
-                 waterconnection.watermeter_id.name)
+                    waterconnection.watermeter_id.name)
             if partner_name and waterconnection_tag_ids:
                 resp = {
                     'parcel_code': parcel.name,
@@ -251,7 +253,7 @@ class WuaParcel(models.Model):
                 waterconnection = irrigationpointwc.waterconnection_id
                 if waterconnection:
                     waterconnection_tag_ids.append(
-                     waterconnection.watermeter_id.name)
+                        waterconnection.watermeter_id.name)
                 if waterconnection_tag_ids:
                     resp = {
                         'partner_name': '',

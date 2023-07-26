@@ -115,7 +115,7 @@ class ResPartner(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -237,7 +237,7 @@ class ResPartner(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -290,7 +290,7 @@ class ResPartner(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -371,7 +371,7 @@ class ResPartner(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
+        except Exception:
             resp = False
             error_message = _('Telecontrol Error')
         return resp, error_message
@@ -459,9 +459,8 @@ class ResPartner(models.Model):
                 url_close_session = url_remotecontrol_rest + \
                     '/sesiones/' + id_session
                 resprest = requests.delete(url_close_session)
-        except Exception as e:
-            resp = False
-            error_message = _('Telecontrol Error')
+        except Exception:
+            pass
         return partners_ok, partners_not_ok
 
     def create_partners_on_synchronize_telecontrol(self, active_partners):

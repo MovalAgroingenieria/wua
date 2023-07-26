@@ -248,7 +248,7 @@ class WuaParcel(models.Model):
                     'content-type': 'application/json',
                 }
                 resprest = requests.delete(url_delete_parcel,
-                                        headers=headers_data)
+                                           headers=headers_data)
                 if resprest.status_code == 200:
                     resp = True
                 else:
