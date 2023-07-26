@@ -30,6 +30,8 @@ class WuaSuperproduct(models.Model):
     product_tmpl_id = fields.Many2one(
         string='Related Product',
         help='Product-related data of superproduct',
+        required=True,
+        ondelete='restrict',
         comodel_name='product.template')
 
     superproduct_code = fields.Integer(
