@@ -26,7 +26,7 @@ class WuaReservoir(models.Model):
 
     _sql_constraints = [
         ('valid_height_correction',
-         'CHECK (valid_height_correction >= 0)',
+         'CHECK (height_correction >= 0)',
          'The height correction must be zero or positive.'),
         ]
 
