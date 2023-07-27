@@ -40,7 +40,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
             if (wc_info):
                 others_wc_info[0] += wc_info
             if (error_message):
-                others_wc_info[1] += ' - ' + error_message
+                others_wc_info[1] += ' - ' + error_message + '\n\n'
         return others_wc_info
 
     # Implemented hook
@@ -56,83 +56,90 @@ class WuaWaterconnectionTelecontrol(models.Model):
             url_remotecontrol_rest_password, list_of_data):
         wc_all_info = []
         error_message = ''
-        jsessionid = self.open_connection_hidroconta(
-            url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password)
-        if jsessionid:
-            resp_rest = requests.request(
-                'POST', url_remotecontrol_rest + '/search',
-                headers={
-                    'Content-Type': 'application/json',
-                    'Cookie': 'JSESSIONID=' + jsessionid
-                    },
-                data=json.dumps({
-                    'type': ['hydrants'],
-                    'state': 'enabled'
-                    }))
-            installation_identifier = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'installation_identifier')
-            flow_in_liters = self.env['ir.values'].get_default(
-                'wua.irrigation.configuration', 'flow_in_liters')
-            if resp_rest.status_code == 200 and installation_identifier:
-                hydrants = json.loads(resp_rest.text)
-                model_wua_watermeter = self.env['wua.watermeter']
-                for hydrant in hydrants:
-                    installationId = int(hydrant['installationId'])
-                    if installationId == installation_identifier:
-                        watermeter = \
-                            hydrant['counter']['code'].encode(
-                                'utf-8', 'ignore')
-                        current_watermeter = model_wua_watermeter.search(
-                            [('name', '=', watermeter)])
-                        if current_watermeter:
-                            current_watermeter = current_watermeter[0]
-                            if current_watermeter.waterconnection_id:
-                                waterconnection = \
-                                    current_watermeter.waterconnection_id.name
-                                total_volume = (
-                                    hydrant['counter']['counterGlobalValue'] /
-                                    1000)
-                                waterflow = (
-                                    hydrant['counter']['flow'] /
-                                    self.FACTOR_CONVERSION)
-                                # flow in m³/h?
-                                if (not flow_in_liters):
-                                    waterflow = waterflow / 3.6
-                                valve_open = \
-                                    hydrant['valve']['stateIsOpen']
-                                valve_scheduled = \
-                                    str(hydrant['valve']['modeIsProgram'])
-                                if valve_scheduled == '1':
-                                    valve_scheduled = True
-                                else:
-                                    valve_scheduled = False
-                                valve_error = False
-                                valve_error_msg = ''
-                                watermeter_error = False
-                                watermeter_error_msg = ''
-                                date = hydrant['counter']['lastStatusLocal']
-                                data_time = datetime.datetime.strptime(
-                                    date, '%d/%m/%Y %H:%M:%S')
-                                data_time = pytz.timezone('Europe/Madrid').\
-                                    localize(data_time)
-                                data_time = data_time.astimezone(
-                                    pytz.timezone('UTC')).\
-                                    strftime('%Y-%m-%d %H:%M:%S')
-                                wc_all_info.append({
-                                    'waterconnection': waterconnection,
-                                    'total_volume': total_volume,
-                                    'waterflow': waterflow,
-                                    'valve_open': valve_open,
-                                    'valve_scheduled': valve_scheduled,
-                                    'data_time': data_time,
-                                    'valve_error': valve_error,
-                                    'valve_error_msg': valve_error_msg,
-                                    'watermeter_error': watermeter_error,
-                                    'watermeter_error_msg':
-                                        watermeter_error_msg,
-                                })
-            self.close_connection(url_remotecontrol_rest, jsessionid)
+        try:
+            jsessionid = self.open_connection_hidroconta(
+                url_remotecontrol_rest, url_remotecontrol_rest_username,
+                url_remotecontrol_rest_password)
+            if jsessionid:
+                resp_rest = requests.request(
+                    'POST', url_remotecontrol_rest + '/search',
+                    headers={
+                        'Content-Type': 'application/json',
+                        'Cookie': 'JSESSIONID=' + jsessionid
+                        },
+                    data=json.dumps({
+                        'type': ['hydrants'],
+                        'state': 'enabled'
+                        }))
+                installation_identifier = self.env['ir.values'].get_default(
+                    'wua.irrigation.configuration', 'installation_identifier')
+                flow_in_liters = self.env['ir.values'].get_default(
+                    'wua.irrigation.configuration', 'flow_in_liters')
+                if resp_rest.status_code == 200 and installation_identifier:
+                    hydrants = json.loads(resp_rest.text)
+                    model_wua_watermeter = self.env['wua.watermeter']
+                    for hydrant in hydrants:
+                        installationId = int(hydrant['installationId'])
+                        if installationId == installation_identifier:
+                            watermeter = \
+                                hydrant['counter']['code'].encode(
+                                    'utf-8', 'ignore')
+                            current_watermeter = model_wua_watermeter.search(
+                                [('name', '=', watermeter)])
+                            if current_watermeter:
+                                current_watermeter = current_watermeter[0]
+                                if current_watermeter.waterconnection_id:
+                                    waterconnection = \
+                                        current_watermeter.waterconnection_id.\
+                                        name
+                                    total_volume = (
+                                        hydrant['counter']
+                                        ['counterGlobalValue'] /
+                                        1000)
+                                    waterflow = (
+                                        hydrant['counter']['flow'] /
+                                        self.FACTOR_CONVERSION)
+                                    # flow in m³/h?
+                                    if (not flow_in_liters):
+                                        waterflow = waterflow / 3.6
+                                    valve_open = \
+                                        hydrant['valve']['stateIsOpen']
+                                    valve_scheduled = \
+                                        str(hydrant['valve']['modeIsProgram'])
+                                    if valve_scheduled == '1':
+                                        valve_scheduled = True
+                                    else:
+                                        valve_scheduled = False
+                                    valve_error = False
+                                    valve_error_msg = ''
+                                    watermeter_error = False
+                                    watermeter_error_msg = ''
+                                    date = hydrant['counter']
+                                    ['lastStatusLocal']
+                                    data_time = datetime.datetime.strptime(
+                                        date, '%d/%m/%Y %H:%M:%S')
+                                    data_time = pytz.timezone(
+                                        'Europe/Madrid').\
+                                        localize(data_time)
+                                    data_time = data_time.astimezone(
+                                        pytz.timezone('UTC')).\
+                                        strftime('%Y-%m-%d %H:%M:%S')
+                                    wc_all_info.append({
+                                        'waterconnection': waterconnection,
+                                        'total_volume': total_volume,
+                                        'waterflow': waterflow,
+                                        'valve_open': valve_open,
+                                        'valve_scheduled': valve_scheduled,
+                                        'data_time': data_time,
+                                        'valve_error': valve_error,
+                                        'valve_error_msg': valve_error_msg,
+                                        'watermeter_error': watermeter_error,
+                                        'watermeter_error_msg':
+                                            watermeter_error_msg,
+                                    })
+                self.close_connection(url_remotecontrol_rest, jsessionid)
+        except Exception as e:
+            error_message = u'Hidroconta error:\n\n' + str(e)
         return [wc_all_info, error_message]
 
     def open_connection_hidroconta(

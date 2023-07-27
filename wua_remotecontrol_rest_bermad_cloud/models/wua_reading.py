@@ -200,25 +200,28 @@ class WuaReading(models.Model):
         if (import_from_readings and url_remotecontrol_rest and
                 url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
-            data = self.populate_data_for_import_readings_bermad(
-                url_remotecontrol_rest,
-                url_remotecontrol_rest_username,
-                url_remotecontrol_rest_password)
-            if data:
-                readings, error_message, error_watermeters = \
-                    self.import_readings_bermad(
-                        url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, data)
-                if (readings):
-                    # Merge arrays
-                    others_readings_info[0] += readings
-                if (error_message):
-                    # Merge Strings
-                    others_readings_info[1] += ' - ' + error_message
-                if (error_watermeters):
-                    # Merge Strings
-                    others_readings_info[2] += error_watermeters
+            try:
+                data = self.populate_data_for_import_readings_bermad(
+                    url_remotecontrol_rest,
+                    url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                if data:
+                    readings, error_message, error_watermeters = \
+                        self.import_readings_bermad(
+                            url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password, data)
+                    if (readings):
+                        # Merge arrays
+                        others_readings_info[0] += readings
+                    if (error_message):
+                        # Merge Strings
+                        others_readings_info[1] += ' - ' + error_message
+                    if (error_watermeters):
+                        # Merge Strings
+                        others_readings_info[2] += error_watermeters
+            except Exception as e:
+                others_readings_info[1] += ' - ' + 'Bermad error:\n\n' + str(e) + '\n\n'
         return others_readings_info
 
     # AUX functions to get waterconnections info (Used by viewer)

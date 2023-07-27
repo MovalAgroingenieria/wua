@@ -89,25 +89,28 @@ class WuaReading(models.Model):
         import_from_readings = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'import_from_readings_regasoft')
         if (import_from_readings and url_remotecontrol_rest):
-            data = self.populate_data_for_import_readings_regasoft(
-                url_remotecontrol_rest,
-                url_remotecontrol_rest_username,
-                url_remotecontrol_rest_password)
-            if data:
-                readings, error_message, error_watermeters = \
-                    self.import_readings_regasoft(
-                        url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, data)
-                if (readings):
-                    # Merge arrays
-                    others_readings_info[0] += readings
-                if (error_message):
-                    # Merge Strings
-                    others_readings_info[1] += ' - ' + error_message
-                if (error_watermeters):
-                    # Merge Strings
-                    others_readings_info[2] += error_watermeters
+            try:
+                data = self.populate_data_for_import_readings_regasoft(
+                    url_remotecontrol_rest,
+                    url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                if data:
+                    readings, error_message, error_watermeters = \
+                        self.import_readings_regasoft(
+                            url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password, data)
+                    if (readings):
+                        # Merge arrays
+                        others_readings_info[0] += readings
+                    if (error_message):
+                        # Merge Strings
+                        others_readings_info[1] += ' - ' + error_message
+                    if (error_watermeters):
+                        # Merge Strings
+                        others_readings_info[2] += error_watermeters
+            except Exception as e:
+                others_readings_info[1] += ' - ' + 'Inelcom error:\n\n' + str(e) + '\n\n'
         return others_readings_info
 
     def get_token_regasoft(self):

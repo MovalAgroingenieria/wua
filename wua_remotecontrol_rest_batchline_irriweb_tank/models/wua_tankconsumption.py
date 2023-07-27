@@ -41,6 +41,7 @@ class WuaTankconsumption(models.Model):
         # # tankconsumptions,
         # item 3: possible error message, item 4: list of problematic
         # tanks
+        error_message = ''
         resp = [None, 0, '', None]
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
@@ -58,45 +59,68 @@ class WuaTankconsumption(models.Model):
                             'url_remotecontrol_rest_password_batchline')
             if (url_remotecontrol_rest and url_remotecontrol_rest_username and
                url_remotecontrol_rest_password):
-                data = self.populate_data_for_import_tankconsumptions(
-                    url_remotecontrol_rest,
-                    url_remotecontrol_rest_username,
-                    url_remotecontrol_rest_password)
-                if data:
-                    tankconsumptions, error_message, error_tanks = \
-                        self.import_tankconsumptions(
-                            url_remotecontrol_rest,
-                            url_remotecontrol_rest_username,
-                            url_remotecontrol_rest_password, data)
-                    tankconsumptions = self.refine_tankconsumptions(
-                        tankconsumptions)
-                    if tankconsumptions:
-                        resp[0] = tankconsumptions
-                        resp[1] = len(tankconsumptions)
-                        resp[2] = error_message
-                        resp[3] = error_tanks
-                        if save_data:
-                            self.save_tankconsumptions(tankconsumptions)
-                        prefix_message_01 = _('Remote Control: '
-                                              'Getting tankconsumptions')
-                        suffix_message_01 = str(resp[1])
-                        _logger = logging.getLogger(self.__class__.__name__)
-                        _logger.info(prefix_message_01 + '... ' +
-                                     suffix_message_01)
-                        if error_message:
-                            prefix_message_02 = _('Remote Control: '
-                                                  'Error getting '
-                                                  'tankconsumptions')
-                            suffix_message_02 = error_message
-                            _logger = logging.getLogger(
-                                self.__class__.__name__)
-                            _logger.info(prefix_message_02 + '... ' +
-                                         suffix_message_02)
+                try:
+                    data = self.populate_data_for_import_tankconsumptions(
+                        url_remotecontrol_rest,
+                        url_remotecontrol_rest_username,
+                        url_remotecontrol_rest_password)
+                    if data:
+                        tankconsumptions, error_message, error_tanks = \
+                            self.import_tankconsumptions(
+                                url_remotecontrol_rest,
+                                url_remotecontrol_rest_username,
+                                url_remotecontrol_rest_password, data)
+                        tankconsumptions = self.refine_tankconsumptions(
+                            tankconsumptions)
+                        if tankconsumptions:
+                            resp[0] = tankconsumptions
+                            resp[1] = len(tankconsumptions)
+                            resp[2] = error_message
+                            resp[3] = error_tanks
+                            if save_data:
+                                self.save_tankconsumptions(tankconsumptions)
+                            prefix_message_01 = _('Remote Control: '
+                                                'Getting tankconsumptions')
+                            suffix_message_01 = str(resp[1])
+                            _logger = logging.getLogger(self.__class__.__name__)
+                            _logger.info(prefix_message_01 + '... ' +
+                                        suffix_message_01)
+
+                except Exception as e:
+                    error_message = ' - ' + 'Batchline error:\n\n' + str(e) + '\n\n'
+                    resp[2] += error_message
+                if error_message:
+                    prefix_message_02 = _('Remote Control: '
+                                        'Error getting '
+                                        'tankconsumptions')
+                    suffix_message_02 = resp[2]
+                    _logger = logging.getLogger(
+                        self.__class__.__name__)
+                    _logger.info(prefix_message_02 + '... ' +
+                                suffix_message_02)
+                    company_name = self.env.user.company_id.name
+                    website_url = self.env['ir.config_parameter'].get_param("web.base.url")
+                    domain =  self.env['ir.config_parameter'].get_param("mail.catchall.domain")
+                    telecontrol_failed_template_id = self.env.ref(
+                        'base_wua_remotecontrol_rest.'
+                        'telecontrol_failed_email_template').id
+                    mail_template = self.env['mail.template'].browse(
+                        telecontrol_failed_template_id)
+                    mail_template.subject = 'Tankconsumption remote control in %s has experienced some problem' % (domain or self.pool.db_name)
+                    mail_template.body_html = '''
+                        <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                            <b><a href="%s">%s</a></p></b>
+                            <br/>
+                            <span>%s</span>
+                        </p>
+                    ''' % (website_url, company_name, resp[2].replace('\n', '<br/>'))
+                    mail_template.send_mail(self.id, force_send=True)
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
                                              'the remote control is not '
                                              'enabled.'))
+        # Not used
         return resp
 
     # Hook

@@ -147,23 +147,26 @@ class WuaWaterpipeflowreading(models.Model):
         if (import_from_waterpipeflowreadings and url_remotecontrol_rest and
                 url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
-            data = self.populate_data_for_import_waterpipeflowreadings_inelcom(
-                url_remotecontrol_rest,
-                url_remotecontrol_rest_username,
-                url_remotecontrol_rest_password)
-            if data:
-                waterpipeflowreadings, error_message, error_flowmeters = \
-                    self.import_waterpipeflowreadings_inelcom(
-                        url_remotecontrol_rest,
-                        url_remotecontrol_rest_username,
-                        url_remotecontrol_rest_password, data)
-                if (waterpipeflowreadings):
-                    # Merge arrays
-                    others_readings_info[0] += waterpipeflowreadings
-                if (error_message):
-                    # Merge Strings
-                    others_readings_info[1] += ' - ' + error_message
-                if (error_flowmeters):
-                    # Merge Strings
-                    others_readings_info[2] += error_flowmeters
+            try:
+                data = self.populate_data_for_import_waterpipeflowreadings_inelcom(
+                    url_remotecontrol_rest,
+                    url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                if data:
+                    waterpipeflowreadings, error_message, error_flowmeters = \
+                        self.import_waterpipeflowreadings_inelcom(
+                            url_remotecontrol_rest,
+                            url_remotecontrol_rest_username,
+                            url_remotecontrol_rest_password, data)
+                    if (waterpipeflowreadings):
+                        # Merge arrays
+                        others_readings_info[0] += waterpipeflowreadings
+                    if (error_message):
+                        # Merge Strings
+                        others_readings_info[1] += ' - ' + error_message
+                    if (error_flowmeters):
+                        # Merge Strings
+                        others_readings_info[2] += error_flowmeters
+            except Exception as e:
+                others_readings_info[1] += ' - ' + 'Inelcom error:\n\n' + str(e) + '\n\n'
         return others_readings_info

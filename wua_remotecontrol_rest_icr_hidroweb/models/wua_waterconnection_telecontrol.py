@@ -55,127 +55,251 @@ class WuaWaterconnectionTelecontrol(models.Model):
             url_remotecontrol_rest_password, list_of_data):
         wc_all_info = []
         wc_all_info_dict = {}
-        error_message = ''
-        installation_identifiers = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'installation_identifier')
-        client_identifier = self.env['ir.values'].get_default(
-            'wua.irrigation.configuration', 'client_identifier')
-        # Check if exists, and in case, split value to get all the
-        # installations
-        if (installation_identifiers):
-            installation_identifiers = installation_identifiers.split(',')
-        if (installation_identifiers and client_identifier):
-            jwt = self.open_connection_icr(
-                url_remotecontrol_rest, url_remotecontrol_rest_username,
-                url_remotecontrol_rest_password)
-            if jwt:
-                # Dict with the key = watermeter.name of all
-                # watermeters
-                wm_dict = dict(
-                    ('{watermeter_name}'.format(
-                        watermeter_name=wm.name
-                    ), wm)
-                    for wm in self.env['wua.watermeter'].search([])
-                )
-                readings_response = []
-                flows_response = []
-                valves_response = []
-                for installation_identifier in installation_identifiers:
-                    url_readings = url_remotecontrol_rest + '/clients/' + \
-                        str(client_identifier) + '/installations/' + \
-                        str(installation_identifier) + '/tags/?' + \
-                        'items_per_page=1000000&filter=name:' + \
-                        '\'_CONTADOR$\':contains'
-                    url_flows = url_remotecontrol_rest + '/clients/' + \
-                        str(client_identifier) + '/installations/' + \
-                        str(installation_identifier) + '/tags/?' + \
-                        'items_per_page=1000000&filter=name' + \
-                        ':\'_CAUDAL$\':contains'
-                    url_valves = url_remotecontrol_rest + '/clients/' + \
-                        str(client_identifier) + '/installations/' + \
-                        str(installation_identifier) + '/tags/?' + \
-                        'items_per_page=1000000&filter=name' + \
-                        ':\'_V_ABIERTA$\':contains'
-                    headers = {
-                        'Authorization': 'Bearer ' + jwt,
-                    }
-                    data_time = datetime.datetime.now().strftime(
-                        '%Y-%m-%d %H:%M:%S')
-                    resprest_volume = requests.request(
-                        'GET', url_readings,
-                        headers=headers,
-                        data={}
+        try:
+            error_message = ''
+            installation_identifiers = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'installation_identifier')
+            client_identifier = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'client_identifier')
+            # Check if exists, and in case, split value to get all the
+            # installations
+            if (installation_identifiers):
+                installation_identifiers = installation_identifiers.split(',')
+            if (installation_identifiers and client_identifier):
+                jwt = self.open_connection_icr(
+                    url_remotecontrol_rest, url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                if jwt:
+                    # Dict with the key = watermeter.name of all
+                    # watermeters
+                    wm_dict = dict(
+                        ('{watermeter_name}'.format(
+                            watermeter_name=wm.name
+                        ), wm)
+                        for wm in self.env['wua.watermeter'].search([])
                     )
-                    if (resprest_volume.ok and resprest_volume.text):
-                        readings_response += json.loads(
-                            resprest_volume.text)['results']
-                    resprest_flow = requests.request(
-                        'GET', url_flows,
-                        headers=headers,
-                        data={}
+                    readings_response = []
+                    flows_response = []
+                    valves_response = []
+                    for installation_identifier in installation_identifiers:
+                        url_readings = url_remotecontrol_rest + '/clients/' + \
+                            str(client_identifier) + '/installations/' + \
+                            str(installation_identifier) + '/tags/?' + \
+                            'items_per_page=1000000&filter=name:' + \
+                            '\'_CONTADOR$\':contains'
+                        url_flows = url_remotecontrol_rest + '/clients/' + \
+                            str(client_identifier) + '/installations/' + \
+                            str(installation_identifier) + '/tags/?' + \
+                            'items_per_page=1000000&filter=name' + \
+                            ':\'_CAUDAL$\':contains'
+                        url_valves = url_remotecontrol_rest + '/clients/' + \
+                            str(client_identifier) + '/installations/' + \
+                            str(installation_identifier) + '/tags/?' + \
+                            'items_per_page=1000000&filter=name' + \
+                            ':\'_V_ABIERTA$\':contains'
+                        headers = {
+                            'Authorization': 'Bearer ' + jwt,
+                        }
+                        data_time = datetime.datetime.now().strftime(
+                            '%Y-%m-%d %H:%M:%S')
+                        resprest_volume = requests.request(
+                            'GET', url_readings,
+                            headers=headers,
+                            data={}
+                        )
+                        if (resprest_volume.ok and resprest_volume.text):
+                            readings_response += json.loads(
+                                resprest_volume.text)['results']
+                        resprest_flow = requests.request(
+                            'GET', url_flows,
+                            headers=headers,
+                            data={}
+                        )
+                        # Get the flows and if already a volume exists update
+                        if (resprest_flow.ok and resprest_flow.text):
+                            flows_response += json.loads(
+                                resprest_flow.text)['results']
+                        resprest_valve = requests.request(
+                            'GET', url_valves,
+                            headers=headers,
+                            data={}
+                        )
+                        # Get the valves opened and if already a volume exists
+                        # update
+                        if (resprest_valve.ok and resprest_valve.text):
+                            valves_response += json.loads(
+                                resprest_valve.text)['results']
+                    for reading in readings_response:
+                        code_values = reading['name'].split('_')
+                        wm_name = code_values[0] + '_' + code_values[1]
+                        if (wm_name in wm_dict and
+                                wm_dict[wm_name].waterconnection_id):
+                            wc = wm_dict[wm_name].waterconnection_id
+                            if (wc and wc.name):
+                                valve_error = False
+                                valve_error_msg = ''
+                                watermeter_error = False
+                                watermeter_error_msg = ''
+                                wc_all_info_dict[wc.name] = {
+                                    'waterconnection': wc.name,
+                                    'total_volume': reading['value'],
+                                    'waterflow': 0.0,
+                                    'valve_open': False,
+                                    'valve_scheduled': False,
+                                    'data_time': data_time,
+                                    'valve_error': valve_error,
+                                    'valve_error_msg': valve_error_msg,
+                                    'watermeter_error': watermeter_error,
+                                    'watermeter_error_msg': watermeter_error_msg,
+                                }
+                    for flow in flows_response:
+                        code_values = flow['name'].split('_')
+                        flow_value = float(flow['value']) / 3.6
+                        wm_name = code_values[0] + '_' + code_values[1]
+                        if (wm_name in wm_dict and
+                                wm_dict[wm_name].waterconnection_id):
+                            wc = wm_dict[wm_name].waterconnection_id
+                            if (wc and wc.name and wc.name in
+                                    wc_all_info_dict):
+                                wc_all_info_dict[wc.name].update({
+                                    'waterflow': flow_value
+                                })
+                    for valve in valves_response:
+                        code_values = valve['name'].split('_')
+                        valve_open = valve['value']
+                        wm_name = code_values[0] + '_' + code_values[1]
+                        if (wm_name in wm_dict and
+                                wm_dict[wm_name].waterconnection_id):
+                            wc = wm_dict[wm_name].waterconnection_id
+                            if (wc and wc.name and wc.name in
+                                    wc_all_info_dict):
+                                wc_all_info_dict[wc.name].update({
+                                    'valve_open': valve_open
+                                })
+            wc_all_info = wc_all_info_dict.values()
+            error_message = ''
+            installation_identifiers = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'installation_identifier')
+            client_identifier = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'client_identifier')
+            # Check if exists, and in case, split value to get all the
+            # installations
+            if (installation_identifiers):
+                installation_identifiers = installation_identifiers.split(',')
+            if (installation_identifiers and client_identifier):
+                jwt = self.open_connection_icr(
+                    url_remotecontrol_rest, url_remotecontrol_rest_username,
+                    url_remotecontrol_rest_password)
+                if jwt:
+                    # Dict with the key = watermeter.name of all
+                    # watermeters
+                    wm_dict = dict(
+                        ('{watermeter_name}'.format(
+                            watermeter_name=wm.name
+                        ), wm)
+                        for wm in self.env['wua.watermeter'].search([])
                     )
-                    # Get the flows and if already a volume exists update
-                    if (resprest_flow.ok and resprest_flow.text):
-                        flows_response += json.loads(
-                            resprest_flow.text)['results']
-                    resprest_valve = requests.request(
-                        'GET', url_valves,
-                        headers=headers,
-                        data={}
-                    )
-                    # Get the valves opened and if already a volume exists
-                    # update
-                    if (resprest_valve.ok and resprest_valve.text):
-                        valves_response += json.loads(
-                            resprest_valve.text)['results']
-                for reading in readings_response:
-                    code_values = reading['name'].split('_')
-                    wm_name = code_values[0] + '_' + code_values[1]
-                    if (wm_name in wm_dict and
-                            wm_dict[wm_name].waterconnection_id):
-                        wc = wm_dict[wm_name].waterconnection_id
-                        if (wc and wc.name):
-                            valve_error = False
-                            valve_error_msg = ''
-                            watermeter_error = False
-                            watermeter_error_msg = ''
-                            wc_all_info_dict[wc.name] = {
-                                'waterconnection': wc.name,
-                                'total_volume': reading['value'],
-                                'waterflow': 0.0,
-                                'valve_open': False,
-                                'valve_scheduled': False,
-                                'data_time': data_time,
-                                'valve_error': valve_error,
-                                'valve_error_msg': valve_error_msg,
-                                'watermeter_error': watermeter_error,
-                                'watermeter_error_msg': watermeter_error_msg,
-                            }
-                for flow in flows_response:
-                    code_values = flow['name'].split('_')
-                    flow_value = float(flow['value']) / 3.6
-                    wm_name = code_values[0] + '_' + code_values[1]
-                    if (wm_name in wm_dict and
-                            wm_dict[wm_name].waterconnection_id):
-                        wc = wm_dict[wm_name].waterconnection_id
-                        if (wc and wc.name and wc.name in
-                                wc_all_info_dict):
-                            wc_all_info_dict[wc.name].update({
-                                'waterflow': flow_value
-                            })
-                for valve in valves_response:
-                    code_values = valve['name'].split('_')
-                    valve_open = valve['value']
-                    wm_name = code_values[0] + '_' + code_values[1]
-                    if (wm_name in wm_dict and
-                            wm_dict[wm_name].waterconnection_id):
-                        wc = wm_dict[wm_name].waterconnection_id
-                        if (wc and wc.name and wc.name in
-                                wc_all_info_dict):
-                            wc_all_info_dict[wc.name].update({
-                                'valve_open': valve_open
-                            })
-        wc_all_info = wc_all_info_dict.values()
+                    readings_response = []
+                    flows_response = []
+                    valves_response = []
+                    for installation_identifier in installation_identifiers:
+                        url_readings = url_remotecontrol_rest + '/clients/' + \
+                            str(client_identifier) + '/installations/' + \
+                            str(installation_identifier) + '/tags/?' + \
+                            'items_per_page=1000000&filter=name:' + \
+                            '\'_CONTADOR$\':contains'
+                        url_flows = url_remotecontrol_rest + '/clients/' + \
+                            str(client_identifier) + '/installations/' + \
+                            str(installation_identifier) + '/tags/?' + \
+                            'items_per_page=1000000&filter=name' + \
+                            ':\'_CAUDAL$\':contains'
+                        url_valves = url_remotecontrol_rest + '/clients/' + \
+                            str(client_identifier) + '/installations/' + \
+                            str(installation_identifier) + '/tags/?' + \
+                            'items_per_page=1000000&filter=name' + \
+                            ':\'_V_ABIERTA$\':contains'
+                        headers = {
+                            'Authorization': 'Bearer ' + jwt,
+                        }
+                        data_time = datetime.datetime.now().strftime(
+                            '%Y-%m-%d %H:%M:%S')
+                        resprest_volume = requests.request(
+                            'GET', url_readings,
+                            headers=headers,
+                            data={}
+                        )
+                        if (resprest_volume.ok and resprest_volume.text):
+                            readings_response += json.loads(
+                                resprest_volume.text)['results']
+                        resprest_flow = requests.request(
+                            'GET', url_flows,
+                            headers=headers,
+                            data={}
+                        )
+                        # Get the flows and if already a volume exists update
+                        if (resprest_flow.ok and resprest_flow.text):
+                            flows_response += json.loads(
+                                resprest_flow.text)['results']
+                        resprest_valve = requests.request(
+                            'GET', url_valves,
+                            headers=headers,
+                            data={}
+                        )
+                        # Get the valves opened and if already a volume exists
+                        # update
+                        if (resprest_valve.ok and resprest_valve.text):
+                            valves_response += json.loads(
+                                resprest_valve.text)['results']
+                    for reading in readings_response:
+                        code_values = reading['name'].split('_')
+                        wm_name = code_values[0] + '_' + code_values[1]
+                        if (wm_name in wm_dict and
+                                wm_dict[wm_name].waterconnection_id):
+                            wc = wm_dict[wm_name].waterconnection_id
+                            if (wc and wc.name):
+                                valve_error = False
+                                valve_error_msg = ''
+                                watermeter_error = False
+                                watermeter_error_msg = ''
+                                wc_all_info_dict[wc.name] = {
+                                    'waterconnection': wc.name,
+                                    'total_volume': reading['value'],
+                                    'waterflow': 0.0,
+                                    'valve_open': False,
+                                    'valve_scheduled': False,
+                                    'data_time': data_time,
+                                    'valve_error': valve_error,
+                                    'valve_error_msg': valve_error_msg,
+                                    'watermeter_error': watermeter_error,
+                                    'watermeter_error_msg': watermeter_error_msg,
+                                }
+                    for flow in flows_response:
+                        code_values = flow['name'].split('_')
+                        flow_value = float(flow['value']) / 3.6
+                        wm_name = code_values[0] + '_' + code_values[1]
+                        if (wm_name in wm_dict and
+                                wm_dict[wm_name].waterconnection_id):
+                            wc = wm_dict[wm_name].waterconnection_id
+                            if (wc and wc.name and wc.name in
+                                    wc_all_info_dict):
+                                wc_all_info_dict[wc.name].update({
+                                    'waterflow': flow_value
+                                })
+                    for valve in valves_response:
+                        code_values = valve['name'].split('_')
+                        valve_open = valve['value']
+                        wm_name = code_values[0] + '_' + code_values[1]
+                        if (wm_name in wm_dict and
+                                wm_dict[wm_name].waterconnection_id):
+                            wc = wm_dict[wm_name].waterconnection_id
+                            if (wc and wc.name and wc.name in
+                                    wc_all_info_dict):
+                                wc_all_info_dict[wc.name].update({
+                                    'valve_open': valve_open
+                                })
+            wc_all_info = wc_all_info_dict.values()
+        except Exception as e:
+            error_message = u'Hidroweb error:\n\n' + str(e)
         return [wc_all_info, error_message]
 
     def open_connection_icr(
