@@ -16,6 +16,10 @@
             </td>
         </xpath>
 
+        <xpath expr="//table[@id='summary_table_with_variable_fees']/tbody/tr" position="attributes">
+            <attribute name="t-foreach">lines.filtered(lambda x: x.included_in_variable_fees)</attribute>
+        </xpath>
+
     </template>
 
 </odoo>

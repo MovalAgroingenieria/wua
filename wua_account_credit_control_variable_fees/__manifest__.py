@@ -16,6 +16,7 @@
     ],
     "data": [
         "reports/report_credit_control_summary.xml",
+        "views/credit_control_line.xml",
     ],
     "installable": True,
     "application": False,

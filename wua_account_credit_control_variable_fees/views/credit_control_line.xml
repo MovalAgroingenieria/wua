@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="credit_control_line_form" model="ir.ui.view">
+        <field name="name">credit.control.line.form</field>
+        <field name="model">credit.control.line</field>
+        <field name="inherit_id" ref="account_credit_control.credit_control_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='delivery_date']" position="after">
+                <field name="included_in_variable_fees"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
