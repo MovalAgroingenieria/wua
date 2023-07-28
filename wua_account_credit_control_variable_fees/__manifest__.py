@@ -12,6 +12,7 @@
     "license": "AGPL-3",
     "depends": [
         "account_credit_control_variable_fees",
+        "account_credit_control_extended",
         "base_wua_invoicing",
     ],
     "data": [
