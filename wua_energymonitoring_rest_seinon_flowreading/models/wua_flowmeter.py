@@ -5,11 +5,10 @@
 import logging
 import requests
 import json
-import math
 from datetime import datetime
 from datetime import timedelta
 import pytz
-from odoo import models, fields, api, exceptions, _
+from odoo import models, api, exceptions, _
 
 
 class WuaFlowmeter(models.Model):
@@ -27,8 +26,8 @@ class WuaFlowmeter(models.Model):
             prefix_message = \
                 _('Remote Control: Starting reading in flowmeter')
             _logger = logging.getLogger(self.__class__.__name__)
-            _logger.info(prefix_message + '... ' + str(self.name))
-            message += _('Flow reading from %s') % str(self.name)
+            _logger.info(prefix_message + u'... ' + self.name)
+            message += _('Flow reading from %s') % self.name
             data_flowreadings, init_reading, flag_error, error_messages = \
                 self.do_import_flowreadings_seinon()
             if flag_error:

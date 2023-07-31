@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models, fields, api, _
+from odoo import models, fields
 
 
 class WuaPumpgroup(models.Model):

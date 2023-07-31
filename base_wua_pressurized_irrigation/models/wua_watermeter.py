@@ -2,7 +2,6 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import urllib
 from odoo import models, fields, api, _
 
 
@@ -230,5 +229,5 @@ class WuaWatermeter(models.Model):
         else:
             link_title = _("QR code link for watermeter %s") % self.name
             url = (self.env['link.tracker'].sudo().create(
-             {"title": link_title,"url": url_raw}).short_url)
+                {"title": link_title, "url": url_raw}).short_url)
         return url
