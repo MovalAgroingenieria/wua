@@ -114,8 +114,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     valve_error_msg = ''
                                     watermeter_error = False
                                     watermeter_error_msg = ''
-                                    date = hydrant['counter']
-                                    ['lastStatusLocal']
+                                    date = hydrant['counter'][
+                                        'lastStatusLocal']
                                     data_time = datetime.datetime.strptime(
                                         date, '%d/%m/%Y %H:%M:%S')
                                     data_time = pytz.timezone(
