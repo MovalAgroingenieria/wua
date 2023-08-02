@@ -101,7 +101,9 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                         '%Y-%m-%d %H:%M:%S'),
                                 })
                 else:
-                    error_message = _(' It is not possible to get the info. ')
+                    error_message = _(' Represt code was not 200. ')
+            else:
+                error_message = _(' Represt code was not 200.')
         except Exception as e:
             error_message = u'Inelcom error:\n\n' + str(e)
         return [wc_all_info, error_message]

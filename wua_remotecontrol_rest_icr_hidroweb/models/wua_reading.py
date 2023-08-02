@@ -74,6 +74,8 @@ class WuaReading(models.Model):
                         readings_response += [(
                             installation_identifier,
                             json.loads(resprest.text)['results'])]
+                    else:
+                        error_message = _(' Represt was not ok. ')
                 # Iterate the installation identifier and then all the readings
                 for installation_identifier, readings_res in readings_response:
                     for reading in readings_res:
@@ -85,6 +87,10 @@ class WuaReading(models.Model):
                             'watermeter': wm_name,
                             'volume': volume,
                         })
+            else:
+                error_message = _(' It is not possible to stablish connection with icr. ')
+        else:
+            error_message = _(' It is not possible to get installation / client identifiers. ')
         return readings, error_message, error_watermeters
 
     # Hook that will be implemeneted on every telecontrol

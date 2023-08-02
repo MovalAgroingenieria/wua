@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models
+from odoo import models, _
 import time
 import datetime
 import pytz
@@ -99,8 +99,10 @@ class WuaPressuresensormeasurement(models.Model):
                     else:
                         error_message = error_message + '. ' + \
                             outputrest['textoError']
-            if error_message != '':
-                error_message = error_message[2:]
+                else:
+                    error_message = _(' Represt response code was not 200. ')
+            else:
+                error_message = _(' Represt response code was not 200. ')
         return [pressuresensor_measurements, error_message,
                 error_pressuresensors]
 

@@ -6,7 +6,7 @@ import pytz
 import requests
 import json
 from datetime import datetime
-from odoo import models
+from odoo import models, _
 
 
 class WuaWaterconnectionTelecontrol(models.Model):
@@ -119,6 +119,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                 'data_time': date_time_read.strftime(
                                     '%Y-%m-%d %H:%M:%S'),
                             })
+            else:
+                error_message = _(' Represt was not ok. ')
+        else:
+            error_message = _(' It is not possible to get the token. ')
         return [wc_all_info, error_message]
 
     def open_connection_hp3(

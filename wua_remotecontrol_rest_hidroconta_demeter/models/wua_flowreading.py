@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models
+from odoo import models, _
 
 
 class WuaFlowreading(models.Model):
@@ -102,7 +102,11 @@ class WuaFlowreading(models.Model):
                             'volume': volume,
                             'instant_flow': instant_flow,
                         })
+            else:
+                error_message = _(' It is not possible to get installation identifier. ')
             self.close_connection(url_remotecontrol_rest, jsessionid)
+        else:
+            error_message = _(' It is not possible to get sessionid. ')
         return flowreadings, error_message, error_flowmeters
 
     # Hook that will be implemeneted on every telecontrol

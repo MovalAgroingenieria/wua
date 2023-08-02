@@ -116,6 +116,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         })
                 else:
                     error_message = _(' It is not possible to get the info. ')
+            else:
+                error_message = _(' Cannot get token. ')
         except Exception as e:
             error_message = u'Batchline error:\n\n' + str(e) + '\n\n'
         return [wc_all_info, error_message]

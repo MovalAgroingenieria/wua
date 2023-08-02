@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models
+from odoo import models, _
 
 
 class WuaFlowreading(models.Model):
@@ -64,7 +64,8 @@ class WuaFlowreading(models.Model):
                     if resprest_volume.ok:
                         readings_response += json.loads(
                             resprest_volume.text)['results']
-
+                    else:
+                        error_message = _(' Represt was not ok. ')
                     resprest_flow = requests.request(
                         'GET', url_flows,
                         headers=headers,
@@ -74,6 +75,8 @@ class WuaFlowreading(models.Model):
                     if resprest_flow.ok:
                         flows_response += json.loads(
                             resprest_flow.text)['results']
+                    else:
+                        error_message = _(' Represt was not ok. ')
                 # After all the data recolected from the installation, process
                 # it
                 for reading in readings_response:
@@ -94,6 +97,10 @@ class WuaFlowreading(models.Model):
                             'instant_flow': flow_value
                         })
                 flowreadings = flowreadings_dict.values()
+            else:
+                error_message = _(' It is not possible to open connection with icr. ')
+        else:
+            error_message = _(' It is not possible to get installation or client identifiers. ')
         return flowreadings, error_message, error_flowmeters
 
     # Hook that will be implemeneted on every telecontrol

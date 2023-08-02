@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models
+from odoo import models, _
 
 
 class WuaReservoirreading(models.Model):
@@ -73,8 +73,12 @@ class WuaReservoirreading(models.Model):
                                             'reservoir': reservoir_name,
                                             'value': value,
                                             })
+            else:
+                error_message = _(' It is not possible to get installation identifier. ')
             self.env['wua.reading'].close_connection(
                 url_remotecontrol_rest, jsessionid)
+        else:
+            error_message = _(' It is not possible to get sessionid. ')
         return reservoirreadings, error_message, error_reservoirs
 
     # Hook that will be implemeneted on every telecontrol

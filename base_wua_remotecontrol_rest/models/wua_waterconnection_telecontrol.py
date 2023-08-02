@@ -132,7 +132,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                 mail_template = self.env['mail.template'].browse(
                     telecontrol_failed_template_id)
                 mail_template.subject = '''
-                Waterconnection remote control in %s
+                    Waterconnection remote control in %s
                     has experienced some problem
                 ''' % (domain or self.pool.db_name)
                 mail_template.body_html = '''

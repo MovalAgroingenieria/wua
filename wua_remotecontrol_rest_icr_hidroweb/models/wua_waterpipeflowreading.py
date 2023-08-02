@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models
+from odoo import models, _
 
 
 class WuaWaterpipeflowreading(models.Model):
@@ -140,6 +140,10 @@ class WuaWaterpipeflowreading(models.Model):
                             'instant_flow': flow_value
                         })
                 waterpipeflowreadings = waterpipeflowreadings_dict.values()
+            else:
+                error_message = _(' It is not possible to stablish a connection with icr. ')
+        else:
+            error_message = _(' It is not possible to get installation / client identifiers')
         return waterpipeflowreadings, error_message, error_flowmeters
 
     def open_connection_icr(

@@ -50,28 +50,34 @@ class WuaReservoirreading(models.Model):
                              suffix_message_01)
             if error_message:
                 prefix_message_02 = _('Remote Control: Error '
-                                        'getting reservoir-readings')
+                                      'getting reservoir-readings')
                 suffix_message_02 = error_message
                 company_name = self.env.user.company_id.name
-                website_url = self.env['ir.config_parameter'].get_param("web.base.url")
-                domain =  self.env['ir.config_parameter'].get_param("mail.catchall.domain")
+                website_url = self.env['ir.config_parameter'].get_param(
+                    "web.base.url")
+                domain = self.env['ir.config_parameter'].get_param(
+                    "mail.catchall.domain")
                 _logger = logging.getLogger(
                     self.__class__.__name__)
                 _logger.info(prefix_message_02 + '... ' +
-                                suffix_message_02)
+                             suffix_message_02)
                 telecontrol_failed_template_id = self.env.ref(
                     'base_wua_remotecontrol_rest.'
                     'telecontrol_failed_email_template').id
                 mail_template = self.env['mail.template'].browse(
                     telecontrol_failed_template_id)
-                mail_template.subject = 'Reservoir reading remote control in %s has experienced some problem' % (domain or self.pool.db_name)
+                mail_template.subject = 'Reservoir reading remote control' +\
+                    'in %s has experienced some problem' % (domain or
+                                                            self.pool.db_name)
                 mail_template.body_html = '''
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         <b><a href="%s">%s</a></p></b>
                         <br/>
                         <span>%s</span>
                     </p>
-                ''' % (website_url, company_name, error_message.replace('\n', '<br/>'))
+                ''' % (website_url, company_name, error_message.replace('\n',
+                                                                        '<br/>'
+                                                                        ))
                 mail_template.send_mail(self.id, force_send=True)
         else:
             if show_message:

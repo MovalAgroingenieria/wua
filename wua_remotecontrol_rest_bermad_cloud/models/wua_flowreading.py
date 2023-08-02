@@ -77,8 +77,8 @@ class WuaFlowreading(models.Model):
                                 'volume': volume,
                                 'instant_flow': instant_flow
                             })
-        if error_message != '':
-            error_message = error_message[2:]
+        else:
+            error_message = ' It is not possible to get the token. '
         return [flowreadings, error_message, error_flowmeters]
 
     # Hook that will be implemeneted on every telecontrol

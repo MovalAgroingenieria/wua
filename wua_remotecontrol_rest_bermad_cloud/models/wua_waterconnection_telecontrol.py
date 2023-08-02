@@ -156,6 +156,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                     'data_time': date_time_now.strftime(
                                         '%Y-%m-%d %H:%M:%S'),
                                 })
+                    else:
+                        error_message = _(' It is not possible to get status. ')
             else:
                 error_message = _(' It is not possible to get the info. ')
         except Exception as e:

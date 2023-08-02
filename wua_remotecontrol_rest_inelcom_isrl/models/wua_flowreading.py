@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models
+from odoo import models, _
 import time
 
 
@@ -195,8 +195,8 @@ class WuaFlowreading(models.Model):
                         # Concatenate data from sectors
                         flowreadings = flowreadings + frs_head
                         error_message = error_message + frs_error_message
-                if error_message != '':
-                    error_message = error_message[2:]
+                else:
+                    error_message = _(' It is not possible to get session id. ')
         return [flowreadings, error_message, error_flowmeters]
 
     # Hook that will be implemeneted on every telecontrol

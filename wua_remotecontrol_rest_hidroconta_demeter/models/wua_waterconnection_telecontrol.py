@@ -6,7 +6,7 @@ import pytz
 import datetime
 import requests
 import json
-from odoo import models
+from odoo import models, _
 
 
 class WuaWaterconnectionTelecontrol(models.Model):
@@ -137,7 +137,11 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                         'watermeter_error_msg':
                                             watermeter_error_msg,
                                     })
+                else:
+                    error_message = _(' Some error ocurred on hidrocontra servers (Installation id / Code not 200). ')
                 self.close_connection(url_remotecontrol_rest, jsessionid)
+            else:
+                error_message = _(' It is not possible to get session id. ')
         except Exception as e:
             error_message = u'Hidroconta error:\n\n' + str(e)
         return [wc_all_info, error_message]

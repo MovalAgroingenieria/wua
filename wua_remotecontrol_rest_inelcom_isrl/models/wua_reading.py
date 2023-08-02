@@ -206,6 +206,10 @@ class WuaReading(models.Model):
                         else:
                             error_message = error_message + '. ' + \
                                 outputrest['textoError']
+                    else:
+                        error_message = _(' Represt code was not 200. ')
+            else:
+                error_message = _(' It is not possible to get a session id. ')
             if error_message != '':
                 error_message = error_message[2:]
         return [readings, error_message, error_watermeters]

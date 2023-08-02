@@ -7,7 +7,7 @@ import json
 import time
 import datetime
 import pytz
-from odoo import models
+from odoo import models, _
 
 
 class WuaReservoirreading(models.Model):
@@ -171,6 +171,8 @@ class WuaReservoirreading(models.Model):
                         # Concatenate data from sectors
                         reservoirreadings = reservoirreadings + rrs_head
                         error_message = error_message + rrs_error_message
+                else:
+                    error_message = _(' It is not possible to get session id. ')
                 if error_message != '':
                     error_message = error_message[2:]
         return reservoirreadings, error_message, error_reservoirs

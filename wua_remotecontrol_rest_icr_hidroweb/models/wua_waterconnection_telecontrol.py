@@ -5,7 +5,7 @@
 import datetime
 import requests
 import json
-from odoo import models
+from odoo import models, _
 
 
 class WuaWaterconnectionTelecontrol(models.Model):
@@ -110,6 +110,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         if (resprest_volume.ok and resprest_volume.text):
                             readings_response += json.loads(
                                 resprest_volume.text)['results']
+                        else:
+                            error_message = _(' Represt volume was not ok. ')
                         resprest_flow = requests.request(
                             'GET', url_flows,
                             headers=headers,
@@ -119,6 +121,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         if (resprest_flow.ok and resprest_flow.text):
                             flows_response += json.loads(
                                 resprest_flow.text)['results']
+                        else:
+                            error_message = _(' Represt flow was not ok. ')
                         resprest_valve = requests.request(
                             'GET', url_valves,
                             headers=headers,
@@ -129,6 +133,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         if (resprest_valve.ok and resprest_valve.text):
                             valves_response += json.loads(
                                 resprest_valve.text)['results']
+                        else:
+                            error_message = _(' Represt valve was not ok. ')
                     for reading in readings_response:
                         code_values = reading['name'].split('_')
                         wm_name = code_values[0] + '_' + code_values[1]
@@ -176,6 +182,10 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                 wc_all_info_dict[wc.name].update({
                                     'valve_open': valve_open
                                 })
+                else:
+                    error_message = _(' It is not possible to stablish connection with icr. ')
+            else:
+                error_message = _(' It is not possible to get installation / client identifiers. ')
             wc_all_info = wc_all_info_dict.values()
             error_message = ''
             installation_identifiers = self.env['ir.values'].get_default(

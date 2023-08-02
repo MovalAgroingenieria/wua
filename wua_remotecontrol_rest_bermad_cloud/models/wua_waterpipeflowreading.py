@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import json
-from odoo import models
+from odoo import models, _
 from graphqlclient import GraphQLClient
 
 
@@ -77,8 +77,10 @@ class WuaWaterpipeflowreading(models.Model):
                                 'volume': volume,
                                 'instant_flow': instant_flow
                             })
-        if error_message != '':
-            error_message = error_message[2:]
+                else:
+                    error_message = _(' It is not possible to get status. ')
+        else:
+            error_message = _(' It is not possible to get the info. ')
         return [waterpipeflowreadings, error_message, error_flowmeters]
 
     # Hook that will be implemeneted on every telecontrol

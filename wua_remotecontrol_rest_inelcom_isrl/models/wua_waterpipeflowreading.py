@@ -4,7 +4,7 @@
 
 import requests
 import json
-from odoo import models
+from odoo import models, _
 import time
 
 
@@ -121,6 +121,8 @@ class WuaWaterpipeflowreading(models.Model):
                         error_message = error_message + frs_error_message
                     if error_message != '':
                         error_message = error_message[2:]
+                else:
+                    error_message = _(' It is not possible to get the session id. ')
         return [waterpipeflowreadings, error_message, error_flowmeters]
 
     # Hook that will be implemeneted on every telecontrol

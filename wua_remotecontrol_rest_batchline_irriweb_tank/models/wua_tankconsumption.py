@@ -80,40 +80,51 @@ class WuaTankconsumption(models.Model):
                             if save_data:
                                 self.save_tankconsumptions(tankconsumptions)
                             prefix_message_01 = _('Remote Control: '
-                                                'Getting tankconsumptions')
+                                                  'Getting tankconsumptions')
                             suffix_message_01 = str(resp[1])
-                            _logger = logging.getLogger(self.__class__.__name__)
+                            _logger = logging.getLogger(
+                                self.__class__.__name__)
                             _logger.info(prefix_message_01 + '... ' +
-                                        suffix_message_01)
+                                         suffix_message_01)
 
                 except Exception as e:
-                    error_message = ' - ' + 'Batchline error:\n\n' + str(e) + '\n\n'
+                    error_message = ' - ' + 'Batchline error:\n\n' + str(e) +\
+                        '\n\n'
                     resp[2] += error_message
                 if error_message:
                     prefix_message_02 = _('Remote Control: '
-                                        'Error getting '
-                                        'tankconsumptions')
+                                          'Error getting '
+                                          'tankconsumptions')
                     suffix_message_02 = resp[2]
                     _logger = logging.getLogger(
                         self.__class__.__name__)
                     _logger.info(prefix_message_02 + '... ' +
-                                suffix_message_02)
+                                 suffix_message_02)
                     company_name = self.env.user.company_id.name
-                    website_url = self.env['ir.config_parameter'].get_param("web.base.url")
-                    domain =  self.env['ir.config_parameter'].get_param("mail.catchall.domain")
+                    website_url = self.env['ir.config_parameter'].get_param(
+                        "web.base.url")
+                    domain = self.env['ir.config_parameter'].get_param(
+                        "mail.catchall.domain")
+                    mail_server = self.env['ir.mail_server'].sudo().search(
+                        [], limit=1)
+                    self.email_from = mail_server.smtp_user if mail_server \
+                        else self.email_from
                     telecontrol_failed_template_id = self.env.ref(
                         'base_wua_remotecontrol_rest.'
                         'telecontrol_failed_email_template').id
                     mail_template = self.env['mail.template'].browse(
                         telecontrol_failed_template_id)
-                    mail_template.subject = 'Tankconsumption remote control in %s has experienced some problem' % (domain or self.pool.db_name)
+                    mail_template.subject = 'Tankconsumption remote ' +\
+                        'control in %s has experienced some problem' % (
+                            domain or self.pool.db_name)
                     mail_template.body_html = '''
                         <p style="margin: 0px; padding: 0px; font-size: 13px;">
                             <b><a href="%s">%s</a></p></b>
                             <br/>
                             <span>%s</span>
                         </p>
-                    ''' % (website_url, company_name, resp[2].replace('\n', '<br/>'))
+                    ''' % (website_url, company_name, resp[2].replace('\n',
+                                                                      '<br/>'))
                     mail_template.send_mail(self.id, force_send=True)
         else:
             if show_message:
@@ -203,6 +214,8 @@ class WuaTankconsumption(models.Model):
             else:
                 error_message = _(' It is not possible to get the '
                                   'tankconsumptions. ')
+        else:
+            error_message = _(' It is not possible to get the token. ')
         return [tankconsumptions, error_message, error_tanks]
 
     def refine_tankconsumptions(self, tankconsumptions):

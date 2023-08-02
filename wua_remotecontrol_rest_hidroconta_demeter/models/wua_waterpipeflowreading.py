@@ -151,7 +151,11 @@ class WuaWaterpipeflowreading(models.Model):
                             'volume': volume,
                             'instant_flow': instant_flow,
                         })
+            else:
+                error_message = _(' It is not possible to get installation identifier. ')
             self.close_connection(url_remotecontrol_rest, jsessionid)
+        else:
+            error_message = _(' It is not possible to get session id. ')
         return waterpipeflowreadings, error_message, error_flowmeters
 
     def open_connection_hidroconta(

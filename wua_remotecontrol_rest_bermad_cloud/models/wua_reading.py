@@ -177,8 +177,10 @@ class WuaReading(models.Model):
                                 'watermeter': watermeter,
                                 'volume': volume,
                                 })
-        if error_message != '':
-            error_message = error_message[2:]
+                else:
+                    error_message = _(' It is not possible to get status. ')
+            else:
+                error_message = _(' It is not possible to get the token. ')
         return [readings, error_message, error_watermeters]
 
     # Hook that will be implemeneted on every telecontrol

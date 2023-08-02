@@ -58,12 +58,13 @@ class WuaReading(models.Model):
                 suffix_message_02 = resp[2]
                 company_name = self.env.user.company_id.name
                 website_url = self.env['ir.config_parameter'].get_param(
-                    'web.base.url')
+                    "web.base.url")
                 domain = self.env['ir.config_parameter'].get_param(
-                    'mail.catchall.domain')
+                    "mail.catchall.domain")
                 _logger = logging.getLogger(
                     self.__class__.__name__)
-                _logger.info(prefix_message_02 + '... ' + suffix_message_02)
+                _logger.info(prefix_message_02 + '... ' +
+                             suffix_message_02)
                 telecontrol_failed_template_id = self.env.ref(
                     'base_wua_remotecontrol_rest.'
                     'telecontrol_failed_email_template').id
