@@ -112,8 +112,7 @@
         <field name="name">Irrigations Requests (tree view)</field>
         <field name="model">wua.irrigationsrequest</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_irrigationsrequest_irrigationsrequest_view_tree" colors="silver:cancelled == True;">
-                <field name="cancelled" invisible="1"/>
+            <tree class="o_base_wua_irrigationsrequest_irrigationsrequest_view_tree" colors="red:cancelled == True;silver:state == 'draft';">
                 <field name="irrigationsrequest_code"/>
                 <field name="irrigationsrequest_number"/>
                 <field name="agriculturalseason_id"/>
@@ -124,6 +123,7 @@
                 <field name="number_of_irrigations"/>
                 <field name="volume"/>
                 <field name="state"/>
+                <field name="cancelled"/>
             </tree>
         </field>
     </record>
