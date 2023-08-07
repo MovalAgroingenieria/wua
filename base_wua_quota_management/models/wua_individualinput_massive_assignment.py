@@ -16,7 +16,7 @@ class WuaIndividualinputMassiveAssignment(models.Model):
 
     MAX_SIZE_SUPERPRODUCT_CODE = 6
     MAX_SIZE_REASON = 75
-    MAX_SIZE_NAME = 24 + MAX_SIZE_SUPERPRODUCT_CODE + MAX_SIZE_REASON
+    MAX_SIZE_NAME = 25 + MAX_SIZE_SUPERPRODUCT_CODE + MAX_SIZE_REASON
 
     def _default_agriculturalseason_id(self):
         resp = 0
@@ -209,7 +209,7 @@ class WuaIndividualinputMassiveAssignment(models.Model):
         for record in self:
             name = ''
             if record.event_time and record.superproduct_id:
-                name = record.event_time + str(
+                name = record.event_time + '-' + str(
                     record.superproduct_id.superproduct_code).zfill(
                         self.MAX_SIZE_SUPERPRODUCT_CODE) + '-' + \
                     record.reason
@@ -298,14 +298,26 @@ class WuaIndividualinputMassiveAssignment(models.Model):
             if (len(record.assignment_line_ids) == 0):
                 raise exceptions.UserError(
                     _('There must be at least one line.'))
+            partners_already_added = {}
             for line in record.assignment_line_ids:
+                seconds_to_add = 0
+                # More than one partner? Add seconds
+                partner_id = line.partner_id.id
+                if (partner_id in partners_already_added):
+                    seconds_to_add = partners_already_added[partner_id]
+                partners_already_added[partner_id] = seconds_to_add + 1
+                event_time = datetime.datetime.strptime(
+                    record.event_time, '%Y-%m-%d %H:%M:%S') + \
+                    datetime.timedelta(seconds=seconds_to_add)
+                event_time = event_time.strftime(
+                    '%Y-%m-%d %H:%M:%S')
                 self.env['wua.individualinput'].create({
                     'agriculturalseason_id':
                         record.agriculturalseason_id.id,
                     'quotaperiod_id': record.quotaperiod_id.id,
                     'superproduct_id': record.superproduct_id.id,
                     'category_id': record.category_id.id,
-                    'event_time': record.event_time,
+                    'event_time': event_time,
                     'massive_assignment_id': record.id,
                     'partner_id': line.partner_id.id,
                     'volume': line.volume,
@@ -382,7 +394,7 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
     MAX_SIZE_SUPERPRODUCT_CODE = 6
     MAX_SIZE_REASON = 75
     MAX_SIZE_PARTNER_CODE = 6
-    MAX_SIZE_NAME = 24 + MAX_SIZE_SUPERPRODUCT_CODE + MAX_SIZE_REASON + \
+    MAX_SIZE_NAME = 25 + MAX_SIZE_SUPERPRODUCT_CODE + MAX_SIZE_REASON + \
         MAX_SIZE_PARTNER_CODE
 
     name = fields.Char(
@@ -433,16 +445,19 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
          'Zero is not a valid value for the volume field.'),
         ]
 
-    @api.depends('partner_id', 'assignment_id', 'assignment_id.event_time',
+    @api.depends('partner_id', 'assignment_id', 'assignment_id.name',
+                 'assignment_id.event_time',
                  'assignment_id.superproduct_id',
                  'assignment_id.superproduct_id.superproduct_code', 'reason')
     def _compute_name(self):
         for record in self:
             name = ''
             if record.partner_id and record.assignment_id:
-                name = str(record.partner_id.partner_code).zfill(
-                    self.MAX_SIZE_PARTNER_CODE) + '-' + \
-                    record.assignment_id.name
+                name = record.assignment_id.event_time + '-' + str(
+                    record.assignment_id.superproduct_id.superproduct_code).\
+                    zfill(self.MAX_SIZE_SUPERPRODUCT_CODE) + '-' + \
+                    str(record.partner_id.partner_code).zfill(
+                    self.MAX_SIZE_PARTNER_CODE) + '-' + record.reason
                 record.name = name
 
     @api.depends('volume', 'category_id', 'category_id.effective_factor')
