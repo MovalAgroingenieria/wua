@@ -2,7 +2,7 @@
 # Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-# import logging
+import logging
 import datetime
 from odoo import models, fields, api, exceptions, _
 from operator import itemgetter
@@ -324,10 +324,9 @@ class WuaInvoiceset(models.Model):
 
     @api.multi
     def calculate_invoiceset(self):
-        # _logger = logging.getLogger(__name__)
-        # initial_time = datetime.datetime.now()
-        # _logger.info('calculate_invoiceset (start) : ' + str(initial_time))
+        _logger = logging.getLogger(__name__)
         for record in self:
+            _logger.info('Invoiceset ' + record.name + ': Calculus started')
             invoice_items = self.select_invoice_items(record)
             if len(invoice_items) > 0:
                 invoice_details = self.calculate_invoice_details(invoice_items)
@@ -351,10 +350,7 @@ class WuaInvoiceset(models.Model):
                             })
                         # Hook: run after the calculation
                         self.after_calculate_invoiceset(record)
-        # end_time = datetime.datetime.now()
-        # interval = (end_time - initial_time).total_seconds()
-        # _logger.info('calculate_invoiceset (finish): ' + str(end_time))
-        # _logger.info('Time (seconds)               : %.6f' % interval)
+            _logger.info('Invoiceset ' + record.name + ': Calculus ended')
 
     # This method receives the invoiceset to calculate, then it loops
     # from their lines to get the linked items. The method gets a list of
