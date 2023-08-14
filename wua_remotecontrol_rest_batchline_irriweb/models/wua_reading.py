@@ -128,5 +128,6 @@ class WuaReading(models.Model):
                         # Merge Strings
                         others_readings_info[2] += error_watermeters
             except Exception as e:
-                others_readings_info[1] += ' - ' + 'Batchline error:\n\n' + str(e) + '\n\n'
+                others_readings_info[1] += ' - ' + 'Batchline error:\n\n' + \
+                    str(e) + '\n\n'
         return others_readings_info

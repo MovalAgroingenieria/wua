@@ -2,7 +2,8 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+import logging
+from odoo import models, fields, api, _, exceptions
 
 
 class WuaWaterconnection(models.Model):
@@ -38,7 +39,7 @@ class WuaWaterconnection(models.Model):
             if url_ok:
                 hidrante_param = record.sudo().irrigationshed_id.name
                 toma_param = str(record.sudo().position)
-                clientidentify_param = self.sudo().env.user.name
+                clientidentify_param = self.env.user.name
                 url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
@@ -63,7 +64,7 @@ class WuaWaterconnection(models.Model):
             if url_ok:
                 hidrante_param = record.sudo().irrigationshed_id.name
                 toma_param = str(record.sudo().position)
-                clientidentify_param = self.sudo().env.user.name
+                clientidentify_param = self.env.user.name
                 url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
@@ -88,7 +89,7 @@ class WuaWaterconnection(models.Model):
             if url_ok:
                 hidrante_param = record.sudo().irrigationshed_id.name
                 toma_param = str(record.sudo().position)
-                clientidentify_param = self.sudo().env.user.name
+                clientidentify_param = self.env.user.name
                 url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
@@ -116,6 +117,20 @@ class WuaWaterconnection(models.Model):
     @api.multi
     def action_scheduling_waterconnection(self):
         self.ensure_one()
+        is_portal_user = self.env.user.has_group(
+            'base_wua.group_wua_portal_user')
+        current_partner_id = self.env.user.partner_id
+        if (is_portal_user and self.id not in
+                (current_partner_id.waterconnectionlink_ids.mapped(
+                lambda x: x.waterconnection_id.id) +
+                current_partner_id.parent_id.waterconnectionlink_ids.mapped(
+                lambda x: x.waterconnection_id.id))):
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.error(
+                'Partner ' + current_partner_id.name + ' is not the owner ' +
+                'of ' + self.name)
+            raise exceptions.UserError(_(
+                'You are not the owner of the waterconnection'))
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Schedule water connection'),

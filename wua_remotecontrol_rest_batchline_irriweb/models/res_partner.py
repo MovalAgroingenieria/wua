@@ -2,9 +2,10 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import logging
 import requests
 import json
-from odoo import models, _, fields, api
+from odoo import models, _, fields, api, exceptions
 
 
 class ResPartner(models.Model):
@@ -375,7 +376,7 @@ class ResPartnerWaterconnection(models.Model):
                 hidrante_param = record.sudo().waterconnection_id.\
                     irrigationshed_id.name
                 toma_param = str(record.sudo().waterconnection_id.position)
-                clientidentify_param = self.sudo().env.user.name
+                clientidentify_param = self.env.user.name
                 url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
@@ -391,7 +392,7 @@ class ResPartnerWaterconnection(models.Model):
                 hidrante_param = record.sudo().waterconnection_id.\
                     irrigationshed_id.name
                 toma_param = str(record.sudo().waterconnection_id.position)
-                clientidentify_param = self.sudo().env.user.name
+                clientidentify_param = self.env.user.name
                 url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
@@ -407,7 +408,7 @@ class ResPartnerWaterconnection(models.Model):
                 hidrante_param = record.sudo().waterconnection_id.\
                     irrigationshed_id.name
                 toma_param = str(record.sudo().waterconnection_id.position)
-                clientidentify_param = self.sudo().env.user.name
+                clientidentify_param = self.env.user.name
                 url = url + '&hidrante=' + hidrante_param + '&' + \
                     'toma=' + toma_param + '&' + \
                     'clientidentify=' + clientidentify_param
@@ -458,6 +459,21 @@ class ResPartnerWaterconnection(models.Model):
     @api.multi
     def action_see_readings(self):
         self.ensure_one()
+        # Added check for weird BUG where shortcut view is showing
+        # Waterconnection ids not related with partner
+        is_portal_user = self.env.user.has_group(
+            'base_wua.group_wua_portal_user')
+        current_partner_id = self.env.user.partner_id
+        # Check if portal user (Or parent) have the waterconnection related
+        if (is_portal_user and self.id not in
+                (current_partner_id.waterconnectionlink_ids.ids +
+                 current_partner_id.parent_id.waterconnectionlink_ids.ids)):
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.error(
+                'Partner ' + current_partner_id.name + ' is not the owner ' +
+                'of ' + self.waterconnection_id.name)
+            raise exceptions.UserError(_(
+                'You are not the owner of the waterconnection'))
         if self.html_readings_url:
             return {
                 'type': 'ir.actions.act_url',
@@ -468,6 +484,20 @@ class ResPartnerWaterconnection(models.Model):
     @api.multi
     def action_see_consumptions(self):
         self.ensure_one()
+        # Added check for weird BUG where shortcut view is showing
+        # Waterconnection ids not related with partner
+        is_portal_user = self.env.user.has_group(
+            'base_wua.group_wua_portal_user')
+        current_partner_id = self.env.user.partner_id
+        if (is_portal_user and self.id not in
+                (current_partner_id.waterconnectionlink_ids.ids +
+                 current_partner_id.parent_id.waterconnectionlink_ids.ids)):
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.error(
+                'Partner ' + current_partner_id.name + ' is not the owner ' +
+                'of ' + self.waterconnection_id.name)
+            raise exceptions.UserError(_(
+                'You are not the owner of the waterconnection'))
         if self.html_readings_url:
             return {
                 'type': 'ir.actions.act_url',
@@ -478,6 +508,20 @@ class ResPartnerWaterconnection(models.Model):
     @api.multi
     def action_see_scheduling(self):
         self.ensure_one()
+        # Added check for weird BUG where shortcut view is showing
+        # Waterconnection ids not related with partner
+        is_portal_user = self.env.user.has_group(
+            'base_wua.group_wua_portal_user')
+        current_partner_id = self.env.user.partner_id
+        if (is_portal_user and self.id not in
+                (current_partner_id.waterconnectionlink_ids.ids +
+                 current_partner_id.parent_id.waterconnectionlink_ids.ids)):
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.error(
+                'Partner ' + current_partner_id.name + ' is not the owner ' +
+                'of ' + self.waterconnection_id.name)
+            raise exceptions.UserError(_(
+                'You are not the owner of the waterconnection'))
         if self.html_readings_url:
             return {
                 'type': 'ir.actions.act_url',
