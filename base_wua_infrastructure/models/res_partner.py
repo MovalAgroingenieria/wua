@@ -8,6 +8,12 @@ from odoo import models, fields, api, tools, _
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    waterconnectionlink_ids = fields.One2many(
+        string='Waterconnections',
+        comodel_name='res.partner.waterconnection',
+        inverse_name='partner_id',
+    )
+
     def get_res_partner_irrigationpoints_action(self):
         current_partner_id = self.env.context.get('active_id')
         parcel_ids = []

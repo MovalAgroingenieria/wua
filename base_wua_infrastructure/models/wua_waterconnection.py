@@ -184,7 +184,8 @@ class WuaWaterconnection(models.Model):
                         sep_char = '&'
                     url_for_record = url_for_record + sep_char + \
                         waterconnection_param + '=' + record.name
-            if url_for_record and username and password:
+            if url_for_record and username and password and (not
+               self.env.user.has_group('base_wua.group_wua_portal_user')):
                 credentials = username + "-" + password
                 credentials = credentials.ljust(32)
                 current_datetime = pytz.utc.localize(datetime.datetime.now())
