@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from . import wua_irrigation_config_settings
+from . import wua_hydraulicsector
 from . import wua_waterconnection
 from . import res_partner
 from . import wua_parcel
@@ -15,3 +16,5 @@ from . import wua_pressuresensor
 from . import wua_pressuresensormeasurement
 from . import wua_reservoir
 from . import wua_reservoirreading
+from . import wua_waterconnection_irrigation_schedule
+from . import wua_waterconnection_irrigation_event

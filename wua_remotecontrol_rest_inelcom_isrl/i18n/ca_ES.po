@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-05 10:54+0000\n"
-"PO-Revision-Date: 2023-05-05 10:54+0000\n"
+"POT-Creation-Date: 2023-08-18 06:51+0000\n"
+"PO-Revision-Date: 2023-08-18 06:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,10 +16,47 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_waterconnection_telecontrol.py:94
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_reading.py:212
 #, python-format
-msgid " It is not possible to get the info. "
-msgstr " No ha estat possible obtenir la informació. "
+msgid " It is not possible to get a session id. "
+msgstr " No ha estat possible obtenir un ID de sessió "
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_flowreading.py:199
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_reservoirreading.py:175
+#, python-format
+msgid " It is not possible to get session id. "
+msgstr " No ha estat possible obtenir un ID de sessió "
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_waterpipeflowreading.py:125
+#, python-format
+msgid " It is not possible to get the session id. "
+msgstr " No ha estat possible obtenir un ID de sessió "
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_waterconnection_irrigation_event.py:129
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_waterconnection_irrigation_schedule.py:133
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_waterconnection_telecontrol.py:107
+#, python-format
+msgid " Represt code was not 200."
+msgstr " Código de respuesta de API rest no 200."
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_reading.py:210
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_waterconnection_irrigation_event.py:126
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_waterconnection_irrigation_schedule.py:130
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_waterconnection_telecontrol.py:104
+#, python-format
+msgid " Represt code was not 200. "
+msgstr " Código de respuesta de API rest no 200. "
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_pressuresensormeasurement.py:103
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_pressuresensormeasurement.py:105
+#, python-format
+msgid " Represt response code was not 200. "
+msgstr " Código de respuesta de API rest no 200. "
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_url_remotecontrol_rest_inelcom
@@ -60,12 +97,12 @@ msgid "Application URL"
 msgstr "URL de l'aplicació"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:177
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:292
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:381
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:162
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:265
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:339
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:184
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:309
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:406
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:193
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:308
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:392
 #, python-format
 msgid "Archived Data"
 msgstr "Registre arxivat"
@@ -107,6 +144,11 @@ msgid "Entity (flowmeter)"
 msgstr "Element (cabalímetre)"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_hydraulicsector
+msgid "Entity (hydraulic sector)"
+msgstr "Element (sector hydràulic)"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_parcel
 msgid "Entity (parcel)"
 msgstr "Entity (parcel)"
@@ -132,6 +174,16 @@ msgid "Entity (water connection)"
 msgstr "Element (toma)"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_waterconnection_irrigation_event
+msgid "Entity (waterconnection irrigation event)"
+msgstr "Element (esdeveniment de reg)"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_waterconnection_irrigation_schedule
+msgid "Entity (waterconnection irrigation schedule)"
+msgstr "Element (Programació de reg)"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model,name:wua_remotecontrol_rest_inelcom_isrl.model_wua_waterconnection_telecontrol
 msgid "Entity (waterconnection telecontrol)"
 msgstr "Element (toma telecontrol)"
@@ -152,6 +204,16 @@ msgstr "Magnitud del cabal"
 #: selection:wua.reservoir,inelcom_reservoir_type:0
 msgid "Hydrant"
 msgstr "Hidrant"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_irrigation_event_from_waterconnections_inelcom
+msgid "Import Irrigation Event from waterconnection"
+msgstr "Importar eventos de riego desde toma"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_irrigation_schedule_from_waterconnections_inelcom
+msgid "Import Irrigation Schedule from waterconnection"
+msgstr "Importar programaciones de riego desde toma"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_import_from_flowmeter_inelcom
@@ -210,6 +272,7 @@ msgstr "Importació de lectures d'una presa al telecontrol"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_flowmeter_inelcom_id
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_hydraulicsector_inelcom_id
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_pressuresensor_inelcom_id
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_reservoir_inelcom_id
 msgid "Inelcom code"
@@ -221,6 +284,11 @@ msgstr "Codi inelcom"
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_reservoir_inelcom_reservoir_type
 msgid "Inelcom type"
 msgstr "Tipus Inelcom"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_inelcom_isrl.field_wua_irrigation_configuration_irrigation_events_start_date
+msgid "Irrigation Events Start Date"
+msgstr "Data inicial Esdeveniments de reg"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: selection:wua.flowmeter,inelcom_flowmeter_type:0
@@ -283,17 +351,30 @@ msgid "Reservoir Reading"
 msgstr "Lectura de bassa"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:100
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:176
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:291
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:380
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:95
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:161
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:264
-#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:338
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:103
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:183
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:308
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:405
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:112
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:192
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:307
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:391
 #, python-format
 msgid "Source: Moval Regadío"
 msgstr "Origen: Moval Regadío"
+
+#. module: wua_remotecontrol_rest_inelcom_isrl
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:120
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:242
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:295
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/res_partner.py:376
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:128
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:241
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:294
+#: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_parcel.py:362
+#, python-format
+msgid "Telecontrol Error"
+msgstr "Error en telecontrol"
 
 #. module: wua_remotecontrol_rest_inelcom_isrl
 #: code:addons/wua_remotecontrol_rest_inelcom_isrl/models/wua_reading.py:86

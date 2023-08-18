@@ -70,6 +70,15 @@ class WuaIrrigationConfiguration(models.TransientModel):
     import_from_reservoir_inelcom = fields.Boolean(
         string='Import from reservoir')
 
+    import_irrigation_event_from_waterconnections_inelcom = fields.Boolean(
+        string='Import Irrigation Event from waterconnection')
+
+    import_irrigation_schedule_from_waterconnections_inelcom = fields.Boolean(
+        string='Import Irrigation Schedule from waterconnection')
+
+    irrigation_events_start_date = fields.Date(
+        string='Irrigation Events Start Date',)
+
     last_api_response_hidrantes = fields.Char(
         string='API Raw Response for endpoint /hidrantes/medidas')
 
@@ -96,11 +105,24 @@ class WuaIrrigationConfiguration(models.TransientModel):
                            'automatic_census_synchronization_inelcom',
                            self.automatic_census_synchronization_inelcom)
         values.set_default('wua.irrigation.configuration',
+                           'irrigation_events_start_date',
+                           self.irrigation_events_start_date)
+        values.set_default('wua.irrigation.configuration',
                            'last_api_response_hidrantes',
                            self.last_api_response_hidrantes)
         values.set_default('wua.irrigation.configuration',
                            'last_api_response_cabezales',
                            self.last_api_response_cabezales)
+
+        values.set_default(
+            'wua.irrigation.configuration',
+            'import_irrigation_schedule_from_waterconnections_inelcom',
+            self.import_irrigation_schedule_from_waterconnections_inelcom)
+
+        values.set_default(
+            'wua.irrigation.configuration',
+            'import_irrigation_event_from_waterconnections_inelcom',
+            self.import_irrigation_event_from_waterconnections_inelcom)
 
     def can_be_sent_partners_census_any(self):
         other_can_send = super(WuaIrrigationConfiguration, self).\
@@ -172,4 +194,22 @@ class WuaIrrigationConfiguration(models.TransientModel):
         inelcom_can_impport = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'import_from_reservoir_inelcom')
+        return other_can_import or inelcom_can_impport
+
+    def import_irrigation_schedule_from_wc_any(self):
+        other_can_import = super(WuaIrrigationConfiguration, self).\
+            import_irrigation_schedule_from_wc_any()
+        # GET inelcom config
+        inelcom_can_impport = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_irrigation_schedule_from_waterconnections_inelcom')
+        return other_can_import or inelcom_can_impport
+
+    def import_irrigation_event_from_wc_any(self):
+        other_can_import = super(WuaIrrigationConfiguration, self).\
+            import_irrigation_event_from_wc_any()
+        # GET inelcom config
+        inelcom_can_impport = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_irrigation_event_from_waterconnections_inelcom')
         return other_can_import or inelcom_can_impport
