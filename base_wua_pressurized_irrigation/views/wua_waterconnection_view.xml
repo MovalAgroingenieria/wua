@@ -9,6 +9,8 @@
         <field name="arch" type="xml">
             <xpath expr="//button[@name='toggle_active']"
                    position="after">
+                <field name='number_of_irrigation_schedules' invisible="1"/>
+                <field name='number_of_irrigation_events' invisible="1"/>
                 <button name="action_see_readings"
                         type="object"
                         class="oe_stat_button"
@@ -27,6 +29,30 @@
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_text">Consumptions</span>
                         </div>
+                </button>
+                <button name="action_see_irrigation_schedules"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-calendar"
+                        groups="base_wua.group_wua_user"
+                        attrs="{'invisible':
+                                [('number_of_irrigation_schedules','&lt;=',0),]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">Schedules</span>
+                        </div>
+                </button>
+                <button name="action_see_irrigation_events"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-history"
+                        groups="base_wua.group_wua_user"
+                        attrs="{'invisible':
+                                [('number_of_irrigation_events','&lt;=',0),]}">
+                        <div class="o_form_field o_stat_info"><span class="o_stat_text">
+                            Irrigation
+                        </span><span class="o_stat_text">
+                            Events
+                        </span></div>
                 </button>
             </xpath>
             <xpath expr="//field[@name='total_affected_area_official']"
@@ -71,7 +97,30 @@
                 <attribute name="class">o_base_wua_pressurized_irrigation_waterconnection_view_tree</attribute>
             </xpath>
             <xpath expr="//field[@name='number_of_parcels']" position="after">
+                <field name="number_of_irrigation_schedules" invisible="1"/>
+                <field name="number_of_irrigation_events" invisible="1"/>
                 <field name="watermeter_id"/>
+                <button name="action_see_irrigation_schedules"
+                        type="object" class="oe_stat_button"
+                        string="Irrigation Schedules"
+                        icon="fa-calendar"
+                        attrs="{'invisible':
+                                [('number_of_irrigation_schedules','=',0),]}"/>
+                <button name="action_see_irrigation_events"
+                        type="object" class="oe_stat_button"
+                        string="Irrigation Events"
+                        icon="fa-history"
+                        attrs="{'invisible':
+                                [('number_of_irrigation_events','=',0),]}">
+                        <div class="o_form_field o_stat_info">
+                            <span class="o_stat_text">
+                                Irrigation
+                            </span>
+                            <span class="o_stat_text">
+                                Events
+                            </span>
+                        </div>
+                </button>
                 <field name="last_reading_time" string="Last Reading (time)"/>
                 <field name="last_reading_value" string="Last Reading (value)"/>
                 <field name="average_consumption"/>

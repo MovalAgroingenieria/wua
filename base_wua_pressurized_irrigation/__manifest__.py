@@ -34,6 +34,8 @@
         "views/wua_negative_reading_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/wua_infrastructure_config_settings_view.xml",
+        "views/wua_waterconnection_irrigation_schedule_view.xml",
+        "views/wua_waterconnection_irrigation_event_view.xml",
         "reports/wua_parcel_report.xml",
         "reports/wua_watermeter_report.xml",
         "data/wua_infrastructure_config_settings_data.xml",

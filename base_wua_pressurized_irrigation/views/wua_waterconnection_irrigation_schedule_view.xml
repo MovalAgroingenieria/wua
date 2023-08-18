@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_irrigation_schedule_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Schedule (form view)</field>
+        <field name="model">wua.waterconnection.irrigation.schedule</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="00_inactive,01_active"/>
+                </header>
+                <field name="id" invisible="1"/>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="waterconnection_id"/>
+                            <field name="irrigation_start_day"/>
+                            <field name="shift_number"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="irrigation_start_hour" widget="float_time"/>
+                            <field name="irrigation_end_hour" widget="float_time"/>
+                            <field name="irrigation_duration" widget="float_time"/>
+                            <field name="max_irrigation_volume"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_schedule_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Schedule (tree view)</field>
+        <field name="model">wua.waterconnection.irrigation.schedule</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_irrigation_schedules_view_tree">
+                <field name="waterconnection_id"/>
+                <field name="irrigation_start_day"/>
+                <field name="shift_number"/>
+                <field name="irrigation_start_hour" widget="float_time"/>
+                <field name="irrigation_end_hour" widget="float_time"/>
+                <field name="irrigation_duration" widget="float_time"/>
+                <field name="max_irrigation_volume" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_schedule_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Schedule (search view)</field>
+        <field name="model">wua.waterconnection.irrigation.schedule</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterconnection_id"/>
+                <filter string="Inactive" name="stateinactive"
+                 domain="[('state', '=', '00_inactive')]"/>
+                <separator/>
+                <filter string="Active" name="stateactive"
+                 domain="[('state', '=', '01_active')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="State"
+                     name="state"
+                     context="{'group_by':'state'}"/>
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_schedule_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Schedule</field>
+        <field name="res_model">wua.waterconnection.irrigation.schedule</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_waterconnection_irrigation_schedule_view_tree"/>
+        <field name="search_view_id" ref="wua_waterconnection_irrigation_schedule_view_search"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Irrigation Schedule.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="wua_waterconnection_irrigation_schedule_menu"
+              name="Irrigation Schedules"
+              parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+              action="wua_waterconnection_irrigation_schedule_action"
+              sequence="8"/>
+
+</odoo>

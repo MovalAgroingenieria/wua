@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-19 06:14+0000\n"
-"PO-Revision-Date: 2023-06-19 06:14+0000\n"
+"POT-Creation-Date: 2023-08-18 07:05+0000\n"
+"PO-Revision-Date: 2023-08-18 07:05+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -46,6 +46,34 @@ msgid "&amp;nbsp;"
 msgstr "&amp;nbsp;"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_tree
+msgid "<span class=\"o_stat_text\">\n"
+"                                Irrigation\n"
+"                            </span>\n"
+"                            <span class=\"o_stat_text\">\n"
+"                                Events\n"
+"                            </span>"
+msgstr "<span class=\"o_stat_text\">\n"
+"                                Irrigation\n"
+"                            </span>\n"
+"                            <span class=\"o_stat_text\">\n"
+"                                Events\n"
+"                            </span>"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_form
+msgid "<span class=\"o_stat_text\">\n"
+"                            Irrigation\n"
+"                        </span><span class=\"o_stat_text\">\n"
+"                            Events\n"
+"                        </span>"
+msgstr "<span class=\"o_stat_text\">\n"
+"                            Esdeveniments\n"
+"                        </span><span class=\"o_stat_text\">\n"
+"                            de Reg\n"
+"                        </span>"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_form
 msgid "<span class=\"o_stat_text\">Consumptions</span>"
@@ -61,6 +89,11 @@ msgstr "<span class=\"o_stat_text\">Mesuraments</span>"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_form
 msgid "<span class=\"o_stat_text\">Readings</span>"
 msgstr "<span class=\"o_stat_text\">Lectures</span>"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_form
+msgid "<span class=\"o_stat_text\">Schedules</span>"
+msgstr "<span class=\"o_stat_text\">Programació</span>"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_pressuresensor_view_form
@@ -163,6 +196,7 @@ msgid "<strong>Waterconnection</strong>"
 msgstr "<strong>Toma</strong>"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 #: selection:wua.watermeter,state:0
 msgid "Active"
@@ -256,7 +290,17 @@ msgstr "Càlcul: consums (pressió)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_print_readings_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wizard_remove_readings_view_form
 msgid "Cancel"
-msgstr "Treure validació"
+msgstr "Cancel·la"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.actions.act_window,help:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_action
+msgid "Click to add a new Irrigation Event."
+msgstr "Clic per afegir un nou esdeveniment de reg."
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.actions.act_window,help:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_action
+msgid "Click to add a new Irrigation Schedule."
+msgstr "Clic per afegir una programació de reg."
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.actions.act_window,help:base_wua_pressurized_irrigation.wua_technical_show_pressuresensormeasurements_action
@@ -271,7 +315,7 @@ msgstr "Configuració del mòdul base_wua_infrastructure_primary"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuració de reg amb tipus d'aigua"
+msgstr "Configuració del reg amb tipus d'aigua"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_tree
@@ -316,7 +360,7 @@ msgstr "Consum (m³)"
 #. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_agriculturalseason.py:39
 #: code:addons/base_wua_pressurized_irrigation/models/wua_presconsumption.py:280
-#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:162
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:219
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_presconsumption_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_agriculturalseason_presconsumption_ids
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_presconsumption_ids
@@ -337,6 +381,7 @@ msgstr "Consums (a baix nivell)"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_create_uid
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_create_uid
 msgid "Created by"
@@ -349,6 +394,7 @@ msgstr "Creat per"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_create_date
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_create_date
 msgid "Created on"
@@ -406,6 +452,7 @@ msgstr "Descartat"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_display_name
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_display_name
 msgid "Display Name"
@@ -449,7 +496,7 @@ msgstr "Element (consum de pressió)"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_reading
 msgid "Entity (pressure reading)"
-msgstr "Entity (pressure reading)"
+msgstr "Element (lectura de pressió)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_pressuresensor
@@ -472,6 +519,16 @@ msgid "Entity (water meter)"
 msgstr "Element (comptador)"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_waterconnection_irrigation_event
+msgid "Entity (waterconnection irrigation event)"
+msgstr "Element (esdeveniment de reg)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_waterconnection_irrigation_schedule
+msgid "Entity (waterconnection irrigation schedule)"
+msgstr "Element (Programació de reg)"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.actions.server,name:base_wua_pressurized_irrigation.action_send_email_on_negative_reading
 msgid "Enviar correo electrónico en lectura negativa"
 msgstr "Enviar correo electrónico en lectura negativa"
@@ -480,6 +537,16 @@ msgstr "Enviar correo electrónico en lectura negativa"
 #: sql_constraint:wua.presconsumption:0
 msgid "Existing Consumption."
 msgstr "Consum existent."
+
+#. module: base_wua_pressurized_irrigation
+#: sql_constraint:wua.waterconnection.irrigation.event:0
+msgid "Existing Irrigation Event."
+msgstr "Esdeveniment de reg ja existent."
+
+#. module: base_wua_pressurized_irrigation
+#: sql_constraint:wua.waterconnection.irrigation.schedule:0
+msgid "Existing Irrigation Schedule."
+msgstr "Programació de reg ja existent."
 
 #. module: base_wua_pressurized_irrigation
 #: sql_constraint:wua.pressuresensor:0
@@ -543,6 +610,7 @@ msgstr "Valor brut (m³)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_pressuresensormeasurement_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 msgid "Group By"
 msgstr "Agrupar per"
@@ -569,6 +637,7 @@ msgstr "Sector hidràulic"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_id
 msgid "ID"
@@ -579,6 +648,11 @@ msgstr "ID"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_name
 msgid "Identifier"
 msgstr "Identificador"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_search
+msgid "Inactive"
+msgstr "Inactiu"
 
 #. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/wizard/wizard_print_readings.py:89
@@ -635,6 +709,69 @@ msgid "Instant"
 msgstr "Data, hora"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_duration
+msgid "Irigation Duration"
+msgstr "Durada"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_flow
+msgid "Irigation Flow (m³/h)"
+msgstr "Cabal (m³/h)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_flow_per_surface
+msgid "Irigation Flow Per Surface (m³/U/h)"
+msgstr "Cabal específic per superfície (m³/U/h)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_volume
+msgid "Irigation Volume (m³)"
+msgstr "Volum (m³)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_area_static
+msgid "Irrigation Area (Static)"
+msgstr "Superfície (Static)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_area
+msgid "Irrigation Area (U)"
+msgstr "Superfície (U)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_end_date
+msgid "Irrigation End Date"
+msgstr "Data fi de reg"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_action
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_name
+msgid "Irrigation Event"
+msgstr "Esdeveniment de reg"
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:313
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_ids
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_menu
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_tree
+#, python-format
+msgid "Irrigation Events"
+msgstr "Esdeveniments de reg"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_action
+msgid "Irrigation Schedule"
+msgstr "Programació de reg"
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:280
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_menu
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_tree
+#, python-format
+msgid "Irrigation Schedules"
+msgstr "Programacions de reg"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_irrigationshed_id
@@ -649,6 +786,11 @@ msgid "Irrigation Shed"
 msgstr "Caseta"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_start_date
+msgid "Irrigation Start Date"
+msgstr "Data Inici de reg"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_reading_report_document
 msgid "Irrigation partner"
 msgstr "Regant"
@@ -657,6 +799,11 @@ msgstr "Regant"
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_parcel_irrigationpointwc
 msgid "Irrigation point of a parcel (WC)"
 msgstr "Irrigation point of a parcel (WC)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_last_irrigation_event_id
+msgid "Last Irrigation Event"
+msgstr "Últim esdeveniment de reg"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement_is_last_measurement
@@ -670,6 +817,7 @@ msgstr "Darrera mesurament"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading___last_update
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm___last_update
 msgid "Last Modified on"
@@ -717,6 +865,7 @@ msgstr "Valor última lectura"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_write_uid
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_write_uid
 msgid "Last Updated by"
@@ -729,6 +878,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensormeasurement_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_write_date
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_write_date
 msgid "Last Updated on"
@@ -787,6 +937,16 @@ msgstr "Modelo"
 #: selection:wua.wc.wm,type:0
 msgid "Multi-stream"
 msgstr "Multi-doll"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_number_of_irrigation_events
+msgid "N. Irrigtion Events"
+msgstr "Nombre de Esdeveniments de reg"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_number_of_irrigation_schedules
+msgid "N. Irrigtion Schedules"
+msgstr "Nombre de Programacions de reg"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_number_of_measurements
@@ -996,8 +1156,8 @@ msgid "Reading Start Time"
 msgstr "Data lectura inicial"
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:190
-#: code:addons/base_wua_pressurized_irrigation/models/wua_watermeter.py:206
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:247
+#: code:addons/base_wua_pressurized_irrigation/models/wua_watermeter.py:205
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_reading_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wizard_print_readings_reading_ids
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_reading_ids
@@ -1039,6 +1199,7 @@ msgstr "Mostra volum per unitat d'àrea i dia"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_state
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_search
 msgid "State"
 msgstr "Estat"
 
@@ -1271,12 +1432,14 @@ msgstr "Cabal (m3/hour)"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_waterconnection_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_waterconnection_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 msgid "Water Connection"
 msgstr "Toma"
@@ -1392,6 +1555,12 @@ msgstr "No teniu permís per executar aquesta acció."
 #, python-format
 msgid "day"
 msgstr "dia"
+
+#. module: base_wua_pressurized_irrigation
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection_irrigation_event.py:162
+#, python-format
+msgid "ha"
+msgstr "ha"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_res_partner_waterconnection

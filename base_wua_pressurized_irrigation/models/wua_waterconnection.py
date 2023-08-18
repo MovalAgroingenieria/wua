@@ -42,6 +42,35 @@ class WuaWaterconnection(models.Model):
         store=True,
         compute='_compute_average_consumption')
 
+    irrigation_schedule_ids = fields.One2many(
+        string='Irrigation Schedules',
+        comodel_name='wua.waterconnection.irrigation.schedule',
+        inverse_name='waterconnection_id')
+
+    number_of_irrigation_schedules = fields.Integer(
+        string='N. Irrigtion Schedules',
+        compute='_compute_number_of_irrigation_schedules',
+        store=True,
+    )
+
+    irrigation_event_ids = fields.One2many(
+        string='Irrigation Events',
+        comodel_name='wua.waterconnection.irrigation.event',
+        inverse_name='waterconnection_id')
+
+    last_irrigation_event_id = fields.Many2one(
+        string='Last Irrigation Event',
+        comodel_name='wua.waterconnection.irrigation.event',
+        compute='_compute_last_irrigation_event_id',
+        store=True,
+        index=True,)
+
+    number_of_irrigation_events = fields.Integer(
+        string='N. Irrigtion Events',
+        compute='_compute_number_of_irrigation_events',
+        store=True,
+    )
+
     @api.depends('watermeter_id')
     def _compute_with_watermeter(self):
         for record in self:
@@ -73,6 +102,34 @@ class WuaWaterconnection(models.Model):
             if record.watermeter_id:
                 average_consumption = record.watermeter_id.average_consumption
             record.average_consumption = average_consumption
+
+    @api.depends('irrigation_schedule_ids')
+    def _compute_number_of_irrigation_schedules(self):
+        for record in self:
+            number_of_irrigation_schedules = 0
+            if (record.irrigation_schedule_ids):
+                number_of_irrigation_schedules = len(
+                    record.irrigation_schedule_ids)
+            record.number_of_irrigation_schedules = \
+                number_of_irrigation_schedules
+
+    @api.depends('irrigation_event_ids')
+    def _compute_last_irrigation_event_id(self):
+        for record in self:
+            last_irrigation_event_id = None
+            if (record.irrigation_event_ids):
+                last_irrigation_event_id = record.irrigation_event_ids[0]
+            record.last_irrigation_event_id = last_irrigation_event_id
+
+    @api.depends('irrigation_event_ids')
+    def _compute_number_of_irrigation_events(self):
+        for record in self:
+            number_of_irrigation_events = 0
+            if (record.irrigation_event_ids):
+                number_of_irrigation_events = len(
+                    record.irrigation_event_ids)
+            record.number_of_irrigation_events = \
+                number_of_irrigation_events
 
     @api.model
     def create(self, vals):
@@ -107,7 +164,7 @@ class WuaWaterconnection(models.Model):
                     self.update_wua_wc_wm(self.id, new_watermeter_id)
         return resp
 
-    # Update the "wua.wc.wm" model.
+    # Update the 'wua.wc.wm' model.
     def update_wua_wc_wm(self, waterconnection_id, watermeter_id):
         current_date = datetime.datetime.now()
         wc_wm_registers = self.env['wua.wc.wm']
@@ -192,6 +249,72 @@ class WuaWaterconnection(models.Model):
             'type': 'ir.actions.act_window',
             'name': reading_label,
             'res_model': 'wua.reading',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            'context': {'from_shortcut': 1},
+            }
+        return act_window
+
+    @api.multi
+    def action_see_irrigation_schedules(self):
+        self.ensure_one()
+        condition = [('waterconnection_id', '=', self.id)]
+        id_form_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_waterconnection_irrigation_schedule_view_form').id
+        id_tree_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_waterconnection_irrigation_schedule_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_waterconnection_irrigation_schedule_view_search')
+        irrigation_schedules_label = self.sudo().env['wua.parcel'].\
+            get_value_from_translation(
+            'base_wua_pressurized_irrigation',
+            'Irrigation Schedules')
+        if (not irrigation_schedules_label):
+            irrigation_schedules_label = _('Irrigation Schedules')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': irrigation_schedules_label,
+            'res_model': 'wua.waterconnection.irrigation.schedule',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            'context': {'from_shortcut': 1},
+            }
+        return act_window
+
+    @api.multi
+    def action_see_irrigation_events(self):
+        self.ensure_one()
+        condition = [('waterconnection_id', '=', self.id)]
+        id_form_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_waterconnection_irrigation_event_view_form').id
+        id_tree_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_waterconnection_irrigation_event_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_waterconnection_irrigation_event_view_search')
+        irrigation_events_label = self.sudo().env['wua.parcel'].\
+            get_value_from_translation(
+            'base_wua_pressurized_irrigation',
+            'Irrigation Events')
+        if (not irrigation_events_label):
+            irrigation_events_label = _('Irrigation Events')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': irrigation_events_label,
+            'res_model': 'wua.waterconnection.irrigation.event',
             'view_type': 'form',
             'view_mode': 'tree',
             'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],

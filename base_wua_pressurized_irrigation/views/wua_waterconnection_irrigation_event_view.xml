@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_irrigation_event_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Event (form view)</field>
+        <field name="model">wua.waterconnection.irrigation.event</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                </header>
+                <field name="id" invisible="1"/>
+                <sheet>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="waterconnection_id"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="irrigation_start_date"/>
+                            <field name="irrigation_end_date"/>
+                            <field name="irrigation_volume"/>
+                            <field name="irrigation_duration" widget="float_time"/>
+                            <field name="irrigation_flow"/>
+                            <field name="irrigation_area"/>
+                            <field name="irrigation_flow_per_surface"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_event_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Event (tree view)</field>
+        <field name="model">wua.waterconnection.irrigation.event</field>
+        <field name="arch" type="xml">
+            <tree
+             class="o_base_wua_pressurized_irrigation_irrigation_events_view_tree">
+                <field name="waterconnection_id"/>
+                <field name="irrigation_start_date"/>
+                <field name="irrigation_end_date"/>
+                <field name="irrigation_volume"/>
+                <field name="irrigation_duration" widget="float_time"/>
+                <field name="irrigation_flow"/>
+                <field name="irrigation_area"/>
+                <field name="irrigation_flow_per_surface"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_event_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Event (search view)</field>
+        <field name="model">wua.waterconnection.irrigation.event</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterconnection_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_event_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Event</field>
+        <field name="res_model">wua.waterconnection.irrigation.event</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_waterconnection_irrigation_event_view_tree"/>
+        <field name="search_view_id" ref="wua_waterconnection_irrigation_event_view_search"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Irrigation Event.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="wua_waterconnection_irrigation_event_menu"
+              name="Irrigation Events"
+              parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+              action="wua_waterconnection_irrigation_event_action"
+              sequence="9"/>
+
+</odoo>

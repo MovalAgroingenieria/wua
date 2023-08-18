@@ -15,3 +15,5 @@ from . import wua_irrigation_config_settings
 from . import wua_infrastructure_config_settings
 from . import res_partner
 from . import wua_negative_reading
+from . import wua_waterconnection_irrigation_schedule
+from . import wua_waterconnection_irrigation_event
