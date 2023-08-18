@@ -84,10 +84,13 @@ class WuaWaterconnectionIrrigationEvent(models.Model):
                 info['waterconnection_id'])
             # We must check if the start_Date is greater than the latest end
             # date and only append later ones (Only if some event)
-            if (not waterconnection.last_irrigation_event_id or (
-                waterconnection.last_irrigation_event_id and
-                waterconnection.last_irrigation_event_id.irrigation_end_date <=
-                    info['irrigation_start_date'])):
+            # Also checks for irrigations with end and start date equal
+            last_event = waterconnection.last_irrigation_event_id
+            if (not last_event or (last_event and
+                last_event.irrigation_end_date <=
+                info['irrigation_start_date'] and
+                info['irrigation_end_date'] >
+                    last_event.irrigation_start_date)):
                 resp.append(refined_wc_irr_event)
         return resp
 
