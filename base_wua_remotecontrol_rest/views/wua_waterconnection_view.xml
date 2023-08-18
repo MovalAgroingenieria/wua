@@ -9,6 +9,8 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet" position="before">
                 <field name="remotecontrol_enabled" invisible="1"/>
+                <field name="remotecontrol_irrigation_event_enabled" invisible="1"/>
+                <field name="remotecontrol_irrigation_schedule_enabled" invisible="1"/>
                 <field name="id" invisible="1"/>
                 <header>
                     <button name="do_import_readings_from_waterconnection"
@@ -19,6 +21,22 @@
                                           ('id', '=', 0)]}"
                             groups="base_wua.group_wua_manager"
                             confirm="Import readings?"/>
+                    <button name="do_import_irrigation_schedules_from_waterconnection"
+                            type="object" string="Get Irrigation schedules"
+                            icon="fa-calendar"
+                            attrs="{'invisible':
+                                    ['|', ('remotecontrol_irrigation_schedule_enabled','=',False),
+                                          ('id', '=', 0)]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Import Irrigation schedules?"/>
+                    <button name="do_import_irrigation_events_from_waterconnection"
+                            type="object" string="Get Irrigation events"
+                            icon="fa-history"
+                            attrs="{'invisible':
+                                    ['|', ('remotecontrol_irrigation_event_enabled','=',False),
+                                          ('id', '=', 0)]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Import Irrigation events?"/>
                 </header>
             </xpath>
             <xpath expr="//field[@name='last_reading_value']" position="after">
@@ -83,6 +101,42 @@
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('wua_import_readings_from_waterconnections'))"/>
+    </record>
+
+    <record id="wua_import_irrigation_schedules_from_waterconnections" model="ir.actions.server">
+        <field name="name">Get Irrigation schedules</field>
+        <field name="model_id" ref="model_wua_waterconnection"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.waterconnection'].do_import_irrigation_schedules_from_waterconnections(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_import_irrigation_schedules_from_waterconnections" model="ir.values">
+        <field name="name">Get Irrigation_schedules</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_import_irrigation_schedules_from_waterconnections'))"/>
+    </record>
+
+    <record id="wua_import_irrigation_events_from_waterconnections" model="ir.actions.server">
+        <field name="name">Get Irrigation events</field>
+        <field name="model_id" ref="model_wua_waterconnection"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.waterconnection'].do_import_irrigation_events_from_waterconnections(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_import_irrigation_events_from_waterconnections" model="ir.values">
+        <field name="name">Get Irrigation_events</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_import_irrigation_events_from_waterconnections'))"/>
     </record>
 
 </odoo>

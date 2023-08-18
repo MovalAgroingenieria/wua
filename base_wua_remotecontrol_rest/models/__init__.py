@@ -13,3 +13,5 @@ from . import wua_negative_reading
 from . import wua_waterconnection_telecontrol
 from . import wua_pressuresensor
 from . import wua_pressuresensormeasurement
+from . import wua_waterconnection_irrigation_schedule
+from . import wua_waterconnection_irrigation_event

@@ -21,6 +21,8 @@
         "data/wua_reading_cron.xml",
         "data/wua_telecontrol_no_connection_mail_template.xml",
         "data/wua_pressuresensormeasurement_cron.xml",
+        "data/wua_waterconnection_irrigation_schedule_cron.xml",
+        "data/wua_waterconnection_irrigation_event_cron.xml",
         "views/resources.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/res_partner_view.xml",

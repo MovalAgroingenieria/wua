@@ -15,6 +15,14 @@ class WuaWaterconnection(models.Model):
         string='Remote Control enabled',
         compute='_compute_remotecontrol_enabled')
 
+    remotecontrol_irrigation_event_enabled = fields.Boolean(
+        string='Import Irrigation Event enabled',
+        compute='_compute_remotecontrol_irrigation_event_enabled')
+
+    remotecontrol_irrigation_schedule_enabled = fields.Boolean(
+        string='Import Irrigation Schedule enabled',
+        compute='_compute_remotecontrol_irrigation_schedule_enabled')
+
     # Empty, inherit
     telecontrol_associated = fields.Selection(
         [],
@@ -90,6 +98,36 @@ class WuaWaterconnection(models.Model):
                 enable_remotecontrol & import_from_waterconnection
 
     @api.multi
+    def _compute_remotecontrol_irrigation_event_enabled(self):
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        import_irrigation_event_from_wc = \
+            self.env['wua.irrigation.configuration'].\
+            import_irrigation_event_from_wc_any()
+        if enable_remotecontrol is None:
+            enable_remotecontrol = False
+        if import_irrigation_event_from_wc is None:
+            import_irrigation_event_from_wc = False
+        for record in self:
+            record.remotecontrol_irrigation_event_enabled = \
+                enable_remotecontrol & import_irrigation_event_from_wc
+
+    @api.multi
+    def _compute_remotecontrol_irrigation_schedule_enabled(self):
+        enable_remotecontrol = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'enable_remotecontrol')
+        import_irrigation_schedule_from_wc = \
+            self.env['wua.irrigation.configuration'].\
+            import_irrigation_schedule_from_wc_any()
+        if enable_remotecontrol is None:
+            enable_remotecontrol = False
+        if import_irrigation_schedule_from_wc is None:
+            import_irrigation_schedule_from_wc = False
+        for record in self:
+            record.remotecontrol_irrigation_schedule_enabled = \
+                enable_remotecontrol & import_irrigation_schedule_from_wc
+
+    @api.multi
     def do_import_readings_from_waterconnection(self):
         self.ensure_one()
         prefix_message = _('Remote Control: Starting reading in '
@@ -128,6 +166,92 @@ class WuaWaterconnection(models.Model):
                 readings = [x for x in readings if x['waterconnection_id']
                             in active_waterconnections]
                 self.env['wua.reading'].save_readings(readings)
+
+    def do_import_irrigation_schedules_from_waterconnections(
+            self, active_waterconnections):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        waterconnections = self.env['wua.waterconnection'].browse(
+            active_waterconnections)
+        if waterconnections:
+            prefix_message = _('Remote Control: Starting irrigation schedules '
+                               'retrieval in water connections')
+            suffix_message = ''
+            for waterconnection in waterconnections:
+                suffix_message = suffix_message + ', ' + waterconnection.name
+            suffix_message = suffix_message[2:]
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.info(prefix_message + '... ' + suffix_message)
+            schedule_model = self.env[
+                'wua.waterconnection.irrigation.schedule']
+            wc_irr_schedule, error_message = schedule_model.\
+                do_import_waterconnection_irrigation_schedule_all(
+                    waterconnections)
+            wc_irr_schedule = schedule_model.\
+                refine_waterconnection_irrigation_schedule(wc_irr_schedule)
+            schedule_model.save_waterconnection_irrigation_schedule(
+                wc_irr_schedule)
+
+    @api.multi
+    def do_import_irrigation_schedules_from_waterconnection(self):
+        self.ensure_one()
+        prefix_message = _('Remote Control: Starting reading in '
+                           'water connections')
+        _logger = logging.getLogger(self.__class__.__name__)
+        _logger.info(prefix_message + '... ' +
+                     str(self.name))
+        schedule_model = self.env[
+            'wua.waterconnection.irrigation.schedule']
+        wc_irr_schedule, error_message = schedule_model.\
+            do_import_waterconnection_irrigation_schedule_all(self)
+        wc_irr_schedule = schedule_model.\
+            refine_waterconnection_irrigation_schedule(wc_irr_schedule)
+        schedule_model.save_waterconnection_irrigation_schedule(
+            wc_irr_schedule)
+
+    def do_import_irrigation_events_from_waterconnections(
+            self, active_waterconnections):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        waterconnections = self.env['wua.waterconnection'].browse(
+            active_waterconnections)
+        if waterconnections:
+            prefix_message = _('Remote Control: Starting irrigation events '
+                               'retrieval in water connections')
+            suffix_message = ''
+            for waterconnection in waterconnections:
+                suffix_message = suffix_message + ', ' + waterconnection.name
+            suffix_message = suffix_message[2:]
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.info(prefix_message + '... ' + suffix_message)
+            event_model = self.env[
+                'wua.waterconnection.irrigation.event']
+            wc_irr_event, error_message = event_model.\
+                do_import_waterconnection_irrigation_event_all(
+                    waterconnections)
+            wc_irr_event = event_model.\
+                refine_waterconnection_irrigation_event(wc_irr_event)
+            event_model.save_waterconnection_irrigation_event(
+                wc_irr_event)
+
+    @api.multi
+    def do_import_irrigation_events_from_waterconnection(self):
+        self.ensure_one()
+        prefix_message = _('Remote Control: Starting reading in '
+                           'water connections')
+        _logger = logging.getLogger(self.__class__.__name__)
+        _logger.info(prefix_message + '... ' +
+                     str(self.name))
+        event_model = self.env[
+            'wua.waterconnection.irrigation.event']
+        wc_irr_event, error_message = event_model.\
+            do_import_waterconnection_irrigation_event_all(self)
+        wc_irr_event = event_model.\
+            refine_waterconnection_irrigation_event(wc_irr_event)
+        event_model.save_waterconnection_irrigation_event(
+            wc_irr_event)
 
     @api.multi
     def _compute_html_last_telecontrol_info(self):
