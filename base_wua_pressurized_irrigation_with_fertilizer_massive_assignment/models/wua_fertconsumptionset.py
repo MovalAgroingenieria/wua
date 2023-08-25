@@ -292,8 +292,9 @@ class WuaFertconsumptionsetLine(models.Model):
     @api.depends('fertconsumptionset_id', 'hydraulicsector_id', 'product_id')
     def _compute_name(self):
         for record in self:
-            name = None
-            if (record.fertconsumptionset_id and record.hydraulicsector_id):
+            name = ''
+            if (record.fertconsumptionset_id and
+                    record.hydraulicsector_id and record.product_id):
                 name = record.fertconsumptionset_id.name + '-' + \
                     record.product_id.name + '-' + \
                     str(record.hydraulicsector_id.hydraulicsector_code
@@ -348,7 +349,6 @@ class WuaFertconsumptionsetLine(models.Model):
             if not selected:
                 selected_val = 'FALSE'
             try:
-                # TODO: Add Invoice by hmovement on checks?
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
                     DELETE FROM wua_fertconsumptionset_line_presconsumption
