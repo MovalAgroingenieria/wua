@@ -52,7 +52,7 @@ class WuaFertconsumption(models.Model):
         digits=(32, 4),
         store=True,
         required=True,
-        inndex=True,
+        index=True,
         default=0.0)
 
     presconsumption_id = fields.Many2one(

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_fertconsumptionset_view_form" model="ir.ui.view">
+        <field name="name">Fertilizer Consumptions Lot (form view)</field>
+        <field name="model">wua.fertconsumptionset</field>
+        <field name="priority" eval="1"/>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <field name="configured_fertconsumptionset" invisible="1"/>
+                <header>
+                    <button name="configure_fertconsumptionset"
+                            type="object" string="Configure"
+                            states="draft"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="calculate_fertconsumptionset"
+                            type="object" string="Calculate"
+                            attrs="{'invisible':
+                                    ['|',
+                                     ('configured_fertconsumptionset','=',False),
+                                     ('state','=','generated')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <button name="cancel_fertconsumptionset"
+                            type="object" string="Cancel"
+                            states="generated"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,generated"/>
+                </header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-archive"
+                                confirm="Are you sure you want to toggle visibility?"
+                                groups="base_wua.group_wua_manager">
+                                <field name="active"
+                                       widget="boolean_button"
+                                       options='{"terminology": "archive"}'/>
+                        </button>
+                        <button name="action_see_fertconsumptions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-file-fertilizer"
+                                attrs="{'invisible':
+                                        [('state','=','draft')]}">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_fertconsumptions"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        Fertconsumptions
+                                    </span>
+                                </div>
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field
+                                attrs="{'readonly': [('state','=','generated')]}"
+                                name="name"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="total_amount"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="lines_page" string="Lines">
+                                <field name="line_ids"
+                                       attrs="{'readonly':
+                                                [('state','=','generated')]}"
+                                       context="{'tree_view_ref':
+                                                 'base_wua_pressurized_irrigation_with_fertilizer_massive_assignment.wua_fertconsumptionset_line_view_tree'}"/>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_fertconsumptionset_line_view_tree" model="ir.ui.view">
+        <field name="name">Reading Periods-Line (tree view)</field>
+        <field name="model">wua.fertconsumptionset.line</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_with_fertilizer_massive_assignment_fertconsumptionset_line_view_tree"
+                  editable="bottom">
+                <field name="product_id" widget="many2one_unclickable"/>
+                <field name="amount"/>
+                <field name="uom_id"/>
+                <field name='hydraulicsector_id' widget="many2one_unclickable"
+                        options="{'no_quick_create':True,
+                                'no_create_edit':True}"
+                        attrs="{'readonly':[('configured_line','=',True)]}"/>
+                <field name="total_volume"/>
+                <field name="configured_line" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('configured_line','=',False)],
+                                'readonly':
+                                [('configured_line','=',True)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_fertconsumptionset_view_tree" model="ir.ui.view">
+        <field name="name">Consumptions (tree view)</field>
+        <field name="model">wua.fertconsumptionset</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_with_fertilizer_massive_assignment_fertconsumptionset_view_tree">
+                <field name="name"/>
+                <field name="number_of_fertconsumptions"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_fertconsumptionset_view_search" model="ir.ui.view">
+        <field name="name">Fertilizer Consumptions Lot (search view)</field>
+        <field name="model">wua.fertconsumptionset</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="state"/>
+                <filter string="Draft" name="draft"
+                 domain="[('state','=','draft')]"/>
+                <filter string="Generated" name="generated"
+                 domain="[('state','=','generated')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive"
+                 domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_config_fertconsumptionset_view_form" model="ir.ui.view">
+        <field name="name">Fertilizer Consumptions Lot (configuration-form view)</field>
+        <field name="model">wua.fertconsumptionset</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <form>
+                <field name="line_ids" readonly="1"
+                 context="{'tree_view_ref':
+                 'base_wua_pressurized_irrigation_with_fertilizer_massive_assignment.wua_config_fertconsumptionset_line_view_tree'}"/>
+                <footer>
+                   <button name="auxbutton" type="object" string="aux"
+                           invisible="1"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_config_fertconsumptionset_line_view_tree" model="ir.ui.view">
+        <field name="name">Fertilizer Consumptions Lot (configuration-tree view)</field>
+        <field name="model">wua.fertconsumptionset.line</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_with_fertilizer_massive_assignment_config_fertconsumptionset_line_view_tree">
+                <field name="product_id" widget="many2one_unclickable"/>
+                <field name="amount"/>
+                <field name="uom_id"/>
+                <field name="hydraulicsector_id" widget="many2one_unclickable"/>
+                <field name="total_volume"/>
+                <button name="action_select_fertconsumptionset_line_presconsumptions"
+                        type="object"
+                        string="Select"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_fertconsumptionset_line_presconsumption_view_tree" model="ir.ui.view">
+        <field name="name">Reading Periods-Line Presconsumption(tree view)</field>
+        <field name="model">wua.fertconsumptionset.line.presconsumption</field>
+        <field name="arch" type="xml">
+            <tree class=
+                  "o_base_wua_pressurized_irrigation_with_fertilizer_massive_assignment_fertconsumptionset_line_presconsumption_view_tree"
+                  create="false" edit="false" delete="false">
+                  <field name="selected" invisible="1"/>
+                <field name="presconsumption_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="reading_initial_time"/>
+                <field name="reading_end_time"/>
+                <field name="volume"/>
+                <field name="adjustement_volume"/>
+                <field name="volume_real"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="wua_fertconsumptionset_line_presconsumption_view_search" model="ir.ui.view">
+        <field name="name">Reading Periods-Line Presconsumption (search view)</field>
+        <field name="model">wua.fertconsumptionset.line.presconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="presconsumption_id"/>
+                <field name="watermeter_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Is selected (marked)"
+                     name="isselected"
+                     context="{'group_by':'selected'}"/>
+                    <filter string="Hydraulic Sector"
+                     name="hydraulic_sector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigation_shed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Water Connection"
+                     name="water_connection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                    <filter string="Water Meter"
+                     name="water_meter"
+                     context="{'group_by':'watermeter_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_presconsumption_to_fertconsumptionset" model="ir.actions.server">
+        <field name="name">Add to fertilizer consumption lot</field>
+        <field name="model_id" ref="model_wua_fertconsumptionset_line_presconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.fertconsumptionset.line.presconsumption'].browse(context['active_ids']).add_to_fertconsumptionset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_presconsumption_to_fertconsumptionset" model="ir.values">
+        <field name="name">Add presconsumption to fertilizer consumption lot</field>
+        <field name="model">wua.fertconsumptionset.line.presconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_presconsumption_to_fertconsumptionset'))"/>
+    </record>
+
+    <record id="wua_remove_presconsumption_to_fertconsumptionset" model="ir.actions.server">
+        <field name="name">Remove from fertilizer consumption lot</field>
+        <field name="model_id" ref="model_wua_fertconsumptionset_line_presconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.fertconsumptionset.line.presconsumption'].browse(context['active_ids']).remove_from_fertconsumptionset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_presconsumption_to_fertconsumptionset" model="ir.values">
+        <field name="name">Remove presconsumption from fertilizer consumption lot</field>
+        <field name="model">wua.fertconsumptionset.line.presconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_presconsumption_to_fertconsumptionset'))"/>
+    </record>
+
+
+    <record id="wua_fertconsumptionset_action" model="ir.actions.act_window">
+        <field name="name">Fertilizer Consumptions Lot</field>
+        <field name="res_model">wua.fertconsumptionset</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_fertconsumptionset_view_tree"/>
+        <field name="search_view_id" ref="wua_fertconsumptionset_view_search"/>
+    </record>
+
+</odoo>
