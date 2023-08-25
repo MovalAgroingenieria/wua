@@ -137,6 +137,7 @@ class WuaFertconsumptionset(models.Model):
     @api.multi
     def calculate_fertconsumptionset(self):
         for record in self:
+            total_fertconsumptions = 0
             for line in record.line_ids:
                 # Some selected presconsumptions
                 if (line.selected_fertconsumptionsetpresconsumption_ids and
@@ -167,11 +168,12 @@ class WuaFertconsumptionset(models.Model):
                             'validated': False,
                         })
                         number_of_fertconsumptions += 1
-                    record.write({
-                        'state': 'generated',
-                        'number_of_fertconsumptions':
-                            number_of_fertconsumptions,
-                        })
+                        total_fertconsumptions += 1
+            record.write({
+                'state': 'generated',
+                'number_of_fertconsumptions':
+                    total_fertconsumptions,
+                })
 
     @api.multi
     def action_see_fertconsumptions(self):
