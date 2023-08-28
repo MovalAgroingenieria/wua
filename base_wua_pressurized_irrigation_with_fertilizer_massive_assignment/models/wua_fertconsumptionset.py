@@ -159,16 +159,17 @@ class WuaFertconsumptionset(models.Model):
                                 (line.amount * fert_line.volume_real) /
                                 line.total_volume, 4)
                             accumulated_amount += fert_amount
-                        self.env['wua.fertconsumption'].create({
-                            'presconsumption_id':
-                                fert_line.presconsumption_id.id,
-                            'product_id': line.product_id.id,
-                            'amount': fert_amount,
-                            'fertconsumptionset_id': record.id,
-                            'validated': False,
-                        })
-                        number_of_fertconsumptions += 1
-                        total_fertconsumptions += 1
+                        if (fert_amount > 0):
+                            self.env['wua.fertconsumption'].create({
+                                'presconsumption_id':
+                                    fert_line.presconsumption_id.id,
+                                'product_id': line.product_id.id,
+                                'amount': fert_amount,
+                                'fertconsumptionset_id': record.id,
+                                'validated': False,
+                            })
+                            number_of_fertconsumptions += 1
+                            total_fertconsumptions += 1
             record.write({
                 'state': 'generated',
                 'number_of_fertconsumptions':
@@ -332,15 +333,22 @@ class WuaFertconsumptionsetLine(models.Model):
                         lambda x: x.volume_real))
             record.total_volume = total_volume
 
-    def _populate_items_select(self, selected=True):
-        presconsumptions = self.env['wua.presconsumption'].search([])
+    def _populate_items_select(self, previous_presc_not_selected=[]):
+        presconsumptions = self.env['wua.presconsumption'].search([], limit=1)
         if len(presconsumptions) > 0:
             user_id = self.env.user.id
             fertconsumptionset_id = self.fertconsumptionset_id.id
             fertconsumptionsetline_id = self.id
             hydraulicsector_id = self.hydraulicsector_id.id
-            selected_val = 'TRUE'
-            # TODO: This will be better as an extension in ohter module with
+            # If we have a previous selection (Refreshing), if the
+            # presconsumption was not selected, then it should noit be selected
+            # New ones and already selected ones whill be selected
+            # -1 Because empty () will be an error
+            previous_presc_not_selected.append('-1')
+            select_statement = ' CASE WHEN id IN (' + \
+                ','.join(previous_presc_not_selected) + ') THEN FALSE ' + \
+                'ELSE TRUE END'
+            # TODO: This will be better as an extension in other module with
             # invoicing module as dependency
             hmov_condition = ' AND TRUE'
             hmov_invoicing_module = self.env['ir.module.module'].search(
@@ -348,15 +356,14 @@ class WuaFertconsumptionsetLine(models.Model):
             if (not hmov_invoicing_module or
                     hmov_invoicing_module.state != 'installed'):
                 hmov_condition = ' AND NOT invoiced_consumption_quota'
-            if not selected:
-                selected_val = 'FALSE'
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
                     DELETE FROM wua_fertconsumptionset_line_presconsumption
                     WHERE fertconsumptionsetline_id=""" + str(
                     fertconsumptionsetline_id))
-                self.env.cr.execute("""
+                self.env.cr.execute(
+                    """
                     INSERT INTO wua_fertconsumptionset_line_presconsumption
                     (id, create_uid, write_uid, create_date, write_date,
                     fertconsumptionset_id,
@@ -367,7 +374,8 @@ class WuaFertconsumptionsetLine(models.Model):
                     adjustement_volume, volume_real)
                     SELECT nextval(
                     'wua_fertconsumptionset_line_presconsumption_id_seq'), %s,
-                    %s, now(), now(), %s, %s, %s, id, reading_id,
+                    %s, now(), now(), %s, %s, """ + select_statement +
+                    """, id, reading_id,
                     reading_initial_time, initial_volume,
                     reading_end_time, end_volume, volume, watermeter_id,
                     waterconnection_id, irrigationshed_id, hydraulicsector_id,
@@ -376,9 +384,8 @@ class WuaFertconsumptionsetLine(models.Model):
                     WHERE hydraulicsector_id = %s AND
                     validated AND NOT invoiced_consumption
                     """ + hmov_condition, (
-                    user_id, user_id, fertconsumptionset_id,
-                    fertconsumptionsetline_id, selected_val,
-                    hydraulicsector_id))
+                        user_id, user_id, fertconsumptionset_id,
+                        fertconsumptionsetline_id, hydraulicsector_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
             except Exception:
@@ -386,10 +393,24 @@ class WuaFertconsumptionsetLine(models.Model):
                 raise exceptions.UserError(_('Error when updating records.'))
 
     @api.multi
-    def action_select_fertconsumptionset_line_presconsumptions(self):
+    def action_refresh_fertconsumptionset_line_presconsumptions(self):
         self.ensure_one()
-        if not self.configured_line:
-            self._populate_items_select()
+        return self.action_select_fertconsumptionset_line_presconsumptions(
+            {}, True)
+
+    # Context needed because when clicked from the view is always passed
+    @api.multi
+    def action_select_fertconsumptionset_line_presconsumptions(
+            self, context, refresh=False):
+        self.ensure_one()
+        if not self.configured_line or refresh:
+            presconsumptions_not_selected = []
+            if (refresh):
+                presconsumptions_not_selected = \
+                    self.fertconsumptionsetpresconsumption_ids.\
+                    filtered(lambda x: not x.selected).mapped(
+                        lambda x: str(x.presconsumption_id.id))
+            self._populate_items_select(presconsumptions_not_selected)
             self._compute_configured_line()
             self._compute_total_volume()
         id_tree_view = self.env.ref(

@@ -588,11 +588,11 @@ class WuaParcel(models.Model):
             url_for_record = url
             if url_for_record:
                 if parcel_param:
-                    sep_char = '?'
+                    sep_char = u'?'
                     if url_for_record.find('?') != -1:
-                        sep_char = '&'
+                        sep_char = u'&'
                     url_for_record = url_for_record + sep_char + \
-                        parcel_param + '=' + str(record.name)
+                        parcel_param + u'=' + record.name
             if (url_for_record and username and password and (not
                self.env.user.has_group('base_wua.group_wua_portal_user'))):
                 credentials = username + "-" + password
