@@ -494,7 +494,7 @@ class WuaInvoicesetLine(models.Model):
                     waterconnection_id, irrigationshed_id, hydraulicsector_id,
                     amount
                     FROM wua_fertconsumption
-                    WHERE product_id=%s and invoiceset_id is null
+                    WHERE product_id=%s AND invoiceset_id is null AND validated
                     """, (user_id, user_id, invoicesetline_id, product_id))
                 self.env.cr.execute("""
                     UPDATE wua_fertconsumption

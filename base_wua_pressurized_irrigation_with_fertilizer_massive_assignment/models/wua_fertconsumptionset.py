@@ -6,6 +6,7 @@ from odoo import models, fields, api, exceptions, _
 
 
 class WuaFertconsumptionset(models.Model):
+    _inherit = 'mail.thread'
     _name = 'wua.fertconsumptionset'
     _description = 'Entity (fertilizer consumption lot)'
 

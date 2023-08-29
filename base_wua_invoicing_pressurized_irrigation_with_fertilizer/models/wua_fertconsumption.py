@@ -2,7 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions, _
 
 
 class WuaFertconsumption(models.Model):
@@ -52,6 +52,16 @@ class WuaFertconsumption(models.Model):
         ondelete='restrict',
         store=False,
         compute='_compute_uom_id')
+
+    @api.multi
+    def cancel_fertconsumption(self):
+        self.ensure_one()
+        if not self.invoiced_consumption:
+            self.validated = False
+        else:
+            raise exceptions.UserError(
+                _('The fertconsumption is invoiced: it is not '
+                  'possible to cancel it.'))
 
     @api.depends('product_id')
     def _compute_uom_id(self):

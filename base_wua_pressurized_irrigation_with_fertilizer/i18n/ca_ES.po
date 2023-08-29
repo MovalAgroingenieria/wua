@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-20 11:52+0000\n"
-"PO-Revision-Date: 2020-03-20 11:52+0000\n"
+"POT-Creation-Date: 2023-08-29 11:07+0000\n"
+"PO-Revision-Date: 2023-08-29 11:07+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,7 @@ msgstr "<span class=\"o_stat_text\">Usos de<br/>fertilitzant</span>"
 #. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_pivot
 msgid "Agregated Values"
-msgstr "Agregated Values"
+msgstr "Valors agregats"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_agriculturalseason_id
@@ -63,22 +63,17 @@ msgid "Calculation: fert. consumptions"
 msgstr "Càlcul: consums (fertilitzant)"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_with_fertilizer.wua_cancel_fertconsumptions
+msgid "Cancel Fertconsumption"
+msgstr "Cancel·la"
+
+#. module: base_wua_pressurized_irrigation_with_fertilizer
 #: code:addons/base_wua_pressurized_irrigation_with_fertilizer/models/wua_agriculturalseason.py:31
 #: code:addons/base_wua_pressurized_irrigation_with_fertilizer/models/wua_presconsumption.py:57
 #: code:addons/base_wua_pressurized_irrigation_with_fertilizer/models/wua_waterconnection.py:31
 #, python-format
 msgid "Consumptions"
 msgstr "Consums"
-
-#. module: base_wua_pressurized_irrigation_with_fertilizer
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_create_uid
-msgid "Created by"
-msgstr "Creat per"
-
-#. module: base_wua_pressurized_irrigation_with_fertilizer
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_create_date
-msgid "Created on"
-msgstr "Creat el"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_search
@@ -88,7 +83,7 @@ msgstr "Data"
 #. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_display_name
 msgid "Display Name"
-msgstr "Mostrar Nom"
+msgstr "Veure el nom"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.model,name:base_wua_pressurized_irrigation_with_fertilizer.model_wua_agriculturalseason
@@ -121,7 +116,7 @@ msgid "Fertconsumption"
 msgstr "Consum de fertilitzant"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
-#: code:addons/base_wua_pressurized_irrigation_with_fertilizer/models/wua_fertconsumption.py:234
+#: code:addons/base_wua_pressurized_irrigation_with_fertilizer/models/wua_fertconsumption.py:269
 #, python-format
 msgid "Fertconsumptions"
 msgstr "Consums de fertilitzant"
@@ -150,11 +145,6 @@ msgid "Hydraulic Sector"
 msgstr "Sector hidràulic"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_id
-msgid "ID"
-msgstr "ID"
-
-#. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_irrigationshed_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_search
 msgid "Irrigation Shed"
@@ -163,17 +153,7 @@ msgstr "Caseta"
 #. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
-
-#. module: base_wua_pressurized_irrigation_with_fertilizer
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_write_uid
-msgid "Last Updated by"
-msgstr "Última actualització per"
-
-#. module: base_wua_pressurized_irrigation_with_fertilizer
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_write_date
-msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera modificació el"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_notes
@@ -217,6 +197,21 @@ msgid "Uses of fertilizer"
 msgstr "Usos de fertilitzant"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_with_fertilizer.wua_validate_fertconsumptions
+msgid "Validate Fertconsumption"
+msgstr "Validar"
+
+#. module: base_wua_pressurized_irrigation_with_fertilizer
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_search
+msgid "Validated Fertconsumption: No"
+msgstr "Validat: No"
+
+#. module: base_wua_pressurized_irrigation_with_fertilizer
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_search
+msgid "Validated Fertconsumption: Yes"
+msgstr "Validat: Sí"
+
+#. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_with_fertilizer.field_wua_fertconsumption_waterconnection_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_search
 msgid "Water Connection"
@@ -243,6 +238,14 @@ msgid "With fertilizers"
 msgstr "Amb fertilitzants"
 
 #. module: base_wua_pressurized_irrigation_with_fertilizer
+#: code:addons/base_wua_pressurized_irrigation_with_fertilizer/models/wua_fertconsumption.py:160
+#: code:addons/base_wua_pressurized_irrigation_with_fertilizer/models/wua_fertconsumption.py:170
+#, python-format
+msgid "You do not have permission to execute this action."
+msgstr "No teniu permisos per executar aquesta acció."
+
+#. module: base_wua_pressurized_irrigation_with_fertilizer
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_with_fertilizer.wua_presconsumption_view_form
 msgid "uses of <br/>fertilizer"
 msgstr "usos de <br/>fertilitzant"
+

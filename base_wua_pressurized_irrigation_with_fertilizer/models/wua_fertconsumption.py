@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, exceptions
 
 
 class WuaFertconsumption(models.Model):
@@ -59,6 +59,12 @@ class WuaFertconsumption(models.Model):
         string='Associated Consumption',
         comodel_name='wua.presconsumption',
         ondelete='restrict')
+
+    validated = fields.Boolean(
+        string='Validated Fertconsumption',
+        default=True,
+        required=True,
+    )
 
     with_presconsumption = fields.Boolean(
         string='Water Consumption',
@@ -138,6 +144,36 @@ class WuaFertconsumption(models.Model):
                 hydraulicsector_id = \
                     record.waterconnection_id.hydraulicsector_id
             record.hydraulicsector_id = hydraulicsector_id
+
+    @api.multi
+    def validate_fertconsumption(self):
+        self.ensure_one()
+        self.validated = True
+
+    @api.multi
+    def cancel_fertconsumption(self):
+        self.ensure_one()
+        self.validated = False
+
+    def validate_fertconsumptions(self, active_fertconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        fertconsumptions = self.env['wua.fertconsumption'].browse(
+            active_fertconsumptions)
+        for fertconsumption in fertconsumptions:
+            if not fertconsumption.validated:
+                fertconsumption.validate_fertconsumption()
+
+    def cancel_fertconsumptions(self, active_fertconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        fertconsumptions = self.env['wua.fertconsumption'].browse(
+            active_fertconsumptions)
+        for fertconsumption in fertconsumptions:
+            if fertconsumption.validated:
+                fertconsumption.cancel_fertconsumption()
 
     @api.model
     def create(self, vals):

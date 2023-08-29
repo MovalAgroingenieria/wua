@@ -7,23 +7,10 @@
         <field name="inherit_id"
             ref="base_wua_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='presconsumption_id']" position="after">
-                <field name="validated"/>
+            <xpath expr="//field[@name='validated']" position="after">
                 <field name="fertconsumptionset_id"
                        attrs="{'invisible':
                             [('fertconsumptionset_id', '=', None)]}"/>
-            </xpath>
-        </field>
-    </record>
-
-    <record id="wua_fertconsumption_view_tree" model="ir.ui.view">
-        <field name="name">Consumptions (tree view)</field>
-        <field name="model">wua.fertconsumption</field>
-        <field name="inherit_id"
-               ref="base_wua_invoicing_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_tree"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='invoiceset_id']" position="after">
-              <field name='validated'/>
             </xpath>
         </field>
     </record>
@@ -34,55 +21,12 @@
         <field name="inherit_id"
             ref="base_wua_invoicing_pressurized_irrigation_with_fertilizer.wua_fertconsumption_view_search"/>
         <field name="arch" type="xml">
-            <xpath expr="//filter[@name='invoiced']" position="before">
-                <filter string="Validated Fertconsumption: Yes" name="isvalidatedyes"
-                 domain="[('validated','=',True)]"/>
-                <filter string="Validated Fertconsumption: No" name="isvalidatedno"
-                 domain="[('validated','=',False)]"/>
-                <separator/>
-            </xpath>
             <xpath expr="//filter[@name='readingendtime']" position="after">
                 <filter string="Fertconsumption Set"
                      name="fertconsumptionset_id"
                      context="{'group_by':'fertconsumptionset_id'}"/>
             </xpath>
         </field>
-    </record>
-
-    <record id="wua_validate_fertconsumptions" model="ir.actions.server">
-        <field name="name">Validate Fertconsumption</field>
-        <field name="model_id" ref="base_wua_pressurized_irrigation_with_fertilizer.model_wua_fertconsumption"/>
-        <field name="state">code</field>
-        <field name="code">
-            if context.get('active_ids'):
-                action = env['wua.fertconsumption'].validate_fertconsumptions(context['active_ids'])
-        </field>
-    </record>
-
-    <record id="wua_action_validate_fertconsumptions" model="ir.values">
-        <field name="name">Validate Fertconsumption</field>
-        <field name="model">wua.fertconsumption</field>
-        <field name="key">action</field>
-        <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server,' + str(ref('wua_validate_fertconsumptions'))"/>
-    </record>
-
-    <record id="wua_cancel_fertconsumptions" model="ir.actions.server">
-        <field name="name">Cancel Fertconsumption</field>
-        <field name="model_id" ref="base_wua_pressurized_irrigation_with_fertilizer.model_wua_fertconsumption"/>
-        <field name="state">code</field>
-        <field name="code">
-            if context.get('active_ids'):
-                action = env['wua.fertconsumption'].cancel_fertconsumptions(context['active_ids'])
-        </field>
-    </record>
-
-    <record id="wua_action_cancel_fertconsumptions" model="ir.values">
-        <field name="name">Cancel Fertconsumption</field>
-        <field name="model">wua.fertconsumption</field>
-        <field name="key">action</field>
-        <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server,' + str(ref('wua_cancel_fertconsumptions'))"/>
     </record>
 
 </odoo>
