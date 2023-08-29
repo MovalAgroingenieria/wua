@@ -210,8 +210,6 @@ class ProductTemplate(models.Model):
             resp = vals['type'] == 'service'
         if 'sale_ok' in vals and resp:
             resp = vals['sale_ok']
-        if 'purchase_ok' in vals and resp:
-            resp = not vals['purchase_ok']
         return resp
 
 
