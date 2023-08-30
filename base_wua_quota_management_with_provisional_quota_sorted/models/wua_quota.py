@@ -179,7 +179,8 @@ class WuaQuota(models.Model):
     def _get_available_quota_with_extra_consumptions(self, quota):
         resp = quota.balance
         last_hydricmovement = self.env['wua.hydricmovement'].search(
-            [('quota_id', '=', quota.id), ('type', '=', 'pres_consumption')],
+            [('partner_id', '=', quota.partner_id.id),
+             ('type', '=', 'pres_consumption')],
             order='event_time desc', limit=1)
         if last_hydricmovement:
             lower_time_extra_consumptions = last_hydricmovement[0].event_time
