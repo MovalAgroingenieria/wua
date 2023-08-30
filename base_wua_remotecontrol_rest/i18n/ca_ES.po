@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-18 06:36+0000\n"
-"PO-Revision-Date: 2023-08-18 06:36+0000\n"
+"POT-Creation-Date: 2023-08-30 11:09+0000\n"
+"PO-Revision-Date: 2023-08-30 11:09+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,14 +21,14 @@ msgid "\n"
 "                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
 "                        <b><a href=\"https://crtollos.moval.es\">C.R. Margen Derecho C.J.T. Sector I \"Los Tollos\"</a></p></b>\n"
 "                        <br/>\n"
-"                        <span> -  Represt code was not 200. <br/><br/></span>\n"
+"                        <span> - Inelcom error:<br/><br/>HTTPSConnectionPool(host='tollos-isrl.inelcom.com', port=25081): Max retries exceeded with url: /restws/webresources/sesiones (Caused by SSLError(SSLError(\"bad handshake: SysCallError(-1, 'Unexpected EOF')\",),))<br/><br/></span>\n"
 "                    </p>\n"
 "                "
 msgstr "\n"
 "                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
 "                        <b><a href=\"https://crtollos.moval.es\">C.R. Margen Derecho C.J.T. Sector I \"Los Tollos\"</a></p></b>\n"
 "                        <br/>\n"
-"                        <span> -  Represt code was not 200. <br/><br/></span>\n"
+"                        <span> - Inelcom error:<br/><br/>HTTPSConnectionPool(host='tollos-isrl.inelcom.com', port=25081): Max retries exceeded with url: /restws/webresources/sesiones (Caused by SSLError(SSLError(\"bad handshake: SysCallError(-1, 'Unexpected EOF')\",),))<br/><br/></span>\n"
 "                    </p>\n"
 "                "
 
@@ -52,11 +52,6 @@ msgid "&nbsp;&nbsp;"
 msgstr "&nbsp;&nbsp;"
 
 #. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,state:0
-msgid "Active"
-msgstr "Actiu"
-
-#. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection.py:265
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_data_time
 #, python-format
@@ -66,7 +61,7 @@ msgstr "Data informació"
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuració de reg amb tipus d'aigua"
+msgstr "Configuració del reg amb tipus d'aigua"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_conversion_factor
@@ -80,14 +75,12 @@ msgstr "Factor de conversió ha de ser més gran que 0."
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_create_uid
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_create_uid
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_create_uid
 msgid "Created by"
 msgstr "Creat per"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_create_date
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_create_date
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_create_date
 msgid "Created on"
 msgstr "Creat el"
@@ -95,10 +88,9 @@ msgstr "Creat el"
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_display_name
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_display_name
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_display_name
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_display_name
 msgid "Display Name"
-msgstr "Mostrar Nom"
+msgstr "Mostra el nom"
 
 #. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/res_partner.py:298
@@ -132,7 +124,7 @@ msgstr "Element (lectura negativa)"
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
+msgstr "Element (parcel·la)"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_reading
@@ -177,9 +169,22 @@ msgid "Error"
 msgstr "Error"
 
 #. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,irrigation_start_day:0
-msgid "Friday"
-msgstr "Divendres"
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_event_from_remotecontrol
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_from_remotecontrol
+msgid "From Remote Control"
+msgstr "Origen telecontrol"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_irrigation_event_view_search
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_irrigation_schedule_view_search
+msgid "From Remotecontrol: No"
+msgstr "Origen telecontrol: No"
+
+#. module: base_wua_remotecontrol_rest
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_irrigation_event_view_search
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_irrigation_schedule_view_search
+msgid "From Remotecontrol: Yes"
+msgstr "Origen telecontrol: Sí"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_from_remotecontrol
@@ -244,7 +249,6 @@ msgstr "Sector hidràulic"
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_id
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_id
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_id
 msgid "ID"
 msgstr "ID"
@@ -316,44 +320,14 @@ msgid "In Remote control: Yes"
 msgstr "En telecontrol: Sí"
 
 #. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,state:0
-msgid "Inactive"
-msgstr "Inactiu"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_irrigation_duration
-msgid "Irigation Duration"
-msgstr "Durada"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_irrigation_end_hour
-msgid "Irrigation End Hour"
-msgstr "Hora Fi"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_partner_id
 msgid "Irrigation Partner"
 msgstr "Soci"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_ids
-msgid "Irrigation Schedules"
-msgstr "Programacions de Reg"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_irrigationshed_id
 msgid "Irrigation Shed"
 msgstr "Caseta"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_irrigation_start_day
-msgid "Irrigation Start Day"
-msgstr "Dia reg"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_irrigation_start_hour
-msgid "Irrigation Start Hour"
-msgstr "Hora inici"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_last_data_time
@@ -364,21 +338,18 @@ msgstr "Última data informació"
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection___last_update
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading___last_update
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule___last_update
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol___last_update
 msgid "Last Modified on"
 msgstr "Última modificació el "
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_write_uid
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_write_uid
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_write_uid
 msgid "Last Updated by"
 msgstr "Última actualització per"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_write_date
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_write_date
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_write_date
 msgid "Last Updated on"
 msgstr "Última actualització el"
@@ -409,16 +380,6 @@ msgstr "Introducció manual: No (procedent de l'telecontrol)"
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_reading_view_search
 msgid "Manual Introduction: Yes"
 msgstr "Introducció manual: Sí"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_max_irrigation_volume
-msgid "Max Irrigation Volume (m³)"
-msgstr "Volum màxim (m³)"
-
-#. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,irrigation_start_day:0
-msgid "Monday"
-msgstr "Dilluns"
 
 #. module: base_wua_remotecontrol_rest
 #. openerp-web
@@ -523,13 +484,13 @@ msgid "Remote Control: Error getting waterconnection info"
 msgstr "Remote Control: Error getting waterconnection info"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_event.py:35
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_event.py:58
 #, python-format
 msgid "Remote Control: Error getting waterconnection irrigation event"
 msgstr "Remote Control: Error getting waterconnection irrigation event"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_schedule.py:35
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_schedule.py:41
 #, python-format
 msgid "Remote Control: Error getting waterconnection irrigation schedule"
 msgstr "Remote Control: Error getting waterconnection irrigation schedule"
@@ -547,13 +508,13 @@ msgid "Remote Control: Getting readings"
 msgstr "Remote Control: Getting readings"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_schedule.py:116
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_schedule.py:123
 #, python-format
 msgid "Remote Control: Saved Irrigation Schedules"
 msgstr "Remote Control: Saved Irrigation Schedules"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_event.py:111
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_event.py:139
 #, python-format
 msgid "Remote Control: Saved Irrigation events"
 msgstr "Remote Control: Saved Irrigation events"
@@ -694,31 +655,6 @@ msgid "Restricted access to control remote menus"
 msgstr "Accés restringit als menús de l'telecontrol"
 
 #. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,irrigation_start_day:0
-msgid "Saturday"
-msgstr "Dissabte"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_name
-msgid "Schedule Data"
-msgstr "Programació"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_shift_number
-msgid "Shift Number"
-msgstr "Núm reg"
-
-#. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_state
-msgid "State"
-msgstr "Estat"
-
-#. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,irrigation_start_day:0
-msgid "Sunday"
-msgstr "Diumenge"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.view_partner_form
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_parcel_view_form
 msgid "Synchronize"
@@ -749,8 +685,8 @@ msgstr "Informació telecontrol"
 #: code:addons/base_wua_remotecontrol_rest/models/wua_parcel.py:417
 #: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensormeasurement.py:65
 #: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:88
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_event.py:66
-#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_schedule.py:66
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_event.py:89
+#: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_schedule.py:72
 #: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:150
 #, python-format
 msgid "The communication with the remote control is not enabled."
@@ -760,11 +696,6 @@ msgstr "La comunicació amb el telecontrol no està habilitada."
 #: model:res.groups,comment:base_wua_remotecontrol_rest.group_no_controlremote_menu
 msgid "This group will be assigned to invisible menus of remote control"
 msgstr "Aquest grup serà assignat per ocultar els menús de l'telecontrol"
-
-#. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,irrigation_start_day:0
-msgid "Thursday"
-msgstr "Dijous"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_reading_time
@@ -783,11 +714,6 @@ msgstr "Total"
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_total_volume
 msgid "Total (m³)"
 msgstr "Total (m³)"
-
-#. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,irrigation_start_day:0
-msgid "Tuesday"
-msgstr "Dimarts"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_pressuresensor_telecontrol_associated
@@ -902,7 +828,6 @@ msgstr "AVÍS"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_waterconnection_id
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_schedule_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_waterconnection_id
 msgid "Water Connection"
 msgstr "Toma"
@@ -954,9 +879,10 @@ msgid "Watermeter state:"
 msgstr "Estat Comptador:"
 
 #. module: base_wua_remotecontrol_rest
-#: selection:wua.waterconnection.irrigation.schedule,irrigation_start_day:0
-msgid "Wednesday"
-msgstr "Dimecres"
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_irrigation_event_waterpipe_id
+#: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_irrigation_event_view_search
+msgid "Waterpipe"
+msgstr "Ramal"
 
 #. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/res_partner.py:398

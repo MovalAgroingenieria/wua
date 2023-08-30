@@ -3,11 +3,17 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
-from odoo import models, api, _, exceptions
+from odoo import models, api, _, exceptions, fields
 
 
 class WuaWaterconnectionIrrigationSchedule(models.Model):
     _inherit = 'wua.waterconnection.irrigation.schedule'
+
+    from_remotecontrol = fields.Boolean(
+        string='From Remote Control',
+        default=False,
+        required=True,
+    )
 
     # Hook that will be implemented on all telecontrols, appending info
     def do_import_waterconnection_irrigation_schedule_all(self, list_of_wc):
@@ -103,6 +109,7 @@ class WuaWaterconnectionIrrigationSchedule(models.Model):
                     'irrigation_duration': info['irrigation_duration'],
                     'max_irrigation_volume': info['max_irrigation_volume'],
                     'waterconnection_id': info['waterconnection_id'],
+                    'from_remotecontrol': True,
                 }
                 if (wc.irrigation_schedule_ids and
                     len(wc.irrigation_schedule_ids) > 0 and wc.id not in

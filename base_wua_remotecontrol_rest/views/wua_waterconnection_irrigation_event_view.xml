@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_irrigation_event_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Event (form view)</field>
+        <field name="model">wua.waterconnection.irrigation.event</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='irrigationshed_id']" position="after">
+                <field name="from_remotecontrol" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='irrigationshed_id']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+            <xpath expr="//field[@name='waterconnection_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('from_remotecontrol','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='irrigation_start_date']" position="attributes">
+                <attribute name="attrs">{'readonly': [('from_remotecontrol','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='irrigation_end_date']" position="attributes">
+                <attribute name="attrs">{'readonly': [('from_remotecontrol','=',True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='irrigation_volume']" position="attributes">
+                <attribute name="attrs">{'readonly': [('from_remotecontrol','=',True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_event_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Event (search view)</field>
+        <field name="model">wua.waterconnection.irrigation.event</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='irrigationshed_id']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+            <xpath expr="//field[@name='irrigationshed_id']" position="after">
+                <field name="waterpipe_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='irrigation_lack']" position="after">
+                <separator/>
+                <filter string="From Remotecontrol: Yes" name="fromremotecontrolyes"
+                 domain="[('from_remotecontrol','=',True)]"/>
+                <filter string="From Remotecontrol: No" name="fromremoteconrtolno"
+                 domain="[('from_remotecontrol','=',False)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='hydraulicsector']" position="after">
+                <filter string="Waterpipe"
+                     name="waterpipe"
+                     context="{'group_by':'waterpipe_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

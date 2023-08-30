@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-18 10:48+0000\n"
-"PO-Revision-Date: 2023-08-18 10:48+0000\n"
+"POT-Creation-Date: 2023-08-30 11:04+0000\n"
+"PO-Revision-Date: 2023-08-30 11:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -538,6 +538,11 @@ msgid "Enviar correo electrónico en lectura negativa"
 msgstr "Enviar correo electrónico en lectura negativa"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigation_configuration_excess_irrigation_percentage
+msgid "Excess Irigation Flow Per Surface (%)"
+msgstr "Exceso caudal específico por superficie (%)"
+
+#. module: base_wua_pressurized_irrigation
 #: sql_constraint:wua.presconsumption:0
 msgid "Existing Consumption."
 msgstr "Consumo existente."
@@ -619,6 +624,7 @@ msgstr "Gross Value (m³)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_pressuresensormeasurement_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 msgid "Group By"
@@ -628,6 +634,7 @@ msgstr "Agrupar por"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_hydraulicsector_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_hydraulicsector_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
@@ -635,6 +642,7 @@ msgstr "Agrupar por"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_pressuresensor_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 msgid "Hydraulic Sector"
 msgstr "Sector hidráulico"
@@ -726,6 +734,11 @@ msgid "Irigation Duration"
 msgstr "Duración"
 
 #. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_excess
+msgid "Irigation Excess"
+msgstr "Exceso de riego"
+
+#. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_flow
 msgid "Irigation Flow (m³/h)"
 msgstr "Caudal (m³/h)"
@@ -734,6 +747,16 @@ msgstr "Caudal (m³/h)"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_flow_per_surface
 msgid "Irigation Flow Per Surface (m³/U/h)"
 msgstr "Caudal específico por superficie (m³/U/h)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_flow_per_surface_deviation
+msgid "Irigation Flow Per Surface Deviation %"
+msgstr "Desviación caudal específico por superficie %"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_lack
+msgid "Irigation Lack"
+msgstr "Falta de riego"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigation_volume
@@ -763,6 +786,7 @@ msgstr "Hora fin riego"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_action
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_name
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_pivot
 msgid "Irrigation Event"
 msgstr "Evento de riego"
 
@@ -770,10 +794,21 @@ msgstr "Evento de riego"
 #: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection.py:313
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_ids
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_menu
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_irrigation_config_settings_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_view_tree
 #, python-format
 msgid "Irrigation Events"
 msgstr "Eventos de riego"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_search
+msgid "Irrigation Excess"
+msgstr "Exceso de riego"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_search
+msgid "Irrigation Lack"
+msgstr "Falta de riego"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_action
@@ -793,12 +828,14 @@ msgstr "Programaciones de riego"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_pressuresensor_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_reading_irrigationshed_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_irrigation_event_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_watermeter_irrigationshed_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_negative_reading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_pressuresensor_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 msgid "Irrigation Shed"
 msgstr "Caseta"
@@ -827,6 +864,11 @@ msgstr "Regante"
 #: model:ir.model,name:base_wua_pressurized_irrigation.model_wua_parcel_irrigationpointwc
 msgid "Irrigation point of a parcel (WC)"
 msgstr "Irrigation point of a parcel (WC)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigation_configuration_lack_irrigation_percentage
+msgid "Lack Irigation Flow Per Surface (%)"
+msgstr "Falta caudal específico por superficie (%)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_waterconnection_last_irrigation_event_id
@@ -1020,6 +1062,11 @@ msgstr "Lecturas negativas"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_wc_wm_nominal_diameter
 msgid "Nominal Diameter"
 msgstr "Diámetro nom. (mm)"
+
+#. module: base_wua_pressurized_irrigation
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_irrigation_configuration_normal_irrigation_flow_per_surface
+msgid "Normal Irigation Flow Per Surface"
+msgstr "Caudal específico por superficie normal"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
@@ -1512,6 +1559,7 @@ msgstr "Caudal (m3/hora)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_one_watermeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_reading_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_event_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_watermeter_view_search
 msgid "Water Connection"
@@ -1635,7 +1683,7 @@ msgid "day"
 msgstr "día"
 
 #. module: base_wua_pressurized_irrigation
-#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection_irrigation_event.py:162
+#: code:addons/base_wua_pressurized_irrigation/models/wua_waterconnection_irrigation_event.py:251
 #, python-format
 msgid "ha"
 msgstr "ha"

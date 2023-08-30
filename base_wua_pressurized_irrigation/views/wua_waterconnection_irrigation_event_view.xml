@@ -13,6 +13,8 @@
                     <group name="master_data">
                         <group name="master_data_left">
                             <field name="waterconnection_id"/>
+                            <field name="irrigationshed_id"/>
+                            <field name="hydraulicsector_id"/>
                         </group>
                         <group name="master_data_right">
                             <field name="irrigation_start_date"/>
@@ -41,8 +43,9 @@
                 <field name="irrigation_volume"/>
                 <field name="irrigation_duration" widget="float_time"/>
                 <field name="irrigation_flow"/>
-                <field name="irrigation_area"/>
+                <field name="irrigation_area" invisible="1"/>
                 <field name="irrigation_flow_per_surface"/>
+                <field name="irrigation_flow_per_surface_deviation" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -53,7 +56,35 @@
         <field name="arch" type="xml">
             <search>
                 <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Irrigation Excess" name="irrigation_excess"
+                 domain="[('irrigation_excess', '=', True)]"/>
+                <filter string="Irrigation Lack" name="irrigation_lack"
+                 domain="[('irrigation_lack', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Shed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Water Connection"
+                     name="waterconnection"
+                     context="{'group_by':'waterconnection_id'}"/>
+                </group>
             </search>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_event_view_pivot" model="ir.ui.view">
+        <field name="name">Irrigation Event (pivot view)</field>
+        <field name="model">wua.waterconnection.irrigation.event</field>
+        <field name="arch" type="xml">
+            <graph string="Irrigation Event">
+                <field name="irrigation_start_date" type="row"/>
+                <field name="irrigation_duration" type="measure"/>
+            </graph>
         </field>
     </record>
 
@@ -61,7 +92,7 @@
         <field name="name">Irrigation Event</field>
         <field name="res_model">wua.waterconnection.irrigation.event</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" ref="wua_waterconnection_irrigation_event_view_tree"/>
         <field name="search_view_id" ref="wua_waterconnection_irrigation_event_view_search"/>
         <field name="help" type="html">

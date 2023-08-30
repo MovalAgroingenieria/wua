@@ -9,12 +9,19 @@
         <field name="arch" type="xml">
           <xpath expr="//field[@name='default_watermeter_type']"
                  position="after">
-            <field name="show_volume_perunitareaandday"></field>
-            <field name="number_of_presconsumptions_for_average"></field>
-            <field name="threshold_pressure"></field>
+            <field name="show_volume_perunitareaandday"/>
+            <field name="number_of_presconsumptions_for_average"/>
+            <field name="threshold_pressure"/>
           </xpath>
+          <xpath expr="//group[@name='pres_irrig']"
+                 position="after">
+              <group name="irrigation_event" string="Irrigation Events">
+                  <field name="normal_irrigation_flow_per_surface"/>
+                  <field name="excess_irrigation_percentage"/>
+                  <field name="lack_irrigation_percentage"/>
+              </group>
+            </xpath>
         </field>
     </record>
-
 
 </odoo>

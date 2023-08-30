@@ -3,11 +3,34 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
-from odoo import models, api, _, exceptions
+from odoo import models, api, _, exceptions, fields
 
 
 class WuaWaterconnectionIrrigationEvent(models.Model):
     _inherit = 'wua.waterconnection.irrigation.event'
+
+    from_remotecontrol = fields.Boolean(
+        string='From Remote Control',
+        default=False,
+        required=True,
+    )
+
+    waterpipe_id = fields.Many2one(
+        string='Waterpipe',
+        comodel_name='wua.waterpipe',
+        compute='_compute_waterpipe_id',
+        store=True,
+        ondelete='set null',
+    )
+
+    @api.depends('irrigationshed_id')
+    def _compute_waterpipe_id(self):
+        for record in self:
+            waterpipe_id = None
+            if (record.irrigationshed_id and
+                    record.irrigationshed_id.waterpipe_id):
+                waterpipe_id = record.irrigationshed_id.waterpipe_id
+            record.waterpipe_id = waterpipe_id
 
     # Hook that will be implemented on all telecontrols, appending info
     def do_import_waterconnection_irrigation_event_all(self, list_of_wc):
@@ -104,6 +127,7 @@ class WuaWaterconnectionIrrigationEvent(models.Model):
                     'irrigation_start_date': info['irrigation_start_date'],
                     'irrigation_end_date': info['irrigation_end_date'],
                     'irrigation_volume': info['irrigation_volume'],
+                    'from_remotecontrol': True,
                 }
                 if ('irrigation_area_static' in info):
                     waterconnection_irrigation_event_params[

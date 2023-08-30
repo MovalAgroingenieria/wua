@@ -13,7 +13,8 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua_pressurized_irrigation", ],
+        "base_wua_pressurized_irrigation",
+        "base_wua_infrastructure_pressurized_hierarchy"],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
@@ -33,6 +34,8 @@
         "views/wua_reading_view.xml",
         "views/wua_pressuresensor_view.xml",
         "views/wua_pressuresensormeasurement_view.xml",
+        "views/wua_waterconnection_irrigation_event_view.xml",
+        "views/wua_waterconnection_irrigation_schedule_view.xml",
         "views/wua_negative_reading_view.xml",
     ],
     "post_init_hook": "post_init_hook",

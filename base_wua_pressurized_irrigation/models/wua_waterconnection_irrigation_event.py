@@ -21,6 +21,22 @@ class WuaWaterconnectionIrrigationEvent(models.Model):
         ondelete='cascade',
     )
 
+    irrigationshed_id = fields.Many2one(
+        string='Irrigation Shed',
+        comodel_name='wua.irrigationshed',
+        compute='_compute_irrigationshed_id',
+        store=True,
+        ondelete='set null',
+    )
+
+    hydraulicsector_id = fields.Many2one(
+        string='Hydraulic Sector',
+        comodel_name='wua.hydraulicsector',
+        compute='_compute_hydraulicsector_id',
+        store=True,
+        ondelete='set null',
+    )
+
     irrigation_start_date = fields.Datetime(
         string='Irrigation Start Date',
         required=True,
@@ -72,6 +88,25 @@ class WuaWaterconnectionIrrigationEvent(models.Model):
         compute='_compute_irrigation_flow_per_surface',
     )
 
+    irrigation_excess = fields.Boolean(
+        string='Irigation Excess',
+        store=True,
+        compute='_compute_irrigation_flow_per_surface_deviation',
+    )
+
+    irrigation_lack = fields.Boolean(
+        string='Irigation Lack',
+        store=True,
+        compute='_compute_irrigation_flow_per_surface_deviation',
+    )
+
+    irrigation_flow_per_surface_deviation = fields.Float(
+        string='Irigation Flow Per Surface Deviation %',
+        digits=(32, 4),
+        store=True,
+        compute='_compute_irrigation_flow_per_surface_deviation',
+    )
+
     name = fields.Char(
         string='Irrigation Event',
         size=MAX_SIZE_NAME,
@@ -96,6 +131,25 @@ class WuaWaterconnectionIrrigationEvent(models.Model):
                     str(record.irrigation_start_date) + u'-' + str(
                         record.irrigation_end_date)
             record.name = value
+
+    @api.depends('waterconnection_id')
+    def _compute_irrigationshed_id(self):
+        for record in self:
+            irrigationshed_id = None
+            if (record.waterconnection_id and
+                    record.waterconnection_id.irrigationshed_id):
+                irrigationshed_id = record.waterconnection_id.irrigationshed_id
+            record.irrigationshed_id = irrigationshed_id
+
+    @api.depends('waterconnection_id')
+    def _compute_hydraulicsector_id(self):
+        for record in self:
+            hydraulicsector_id = None
+            if (record.waterconnection_id and
+                    record.waterconnection_id.hydraulicsector_id):
+                hydraulicsector_id = \
+                    record.waterconnection_id.hydraulicsector_id
+            record.hydraulicsector_id = hydraulicsector_id
 
     @api.depends('irrigation_start_date', 'irrigation_end_date')
     def _compute_irrigation_duration(self):
@@ -141,6 +195,41 @@ class WuaWaterconnectionIrrigationEvent(models.Model):
                     record.irrigation_area
             record.irrigation_flow_per_surface = \
                 irrigation_flow_per_surface
+
+    @api.depends('irrigation_flow_per_surface')
+    def _compute_irrigation_flow_per_surface_deviation(self):
+        normal_irrigation_flow_per_surface = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'normal_irrigation_flow_per_surface')
+        lack_irrigation_percentage = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'lack_irrigation_percentage')
+        excess_irrigation_percentage = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'excess_irrigation_percentage')
+        for record in self:
+            irrigation_flow_per_surface_deviation = 0
+            irrigation_lack = False
+            irrigation_excess = False
+            if (record.irrigation_flow_per_surface and
+                    normal_irrigation_flow_per_surface):
+                irrigation_flow_per_surface_deviation = (
+                    record.irrigation_flow_per_surface * 100 /
+                    normal_irrigation_flow_per_surface) - 100
+                if (excess_irrigation_percentage and
+                    irrigation_flow_per_surface_deviation > 0 and
+                    irrigation_flow_per_surface_deviation >
+                        excess_irrigation_percentage):
+                    irrigation_excess = True
+                if (lack_irrigation_percentage and
+                    irrigation_flow_per_surface_deviation < 0 and
+                    abs(irrigation_flow_per_surface_deviation) >
+                        lack_irrigation_percentage):
+                    irrigation_lack = True
+            record.irrigation_flow_per_surface_deviation = \
+                irrigation_flow_per_surface_deviation
+            record.irrigation_excess = irrigation_excess
+            record.irrigation_lack = irrigation_lack
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
