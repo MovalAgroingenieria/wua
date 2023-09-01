@@ -184,19 +184,11 @@ class WuaReadingperiod(models.Model):
     @api.constrains('initial_date', 'end_date')
     def _check_initial_end_dates(self):
         if (len(self) == 1):
-            agriculturalseasons = self.env['wua.agriculturalseason'].search(
-                [], order='initial_date desc')
-            i = 0
-            some_agriculturalseason = False
-            while (i < len(agriculturalseasons) and self.initial_date >=
-                    agriculturalseasons[i].initial_date and not
-                    some_agriculturalseason):
-                some_agriculturalseason = ((
-                    (self.initial_date >=
-                     agriculturalseasons[i].initial_date) and
-                    (self.end_date <= agriculturalseasons[i].end_date)))
-                i = i + 1
-            if (not some_agriculturalseason):
+            agriculturalseasons = self.env['wua.agriculturalseason'].search([
+                ('initial_date', '<=', self.initial_date),
+                ('end_date', '>=', self.end_date)
+            ])
+            if (not agriculturalseasons):
                 raise exceptions.ValidationError(_(
                     'The reading period limits are outside of all agricultural'
                     ' seasons.'))
