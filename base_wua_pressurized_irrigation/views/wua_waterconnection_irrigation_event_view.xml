@@ -81,9 +81,19 @@
         <field name="name">Irrigation Event (pivot view)</field>
         <field name="model">wua.waterconnection.irrigation.event</field>
         <field name="arch" type="xml">
-            <graph string="Irrigation Event">
+            <pivot string="Irrigation Events">
                 <field name="irrigation_start_date" type="row"/>
-                <field name="irrigation_duration" type="measure"/>
+                <field name="irrigation_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_irrigation_event_view_graph" model="ir.ui.view">
+         <field name="name">Irrigation Event (pivot view)</field>
+        <field name="model">wua.waterconnection.irrigation.event</field>
+        <field name="arch" type="xml">
+            <graph string="Irrigation Events">
+                <field name="irrigation_volume" type="measure"/>
             </graph>
         </field>
     </record>
@@ -92,7 +102,7 @@
         <field name="name">Irrigation Event</field>
         <field name="res_model">wua.waterconnection.irrigation.event</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form,pivot</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
         <field name="view_id" ref="wua_waterconnection_irrigation_event_view_tree"/>
         <field name="search_view_id" ref="wua_waterconnection_irrigation_event_view_search"/>
         <field name="help" type="html">

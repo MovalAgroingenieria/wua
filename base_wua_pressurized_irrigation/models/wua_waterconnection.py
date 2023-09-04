@@ -302,6 +302,12 @@ class WuaWaterconnection(models.Model):
         id_tree_view = self.env.ref(
             'base_wua_pressurized_irrigation.'
             'wua_waterconnection_irrigation_event_view_tree').id
+        id_pivot_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_waterconnection_irrigation_event_view_pivot').id
+        id_graph_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_waterconnection_irrigation_event_view_graph').id
         search_view = self.env.ref(
             'base_wua_pressurized_irrigation.'
             'wua_waterconnection_irrigation_event_view_search')
@@ -317,7 +323,8 @@ class WuaWaterconnection(models.Model):
             'res_model': 'wua.waterconnection.irrigation.event',
             'view_type': 'form',
             'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form'),
+                      (id_pivot_view, 'pivot'), (id_graph_view, 'graph')],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
