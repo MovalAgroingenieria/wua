@@ -206,8 +206,6 @@ class ProductTemplate(models.Model):
 
     def fields_of_wua_product_ok(self, vals):
         resp = True
-        if 'type' in vals:
-            resp = vals['type'] == 'service'
         if 'sale_ok' in vals and resp:
             resp = vals['sale_ok']
         return resp
