@@ -42,6 +42,11 @@ class WuaWaterconnection(models.Model):
         store=True,
         compute='_compute_average_consumption')
 
+    irrigation_shift_id = fields.Many2one(
+        string='Irrigation Shift',
+        comodel_name='wua.waterconnection.irrigation.shift',
+        index=True,)
+
     irrigation_schedule_ids = fields.One2many(
         string='Irrigation Schedules',
         comodel_name='wua.waterconnection.irrigation.schedule',

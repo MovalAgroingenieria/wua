@@ -55,6 +55,11 @@
                         </span></div>
                 </button>
             </xpath>
+            <xpath expr="//field[@name='position']"
+                   position="after">
+                <div colspan="2"/>
+                <field name="irrigation_shift_id"/>
+            </xpath>
             <xpath expr="//field[@name='total_affected_area_official']"
              position="after">
                 <field name="watermeter_id"
@@ -99,6 +104,7 @@
             <xpath expr="//field[@name='number_of_parcels']" position="after">
                 <field name="number_of_irrigation_schedules" invisible="1"/>
                 <field name="number_of_irrigation_events" invisible="1"/>
+                <field name="irrigation_shift_id" invisible="1"/>
                 <field name="watermeter_id"/>
                 <button name="action_see_irrigation_schedules"
                         type="object" class="oe_stat_button"
@@ -140,6 +146,11 @@
                  domain="[('with_watermeter','=',True)]"/>
                 <filter string="Without water meter" name="withoutwatermeter"
                  domain="[('with_watermeter','=',False)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='irrigation_shed']" position="after">
+                <filter string="Irrigation Shift"
+                        name="irrigation_shift"
+                        context="{'group_by':'irrigation_shift_id'}"/>
             </xpath>
         </field>
     </record>
