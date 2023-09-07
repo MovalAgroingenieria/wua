@@ -74,7 +74,7 @@
                     <tbody>
                         <t t-foreach="o.attendance_ids.filtered(lambda x: x.present == True)" t-as="attendance">
                             <t t-if="attendance.potential_attendee">
-                                <tr>
+                                <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
                                     <td name="td_vat_participant"><span t-field="attendance.vat_participant"/></td>
                                     <td name="td_participant_name"><span t-field="attendance.participant_name"/></td>
                                     <td name="td_represented_partner"><span t-field="attendance.represented_partner"/></td>
