@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-05 14:03+0000\n"
-"PO-Revision-Date: 2023-07-05 14:03+0000\n"
+"POT-Creation-Date: 2023-09-07 13:41+0000\n"
+"PO-Revision-Date: 2023-09-07 13:41+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -114,12 +114,45 @@ msgid "<strong>Water&amp;nbsp;connection&amp;nbsp;points</strong>"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_active
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_active
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_active
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_active
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_active
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_active
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_active
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_active
 msgid "Active"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_airvalve_brand
+msgid "Airvalve Brand"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_airvalve_model
+msgid "Airvalve Model"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_name
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_search
+msgid "Airvalve Type"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.wua_airvalve_type_action
+#: model:ir.ui.menu,name:base_wua_infrastructure.wua_airvalve_type_menu
+msgid "Airvalve Types"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.wua_airvalve_action
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_airvalve_ids
+#: model:ir.ui.menu,name:base_wua_infrastructure.wua_airvalve_menu
+msgid "Airvalves"
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -128,14 +161,20 @@ msgid "Apply"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Archived"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationditch_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_form
 msgid "Are you sure you want to toggle visibility?"
 msgstr ""
@@ -215,6 +254,10 @@ msgid "Connected to main pipe"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_create_uid
@@ -223,12 +266,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_uid
 msgid "Created by"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_create_date
@@ -237,6 +286,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_date
 msgid "Created on"
@@ -285,7 +336,10 @@ msgid "Dialog box to change the parcel name (code), with irrigation infrastructu
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_display_name
@@ -294,6 +348,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_display_name
 msgid "Display Name"
@@ -305,13 +361,43 @@ msgid "Drainage Coefficiente (from 0 to 1)"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_drainagevalve_brand
+msgid "Drainagevalve Brand"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_drainagevalve_model
+msgid "Drainagevalve Model"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_name
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_search
+msgid "Drainagevalve Type"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.wua_drainagevalve_type_action
+#: model:ir.ui.menu,name:base_wua_infrastructure.wua_drainagevalve_type_menu
+msgid "Drainagevalve Types"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.wua_drainagevalve_action
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_drainagevalve_ids
+#: model:ir.ui.menu,name:base_wua_infrastructure.wua_drainagevalve_menu
+msgid "Drainagevalves"
+msgstr ""
+
+#. module: base_wua_infrastructure
 #: code:addons/base_wua_infrastructure/models/wua_irrigationgate.py:180
 #, python-format
 msgid "Duplicated hydraulic order."
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:313
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:314
 #, python-format
 msgid "Duplicated position."
 msgstr ""
@@ -332,8 +418,8 @@ msgid "Employee"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1410
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1429
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1969
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1988
 #, python-format
 msgid "Empty Irrigation Point."
 msgstr ""
@@ -343,9 +429,34 @@ msgstr ""
 #: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:260
 #: code:addons/base_wua_infrastructure/models/wua_irrigationgate.py:169
 #: code:addons/base_wua_infrastructure/models/wua_irrigationshed.py:242
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:302
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:303
 #, python-format
 msgid "Empty Value."
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_airvalve_type
+msgid "Entity (Airvalve Type)"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_drainagevalve_type
+msgid "Entity (Drainagevalve Type)"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_valve_type
+msgid "Entity (Valve Type)"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_airvalve
+msgid "Entity (airvalve)"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_drainagevalve
+msgid "Entity (drainagevalve)"
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -379,12 +490,20 @@ msgid "Entity (parcel)"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_valve
+msgid "Entity (valve)"
+msgstr ""
+
+#. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection
 msgid "Entity (water connection)"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: sql_constraint:wua.airvalve:0
+#: sql_constraint:wua.drainagevalve:0
 #: sql_constraint:wua.irrigationshed:0
+#: sql_constraint:wua.valve:0
 msgid "Existing Identifier."
 msgstr ""
 
@@ -451,15 +570,21 @@ msgid "GIS Settings"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_gis_viewer_link
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_gis_googlemaps_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_gis_googlemaps_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_gis_googlemaps_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_parcel_gis_viewer_link
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_gis_viewer_link
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationditch_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_form
 msgid "GIS Viewer"
 msgstr ""
 
@@ -471,14 +596,32 @@ msgid "GIS Viewer (zoom to parcel)"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_tree
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_tree
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationditch_view_tree
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_tree
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_tree
 msgid "GIS Viewer (zoom to point)"
 msgstr ""
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_with_some_gis_parcel
 msgid "GIS Waterconnection"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_with_gis_airvalve
+msgid "GIS airvalve"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_with_gis_drainagevalve
+msgid "GIS drainagevalve"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_with_gis_valve
+msgid "GIS valve"
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -520,10 +663,13 @@ msgstr ""
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.res_partner_waterconnection_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_flowdivider_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationgate_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Group By"
 msgstr ""
@@ -539,24 +685,30 @@ msgid "Hydraulic Order Range: ["
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_hydraulicsector_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_subparcel_hydraulicsector_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_hydraulicsector_id
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_subparcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Hydraulic Sector"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1147
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1706
 #: code:addons/base_wua_infrastructure/models/wua_zone.py:81
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_hydraulicsector_action
 #: model:ir.ui.menu,name:base_wua_infrastructure.wua_hydraulicsector_menu
@@ -575,7 +727,10 @@ msgid "Hydraulic sectors of zone"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_id_11650
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_id_11718
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_id
@@ -584,6 +739,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id_11684
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_id
 msgid "ID"
@@ -595,9 +752,12 @@ msgid "IG Quantity"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_name
 msgid "Identifier"
 msgstr ""
@@ -613,17 +773,20 @@ msgid "If access to pressurized irrigation is not allowed, this group will be as
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_airvalve_active
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_drainagevalve_active
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_irrigationditch_active
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_irrigationshed_active
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_parcel_irrigationpoint_active
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_active
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_valve_active
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_waterconnection_active
 msgid "If the active field is set to False, it will allow you to hide the register without removing it. For see archived register, go to \"Search-Filters\" in tree view"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1385
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1391
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1944
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1950
 #, python-format
 msgid "Incompatible irrigation point type."
 msgstr ""
@@ -684,7 +847,7 @@ msgid "Irrigation Ditch"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1152
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1711
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_irrigationditch_action
 #: model:ir.ui.menu,name:base_wua_infrastructure.wua_irrigationditch_menu
 #, python-format
@@ -729,7 +892,6 @@ msgid "Irrigation Model Type"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_partner_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_partner_id
 msgid "Irrigation Partner"
 msgstr ""
@@ -833,7 +995,10 @@ msgid "Irrigationshed"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration___last_update
@@ -842,12 +1007,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone___last_update
 msgid "Last Modified on"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_write_uid
@@ -856,12 +1027,18 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_uid
 msgid "Last Updated by"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_write_date
@@ -870,6 +1047,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_date
 msgid "Last Updated on"
@@ -887,6 +1066,16 @@ msgid "Name"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_airvalve_param
+msgid "Name of airvalve param in the GIS viewer url"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_drainagevalve_param
+msgid "Name of drainagevalve param in the GIS viewer url"
+msgstr ""
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_irrigationditch_param
 msgid "Name of irrigation-ditch param in the GIS viewer url"
 msgstr ""
@@ -898,8 +1087,20 @@ msgid "Name of irrigation-shed param in the GIS viewer url"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_valve_param
+msgid "Name of valve param in the GIS viewer url"
+msgstr ""
+
+#. module: base_wua_infrastructure
 #: selection:wua.parcel,hydraulic_infrastructure_type:0
 msgid "No infrastructure"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_nominal_diameter
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_nominal_diameter
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_nominal_diameter
+msgid "Nominal Diameter (mm)"
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -908,18 +1109,30 @@ msgid "Note: ycval and xcval are parameters"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_notes
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_notes
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_notes
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationditch_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_notes
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_notes
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_notes
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_type_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_type_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_flowdivider_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_hydraulicsector_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationditch_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationgate_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_type_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_form
 msgid "Notes"
 msgstr ""
@@ -978,6 +1191,16 @@ msgid "Official Hectares"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_airvalve_param
+msgid "Param for airvalve"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_drainagevalve_param
+msgid "Param for drainagevalve"
+msgstr ""
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_irrigationditch_param
 msgid "Param for irr. ditch"
 msgstr ""
@@ -985,6 +1208,11 @@ msgstr ""
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_irrigationshed_param
 msgid "Param for irr. shed"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_url_gis_viewer_valve_param
+msgid "Param for valve"
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -1052,7 +1280,7 @@ msgid "Partner of a WUA"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/res_partner.py:139
+#: code:addons/base_wua_infrastructure/models/res_partner.py:145
 #, python-format
 msgid "Partners"
 msgstr ""
@@ -1063,9 +1291,12 @@ msgid "Partners (form view)"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_image
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_image
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_image
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_image
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_image
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_image
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_image
 msgid "Photo / Image"
 msgstr ""
@@ -1130,6 +1361,11 @@ msgid "Sectors"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_serial_number
+msgid "Serial Number"
+msgstr ""
+
+#. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Several water payers: No"
 msgstr ""
@@ -1154,7 +1390,7 @@ msgid "Street View"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:740
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1299
 #, python-format
 msgid "Subparc. / Irrig. Gates"
 msgstr ""
@@ -1177,6 +1413,16 @@ msgstr ""
 #. module: base_wua_infrastructure
 #: model:ir.ui.menu,name:base_wua_infrastructure.base_wua_infrastructure_technical_menu
 msgid "Technical"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_technical_characteristics
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_technical_characteristics
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_technical_characteristics
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_airvalve_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_drainagevalve_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_form
+msgid "Technical Characteristics"
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -1208,7 +1454,7 @@ msgid "The hydraulic sector code must be a positive value."
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:911
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1470
 #, python-format
 msgid "The hydraulic sectors are differents."
 msgstr ""
@@ -1237,9 +1483,16 @@ msgid "The irrigation ditch code must be a positive value."
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:925
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1484
 #, python-format
 msgid "The irrigation ditches are differents."
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: sql_constraint:wua.airvalve:0
+#: sql_constraint:wua.drainagevalve:0
+#: sql_constraint:wua.valve:0
+msgid "The nominal diameter can not be a negative value."
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -1258,19 +1511,19 @@ msgid "The watering dur. x area ratio must be a value zero or positive."
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:919
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1478
 #, python-format
 msgid "There are repeated irrigation gates."
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:905
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1464
 #, python-format
 msgid "There are repeated water connections."
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_parcel.py:931
+#: code:addons/base_wua_infrastructure/models/wua_parcel.py:1490
 #, python-format
 msgid "There are some irrigation gates in anoter parcel."
 msgstr ""
@@ -1282,7 +1535,7 @@ msgid "This irrigation gate is present in some parcels: It is not possible to ch
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:349
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:350
 #, python-format
 msgid "This water connection is present in some parcels: It is not possible to change the irrigation shed."
 msgstr ""
@@ -1295,6 +1548,35 @@ msgstr ""
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_type
 msgid "Type"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_valve_brand
+msgid "Valve Brand"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_valve_model
+msgid "Valve Model"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_name
+msgid "Valve Type"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.wua_valve_type_action
+#: model:ir.ui.menu,name:base_wua_infrastructure.wua_valve_type_menu
+msgid "Valve Types"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.wua_valve_action
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_valve_ids
+#: model:ir.ui.menu,name:base_wua_infrastructure.wua_valve_menu
+msgid "Valves"
 msgstr ""
 
 #. module: base_wua_infrastructure
@@ -1378,14 +1660,15 @@ msgid "Water connection"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/res_partner.py:155
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_waterconnection_id
+#: code:addons/base_wua_infrastructure/models/res_partner.py:161
 #, python-format
 msgid "Waterconnection"
 msgstr ""
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/res_partner.py:74
+#: code:addons/base_wua_infrastructure/models/res_partner.py:80
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnectionlink_ids
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_users_waterconnectionlink_ids
 #, python-format
 msgid "Waterconnections"
 msgstr ""
@@ -1450,16 +1733,22 @@ msgid "With several water payers"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_gis_viewer_x
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_gis_viewer_x
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_gis_viewer_x
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_gis_viewer_x
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_gis_viewer_x
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_gis_viewer_x
 msgid "X coordinate"
 msgstr ""
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_gis_viewer_y
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_gis_viewer_y
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_gis_viewer_y
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_gis_viewer_y
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationshed_gis_viewer_y
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_gis_viewer_y
 msgid "Y coordinate"
 msgstr ""
 
@@ -1483,5 +1772,10 @@ msgstr ""
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner_waterconnection
 msgid "res.partner.waterconnection"
+msgstr ""
+
+#. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_search
+msgid "valve Type"
 msgstr ""
 

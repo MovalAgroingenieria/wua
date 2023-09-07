@@ -626,6 +626,486 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
+    # Airvalve
+    def check_gis_airvalve_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_airvalve')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_airvalve_table(self):
+        # Check if wua gis table already exists
+        gis_airvalve_table_created = \
+            self.check_gis_airvalve_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis airvalve don't
+        if (not gis_airvalve_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_airvalve_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_airvalve
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_airvalve_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_airvalve_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_airvalve_idx ON public.wua_gis_airvalve
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_airvalve_triggers(self):
+        gis_airvalve_table_created = \
+            self.check_gis_airvalve_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_airvalve_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_airvalve data when the
+            # wua_gis_airvalve table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_airvalve_update_on_wua_airvalve()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_airvalve SET
+                        with_gis_airvalve = False,
+                        gis_viewer_x = 0,
+                        gis_viewer_y = 0
+                    WHERE name = OLD.name;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_airvalve SET
+                        with_gis_airvalve = True,
+                        gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
+                        gis_viewer_y = postgis.ST_Y(NEW.geom)::INTEGER
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis airvalve is
+            # unlinked and other when a gis airvalve is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_airvalve_write_trigger ON
+                    public.wua_gis_airvalve;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_airvalve_create_unlink_trigger ON
+                    public.wua_gis_airvalve;
+
+                CREATE TRIGGER wua_gis_airvalve_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_airvalve FOR EACH ROW WHEN
+                ((NOT postgis.ST_Equals(OLD.geom, NEW.geom)) OR
+                 OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_airvalve_update_on_wua_airvalve();
+
+                CREATE TRIGGER wua_gis_airvalve_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_airvalve FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_airvalve_update_on_wua_airvalve();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_airvalve data when the
+            # wua_airvalve table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_airvalve_update_on_wua_airvalve() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_airvalve SET
+                        with_gis_airvalve = (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_airvalve)),
+                        gis_viewer_x = (SELECT postgis.ST_X(geom)::INTEGER FROM
+                            wua_gis_airvalve WHERE name = NEW.name
+                            LIMIT 1),
+                        gis_viewer_y = (SELECT postgis.ST_Y(geom)::INTEGER FROM
+                            wua_gis_airvalve WHERE name = NEW.name
+                            LIMIT 1)
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the airvalve is created
+            # and other when a gis airvalve is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_airvalve_write_trigger ON
+                    public.wua_airvalve;
+                DROP TRIGGER IF EXISTS wua_airvalve_create_trigger ON
+                    public.wua_airvalve;
+
+                CREATE TRIGGER wua_airvalve_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_airvalve FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_airvalve_update_on_wua_airvalve();
+
+                CREATE TRIGGER wua_airvalve_create_trigger
+                AFTER INSERT ON
+                public.wua_airvalve FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_airvalve_update_on_wua_airvalve();
+            """)
+            self.env.cr.commit()
+
+    # Valve
+    def check_gis_valve_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_valve')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_valve_table(self):
+        # Check if wua gis table already exists
+        gis_valve_table_created = \
+            self.check_gis_valve_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis valve don't
+        if (not gis_valve_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_valve_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_valve
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_valve_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_valve_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_valve_idx ON public.wua_gis_valve
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_valve_triggers(self):
+        gis_valve_table_created = \
+            self.check_gis_valve_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_valve_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_valve data when the
+            # wua_gis_valve table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_valve_update_on_wua_valve()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_valve SET
+                        with_gis_valve = False,
+                        gis_viewer_x = 0,
+                        gis_viewer_y = 0
+                    WHERE name = OLD.name;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_valve SET
+                        with_gis_valve = True,
+                        gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
+                        gis_viewer_y = postgis.ST_Y(NEW.geom)::INTEGER
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis valve is
+            # unlinked and other when a gis valve is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_valve_write_trigger ON
+                    public.wua_gis_valve;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_valve_create_unlink_trigger ON
+                    public.wua_gis_valve;
+
+                CREATE TRIGGER wua_gis_valve_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_valve FOR EACH ROW WHEN
+                ((NOT postgis.ST_Equals(OLD.geom, NEW.geom)) OR
+                 OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_valve_update_on_wua_valve();
+
+                CREATE TRIGGER wua_gis_valve_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_valve FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_valve_update_on_wua_valve();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_valve data when the
+            # wua_valve table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_valve_update_on_wua_valve() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_valve SET
+                        with_gis_valve = (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_valve)),
+                        gis_viewer_x = (SELECT postgis.ST_X(geom)::INTEGER FROM
+                            wua_gis_valve WHERE name = NEW.name
+                            LIMIT 1),
+                        gis_viewer_y = (SELECT postgis.ST_Y(geom)::INTEGER FROM
+                            wua_gis_valve WHERE name = NEW.name
+                            LIMIT 1)
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the valve is created
+            # and other when a gis valve is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_valve_write_trigger ON
+                    public.wua_valve;
+                DROP TRIGGER IF EXISTS wua_valve_create_trigger ON
+                    public.wua_valve;
+
+                CREATE TRIGGER wua_valve_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_valve FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_valve_update_on_wua_valve();
+
+                CREATE TRIGGER wua_valve_create_trigger
+                AFTER INSERT ON
+                public.wua_valve FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_valve_update_on_wua_valve();
+            """)
+            self.env.cr.commit()
+
+    # DraingeValve
+    def check_gis_drainagevalve_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_drainagevalve')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_drainagevalve_table(self):
+        # Check if wua gis table already exists
+        gis_drainagevalve_table_created = \
+            self.check_gis_drainagevalve_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis drainagevalve don't
+        if (not gis_drainagevalve_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_drainagevalve_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_drainagevalve
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_drainagevalve_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_drainagevalve_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_drainagevalve_idx ON public.wua_gis_drainagevalve
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_drainagevalve_triggers(self):
+        gis_drainagevalve_table_created = \
+            self.check_gis_drainagevalve_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_drainagevalve_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_drainagevalve data when the
+            # wua_gis_drainagevalve table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_drainagevalve_update_on_wua_drainagevalve()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_drainagevalve SET
+                        with_gis_drainagevalve = False,
+                        gis_viewer_x = 0,
+                        gis_viewer_y = 0
+                    WHERE name = OLD.name;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_drainagevalve SET
+                        with_gis_drainagevalve = True,
+                        gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
+                        gis_viewer_y = postgis.ST_Y(NEW.geom)::INTEGER
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis drainagevalve is
+            # unlinked and other when a gis drainagevalve is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_drainagevalve_write_trigger ON
+                    public.wua_gis_drainagevalve;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_drainagevalve_create_unlink_trigger ON
+                    public.wua_gis_drainagevalve;
+
+                CREATE TRIGGER wua_gis_drainagevalve_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_drainagevalve FOR EACH ROW WHEN
+                ((NOT postgis.ST_Equals(OLD.geom, NEW.geom)) OR
+                 OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_drainagevalve_update_on_wua_drainagevalve();
+
+                CREATE TRIGGER wua_gis_drainagevalve_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_drainagevalve FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_drainagevalve_update_on_wua_drainagevalve();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_drainagevalve data when the
+            # wua_drainagevalve table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_drainagevalve_update_on_wua_drainagevalve() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_drainagevalve SET
+                        with_gis_drainagevalve = (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_drainagevalve)),
+                        gis_viewer_x = (SELECT postgis.ST_X(geom)::INTEGER FROM
+                            wua_gis_drainagevalve WHERE name = NEW.name
+                            LIMIT 1),
+                        gis_viewer_y = (SELECT postgis.ST_Y(geom)::INTEGER FROM
+                            wua_gis_drainagevalve WHERE name = NEW.name
+                            LIMIT 1)
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the drainagevalve is created
+            # and other when a gis drainagevalve is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_drainagevalve_write_trigger ON
+                    public.wua_drainagevalve;
+                DROP TRIGGER IF EXISTS wua_drainagevalve_create_trigger ON
+                    public.wua_drainagevalve;
+
+                CREATE TRIGGER wua_drainagevalve_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_drainagevalve FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_drainagevalve_update_on_wua_drainagevalve();
+
+                CREATE TRIGGER wua_drainagevalve_create_trigger
+                AFTER INSERT ON
+                public.wua_drainagevalve FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_drainagevalve_update_on_wua_drainagevalve();
+            """)
+            self.env.cr.commit()
+
     def set_gis_fields_irrigationshed(self):
         gis_irrigationshed_ok = self.check_gis_irrigationshed_created()
         if (gis_irrigationshed_ok):
@@ -672,14 +1152,93 @@ class WuaParcel(models.Model):
                 gis_irrigationditch_ok = False
         return gis_irrigationditch_ok
 
+    def set_gis_fields_airvalve(self):
+        gis_airvalve_ok = self.check_gis_airvalve_created()
+        if (gis_airvalve_ok):
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_airvalve
+                    SET with_gis_airvalve = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_airvalve wi1
+                    SET with_gis_airvalve = TRUE,
+                        gis_viewer_x = postgis.ST_X(wgi1.geom),
+                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    FROM public.wua_gis_airvalve wgi1 WHERE
+                        wi1.name = wgi1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_airvalve_ok = False
+        return gis_airvalve_ok
+
+    def set_gis_fields_valve(self):
+        gis_valve_ok = self.check_gis_valve_created()
+        if (gis_valve_ok):
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_valve
+                    SET with_gis_valve = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_valve wi1
+                    SET with_gis_valve = TRUE,
+                        gis_viewer_x = postgis.ST_X(wgi1.geom),
+                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    FROM public.wua_gis_valve wgi1 WHERE
+                        wi1.name = wgi1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_valve_ok = False
+        return gis_valve_ok
+
+    def set_gis_fields_drainagevalve(self):
+        gis_drainagevalve_ok = self.check_gis_drainagevalve_created()
+        if (gis_drainagevalve_ok):
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_drainagevalve
+                    SET with_gis_drainagevalve = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_drainagevalve wi1
+                    SET with_gis_drainagevalve = TRUE,
+                        gis_viewer_x = postgis.ST_X(wgi1.geom),
+                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    FROM public.wua_gis_draiangevalve wgi1 WHERE
+                        wi1.name = wgi1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_drainagevalve_ok = False
+        return gis_drainagevalve_ok
+
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         # Irrigationshed GIS
         gis_irrigationshed_ok = self.set_gis_fields_irrigationshed()
         # Irrigationditch GIS
         gis_irrigationditch_ok = self.set_gis_fields_irrigationditch()
+        # airvalve GIS
+        gis_airvalve_ok = self.set_gis_fields_airvalve()
+        # valve GIS
+        gis_valve_ok = self.set_gis_fields_valve()
+        # drainagevalve GIS
+        gis_drainagevalve_ok = self.set_gis_fields_drainagevalve()
         return gis_parcels_ok and gis_irrigationshed_ok and \
-            gis_irrigationditch_ok
+            gis_irrigationditch_ok and gis_airvalve_ok and gis_valve_ok and \
+            gis_drainagevalve_ok
 
     def populate_irrigationgates_to_add(self, vals):
         irrigationgates_to_add = []

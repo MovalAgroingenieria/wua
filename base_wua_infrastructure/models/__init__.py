@@ -13,3 +13,9 @@ from . import wua_parcel
 from . import res_partner
 from . import hr
 from . import wua_zone
+from . import wua_airvalve
+from . import wua_airvalve_type
+from . import wua_valve
+from . import wua_valve_type
+from . import wua_drainagevalve
+from . import wua_drainagevalve_type
