@@ -55,6 +55,13 @@ class WuaFilteringstation(models.Model):
         default=0,
     )
 
+    nominal_water_flow = fields.Float(
+        string='Water Flow (m³/h)',
+        digits=(32, 2),
+        default=0,
+        help='The nominal flow rate of filteringstation',
+    )
+
     filteringstation_brand = fields.Char(
         string='Filteringstation Brand',
     )
@@ -103,6 +110,9 @@ class WuaFilteringstation(models.Model):
         ('valid_nominal_diameter',
          'CHECK (nominal_diameter >= 0)',
          'The nominal diameter can not be a negative value.'),
+        ('nominal_water_flow',
+         'CHECK (nominal_water_flow >= 0)',
+         'Nominal water flow can not be negative.'),
         ]
 
     @api.multi
