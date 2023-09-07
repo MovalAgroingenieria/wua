@@ -3,3 +3,4 @@
 
 from . import wua_flowmeter
 from . import wua_intake
+from . import wua_filteringstation
