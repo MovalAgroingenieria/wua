@@ -350,6 +350,191 @@ class WuaParcel(models.Model):
                 gis_intake_ok = False
         return gis_intake_ok
 
+    # Filteringstation
+    def check_gis_filteringstation_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_filteringstation')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_filteringstation_table(self):
+        # Check if wua gis table already exists
+        gis_filteringstation_table_created = \
+            self.check_gis_filteringstation_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis filteringstation don't
+        if (not gis_filteringstation_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_filteringstation_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_filteringstation
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_filteringstation_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_filteringstation_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_filteringstation_idx ON public.wua_gis_filteringstation
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_filteringstation_triggers(self):
+        gis_filteringstation_table_created = \
+            self.check_gis_filteringstation_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_filteringstation_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_filteringstation data when the
+            # wua_gis_filteringstation table has some change, (Create,
+            # Update or Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_filteringstation_update_on_wua_filteringstation()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_filteringstation SET
+                        with_gis_filteringstation = False,
+                        gis_viewer_x = 0,
+                        gis_viewer_y = 0
+                    WHERE name = OLD.name;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_filteringstation SET
+                        with_gis_filteringstation = True,
+                        gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
+                        gis_viewer_y = postgis.ST_Y(NEW.geom)::INTEGER
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis filteringstation is
+            # unlinked and other when a gis filteringstation is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_filteringstation_write_trigger
+                    ON public.wua_gis_filteringstation;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_filteringstation_create_unlink_trigger ON
+                    public.wua_gis_filteringstation;
+
+                CREATE TRIGGER wua_gis_filteringstation_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_filteringstation FOR EACH ROW WHEN
+                ((NOT postgis.ST_Equals(OLD.geom, NEW.geom)) OR
+                 OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_filteringstation_update_on_wua_filteringstation();
+
+                CREATE TRIGGER wua_gis_filteringstation_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_filteringstation FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_filteringstation_update_on_wua_filteringstation();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_filteringstation data when the
+            # wua_filteringstation table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_filteringstation_update_on_wua_filteringstation()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_filteringstation SET
+                        with_gis_filteringstation = (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_filteringstation)),
+                        gis_viewer_x = (SELECT postgis.ST_X(geom)::INTEGER FROM
+                            wua_gis_filteringstation WHERE name = NEW.name
+                            LIMIT 1),
+                        gis_viewer_y = (SELECT postgis.ST_Y(geom)::INTEGER FROM
+                            wua_gis_filteringstation WHERE name = NEW.name
+                            LIMIT 1)
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the filteringstation is
+            # created and other when a gis filteringstation is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_filteringstation_write_trigger ON
+                    public.wua_filteringstation;
+                DROP TRIGGER IF EXISTS wua_filteringstation_create_trigger ON
+                    public.wua_filteringstation;
+
+                CREATE TRIGGER wua_filteringstation_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_filteringstation FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_filteringstation_update_on_wua_filteringstation();
+
+                CREATE TRIGGER wua_filteringstation_create_trigger
+                AFTER INSERT ON
+                public.wua_filteringstation FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_filteringstation_update_on_wua_filteringstation();
+            """)
+            self.env.cr.commit()
+
+    def set_gis_fields_filteringstation(self):
+        gis_filteringstation_ok = self.check_gis_filteringstation_created()
+        if (gis_filteringstation_ok):
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_filteringstation
+                    SET with_gis_filteringstation = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_filteringstation wi1
+                    SET with_gis_filteringstation = TRUE,
+                        gis_viewer_x = postgis.ST_X(wgi1.geom),
+                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    FROM public.wua_gis_draiangevalve wgi1 WHERE
+                        wi1.name = wgi1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_filteringstation_ok = False
+        return gis_filteringstation_ok
+
     def set_gis_fields(self):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         # @INFO: The original method return False if gis_parcels_ok
@@ -362,4 +547,7 @@ class WuaParcel(models.Model):
         # Call methods
         gis_flowmeter_ok = self.set_gis_fields_flowmeter()
         gis_intake_ok = self.set_gis_fields_intake()
-        return gis_parcels_ok and gis_flowmeter_ok and gis_intake_ok
+        # filteringstation GIS
+        gis_filteringstation_ok = self.set_gis_fields_filteringstation()
+        return gis_parcels_ok and gis_flowmeter_ok and gis_intake_ok and \
+            gis_filteringstation_ok

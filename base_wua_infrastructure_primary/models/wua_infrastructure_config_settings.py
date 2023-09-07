@@ -19,6 +19,11 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         size=20,
         help='Name of intake param in the GIS viewer url')
 
+    url_gis_viewer_filteringstation_param = fields.Char(
+        string='Param for filteringstation',
+        size=20,
+        help='Name of filteringstation param in the GIS viewer url')
+
     @api.multi
     def set_default_values(self):
         super(WuaInfrastructureConfiguration, self).set_default_values()
@@ -29,3 +34,6 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_intake_param',
                            self.url_gis_viewer_intake_param)
+        values.set_default('wua.infrastructure.configuration',
+                           'url_gis_viewer_filteringstation_param',
+                           self.url_gis_viewer_filteringstation_param)

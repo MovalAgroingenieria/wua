@@ -21,6 +21,8 @@
         "views/wua_infrastructure_config_settings_view.xml",
         "views/wua_flowmeter_view.xml",
         "views/wua_intake_view.xml",
+        "views/wua_filteringstation_view.xml",
+        "views/wua_filteringstation_type_view.xml",
     ],
     "installable": True,
     "application": True,

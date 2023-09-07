@@ -6,3 +6,5 @@ from . import wua_infrastructure_config_settings
 from . import wua_flowmeter
 from . import wua_intake
 from . import wua_parcel
+from . import wua_filteringstation
+from . import wua_filteringstation_type
