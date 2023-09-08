@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="wua_airvalve_view_form" model="ir.ui.view">
-        <field name="name">Airvalves (form view)</field>
-        <field name="model">wua.airvalve</field>
-        <field name="inherit_id" ref="base_wua_infrastructure.wua_airvalve_view_form"/>
+    <record id="wua_drainagevalve_view_form" model="ir.ui.view">
+        <field name="name">Drainagevalves (form view)</field>
+        <field name="model">wua.drainagevalve</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_drainagevalve_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='hydraulicsector_id']" position="before">
                 <field name="waterpipe_id"/>
@@ -15,10 +15,10 @@
         </field>
     </record>
 
-    <record id="wua_airvalve_view_tree" model="ir.ui.view">
-        <field name="name">Airvalves (tree view)</field>
-        <field name="model">wua.airvalve</field>
-        <field name="inherit_id" ref="base_wua_infrastructure.wua_airvalve_view_tree"/>
+    <record id="wua_drainagevalve_view_tree" model="ir.ui.view">
+        <field name="name">Drainagevalves (tree view)</field>
+        <field name="model">wua.drainagevalve</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_drainagevalve_view_tree"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='hydraulicsector_id']" position="after">
                 <field name="waterpipe_id" invisible="1"/>
@@ -26,10 +26,10 @@
         </field>
     </record>
 
-    <record id="wua_airvalve_view_search" model="ir.ui.view">
-        <field name="name">Airvalves (search view)</field>
-        <field name="model">wua.airvalve</field>
-        <field name="inherit_id" ref="base_wua_infrastructure.wua_airvalve_view_search"/>
+    <record id="wua_drainagevalve_view_search" model="ir.ui.view">
+        <field name="name">Drainagevalves (search view)</field>
+        <field name="model">wua.drainagevalve</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_drainagevalve_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//filter[@name='hydraulic_sector']" position="after">
                 <filter string="Waterpipe"
