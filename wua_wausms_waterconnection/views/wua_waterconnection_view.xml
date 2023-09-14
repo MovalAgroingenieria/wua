@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Waterconnection (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_waterconnection_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <button name="action_see_wausms_waterconnection" class="oe_stat_button" icon="fa-wausms-sms-registre"
+                    type="object"  attrs="{'invisible': [('num_sms','=', 0)]}" help="SMS's that have been sent.">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_value" style="display:inline;"><field name="num_sms"/></span>
+                        <span class="o_stat_text" style="display:inline;"> SMS's</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

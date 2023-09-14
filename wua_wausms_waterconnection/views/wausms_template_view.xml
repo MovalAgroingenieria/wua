@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="wausms_template_view_form" model="ir.ui.view">
+        <field name="name">WauSMS Template Form</field>
+        <field name="model">wausms.template</field>
+        <field name="inherit_id" ref="wausms_client_sms.wausms_template_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='help_invoice']/br" position="replace">
+                <div>
+                    The waterconnection object is also available. Note that this object has many
+                    attributes and they depend on the installed modules.
+                 </div>
+            </xpath>
+            <xpath expr="//tr[@name='partner_vat']" position="after">
+                <tr name="wc_name" attrs="{'invisible': [('type','!=','waterconnection')]}">
+                    <td>Waterconnection name</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ waterconnection.name }}</td>
+                </tr>
+                <tr name="wc_description" attrs="{'invisible': [('type','!=','waterconnection')]}">
+                    <td>Waterconnection description</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ waterconnection.description }}</td>
+                </tr>
+                <tr name="wc_hydraulicsector" attrs="{'invisible': [('type','!=','waterconnection')]}">
+                    <td>Waterconnection hydraulicsector</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ waterconnection.hydraulicsector_id.name }}</td>
+                </tr>
+                <tr name="wc_irrigationshift" attrs="{'invisible': [('type','!=','waterconnection')]}">
+                    <td>Waterconnection irrgation shift</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ waterconnection.irrigation_shift_id.name }}</td>
+                </tr>
+                <tr name="wc_lastreadingvalue" attrs="{'invisible': [('type','!=','waterconnection')]}">
+                    <td>Waterconnection last reading (m³)</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ waterconnection.last_reading_value }}</td>
+                </tr>
+                <tr name="wc_product" attrs="{'invisible': [('type','!=','waterconnection')]}">
+                    <td>Waterconnection product</td>
+                    <td style="padding: 0px 4px"> -> </td>
+                    <td>{{ waterconnection.product_id.name }}</td>
+                </tr>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

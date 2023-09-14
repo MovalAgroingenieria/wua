@@ -27,18 +27,16 @@ class WauSMSWizard(models.Model):
         if context.get("mode") == 'parcel':
             default_template_id = self.env['ir.values'].get_default(
                 'wausms.configuration', 'default_parcel_template_id')
-        if context.get("mode") == 'quota':
+        if context.get("mode") == 'waterconnection':
             default_template_id = self.env['ir.values'].get_default(
-                'wausms.configuration', 'default_quota_template_id')
-        # Detect waterconnection module
-        waterconnection_module_installed = self.env['ir.module.module'].search(
-            [('name', '=', 'wua_wausms_waterconnection'),
-             ('state', '=', 'installed')])
-        if waterconnection_module_installed:
-            if context.get("mode") == 'waterconnection':
+                'wausms.configuration', 'default_waterconnection_template_id')
+        # Detect quota module
+        quota_module_installed = self.env['ir.module.module'].search(
+            [('name', '=', 'wua_wausms_quota'), ('state', '=', 'installed')])
+        if quota_module_installed:
+            if context.get("mode") == 'quota':
                 default_template_id = self.env['ir.values'].get_default(
-                    'wausms.configuration',
-                    'default_waterconnection_template_id')
+                    'wausms.configuration', 'default_quota_template_id')
         return default_template_id
 
     # Overwrite parent field
@@ -51,10 +49,9 @@ class WauSMSWizard(models.Model):
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
                         submenu=False):
-        # Detect waterconnection module
-        waterconnection_module_installed = self.env['ir.module.module'].search(
-            [('name', '=', 'wua_wausms_waterconnection'),
-             ('state', '=', 'installed')])
+        # Detect quota module
+        quota_module_installed = self.env['ir.module.module'].search(
+            [('name', '=', 'wua_wausms_quota'), ('state', '=', 'installed')])
         context = self._context
         if context.get('mode') == 'partner':
             context_filter = "[('type', '=', 'partner')]"
@@ -62,11 +59,11 @@ class WauSMSWizard(models.Model):
             context_filter = "[('type', '=', 'invoice')]"
         elif context.get('mode') == 'parcel':
             context_filter = "[('type', '=', 'parcel')]"
-        elif context.get('mode') == 'quota':
-            context_filter = "[('type', '=', 'quota')]"
-        elif waterconnection_module_installed:
-            if context.get("mode") == 'waterconnection':
-                context_filter = "[('type', '=', 'waterconnection')]"
+        elif context.get('mode') == 'waterconnection':
+            context_filter = "[('type', '=', 'waterconnection')]"
+        elif quota_module_installed:
+            if context.get("mode") == 'quota':
+                context_filter = "[('type', '=', 'quota')]"
         else:
             context_filter = ""
         res = super(WauSMSWizard, self).fields_view_get(
@@ -128,16 +125,24 @@ class WauSMSWizard(models.Model):
                         [partnerlink.partner_id.id, parcel_id])
             # Set active_ids as list of list [[partner_id, parcel_id],)
             active_ids = partner_parcel_list
-        if context.get("mode") == 'quota':
+        if context.get("mode") == 'waterconnection':
             partner_active_ids = []
-            partner_quota_list = []
-            quota_ids = context.get('active_ids')
-            for quota_id in quota_ids:
-                quota = self.env['wua.quota'].browse(quota_id)
-                # Send only to partner_id of quota
-                partner_quota_list.append([quota.partner_id.id, quota_id])
-            # Set active_ids as list of list [[partner_id, quota_id],)
-            active_ids = partner_quota_list
+            partner_waterconnection_list = []
+            waterconnection_ids = context.get('active_ids')
+            for waterconnection_id in waterconnection_ids:
+                waterconnection = self.env['wua.waterconnection'].browse(
+                    waterconnection_id)
+                # Send sms to every partner in irrigationpoint_ids
+                for irrigationpoint in waterconnection.irrigationpoint_ids:
+                    if irrigationpoint.partner_id:
+                        item = [irrigationpoint.partner_id.id,
+                                waterconnection_id]
+                        if item not in partner_waterconnection_list:
+                            partner_waterconnection_list.append(
+                                [irrigationpoint.partner_id.id,
+                                 waterconnection_id])
+            # Set active_ids as list of list [[partner_id,waterconnection_id])
+            active_ids = partner_waterconnection_list
 
         if not active_ids:
             raise ValidationError(_("There are no items selected."))
@@ -148,34 +153,35 @@ class WauSMSWizard(models.Model):
                 partner = partner_id = ""
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
-                quota = quota_id = ""
+                waterconnection = waterconnection_id = ""
             if context.get("mode") == 'partner':
                 partner = self.env['res.partner'].browse(active_id)
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
-                quota = quota_id = ""
+                waterconnection = waterconnection_id = ""
             if context.get("mode") == 'invoice':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
                 invoice = self.env['account.invoice'].browse(active_id[1])
                 invoice_id = invoice.id
                 parcel = parcel_id = ""
-                quota = quota_id = ""
+                waterconnection = waterconnection_id = ""
             if context.get("mode") == 'parcel':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
                 invoice = invoice_id = ""
-                quota = quota_id = ""
+                waterconnection = waterconnection_id = ""
                 parcel = self.env['wua.parcel'].browse(active_id[1])
                 parcel_id = parcel.id
-            if context.get("mode") == 'quota':
+            if context.get("mode") == 'waterconnection':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
-                quota = self.env['wua.quota'].browse(active_id[1])
-                quota_id = quota.id
+                waterconnection = self.env['wua.waterconnection'].browse(
+                    active_id[1])
+                waterconnection_id = waterconnection.id
 
             # Set and check mobile number
             if context.get("mode") == 'test':
@@ -198,7 +204,7 @@ class WauSMSWizard(models.Model):
                 try:
                     raw_sms_message = raw_template.render(
                         partner=partner, invoice=invoice, parcel=parcel,
-                        quota=quota, datetime=datetime)
+                        waterconnection=waterconnection, datetime=datetime)
                 except TemplateError as err:
                     raise ValidationError(
                         _("Error resolving template: {}".format(err.message)))
@@ -261,10 +267,11 @@ class WauSMSWizard(models.Model):
                 sms_confirmations += \
                     sms_confirmation + " -- [" + subject + " - " + \
                     str(parcel.name) + " - " + partner.name + "]" + '\n'
-            if context.get("mode") == 'quota':
+            if context.get("mode") == 'waterconnection':
                 sms_confirmations += \
                     sms_confirmation + " -- [" + subject + " - " + \
-                    str(quota.name) + " - " + partner.name + "]" + '\n'
+                    str(waterconnection.name) + " - " + partner.name + "]" + \
+                    '\n'
 
             # Response message (only shown in debug mode)
             if connection_ok:
@@ -308,7 +315,7 @@ class WauSMSWizard(models.Model):
                 "partner_id": partner_id,
                 "invoice_id": invoice_id,
                 "parcel_id": parcel_id,
-                "quota_id": quota_id,
+                "waterconnection_id": waterconnection_id,
                 "phone_number": reformated_phone_number,
                 "sender": sender,
                 "sms_message": sms_message,
