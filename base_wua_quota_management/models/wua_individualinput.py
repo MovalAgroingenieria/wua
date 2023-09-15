@@ -216,6 +216,18 @@ class WuaIndividualinput(models.Model):
         readonly=True,
         ondelete='restrict',)
 
+    massive_cancel_balance_id = fields.Many2one(
+        string='Cancel Balance',
+        comodel_name='wua.massive.cancel.balances',
+        readonly=True,
+        ondelete='restrict',)
+
+    massive_controlled_assignment_id = fields.Many2one(
+        string='Massive Assignment',
+        comodel_name='wua.massive.assignments',
+        readonly=True,
+        ondelete='restrict',)
+
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
@@ -482,6 +494,19 @@ class WuaIndividualinput(models.Model):
                     'It is not possible to delete an individual input, '
                     'associated with a massive assignment, cancel the '
                     'assignment instead.'))
+            if record.massive_cancel_balance_id and not self.env.context.get(
+                    'deleting_from_cancel_balance_cancel', False):
+                raise exceptions.UserError(_(
+                    'It is not possible to delete an individual input, '
+                    'associated with a massive cancel balance, cancel the '
+                    'cancellation instead.'))
+            if (record.massive_controlled_assignment_id and not
+                self.env.context.get(
+                    'deleting_from_massive_controlled_assignment', False)):
+                raise exceptions.UserError(_(
+                    'It is not possible to delete an individual input, '
+                    'associated with a massive controlled assignment, cancel '
+                    'the massive assignment instead.'))
             if quota and quota.hydricmovement_ids:
                 hydric_outputs = filter(
                     lambda x: x['is_consumption'] is True and

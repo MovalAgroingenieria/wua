@@ -6,19 +6,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-21 14:50+0000\n"
-"PO-Revision-Date: 2023-09-21 14:50+0000\n"
+"POT-Creation-Date: 2023-10-04 11:04+0000\n"
+"PO-Revision-Date: 2023-10-04 11:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
-
-#. module: base_wua_quota_management
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_rules_count_13621
-msgid "# Analytic Rules"
-msgstr "# Reglas Analíticas"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_product_variant_count
@@ -148,7 +143,9 @@ msgstr "<span class=\"o_stat_text\">Movimientos</span>\n"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_category_view_form
-#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignmnet_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_form
 msgid "<span class=\"o_stat_text\">Individual</span>\n"
 "                                <span class=\"o_stat_text\">Inputs</span>"
 msgstr "<span class=\"o_stat_text\">Asignaciones</span>\n"
@@ -464,7 +461,7 @@ msgstr "<strong>Notas</strong>"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_partner_quota_report_document
 msgid "<strong>Partner</strong>"
-msgstr "<strong>Socio</strong>"
+msgstr "<strong>Nº Socio</strong>"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_partner_quota_report_document
@@ -563,6 +560,8 @@ msgstr "Activo"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_search
 msgid "Active Agricultural Season"
@@ -572,7 +571,17 @@ msgstr "Campaña activa"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_agriculturalseason_description
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_partner_agriculturalseason_description
 msgid "Active agricultural season"
-msgstr "Active agricultural season"
+msgstr "Campaña activa"
+
+#. module: base_wua_quota_management
+#: model:ir.actions.server,name:base_wua_quota_management.wua_add_parcel_to_massive_assignment
+msgid "Add parcel to massive assignment"
+msgstr "Añadir parcela/s a la asignación masiva"
+
+#. module: base_wua_quota_management
+#: model:ir.actions.server,name:base_wua_quota_management.wua_add_partner_to_massive_cancel
+msgid "Add partner to massive cancel"
+msgstr "Añadir socio/s a la cancelación mavisa"
 
 #. module: base_wua_quota_management
 #: model:ir.actions.server,name:base_wua_quota_management.wua_add_parcel_to_quotaperiod
@@ -586,7 +595,7 @@ msgstr "Añadir al período de cupo"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_quotaperiod_aggregatequotas
 #, python-format
 msgid "Aggregate quotas"
-msgstr "Aggregate quotas"
+msgstr "Cupos agregados"
 
 #. module: base_wua_quota_management
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_quota_ggregatevalue_action
@@ -611,12 +620,16 @@ msgstr "Valores agregados"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_agriculturalseason_id
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_cession_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_search
 msgid "Agricultural Season"
@@ -629,6 +642,12 @@ msgstr "Campaña"
 #, python-format
 msgid "Agricultural Seasons"
 msgstr "Campañas"
+
+#. module: base_wua_quota_management
+#: model:product.template,name:base_wua_quota_management.superproduct_pressurized_irrigation_product_template
+#: model:wua.superproduct,name:base_wua_quota_management.superproduct_pressurized_irrigation
+msgid "Agua Trasvase"
+msgstr "Agua Trasvase"
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_quotas_config_settings.py:80
@@ -670,7 +689,9 @@ msgid "Apply superproduct sorting of quota periods to calculate the irrigation r
 msgstr "Considerar el orden de los supraproductos al calcular los movimientos hídricos de partes de riego"
 
 #. module: base_wua_quota_management
-#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignmnet_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "Are you sure you want to do this operation?"
 msgstr "Pulse sobre 'Aceptar' para confirmar la realización de esta operación."
@@ -686,11 +707,6 @@ msgid "Are you sure you want to transfer the positive balances to the next quota
 msgstr "¿Está seguro/a de querer traspasar los saldos positivos de este período de cupo al siguiente?"
 
 #. module: base_wua_quota_management
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_asset_category_id
-msgid "Asset Type"
-msgstr "Tipo de activo"
-
-#. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "Assign"
@@ -699,17 +715,23 @@ msgstr "Asignar"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "Assigned Vol. (m³)"
-msgstr "Vol. asignado (m3)"
+msgstr "Vol. asignado (m³)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_massive_controlled_assignment_id
 msgid "Assignment"
 msgstr "Lote de asignación"
 
 #. module: base_wua_quota_management
-#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignmnet_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_form
 msgid "Assignment Lines"
 msgstr "Líneas de lote de asignación"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_assignment_provision_parcel
+msgid "Assignment Provision Parcel (m³)"
+msgstr "Asignación dotación parcela (m³)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_product_tmpl_ids
@@ -743,11 +765,12 @@ msgstr "SALDO"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession_quota_negative_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_quota_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_quota_negative_balance
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_aggregatevalue_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_balance
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_negative_balance
 msgid "Balance"
-msgstr "Saldo pendiente"
+msgstr "Saldo"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_partner_quota_report_document
@@ -791,6 +814,12 @@ msgstr "Con saldos recibidos desde el período de cupo anterior"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_balances_to_next_quotaperiod
 msgid "Balances tranferred to next quota period"
 msgstr "Con saldos traspasados al siguiente período de cupo"
+
+#. module: base_wua_quota_management
+#: model:product.template,name:base_wua_quota_management.superproduct_gravity_irrigation_product_template
+#: model:wua.superproduct,name:base_wua_quota_management.superproduct_gravity_irrigation
+msgid "Barbo"
+msgstr "Barbo"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_barcode
@@ -871,11 +900,19 @@ msgstr "Puede ser vendido"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_provision_partner_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_recalculate_quotas_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_set_activeagriculturalseason_view_form
-#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignmnet_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotas_config_settings_view_form
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_cancel_balance_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_massive_cancel_balance_id
+msgid "Cancel Balance"
+msgstr "Cancelar saldo"
 
 #. module: base_wua_quota_management
 #: model:ir.actions.server,name:base_wua_quota_management.wua_cancel_cessions
@@ -884,8 +921,14 @@ msgstr "Cancelar"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
+#: selection:wua.massive.cancel.balances,cancel_type:0
 msgid "Cancel Negatives"
-msgstr "Cancelar Negativos"
+msgstr "Cancelar negativos"
+
+#. module: base_wua_quota_management
+#: selection:wua.massive.cancel.balances,cancel_type:0
+msgid "Cancel Positives"
+msgstr "Cancelar positivos"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.menu,name:base_wua_quota_management.individualinput_category_menu
@@ -894,9 +937,11 @@ msgstr "Cat. (asig. indv.)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_category_id
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_id_13953
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_id_12365
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_category_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_category_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_category_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_category_id
 msgid "Categ."
 msgstr "Categ."
 
@@ -913,6 +958,8 @@ msgstr "Categorías de asignaciones individuales"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_search
 msgid "Category"
 msgstr "Categoría"
 
@@ -1193,6 +1240,10 @@ msgstr "Crear períodos"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_create_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_create_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_create_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_create_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_create_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_create_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_create_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_create_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_create_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_create_uid
@@ -1217,6 +1268,10 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_create_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_create_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_create_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_create_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_create_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_create_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_create_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_create_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_create_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_create_date
@@ -1293,6 +1348,10 @@ msgstr "Gráfico de consumos del tablero"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_tree
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_tree
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_tree
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_tree
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_partner_quota_report_document
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_thechnical_hydricmovement_view_tree
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_waterconnection_reading_report_document
@@ -1307,6 +1366,8 @@ msgstr "Fecha"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession_event_time
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_event_time
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_event_time
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_event_time
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_event_time
 msgid "Date and Time"
 msgstr "Fecha/hora"
 
@@ -1317,6 +1378,8 @@ msgstr "Días hasta fin de cesión"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_reason
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_reason
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_reason
 msgid "Default Reason"
 msgstr "Motivo por defecto"
 
@@ -1335,11 +1398,6 @@ msgstr "Unidad de medida por defecto utilizada para todas las operaciones de sto
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_uom_po_id
 msgid "Default Unit of Measure used for purchase orders. It must be in the same category than the default unit of measure."
 msgstr "Unidad de medida por defecto utilizada para los pedidos de compra. Debe estar en la misma categoría que la unidad de medida por defecto."
-
-#. module: base_wua_quota_management
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_deferred_revenue_category_id
-msgid "Deferred Revenue Type"
-msgstr "Tipo de ingreso diferido"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_route_ids
@@ -1425,6 +1483,10 @@ msgstr "Cuadro de diálogo para generar perídos de cupo"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_display_name
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_display_name
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_display_name
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_display_name
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_aggregatevalue_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_display_name
@@ -1438,6 +1500,8 @@ msgstr "Nombre a mostrar"
 #. module: base_wua_quota_management
 #: selection:wua.cession,cession_state:0
 #: selection:wua.individualinput.massive.assignment,state:0
+#: selection:wua.massive.assignments,state:0
+#: selection:wua.massive.cancel.balances,state:0
 #: selection:wua.quotaperiod,state:0
 msgid "Draft"
 msgstr "Borrador"
@@ -1450,7 +1514,7 @@ msgstr "Coeficiente de ajuste"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_form
 msgid "Effective Value (m³)"
-msgstr "Valor efectivo (m3)"
+msgstr "Valor efectivo (m³)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_effective_volume
@@ -1471,7 +1535,7 @@ msgstr "Pasado - Pendiente"
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_end_date
 msgid "End Date"
-msgstr "Fecha finalización"
+msgstr "Fecha Finalización"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_massive_cancelnegativebalances_view_form
@@ -1507,12 +1571,12 @@ msgstr "Elemento (plantilla producto)"
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Elemento (Campaña)"
+msgstr "Elemento (campaña)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_gravconsumption
 msgid "Entity (gravity consumption)"
-msgstr "Elemento (consumo de gravedad)"
+msgstr "Elemento (consumo gravedad)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_hydraulicsector
@@ -1556,6 +1620,8 @@ msgid "Error when updating records (\"of_active_agriculturalseason\" field)."
 msgstr "Error al actualizar la base de datos (campo \"of_active_agriculturalseason\")."
 
 #. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:464
+#: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:456
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:768
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:788
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:962
@@ -1608,19 +1674,23 @@ msgid "Exceeded quota. It is not possible to create this watering request. AVAIL
 msgstr "Cupo sobrepasado. No se permite dar de alta la solicitud de riego. CUPO DISPONIBLE:"
 
 #. module: base_wua_quota_management
-#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignmnet_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_form
 msgid "Execute"
 msgstr "Ejecutar"
 
 #. module: base_wua_quota_management
 #: selection:wua.individualinput.massive.assignment,state:0
+#: selection:wua.massive.assignments,state:0
+#: selection:wua.massive.cancel.balances,state:0
 msgid "Executed"
 msgstr "Ejecutado"
 
 #. module: base_wua_quota_management
 #: sql_constraint:wua.individualinput.category:0
 msgid "Existing Category."
-msgstr "Existing Category."
+msgstr "La categoría ya existe."
 
 #. module: base_wua_quota_management
 #: sql_constraint:wua.hydricmovement:0
@@ -1642,6 +1712,16 @@ msgstr "Lote de asignaciones individuales ya existente."
 #: sql_constraint:wua.individualinput:0
 msgid "Existing Individual Input."
 msgstr "Asignación individual preexistente."
+
+#. module: base_wua_quota_management
+#: sql_constraint:wua.massive.assignments:0
+msgid "Existing Massive Assignment."
+msgstr "Ya existe la asignación."
+
+#. module: base_wua_quota_management
+#: sql_constraint:wua.massive.cancel.balances:0
+msgid "Existing Massive Cancel Balance."
+msgstr "Ya existe la cancelación masiva."
 
 #. module: base_wua_quota_management
 #: sql_constraint:wua.quotaperiod:0
@@ -1785,6 +1865,8 @@ msgstr "Riego por gravedad"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_line_parcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_search
@@ -1869,8 +1951,12 @@ msgstr "Consumos hídricos"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_id
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_id_15973
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_id_17863
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_aggregatevalue_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_id
@@ -1895,7 +1981,7 @@ msgid "INDIVIDUAL INPUT"
 msgstr "ASIGNACIÓN INDIVIDUAL"
 
 #. module: base_wua_quota_management
-#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignmnet_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_form
 msgid "INDIVIDUAL INPUT MASSIVE ASSIGNMENT"
 msgstr "LOTE DE ASIGNACIONES INDIVIDUALES"
 
@@ -2028,9 +2114,13 @@ msgid "Individual Input Massive Assignment Line"
 msgstr "Línea de lote de asignaciones individuales"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:375
+#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:376
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:268
+#: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:269
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_individualinput_action
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_individualinput_ids
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_individualinput_ids
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_individualinput_ids
 #: model:ir.ui.menu,name:base_wua_quota_management.individualinput_menu
 #, python-format
 msgid "Individual Inputs"
@@ -2082,7 +2172,7 @@ msgstr "Infraestructura: Riego a presión y por gravedad"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_tree
 msgid "Initial Assignment (m³)"
-msgstr "Asignación inicial (m3)"
+msgstr "Asignación inicial (m³)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_initial_date
@@ -2264,13 +2354,25 @@ msgid "It is not possible to break a link with a superproduct if this superprodu
 msgstr "No se permite desvincular un producto de su supraproducto si ese supraproducto ya tiene consumos hídricos."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_individualinput.py:481
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:493
 #, python-format
 msgid "It is not possible to delete an individual input, associated with a massive assignment, cancel the assignment instead."
 msgstr "No es posible eliminar una asignación individual asociada a un lote de asignaciones, cancélelo en su lugar."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_individualinput.py:491
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:499
+#, python-format
+msgid "It is not possible to delete an individual input, associated with a massive cancel balance, cancel the cancellation instead."
+msgstr "No es posible eliminar una entrada individual, asociada con un saldo de cancelación masiva; en su lugar, cancele la cancelación."
+
+#. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:506
+#, python-format
+msgid "It is not possible to delete an individual input, associated with a massive controlled assignment, cancel the massive assignment instead."
+msgstr "No es posible eliminar una entrada individual asociada a una asignación masiva controlada, sino cancelar la asignación masiva."
+
+#. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:516
 #, python-format
 msgid "It is not possible to delete this individual input, because the quota has some hydric consumptions after the individual input."
 msgstr "No es posible suprimir esta asignación individual, ya que su cupo ya tiene consumos hídricos posteriores."
@@ -2327,6 +2429,10 @@ msgstr "No es posible suprimir la categoría 'SIN VARIACIÓN'."
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line___last_update
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments___last_update
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel___last_update
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances___last_update
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_aggregatevalue___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod___last_update
@@ -2352,6 +2458,10 @@ msgstr "Última modificación en"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_write_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_write_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_write_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_write_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_write_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_write_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_write_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_write_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_write_uid
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_write_uid
@@ -2376,6 +2486,10 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_write_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_write_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_write_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_write_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_write_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_write_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_write_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_write_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_write_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_write_date
@@ -2383,7 +2497,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotas_configuration_write_date
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_write_date
 msgid "Last Updated on"
-msgstr "Última actualización en"
+msgstr "Última actualización el"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_line_parcel_view_search
@@ -2398,7 +2512,7 @@ msgstr "Parcela arrendada"
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_quotaperiodline_id
 msgid "Line"
-msgstr "Linea"
+msgstr "Línea"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_assignment_line_ids
@@ -2422,6 +2536,16 @@ msgid "Logistical Units"
 msgstr "Unidades de logística"
 
 #. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
+msgid "MASSIVE ASSIGNMENT"
+msgstr "ASIGNACIÓN MASIVA"
+
+#. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_form
+msgid "MASSIVE CANCEL BALANCES"
+msgstr "CANCELACIÓN MASIVA DE SALDOS"
+
+#. module: base_wua_quota_management
 #: model:ir.ui.menu,name:base_wua_quota_management.management_menu
 msgid "Management"
 msgstr "Administración"
@@ -2437,8 +2561,29 @@ msgstr "Establecer la cantidad en el pedido de forma manual:  La factura se crea
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_assignment_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_controlled_assignment_id
 msgid "Massive Assignment"
 msgstr "Lote Asignaciones"
+
+#. module: base_wua_quota_management
+#: model:ir.model,name:base_wua_quota_management.model_wua_massive_assignments
+msgid "Massive Assignments"
+msgstr "Asignaciones masivas"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_name
+msgid "Massive Cancel Balance"
+msgstr "Cancelación masiva de saldo"
+
+#. module: base_wua_quota_management
+#: model:ir.model,name:base_wua_quota_management.model_wua_massive_cancel_balances
+msgid "Massive Cancel Balances"
+msgstr "Cancelación masiva de saldo"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_name
+msgid "Massive Transfer"
+msgstr "Transferencia masiva"
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:614
@@ -2467,7 +2612,19 @@ msgstr "Compensación global de saldos"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_massive_cancelnegativebalances_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_massive_compensatorytransfers_view_form
 msgid "Massive transfers of balance (to compensate)"
-msgstr "Massive transfers of balance (to compensate)"
+msgstr "Transferencia masiva de saldo (para compensar)"
+
+#. module: base_wua_quota_management
+#: model:ir.actions.act_window,name:base_wua_quota_management.wua_massive_controlled_assignments_action
+#: model:ir.ui.menu,name:base_wua_quota_management.massive_controlled_assignments_menu
+msgid "Massives Assignments"
+msgstr "Asignaciones masivas"
+
+#. module: base_wua_quota_management
+#: model:ir.actions.act_window,name:base_wua_quota_management.wua_massive_cancel_balances_action
+#: model:ir.ui.menu,name:base_wua_quota_management.massive_cancel_balances_menu
+msgid "Massives Cancel Balances"
+msgstr "Cancelaciones masivas de saldos"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_image_medium
@@ -2513,6 +2670,7 @@ msgstr "Nº supraproductos"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_name
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_partner_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_name
 msgid "Name"
 msgstr "Nombre"
@@ -2564,14 +2722,18 @@ msgstr "No seleccionado"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_notes
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_notes
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_notes
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_notes
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_notes
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_notes
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_notes
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_notes
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_agriculturalseason_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_cession_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_category_view_form
-#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignmnet_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_superproduct_view_form
@@ -2663,12 +2825,15 @@ msgstr "CONSUMOS"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_of_active_agriculturalseason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_of_active_agriculturalseason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_of_active_agriculturalseason
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_of_active_agriculturalseason
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_of_active_agriculturalseason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_of_active_agriculturalseason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_of_active_agriculturalseason
 msgid "Of active ag.season"
 msgstr "De campaña activa"
 
 #. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_area_official
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_area_official
 msgid "Official Area"
 msgstr "Área declarada"
@@ -2740,6 +2905,7 @@ msgstr "Parámetros"
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:537
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_parcel_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_parcel_id
 #, python-format
 msgid "Parcel"
 msgstr "Parcela"
@@ -2760,6 +2926,11 @@ msgid "Parcel Tags"
 msgstr "Etiquetas de parcelas"
 
 #. module: base_wua_quota_management
+#: model:ir.model,name:base_wua_quota_management.model_wua_massive_assignments_parcel
+msgid "Parcel of Massive Assignment"
+msgstr "Parcela de una asignación masiva"
+
+#. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_quotaperiod_line_parcel
 msgid "Parcel of a quota-period line"
 msgstr "Parcela de línea de período de cupo"
@@ -2770,12 +2941,21 @@ msgid "Parcel present in the current quota period"
 msgstr "Parcela presente en el período de cupo vigente"
 
 #. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:289
 #: code:addons/base_wua_quota_management/models/wua_quota.py:818
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1364
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_assignment_parcel_ids
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_selected_assignment_parcel_ids
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_line_view_tree
 #, python-format
 msgid "Parcels"
 msgstr "Parcelas"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_selected_parcels
+msgid "Parcels Already Selected"
+msgstr "Parcela ya seleccionada"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_quotaperiodlineparcel_ids
@@ -2785,7 +2965,7 @@ msgstr "Parcelas de línea de período de cupo"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_waterconnection_reading_report_document
 msgid "Partner"
-msgstr "Empresa"
+msgstr "Socio"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_partner_code
@@ -2828,9 +3008,28 @@ msgid "Partner link of a parcel"
 msgstr "Enlace a socio de una parcela"
 
 #. module: base_wua_quota_management
+#: model:ir.model,name:base_wua_quota_management.model_wua_massive_cancel_balances_partner
+msgid "Partner of Massive Cancel Balances Partner"
+msgstr "Socio de una cancelación masiva de saldos de socio"
+
+#. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_res_partner
 msgid "Partner of a WUA"
 msgstr "Socio"
+
+#. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:290
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_cancel_partner_ids
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_selected_cancel_partner_ids
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_form
+#, python-format
+msgid "Partners"
+msgstr "Socios"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_selected_partners
+msgid "Partners Already Selected"
+msgstr "Socios ya seleccionados"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_pos_superproduct
@@ -2838,7 +3037,7 @@ msgstr "Socio"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_pos
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_pos_str
 msgid "Position"
-msgstr "Posició"
+msgstr "Posición"
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:509
@@ -2945,6 +3144,8 @@ msgstr "Productos"
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_individualinputs_provision
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_provision
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_provision
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_provision
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_provision
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_provision
 #: model:ir.ui.view,arch_db:base_wua_quota_management.view_partner_form
@@ -3051,6 +3252,8 @@ msgstr "Operaciones de cupos"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_quotaperiod_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_quotaperiod_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_quotaperiod_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_quotaperiod_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_quotaperiod_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_aggregatevalue_quotaperiod_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_name_quotaperiod
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_quotaperiod_id
@@ -3061,6 +3264,8 @@ msgstr "Operaciones de cupos"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_search
 #, python-format
 msgid "Quota Period"
@@ -3222,7 +3427,7 @@ msgstr "Período de cupo/Supraproducto"
 #: code:addons/base_wua_quota_management/models/wua_agriculturalseason.py:180
 #: code:addons/base_wua_quota_management/models/wua_cession.py:752
 #: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:450
-#: code:addons/base_wua_quota_management/models/wua_individualinput.py:516
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:541
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:425
 #: code:addons/base_wua_quota_management/models/wua_superproduct.py:276
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_quota_action
@@ -3325,6 +3530,16 @@ msgid "Remove from quota period"
 msgstr "Quitar del período de cupo"
 
 #. module: base_wua_quota_management
+#: model:ir.actions.server,name:base_wua_quota_management.wua_remove_parcel_from_massive_assignment
+msgid "Remove parcel from massive assignment"
+msgstr "Quitar parcela/s de la asignación masiva"
+
+#. module: base_wua_quota_management
+#: model:ir.actions.server,name:base_wua_quota_management.wua_remove_partner_from_massive_cancel
+msgid "Remove partner from massive cancel"
+msgstr "Quitar socio/s de la cancelación masiva"
+
+#. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_nbr_reordering_rules
 msgid "Reordering Rules"
 msgstr "Reglas de reabastecimiento"
@@ -3370,11 +3585,23 @@ msgid "Select"
 msgstr "Seleccionar"
 
 #. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
+msgid "Select Parcels"
+msgstr "Seleccionar parcelas"
+
+#. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_form
+msgid "Select Partners"
+msgstr "Seleccionar socios"
+
+#. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_categ_id
 msgid "Select category for the current product"
 msgstr "Seleccione la categoría para el producto actual."
 
 #. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_selected
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_partner_selected
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_selected
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_line_parcel_view_search
 msgid "Selected"
@@ -3492,6 +3719,8 @@ msgstr "Precio estándar: El precio de coste se actualiza manualmente al final d
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_state
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_state
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_state
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_state
 msgid "State"
 msgstr "Estado"
@@ -3514,7 +3743,7 @@ msgstr "Estado: Borrador"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_search
 msgid "State: Generated"
-msgstr "Estado: Generado"
+msgstr "Estado: Generada"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_property_stock_account_input
@@ -3539,6 +3768,8 @@ msgstr "Cuenta de salida de existencias"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_superproduct_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_superproduct_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_superproduct_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_superproduct_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_superproduct_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_superproduct_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_superproduct_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_superproduct_id
@@ -3547,6 +3778,8 @@ msgstr "Cuenta de salida de existencias"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_massive_assignment_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_individualinput_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_search
+#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_cancel_balances_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_search
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_waterconnection_reading_report_document
 #, python-format
@@ -3619,9 +3852,11 @@ msgstr "El saldo del socio elegido es negativo o cero."
 #. module: base_wua_quota_management
 #: sql_constraint:wua.individualinput.category:0
 msgid "The category code must be a positive value."
-msgstr "The category code must be a positive value."
+msgstr "El código de la categoría debe ser un valor positivo."
 
 #. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:482
+#: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:414
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_cancelnegativebalances.py:124
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_compensatorytransfers.py:155
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:209
@@ -3630,7 +3865,7 @@ msgid "The chosen date/time is outside the quota period."
 msgstr "La fecha/hora elegida está fuera del período de cupo."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_individualinput.py:409
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:421
 #, python-format
 msgid "The chosen partner does not have a quota yet, and it is not possible to create a quota with a negative initial volume."
 msgstr "El socio elegido todavía no tiene cupo y no es posible crear un cupo con un valor inicial negativo."
@@ -3645,12 +3880,14 @@ msgstr "El supraproducto hídrico elegido no figura en el período de cupo."
 #. module: base_wua_quota_management
 #: sql_constraint:wua.individualinput.category:0
 msgid "The effective factor must be greater than 0 and less than or equal to 1."
-msgstr "The effective factor must be greater than 0 and less than or equal to 1."
+msgstr "El factor efectivo debe ser un valor mayor que 0 y menor o igual a 1."
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_cession.py:493
-#: code:addons/base_wua_quota_management/models/wua_individualinput.py:361
-#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:261
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:373
+#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:262
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:435
+#: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:395
 #, python-format
 msgid "The instant of this input is not within the chosen quota period."
 msgstr "La fecha/hora de ocurrencia de esta entrada no está dentro del período de cupo elegido."
@@ -3680,8 +3917,10 @@ msgstr "La dotación extra no puede ser cero."
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_cession.py:459
-#: code:addons/base_wua_quota_management/models/wua_individualinput.py:327
-#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:227
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:339
+#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:228
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:401
+#: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:361
 #, python-format
 msgid "The quota period is not within the chosen agricultural season."
 msgstr "El período de cupo no forma parte de la campaña escogida."
@@ -3705,8 +3944,10 @@ msgstr "La referencia asociada al movimiento hídrico no existe"
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_cession.py:455
-#: code:addons/base_wua_quota_management/models/wua_individualinput.py:323
-#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:223
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:335
+#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:224
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:397
+#: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:357
 #, python-format
 msgid "The state of quota period must be 'generated'."
 msgstr "El período de cupo debe estar en el estado 'generado'."
@@ -3718,8 +3959,10 @@ msgstr "El código de supraproducto ha de ser un valor positivo."
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_cession.py:473
-#: code:addons/base_wua_quota_management/models/wua_individualinput.py:341
-#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:241
+#: code:addons/base_wua_quota_management/models/wua_individualinput.py:353
+#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:242
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:415
+#: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:375
 #, python-format
 msgid "The superproduct is not enrolled in the chosen quota period."
 msgstr "El supraproducto no ha sido inscrito en el período de cupo elegido."
@@ -3739,7 +3982,7 @@ msgstr "El cedente y el cesionario no pueden ser el mismo socio."
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_volume
 msgid "The volume in m3."
-msgstr "El volumen en m3."
+msgstr "El volumen en m³."
 
 #. module: base_wua_quota_management
 #: sql_constraint:wua.hydricmovement:0
@@ -3763,7 +4006,7 @@ msgid "Then volume of cession must be a positive value."
 msgstr "El volumen de la cesión debe ser un valor positivo."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:300
+#: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:301
 #, python-format
 msgid "There must be at least one line."
 msgstr "Debe haber al menos una línea de asignación."
@@ -3847,6 +4090,11 @@ msgid "Total Area"
 msgstr "Área total"
 
 #. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_total_assignment_volume
+msgid "Total Assignment Volumen (m³)"
+msgstr "Volumen total asignación (m³)"
+
+#. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_total_effective_volume
 msgid "Total Effective Volume (m³)"
 msgstr "Volumen total efectivo (m³)"
@@ -3898,6 +4146,7 @@ msgstr "Cupo cedente"
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:373
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_type
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_cancel_type
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
 #, python-format
 msgid "Type"
@@ -3983,7 +4232,7 @@ msgstr "Valoración"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_tree
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_thechnical_hydricmovement_view_tree
 msgid "Value (m³)"
-msgstr "Valor (m3)"
+msgstr "Valor (m³)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_individualinput_category_effective_factor
@@ -4153,18 +4402,6 @@ msgid "Watering Request"
 msgstr "Solicitud de riego"
 
 #. module: base_wua_quota_management
-#: model:product.template,name:base_wua_quota_management.superproduct_irrigation_reports_product_template
-#: model:wua.superproduct,name:base_wua_quota_management.superproduct_irrigation_reports
-msgid "Waters of irrigation reports"
-msgstr "Agua IDAM Torrevieja"
-
-#. module: base_wua_quota_management
-#: model:product.template,name:base_wua_quota_management.superproduct_pressurized_irrigation_product_template
-#: model:wua.superproduct,name:base_wua_quota_management.superproduct_pressurized_irrigation
-msgid "Waters of pressurized irrigation"
-msgstr "Waters of pressurized irrigation"
-
-#. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_weight
 msgid "Weight"
 msgstr "Peso"
@@ -4232,6 +4469,8 @@ msgid "days"
 msgstr "días"
 
 #. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:375
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:562
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1323
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:69
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:104

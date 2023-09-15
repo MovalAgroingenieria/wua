@@ -119,6 +119,7 @@ class WuaIndividualinputMassiveAssignment(models.Model):
 
     reason = fields.Char(
         string='Default Reason',
+        default='',
         size=MAX_SIZE_REASON)
 
     event_time = fields.Datetime(
@@ -402,8 +403,7 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
         size=MAX_SIZE_NAME,
         store=True,
         index=True,
-        compute='_compute_name'
-    )
+        compute='_compute_name',)
 
     volume = fields.Float(
         string='Volume (m³)',
@@ -436,6 +436,7 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
 
     reason = fields.Char(
         string='Reason',
+        default='',
         size=MAX_SIZE_REASON)
 
     _sql_constraints = [
@@ -453,11 +454,12 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
         for record in self:
             name = ''
             if record.partner_id and record.assignment_id:
+                reason = record.reason or ""
                 name = record.assignment_id.event_time + '-' + str(
                     record.assignment_id.superproduct_id.superproduct_code).\
-                    zfill(self.MAX_SIZE_SUPERPRODUCT_CODE) + '-' + \
+                    zfill(self.MAX_SIZE_SUPERPRODUCT_CODE) + u'-' + \
                     str(record.partner_id.partner_code).zfill(
-                    self.MAX_SIZE_PARTNER_CODE) + '-' + record.reason
+                    self.MAX_SIZE_PARTNER_CODE) + u'-' + reason
                 record.name = name
 
     @api.depends('volume', 'category_id', 'category_id.effective_factor')

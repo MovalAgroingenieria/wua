@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_massive_cancel_balances_view_form" model="ir.ui.view">
+        <field name="name">Massive Cancel Balances (form view)</field>
+        <field name="model">wua.massive.cancel.balances</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="id" invisible="1"/>
+                <field name="state" invisible="1"/>
+                <field name="selected_partners" invisible="1"/>
+                <header>
+                    <button name="execute_massive_cancel"
+                            type="object" string="Execute"
+                            attrs="{'invisible':['|', ('id','=',False), ('state', '=', '01_executed')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <button name="cancel_massive_cancel"
+                            type="object" string="Cancel"
+                            attrs="{'invisible':['|', ('id','=',False), ('state', '=', '00_draft')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="00_draft,01_executed"/>
+                </header>
+                <sheet>
+                    <div class="panel-body text-center" style="background:#ededed;border-radius:4px;border-color:#696969;border-width:1px;border-style:solid;padding-top:1px;padding-bottom:8px;margin-bottom:5px"><h2>MASSIVE CANCEL BALANCES</h2></div>
+                    <div style="text-align:right;margin-right: 40px;margin-top: 15px;" attrs="{'invisible':[('state','!=','01_executed')]}" class="oe_button_box" name="button_box">
+                        <button name="action_show_individualinputs"
+                                type="object" class="oe_stat_button"
+                                icon="fa-list-ol">
+
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Individual</span>
+                                <span class="o_stat_text">Inputs</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group name="master_data" col="5">
+                        <group name="master_data_left"
+                               colspan="3" col="4">
+                            <field name="agriculturalseason_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('state','=','01_executed')]}"/>
+                            <field name="quotaperiod_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('state','=','01_executed')]}"/>
+                            <field name="superproduct_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('state','=','01_executed')]}"/>
+                            <field name="cancel_type" colspan="4"
+                                   attrs="{'readonly':['|', ('state','=','01_executed'),
+                                                            ('selected_partners','=',True)]}"/>
+                            <field name="category_id" colspan="4"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('state','=','01_executed')]}"/>
+                            <field name="event_time" colspan="4"
+                                   attrs="{'readonly':[('state','=','01_executed')]}"/>
+                            <field name="reason" colspan="4"/>
+                        </group>
+                        <group name="master_data_right" colspan="2" col="4">
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="cancel_partners_page" string="Partners">
+                                <header>
+                                    <button name="action_select_partners" type="object" class="btn btn-link"
+                                        attrs="{'invisible': [('state','=','01_executed')]}"
+                                        string="Select Partners" icon="fa-check"
+                                        style="margin-top:2px; margin-bottom:2px;"/>
+                                    <!--
+                                    <button name="action_reselect_partners" type="object" class="btn btn-link"
+                                        attrs="{'invisible': [('state','=','01_executed')]}"
+                                        string="Reselect Partners" icon="fa-refresh"
+                                        style="margin-top:2px; margin-bottom:2px;"/>
+                                    -->
+                                </header>
+                                <field name="selected_cancel_partner_ids" attrs="{'readonly': 1}" options="{'no_create': True}"
+                                       context="{'tree_view_ref': 'base_wua_quota_management.wua_edit_selected_cancel_partner_view_tree'}"/>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base_wua.group_wua_manager"/>
+                    <field name="message_ids"
+                           widget="mail_thread" groups="base_wua.group_wua_manager"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_massive_cancel_balances_view_tree" model="ir.ui.view">
+        <field name="name">Massive Cancel Balances (tree view)</field>
+        <field name="model">wua.massive.cancel.balances</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_massive_cancel_balances_view_tree"
+                  default_order="event_time desc, name">
+                <field name="superproduct_id"/>
+                <field name="quotaperiod_id"
+                       widget="many2one_unclickable"/>
+                <field name="event_time"
+                       string="Date" widget="date"/>
+                <field name="category_id"/>
+                <field name="reason"/>
+                <field name='state'/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_massive_cancel_balances_view_search" model="ir.ui.view">
+        <field name="name">Massive Cancel Balances (search view)</field>
+        <field name="model">wua.massive.cancel.balances</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reason"/>
+                <filter string="Active Agricultural Season" name="active_agriculturalseason"
+                        domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season" name="grouped_agriculturalseason"
+                            context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Quota Period" name="grouped_quotaperiod"
+                            context="{'group_by':'quotaperiod_id'}"/>
+                    <filter string="Date" name="grouped_event_time"
+                            context="{'group_by':'event_time'}"/>
+                    <filter string="Superproduct" name="grouped_superproduct"
+                            context="{'group_by':'superproduct_id'}"/>
+                    <filter string="Category" name="grouped_category"
+                            context="{'group_by':'category_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_massive_cancel_balances_action" model="ir.actions.act_window">
+        <field name="name">Massives Cancel Balances</field>
+        <field name="res_model">wua.massive.cancel.balances</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_massive_cancel_balances_view_tree')}),
+                (0, 0, {'view_mode': 'form',
+                        'view_id': ref('wua_massive_cancel_balances_view_form')})]"/>
+        <field name="search_view_id" ref="wua_massive_cancel_balances_view_search"/>
+        <field name="context">
+          {'compressed_agriculturalseason': True,
+           'compressed_quotaperiod': True,
+           'search_default_active_agriculturalseason': True,}
+        </field>
+    </record>
+
+    <menuitem id="massive_cancel_balances_menu"
+              name="Massives Cancel Balances"
+              parent="management_menu"
+              sequence="8"
+              action="wua_massive_cancel_balances_action"/>
+
+    <record id="wua_edit_selected_cancel_partner_view_tree" model="ir.ui.view">
+        <field name="name">Selected Cancel Partners</field>
+        <field name="model">wua.massive.cancel.balances.partner</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_edit_selected_cancel_partner_view_tree"
+                create="false" edit="false" delete="false" export="false" colors="red:balance&lt;0">
+                <field name="selected" invisible="1"/>
+                <field name="partner_id"/>
+                <field name="balance"/>
+                <button type="object" name="toggle_selected" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible': [('selected','=',False)]}"/>
+                <button type="object" name="toggle_selected" class="oe_read_only"
+                        icon="fa-times"
+                        attrs="{'invisible': [('selected','=',True)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_edit_selected_cancel_partner_view_search" model="ir.ui.view">
+        <field name="name">Selected Cancel Partners (search)</field>
+        <field name="model">wua.massive.cancel.balances.partner</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="balance"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_partner_to_massive_cancel" model="ir.actions.server">
+        <field name="name">Add partner to massive cancel</field>
+        <field name="model_id" ref="model_wua_massive_cancel_balances_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.massive.cancel.balances.partner'].browse(context['active_ids']).add_to_massive_cancel()
+        </field>
+    </record>
+
+    <record id="wua_action_add_partner_to_massive_cancel" model="ir.values">
+        <field name="name">Add partner to massive cancel</field>
+        <field name="model">wua.massive.cancel.balances.partner</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_partner_to_massive_cancel'))"/>
+    </record>
+
+    <record id="wua_remove_partner_from_massive_cancel" model="ir.actions.server">
+        <field name="name">Remove partner from massive cancel</field>
+        <field name="model_id" ref="model_wua_massive_cancel_balances_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.massive.cancel.balances.partner'].browse(context['active_ids']).remove_from_massive_cancel()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_partner_from_massive_cancel" model="ir.values">
+        <field name="name">Remove partner from massive cancel</field>
+        <field name="model">wua.massive.cancel.balances.partner</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_partner_from_massive_cancel'))"/>
+    </record>
+
+</odoo>
