@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_airvalve_type_view_form" model="ir.ui.view">
+        <field name="name">Airvalve Types (form view)</field>
+        <field name="model">wua.airvalve.type</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_id">
+                            <field name="name"/>
+                        </group>
+                        <group name="master_data_desc">
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_airvalve_type_view_tree" model="ir.ui.view">
+        <field name="name">Airvalve Types (tree view)</field>
+        <field name="model">wua.airvalve.type</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_airvalve_type_view_tree">
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_airvalve_type_view_search" model="ir.ui.view">
+        <field name="name">Airvalve Types (search view)</field>
+        <field name="model">wua.airvalve.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_airvalve_type_action" model="ir.actions.act_window">
+        <field name="name">Airvalve Types</field>
+        <field name="res_model">wua.airvalve.type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_airvalve_type_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_airvalve_type_view_search"/>
+    </record>
+
+    <menuitem id="wua_airvalve_type_menu"
+              name="Airvalve Types"
+              parent="base_wua_infrastructure_configuration_menu"
+              action="wua_airvalve_type_action"
+              sequence="3"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

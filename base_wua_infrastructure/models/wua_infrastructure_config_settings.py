@@ -27,6 +27,21 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         size=20,
         help='Name of irrigation-shed param in the GIS viewer url')
 
+    url_gis_viewer_valve_param = fields.Char(
+        string='Param for valve',
+        size=20,
+        help='Name of valve param in the GIS viewer url')
+
+    url_gis_viewer_airvalve_param = fields.Char(
+        string='Param for airvalve',
+        size=20,
+        help='Name of airvalve param in the GIS viewer url')
+
+    url_gis_viewer_drainagevalve_param = fields.Char(
+        string='Param for drainagevalve',
+        size=20,
+        help='Name of drainagevalve param in the GIS viewer url')
+
     url_gis_viewer_waterconnection_param = fields.Char(
         string='Param for waterconnection',
         size=20,
@@ -49,6 +64,15 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_irrigationshed_param',
                            self.url_gis_viewer_irrigationshed_param)
+        values.set_default('wua.infrastructure.configuration',
+                           'url_gis_viewer_valve_param',
+                           self.url_gis_viewer_valve_param)
+        values.set_default('wua.infrastructure.configuration',
+                           'url_gis_viewer_airvalve_param',
+                           self.url_gis_viewer_airvalve_param)
+        values.set_default('wua.infrastructure.configuration',
+                           'url_gis_viewer_drainagevalve_param',
+                           self.url_gis_viewer_drainagevalve_param)
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_irrigationditch_param',
                            self.url_gis_viewer_irrigationditch_param)

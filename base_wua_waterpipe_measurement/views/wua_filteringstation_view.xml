@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_filteringstation_view_form" model="ir.ui.view">
+        <field name="name">Filteringstations (form view)</field>
+        <field name="model">wua.filteringstation</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_filteringstation_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="before">
+                <field name="waterpipe_id"/>
+            </xpath>
+            <xpath expr="//field[@name='hydraulicsector_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('waterpipe_id', '!=', False)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_filteringstation_view_tree" model="ir.ui.view">
+        <field name="name">Filteringstations (tree view)</field>
+        <field name="model">wua.filteringstation</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_filteringstation_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <field name="waterpipe_id" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_filteringstation_view_search" model="ir.ui.view">
+        <field name="name">Filteringstations (search view)</field>
+        <field name="model">wua.filteringstation</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_filteringstation_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='hydraulic_sector']" position="after">
+                <filter string="Waterpipe"
+                        name="waterpipe"
+                        context="{'group_by':'waterpipe_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-09 10:13+0000\n"
-"PO-Revision-Date: 2022-09-09 10:13+0000\n"
+"POT-Creation-Date: 2023-09-07 15:37+0000\n"
+"PO-Revision-Date: 2023-09-07 15:37+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,10 +16,21 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_active
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
 #: selection:wua.flowmeter,state:0
 msgid "Active"
 msgstr "Activo"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_search
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_form
+msgid "Are you sure you want to toggle visibility?"
+msgstr "¿Está seguro de que quiere modificar la visibilidad?"
 
 #. module: base_wua_infrastructure_primary
 #: selection:wua.flowmeter,flow_direction:0
@@ -27,7 +38,7 @@ msgid "Bidirectional"
 msgstr "Bidireccional"
 
 #. module: base_wua_infrastructure_primary
-#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:182
+#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:181
 #, python-format
 msgid "Blanks are not allowed in the name of the flowmeter."
 msgstr "No se permiten espacios en blanco en el nombre del caudalímetro."
@@ -59,12 +70,16 @@ msgid "Connected to intake: Yes"
 msgstr "Conectado a captación: Sí"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_create_date
 msgid "Created on"
@@ -82,10 +97,12 @@ msgid "Discarted"
 msgstr "Descartado"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_display_name
 msgid "Display Name"
-msgstr "Nombre mostrado"
+msgstr "Nombre a mostrar"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
@@ -100,6 +117,16 @@ msgid "Electromagnetic"
 msgstr "Electromagnético"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model,name:base_wua_infrastructure_primary.model_wua_filteringstation_type
+msgid "Entity (Filteringstation Type)"
+msgstr "Elemento (Tipo de Filtro)"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model,name:base_wua_infrastructure_primary.model_wua_filteringstation
+msgid "Entity (filteringstation)"
+msgstr "Elemento (filtro)"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model,name:base_wua_infrastructure_primary.model_wua_flowmeter
 msgid "Entity (flowmeter)"
 msgstr "Elemento (caudalímetro)"
@@ -108,6 +135,16 @@ msgstr "Elemento (caudalímetro)"
 #: model:ir.model,name:base_wua_infrastructure_primary.model_wua_intake
 msgid "Entity (intake)"
 msgstr "Elemento (captación)"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model,name:base_wua_infrastructure_primary.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Elemento (parcela)"
+
+#. module: base_wua_infrastructure_primary
+#: sql_constraint:wua.filteringstation:0
+msgid "Existing Identifier."
+msgstr "Identificador ya existente."
 
 #. module: base_wua_infrastructure_primary
 #: sql_constraint:wua.flowmeter:0
@@ -123,6 +160,36 @@ msgstr "El código para la captación ya existe."
 #: sql_constraint:wua.intake:0
 msgid "Existing intake."
 msgstr "La captación ya existe."
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_filteringstation_brand
+msgid "Filteringstation Brand"
+msgstr "Marca"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_filteringstation_model
+msgid "Filteringstation Model"
+msgstr "Modelo"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_name
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_search
+msgid "Filteringstation Type"
+msgstr "Tipo"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.actions.act_window,name:base_wua_infrastructure_primary.wua_filteringstation_type_action
+#: model:ir.ui.menu,name:base_wua_infrastructure_primary.wua_filteringstation_type_menu
+msgid "Filteringstation Types"
+msgstr "Tipos de filtro"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.actions.act_window,name:base_wua_infrastructure_primary.wua_filteringstation_action
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_filteringstation_ids
+#: model:ir.ui.menu,name:base_wua_infrastructure_primary.wua_filteringstation_menu
+msgid "Filteringstations"
+msgstr "Filtros"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_flowmeter_id
@@ -172,18 +239,26 @@ msgid "GIS Intake"
 msgstr "Captación GIS"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_gis_viewer_link
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_gis_viewer_link
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_form
 msgid "GIS Viewer"
 msgstr "Visor GIS"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_tree
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_tree
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_tree
 msgid "GIS Viewer (zoom to point)"
 msgstr "Visor GIS (zoom al punto)"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_with_gis_filteringstation
+msgid "GIS filteringstation"
+msgstr "Filtros GIS"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.menu,name:base_wua_infrastructure_primary.base_wua_infrastructure_primary_menu
@@ -191,21 +266,36 @@ msgid "General Infrastructure"
 msgstr "Infraestructura general"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_search
 msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_hydraulicsector_id
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_search
+msgid "Hydraulic Sector"
+msgstr "Sector hidráulico"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_id_11759
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_id
 msgid "ID"
 msgstr "ID"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_name
 msgid "Identifier"
 msgstr "Identificador"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_filteringstation_active
+msgid "If the active field is set to False, it will allow you to hide the register without removing it. For see archived register, go to \"Search-Filters\" in tree view"
+msgstr "Si el campo activo está como falso, ello le permitirá ocultar el registro sin borrarlo. Para ver los registros archivados, ir a \"Buscar-Filtros\" en la vista árbol"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_connected_to_intake
@@ -257,18 +347,24 @@ msgid "Intakes related to the flow-meter"
 msgstr "Captaciones relacionadas con el caudalímetro"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_write_date
 msgid "Last Updated on"
@@ -281,6 +377,11 @@ msgid "Level Probe"
 msgstr "Sonda nivel"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_infrastructure_configuration_url_gis_viewer_filteringstation_param
+msgid "Name of filteringstation param in the GIS viewer url"
+msgstr "Nombre del parámetro filtro en la URL del visor GIS"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_infrastructure_configuration_url_gis_viewer_flowmeter_param
 msgid "Name of flow meter param in the GIS viewer url"
 msgstr "Nombre del parámetro caudalímetro en la URL del visor GIS"
@@ -291,13 +392,23 @@ msgid "Name of intake param in the GIS viewer url"
 msgstr "Nombre del parámetro captación en la URL del visor GIS"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_nominal_diameter
+msgid "Nominal Diameter (mm)"
+msgstr "Diámetro nominal (mm)"
+
+#. module: base_wua_infrastructure_primary
+#: sql_constraint:wua.filteringstation:0
 #: sql_constraint:wua.flowmeter:0
 msgid "Nominal water flow can not be negative."
 msgstr "El flujo de agua nominal no puede ser negativo."
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_notes
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_notes
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_notes
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_type_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_form
 msgid "Notes"
@@ -330,6 +441,11 @@ msgid "Outgoing flow"
 msgstr "Caudal saliente"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_infrastructure_configuration_url_gis_viewer_filteringstation_param
+msgid "Param for filteringstation"
+msgstr "Parámetro Filtro"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_infrastructure_configuration_url_gis_viewer_flowmeter_param
 msgid "Param for flow meter"
 msgstr "Parámetro para caudalímetro"
@@ -340,9 +456,9 @@ msgid "Param for intake"
 msgstr "Parámetro para captación"
 
 #. module: base_wua_infrastructure_primary
-#: model:ir.model,name:base_wua_infrastructure_primary.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcelas (integradas GIS)"
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_image
+msgid "Photo / Image"
+msgstr "Foto / Imagen"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_search
@@ -362,6 +478,12 @@ msgid "Stored"
 msgstr "Almacenado"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_technical_characteristics
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_form
+msgid "Technical Characteristics"
+msgstr "Características técnicas"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_1_def
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_bidirectional_flow_2_def
 msgid "The definition of the flow as it appears in the irrigation remote control."
@@ -376,6 +498,16 @@ msgstr "La dirección del flujo de agua."
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_name
 msgid "The name that identifies the flow-meter"
 msgstr "El nombre que identifica al caudalímetro"
+
+#. module: base_wua_infrastructure_primary
+#: sql_constraint:wua.filteringstation:0
+msgid "The nominal diameter can not be a negative value."
+msgstr "El diámetro nominal debe ser un valor positivo."
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_filteringstation_nominal_water_flow
+msgid "The nominal flow rate of filteringstation"
+msgstr "El cabal nominal del filtre"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_nominal_water_flow
@@ -426,6 +558,11 @@ msgid "Water Flow (m3/hour)"
 msgstr "Caudal (m³/hora)"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_nominal_water_flow
+msgid "Water Flow (m³/h)"
+msgstr "Cabal nominal (m³/h)"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_with_flowmeter
 msgid "With flowmeter"
 msgstr "Con caudalímetro"
@@ -445,4 +582,14 @@ msgstr "Con caudalímetro: Sí"
 #: selection:wua.flowmeter,type:0
 msgid "Woltmann"
 msgstr "Woltmann"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_gis_viewer_x
+msgid "X coordinate"
+msgstr "Coordenada X"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_gis_viewer_y
+msgid "Y coordinate"
+msgstr "Coordenada Y"
 

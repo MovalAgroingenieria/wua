@@ -15,6 +15,7 @@
     "data": [
         "views/wua_flowmeter_view.xml",
         "views/wua_intake_view.xml",
+        "views/wua_filteringstation_view.xml",
     ],
     "installable": True,
     "application": False,

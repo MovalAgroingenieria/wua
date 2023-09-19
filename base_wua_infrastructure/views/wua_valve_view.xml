@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_valve_view_form" model="ir.ui.view">
+        <field name="name">Valves (form view)</field>
+        <field name="model">wua.valve</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_valve" invisible="1"/>
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                confirm="Are you sure you want to toggle visibility?"
+                                icon="fa-archive"
+                                groups="base_wua.group_wua_user">
+                                <field name="active"
+                                 widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                        ['|',('gis_viewer_link','=',False),
+                                        ('with_gis_valve','=',False)]}"/>
+                    </div>
+                    <group name="master_data" col="9">
+                        <group name="master_data_image" colspan="3">
+                            <field name="image" widget="image" class="oe_img_259_160"/>
+                        </group>
+                        <group name="master_data_fields" colspan="6" col="4">
+                            <group name="master_data_fields_left" colspan="2">
+                                <field name="name"/>
+                                <field name="type_id"/>
+                                <field name="hydraulicsector_id"/>
+                                <field name="nominal_diameter"/>
+                                <field name="valve_brand"/>
+                                <field name="valve_model"/>
+                                <field name="serial_number"/>
+                            </group>
+                            <group name="master_data_fields_right" colspan="2">
+                                <field name="gis_viewer_x" readonly="1"/>
+                                <field name="gis_viewer_y" readonly="1"/>
+                            </group>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="technical_characteristics_page" string="Technical Characteristics">
+                                <field name="technical_characteristics"/>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_valve_view_tree" model="ir.ui.view">
+        <field name="name">Valves (tree view)</field>
+        <field name="model">wua.valve</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_infrastructure_valve_view_tree">
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_valve" invisible="1"/>
+                <field name="name"/>
+                <field name="type_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="nominal_diameter"/>
+                <field name="valve_brand"/>
+                <field name="valve_model"/>
+                <field name="serial_number"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_valve','=',False)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_valve_view_search" model="ir.ui.view">
+        <field name="name">Valves (search view)</field>
+        <field name="model">wua.valve</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="type_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="nominal_diameter"/>
+                <field name="valve_brand"/>
+                <field name="valve_model"/>
+                <field name="serial_number"/>
+                <filter string="Archived" name="inactive"
+                 domain="[('active','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Hydraulic Sector"
+                     name="hydraulic_sector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="valve Type"
+                     name="type_id"
+                     context="{'group_by':'type_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_valve_action" model="ir.actions.act_window">
+        <field name="name">Valves</field>
+        <field name="res_model">wua.valve</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_valve_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_valve_view_search"/>
+    </record>
+
+
+    <menuitem id="wua_valve_menu"
+              name="Valves"
+              parent="base_wua_infrastructure_pressurized_irrigation_menu"
+              action="wua_valve_action"
+              sequence="5"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

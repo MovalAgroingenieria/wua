@@ -24,6 +24,7 @@
         "views/wua_waterpipeconsumption_view.xml",
         "views/wua_waterpipeflowreading_view.xml",
         "views/wua_negative_flowreading_view.xml",
+        "views/wua_filteringstation_view.xml",
     ],
     "installable": True,
     "application": False,

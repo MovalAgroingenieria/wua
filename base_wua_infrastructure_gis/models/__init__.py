@@ -5,3 +5,6 @@
 from . import wua_irrigationshed
 from . import wua_irrigationditch
 from . import wua_waterconnection
+from . import wua_airvalve
+from . import wua_valve
+from . import wua_drainagevalve

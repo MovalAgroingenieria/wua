@@ -16,6 +16,9 @@
         "base_wua_gis", ],
     "data": [
         "views/wua_irrigationshed_view.xml",
+        "views/wua_airvalve_view.xml",
+        "views/wua_valve_view.xml",
+        "views/wua_drainagevalve_view.xml",
         "views/wua_irrigationditch_view.xml",
         "views/wua_waterconnection_view.xml"],
     "installable": True,
