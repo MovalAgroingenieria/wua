@@ -31,9 +31,10 @@ class WauSMSWizard(models.Model):
             default_template_id = self.env['ir.values'].get_default(
                 'wausms.configuration', 'default_quota_template_id')
         # Detect waterconnection module
-        waterconnection_module_installed = self.env['ir.module.module'].search(
-            [('name', '=', 'wua_wausms_waterconnection'),
-             ('state', '=', 'installed')])
+        waterconnection_module_installed = \
+            self.sudo().env['ir.module.module'].search(
+                [('name', '=', 'wua_wausms_waterconnection'),
+                 ('state', '=', 'installed')])
         if waterconnection_module_installed:
             if context.get("mode") == 'waterconnection':
                 default_template_id = self.env['ir.values'].get_default(
@@ -52,9 +53,10 @@ class WauSMSWizard(models.Model):
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
                         submenu=False):
         # Detect waterconnection module
-        waterconnection_module_installed = self.env['ir.module.module'].search(
-            [('name', '=', 'wua_wausms_waterconnection'),
-             ('state', '=', 'installed')])
+        waterconnection_module_installed = \
+            self.sudo().env['ir.module.module'].search(
+                [('name', '=', 'wua_wausms_waterconnection'),
+                 ('state', '=', 'installed')])
         context = self._context
         if context.get('mode') == 'partner':
             context_filter = "[('type', '=', 'partner')]"

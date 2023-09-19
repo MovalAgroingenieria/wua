@@ -31,7 +31,7 @@ class WauSMSWizard(models.Model):
             default_template_id = self.env['ir.values'].get_default(
                 'wausms.configuration', 'default_waterconnection_template_id')
         # Detect quota module
-        quota_module_installed = self.env['ir.module.module'].search(
+        quota_module_installed = self.sudo().env['ir.module.module'].search(
             [('name', '=', 'wua_wausms_quota'), ('state', '=', 'installed')])
         if quota_module_installed:
             if context.get("mode") == 'quota':
@@ -50,7 +50,7 @@ class WauSMSWizard(models.Model):
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
                         submenu=False):
         # Detect quota module
-        quota_module_installed = self.env['ir.module.module'].search(
+        quota_module_installed = self.sudo().env['ir.module.module'].search(
             [('name', '=', 'wua_wausms_quota'), ('state', '=', 'installed')])
         context = self._context
         if context.get('mode') == 'partner':
