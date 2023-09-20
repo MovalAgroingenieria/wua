@@ -531,6 +531,9 @@ class WuaCertificate(models.Model):
                 'document': encodestring(pdf),
                 'document_name': self.name + '.pdf'
                 })
+        if self.env['ir.values'].get_default(
+                'wua.configuration', 'with_letter'):
+            self._create_letters()
 
     @api.multi
     def action_print_certificate(self):
@@ -810,6 +813,19 @@ class WuaCertificate(models.Model):
                     except Exception:
                         pass
         return resp
+
+    @api.multi
+    def _create_letters(self):
+        model_res_letter = self.env['res.letter']
+        for record in self:
+            values = {
+                'name': record.name + ' (' +
+                record.certificatetype_id.name + ')',
+                'move': 'out',
+                'state': 'draft',
+                'recipient_partner_id': record.partner_id.id,
+            }
+            model_res_letter.create(values)
 
     # Hook
     def _allowed_signature(self, certificate):

@@ -55,6 +55,13 @@ class WuaConfiguration(models.TransientModel):
         help='Activate this parameter to use the intersected area on the '
              'certificates instead of the official area')
 
+    with_letter = fields.Boolean(
+        string='Automatically register an annotation in the output record',
+        default=False,
+        help='Activate this parameter to automatically register an annotation'
+             ' in the output record'
+    )
+
     @api.multi
     def set_default_values(self):
         super(WuaConfiguration, self).set_default_values()
@@ -83,3 +90,6 @@ class WuaConfiguration(models.TransientModel):
         values.set_default('wua.configuration',
                            'ip_remote_address',
                            self.ip_remote_address)
+        values.set_default('wua.configuration',
+                           'with_letter',
+                           self.with_letter)

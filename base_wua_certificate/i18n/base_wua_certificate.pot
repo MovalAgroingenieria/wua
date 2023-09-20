@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-22 08:05+0000\n"
-"PO-Revision-Date: 2023-05-22 08:05+0000\n"
+"POT-Creation-Date: 2023-09-20 14:19+0000\n"
+"PO-Revision-Date: 2023-09-20 14:19+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -66,7 +66,7 @@ msgstr ""
 
 #. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "<b><font style=\"font-size: 14px;\">{{ certificate.name_of_signer.upper() }}, SECRETARY OF {{ partner.company_id.name.upper() }}</font></b>"
+msgid "<b><font style=\"font-size: 14px;\">{{ certificate.name_of_signer.upper() }}, SECRETARIO DE LA {{ partner.company_id.name.upper() }}</font></b>"
 msgstr ""
 
 #. module: base_wua_certificate
@@ -221,7 +221,7 @@ msgstr ""
 
 #. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "<u><b><font style=\"font-size: 18px;\">CERTIFY:</font></b></u>"
+msgid "<u><b><font style=\"font-size: 18px;\">CERTIFICO:</font></b></u>"
 msgstr ""
 
 #. module: base_wua_certificate
@@ -237,7 +237,7 @@ msgid "A certificate manger can only edit their own certificate types."
 msgstr ""
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:551
+#: code:addons/base_wua_certificate/models/wua_certificate.py:554
 #, python-format
 msgid "ATTENTION: The mail could not be sent."
 msgstr ""
@@ -245,6 +245,11 @@ msgstr ""
 #. module: base_wua_certificate
 #: model:ir.model.fields,help:base_wua_certificate.field_wua_configuration_allowed_request_for_portal_user
 msgid "Activate this parameter to allow portal users to request certificates"
+msgstr ""
+
+#. module: base_wua_certificate
+#: model:ir.model.fields,help:base_wua_certificate.field_wua_configuration_with_letter
+msgid "Activate this parameter to automatically register an annotation in the output record"
 msgstr ""
 
 #. module: base_wua_certificate
@@ -275,11 +280,6 @@ msgstr ""
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_allowed_request_for_portal_user
 msgid "Allowed request for portal user"
-msgstr ""
-
-#. module: base_wua_certificate
-#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "And as evidence thereof, I hereby issue this certificate in {{ partner.company_id.city }} on {{ current_month }} {{ current_day }}th, {{ current_year }}.<br>"
 msgstr ""
 
 #. module: base_wua_certificate
@@ -336,6 +336,16 @@ msgstr ""
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.view_company_form
 msgid "Authorized Signer (for census certificates)"
+msgstr ""
+
+#. module: base_wua_certificate
+#: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
+msgid "Automatic annotation in the output record"
+msgstr ""
+
+#. module: base_wua_certificate
+#: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_with_letter
+msgid "Automatically register an annotation in the output record"
 msgstr ""
 
 #. module: base_wua_certificate
@@ -442,7 +452,7 @@ msgstr ""
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/res_partner.py:70
-#: code:addons/base_wua_certificate/models/wua_certificate.py:584
+#: code:addons/base_wua_certificate/models/wua_certificate.py:587
 #: code:addons/base_wua_certificate/models/wua_certificate_type.py:195
 #: model:ir.actions.act_window,name:base_wua_certificate.wua_certificate_action
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_certificate_ids
@@ -776,7 +786,7 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:657
+#: code:addons/base_wua_certificate/models/wua_certificate.py:660
 #, python-format
 msgid "Mail with certificate"
 msgstr ""
@@ -993,6 +1003,11 @@ msgid "Processing Status"
 msgstr ""
 
 #. module: base_wua_certificate
+#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
+msgid "Que <b>{{ partner.name }}</b>, con domicilio en <b>{{ partner.street }}, {{partner.city}} -{{partner.state_id.name}}-</b>, y DNI/CIF <b>{{ partner.vat }}</b>, figura en el censo de partícipes y/o titulares de esta comunidad de regantes, en las parcelas listadas en la siguiente página, estando dichas parcelas autorizadas para el uso, en regadío agrícola, del agua distribuida por esta corporación.<br>"
+msgstr ""
+
+#. module: base_wua_certificate
 #: code:addons/base_wua_certificate/wizard/wizard_create_certificate.py:57
 #, python-format
 msgid "REQUEST PROCESSED"
@@ -1109,11 +1124,6 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_one_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_search
 msgid "State: Validated"
-msgstr ""
-
-#. module: base_wua_certificate
-#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "That <b>{{ partner.name }}</b>, located at <b>{{ partner.street }}, {{partner.city}} -{{partner.state_id.name}}-</b>, and holder of identity document number <b>{{ partner.vat }}</b> is enrolled in the census of this water users association, with the parcels listed on the next page. These parcels are authorized for the use of the water distributed by this corporation, for agricultural irrigation.<br>"
 msgstr ""
 
 #. module: base_wua_certificate
@@ -1237,26 +1247,31 @@ msgid "With mail template"
 msgstr ""
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:659
+#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
+msgid "Y para que conste, a petición del interesado, expido el presente, en {{ partner.company_id.city }}, a {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
+msgstr ""
+
+#. module: base_wua_certificate
+#: code:addons/base_wua_certificate/models/wua_certificate.py:662
 #, python-format
 msgid "for the partner"
 msgstr ""
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/wua_certificate.py:376
-#: code:addons/base_wua_certificate/models/wua_certificate.py:948
+#: code:addons/base_wua_certificate/models/wua_certificate.py:964
 #, python-format
 msgid "ha"
 msgstr ""
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:671
+#: code:addons/base_wua_certificate/models/wua_certificate.py:674
 #, python-format
 msgid "send error"
 msgstr ""
 
 #. module: base_wua_certificate
-#: code:addons/base_wua_certificate/models/wua_certificate.py:661
+#: code:addons/base_wua_certificate/models/wua_certificate.py:664
 #, python-format
 msgid "sent successfully"
 msgstr ""

@@ -15,6 +15,7 @@
         "html_text",
         "web_ir_actions_act_window_message",
         "report_qweb_signer",
+        "crm_lettermgmt",
     ],
     "data": [
         "security/security.xml",
