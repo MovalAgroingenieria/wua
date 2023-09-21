@@ -27,4 +27,18 @@
         </field>
     </record>
 
+   <record id="wua_technical_update_waterpipe_id_in_presconsumptions_action" model="ir.actions.server">
+        <field name="name">Update Waterpipe in Presconsumptions</field>
+        <field name="model_id" ref="base_wua_infrastructure_pressurized_hierarchy.model_wua_presconsumption"/>
+        <field name="code">
+            action = env["wua.presconsumption"].update_waterpipe_id()
+        </field>
+    </record>
+
+    <menuitem id="wua_technical_update_waterpipe_id_in_presconsumptions_menu"
+              name="Calculation: Watepipe in pres. consumptions"
+              parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+              action="wua_technical_update_waterpipe_id_in_presconsumptions_action"
+              sequence="8"/>
+
 </odoo>
