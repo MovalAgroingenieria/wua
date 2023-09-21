@@ -12,6 +12,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_infrastructure",
+        "base_wua_pressurized_irrigation",
     ],
     "data": [
         "security/ir.model.access.csv",
@@ -25,6 +26,7 @@
         "views/wua_valve_view.xml",
         "views/wua_irrigationshed_view.xml",
         "views/wua_parcel_view.xml",
+        "views/wua_presconsumption_view.xml",
     ],
     "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",

@@ -9,3 +9,4 @@ from . import wua_parcel
 from . import wua_airvalve
 from . import wua_drainagevalve
 from . import wua_valve
+from . import wua_presconsumption
