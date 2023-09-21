@@ -118,8 +118,10 @@ class WuaParcelPartnerlink(models.Model):
 
     @api.onchange('partner_id')
     def _onchange_partner(self):
+        show_warning = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'show_warning_onchange_waterpayer')
         if ((not self.__class__._fired_onchange_partnerlink) and
-           self.partner_id and
+           self.partner_id and show_warning and
            self.water_costs_percentage > 0 and
            self.parcel_id.selected_for_current_quotaperiod):
             self.__class__._fired_onchange_partnerlink = True
@@ -133,8 +135,10 @@ class WuaParcelPartnerlink(models.Model):
 
     @api.onchange('water_costs_percentage')
     def _onchange_watercosts(self):
+        show_warning = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'show_warning_onchange_watercosts')
         if ((not self.__class__._fired_onchange_partnerlink) and
-           self.partner_id and
+           self.partner_id and show_warning and
            self.parcel_id.selected_for_current_quotaperiod):
             self.__class__._fired_onchange_partnerlink = True
             warning_title = _('IMPORTANT WARNING:')

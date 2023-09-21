@@ -37,6 +37,18 @@ class WuaQuotasConfiguration(models.TransientModel):
         default=False,
         help='If it is checked, it shows partner aggregated quotas.')
 
+    show_warning_onchange_waterpayer = fields.Boolean(
+        string='Show warning on change water payer',
+        default=True,
+        help="If checked, displays a warning when a change in the parcel's "
+             "water payers is detected.")
+
+    show_warning_onchange_watercosts = fields.Boolean(
+        string='Show warning on change water costs',
+        default=True,
+        help='If it is checked, it shows a warning when a change in the '
+             'percentage of water costs of the parcel has been detected.')
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -54,6 +66,12 @@ class WuaQuotasConfiguration(models.TransientModel):
         values.set_default('wua.quotas.configuration',
                            'days_cession_notice',
                            self.days_cession_notice)
+        values.set_default('wua.quotas.configuration',
+                           'show_warning_onchange_waterpayer',
+                           self.show_warning_onchange_waterpayer)
+        values.set_default('wua.quotas.configuration',
+                           'show_warning_onchange_watercosts',
+                           self.show_warning_onchange_watercosts)
         # If not allowed change of states, all cessions must be validated
         if (not self.draft_cession_allow):
             cessions_draft = self.env['wua.cession'].search(
