@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record model="res.groups"
+            id="base_wua.group_wua_user">
+            <field name="implied_ids"
+                eval="[(4, ref('base_maintenance_config.group_maintenance_user'))]"/>
+        </record>
+
+        <record model="res.groups"
+                id="base_wua.group_wua_manager">
+            <field name="implied_ids"
+                eval="[(4, ref('base_maintenance_config.group_maintenance_manager'))]"/>
+        </record>
+
+    </data>
+</odoo>

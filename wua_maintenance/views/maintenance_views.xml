@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hr_equipment_view_form" model="ir.ui.view">
+        <field name="name">hr.equipment.view.form.inherit</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="duplicate">0</attribute>
+            </xpath>
+            <xpath expr="//div[@name='button_box']/button[1]" position="before">
+                <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" confirm="Are you sure you want to toggle visibility?" groups="base_wua.group_wua_user">
+                    <field name="active" widget="boolean_button" options='{"terminology": "archive"}' />
+                </button>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="is_wua" invisible="1" />
+                <button name="action_get_wua_infrastructure_item" type="object" class="oe_stat_button" icon="fa-cogs" attrs="{'invisible': [('is_wua','=',False)]}" groups="base_wua.group_wua_user">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Infrastructure</span>
+                        <span class="o_stat_text">Item</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_wua', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_wua', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="hydraulicsector_id" placeholder="Hydraulic Sector" />
+            </xpath>
+            <xpath expr="//field[@name='owner_user_id']" position="after">
+                <field name="tag_ids" widget="many2many_tags" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_equipment_request_view_form" model="ir.ui.view">
+        <field name="name">hr.equipment.request.view.form.inherit</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="hydraulicsector_id" placeholder="Hydraulic Sector" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_equipmenttag_view_form" model="ir.ui.view">
+        <field name="name">Equipment Tags (form view)</field>
+        <field name="model">maintenance.equipmenttag</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <group name="master_data">
+                    <field name="name" style="width:200px" />
+                    <field name="color" />
+                    <field name="description" invisible="1" />
+                </group>
+                <group name="slave_data">
+                    <notebook name="slave_data_notebook">
+                        <page name="notes_page" string="Notes">
+                            <field name="notes" />
+                        </page>
+                    </notebook>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_drainageditch_view_form" model="ir.ui.view">
+        <field name="name">Drainage Ditchs (form view)</field>
+        <field name="model">wua.drainageditch</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_flowdivider_view_form" model="ir.ui.view">
+        <field name="name">Flow Dividers (form view)</field>
+        <field name="model">wua.flowdivider</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_flowdivider_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_googlemaps']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_intake_view_form" model="ir.ui.view">
+        <field name="name">hr.equipment.view.form.inherit</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_flowmeter_view_form" model="ir.ui.view">
+        <field name="name">Flowmeter (form view)</field>
+        <field name="model">wua.flowmeter</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_flowmeter_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationditch_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Ditches (form view)</field>
+        <field name="model">wua.irrigationditch</field>
+        <field name="inherit_id" ref="base_wua_gravity_irrigation.wua_irrigationditch_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationgate_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Gates (form view)</field>
+        <field name="model">wua.irrigationgate</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationgate_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_googlemaps']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Sheds (form view)</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_photovoltaicplant_view_form" model="ir.ui.view">
+        <field name="name">photovoltaicplant (form view)</field>
+        <field name="model">wua.photovoltaicplant</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pump.wua_photovoltaicplant_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_pumpgroups']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_pressuresensor_view_form" model="ir.ui.view">
+        <field name="name">Pressure Sensor (form view)</field>
+        <field name="model">wua.pressuresensor</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_pressuresensor_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_pumpgroup_view_form" model="ir.ui.view">
+        <field name="name">Pumpgroup (form view)</field>
+        <field name="model">wua.pumpgroup</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pump.wua_pumpgroup_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_pumpunit_view_form" model="ir.ui.view">
+        <field name="name">Pump (form view)</field>
+        <field name="model">wua.pumpunit</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pump.wua_pumpunit_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_reservoir_view_form" model="ir.ui.view">
+        <field name="name">Reservoir (form view)</field>
+        <field name="model">wua.reservoir</field>
+        <field name="inherit_id" ref="base_wua_reservoir.wua_reservoir_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterconnection_view_form" model="ir.ui.view">
+        <field name="name">Water Connections (form view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_waterconnection_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="inside">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_watermeter_view_form" model="ir.ui.view">
+        <field name="name">Water Meters (form view)</field>
+        <field name="model">wua.watermeter</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_watermeter_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_readings']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_waterpipe_view_form" model="ir.ui.view">
+        <field name="name">Waterpipes (form view)</field>
+        <field name="model">wua.waterpipe</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_pressurized_hierarchy.wua_waterpipe_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_airvalve_view_form" model="ir.ui.view">
+        <field name="name">Air Valves (form view)</field>
+        <field name="model">wua.airvalve</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_airvalve_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_valve_view_form" model="ir.ui.view">
+        <field name="name">Valves (form view)</field>
+        <field name="model">wua.valve</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_valve_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_drainagevalve_view_form" model="ir.ui.view">
+        <field name="name">Drainage Valves (form view)</field>
+        <field name="model">wua.drainagevalve</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_drainagevalve_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_filteringstation_view_form" model="ir.ui.view">
+        <field name="name">Filtering Stations (form view)</field>
+        <field name="model">wua.filteringstation</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_filteringstation_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="equipment_id" invisible="1" />
+                <button name="action_get_equipment" type="object" class="oe_stat_button" icon="fa-gear" groups="base_wua.group_wua_user" attrs="{'invisible': [('equipment_id','=',None)]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Associated</span>
+                        <span class="o_stat_text">Equipment</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_equipmenttag_view_tree" model="ir.ui.view">
+        <field name="name">Equipment Tags (tree view)</field>
+        <field name="model">maintenance.equipmenttag</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="color" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="maintenance_equipmenttag_view_search" model="ir.ui.view">
+        <field name="name">Equipment Tags (search view)</field>
+        <field name="model">maintenance.equipmenttag</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+            </search>
+        </field>
+    </record>
+
+    <record id="hr_equipment_category_view_search" model="ir.ui.view">
+        <field name="name">equipment.category.search.inherit</field>
+        <field name="model">maintenance.equipment.category</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_category_view_search" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <filter string='Is WUA: Yes' name="filter_is_wua_true" domain="[('is_wua', '!=', False)]" />
+                <filter string='Is WUA: No' name="filter_is_wua_false" domain="[('is_wua', '!=', True)]" />
+                <filter string='Primary' name="filter_is_primary" domain="[('is_primary', '!=', False)]" />
+            </xpath>
+            <xpath expr="(//group[1]/filter)[last()]" position="after">
+                <filter string='Infrastructure Type' domain="[]" context="{'group_by' : 'infrastructure_type'}" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_equipment_view_search_inherit_hr" model="ir.ui.view">
+        <field name="name">equipment.search.inherit</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="hr_maintenance.maintenance_equipment_view_search_inherit_hr" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='owner_user_id']" position="after">
+                <filter string='Is WUA: Yes' name="filter_is_wua_true" domain="[('is_wua', '!=', False)]" />
+                <filter string='Is WUA: No' name="filter_is_wua_false" domain="[('is_wua', '!=', True)]" />
+                <filter string='Primary' name="filter_is_primary" domain="[('is_primary', '!=', False)]" />
+            </xpath>
+            <xpath expr="//group[1]" position="replace">
+                <filter string="Technicians" domain="[]" context="{'group_by': 'technician_user_id'}" />
+                <filter string="Category" domain="[]" context="{'group_by': 'category_id'}" />
+                <filter string="Owner" domain="[]" context="{'group_by': 'owner_user_id'}" />
+                <filter string="Vendor" domain="[]" context="{'group_by': 'partner_id'}" />
+                <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}" />
+                <filter string="Department" domain="[]" context="{'group_by': 'department_id'}" />
+                <filter string='Infrastructure Type' domain="[]" context="{'group_by' : 'infrastructure_type'}" />
+            </xpath>
+            <xpath expr="//search" position="inside">
+                <field name="tag_ids" placeholder="Equipment Tag" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance.menu_maintenance_configuration" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('base_maintenance_config.group_maintenance_user'))]" />
+    </record>
+
+    <record id="maintenance_equipmenttag_action" model="ir.actions.act_window">
+        <field name="name">Equipment Tags</field>
+        <field name="res_model">maintenance.equipmenttag</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="maintenance_equipmenttag_view_tree" />
+        <field name="search_view_id" ref="maintenance_equipmenttag_view_search" />
+    </record>
+
+    <record id="hr_equipment_view_tree" model="ir.ui.view">
+        <field name="name">equipment.tree</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="replace">
+                <field name="category_id" string="Equipment Category" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_plan.menu_maintenance_kind_configuration" model="ir.ui.menu">
+        <field name="name">Maintenance kinds</field>
+    </record>
+
+    <menuitem id="maintenance_equipmenttag_menu" name="Equipment Tags" parent="maintenance.menu_maintenance_configuration" action="maintenance_equipmenttag_action" sequence="4" />
+
+    <record id="hr_equipment_view_kanban" model="ir.ui.view">
+        <field name="name">equipment.kanban.inherit</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_kanban" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@class='mt4']" position="before">
+                <field name="tag_html" invisible="1" />
+                <div class="o_kanban_tags" t-raw="record.tag_html.value" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance.hr_equipment_action" model="ir.actions.act_window">
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_id" ref="maintenance.hr_equipment_view_tree" />
+        <field name="context">{
+                'group_by': ['category_id'],
+            }</field>
+    </record>
+
+    <!-- Sequence config -->
+    <record id="maintenance_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Settings</field>
+        <field name="model">maintenance.config.settings</field>
+        <field name="inherit_id" ref="base_maintenance_config.view_maintenance_config_settings" />
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="after">
+                <group name="maintenance_request_parameters" string="Maintenance Requests Management">
+                    <field name="sequence_maintenance_request_code_id" string="Sequence for maintenance requests" options="{'no_quick_create':True,'no_create_edit':True}" style="width:300px" />
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="hr_equipment_request_view_form" model="ir.ui.view">
+        <field name="name">Maintenance Requests</field>
+        <field name="model">maintenance.request</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_request_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='owner_user_id']" position="before">
+                <field name="sequence" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_team_view_form" model="ir.ui.view">
+        <field name="name">Maintenance Teams Form</field>
+        <field name="model">maintenance.team</field>
+        <field name="inherit_id" ref="maintenance.maintenance_team_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="replace">
+                <group>
+                    <group>
+                        <field name="partner_id" placeholder="Responsible" />
+                        <field name="category_id" placeholder="Category" />
+                        <field name="partner_ids" widget="many2many_tags" options="{'no_create': True}" domain="[]"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_team_view_tree" model="ir.ui.view">
+        <field name="name">maintenance.team.tree</field>
+        <field name="model">maintenance.team</field>
+        <field name="inherit_id" ref="maintenance.maintenance_team_view_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="editable"></attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="partner_id" placeholder="Responsible" />
+                <field name="category_id" placeholder="Category" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_team_kanban" model="ir.ui.view">
+        <field name="name">maintenance.team.kanban</field>
+        <field name="model">maintenance.team</field>
+        <field name="inherit_id" ref="maintenance.maintenance_team_kanban" />
+        <field name="arch" type="xml">
+            <xpath expr="//t[@t-name='kanban-box']/div[position()=1]" position="attributes">
+                <attribute name="class">oe_kanban_global_click</attribute>
+            </xpath>
+            <xpath expr="//div[@class='o_primary']" position="inside">
+                <br />
+                <br />
+                <field name="partner_id" placeholder="Responsible" />
+                <br />
+                <field name="category_id" placeholder="Category" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance.maintenance_team_action_settings" model="ir.actions.act_window">
+        <field name="name">Teams</field>
+        <field name="res_model">maintenance.team</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="maintenance_team_view_tree" />
+        <field name="view_type">form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Click to add a team in the maintenance request.
+            </p>
+        </field>
+    </record>
+
+    <record id="maintenance_dashboard_action" model="ir.actions.act_window">
+        <field name="name">Maintenance Team</field>
+        <field name="res_model">maintenance.team</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+            Click to add a stage in the maintenance request.
+            </p>
+        </field>
+        <field name="inherit_id" ref="maintenance.maintenance_dashboard_action" />
+    </record>
+
+
+</odoo>
