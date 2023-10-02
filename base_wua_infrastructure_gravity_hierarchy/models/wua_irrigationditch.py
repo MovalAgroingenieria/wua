@@ -379,7 +379,7 @@ class WuaIrrigationditch(models.Model):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
             'max_levels_gravity_irrigation')
-        if self.level > max_level:
+        if max_level and self.level > max_level:
             raise exceptions.ValidationError(_('You cannot create a '
                                                'irrigation ditch that depends '
                                                'on a ditch of the highest '

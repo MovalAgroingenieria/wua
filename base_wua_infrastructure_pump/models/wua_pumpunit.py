@@ -122,6 +122,12 @@ class WuaPumpunit(models.Model):
         string='Notes',
     )
 
+    active = fields.Boolean(
+        default=True,
+        help='If the active field is set to False, it will allow you to ' +
+        'hide the register without removing it. For see archived register, ' +
+        'go to "Search-Filters" in tree view')
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',

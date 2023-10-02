@@ -8,6 +8,16 @@
             <form duplicate="0">
                 <sheet>
                     <div name="buttons" class="oe_button_box">
+                        <field name="active" invisible="1"/>
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                confirm="Are you sure you want to toggle visibility?"
+                                icon="fa-archive">
+                                <field name="active"
+                                 widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
                         <field name="gis_googlemaps_link" invisible="1"/>
                         <button name="action_see_gis_googlemaps"
                                 type="object"
@@ -16,7 +26,7 @@
                                 icon="fa-moval-gmaps"
                                 attrs="{'invisible':
                                         [('gis_googlemaps_link','=',False)]}"/>
-                    </div>                
+                    </div>
                     <group name="master_data" col="9">
                         <group name="master_image" colspan="3">
                             <field name="image" widget="image" class="oe_img_259_160"/>
@@ -38,12 +48,12 @@
                             <field name="final_hydraulic_order"
                                    attrs="{'invisible':
                                            [('number_of_irrigationgates','=',0)]}"/>
-                        </group> 
+                        </group>
                     </group>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
                             <page name="irrigationgates_page" string="Irrigation Gates">
-                                <field name="irrigationgate_ids">                                
+                                <field name="irrigationgate_ids">
                                     <tree class="o_base_wua_infrastructure_irrigationgate_view_tree_notebook"
                                      create="false" edit="false" delete="false">
                                         <field name="gis_googlemaps_link" invisible="1"/>
@@ -54,12 +64,12 @@
                                                 icon="fa-moval-gmaps"
                                                 attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>
                                         <field name="description"/>
-                                        <field name="hydraulic_order"/>                                        
+                                        <field name="hydraulic_order"/>
                                         <field name="total_affected_area_official"/>
                                         <field name="number_of_parcels"/>
                                     </tree>
                                 </field>
-                            </page>                        
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
                             </page>
@@ -82,9 +92,9 @@
                         type="object" class="oe_stat_button"
                         string="Google Maps (zoom to point)"
                         icon="fa-moval-gmaps"
-                        attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>                
+                        attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>
                 <field name="description"/>
-                <field name="number_of_irrigationgates"/>                
+                <field name="number_of_irrigationgates"/>
                 <field name="initial_hydraulic_order"/>
                 <field name="final_hydraulic_order"/>
                 <field name="delay_time"/>
@@ -131,8 +141,8 @@
                                 </t>
                                 <div style="margin-top:10px">
                                   <t t-if="record.gis_googlemaps_link.raw_value"><a type="button"><button name="action_see_gis_googlemaps" type="object" class="oe_stat_button"><span><i class="fa fa-globe"></i></span></button></a></t>
-                                </div>                                
-                            </div>                            
+                                </div>
+                            </div>
                             <div class="oe_kanban_details">
                                 <strong><field name="irrigationditch_id"/></strong>
                                 <br/>

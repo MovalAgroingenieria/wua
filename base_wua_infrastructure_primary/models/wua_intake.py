@@ -79,6 +79,12 @@ class WuaIntake(models.Model):
     with_gis_intake = fields.Boolean(
         string='GIS Intake')
 
+    active = fields.Boolean(
+        default=True,
+        help='If the active field is set to False, it will allow you to ' +
+        'hide the register without removing it. For see archived register, ' +
+        'go to "Search-Filters" in tree view')
+
     _sql_constraints = [
         ('unique_intake_code',
          'UNIQUE (intake_code)',

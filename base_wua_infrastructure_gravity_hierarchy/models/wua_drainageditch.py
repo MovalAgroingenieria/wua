@@ -245,6 +245,12 @@ class WuaDrainageditch(models.Model):
         store=True,
         compute='_compute_number_of_parcels')
 
+    active = fields.Boolean(
+        default=True,
+        help='If the active field is set to False, it will allow you to ' +
+        'hide the register without removing it. For see archived register, ' +
+        'go to "Search-Filters" in tree view')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.')]
 
@@ -380,7 +386,7 @@ class WuaDrainageditch(models.Model):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
             'max_levels_gravity_drainage')
-        if self.level > max_level:
+        if max_level and self.level > max_level:
             raise exceptions.ValidationError(_('You cannot create a drainage '
                                                'ditch that depends on a ditch '
                                                'of the highest level '

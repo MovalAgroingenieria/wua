@@ -8,6 +8,16 @@
             <form duplicate="0">
                 <sheet>
                     <div name="buttons" class="oe_button_box">
+                        <field name="active" invisible="1"/>
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                confirm="Are you sure you want to toggle visibility?"
+                                icon="fa-archive">
+                                <field name="active"
+                                 widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
                         <field name="gis_googlemaps_link" invisible="1"/>
                         <button name="action_see_gis_googlemaps"
                                 type="object"
@@ -38,7 +48,7 @@
                             <field name="description" colspan="4"/>
                             <field name="number_of_parcels"/>
                             <field name="total_affected_area_official"/>
-                        </group> 
+                        </group>
                     </group>
                     <group name="slave_data" groups="base_wua.group_wua_user">
                         <notebook name="slave_data_notebook">
@@ -65,7 +75,7 @@
                                                 icon="fa-cubes"
                                                 attrs="{'invisible': [('parcel_cadastral_reference_link','=','')]}"/>
                                         <field name="parcel_rural_location_county"/>
-                                        <field name="parcel_cadastral_reference"/>                                        
+                                        <field name="parcel_cadastral_reference"/>
                                         <field name="parcel_cadastral_polygon"/>
                                         <field name="parcel_cadastral_parcel"/>
                                         <button name="action_see_street_view"
@@ -98,8 +108,8 @@
                         type="object" class="oe_stat_button"
                         string="Google Maps (zoom to point)"
                         icon="fa-moval-gmaps"
-                        attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>                
-                <field name="description"/>                
+                        attrs="{'invisible': [('gis_googlemaps_link','=','')]}"/>
+                <field name="description"/>
                 <field name="hydraulic_order"/>
                 <field name="delay_time"/>
                 <field name="total_affected_area_official"/>
@@ -117,9 +127,9 @@
                 <field name="description"/>
                 <field name="irrigationditch_id"/>
                 <filter string="Connected to main pipe" name="tomainpipe"
-                 domain="[('to_main_pipe','=',True)]"/>                
+                 domain="[('to_main_pipe','=',True)]"/>
                 <filter string="With flow divider" name="withflowdivider"
-                 domain="[('with_flowdivider','=',True)]"/>                
+                 domain="[('with_flowdivider','=',True)]"/>
                 <group expand="0" string="Group By">
                     <filter string="Irrigation Ditch"
                      name="irrigation_ditch"
@@ -151,8 +161,8 @@
                                 </t>
                                 <div style="margin-top:10px">
                                   <t t-if="record.gis_googlemaps_link.raw_value"><a type="button"><button name="action_see_gis_googlemaps" type="object" class="oe_stat_button"><span><i class="fa fa-globe"></i></span></button></a></t>
-                                </div>                                
-                            </div>                            
+                                </div>
+                            </div>
                             <div class="oe_kanban_details">
                                 <strong><field name="irrigationditch_id"/></strong>
                                 <br/>
@@ -163,7 +173,7 @@
                                     <li t-if="record.description.raw_value" class="o_text_overflow"><field name="description"/></li>
                                     <li t-if="record.total_affected_area_official" class="o_text_overflow">Area: <field name="total_affected_area_official"/></li>
                                     <br/>
-                                    <li t-if="record.number_of_parcels.raw_value" class="o_text_overflow">Parcels: <field name="number_of_parcels"/></li>                                    
+                                    <li t-if="record.number_of_parcels.raw_value" class="o_text_overflow">Parcels: <field name="number_of_parcels"/></li>
                                     <br/>
                                 </ul>
                             </div>
@@ -210,7 +220,7 @@
         <field name="view_id" ref="wua_irrigationgate_view_form"/>
         <field name="act_window_id" ref="wua_irrigationgate_action"/>
     </record>
-    
+
     <menuitem id="wua_irrigationgate_menu"
               name="Irrigation Gates"
               parent="base_wua_infrastructure_gravityfed_irrigation_menu"
