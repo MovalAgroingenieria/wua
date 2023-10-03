@@ -42,6 +42,11 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         size=20,
         help='Name of drainagevalve param in the GIS viewer url')
 
+    url_gis_viewer_flowdivider_param = fields.Char(
+        string='Param for flowdivider',
+        size=20,
+        help='Name of flowdivider param in the GIS viewer url')
+
     url_gis_viewer_waterconnection_param = fields.Char(
         string='Param for waterconnection',
         size=20,
@@ -73,6 +78,9 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_drainagevalve_param',
                            self.url_gis_viewer_drainagevalve_param)
+        values.set_default('wua.infrastructure.configuration',
+                           'url_gis_viewer_flowdivider_param',
+                           self.url_gis_viewer_flowdivider_param)
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_irrigationditch_param',
                            self.url_gis_viewer_irrigationditch_param)

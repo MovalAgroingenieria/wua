@@ -2,6 +2,9 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from Crypto.Cipher import AES
+import datetime
+import pytz
 from pyproj import Proj, transform
 from odoo import models, fields, api, exceptions, _
 
@@ -20,6 +23,15 @@ class WuaFlowdivider(models.Model):
 
     # Uppercase chars in "name"?
     _uppercase_name = True
+
+    @api.model_cr
+    def init(self):
+        parcel_model = self.env['wua.parcel']
+        try:
+            parcel_model.create_wua_gis_flowdivider_table()
+            parcel_model.create_flowdivider_triggers()
+        except Exception:
+            pass
 
     name = fields.Char(
         string='Identifier',
@@ -54,6 +66,10 @@ class WuaFlowdivider(models.Model):
         string='GIS Viewer',
         compute='_compute_gis_googlemaps_link')
 
+    gis_viewer_link = fields.Char(
+        string='GIS Viewer',
+        compute='_compute_gis_viewer_link')
+
     delay_time = fields.Integer(
         string='Delay Time (min)',
         default=0,
@@ -85,6 +101,28 @@ class WuaFlowdivider(models.Model):
         store=True,
         compute='_compute_final_hydraulic_order')
 
+    with_gis_flowdivider = fields.Boolean(
+        string='GIS Flowdivider',
+        default=False,)
+
+    is_flowstopper = fields.Boolean(
+        string='Is Flowstopper',
+        default=False,
+    )
+
+    flowstopper_order = fields.Integer(
+        string='Flowstopper Order',
+        default=0,
+    )
+
+    flowstopper_direction = fields.Selection([
+        ('00_right', 'Right'),
+        ('01_left', 'Left'),
+        ('02_both', 'Both Directions'),
+        ],
+        string='Flowstopper Direction',
+        index=True,)
+
     active = fields.Boolean(
         default=True,
         help='If the active field is set to False, it will allow you to ' +
@@ -110,6 +148,51 @@ class WuaFlowdivider(models.Model):
                     record.gis_googlemaps_link = ''
             else:
                 record.gis_googlemaps_link = ''
+
+    @api.multi
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        flowdivider_param = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'url_gis_viewer_flowdivider_param')
+        for record in self:
+            url_for_record = url
+            if url_for_record:
+                if flowdivider_param:
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        flowdivider_param + '=' + record.name
+            if url_for_record and username and password:
+                credentials = username + "-" + password
+                credentials = credentials.ljust(32)
+                current_datetime = pytz.utc.localize(datetime.datetime.now())
+                current_datetime = current_datetime.astimezone(
+                    pytz.timezone('Europe/Madrid'))
+                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+                minimum = int(current_datetime[14:])
+                if minimum < 30:
+                    minimum = '00'
+                else:
+                    minimum = '30'
+                iv = current_datetime[:14] + minimum
+                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
+                cipher_text = aes_encryptor.encrypt(credentials)
+                cipher_text = cipher_text.encode('base64')
+                sep_char = '?'
+                if url_for_record.find('?') != -1:
+                    sep_char = '&'
+                url_for_record = url_for_record + sep_char + \
+                    "arg=" + cipher_text
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
 
     @api.depends('irrigationgate_ids')
     def _compute_number_of_irrigationgates(self):
@@ -209,6 +292,16 @@ class WuaFlowdivider(models.Model):
                     'url': url,
                     'target': 'new',
                     }
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
 
     def refine_name(self, vals):
         name = vals['name']

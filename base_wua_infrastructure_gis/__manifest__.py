@@ -16,6 +16,7 @@
         "base_wua_gis", ],
     "data": [
         "views/wua_irrigationshed_view.xml",
+        "views/wua_flowdivider_view.xml",
         "views/wua_airvalve_view.xml",
         "views/wua_valve_view.xml",
         "views/wua_drainagevalve_view.xml",

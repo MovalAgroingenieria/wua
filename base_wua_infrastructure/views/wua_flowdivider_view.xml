@@ -19,6 +19,8 @@
                                  options='{"terminology": "archive"}'/>
                         </button>
                         <field name="gis_googlemaps_link" invisible="1"/>
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_flowdivider" invisible="1"/>
                         <button name="action_see_gis_googlemaps"
                                 type="object"
                                 class="oe_stat_button"
@@ -26,6 +28,14 @@
                                 icon="fa-moval-gmaps"
                                 attrs="{'invisible':
                                         [('gis_googlemaps_link','=',False)]}"/>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                        ['|',('gis_viewer_link','=',False),
+                                        ('with_gis_flowdivider','=',False)]}"/>
                     </div>
                     <group name="master_data" col="9">
                         <group name="master_image" colspan="3">
@@ -40,6 +50,18 @@
                             <field name="gis_viewer_x"/>
                             <field name="gis_viewer_y"/>
                             <field name="description" colspan="4"/>
+                            <field name="is_flowstopper"/>
+                            <newline/>
+                            <field name="flowstopper_order"
+                                   attrs="{'invisible':
+                                            [('is_flowstopper','=', False)],
+                                           'required':
+                                            [('is_flowstopper','=', True)]}"/>
+                            <field name="flowstopper_direction"
+                                   attrs="{'invisible':
+                                            [('is_flowstopper','=', False)],
+                                           'required':
+                                            [('is_flowstopper','=', True)]}"/>
                             <field name="number_of_irrigationgates"/>
                             <newline/>
                             <field name="initial_hydraulic_order"
@@ -85,9 +107,16 @@
         <field name="model">wua.flowdivider</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_infrastructure_flowdivider_view_tree">
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_flowdivider" invisible="1"/>
                 <field name="gis_googlemaps_link" invisible="1"/>
                 <field name="name"/>
                 <field name="irrigationditch_id"/>
+                <button name="action_see_gis_viewer"
+                        type="object" class="oe_stat_button"
+                        string="GIS Viewer (zoom to point)"
+                        icon="fa-map-marker"
+                        attrs="{'invisible': ['|',('gis_viewer_link','=',False),('with_gis_flowdivider','=',False)]}"/>
                 <button name="action_see_gis_googlemaps"
                         type="object" class="oe_stat_button"
                         string="Google Maps (zoom to point)"
@@ -129,6 +158,7 @@
                 <field name="irrigationditch_id"/>
                 <field name="image"/>
                 <field name="gis_googlemaps_link"/>
+                <field name="gis_viewer_link"/>
                 <field name="number_of_irrigationgates"/>
                 <field name="initial_hydraulic_order"/>
                 <field name="final_hydraulic_order"/>
@@ -140,7 +170,7 @@
                                     <img t-att-src="kanban_image('wua.flowdivider', 'image', record.id.value)"/>
                                 </t>
                                 <div style="margin-top:10px">
-                                  <t t-if="record.gis_googlemaps_link.raw_value"><a type="button"><button name="action_see_gis_googlemaps" type="object" class="oe_stat_button"><span><i class="fa fa-globe"></i></span></button></a></t>
+                                  <t t-if="record.gis_viewer_link.raw_value"><a type="button"><button name="action_see_gis_viewer" type="object" class="oe_stat_button"><span><i class="fa fa-map-marker"></i></span></button></a></t>
                                 </div>
                             </div>
                             <div class="oe_kanban_details">

@@ -475,6 +475,165 @@ class WuaParcel(models.Model):
             """)
             self.env.cr.commit()
 
+    def check_gis_flowdivider_created(self):
+        resp = False
+        self.env.cr.execute("""
+            SELECT EXISTS(SELECT * FROM information_schema.tables
+            WHERE table_name='wua_gis_flowdivider')
+            """)
+        if self.env.cr.fetchone()[0]:
+            resp = True
+        return resp
+
+    def create_wua_gis_flowdivider_table(self):
+        # Check if wua gis table already exists
+        gis_flowdivider_table_created = \
+            self.check_gis_flowdivider_created()
+        # Check if extension postgis and schema postgis are created
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        # Postgis extension and schema exists, but gis flowdivider don't
+        if (not gis_flowdivider_table_created and
+                extension_schema_postgis_created):
+            self.env.cr.execute("""
+                CREATE SEQUENCE IF NOT EXISTS
+                    public.wua_gis_flowdivider_gid_seq
+                    INCREMENT 1
+                    START 1
+                    MINVALUE 1
+                    MAXVALUE 2147483647
+                    CACHE 1;
+            """)
+            self.env.cr.execute("""
+                CREATE TABLE IF NOT EXISTS public.wua_gis_flowdivider
+                    (
+                        gid integer NOT NULL DEFAULT nextval(
+                            'wua_gis_flowdivider_gid_seq'::regclass),
+                        name character varying(254)
+                            COLLATE pg_catalog."default",
+                        geom postgis.geometry(Point,25830),
+                        UNIQUE(name),
+                        CONSTRAINT wua_gis_flowdivider_pkey
+                            PRIMARY KEY (gid)
+                    );
+            """)
+            self.env.cr.execute("""
+                CREATE INDEX IF NOT EXISTS
+                wua_gis_flowdivider_idx ON public.wua_gis_flowdivider
+                    USING gist (geom);
+            """)
+            self.env.cr.commit()
+
+    def create_flowdivider_triggers(self):
+        gis_flowdivider_table_created = \
+            self.check_gis_flowdivider_created()
+        extension_schema_postgis_created = \
+            self.check_extension_and_schema_postgis_created()
+        if (gis_flowdivider_table_created and
+                extension_schema_postgis_created):
+            # Function that will update the wua_flowdivider data when the
+            # wua_gis_flowdivider table has some change, (Create, Update or
+            # Delete)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_gis_flowdivider_update_on_wua_flowdivider()
+                    RETURNS trigger AS
+                $BODY$
+                BEGIN
+                IF TG_OP = 'UPDATE' OR TG_OP = 'DELETE' THEN
+                    UPDATE public.wua_flowdivider SET
+                        with_gis_flowdivider = False,
+                        gis_viewer_x = 0,
+                        gis_viewer_y = 0
+                    WHERE name = OLD.name;
+                END IF;
+                IF TG_OP = 'UPDATE' OR TG_OP = 'INSERT' THEN
+                    UPDATE public.wua_flowdivider SET
+                        with_gis_flowdivider = True,
+                        gis_viewer_x = postgis.ST_X(NEW.geom)::INTEGER,
+                        gis_viewer_y = postgis.ST_Y(NEW.geom)::INTEGER
+                    WHERE name = NEW.name;
+                END IF;
+                RETURN NULL;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the gis flowdivider is
+            # unlinked and other when a gis flowdivider is created or
+            # updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_gis_flowdivider_write_trigger ON
+                    public.wua_gis_flowdivider;
+                DROP TRIGGER IF EXISTS
+                    wua_gis_flowdivider_create_unlink_trigger ON
+                    public.wua_gis_flowdivider;
+
+                CREATE TRIGGER wua_gis_flowdivider_write_trigger
+                AFTER UPDATE OF name, geom ON
+                public.wua_gis_flowdivider FOR EACH ROW WHEN
+                ((NOT postgis.ST_Equals(OLD.geom, NEW.geom)) OR
+                 OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_gis_flowdivider_update_on_wua_flowdivider();
+
+                CREATE TRIGGER wua_gis_flowdivider_create_unlink_trigger
+                AFTER INSERT OR DELETE ON
+                public.wua_gis_flowdivider FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_gis_flowdivider_update_on_wua_flowdivider();
+            """)
+            self.env.cr.commit()
+            # Function that will update the wua_flowdivider data when the
+            # wua_flowdivider table has some change (Create, Update)
+            self.env.cr.execute("""
+                CREATE OR REPLACE FUNCTION
+                    wua_flowdivider_update_on_wua_flowdivider() RETURNS
+                    trigger AS
+                $BODY$
+                BEGIN
+                    UPDATE public.wua_flowdivider SET
+                        with_gis_flowdivider = (SELECT NEW.name IN
+                            (SELECT name FROM wua_gis_flowdivider)),
+                        gis_viewer_x = (SELECT postgis.ST_X(geom)::INTEGER FROM
+                            wua_gis_flowdivider WHERE name = NEW.name
+                            LIMIT 1),
+                        gis_viewer_y = (SELECT postgis.ST_Y(geom)::INTEGER FROM
+                            wua_gis_flowdivider WHERE name = NEW.name
+                            LIMIT 1)
+                    WHERE name = NEW.name;
+                RETURN NEW;
+                END;
+                $BODY$
+                LANGUAGE plpgsql
+                SECURITY DEFINER;
+            """)
+            self.env.cr.commit()
+            # Two trigger will be used, one when the flowdivider is created
+            # and other when a gis flowdivider is created or updated
+            self.env.cr.execute("""
+                DROP TRIGGER IF EXISTS wua_flowdivider_write_trigger ON
+                    public.wua_flowdivider;
+                DROP TRIGGER IF EXISTS wua_flowdivider_create_trigger ON
+                    public.wua_flowdivider;
+
+                CREATE TRIGGER wua_flowdivider_write_trigger
+                AFTER UPDATE OF name ON
+                public.wua_flowdivider FOR EACH ROW WHEN
+                (OLD.name IS DISTINCT FROM NEW.name)
+                EXECUTE PROCEDURE
+                    wua_flowdivider_update_on_wua_flowdivider();
+
+                CREATE TRIGGER wua_flowdivider_create_trigger
+                AFTER INSERT ON
+                public.wua_flowdivider FOR EACH ROW
+                EXECUTE PROCEDURE
+                    wua_flowdivider_update_on_wua_flowdivider();
+            """)
+            self.env.cr.commit()
+
     def check_gis_irrigationditch_created(self):
         resp = False
         self.env.cr.execute("""
@@ -1130,6 +1289,30 @@ class WuaParcel(models.Model):
                 gis_irrigationshed_ok = False
         return gis_irrigationshed_ok
 
+    def set_gis_fields_flowdivider(self):
+        gis_flowdivider_ok = self.check_gis_flowdivider_created()
+        if (gis_flowdivider_ok):
+            try:
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                    UPDATE public.wua_flowdivider
+                    SET with_gis_flowdivider = FALSE
+                """)
+                self.env.cr.execute("""
+                    UPDATE public.wua_flowdivider wi1
+                    SET with_gis_flowdivider = TRUE,
+                        gis_viewer_x = postgis.ST_X(wgi1.geom),
+                        gis_viewer_y = postgis.ST_Y(wgi1.geom)
+                    FROM public.wua_gis_flowdivider wgi1 WHERE
+                        wi1.name = wgi1.name;
+                """)
+                self.env.cr.commit()
+                self.env.invalidate_all()
+            except Exception:
+                self.env.cr.rollback()
+                gis_flowdivider_ok = False
+        return gis_flowdivider_ok
+
     def set_gis_fields_irrigationditch(self):
         gis_irrigationditch_ok = self.check_gis_irrigationditch_created()
         if gis_irrigationditch_ok:
@@ -1228,6 +1411,8 @@ class WuaParcel(models.Model):
         gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
         # Irrigationshed GIS
         gis_irrigationshed_ok = self.set_gis_fields_irrigationshed()
+        # Flowdivider GIS
+        gis_flowdivider_ok = self.set_gis_fields_flowdivider()
         # Irrigationditch GIS
         gis_irrigationditch_ok = self.set_gis_fields_irrigationditch()
         # airvalve GIS
@@ -1238,7 +1423,7 @@ class WuaParcel(models.Model):
         gis_drainagevalve_ok = self.set_gis_fields_drainagevalve()
         return gis_parcels_ok and gis_irrigationshed_ok and \
             gis_irrigationditch_ok and gis_airvalve_ok and gis_valve_ok and \
-            gis_drainagevalve_ok
+            gis_drainagevalve_ok and gis_flowdivider_ok
 
     def populate_irrigationgates_to_add(self, vals):
         irrigationgates_to_add = []
