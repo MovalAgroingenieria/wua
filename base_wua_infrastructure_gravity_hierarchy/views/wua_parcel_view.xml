@@ -13,10 +13,18 @@
                 <field name="irrigationditch_direct_id" colspan="4"/>
             </xpath>
 
+            <xpath expr="//field[@name='gis_viewer_link']" position="after">
+                <field name="flowstopper_on_parcels" invisible="1"/>
+            </xpath>
             <!-- Add drainage ditch -->
             <xpath expr="//field[@name='gravityfed_irrigation_right']" position="after">
                 <field name="drainageditch_id" colspan="4"/>
                 <div colspan="4"></div>
+                <field name="flowdivider_id" colspan="4"
+                    attrs="{'invisible':
+                        [('flowstopper_on_parcels','!=', True)]}"/>
+                <div colspan="4" attrs="{'invisible':
+                        [('flowstopper_on_parcels','!=', True)]}"></div>
             </xpath>
 
         </field>

@@ -18,6 +18,12 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         default=5,
         required=True)
 
+    flowstopper_on_parcels = fields.Boolean(
+        string='Flowstoppers on parcels',
+        default=False,
+        required=True,
+    )
+
     url_gis_viewer_drainageditch_param = fields.Char(
         string='Param for drainage ditch',
         size=20,
@@ -47,3 +53,6 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         values.set_default('wua.infrastructure.configuration',
                            'url_gis_viewer_drainageditch_param',
                            self.url_gis_viewer_drainageditch_param)
+        values.set_default('wua.infrastructure.configuration',
+                           'flowstopper_on_parcels',
+                           self.flowstopper_on_parcels)

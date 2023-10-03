@@ -21,6 +21,20 @@ class WuaParcel(models.Model):
         index=True,
         ondelete='restrict')
 
+    flowdivider_id = fields.Many2one(
+        string='Flowstopper',
+        comodel_name='wua.flowdivider',
+        index=True,
+        ondelete='restrict',
+        domain="[('is_flowstopper', '=', True),"
+               "('irrigationditch_id', '=', irrigationditch_direct_id)]",
+    )
+
+    flowstopper_on_parcels = fields.Boolean(
+        string='Flowstopper in parcels',
+        compute='_compute_flowstopper_on_parcels',
+    )
+
     path = fields.Char(
         string="Irrigation Ditch Full name",
         size=SIZE_PATH,
@@ -1068,6 +1082,13 @@ class WuaParcel(models.Model):
                 self.env.cr.rollback()
                 gis_drainageditch_ok = False
         return gis_parcels_ok and gis_drainageditch_ok
+
+    @api.multi
+    def _compute_flowstopper_on_parcels(self):
+        flowstopper_on_parcels = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration', 'flowstopper_on_parcels')
+        for record in self:
+            record.flowstopper_on_parcels = flowstopper_on_parcels
 
 
 class WuaParcelSubparcel(models.Model):
