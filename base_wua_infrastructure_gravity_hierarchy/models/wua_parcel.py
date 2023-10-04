@@ -3,12 +3,33 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api
+import json
 
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
     SIZE_PATH = 255
+
+    # Only parcels of partner with some parcel of concession
+    def _get_flowdivider_id_domain(self):
+        flowdivider_ids = []
+        try:
+            if (self.irrigationditch_direct_id):
+                self.env.cr.execute(u"""
+                    SELECT wf1.id FROM wua_flowdivider wf1
+                    INNER JOIN wua_irrigationditch wi1 ON
+                    wi1.id = wf1.irrigationditch_id
+                    WHERE
+                    wf1.is_flowstopper AND %s LIKE '%%' || wi1.name || '%%'
+                    GROUP BY wf1.id
+                """, (self.irrigationditch_direct_id.path,))
+                flowdivider_ids = [
+                    flowdivider_id[0] for flowdivider_id in
+                    self.env.cr.fetchall()]
+        except Exception:
+            flowdivider_ids = []
+        return [('id', 'in', flowdivider_ids)]
 
     irrigationditch_direct_id = fields.Many2one(
         string='Irrigation Ditch',
@@ -26,8 +47,12 @@ class WuaParcel(models.Model):
         comodel_name='wua.flowdivider',
         index=True,
         ondelete='restrict',
-        domain="[('is_flowstopper', '=', True),"
-               "('irrigationditch_id', '=', irrigationditch_direct_id)]",
+    )
+
+    flowdivider_id_domain = fields.Char(
+        compute="_compute_flowdivider_id_domain",
+        readonly=True,
+        store=False,
     )
 
     flowstopper_on_parcels = fields.Boolean(
@@ -876,6 +901,13 @@ class WuaParcel(models.Model):
                     hydraulic_infrastructure_type = 2
             record.hydraulic_infrastructure_type = \
                 hydraulic_infrastructure_type
+
+    @api.multi
+    @api.depends('flowdivider_id', 'irrigationditch_direct_id')
+    def _compute_flowdivider_id_domain(self):
+        for record in self:
+            domain = record._get_flowdivider_id_domain()
+            record.flowdivider_id_domain = json.dumps(domain)
 
     def get_irrigationditch(self, parcel, level):
         resp = None
