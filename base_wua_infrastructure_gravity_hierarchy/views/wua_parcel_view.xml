@@ -7,24 +7,22 @@
         <field name="model">wua.parcel</field>
         <field name="inherit_id" ref="base_wua_infrastructure.wua_parcel_view_form"/>
         <field name="arch" type="xml">
-
             <!-- Change irrigationditch_id by irrigationditch_direct_id -->
             <xpath expr="//field[@name='irrigationditch_id']" position="replace">
                 <field name="irrigationditch_direct_id" colspan="4"/>
             </xpath>
-
             <xpath expr="//field[@name='gis_viewer_link']" position="after">
                 <field name="flowstopper_on_parcels" invisible="1"/>
             </xpath>
             <!-- Add drainage ditch -->
             <xpath expr="//field[@name='gravityfed_irrigation_right']" position="after">
-                <field name="drainageditch_id" colspan="4"/>
-                <div colspan="4"></div>
                 <field name="flowdivider_id" colspan="4"
                     attrs="{'invisible':
                         [('flowstopper_on_parcels','!=', True)]}"/>
                 <div colspan="4" attrs="{'invisible':
                         [('flowstopper_on_parcels','!=', True)]}"></div>
+                <field name="drainageditch_id" colspan="4"/>
+                <div colspan="4"></div>
             </xpath>
 
         </field>
