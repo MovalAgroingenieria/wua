@@ -95,17 +95,12 @@ class WuaTankconsumption(models.Model):
 
     @api.depends('end_time')
     def _compute_agriculturalseason_id(self):
-        agriculturalseasons = self.env['wua.agriculturalseason'].search(
-            [], order='initial_date desc')
         for record in self:
             agriculturalseason = None
-            if record.end_time:
-                i = 0
-                while (i < len(agriculturalseasons) and not
-                        agriculturalseason):
-                    if (record.end_time <= agriculturalseasons[i].end_date):
-                        agriculturalseason = agriculturalseasons[i]
-                    i = i + 1
+            if record.end_time and record.initial_time:
+                agriculturalseason = self.env['wua.agriculturalseason'].search(
+                    [('end_date', '>=', record.end_time),
+                     ('initial_date', '<=', record.initial_time)],)[0]
             record.agriculturalseason_id = agriculturalseason
 
     @api.multi
