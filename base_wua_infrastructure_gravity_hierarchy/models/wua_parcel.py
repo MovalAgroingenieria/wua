@@ -15,7 +15,8 @@ class WuaParcel(models.Model):
     def _get_flowdivider_id_domain(self):
         flowdivider_ids = []
         try:
-            if (self.irrigationditch_direct_id):
+            if (self.irrigationditch_direct_id and
+                    self.irrigationditch_direct_id.path):
                 self.env.cr.execute(u"""
                     SELECT wf1.id FROM wua_flowdivider wf1
                     INNER JOIN wua_irrigationditch wi1 ON
