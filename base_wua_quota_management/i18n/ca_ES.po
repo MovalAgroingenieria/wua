@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-10 06:27+0000\n"
-"PO-Revision-Date: 2023-10-10 06:27+0000\n"
+"POT-Creation-Date: 2023-10-10 13:21+0000\n"
+"PO-Revision-Date: 2023-10-10 13:21+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1102,7 +1102,7 @@ msgstr "Compensate"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_compensatorytransfer_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_compensatorytransfers_partner_massive_compensatorytransfer_id
 msgid "Compensatory Transfer"
-msgstr "Compensatory Transfer"
+msgstr "Compensació Masiva"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.menu,name:base_wua_quota_management.configuration_menu
@@ -1402,8 +1402,6 @@ msgstr "Dies fins a fi cessió"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_reason
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_reason
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_reason
 msgid "Default Reason"
 msgstr "Motiu per defecte"
 
@@ -1450,7 +1448,7 @@ msgstr "Descripció de Picking"
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_compensatorytransfers_partner_destination_balance
 msgid "Destination Balance"
-msgstr "Destination Balance"
+msgstr "Saldo destí"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_form
@@ -1492,7 +1490,7 @@ msgstr "Quadre de diàleg per triar la campanya activa"
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wizard_massive_compensatorytransfers
 msgid "Dialog box to compensate balances"
-msgstr "Dialog box to compensate balances"
+msgstr "Quadre de diàleg per compensar quotas"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wizard_recalculate_quotas
@@ -1659,7 +1657,7 @@ msgid "Error when updating records (\"of_active_agriculturalseason\" field)."
 msgstr "Error a l'actualitzar la base de dades (camp \"of_active_agriculturalseason\")."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:465
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:469
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:457
 #: code:addons/base_wua_quota_management/models/wua_massive_compensatorytransfers.py:505
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:768
@@ -1768,7 +1766,7 @@ msgstr "Ja hi ha la cancel·lació massiva."
 #. module: base_wua_quota_management
 #: sql_constraint:wua.massive.compensatorytransfers:0
 msgid "Existing Massive Compensatory Transfer Balance."
-msgstr "Existing Massive Compensatory Transfer Balance."
+msgstr "Compensació Masiva ja existent."
 
 #. module: base_wua_quota_management
 #: sql_constraint:wua.quotaperiod:0
@@ -2165,7 +2163,7 @@ msgstr "Línia de lot d'assignacions individuals"
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:376
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:269
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:272
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:270
 #: code:addons/base_wua_quota_management/models/wua_massive_compensatorytransfers.py:306
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_individualinput_action
@@ -2343,6 +2341,7 @@ msgid "Irrigation Ditch"
 msgstr "Sèquia"
 
 #. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_partner_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_line_parcel_partner_id
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_line_parcel_view_search
 msgid "Irrigation Partner"
@@ -2421,7 +2420,7 @@ msgstr "No es pot eliminar una entrada individual, associada amb un saldo de can
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:519
 #, python-format
 msgid "It is not possible to delete an individual input, associated with a massive compensatory transfer cancel the compensatory transfer instead."
-msgstr "It is not possible to delete an individual input, associated with a massive compensatory transfer cancel the compensatory transfer instead."
+msgstr "No és possible suprimir una entrada individual, associada a una transferència compensatòria massiva, cancel·lar la transferència compensatòria."
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:512
@@ -2612,7 +2611,7 @@ msgstr "CANCEL·LACIÓ MASSIVA DE SALDOS"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_compensatorytransfers_view_form
 msgid "MASSIVE COMPENSATORY TRANSFERS"
-msgstr "MASSIVE COMPENSATORY TRANSFERS"
+msgstr "COMPENSACIÓ MASSIVA"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.menu,name:base_wua_quota_management.management_menu
@@ -2652,12 +2651,12 @@ msgstr "Cancel·lació massiva de saldos"
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_compensatorytransfers_name
 msgid "Massive Compensatory Transfer"
-msgstr "Massive Compensatory Transfer"
+msgstr "Compensació massiva"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_massive_compensatorytransfers
 msgid "Massive Compensatory Transfers"
-msgstr "Massive Compensatory Transfers"
+msgstr "Compensacions massives"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_name
@@ -2709,7 +2708,7 @@ msgstr "Cancel·lacions massives de saldos"
 #: model:ir.actions.act_window,name:base_wua_quota_management.wua_massive_compensatorytransfers_action
 #: model:ir.ui.menu,name:base_wua_quota_management.massive_compensatorytransfers_menu
 msgid "Massives Compensatory Transfers"
-msgstr "Massives Compensatory Transfers"
+msgstr "Compensacions massives"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_image_medium
@@ -3030,7 +3029,7 @@ msgid "Parcel present in the current quota period"
 msgstr "Parcel·la present en el període de quota vigent"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:290
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:293
 #: code:addons/base_wua_quota_management/models/wua_quota.py:818
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1364
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_assignment_parcel_ids
@@ -3054,7 +3053,7 @@ msgstr "Parcel·les de línia de període de quota"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_waterconnection_reading_report_document
 msgid "Partner"
-msgstr "Empresa"
+msgstr "Soci"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_partner_code
@@ -3104,7 +3103,7 @@ msgstr "Soci d'una cancel·lació massiva de saldos de soci"
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_massive_compensatorytransfers_partner
 msgid "Partner of Massive Compensatory Transfer Partner"
-msgstr "Partner of Massive Compensatory Transfer Partner"
+msgstr "Soci d'una compensació massiva"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_res_partner
@@ -3570,6 +3569,8 @@ msgstr "Despeses de Refactura"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession_reason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_reason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_reason
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_reason
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_reason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_compensatorytransfers_reason
 #, python-format
 msgid "Reason"
@@ -3644,7 +3645,7 @@ msgstr "Treure soci/s de la cancel·lació massiva"
 #. module: base_wua_quota_management
 #: model:ir.actions.server,name:base_wua_quota_management.wua_remove_partner_from_massive_compensatorytransfers
 msgid "Remove partner from massive compensatorytransfers"
-msgstr "Remove partner from massive compensatorytransfers"
+msgstr "Treure soci/s de la compensació massiva"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_nbr_reordering_rules
@@ -3799,7 +3800,7 @@ msgstr "Amb ordre"
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_compensatorytransfers_partner_source_balance
 msgid "Source Balance"
-msgstr "Source Balance"
+msgstr "Saldo origen"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_source_cession_id
@@ -3975,7 +3976,7 @@ msgid "The category code must be a positive value."
 msgstr "El codi de categoria ha de ser un valor positiu."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:483
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:487
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:415
 #: code:addons/base_wua_quota_management/models/wua_massive_compensatorytransfers.py:456
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_cancelnegativebalances.py:124
@@ -4007,7 +4008,7 @@ msgstr "El factor efectiu ha de ser un valor més gran que 0 i menor o igual a 1
 #: code:addons/base_wua_quota_management/models/wua_cession.py:493
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:379
 #: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:262
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:436
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:439
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:396
 #: code:addons/base_wua_quota_management/models/wua_massive_compensatorytransfers.py:437
 #, python-format
@@ -4041,7 +4042,7 @@ msgstr "La dotació extra no pot ser zero."
 #: code:addons/base_wua_quota_management/models/wua_cession.py:459
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:345
 #: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:228
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:402
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:405
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:362
 #: code:addons/base_wua_quota_management/models/wua_massive_compensatorytransfers.py:403
 #, python-format
@@ -4069,7 +4070,7 @@ msgstr "La referència associada a el moviment hídric no existeix"
 #: code:addons/base_wua_quota_management/models/wua_cession.py:455
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:341
 #: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:224
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:398
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:401
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:358
 #: code:addons/base_wua_quota_management/models/wua_massive_compensatorytransfers.py:399
 #, python-format
@@ -4085,7 +4086,7 @@ msgstr "El codi de supraproducte ha de ser un valor positiu."
 #: code:addons/base_wua_quota_management/models/wua_cession.py:473
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:359
 #: code:addons/base_wua_quota_management/models/wua_individualinput_massive_assignment.py:242
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:416
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:419
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:376
 #: code:addons/base_wua_quota_management/models/wua_massive_compensatorytransfers.py:417
 #, python-format
@@ -4107,7 +4108,7 @@ msgstr "El cedent i el cessionari no poden ser el mateix soci."
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_volume
 msgid "The volume in m3."
-msgstr "El volum en m3."
+msgstr "El volum en m³."
 
 #. module: base_wua_quota_management
 #: sql_constraint:wua.hydricmovement:0
@@ -4612,8 +4613,8 @@ msgid "days"
 msgstr "dies"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:376
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:563
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:379
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:573
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1323
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:69
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:104
