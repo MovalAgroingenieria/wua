@@ -222,6 +222,12 @@ class WuaIndividualinput(models.Model):
         readonly=True,
         ondelete='restrict',)
 
+    massive_compensatorytransfer_id = fields.Many2one(
+        string='Compensatory Transfer',
+        comodel_name='wua.massive.compensatorytransfers',
+        readonly=True,
+        ondelete='restrict',)
+
     massive_controlled_assignment_id = fields.Many2one(
         string='Massive Assignment',
         comodel_name='wua.massive.assignments',
@@ -507,6 +513,13 @@ class WuaIndividualinput(models.Model):
                     'It is not possible to delete an individual input, '
                     'associated with a massive controlled assignment, cancel '
                     'the massive assignment instead.'))
+            if record.massive_compensatorytransfer_id and not self.env.\
+                    context.get(
+                    'deleting_from_compensatorytransfer_cancel', False):
+                raise exceptions.UserError(_(
+                    'It is not possible to delete an individual input, '
+                    'associated with a massive compensatory transfer cancel '
+                    'the compensatory transfer instead.'))
             if quota and quota.hydricmovement_ids:
                 hydric_outputs = filter(
                     lambda x: x['is_consumption'] is True and

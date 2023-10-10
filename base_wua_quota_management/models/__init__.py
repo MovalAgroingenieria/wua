@@ -26,3 +26,4 @@ from . import wua_infrastructure_config_settings
 from . import wua_individualinput_massive_assignment
 from . import wua_massive_cancel_balances
 from . import wua_massive_assignment
+from . import wua_massive_compensatorytransfers

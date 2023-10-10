@@ -129,9 +129,10 @@ class WuaMassiveAssignments(models.Model):
         default=_default_category_id)
 
     reason = fields.Char(
-        string='Default Reason',
+        string='Reason',
         default='',
-        size=MAX_SIZE_REASON)
+        size=MAX_SIZE_REASON,
+        required=True)
 
     event_time = fields.Datetime(
         string='Date and Time',

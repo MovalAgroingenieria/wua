@@ -5,18 +5,19 @@
 import datetime
 import pytz
 import locale
+import json
 from odoo import models, fields, api, exceptions, _
 
 
-class WuaMassiveCancelBalances(models.Model):
-    _name = 'wua.massive.cancel.balances'
-    _description = 'Massive Cancel Balances'
+class WuaMassiveCompensatorytransfers(models.Model):
+    _name = 'wua.massive.compensatorytransfers'
+    _description = 'Massive Compensatory Transfers'
     _inherit = 'mail.thread'
     _order = 'name'
 
     MAX_SIZE_SUPERPRODUCT_CODE = 6
     MAX_SIZE_REASON = 75
-    MAX_SIZE_NAME = 25 + MAX_SIZE_SUPERPRODUCT_CODE + MAX_SIZE_REASON
+    MAX_SIZE_NAME = 25 + MAX_SIZE_SUPERPRODUCT_CODE * 2 + MAX_SIZE_REASON
 
     def _default_agriculturalseason_id(self):
         resp = 0
@@ -69,14 +70,6 @@ class WuaMassiveCancelBalances(models.Model):
                             resp = filtered_quotaperiods[0].id
         return resp
 
-    def _default_superproduct_id(self):
-        resp = 0
-        proposed_superproduct_id = \
-            self.env.context.get('superproduct_id', False)
-        if proposed_superproduct_id:
-            resp = proposed_superproduct_id
-        return resp
-
     def _default_category_id(self):
         resp = 0
         proposed_category = self.env.ref(
@@ -84,6 +77,18 @@ class WuaMassiveCancelBalances(models.Model):
         if proposed_category:
             resp = proposed_category.id
         return resp
+
+    def _get_superproduct_id_domain(self):
+        valid_superproduct_ids = []
+        if (self.quotaperiod_id and self.quotaperiod_id.quotaperiodline_ids):
+            # Check if some concessions associated and in case not
+            # All parcels, else, only parcels with some concession
+            valid_superproduct_ids = []
+            for quotaperiodline in (
+                    self.quotaperiod_id.quotaperiodline_ids or []):
+                valid_superproduct_ids.append(
+                    quotaperiodline.superproduct_id.id)
+        return [('id', 'in', valid_superproduct_ids)]
 
     agriculturalseason_id = fields.Many2one(
         string='Agricultural Season',
@@ -101,13 +106,23 @@ class WuaMassiveCancelBalances(models.Model):
         ondelete='restrict',
         default=_default_quotaperiod_id)
 
-    superproduct_id = fields.Many2one(
-        string='Superproduct',
+    source_superproduct_id = fields.Many2one(
+        string='Source Superproduct',
         comodel_name='wua.superproduct',
         required=True,
-        index=True,
-        ondelete='restrict',
-        default=_default_superproduct_id)
+        domain="[('is_flowstopper', '=', True),"
+               "('irrigationditch_id', '=', irrigationditch_direct_id)]",)
+
+    superproduct_id_domain = fields.Char(
+        compute="_compute_superproduct_id_domain",
+        readonly=True,
+        store=False,
+    )
+
+    destination_superproduct_id = fields.Many2one(
+        string='Destination Superproduct',
+        comodel_name='wua.superproduct',
+        required=True,)
 
     category_id = fields.Many2one(
         string='Categ.',
@@ -120,22 +135,14 @@ class WuaMassiveCancelBalances(models.Model):
     reason = fields.Char(
         string='Reason',
         default='',
-        size=MAX_SIZE_REASON,
-        required=True,)
+        required=True,
+        size=MAX_SIZE_REASON)
 
     event_time = fields.Datetime(
         string='Date and Time',
         default=lambda self: fields.datetime.now(),
         required=True,
         index=True)
-
-    cancel_type = fields.Selection([
-        ('00_negative', 'Cancel Negatives'),
-        ('01_positive', 'Cancel Positives'),
-        ],
-        string='Type',
-        default='00_negative',
-        required=True)
 
     state = fields.Selection([
         ('00_draft', 'Draft'),
@@ -150,7 +157,7 @@ class WuaMassiveCancelBalances(models.Model):
         compute='_compute_of_active_agriculturalseason')
 
     name = fields.Char(
-        string='Massive Cancel Balance',
+        string='Massive Compensatory Transfer',
         size=MAX_SIZE_NAME,
         store=True,
         index=True,
@@ -159,74 +166,100 @@ class WuaMassiveCancelBalances(models.Model):
     individualinput_ids = fields.One2many(
         string='Individual Inputs',
         comodel_name='wua.individualinput',
-        inverse_name='massive_cancel_balance_id')
+        inverse_name='massive_compensatorytransfer_id')
 
-    cancel_partner_ids = fields.One2many(
+    comptransfer_partner_ids = fields.One2many(
         string='Partners',
-        comodel_name='wua.massive.cancel.balances.partner',
-        inverse_name='massive_cancel_balance_id')
+        comodel_name='wua.massive.compensatorytransfers.partner',
+        inverse_name='massive_compensatorytransfer_id')
 
     selected_partners = fields.Boolean(
         string='Partners Already Selected',
         default=False)
 
-    selected_cancel_partner_ids = fields.One2many(
+    selected_comptransfer_partner_ids = fields.One2many(
         string='Partners',
-        comodel_name='wua.massive.cancel.balances.partner',
-        inverse_name='massive_cancel_balance_id',
+        comodel_name='wua.massive.compensatorytransfers.partner',
+        inverse_name='massive_compensatorytransfer_id',
         domain=[('selected', '=', True)])
 
     notes = fields.Html(string='Notes')
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
-         'Existing Massive Cancel Balance.'),
+         'Existing Massive Compensatory Transfer Balance.'),
     ]
 
     @api.multi
-    def execute_massive_cancel(self):
+    def execute_massive_compensatorytransfers(self):
         for record in self:
             quotaperiod = record.quotaperiod_id
             data_ok, error_message = record._check_data(quotaperiod)
             if not data_ok:
                 raise exceptions.ValidationError(error_message)
-            cancel_partner_ids = []
-            massive_cancel_ids = record.cancel_partner_ids.filtered(
-                lambda x: x.selected is True)
-            for massive_cancel_id in massive_cancel_ids:
-                cancel_partner_ids.append(massive_cancel_id.partner_id.id)
-            domain = [
-                ('quotaperiod_id', '=', quotaperiod.id),
-                ('superproduct_id', '=', record.superproduct_id.id),
-                ('partner_id', 'in', cancel_partner_ids)]
-            if (record.cancel_type == '00_negative'):
-                domain.append(('balance', '<', 0))
-            else:
-                domain.append(('balance', '>', 0))
-            cancel_quotas = self.env['wua.quota'].search(domain)
-            model_individualinput = self.env['wua.individualinput']
-            for cancel_quota in (cancel_quotas or []):
-                model_individualinput.create({
-                    'agriculturalseason_id':
-                        quotaperiod.agriculturalseason_id.id,
-                    'quotaperiod_id': quotaperiod.id,
-                    'superproduct_id': record.superproduct_id.id,
-                    'partner_id': cancel_quota.partner_id.id,
-                    'category_id': record.category_id.id,
-                    'event_time': record.event_time,
-                    'volume': -cancel_quota.balance,
-                    'reason': record.reason,
-                    'massive_cancel_balance_id': record.id
-                    })
+            comptrasnfer_partner_ids = []
+            for massive_comptransfer_id in \
+                    record.selected_comptransfer_partner_ids:
+                comptrasnfer_partner_ids.append(
+                    massive_comptransfer_id.partner_id.id)
+            source_quotas = self.env['wua.quota'].search(
+                [('quotaperiod_id', '=', quotaperiod.id),
+                 ('superproduct_id', '=',
+                  record.destination_superproduct_id.id),
+                 ('balance', '<', 0),
+                 ('partner_id', 'in', comptrasnfer_partner_ids)])
+            for source_quota in (source_quotas or []):
+                destination_quota = self.env['wua.quota'].search(
+                    [('quotaperiod_id', '=', quotaperiod.id),
+                     ('superproduct_id', '=',
+                      record.source_superproduct_id.id),
+                     ('partner_id', '=', source_quota.partner_id.id)])
+                if destination_quota:
+                    destination_quota = destination_quota[0]
+                    volume_to_transfer = 0
+                    if destination_quota.balance > 0:
+                        if destination_quota.balance > -source_quota.balance:
+                            volume_to_transfer = -source_quota.balance
+                        else:
+                            volume_to_transfer = destination_quota.balance
+                    if volume_to_transfer > 0:
+                        agriculturalseason = \
+                            quotaperiod.agriculturalseason_id
+                        model_individualinput = self.env['wua.individualinput']
+                        model_individualinput.create({
+                            'agriculturalseason_id': agriculturalseason.id,
+                            'quotaperiod_id': quotaperiod.id,
+                            'superproduct_id':
+                                record.destination_superproduct_id.id,
+                            'partner_id': source_quota.partner_id.id,
+                            'category_id': record.category_id.id,
+                            'event_time': record.event_time,
+                            'volume': volume_to_transfer,
+                            'reason': record.reason,
+                            'massive_compensatorytransfer_id': record.id,
+                            })
+                        model_individualinput.create({
+                            'agriculturalseason_id': agriculturalseason.id,
+                            'quotaperiod_id': quotaperiod.id,
+                            'superproduct_id':
+                                record.source_superproduct_id.id,
+                            'partner_id': source_quota.partner_id.id,
+                            'category_id': record.category_id.id,
+                            'event_time': record.event_time,
+                            'volume': -volume_to_transfer,
+                            'reason': record.reason,
+                            'massive_compensatorytransfer_id': record.id,
+                            })
+
             record.write({
                 'state': '01_executed',
             })
 
     @api.multi
-    def cancel_massive_cancel(self):
+    def cancel_massive_compensatorytransfers(self):
         for record in self:
             record.individualinput_ids.with_context(
-                deleting_from_cancel_balance_cancel=True).unlink()
+                deleting_from_compensatorytransfer_cancel=True).unlink()
             record.write({
                 'state': '00_draft',
             })
@@ -237,7 +270,9 @@ class WuaMassiveCancelBalances(models.Model):
         default_locale = locale.setlocale(locale.LC_TIME)
         is_english = self.env.context['lang'] == 'en_US'
         for record in self:
-            superproduct_name = record.superproduct_id.name
+            source_superproduct_name = record.source_superproduct_id.name
+            destination_superproduct_name = \
+                record.destination_superproduct_id.name
             try:
                 if is_english:
                     locale.setlocale(locale.LC_TIME, 'en_US.utf8')
@@ -246,7 +281,8 @@ class WuaMassiveCancelBalances(models.Model):
                     '%Y-%m-%d %H:%M:%S').strftime('%x')
             finally:
                 locale.setlocale(locale.LC_TIME, default_locale)
-            name = initial_date_str + ' - ' + superproduct_name
+            name = initial_date_str + ' - ' + source_superproduct_name + \
+                ' - ' + destination_superproduct_name
             if record.reason:
                 name += ' - ' + record.reason
             result.append((record.id, name))
@@ -289,10 +325,10 @@ class WuaMassiveCancelBalances(models.Model):
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Partners'),
-            'res_model': 'wua.massive.cancel.balances.partner',
+            'res_model': 'wua.massive.compensatorytransfers.partner',
             'view_type': 'form',
             'view_mode': 'tree',
-            'domain': [['massive_cancel_balance_id', '=', self.id]],
+            'domain': [['massive_compensatorytransfer_id', '=', self.id]],
             'limit': 10000000,
             }
         return act_window
@@ -306,18 +342,31 @@ class WuaMassiveCancelBalances(models.Model):
                 of_active_agriculturalseason = True
             record.of_active_agriculturalseason = of_active_agriculturalseason
 
-    @api.depends('superproduct_id', 'superproduct_id.superproduct_code')
+    @api.depends(
+        'source_superproduct_id', 'source_superproduct_id.superproduct_code',
+        'destination_superproduct_id',
+        'destination_superproduct_id.superproduct_code')
     def _compute_name(self):
         for record in self:
             name = ''
             seq_number = self.env['ir.sequence'].next_by_code(
-                'wua.massive.cancel.balances')
+                'wua.massive.compensatorytransfers')
             name = seq_number
-            if record.superproduct_id:
+            if (record.source_superproduct_id and
+                    record.destination_superproduct_id):
                 name += u'-' + str(
-                    record.superproduct_id.superproduct_code).zfill(
-                        self.MAX_SIZE_SUPERPRODUCT_CODE)
+                    record.source_superproduct_id.superproduct_code).zfill(
+                        self.MAX_SIZE_SUPERPRODUCT_CODE) + u'-' + \
+                    str(record.destination_superproduct_id.superproduct_code).\
+                    zfill(self.MAX_SIZE_SUPERPRODUCT_CODE)
             record.name = name
+
+    @api.multi
+    @api.depends('quotaperiod_id')
+    def _compute_superproduct_id_domain(self):
+        for record in self:
+            domain = record._get_superproduct_id_domain()
+            record.superproduct_id_domain = json.dumps(domain)
 
     @api.onchange('agriculturalseason_id')
     def _onchange_agriculturalseason_id(self):
@@ -341,14 +390,6 @@ class WuaMassiveCancelBalances(models.Model):
                     'domain': {'superproduct_id':
                                [('id', 'in', valid_superproduct_ids)]}
                     }
-
-    @api.onchange('superproduct_id')
-    def _onchange_superproduct_id(self):
-        if self.superproduct_id:
-            default_categ = self.env['wua.individualinput.category'].search(
-                [('superproduct_id', '=', self.superproduct_id.id)])
-            if (default_categ and len(default_categ) > 0):
-                self.category_id = default_categ[0]
 
     @api.constrains('quotaperiod_id')
     def _check_quotaperiod_id(self):
@@ -421,32 +462,39 @@ class WuaMassiveCancelBalances(models.Model):
             [('is_wua_partner', '=', True), ('active', '=', True)])
         if len(partners) > 0:
             user_id = self.env.user.id
-            massive_cancel_balance_id = self.id
+            massive_compensatorytransfer_id = self.id
             quotaperiod_id = self.quotaperiod_id.id
-            superproduct_id = self.superproduct_id.id
-            if self.cancel_type == '00_negative':
-                operator = '<'
-            elif self.cancel_type == '01_positive':
-                operator = '>'
+            source_superproduct_id = self.source_superproduct_id.id
+            destination_superproduct_id = self.destination_superproduct_id.id
             sql_query = """
-                INSERT INTO wua_massive_cancel_balances_partner (
+                INSERT INTO wua_massive_compensatorytransfers_partner (
                     id, create_uid, write_uid, create_date, write_date,
-                    massive_cancel_balance_id, selected, partner_id, balance)
-                SELECT nextval('wua_massive_cancel_balances_partner_id_seq'),
+                    massive_compensatorytransfer_id, selected, partner_id,
+                    source_balance, destination_balance)
+                SELECT nextval(
+                    'wua_massive_compensatorytransfers_partner_id_seq'),
             """
             sql_query += str(user_id) + ', ' + str(user_id) + ', '
             sql_query += 'now(), now(), '
-            sql_query += str(massive_cancel_balance_id) + ', ' + 'TRUE, '
-            sql_query += 'p.id, q.balance '
+            sql_query += str(massive_compensatorytransfer_id) + ', ' + 'TRUE, '
+            sql_query += 'a.partner_id, a.balance as source_balance, ' + \
+                'b.balance AS destination_balance '
             sql_query += """
-                FROM wua_quota q
-                  LEFT JOIN wua_quotaperiod qp ON q.quotaperiod_id = qp.id
-                  LEFT JOIN wua_superproduct sp ON q.superproduct_id = sp.id
-                  LEFT JOIN res_partner p ON q.partner_id = p.id
-                  WHERE p.active AND p.is_wua_partner """
-            sql_query += 'AND qp.id = ' + str(quotaperiod_id)
-            sql_query += ' AND sp.id = ' + str(superproduct_id)
-            sql_query += ' AND q.balance ' + operator + ' 0;'
+                FROM (SELECT partner_id, balance FROM wua_quota wq1 WHERE
+                wq1.quotaperiod_id =  """ + str(quotaperiod_id) + \
+                """
+                AND wq1.superproduct_id = """ + str(source_superproduct_id) + \
+                """
+                AND balance > 0) a
+                INNER JOIN (SELECT partner_id, balance from wua_quota wq2 WHERE
+                wq2.quotaperiod_id = """ + str(quotaperiod_id) + \
+                """
+                AND wq2.superproduct_id = """ + str(
+                    destination_superproduct_id) + \
+                """
+                AND balance < 0) b ON a.partner_id = b.partner_id
+                LEFT JOIN res_partner rp1 ON a.partner_id = rp1.id
+                WHERE rp1.active AND rp1.is_wua_partner """
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute(sql_query)
@@ -457,14 +505,14 @@ class WuaMassiveCancelBalances(models.Model):
                 raise exceptions.UserError(_('Error when updating records.'))
 
 
-class WuaMassiveCancelBalancesPartner(models.Model):
-    _name = 'wua.massive.cancel.balances.partner'
-    _description = 'Partner of Massive Cancel Balances Partner'
-    _order = 'massive_cancel_balance_id,partner_id'
+class WuaMassiveCompensatorytransfersPartner(models.Model):
+    _name = 'wua.massive.compensatorytransfers.partner'
+    _description = 'Partner of Massive Compensatory Transfer Partner'
+    _order = 'massive_compensatorytransfer_id,partner_id'
 
-    massive_cancel_balance_id = fields.Many2one(
-        string='Cancel Balance',
-        comodel_name='wua.massive.cancel.balances',
+    massive_compensatorytransfer_id = fields.Many2one(
+        string='Compensatory Transfer',
+        comodel_name='wua.massive.compensatorytransfers',
         required=True,
         ondelete='cascade')
 
@@ -478,8 +526,12 @@ class WuaMassiveCancelBalancesPartner(models.Model):
         required=True,
         ondelete='restrict')
 
-    balance = fields.Float(
-        string='Balance',
+    source_balance = fields.Float(
+        string='Source Balance',
+        digits=(32, 2))
+
+    destination_balance = fields.Float(
+        string='Destination Balance',
         digits=(32, 2))
 
     @api.multi
@@ -491,11 +543,11 @@ class WuaMassiveCancelBalancesPartner(models.Model):
                 record.selected = True
 
     @api.multi
-    def add_to_massive_cancel(self):
+    def add_to_massive_compensatorytransfer(self):
         vals = {'selected': True, }
         self.write(vals)
 
     @api.multi
-    def remove_from_massive_cancel(self):
+    def remove_from_massive_compensatorytransfer(self):
         vals = {'selected': False, }
         self.write(vals)
