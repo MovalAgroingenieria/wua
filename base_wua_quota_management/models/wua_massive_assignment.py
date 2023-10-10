@@ -193,28 +193,31 @@ class WuaMassiveAssignments(models.Model):
             data_ok, error_message = record._check_data(quotaperiod)
             if not data_ok:
                 raise exceptions.ValidationError(error_message)
-            partners_and_provisions = []
+            partners_and_provisions = {}
             assignment_parcels = record.selected_assignment_parcel_ids
             for assignment_parcel in assignment_parcels:
                 parcel = assignment_parcel.parcel_id
                 for partnerlink in parcel.partnerlink_ids:
                     if partnerlink.water_costs_percentage > 0:
-                        partner = partnerlink.partner_id
+                        partner = partnerlink.partner_id.id
                         water_costs = partnerlink.water_costs_percentage / 100
                         provision = \
                             assignment_parcel.assignment_provision_parcel * \
                             water_costs
+                        if (partner in partners_and_provisions):
+                            partners_and_provisions[partner] = provision + \
+                                partners_and_provisions[partner]
+                        else:
+                            partners_and_provisions[partner] = provision
                         partners_and_provisions.append([partner, provision])
             model_individualinput = self.env['wua.individualinput']
-            for partner_and_provision in partners_and_provisions:
-                partner = partner_and_provision[0]
-                provision = partner_and_provision[1]
+            for partner, provision in partners_and_provisions.items():
                 model_individualinput.create({
                     'agriculturalseason_id':
                         quotaperiod.agriculturalseason_id.id,
                     'quotaperiod_id': quotaperiod.id,
                     'superproduct_id': record.superproduct_id.id,
-                    'partner_id': partner.id,
+                    'partner_id': partner,
                     'category_id': record.category_id.id,
                     'event_time': record.event_time,
                     'volume': provision,
@@ -450,9 +453,10 @@ class WuaMassiveAssignments(models.Model):
                   INSERT INTO wua_massive_assignments_parcel (
                     id, create_uid, write_uid, create_date, write_date,
                     massive_controlled_assignment_id, selected, parcel_id,
-                    area_official, provision)
+                    partner_id, area_official, provision)
                   SELECT nextval('wua_massive_assignments_parcel_id_seq'),
-                    %s, %s, now(), now(), %s, TRUE, p.id, p.area_official, %s
+                    %s, %s, now(), now(), %s, TRUE, p.id, p.partner_id,
+                  p.area_official, %s
                   FROM wua_parcel p
                   WHERE p.active AND p.mapped_to_current_quotaperiod;""",
                                     (user_id, user_id,
@@ -508,6 +512,12 @@ class WuaMassiveAssignmentsParcel(models.Model):
     selected = fields.Boolean(
         string='Selected',
         default=True)
+
+    partner_id = fields.Many2one(
+        string='Irrigation Partner',
+        comodel_name='res.partner',
+        required=True,
+        ondelete='restrict')
 
     parcel_id = fields.Many2one(
         string='Parcel',
