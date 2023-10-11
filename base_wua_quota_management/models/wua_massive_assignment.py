@@ -209,7 +209,6 @@ class WuaMassiveAssignments(models.Model):
                                 partners_and_provisions[partner]
                         else:
                             partners_and_provisions[partner] = provision
-                        partners_and_provisions.append([partner, provision])
             model_individualinput = self.env['wua.individualinput']
             for partner, provision in partners_and_provisions.items():
                 model_individualinput.create({
