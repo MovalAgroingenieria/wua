@@ -8,7 +8,10 @@
             <form duplicate="0">
                 <sheet>
                     <field name="active" invisible="1"/>
-                    <button name="toggle_active"
+                    <field name="gis_viewer_link" invisible="1"/>
+                    <field name="with_gis_intake" invisible="1"/>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="toggle_active"
                             type="object"
                             class="oe_stat_button"
                             confirm="Are you sure you want to toggle visibility?"
@@ -16,10 +19,7 @@
                             <field name="active"
                                 widget="boolean_button"
                                 options='{"terminology": "archive"}'/>
-                    </button>
-                    <field name="gis_viewer_link" invisible="1"/>
-                    <field name="with_gis_intake" invisible="1"/>
-                    <div name="buttons" class="oe_button_box">
+                        </button>
                         <button name="action_see_gis_viewer" type="object"
                             class="oe_stat_button" string="GIS Viewer" icon="fa-map-marker"
                             attrs="{'invisible': ['|',('gis_viewer_link','=',False), ('with_gis_intake','=',False)]}"/>
