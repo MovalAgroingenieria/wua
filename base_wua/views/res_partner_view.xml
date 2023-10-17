@@ -94,7 +94,8 @@
                 <field name="birthdate"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="name_alias"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"
+                 groups="base_wua.group_wua_user"/>
                 <field name="is_owner" readonly="1"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_lessee" readonly="1"
@@ -163,7 +164,7 @@
                 </attribute>
             </xpath>
             <xpath expr="//field[@name='display_name']" position="before">
-                <field name="name_alias" invisible="1"/>
+                <field name="name_alias" invisible="1" groups="base_wua.group_wua_user"/>
                 <field name="partner_code"/>
             </xpath>
             <xpath expr="//field[@name='phone']" position="attributes">
@@ -210,7 +211,7 @@
             <search>
                 <field name="partner_code"/>
                 <field name="display_name"/>
-                <field name="name_alias"/>
+                <field name="name_alias" groups="base_wua.group_wua_user"/>
                 <field name="category_id"/>
                 <filter string="Persons" name="notiscompany"
                  domain="[('is_company','=',False)]"/>
