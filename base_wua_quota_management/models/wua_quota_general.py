@@ -173,8 +173,7 @@ class WuaQuotaGeneral(models.Model):
                 SELECT sum(wh1.accounting_volume) FROM wua_hydricmovement wh1
                 LEFT JOIN wua_individualinput wi1 ON
                 wh1.individualinput_id = wi1.id WHERE (type =
-                'multiple_assign' OR wi1.massive_controlled_assignment_id
-                IS NOT NULL) AND wh1.superproduct_id =  """ + str(
+                'multiple_assign') AND wh1.superproduct_id =  """ + str(
                 record.superproduct_id.id) + """
                 AND wh1.quotaperiod_id = """ + str(record.quotaperiod_id.id))
             query_results = self.env.cr.dictfetchall()
@@ -190,7 +189,10 @@ class WuaQuotaGeneral(models.Model):
             water_consumed = 0
             self.env.cr.execute("""
                 SELECT sum(wh1.volume) FROM wua_hydricmovement wh1
-                WHERE wh1.is_consumption AND wh1.superproduct_id =  """ + str(
+                WHERE (wh1.type = 'pres_consumption' OR
+                       wh1.type = 'grav_consumption' OR
+                       wh1.type = 'irrig_report'
+                ) AND wh1.superproduct_id =  """ + str(
                 record.superproduct_id.id) + """
                 AND wh1.quotaperiod_id = """ + str(record.quotaperiod_id.id))
             query_results = self.env.cr.dictfetchall()
