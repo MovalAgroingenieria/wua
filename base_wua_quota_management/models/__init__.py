@@ -12,6 +12,8 @@ from . import wua_irrigationshed
 from . import wua_hydraulicsector
 from . import wua_quotaperiod
 from . import wua_quota
+from . import wua_quota_general
+from . import wua_generalinput
 from . import wua_hydricmovement
 from . import wua_presconsumption
 from . import wua_individualinput_category

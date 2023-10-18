@@ -127,9 +127,19 @@ class WuaQuotaperiod(models.Model):
         comodel_name='wua.quota',
         inverse_name='quotaperiod_id')
 
+    quota_general_ids = fields.One2many(
+        string='General Quotas',
+        comodel_name='wua.quota.general',
+        inverse_name='quotaperiod_id')
+
     hydricmovement_ids = fields.One2many(
         string='Hydric Movements',
         comodel_name='wua.hydricmovement',
+        inverse_name='quotaperiod_id')
+
+    generalinput_ids = fields.One2many(
+        string='General Inputs',
+        comodel_name='wua.generalinput',
         inverse_name='quotaperiod_id')
 
     balances_to_next_quotaperiod = fields.Boolean(
@@ -437,6 +447,35 @@ class WuaQuotaperiod(models.Model):
             return act_window
 
     @api.multi
+    def action_get_general_quotas(self):
+        self.ensure_one()
+        if self.quota_general_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_general_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_general_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_quota_general_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('General quotas'),
+                'res_model': 'wua.quota.general',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.quota_general_ids.ids)],
+                'context': {'compressed_agriculturalseason': True,
+                            'compressed_quotaperiod': True,
+                            'search_default_active_agriculturalseason': True}
+                }
+            return act_window
+
+    @api.multi
     def action_get_hydric_movements(self):
         self.ensure_one()
         if self.hydricmovement_ids:
@@ -459,6 +498,35 @@ class WuaQuotaperiod(models.Model):
                 'search_view_id': (search_view.id, search_view.name),
                 'target': 'current',
                 'domain': [('id', 'in', self.hydricmovement_ids.ids)],
+                'context': {'compressed_agriculturalseason': True,
+                            'compressed_quotaperiod': True,
+                            'search_default_active_agriculturalseason': True}
+                }
+            return act_window
+
+    @api.multi
+    def action_get_generalinputs(self):
+        self.ensure_one()
+        if self.generalinput_ids:
+            id_tree_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_generalinput_view_tree').id
+            id_form_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_generalinput_view_form').id
+            search_view = self.env.ref(
+                'base_wua_quota_management.'
+                'wua_generalinput_view_search')
+            act_window = {
+                'type': 'ir.actions.act_window',
+                'name': _('Hydric Movements'),
+                'res_model': 'wua.generalinput',
+                'view_type': 'form',
+                'view_mode': 'tree',
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'search_view_id': (search_view.id, search_view.name),
+                'target': 'current',
+                'domain': [('id', 'in', self.generalinput_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
                             'search_default_active_agriculturalseason': True}
@@ -489,6 +557,8 @@ class WuaQuotaperiod(models.Model):
         self._delete_quotas_hydricmovements(quotaperiod)
         quotaperiodlines = quotaperiod.quotaperiodline_ids
         for quotaperiodline in quotaperiodlines:
+            # Create general quotas on quotaperiod open
+            self._create_general_quota(quotaperiodline)
             assignment_for_current_superproduct_ok = \
                 self._apply_multiple_assignment_for_superproduct(
                     quotaperiodline)
@@ -786,6 +856,15 @@ class WuaQuotaperiod(models.Model):
             except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when updating records.'))
+
+    def _create_general_quota(self, quotaperiodline):
+        if (quotaperiodline and quotaperiodline.quotaperiodlineparcel_ids):
+            quotaperiod = quotaperiodline.quotaperiod_id
+            superproduct = quotaperiodline.superproduct_id
+            self.env['wua.quota.general'].create({
+                'quotaperiod_id': quotaperiod.id,
+                'superproduct_id': superproduct.id,
+            })
 
     # @profile
     def _apply_multiple_assignment_for_superproduct(self, quotaperiodline):
