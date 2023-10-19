@@ -113,12 +113,10 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'last_api_response_cabezales',
                            self.last_api_response_cabezales)
-
         values.set_default(
             'wua.irrigation.configuration',
             'import_irrigation_schedule_from_waterconnections_inelcom',
             self.import_irrigation_schedule_from_waterconnections_inelcom)
-
         values.set_default(
             'wua.irrigation.configuration',
             'import_irrigation_event_from_waterconnections_inelcom',
