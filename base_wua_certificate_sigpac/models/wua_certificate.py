@@ -13,6 +13,18 @@ class WuaCertificate(models.Model):
         comodel_name='wua.certificate.sigpac',
         inverse_name='certificate_id')
 
+    @api.onchange('certificateparcel_ids')
+    def _onchange_included_in_certificate(self):
+        parcels = self.certificateparcel_ids
+        for parcel in parcels:
+            included = False
+            if parcel.included_in_certificate:
+                included = True
+            for enclosure in parcel.certificatesigpac_ids:
+                enclosure.write({
+                    'included_in_certificate': included,
+                    'enclosure_included_in_certificate': included})
+
 
 class WuaCertificateParcel(models.Model):
     _inherit = 'wua.certificate.parcel'
@@ -34,7 +46,8 @@ class WuaCertificateParcel(models.Model):
                         'parcel_area': sigpaclink.parcel_area,
                         'area_ha': sigpaclink.area_ha,
                         'parcel_area': sigpaclink.parcel_area,
-                        'intersection_percentage': sigpaclink.intersection_percentage,
+                        'intersection_percentage':
+                            sigpaclink.intersection_percentage,
                         'coef_rega': sigpaclink.coef_rega,
                         'uso_sigpac': sigpaclink.uso_sigpac,
                         }
@@ -144,6 +157,12 @@ class WuaCertificateSigpac(models.Model):
         store=True,
         compute='_compute_included_in_certificate')
 
+    enclosure_included_in_certificate = fields.Boolean(
+        string='Enclosure included',
+        store=True,
+        readonly=False,
+        compute='_compute_enclosure_included_in_certificate')
+
     @api.depends('certificateparcel_id', 'sigpac_code')
     def _compute_name(self):
         for record in self:
@@ -192,7 +211,20 @@ class WuaCertificateSigpac(models.Model):
     def _compute_included_in_certificate(self):
         for record in self:
             included_in_certificate = False
+            enclosure_included_in_certificate = False
             if (record.certificateparcel_id and
                record.certificateparcel_id.included_in_certificate):
                 included_in_certificate = True
+                enclosure_included_in_certificate = True
             record.included_in_certificate = included_in_certificate
+            record.enclosure_included_in_certificate = \
+                enclosure_included_in_certificate
+
+    @api.depends('included_in_certificate')
+    def _compute_enclosure_included_in_certificate(self):
+        for record in self:
+            enclosure_included_in_certificate = False
+            if (record.included_in_certificate):
+                enclosure_included_in_certificate = True
+            record.enclosure_included_in_certificate = \
+                enclosure_included_in_certificate

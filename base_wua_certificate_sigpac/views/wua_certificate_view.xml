@@ -10,9 +10,8 @@
                    position="after">
                 <page name="sigpac_page" string="SIGPAC">
                     <field name="certificatesigpac_ids"
-                           readonly="1"
-                           context="{'tree_view_ref':
-                           'base_wua_certificate_sigpac.wua_certificate_sigpac_view_tree'}"/>
+                        context="{'tree_view_ref': 'base_wua_certificate_sigpac.wua_certificate_sigpac_view_tree'}"
+                        attrs="{'readonly': [('state','!=','01_draft')]}"/>
                 </page>
             </xpath>
         </field>
@@ -22,17 +21,18 @@
         <field name="name">SIGPAC enclosures of certificate (tree view)</field>
         <field name="model">wua.certificate.sigpac</field>
         <field name="arch" type="xml">
-            <tree class=
-                  "o_base_wua_certificate_sigpac_certificate_sigpac_view_tree">
+            <tree class="o_base_wua_certificate_sigpac_certificate_sigpac_view_tree"
+                editable="bottom" create="false" delete="false">
                 <field name="parcel_id" string="Parcel"/>
                 <field name="enclosure_number" string=""/>
-                <field name="sigpac_code" string="SIGPAC Enclosure"/>
-                <field name="uso_sigpac" string="Land Use"/>
-                <field name="coef_rega" string="Irrig. Coef. (0-100)"/>
-                <field name="parcel_area_ha" string="Parcel Area (GIS, ha)"/>
-                <field name="area_ha" string="Intersection (GIS, ha)"/>
-                <field name="intersection_percentage" string="% of parcel"/>
-                <field name="included_in_certificate" string="Included"/>
+                <field name="sigpac_code" string="SIGPAC Enclosure" readonly="1"/>
+                <field name="uso_sigpac" string="Land Use" readonly="1"/>
+                <field name="coef_rega" string="Irrig. Coef. (0-100)" readonly="1"/>
+                <field name="parcel_area_ha" string="Parcel Area (GIS, ha)" readonly="1"/>
+                <field name="area_ha" string="Intersection (GIS, ha)" readonly="1"/>
+                <field name="intersection_percentage" string="% of parcel" readonly="1"/>
+                <field name="included_in_certificate" string="Parcel included"/>
+                <field name="enclosure_included_in_certificate"/>
             </tree>
         </field>
     </record>

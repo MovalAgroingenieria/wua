@@ -19,28 +19,31 @@
                         </div>
                     </t>
                 </div>
-                <table class="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th name="th_parcel_sigpac" class="text-left">Land Parcel</th>
-                            <th name="th_number_sigpac" class="text-right">Number</th>
-                            <th name="th_uso_sigpac" class="text-left">Land Use</th>
-                            <th name="th_coef_rega_sigpac" class="text-right">Irrig. Coef. (0-100)</th>
-                            <th name="th_area_gis_sigpac" class="text-right">Area (GIS, <span><t t-esc="measurement_unit"/></span>)</th>
-                            <th name="th_intersection_percentage_sigpac" class="text-right">% of parcel</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr t-foreach="certificatesigpac_ids" t-as="s">
-                            <td name="td_land_parcel_sigpac" align="left"><span t-field="s.parcel_id"/></td>
-                            <td name="td_number_sigpac" align="right"><span t-field="s.enclosure_number"/></td>
-                            <td name="td_uso_sigpac" align="left"><span t-field="s.uso_sigpac"/></td>
-                            <td name="td_coef_rega_sigpac" align="right"><span t-field="s.coef_rega"/></td>
-                            <td name="td_area_gis_sigpac" align="right"><span t-field="s.area_ha"/></td>
-                            <td name="td_intersection_percentage_sigpac" align="right"><span t-field="s.intersection_percentage"/></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <t t-set="certificatesigpac_ids" t-value="o.certificatesigpac_ids.filtered(lambda x: x.enclosure_included_in_certificate)"/>
+                <t t-if="certificatesigpac_ids" name="sigpac_enclosures_table">
+                    <table class="table table-condensed table-striped">
+                        <thead>
+                            <tr>
+                                <th name="th_parcel_sigpac" class="text-left">Land Parcel</th>
+                                <th name="th_number_sigpac" class="text-right">Number</th>
+                                <th name="th_uso_sigpac" class="text-left">Land Use</th>
+                                <th name="th_coef_rega_sigpac" class="text-right">Irrig. Coef. (0-100)</th>
+                                <th name="th_area_gis_sigpac" class="text-right">Area (GIS, <span><t t-esc="measurement_unit"/></span>)</th>
+                                <th name="th_intersection_percentage_sigpac" class="text-right">% of parcel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="certificatesigpac_ids" t-as="s">
+                                <td name="td_land_parcel_sigpac" align="left"><span t-field="s.parcel_id"/></td>
+                                <td name="td_number_sigpac" align="right"><span t-field="s.enclosure_number"/></td>
+                                <td name="td_uso_sigpac" align="left"><span t-field="s.uso_sigpac"/></td>
+                                <td name="td_coef_rega_sigpac" align="right"><span t-field="s.coef_rega"/></td>
+                                <td name="td_area_gis_sigpac" align="right"><span t-field="s.area_ha"/></td>
+                                <td name="td_intersection_percentage_sigpac" align="right"><span t-field="s.intersection_percentage"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
             </t>
         </xpath>
     </template>
