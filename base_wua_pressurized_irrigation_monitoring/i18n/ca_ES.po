@@ -6,14 +6,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-20 14:14+0000\n"
-"PO-Revision-Date: 2021-10-20 14:14+0000\n"
+"POT-Creation-Date: 2023-10-23 14:35+0000\n"
+"PO-Revision-Date: 2023-10-23 14:35+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:mail.template,body_html:base_wua_pressurized_irrigation_monitoring.email_template_negative_controlreading
+msgid "\n"
+"                \n"
+"                <p>Se ha creado una lectura de control negativa con los siguientes detalles:</p>\n"
+"                <ul>\n"
+"                    <li>Identificador del elemento: ${object.name}</li>\n"
+"                    <li>Volumen: ${object.volume} m³</li>\n"
+"                    <li>Diferencia con respecto al último consumo: ${object.controlpresconsumption_volume} m³</li>\n"
+"                </ul>\n"
+"                <p>Por favor, revise el registro y tome las medidas necesarias.</p>\n"
+"                \n"
+"            "
+msgstr "\n"
+"                \n"
+"                <p>S'ha creat una lectura de control negativa amb els detalls següents:</p>\n"
+"                <ul>\n"
+"                    <li>Identificador de l'element ${object.name}</li>\n"
+"                    <li>Volum: ${object.volume} m³</li>\n"
+"                    <li>Diferència respecte al darrer consum: ${object.controlpresconsumption_volume} m³</li>\n"
+"                </ul>\n"
+"                <p>Reviseu el registre i preneu les mesures necessàries.</p>\n"
+"                \n"
+"            "
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_deviation_percentage_num
@@ -331,10 +356,12 @@ msgstr "<span class=\"o_stat_text\">\n"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_waterconnection_view_form
-msgid "<span class=\"o_stat_text\"> Ctrl. consumptions</span>"
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_watermeter_view_form
+msgid "<span class=\"o_stat_text\"> Ctrl. cons.</span>"
 msgstr "<span class=\"o_stat_text\"> Cons. Ctrl.</span>"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_waterconnection_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_watermeter_view_form
 msgid "<span class=\"o_stat_text\"> Ctrl. readings</span>"
 msgstr "<span class=\"o_stat_text\"> Lec. Ctrl.</span>"
@@ -951,7 +978,7 @@ msgstr "Cons. Valor Real (m3)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlreading_view_tree
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_negative_controlreading_view_tree
 msgid "Cons. Value (m3)"
-msgstr "Consum brut (m3)"
+msgstr "Consum brut (m³)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_controlpresconsumption_id
@@ -1107,11 +1134,13 @@ msgstr "Creat el"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_waterconnection.py:26
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_watermeter.py:59
 #, python-format
 msgid "Ctrl. consumptions"
 msgstr "Cons. Ctrl."
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_waterconnection.py:52
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_watermeter.py:33
 #, python-format
 msgid "Ctrl. readings"
@@ -1280,7 +1309,7 @@ msgstr "Quadre de diàleg per generar períodes de control"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_negative_controlreading_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_soiltype_display_name
 msgid "Display Name"
-msgstr "Mostrar Nom"
+msgstr "Veure el nom"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: selection:wua.controlperiod,state:0
@@ -1348,6 +1377,11 @@ msgid "Entity (negative reading)"
 msgstr "Element (lectura negativa)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Entity (parcel)"
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_controlpresconsumption
 msgid "Entity (pressurized consumption)"
 msgstr "Element (consum de pressió)"
@@ -1361,6 +1395,11 @@ msgstr "Element (toma)"
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_watermeter
 msgid "Entity (water meter)"
 msgstr "Element (comptador)"
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.action_send_email_on_negative_controlreading
+msgid "Enviar correo electrónico en lectura de control negativa"
+msgstr "Enviar correu electrònic en lectura de control negativa"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_form
@@ -1599,7 +1638,7 @@ msgstr "Valor brut (m3)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_negative_controlreading_view_search
 msgid "Group By"
-msgstr "Agrupar per"
+msgstr "Agrupa per"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_parcel_presconsumption_global_hydraulicsector_id
@@ -1775,7 +1814,7 @@ msgstr "Cabal de reg aplicable (m³/h)"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_global_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_comparative_subparcel_presconsumption_view_search
 msgid "Irrigation Partner"
-msgstr "Soci de reg"
+msgstr "Soci"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_irrigationshed_id
@@ -1869,7 +1908,7 @@ msgstr "Darrera lectura (m3)"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_negative_controlreading___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_soiltype___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_is_last_reading
@@ -1889,7 +1928,7 @@ msgstr "Última lectura"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_negative_controlreading_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_soiltype_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Darrera Actualització per"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wizard_generate_controlperiods_write_date
@@ -1904,7 +1943,12 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_negative_controlreading_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_soiltype_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera Actualització el"
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:mail.template,subject:base_wua_pressurized_irrigation_monitoring.email_template_negative_controlreading
+msgid "Lectura de control negativa creada - ${object.name}"
+msgstr "Lectura de control negativa creada - ${object.name}"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_cultivation_kc_edit_view_tree
@@ -2278,11 +2322,6 @@ msgid "Parcels (agregated comparative consumptions)"
 msgstr "Parcel·les (consums comparatius agregats)"
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcels (integrated GIS)"
-
-#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_search
 msgid "Partner"
 msgstr "Empresa"
@@ -2295,7 +2334,7 @@ msgstr "Informe anual de soci"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.report.xml,name:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_estimated_report
 msgid "Partner estimated report"
-msgstr "Informe consum estimat"
+msgstr "Partner estimated report"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.actions.report.xml,name:base_wua_pressurized_irrigation_monitoring.partner_presconsumption_monitoring_report
@@ -2305,7 +2344,7 @@ msgstr "Informe monitoratge (soci)"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Soci"
+msgstr "Partner of a WUA"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/res_partner.py:24
@@ -2517,19 +2556,19 @@ msgid "Remote C.: GIS Viewer"
 msgstr "Telecontrol: Visor GIS"
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:435
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:413
 #, python-format
 msgid "Remote Control: Error getting readings"
 msgstr "Control remot: Error obtenint lectures"
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:428
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:407
 #, python-format
 msgid "Remote Control: Getting readings"
 msgstr "Control remot: Obtenint lectures"
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:523
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:501
 #, python-format
 msgid "Remote Control: Saved readings"
 msgstr "Control remot: Lectures guardades"
@@ -2549,7 +2588,7 @@ msgstr "Arenós"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_parcel_subparcel_aerial_img_scale
 msgid "Scale"
-msgstr "Escala"
+msgstr "Scale"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.email_template_form
@@ -2773,7 +2812,7 @@ msgid "The agricultural season is not active."
 msgstr "La campanya no és la campanya activa."
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:451
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:429
 #, python-format
 msgid "The communication with the remote control is not enabled."
 msgstr "La comunicació amb el telecontrol no està habilitada."
@@ -3049,7 +3088,7 @@ msgstr "Validat: Sí"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlreading_validated
 msgid "Validated Reading"
-msgstr "Lecture validat"
+msgstr "Lectura validada"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlreading_view_search
@@ -3103,7 +3142,7 @@ msgstr "AVÍS: Subparcel·la modificada"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_controlreading_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_negative_controlreading_view_search
 msgid "Water Connection"
-msgstr "Hidrant"
+msgstr "Toma"
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_controlpresconsumption_watermeter_id
@@ -3134,8 +3173,8 @@ msgstr "Amb ajust"
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:320
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:329
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:549
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:558
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:527
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:536
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:620
 #, python-format
 msgid "You do not have permission to execute this action."

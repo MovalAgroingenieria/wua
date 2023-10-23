@@ -6,14 +6,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-20 14:13+0000\n"
-"PO-Revision-Date: 2021-10-20 14:13+0000\n"
+"POT-Creation-Date: 2023-10-23 14:35+0000\n"
+"PO-Revision-Date: 2023-10-23 14:35+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:mail.template,body_html:base_wua_pressurized_irrigation_monitoring.email_template_negative_controlreading
+msgid "\n"
+"                \n"
+"                <p>Se ha creado una lectura de control negativa con los siguientes detalles:</p>\n"
+"                <ul>\n"
+"                    <li>Identificador del elemento: ${object.name}</li>\n"
+"                    <li>Volumen: ${object.volume} m³</li>\n"
+"                    <li>Diferencia con respecto al último consumo: ${object.controlpresconsumption_volume} m³</li>\n"
+"                </ul>\n"
+"                <p>Por favor, revise el registro y tome las medidas necesarias.</p>\n"
+"                \n"
+"            "
+msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_monitoring.field_wua_comparative_cultivation_presconsumption_deviation_percentage_num
@@ -282,10 +297,12 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_waterconnection_view_form
-msgid "<span class=\"o_stat_text\"> Ctrl. consumptions</span>"
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_watermeter_view_form
+msgid "<span class=\"o_stat_text\"> Ctrl. cons.</span>"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_waterconnection_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_watermeter_view_form
 msgid "<span class=\"o_stat_text\"> Ctrl. readings</span>"
 msgstr ""
@@ -1053,11 +1070,13 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_waterconnection.py:26
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_watermeter.py:59
 #, python-format
 msgid "Ctrl. consumptions"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_waterconnection.py:52
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_watermeter.py:33
 #, python-format
 msgid "Ctrl. readings"
@@ -1294,6 +1313,11 @@ msgid "Entity (negative reading)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_controlpresconsumption
 msgid "Entity (pressurized consumption)"
 msgstr ""
@@ -1306,6 +1330,11 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_watermeter
 msgid "Entity (water meter)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_monitoring.action_send_email_on_negative_controlreading
+msgid "Enviar correo electrónico en lectura de control negativa"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
@@ -1853,6 +1882,11 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
+#: model:mail.template,subject:base_wua_pressurized_irrigation_monitoring.email_template_negative_controlreading
+msgid "Lectura de control negativa creada - ${object.name}"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_cultivation_kc_edit_view_tree
 #: selection:wua.comparative.subparcel.presconsumption,age_category:0
 #: selection:wua.irrigationdose,age_category:0
@@ -2224,11 +2258,6 @@ msgid "Parcels (agregated comparative consumptions)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: model:ir.model,name:base_wua_pressurized_irrigation_monitoring.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr ""
-
-#. module: base_wua_pressurized_irrigation_monitoring
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_monitoring.wua_monitoring_parcel_subparcel_view_search
 msgid "Partner"
 msgstr ""
@@ -2463,19 +2492,19 @@ msgid "Remote C.: GIS Viewer"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:435
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:413
 #, python-format
 msgid "Remote Control: Error getting readings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:428
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:407
 #, python-format
 msgid "Remote Control: Getting readings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:523
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:501
 #, python-format
 msgid "Remote Control: Saved readings"
 msgstr ""
@@ -2719,7 +2748,7 @@ msgid "The agricultural season is not active."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_monitoring
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:451
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:429
 #, python-format
 msgid "The communication with the remote control is not enabled."
 msgstr ""
@@ -3080,8 +3109,8 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_monitoring
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:320
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlperiod.py:329
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:549
-#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:558
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:527
+#: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_controlreading.py:536
 #: code:addons/base_wua_pressurized_irrigation_monitoring/models/wua_parcel.py:620
 #, python-format
 msgid "You do not have permission to execute this action."
