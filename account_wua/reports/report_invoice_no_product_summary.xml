@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Invoice without summary by product -->
+    <report
+        id="account_invoice_no_product_summary_report"
+        model="account.invoice"
+        string="Invoice report (no product summary)"
+        report_type="qweb-pdf"
+        name="account_wua.account_invoice_no_product_summary_report_document"
+        file="account_wua.account_invoice_report_no_product_summary"
+        attachment_use="False"/>
+
+    <template id="account_invoice_report_no_product_summary" inherit_id="account.report_invoice_document" primary="True">
+        <xpath expr="//div[@name='product_resume_table']" position="attributes">
+            <attribute name="t-att-style">"display: none"</attribute>
+        </xpath>
+    </template>
+
+    <template id="account_invoice_no_product_summary_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="account_wua.account_invoice_report_no_product_summary" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

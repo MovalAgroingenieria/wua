@@ -327,7 +327,7 @@
                                 </tr>
                             </thead>
                             <tbody class="invoice_tbody" name="invoice_line_body">
-                                <tr t-foreach="o.invoice_line_ids" t-as="l">
+                                <tr t-foreach="o.invoice_line_ids" t-as="l" style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
                                     <td name="product"><span t-field="l.product_id"/></td>
                                     <td name="description"><span t-field="l.name"/></td>
                                     <td name="src_document" class="hidden"><span t-field="l.origin"/></td>
