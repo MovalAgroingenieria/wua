@@ -159,7 +159,147 @@ class WuaParcel(models.Model):
         comodel_name='wua.waterpipe',
         index=True,
         store=True,
-        compute="_compute_waterpipe_10_id")
+        compute="_compute_waterpipe_20_id")
+
+    waterpipe_21_id = fields.Many2one(
+        string="Level 21 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_21_id")
+
+    waterpipe_22_id = fields.Many2one(
+        string="Level 22 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_22_id")
+
+    waterpipe_23_id = fields.Many2one(
+        string="Level 23 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_23_id")
+
+    waterpipe_24_id = fields.Many2one(
+        string="Level 24 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_24_id")
+
+    waterpipe_25_id = fields.Many2one(
+        string="Level 25 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_25_id")
+
+    waterpipe_26_id = fields.Many2one(
+        string="Level 26 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_26_id")
+
+    waterpipe_27_id = fields.Many2one(
+        string="Level 27 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_27_id")
+
+    waterpipe_28_id = fields.Many2one(
+        string="Level 28 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_28_id")
+
+    waterpipe_29_id = fields.Many2one(
+        string="Level 29 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_29_id")
+
+    waterpipe_30_id = fields.Many2one(
+        string="Level 30 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_30_id")
+
+    waterpipe_31_id = fields.Many2one(
+        string="Level 31 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_31_id")
+
+    waterpipe_32_id = fields.Many2one(
+        string="Level 32 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_32_id")
+
+    waterpipe_33_id = fields.Many2one(
+        string="Level 33 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_33_id")
+
+    waterpipe_34_id = fields.Many2one(
+        string="Level 34 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_34_id")
+
+    waterpipe_35_id = fields.Many2one(
+        string="Level 35 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_35_id")
+
+    waterpipe_36_id = fields.Many2one(
+        string="Level 36 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_36_id")
+
+    waterpipe_37_id = fields.Many2one(
+        string="Level 37 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_37_id")
+
+    waterpipe_38_id = fields.Many2one(
+        string="Level 38 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_38_id")
+
+    waterpipe_39_id = fields.Many2one(
+        string="Level 39 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_39_id")
+
+    waterpipe_40_id = fields.Many2one(
+        string="Level 40 Water Pipe",
+        comodel_name='wua.waterpipe',
+        index=True,
+        store=True,
+        compute="_compute_waterpipe_40_id")
 
     @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.waterpipe_id')
     def _compute_waterpipe_id(self):
@@ -298,6 +438,126 @@ class WuaParcel(models.Model):
         for record in self:
             record.waterpipe_20_id = \
                 self._get_waterpipe(record, 20)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_21_id(self):
+        for record in self:
+            record.waterpipe_21_id = \
+                self._get_waterpipe(record, 21)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_22_id(self):
+        for record in self:
+            record.waterpipe_22_id = \
+                self._get_waterpipe(record, 22)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_23_id(self):
+        for record in self:
+            record.waterpipe_23_id = \
+                self._get_waterpipe(record, 23)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_24_id(self):
+        for record in self:
+            record.waterpipe_24_id = \
+                self._get_waterpipe(record, 24)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_25_id(self):
+        for record in self:
+            record.waterpipe_25_id = \
+                self._get_waterpipe(record, 25)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_26_id(self):
+        for record in self:
+            record.waterpipe_26_id = \
+                self._get_waterpipe(record, 26)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_27_id(self):
+        for record in self:
+            record.waterpipe_27_id = \
+                self._get_waterpipe(record, 27)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_28_id(self):
+        for record in self:
+            record.waterpipe_28_id = \
+                self._get_waterpipe(record, 28)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_29_id(self):
+        for record in self:
+            record.waterpipe_29_id = \
+                self._get_waterpipe(record, 29)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_30_id(self):
+        for record in self:
+            record.waterpipe_30_id = \
+                self._get_waterpipe(record, 30)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_31_id(self):
+        for record in self:
+            record.waterpipe_31_id = \
+                self._get_waterpipe(record, 31)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_32_id(self):
+        for record in self:
+            record.waterpipe_32_id = \
+                self._get_waterpipe(record, 32)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_33_id(self):
+        for record in self:
+            record.waterpipe_33_id = \
+                self._get_waterpipe(record, 33)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_34_id(self):
+        for record in self:
+            record.waterpipe_34_id = \
+                self._get_waterpipe(record, 34)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_35_id(self):
+        for record in self:
+            record.waterpipe_35_id = \
+                self._get_waterpipe(record, 35)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_36_id(self):
+        for record in self:
+            record.waterpipe_36_id = \
+                self._get_waterpipe(record, 36)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_37_id(self):
+        for record in self:
+            record.waterpipe_37_id = \
+                self._get_waterpipe(record, 37)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_38_id(self):
+        for record in self:
+            record.waterpipe_38_id = \
+                self._get_waterpipe(record, 38)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_39_id(self):
+        for record in self:
+            record.waterpipe_39_id = \
+                self._get_waterpipe(record, 39)
+
+    @api.depends('waterpipe_id', 'waterpipe_id.level')
+    def _compute_waterpipe_40_id(self):
+        for record in self:
+            record.waterpipe_40_id = \
+                self._get_waterpipe(record, 40)
 
     def _get_waterpipe(self, parcel, level):
         resp = None

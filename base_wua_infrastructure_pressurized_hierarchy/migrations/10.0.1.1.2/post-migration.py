@@ -12,7 +12,7 @@ def migrate(cr, version):
          ALTER TABLE wua_infrastructure_configuration DROP CONSTRAINT
          wua_infrastructure_configuration_valid_max_levels_pressurized_i;''')
 
-    for i in range(6, 10):
+    for i in range(6, 40):
         query = '''
             ALTER TABLE wua_parcel
               ADD COLUMN IF NOT EXISTS waterpipe_0%s_id INT;
@@ -36,5 +36,4 @@ def migrate(cr, version):
             ON DELETE SET NULL;
         CREATE INDEX IF NOT EXISTS "wua_parcel_waterpipe_%s_id_index"
           ON wua_parcel USING btree(waterpipe_%s_id);
-            ''' % ('10', '10', '10', '10', '10', '10'))
-
+            ''' % ('40', '40', '40', '40', '40', '40'))

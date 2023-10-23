@@ -21,8 +21,8 @@ class WuaInfrastructureConfiguration(models.TransientModel):
     _sql_constraints = [
         ('valid_max_levels_pressurized_irrigation',
          'CHECK (max_levels_pressurized_irrigation >= 1 '
-         'and max_levels_pressurized_irrigation <= 20)',
-         'The "Max. Levels" value has to be between 1 and 20.')]
+         'and max_levels_pressurized_irrigation <= 40)',
+         'The "Max. Levels" value has to be between 1 and 40.')]
 
     @api.multi
     def set_default_values(self):

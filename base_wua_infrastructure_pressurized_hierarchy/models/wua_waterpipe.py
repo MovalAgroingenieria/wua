@@ -184,6 +184,106 @@ class WuaWaterpipe(models.Model):
         inverse_name='waterpipe_20_id',
         string="Parcels at level 20 of water-pipe")
 
+    parcel_wp_21_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_21_id',
+        string="Parcels at level 21 of water-pipe")
+
+    parcel_wp_22_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_22_id',
+        string="Parcels at level 22 of water-pipe")
+
+    parcel_wp_23_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_23_id',
+        string="Parcels at level 23 of water-pipe")
+
+    parcel_wp_24_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_24_id',
+        string="Parcels at level 24 of water-pipe")
+
+    parcel_wp_25_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_25_id',
+        string="Parcels at level 25 of water-pipe")
+
+    parcel_wp_26_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_26_id',
+        string="Parcels at level 26 of water-pipe")
+
+    parcel_wp_27_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_27_id',
+        string="Parcels at level 27 of water-pipe")
+
+    parcel_wp_28_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_28_id',
+        string="Parcels at level 28 of water-pipe")
+
+    parcel_wp_29_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_29_id',
+        string="Parcels at level 29 of water-pipe")
+
+    parcel_wp_30_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_30_id',
+        string="Parcels at level 30 of water-pipe")
+
+    parcel_wp_31_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_31_id',
+        string="Parcels at level 31 of water-pipe")
+
+    parcel_wp_32_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_32_id',
+        string="Parcels at level 32 of water-pipe")
+
+    parcel_wp_33_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_33_id',
+        string="Parcels at level 33 of water-pipe")
+
+    parcel_wp_34_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_34_id',
+        string="Parcels at level 34 of water-pipe")
+
+    parcel_wp_35_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_35_id',
+        string="Parcels at level 35 of water-pipe")
+
+    parcel_wp_36_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_36_id',
+        string="Parcels at level 36 of water-pipe")
+
+    parcel_wp_37_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_37_id',
+        string="Parcels at level 37 of water-pipe")
+
+    parcel_wp_38_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_38_id',
+        string="Parcels at level 38 of water-pipe")
+
+    parcel_wp_39_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_39_id',
+        string="Parcels at level 39 of water-pipe")
+
+    parcel_wp_40_ids = fields.One2many(
+        comodel_name='wua.parcel',
+        inverse_name='waterpipe_40_id',
+        string="Parcels at level 40 of water-pipe")
+
     number_of_parcels = fields.Integer(
         string='Parcels',
         store=True,
@@ -289,7 +389,14 @@ class WuaWaterpipe(models.Model):
                  'parcel_wp_10_ids', 'parcel_wp_11_ids', 'parcel_wp_12_ids',
                  'parcel_wp_13_ids', 'parcel_wp_14_ids', 'parcel_wp_15_ids',
                  'parcel_wp_16_ids', 'parcel_wp_17_ids', 'parcel_wp_18_ids',
-                 'parcel_wp_19_ids', 'parcel_wp_20_ids')
+                 'parcel_wp_19_ids', 'parcel_wp_20_ids', 'parcel_wp_21_ids',
+                 'parcel_wp_22_ids', 'parcel_wp_23_ids', 'parcel_wp_24_ids',
+                 'parcel_wp_25_ids', 'parcel_wp_26_ids', 'parcel_wp_27_ids',
+                 'parcel_wp_28_ids', 'parcel_wp_29_ids', 'parcel_wp_30_ids',
+                 'parcel_wp_31_ids', 'parcel_wp_32_ids', 'parcel_wp_33_ids',
+                 'parcel_wp_34_ids', 'parcel_wp_35_ids', 'parcel_wp_36_ids',
+                 'parcel_wp_37_ids', 'parcel_wp_38_ids', 'parcel_wp_39_ids',
+                 'parcel_wp_40_ids')
     def _compute_number_of_parcels(self):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
@@ -310,7 +417,14 @@ class WuaWaterpipe(models.Model):
                  'parcel_wp_10_ids', 'parcel_wp_11_ids', 'parcel_wp_12_ids',
                  'parcel_wp_13_ids', 'parcel_wp_14_ids', 'parcel_wp_15_ids',
                  'parcel_wp_16_ids', 'parcel_wp_17_ids', 'parcel_wp_18_ids',
-                 'parcel_wp_19_ids', 'parcel_wp_20_ids',
+                 'parcel_wp_19_ids', 'parcel_wp_20_ids', 'parcel_wp_21_ids',
+                 'parcel_wp_22_ids', 'parcel_wp_23_ids', 'parcel_wp_24_ids',
+                 'parcel_wp_25_ids', 'parcel_wp_26_ids', 'parcel_wp_27_ids',
+                 'parcel_wp_28_ids', 'parcel_wp_29_ids', 'parcel_wp_30_ids',
+                 'parcel_wp_31_ids', 'parcel_wp_32_ids', 'parcel_wp_33_ids',
+                 'parcel_wp_34_ids', 'parcel_wp_35_ids', 'parcel_wp_36_ids',
+                 'parcel_wp_37_ids', 'parcel_wp_38_ids', 'parcel_wp_39_ids',
+                 'parcel_wp_40_ids',
                  'parcel_wp_01_ids.area_official',
                  'parcel_wp_02_ids.area_official',
                  'parcel_wp_03_ids.area_official',
@@ -330,7 +444,27 @@ class WuaWaterpipe(models.Model):
                  'parcel_wp_17_ids.area_official',
                  'parcel_wp_18_ids.area_official',
                  'parcel_wp_19_ids.area_official',
-                 'parcel_wp_20_ids.area_official')
+                 'parcel_wp_20_ids.area_official',
+                 'parcel_wp_21_ids.area_official',
+                 'parcel_wp_22_ids.area_official',
+                 'parcel_wp_23_ids.area_official',
+                 'parcel_wp_24_ids.area_official',
+                 'parcel_wp_25_ids.area_official',
+                 'parcel_wp_26_ids.area_official',
+                 'parcel_wp_27_ids.area_official',
+                 'parcel_wp_28_ids.area_official',
+                 'parcel_wp_29_ids.area_official',
+                 'parcel_wp_30_ids.area_official',
+                 'parcel_wp_31_ids.area_official',
+                 'parcel_wp_32_ids.area_official',
+                 'parcel_wp_33_ids.area_official',
+                 'parcel_wp_34_ids.area_official',
+                 'parcel_wp_35_ids.area_official',
+                 'parcel_wp_36_ids.area_official',
+                 'parcel_wp_37_ids.area_official',
+                 'parcel_wp_38_ids.area_official',
+                 'parcel_wp_39_ids.area_official',
+                 'parcel_wp_40_ids.area_official')
     def _compute_total_affected_area_official(self):
         max_level = self.env['ir.values'].get_default(
             'wua.infrastructure.configuration',
