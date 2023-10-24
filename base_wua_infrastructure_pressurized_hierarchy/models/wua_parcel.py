@@ -302,12 +302,13 @@ class WuaParcel(models.Model):
         compute="_compute_waterpipe_40_id")
 
     @api.model
-    def fields_get(self, fields=None):
+    def fields_get(self, fields=None, allfields=None, attributes=None):
         fields_to_hide = []
         for parcel_level in range(6, 41):
             fields_to_hide.append(
                 'waterpipe_' + str(parcel_level).zfill(2) + '_id')
-        res = super(WuaParcel, self).fields_get()
+        res = super(WuaParcel, self).fields_get(
+            allfields=None, attributes=None)
         for field in fields_to_hide:
             res[field]['selectable'] = False
             res[field]['sortable'] = False
