@@ -36,7 +36,7 @@ class WuaInvoicesetLine(models.Model):
                     pressurized_irrigation_right, gravityfed_irrigation_right,
                     hydraulicsector_id, irrigationditch_id,
                     with_watering_shift, with_irrigation_worker, employee_id,
-                    path)
+                    path, farmproperty_id)
                     SELECT nextval('wua_invoiceset_line_parcel_id_seq'), %s,
                     %s, now(), now(), %s, TRUE, id, cadastral_reference,
                     is_billable_water, is_billable_expenses, leased_parcel,
@@ -44,7 +44,7 @@ class WuaInvoicesetLine(models.Model):
                     pressurized_irrigation_right, gravityfed_irrigation_right,
                     hydraulicsector_id, irrigationditch_id,
                     with_watering_shift, with_irrigation_worker, employee_id,
-                    path
+                    path, farmproperty_id
                     FROM wua_parcel WHERE active=TRUE
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.execute("""
