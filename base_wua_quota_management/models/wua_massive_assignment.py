@@ -457,8 +457,8 @@ class WuaMassiveAssignments(models.Model):
                     %s, %s, now(), now(), %s, TRUE, p.id, p.partner_id,
                   p.area_official, %s
                   FROM wua_parcel p
-                  WHERE p.active AND p.mapped_to_current_quotaperiod;
-                        AND p.partner_id IS NOT NULL""",
+                  WHERE p.active AND p.mapped_to_current_quotaperiod
+                        AND p.partner_id IS NOT NULL;""",
                                     (user_id, user_id,
                                      massive_controlled_assignment_id,
                                      provision))
