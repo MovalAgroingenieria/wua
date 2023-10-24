@@ -1503,6 +1503,15 @@ class WuaParcel(models.Model):
             if 'active' in vals:
                 process_slave_data = not vals['active']
                 process_active_field = True
+            # TMP FIX: sometimes internal_notes is saved before all the others
+            # fields, even active (Maybe sanitizing?) so check this special
+            # case
+            else:
+                # Don't process when the parcel is archived, and only internal
+                # notes is modified
+                process_slave_data = not (
+                    not self.active and 'internal_notes' in vals and
+                    len(vals) == 1)
             if process_slave_data:
                 self.do_process_slave_data_for_write(vals)
             if process_active_field:
