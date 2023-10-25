@@ -810,4 +810,5 @@ class WuaParcelIrrigationpoint(models.Model):
                                 waterpipe_id.id:
                             raise exceptions.ValidationError(
                                 _('All irrigation points must have the same '
-                                  'water-pipe.'))
+                                  'water-pipe.') +
+                                irrigationpoint_to_check.parcel_id.name)
