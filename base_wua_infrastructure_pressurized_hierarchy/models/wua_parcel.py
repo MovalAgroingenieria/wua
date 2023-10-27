@@ -301,20 +301,21 @@ class WuaParcel(models.Model):
         store=True,
         compute="_compute_waterpipe_40_id")
 
-    # INFO: This method causes all fields with track_visibility to be added to
-    #       the chatter, even when another parameter with no tracking changes.
-    # @api.model
-    # def fields_get(self, fields=None, allfields=None, attributes=None):
-    #     fields_to_hide = []
-    #     for parcel_level in range(6, 41):
-    #         fields_to_hide.append(
-    #             'waterpipe_' + str(parcel_level).zfill(2) + '_id')
-    #     res = super(WuaParcel, self).fields_get(
-    #         allfields=None, attributes=None)
-    #     for field in fields_to_hide:
-    #         res[field]['selectable'] = False
-    #         res[field]['sortable'] = False
-    #     return res
+    @api.model
+    def fields_get(self, fields=None):
+        fields_to_hide = []
+        for parcel_level in range(6, 41):
+            fields_to_hide.append(
+                'waterpipe_' + str(parcel_level).zfill(2) + '_id')
+        res = super(WuaParcel, self).fields_get(fields)
+        for field_to_hide in fields_to_hide:
+            if field_to_hide in res:
+                data_of_field = res[field_to_hide]
+                if ('searchable' in data_of_field and
+                        data_of_field['searchable']):
+                    data_of_field['selectable'] = False
+                    data_of_field['sortable'] = False
+        return res
 
     @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.waterpipe_id')
     def _compute_waterpipe_id(self):

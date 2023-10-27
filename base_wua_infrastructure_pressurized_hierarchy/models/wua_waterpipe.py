@@ -540,18 +540,21 @@ class WuaWaterpipe(models.Model):
         self._populate_hydraulicsector_id(vals)
         return super(WuaWaterpipe, self).create(vals)
 
-    # @api.model
-    # def fields_get(self, fields=None, allfields=None, attributes=None):
-    #     fields_to_hide = []
-    #     for parcel_level in range(6, 41):
-    #         fields_to_hide.append(
-    #             'parcel_wp_' + str(parcel_level).zfill(2) + '_ids')
-    #     res = super(WuaWaterpipe, self).fields_get(
-    #         allfields=None, attributes=None)
-    #     for field in fields_to_hide:
-    #         res[field]['selectable'] = False
-    #         res[field]['sortable'] = False
-    #     return res
+    @api.model
+    def fields_get(self, fields=None):
+        fields_to_hide = []
+        for parcel_level in range(6, 41):
+            fields_to_hide.append(
+                'parcel_wp_' + str(parcel_level).zfill(2) + '_ids')
+        res = super(WuaWaterpipe, self).fields_get(fields)
+        for field_to_hide in fields_to_hide:
+            if field_to_hide in res:
+                data_of_field = res[field_to_hide]
+                if ('searchable' in data_of_field and
+                        data_of_field['searchable']):
+                    data_of_field['selectable'] = False
+                    data_of_field['sortable'] = False
+        return res
 
     @api.multi
     def write(self, vals):
