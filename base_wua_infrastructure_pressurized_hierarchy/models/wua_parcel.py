@@ -789,29 +789,3 @@ class WuaParcelIrrigationpoint(models.Model):
             if record.irrigationshed_id.waterpipe_id:
                 waterpipe_id = record.irrigationshed_id.waterpipe_id
             record.waterpipe_id = waterpipe_id
-
-    @api.constrains('waterpipe_id')
-    def _check_waterpipe_id(self):
-        if len(self) == 1:
-            irrigationpoint_to_check = self
-            if irrigationpoint_to_check.waterpipe_id:
-                remaining_irrigationpoint_ids = \
-                    self.env['wua.parcel.irrigationpoint'].search(
-                        [('parcel_id', '=',
-                          irrigationpoint_to_check.parcel_id.id),
-                         ('id', '!=', irrigationpoint_to_check.id)])
-                if remaining_irrigationpoint_ids:
-                    waterpipe_ids = []
-                    for irrigationpoint in remaining_irrigationpoint_ids:
-                        if irrigationpoint.waterpipe_id:
-                            waterpipe_ids.append(
-                                irrigationpoint.waterpipe_id.id)
-                    if waterpipe_ids:
-                        waterpipe_ids = list(set(waterpipe_ids))
-                        if len(waterpipe_ids) > 1 or \
-                                waterpipe_ids[0] != irrigationpoint_to_check.\
-                                waterpipe_id.id:
-                            raise exceptions.ValidationError(
-                                _('All irrigation points must have the same '
-                                  'water-pipe.') +
-                                irrigationpoint_to_check.parcel_id.name)
