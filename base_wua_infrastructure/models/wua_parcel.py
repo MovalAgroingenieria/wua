@@ -134,7 +134,8 @@ class WuaParcel(models.Model):
             record.hydraulic_infrastructure_type = \
                 hydraulic_infrastructure_type
 
-    @api.depends('irrigationpoint_ids')
+    @api.depends('irrigationpoint_ids',
+                 'irrigationpoint_ids.hydraulicsector_id')
     def _compute_hydraulicsector_id(self):
         for record in self:
             irrigation_points = record.irrigationpoint_ids
@@ -2046,7 +2047,7 @@ class WuaParcelIrrigationpoint(models.Model):
         store=True,
         compute='_compute_partner_id',)
 
-    @api.depends('waterconnection_id')
+    @api.depends('waterconnection_id', 'waterconnection_id.irrigationshed_id')
     def _compute_irrigationshed_id(self):
         for record in self:
             if record.waterconnection_id:
@@ -2055,7 +2056,7 @@ class WuaParcelIrrigationpoint(models.Model):
             else:
                 record.irrigationshed_id = None
 
-    @api.depends('waterconnection_id')
+    @api.depends('waterconnection_id', 'waterconnection_id.hydraulicsector_id')
     def _compute_hydraulicsector_id(self):
         for record in self:
             if record.waterconnection_id:
@@ -2064,7 +2065,7 @@ class WuaParcelIrrigationpoint(models.Model):
             else:
                 record.hydraulicsector_id = None
 
-    @api.depends('irrigationgate_id')
+    @api.depends('irrigationgate_id', 'irrigationgate_id.irrigationditch_id')
     def _compute_irrigationditch_id(self):
         for record in self:
             if record.irrigationgate_id:
@@ -2506,7 +2507,7 @@ class WuaParcelIrrigationpointWC(models.Model):
             else:
                 record.pos_str = ''
 
-    @api.depends('waterconnection_id')
+    @api.depends('waterconnection_id', 'waterconnection_id.irrigationshed_id')
     def _compute_irrigationshed_id(self):
         for record in self:
             if record.waterconnection_id:
@@ -2515,7 +2516,7 @@ class WuaParcelIrrigationpointWC(models.Model):
             else:
                 record.irrigationshed_id = None
 
-    @api.depends('waterconnection_id')
+    @api.depends('waterconnection_id', 'waterconnection_id.hydraulicsector_id')
     def _compute_hydraulicsector_id(self):
         for record in self:
             if record.waterconnection_id:
