@@ -170,12 +170,20 @@ class WuaQuotaGeneral(models.Model):
         for record in self:
             water_distributed = 0
             self.env.cr.execute("""
+                SELECT a.sum + b.sum AS sum FROM (
                 SELECT sum(wh1.accounting_volume) FROM wua_hydricmovement wh1
-                LEFT JOIN wua_individualinput wi1 ON
-                wh1.individualinput_id = wi1.id WHERE (type =
-                'multiple_assign') AND wh1.superproduct_id =  """ + str(
+                INNER JOIN wua_individualinput wi1 ON
+                wh1.individualinput_id = wi1.id
+                WHERE wh1.superproduct_id =  """ + str(
                 record.superproduct_id.id) + """
-                AND wh1.quotaperiod_id = """ + str(record.quotaperiod_id.id))
+                AND wh1.quotaperiod_id = """ + str(record.quotaperiod_id.id) +
+                """) a, (
+                SELECT sum(wh1.accounting_volume) FROM wua_hydricmovement wh1
+                WHERE WH1.TYPE = 'multiple_assign' AND
+                wh1.superproduct_id =  """ + str(
+                record.superproduct_id.id) + """
+                AND wh1.quotaperiod_id = """ + str(record.quotaperiod_id.id) +
+                """) b ;""")
             query_results = self.env.cr.dictfetchall()
             if (query_results and
                query_results[0].get('sum') is not None):
