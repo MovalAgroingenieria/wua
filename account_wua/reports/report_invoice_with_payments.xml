@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Invoice with parcial payments -->
+    <report
+        id="account_invoice_with_payments"
+        model="account.invoice"
+        string="Invoice report (with payments)"
+        report_type="qweb-pdf"
+        name="account_wua.account_invoice_with_payments_document"
+        file="account_wua.account_invoice_with_payments_document"
+        attachment="(object.state in ('open','paid')) and ('INV'+(object.number or '').replace('/','')+'.pdf')"/>
+
+    <record id="account_wua.account_invoice_with_payments" model="ir.actions.report.xml">
+        <field name="attachment_use" eval="False"/>
+    </record>
+
+    <template id="account_invoice_report_with_payments" inherit_id="account.report_invoice_document" primary="True">
+        <xpath expr="//tr[@name='tr_total']" position="after">
+            <t t-foreach="o.payment_ids" t-as="payment" name="payments_loop">
+                <tr>
+                    <td>
+                        <span>Paid on</span>
+                        <span t-field="payment.payment_date"/>
+                    </td>
+                    <td class="text-right">
+                        <span t-field="payment.amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </tr>
+            </t>
+            <tr class="border-black" name="tr_amount_due">
+                <td><strong>Amount due</strong></td>
+                <td class="text-right">
+                    <span t-field="o.residual" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                </td>
+            </tr>
+        </xpath>
+    </template>
+
+    <template id="account_invoice_with_payments_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="account_wua.account_invoice_report_with_payments" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>
