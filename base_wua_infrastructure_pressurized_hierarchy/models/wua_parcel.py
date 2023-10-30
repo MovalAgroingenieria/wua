@@ -301,21 +301,22 @@ class WuaParcel(models.Model):
         store=True,
         compute="_compute_waterpipe_40_id")
 
-    @api.model
-    def fields_get(self, fields=None):
-        fields_to_hide = []
-        for parcel_level in range(6, 41):
-            fields_to_hide.append(
-                'waterpipe_' + str(parcel_level).zfill(2) + '_id')
-        res = super(WuaParcel, self).fields_get(fields)
-        for field_to_hide in fields_to_hide:
-            if field_to_hide in res:
-                data_of_field = res[field_to_hide]
-                if ('searchable' in data_of_field and
-                        data_of_field['searchable']):
-                    data_of_field['selectable'] = False
-                    data_of_field['sortable'] = False
-        return res
+    # INFO The method produces error when waterpipes are used in avanced filter
+    # @api.model
+    # def fields_get(self, fields=None):
+    #     fields_to_hide = []
+    #     for parcel_level in range(6, 41):
+    #         fields_to_hide.append(
+    #             'waterpipe_' + str(parcel_level).zfill(2) + '_id')
+    #     res = super(WuaParcel, self).fields_get(fields)
+    #     for field_to_hide in fields_to_hide:
+    #         if field_to_hide in res:
+    #             data_of_field = res[field_to_hide]
+    #             if ('searchable' in data_of_field and
+    #                     data_of_field['searchable']):
+    #                 data_of_field['selectable'] = False
+    #                 data_of_field['sortable'] = False
+    #     return res
 
     @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.waterpipe_id')
     def _compute_waterpipe_id(self):
