@@ -171,15 +171,17 @@ class WuaQuotaGeneral(models.Model):
             water_distributed = 0
             self.env.cr.execute("""
                 SELECT a.sum + b.sum AS sum FROM (
-                SELECT sum(wh1.accounting_volume) FROM wua_hydricmovement wh1
+                SELECT COALESCE(sum(wh1.accounting_volume), 0) AS sum
+                FROM wua_hydricmovement wh1
                 INNER JOIN wua_individualinput wi1 ON
                 wh1.individualinput_id = wi1.id
                 WHERE wh1.superproduct_id =  """ + str(
                 record.superproduct_id.id) + """
                 AND wh1.quotaperiod_id = """ + str(record.quotaperiod_id.id) +
                 """) a, (
-                SELECT sum(wh1.accounting_volume) FROM wua_hydricmovement wh1
-                WHERE WH1.TYPE = 'multiple_assign' AND
+                SELECT COALESCE(sum(wh1.accounting_volume), 0) AS sum
+                FROM wua_hydricmovement wh1
+                WHERE wh1.type = 'multiple_assign' AND
                 wh1.superproduct_id =  """ + str(
                 record.superproduct_id.id) + """
                 AND wh1.quotaperiod_id = """ + str(record.quotaperiod_id.id) +
