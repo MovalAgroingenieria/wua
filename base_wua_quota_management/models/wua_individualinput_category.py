@@ -65,6 +65,12 @@ class WuaIndividualinputCategory(models.Model):
 
     notes = fields.Html(string='Notes')
 
+    quota_report_totalize = fields.Boolean(
+        string='Totalize',
+        default=True,
+        help='If checked, the hydric movement of the individual input will be '
+             'totalized in parcel quota report.')
+
     _sql_constraints = [
         ('valid_category_code', 'CHECK (category_code > 0)',
          'The category code must be a positive value.'),
