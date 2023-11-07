@@ -207,7 +207,7 @@ class WuaIrrigationReport(models.Model):
         vals['conversion_factor'] = data['conversion_factor']
         vals['volume_time_equivalence'] = data['volume_time_equivalence']
         vals['volume_time_equivalence_ls'] = data['volume_time_equivalence_ls']
-        difference_time = end_date_formatted - data['initial_date_formatted']
+        difference_time = end_date_formatted - initial_date_formatted
         # 3600.0 To getting a float result of hours
         vals['hours'] = difference_time.days * 24 + \
             difference_time.seconds / 3600.0

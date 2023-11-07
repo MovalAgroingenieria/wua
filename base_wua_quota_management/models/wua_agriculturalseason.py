@@ -242,8 +242,7 @@ class WuaAgriculturalseason(models.Model):
     # slave-models of the "wua.agriculturalseason" model ("wua.quotaperiod",
     # "wua.individualinput", "wua_cession", etc), using SQL (not ORM).
     # Reason: higher performance, versus the computed fields of slave-models.
-    def _update_active_flag_in_slave_models(self, agriculturalseason_id,
-                                            active_agriculturalseason):
+    def _update_active_flag_in_slave_models(self):
         models_to_update = [
             'wua_quotaperiod', 'wua_quota', 'wua_hydricmovement',
             'wua_individualinput', 'wua_cession', 'wua_generalinput',
