@@ -658,7 +658,7 @@ class WuaCession(models.Model):
         date_today = datetime.date.today()
         warning_days = self.env['ir.values'].get_default(
             'wua.quotas.configuration', 'days_cession_notice')
-        limit_date = (date_today - datetime.timedelta(days=warning_days)).\
+        limit_date = (date_today + datetime.timedelta(days=warning_days)).\
             strftime('%Y-%m-%d')
         active_ags = self.env['wua.agriculturalseason'].search(
             [('active_agriculturalseason', '=', True)])
@@ -674,7 +674,7 @@ class WuaCession(models.Model):
                 ('cession_state', '=', '01_validated'),
                 ('finish_date', '!=', False),
                 ('quotaperiod_id', '=', quotaperiod[0].id),
-                ('finish_date', '>=', limit_date)], order="finish_date desc")
+                ('finish_date', '<=', limit_date)], order="finish_date desc")
             if (len(cessions_to_send) > 0):
                 body_msg = self._compute_html_table_cession(cessions_to_send)
                 company_sender = cessions_to_send[0].partner_id.company_id
