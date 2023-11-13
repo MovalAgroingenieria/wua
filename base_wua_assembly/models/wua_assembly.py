@@ -18,6 +18,20 @@ class WuaAssembly(models.Model):
     SIZE_ISSUE = 75
     SIZE_NAME = 19
 
+    def _default_company_id(self):
+        resp = ''
+        current_company_id = self.env.user.company_id
+        if current_company_id:
+            resp = current_company_id
+        return resp
+
+    def _default_is_multicompany(self):
+        resp = False
+        company_ids = self.env.user.company_ids
+        if len(company_ids) > 1:
+            resp = True
+        return resp
+
     def _default_street(self):
         resp = ''
         default_street = self.env['ir.values'].get_default(
@@ -56,6 +70,8 @@ class WuaAssembly(models.Model):
             'wua.assembly.configuration', 'assembly_country_id')
         if default_country_id:
             resp = default_country_id
+        else:
+            resp = self.env.user.company_id.country_id
         return resp
 
     def _default_president_id(self):
@@ -105,6 +121,21 @@ class WuaAssembly(models.Model):
         store=True,
         index=True,
         compute='_compute_name',)
+
+    company_id = fields.Many2one(
+        string='Company',
+        comodel_name='res.company',
+        default=_default_company_id,
+        compute='_compute_company_id',
+        store=True,
+        required=True,)
+
+    is_multicompany = fields.Boolean(
+        string='Multi company',
+        compute_sudo=True,
+        default=_default_is_multicompany,
+        compute='_compute_is_multicompany',
+        store=True)
 
     street = fields.Char(
         string='Street',
@@ -317,6 +348,24 @@ class WuaAssembly(models.Model):
                     str(int(round((record.first_hour % 1) * 60))).zfill(2) + \
                     ':00'
             record.name = name
+
+    @api.multi
+    def _compute_company_id(self):
+        for record in self:
+            resp = None
+            current_company_id = self.env.user.company_id
+            if current_company_id:
+                resp = current_company_id
+            record.company_id = resp
+
+    @api.multi
+    def _compute_is_multicompany(self):
+        for record in self:
+            resp = False
+            company_ids = self.env.user.company_ids
+            if len(company_ids) > 1:
+                resp = True
+            record.is_multicompany = resp
 
     @api.multi
     def _compute_president_id_portaluser(self):
@@ -560,7 +609,7 @@ class WuaAssembly(models.Model):
 
     @api.onchange('state_id')
     def _onchange_state_id(self):
-        if not self.country_id:
+        if not self.country_id and self.state_id:
             self.country_id = self.state_id.country_id
 
     @api.onchange('country_id')

@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <form duplicate="false">
                 <field name="is_wua_portal_user" invisible="1"/>
+                <field name="is_multicompany" invisible="1"/>
                 <header>
                     <button name="action_go_to_state_02_called"
                             type="object" string="Convoke"
@@ -148,6 +149,7 @@
                                    attrs="{'readonly': ['|',('state','=','03_in_progress'),('state','=','04_finished')]}"/>
                         </group>
                         <group name="master_data_right">
+                            <field name="company_id" attrs="{'invisible': [('is_multicompany','=', False)]}"/>
                             <label for="street"
                                    string="Assembly Address"/>
                             <div name="div_address"
@@ -162,8 +164,8 @@
                                        attrs="{'readonly': [('state','!=','01_draft')]}"/>
                                 <span style="margin-left:1px;margin-right:6px">-</span>
                                 <field name="state_id"
-                                       placeholder="Province" 
-                                       class="o_address_state" 
+                                       placeholder="Province"
+                                       class="o_address_state"
                                        options="{'no_quick_create':True,
                                                  'no_create_edit':True,
                                                  'no_open':True}"
@@ -171,7 +173,7 @@
                             </div>
                             <label for="president_id"
                                    string="President / Secretary"/>
-                            <div name="div_risponsible_persons" 
+                            <div name="div_risponsible_persons"
                                  class="o_address_format">
                                 <field name="president_id"
                                        string="President"
@@ -296,6 +298,9 @@
                         name="state_finished"
                         domain="[('state','=','04_finished')]"/>
                 <group expand="0" string="Group By">
+                    <filter string="Company"
+                            name="grouped_secretary_id"
+                     context="{'group_by':'company_id'}"/>
                     <filter string="President"
                             name="grouped_president_id"
                      context="{'group_by':'president_id'}"/>
