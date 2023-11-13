@@ -93,7 +93,7 @@ class WuaAssembly(models.Model):
     def _default_publication_text(self):
         resp = _(
             '<p>{{ assembly.issue }} of the '
-            '{{ assembly.president_id.company_id.name }}, which will '
+            '{{ assembly.company_id.name }}, which will '
             'take place on {{ assembly_month }} '
             '{{ assembly_day }}, at {{ assembly.street }} '
             '({{ assembly.city }}, {{ assembly.state_id.name }}), at '

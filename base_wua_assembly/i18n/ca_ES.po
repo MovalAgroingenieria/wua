@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-13 11:03+0000\n"
-"PO-Revision-Date: 2023-11-13 11:03+0000\n"
+"POT-Creation-Date: 2023-11-13 11:55+0000\n"
+"PO-Revision-Date: 2023-11-13 11:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -48,8 +48,8 @@ msgstr "<p><b>NOTA</b>: En virtut dels Estatuts pertinents, les Autoritzacions h
 #. module: base_wua_assembly
 #: code:addons/base_wua_assembly/models/wua_assembly.py:94
 #, python-format
-msgid "<p>{{ assembly.issue }} of the {{ assembly.president_id.company_id.name }}, which will take place on {{ assembly_month }} {{ assembly_day }}, at {{ assembly.street }} ({{ assembly.city }}, {{ assembly.state_id.name }}), at {{ assembly.first_hour_hhmm }}{% if assembly.second_hour %} in the first call, and at {{ assembly.second_hour_hhmm }} in second, {% else %},{% endif %} according to the following <b>AGENDA</b>:<br></p>"
-msgstr "<p>{{ assembly.issue }} de la {{ assembly.president_id.company_id.name }}, que tindrà lloc el proper dia {{ assembly_day }} de {{ assembly_month }}, al {{ assembly.street }} ({{ assembly.city }}, {{ assembly.state_id.name }}), a les {{ assembly.first_hour_hhmm }} hores{% if assembly.second_hour %} en primera convocatòria, ia les {{ assembly.second_hour_hhmm }} en segona, {% else %},{% endif %} d'acord amb el següent <b>ORDRE DEL DIA</b>:<br></p>"
+msgid "<p>{{ assembly.issue }} of the {{ assembly.company_id.name }}, which will take place on {{ assembly_month }} {{ assembly_day }}, at {{ assembly.street }} ({{ assembly.city }}, {{ assembly.state_id.name }}), at {{ assembly.first_hour_hhmm }}{% if assembly.second_hour %} in the first call, and at {{ assembly.second_hour_hhmm }} in second, {% else %},{% endif %} according to the following <b>AGENDA</b>:<br></p>"
+msgstr "<p>{{ assembly.issue }} de la {{ assembly.company_id.name }}, que tindrà lloc el proper dia {{ assembly_day }} de {{ assembly_month }}, al {{ assembly.street }} ({{ assembly.city }}, {{ assembly.state_id.name }}), a les {{ assembly.first_hour_hhmm }} hores{% if assembly.second_hour %} en primera convocatòria, ia les {{ assembly.second_hour_hhmm }} en segona, {% else %},{% endif %} d'acord amb el següent <b>ORDRE DEL DIA</b>:<br></p>"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_report_document
@@ -564,8 +564,9 @@ msgstr "Tancar"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_company_id
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_assembly_view_search
 msgid "Company"
-msgstr "companyia"
+msgstr "Companya"
 
 #. module: base_wua_assembly
 #: model:ir.ui.menu,name:base_wua_assembly.configuration_menu
@@ -1118,12 +1119,12 @@ msgstr "Participant"
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_participant_image
 msgid "Participant Image"
-msgstr "Imatge del participant"
+msgstr "Participant Image"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_participant_name
 msgid "Participant Name"
-msgstr "Assistent"
+msgstr "Participant Name"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_partner_id
@@ -1131,7 +1132,7 @@ msgstr "Assistent"
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_calls_particular_view_tree
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_particular_view_tree
 msgid "Partner"
-msgstr "Soci"
+msgstr "Empresa"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_particular_view_form
@@ -1146,7 +1147,7 @@ msgstr "Vots possibles"
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_potential_attendee
 msgid "Potential Attendee (y/n)"
-msgstr "Assistent potencial (s/n)"
+msgstr "Potential Attendee (y/n)"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_present
@@ -1247,17 +1248,17 @@ msgstr "Soci que rep"
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_receiver_id
 msgid "Receiver (if there is voting delegation)"
-msgstr "Receptor (si hi ha delegació de vot)"
+msgstr "Receiver (if there is voting delegation)"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_rendered_delegation_vote_footer_text
 msgid "Rendered delegation vote footer text"
-msgstr "Delegació vot text peu de pàgina renderitzat"
+msgstr "Rendered delegation vote footer text"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_rendered_delegation_vote_main_text
 msgid "Rendered delegation vote main text"
-msgstr "Delegació vot text principal renderitzat"
+msgstr "Rendered delegation vote main text"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_representation_rendered_representation_footer_text
