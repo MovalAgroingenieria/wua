@@ -354,8 +354,8 @@ class WuaFertconsumptionsetLine(models.Model):
             hmov_condition = ' AND TRUE'
             hmov_invoicing_module = self.env['ir.module.module'].search(
                 [('name', '=', 'base_wua_invoicing_hydricmovement')])
-            if (not hmov_invoicing_module or
-                    hmov_invoicing_module.state != 'installed'):
+            if (hmov_invoicing_module and
+                    hmov_invoicing_module.state == 'installed'):
                 hmov_condition = ' AND NOT invoiced_consumption_quota'
             try:
                 self.env.cr.savepoint()
