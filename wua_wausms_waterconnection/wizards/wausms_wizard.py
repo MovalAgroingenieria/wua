@@ -143,6 +143,16 @@ class WauSMSWizard(models.Model):
                                  waterconnection_id])
             # Set active_ids as list of list [[partner_id,waterconnection_id])
             active_ids = partner_waterconnection_list
+        if context.get("mode") == 'quota':
+            partner_active_ids = []
+            partner_quota_list = []
+            quota_ids = context.get('active_ids')
+            for quota_id in quota_ids:
+                quota = self.env['wua.quota'].browse(quota_id)
+                # Send only to partner_id of quota
+                partner_quota_list.append([quota.partner_id.id, quota_id])
+            # Set active_ids as list of list [[partner_id, quota_id],)
+            active_ids = partner_quota_list
 
         if not active_ids:
             raise ValidationError(_("There are no items selected."))
@@ -154,12 +164,14 @@ class WauSMSWizard(models.Model):
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
                 waterconnection = waterconnection_id = ""
+                quota = quota_id = ""
             if context.get("mode") == 'partner':
                 partner = self.env['res.partner'].browse(active_id)
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
                 waterconnection = waterconnection_id = ""
+                quota = quota_id = ""
             if context.get("mode") == 'invoice':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
@@ -167,6 +179,7 @@ class WauSMSWizard(models.Model):
                 invoice_id = invoice.id
                 parcel = parcel_id = ""
                 waterconnection = waterconnection_id = ""
+                quota = quota_id = ""
             if context.get("mode") == 'parcel':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
@@ -174,11 +187,13 @@ class WauSMSWizard(models.Model):
                 waterconnection = waterconnection_id = ""
                 parcel = self.env['wua.parcel'].browse(active_id[1])
                 parcel_id = parcel.id
+                quota = quota_id = ""
             if context.get("mode") == 'waterconnection':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
+                quota = quota_id = ""
                 waterconnection = self.env['wua.waterconnection'].browse(
                     active_id[1])
                 waterconnection_id = waterconnection.id
@@ -204,7 +219,8 @@ class WauSMSWizard(models.Model):
                 try:
                     raw_sms_message = raw_template.render(
                         partner=partner, invoice=invoice, parcel=parcel,
-                        waterconnection=waterconnection, datetime=datetime)
+                        waterconnection=waterconnection,
+                        quota=quota, datetime=datetime)
                 except TemplateError as err:
                     raise ValidationError(
                         _("Error resolving template: {}".format(err.message)))
@@ -272,6 +288,10 @@ class WauSMSWizard(models.Model):
                     sms_confirmation + " -- [" + subject + " - " + \
                     str(waterconnection.name) + " - " + partner.name + "]" + \
                     '\n'
+            if context.get("mode") == 'quota':
+                sms_confirmations += \
+                    sms_confirmation + " -- [" + subject + " - " + \
+                    str(quota.name) + " - " + partner.name + "]" + '\n'
 
             # Response message (only shown in debug mode)
             if connection_ok:
@@ -316,6 +336,7 @@ class WauSMSWizard(models.Model):
                 "invoice_id": invoice_id,
                 "parcel_id": parcel_id,
                 "waterconnection_id": waterconnection_id,
+                "quota_id": quota_id,
                 "phone_number": reformated_phone_number,
                 "sender": sender,
                 "sms_message": sms_message,

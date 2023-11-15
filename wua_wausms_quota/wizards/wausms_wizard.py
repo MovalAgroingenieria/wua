@@ -140,6 +140,24 @@ class WauSMSWizard(models.Model):
                 partner_quota_list.append([quota.partner_id.id, quota_id])
             # Set active_ids as list of list [[partner_id, quota_id],)
             active_ids = partner_quota_list
+        if context.get("mode") == 'waterconnection':
+            partner_active_ids = []
+            partner_waterconnection_list = []
+            waterconnection_ids = context.get('active_ids')
+            for waterconnection_id in waterconnection_ids:
+                waterconnection = self.env['wua.waterconnection'].browse(
+                    waterconnection_id)
+                # Send sms to every partner in irrigationpoint_ids
+                for irrigationpoint in waterconnection.irrigationpoint_ids:
+                    if irrigationpoint.partner_id:
+                        item = [irrigationpoint.partner_id.id,
+                                waterconnection_id]
+                        if item not in partner_waterconnection_list:
+                            partner_waterconnection_list.append(
+                                [irrigationpoint.partner_id.id,
+                                 waterconnection_id])
+            # Set active_ids as list of list [[partner_id,waterconnection_id])
+            active_ids = partner_waterconnection_list
 
         if not active_ids:
             raise ValidationError(_("There are no items selected."))
@@ -151,12 +169,14 @@ class WauSMSWizard(models.Model):
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
                 quota = quota_id = ""
+                waterconnection = waterconnection_id = ""
             if context.get("mode") == 'partner':
                 partner = self.env['res.partner'].browse(active_id)
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
                 quota = quota_id = ""
+                waterconnection = waterconnection_id = ""
             if context.get("mode") == 'invoice':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
@@ -164,11 +184,13 @@ class WauSMSWizard(models.Model):
                 invoice_id = invoice.id
                 parcel = parcel_id = ""
                 quota = quota_id = ""
+                waterconnection = waterconnection_id = ""
             if context.get("mode") == 'parcel':
                 partner = self.env['res.partner'].browse(active_id[0])
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 quota = quota_id = ""
+                waterconnection = waterconnection_id = ""
                 parcel = self.env['wua.parcel'].browse(active_id[1])
                 parcel_id = parcel.id
             if context.get("mode") == 'quota':
@@ -176,8 +198,18 @@ class WauSMSWizard(models.Model):
                 partner_id = partner.id
                 invoice = invoice_id = ""
                 parcel = parcel_id = ""
+                waterconnection = waterconnection_id = ""
                 quota = self.env['wua.quota'].browse(active_id[1])
                 quota_id = quota.id
+            if context.get("mode") == 'waterconnection':
+                partner = self.env['res.partner'].browse(active_id[0])
+                partner_id = partner.id
+                invoice = invoice_id = ""
+                parcel = parcel_id = ""
+                quota = quota_id = ""
+                waterconnection = self.env['wua.waterconnection'].browse(
+                    active_id[1])
+                waterconnection_id = waterconnection.id
 
             # Set and check mobile number
             if context.get("mode") == 'test':
@@ -200,7 +232,8 @@ class WauSMSWizard(models.Model):
                 try:
                     raw_sms_message = raw_template.render(
                         partner=partner, invoice=invoice, parcel=parcel,
-                        quota=quota, datetime=datetime)
+                        quota=quota, waterconnection=waterconnection,
+                        datetime=datetime)
                 except TemplateError as err:
                     raise ValidationError(
                         _("Error resolving template: {}".format(err.message)))
@@ -267,6 +300,11 @@ class WauSMSWizard(models.Model):
                 sms_confirmations += \
                     sms_confirmation + " -- [" + subject + " - " + \
                     str(quota.name) + " - " + partner.name + "]" + '\n'
+            if context.get("mode") == 'waterconnection':
+                sms_confirmations += \
+                    sms_confirmation + " -- [" + subject + " - " + \
+                    str(waterconnection.name) + " - " + partner.name + "]" + \
+                    '\n'
 
             # Response message (only shown in debug mode)
             if connection_ok:
@@ -311,6 +349,7 @@ class WauSMSWizard(models.Model):
                 "invoice_id": invoice_id,
                 "parcel_id": parcel_id,
                 "quota_id": quota_id,
+                "waterconnection_id": waterconnection_id,
                 "phone_number": reformated_phone_number,
                 "sender": sender,
                 "sms_message": sms_message,
