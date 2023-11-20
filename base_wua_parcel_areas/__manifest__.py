@@ -12,11 +12,11 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
-        "base_wua",
         "base_wua_invoicing",
     ],
     "data": [
         "views/wua_parcel_areas_view.xml",
+        "views/wua_invoiceset_view.xml",
         "reports/wua_parcel_report.xml",
     ],
     "installable": True,

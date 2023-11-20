@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2019 Moval Agroingeniería
+# 2023 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields
@@ -8,11 +8,10 @@ from odoo import models, fields
 class WuaInvoicesetLineParcel(models.Model):
     _inherit = 'wua.invoiceset.line.parcel'
 
-    SIZE_PATH = 255
-
-    path = fields.Char(
-        string="Irrigation Ditch Full name",
-        size=SIZE_PATH)
+    area_irrigation = fields.Float(
+        string='Irrigation Area',
+        digits=(32, 4),
+        index=True,)
 
 
 class WuaInvoicesetLine(models.Model):
@@ -20,10 +19,10 @@ class WuaInvoicesetLine(models.Model):
 
     def _get_sql_insert_fields_select_parcel(self):
         new_sql = super(WuaInvoicesetLine, self).\
-            _get_sql_insert_fields_select_parcel() + ', path '
+            _get_sql_insert_fields_select_parcel() + ', area_irrigation '
         return new_sql
 
     def _get_sql_select_fields_select_parcel(self):
         new_sql = super(WuaInvoicesetLine, self).\
-            _get_sql_select_fields_select_parcel() + ', path '
+            _get_sql_select_fields_select_parcel() + ', area_irrigation '
         return new_sql

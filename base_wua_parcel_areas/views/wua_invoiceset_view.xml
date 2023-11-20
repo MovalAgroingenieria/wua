@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_parcel_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for parcels (tree view)</field>
+        <field name="model">wua.invoiceset.line.parcel</field>
+        <field name="inherit_id" ref="base_wua_invoicing.wua_invoiceset_line_parcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='area_official']" position="after">
+                <field name="area_irrigation"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -126,6 +126,18 @@ class ProductTemplate(models.Model):
         store=True,
         compute='_compute_is_wua_product')
 
+    productcategory_code = fields.Integer(
+        string='Code',
+        index=True,
+        comute='_compute_productcategory_code',
+        store=True,)
+
+    parcel_area_to_be_invoiced = fields.Selection([
+        ('area_official', 'Area Official')],
+        string='Area used for invoicing',
+        default='area_official',
+    )
+
     linkable_unit_type = fields.Selection([
         ('none', 'None'),
         ('parcel', 'Parcels'),
@@ -148,6 +160,15 @@ class ProductTemplate(models.Model):
         for record in self:
             record.linkable_unit_type = \
                 record.categ_id.linkable_unit_type
+
+    @api.onchange('categ_id')
+    @api.depends('categ_id', 'categ_id.productcategory_code')
+    def _compute_productcategory_code(self):
+        for record in self:
+            productcategory_code = 0
+            if (record.categ_id and record.categ_id.productcategory_code):
+                productcategory_code = record.categ_id.productcategory_code
+            record.productcategory_code = productcategory_code
 
     @api.onchange('is_wua_product')
     def _onchange_is_wua_product(self):

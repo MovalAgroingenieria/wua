@@ -505,7 +505,8 @@ class WuaInvoiceset(models.Model):
                     partner_id = partnerlink.partner_id.id
                     profile = partnerlink.profile
                     parcel_code = parcel.name
-                    area_official = parcel.area_official
+                    area_official = self._get_parcel_area_for_invoicing(
+                        parcel, product_id)
                     area_official_str = ('%.4f' % area_official).\
                         replace('.', ',')
                     percentage = partnerlink.other_costs_percentage
@@ -627,6 +628,19 @@ class WuaInvoiceset(models.Model):
             invoice_details_categ02.append(result)
         return invoice_details_categ02
 
+    # Function for future modules to modify the area of the parcel used by the
+    # invoicing
+    # Only affects products of category 3, 4
+    def _get_parcel_area_for_invoicing(self, parcel, product_id):
+        area_to_return = parcel.area_official
+        product = self.env['product.product'].browse(product_id)
+        if (product.parcel_area_to_be_invoiced):
+            # Selection field parcel_area_to_be_invoiced must have the same
+            # value as the area field name: This make extensions easier
+            area_to_return = getattr(
+                parcel, product.parcel_area_to_be_invoiced)
+        return area_to_return
+
     def calculate_invoice_details_categ03(self, product_id, categ_code,
                                           item_ids, partnerlinks):
         invoice_details_categ03 = []
@@ -662,13 +676,14 @@ class WuaInvoiceset(models.Model):
                     partner_id = partnerlink.partner_id.id
                     profile = partnerlink.profile
                     parcel_code = parcel.name
-                    area_official = parcel.area_official
+                    area_official = self._get_parcel_area_for_invoicing(
+                        parcel, product_id)
                     area_official_str = ('%.4f' % area_official).\
                         replace('.', ',')
                     # Calculate area according to Invoicing Area setting
                     if alter_invoicing_behavior:
                         invoicing_area_official = \
-                            parcel.area_official / \
+                            area_official / \
                             area_invoicing_measurement_equivalence
                         invoicing_area_official_str = \
                             ('%.4f' % invoicing_area_official).\
@@ -747,13 +762,14 @@ class WuaInvoiceset(models.Model):
                     invoice_details_categ03.append(result)
         return invoice_details_categ03
 
-    def get_description_categ04(self, parcel, partnerlink):
+    def get_description_categ04(self, parcel, partnerlink, product_id):
         description = ''
         area_measurement_name = self.get_area_measurement_name()
         alter_invoicing_behavior = self.get_alter_invoicing_behavior()
         # Parecel info
         parcel_code = parcel.name
-        area_official = parcel.area_official
+        area_official = self._get_parcel_area_for_invoicing(
+            parcel, product_id)
         # Partnerlink info
         profile = partnerlink.profile
         percentage = partnerlink.ownership_percentage
@@ -781,7 +797,7 @@ class WuaInvoiceset(models.Model):
             area_invoicing_measurement_equivalence = \
                 self.get_invoicing_area_measurement_equivalence()
             invoicing_area_official = \
-                parcel.area_official / \
+                area_official / \
                 area_invoicing_measurement_equivalence
             invoicing_area_official_str = \
                 ('%.4f' % invoicing_area_official).\
@@ -815,13 +831,14 @@ class WuaInvoiceset(models.Model):
             if len(partnerlinks_of_parcel) > 0:
                 for partnerlink in partnerlinks_of_parcel:
                     partner_id = partnerlink.partner_id.id
-                    area_official = parcel.area_official
+                    area_official = self._get_parcel_area_for_invoicing(
+                        parcel, product_id)
                     # Calculate area according to Invoicing Area setting
                     if alter_invoicing_behavior:
                         area_invoicing_measurement_equivalence = \
                             self.get_invoicing_area_measurement_equivalence()
                         invoicing_area_official = \
-                            parcel.area_official / \
+                            area_official / \
                             area_invoicing_measurement_equivalence
                     percentage = partnerlink.ownership_percentage
                     # Set quantity according to Invoicing Area setting
@@ -831,7 +848,7 @@ class WuaInvoiceset(models.Model):
                         quantity = area_official * (percentage / 100)
                     # Set description according to Invoicing Area setting
                     description = self.get_description_categ04(
-                        parcel, partnerlink)
+                        parcel, partnerlink, product_id)
                     result = {
                         'partner_id': partner_id,
                         'product_id': product_id,
@@ -1700,6 +1717,30 @@ class WuaInvoicesetLine(models.Model):
         if self.linkable_unit_type == 'irrigationgate':
             self.populate_items_select_irrigationgate()
 
+    # Hook function for other modules to add new fields on query without
+    # Rewriting all
+    def _get_sql_insert_fields_select_parcel(self):
+        return """
+        id, create_uid, write_uid, create_date, write_date, invoicesetline_id,
+        selected, parcel_id, cadastral_reference, is_billable_water,
+        is_billable_expenses, leased_parcel, area_official, partner_id,
+        hydraulic_infrastructure_type, pressurized_irrigation_right,
+        gravityfed_irrigation_right, hydraulicsector_id, irrigationditch_id,
+        with_watering_shift, with_irrigation_worker, employee_id,
+        farmproperty_id"""
+
+    # Hook function for other modules to add new fields on query without
+    # Rewriting all
+    def _get_sql_select_fields_select_parcel(self):
+        return """
+        nextval('wua_invoiceset_line_parcel_id_seq'), %s, %s, now(), now(),
+        %s, TRUE, id, cadastral_reference, is_billable_water,
+        is_billable_expenses, leased_parcel, area_official, partner_id,
+        hydraulic_infrastructure_type, pressurized_irrigation_right,
+        gravityfed_irrigation_right, hydraulicsector_id, irrigationditch_id,
+        with_watering_shift, with_irrigation_worker, employee_id,
+        farmproperty_id"""
+
     # Add more types
     def populate_items_select_parcel(self):
         parcels = self.env['wua.parcel'].search([])
@@ -1708,25 +1749,13 @@ class WuaInvoicesetLine(models.Model):
             invoicesetline_id = self.id
             try:
                 self.env.cr.savepoint()
+                insert_fields_sql = self._get_sql_insert_fields_select_parcel()
+                select_fields_sql = self._get_sql_select_fields_select_parcel()
                 self.env.cr.execute("""
-                    INSERT INTO wua_invoiceset_line_parcel (id, create_uid,
-                    write_uid, create_date, write_date, invoicesetline_id,
-                    selected, parcel_id, cadastral_reference,
-                    is_billable_water, is_billable_expenses,
-                    leased_parcel, area_official, partner_id,
-                    hydraulic_infrastructure_type,
-                    pressurized_irrigation_right, gravityfed_irrigation_right,
-                    hydraulicsector_id, irrigationditch_id,
-                    with_watering_shift, with_irrigation_worker, employee_id,
-                    farmproperty_id)
-                    SELECT nextval('wua_invoiceset_line_parcel_id_seq'), %s,
-                    %s, now(), now(), %s, TRUE, id, cadastral_reference,
-                    is_billable_water, is_billable_expenses, leased_parcel,
-                    area_official, partner_id, hydraulic_infrastructure_type,
-                    pressurized_irrigation_right, gravityfed_irrigation_right,
-                    hydraulicsector_id, irrigationditch_id,
-                    with_watering_shift, with_irrigation_worker, employee_id,
-                    farmproperty_id
+                    INSERT INTO wua_invoiceset_line_parcel (
+                    """ + insert_fields_sql + """
+                    )
+                    SELECT """ + select_fields_sql + """
                     FROM wua_parcel WHERE active=TRUE
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.execute("""
