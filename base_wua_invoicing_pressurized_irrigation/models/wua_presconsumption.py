@@ -2,7 +2,7 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, exceptions
 
 
 class WuaPresconsumption(models.Model):
@@ -43,6 +43,30 @@ class WuaPresconsumption(models.Model):
                 if waterconnection.product_id:
                     product_id = waterconnection.product_id
             record.product_id = product_id
+
+    @api.multi
+    def set_as_invoiced(self):
+        for record in self:
+            if (not record.validated):
+                raise exceptions.UserError(
+                    _('Cannot set as invoiced if consumption is not '
+                      'validated.'))
+        vals = {
+            'invoiced_consumption': True,
+            }
+        self.write(vals)
+
+    @api.multi
+    def set_as_not_invoiced(self):
+        for record in self:
+            if (record.invoiceset_id):
+                raise exceptions.UserError(
+                    _('Cannot set as not invoiced if have invoiceset '
+                      'associated.'))
+        vals = {
+            'invoiced_consumption': False,
+            }
+        self.write(vals)
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None,

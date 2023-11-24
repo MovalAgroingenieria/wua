@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-30 19:58+0000\n"
-"PO-Revision-Date: 2023-04-30 19:58+0000\n"
+"POT-Creation-Date: 2023-11-24 13:06+0000\n"
+"PO-Revision-Date: 2023-11-24 13:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -50,6 +50,18 @@ msgstr "C7: Press. Cons."
 #, python-format
 msgid "Cannot delete reading with invoiced consumptions."
 msgstr "No és possible esborrar una lectura amb un consum facturat."
+
+#. module: base_wua_invoicing_pressurized_irrigation
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:52
+#, python-format
+msgid "Cannot set as invoiced if consumption is not validated."
+msgstr "No es pot marcar com a facturat si el consum no està validat."
+
+#. module: base_wua_invoicing_pressurized_irrigation
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:64
+#, python-format
+msgid "Cannot set as not invoiced if have invoiceset associated."
+msgstr "No es pot marcar com a no facturat si teniu un lot associat."
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_reading.py:44
@@ -106,7 +118,7 @@ msgstr "Element (categoria de productes)"
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model,name:base_wua_invoicing_pressurized_irrigation.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Element (WUA Product Template)"
+msgstr "Element (producte)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model,name:base_wua_invoicing_pressurized_irrigation.model_wua_invoiceset
@@ -134,7 +146,7 @@ msgid "Entity (water connection)"
 msgstr "Element (toma)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:561
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:562
 #, python-format
 msgid "Error when updating records."
 msgstr "Error actualitzant els registres."
@@ -231,7 +243,7 @@ msgid "Invoice Set"
 msgstr "Lot"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:56
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:80
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_presconsumption_invoiced_consumption
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_reading_invoiced_reading
 #: model:ir.ui.view,arch_db:base_wua_invoicing_pressurized_irrigation.wua_presconsumption_view_search
@@ -274,8 +286,8 @@ msgstr "No és possible crear les factures. Comproveu el cens: les parcel·les d
 #. module: base_wua_invoicing_pressurized_irrigation
 #: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:56
 #, python-format
-msgid "It is not possible to generate invoices. The following water connections do not have irrigation points (and, therefore, their consumptions cannot be invoiced)"
-msgstr "No és possible fer les factures. Les següents preses no tenen punts de subministrament (i, per tant, els seus consums no poden ser facturats)"
+msgid "It is not possible to generate invoices. The following water connections do not have irrigation points but have some consumption greater than 0 (and, therefore, that consumption cannot be invoiced)"
+msgstr "No es poden generar les factures. Les preses següents no tenen punts de subministrament i algun dels seus consums és superior a 0 (i, per tant, els seus consums no poden ser facturats)"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_waterconnection_last_invoiced_presconsumption
@@ -285,7 +297,7 @@ msgstr "Últim consum fact."
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació feta el"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_invoiceset_line_presconsumption_write_uid
@@ -313,7 +325,7 @@ msgid "Normal Water"
 msgstr "Normal Water"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:58
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_presconsumption.py:82
 #, python-format
 msgid "Not Invoiced"
 msgstr "No facturat"
@@ -335,7 +347,7 @@ msgid "Parcel"
 msgstr "Parcel·la"
 
 #. module: base_wua_invoicing_pressurized_irrigation
-#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:565
+#: code:addons/base_wua_invoicing_pressurized_irrigation/models/wua_invoiceset.py:566
 #, python-format
 msgid "Pressure Consumptions"
 msgstr "Consums de pressió"
@@ -390,6 +402,16 @@ msgstr "Seleccionat"
 #: model:ir.model.fields,field_description:base_wua_invoicing_pressurized_irrigation.field_wua_presconsumption_invoicesetlinepresconsumption_ids
 msgid "Selected consumptions of invoice sets"
 msgstr "Selected consumptions of invoice sets"
+
+#. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.actions.server,name:base_wua_invoicing_pressurized_irrigation.wua_set_presconsumption_as_invoiced
+msgid "Set as invoiced"
+msgstr "Marcar com a facturat"
+
+#. module: base_wua_invoicing_pressurized_irrigation
+#: model:ir.actions.server,name:base_wua_invoicing_pressurized_irrigation.wua_set_presconsumption_as_not_invoiced
+msgid "Set as not invoiced"
+msgstr "Marcar com a no facturat"
 
 #. module: base_wua_invoicing_pressurized_irrigation
 #: model:product.category,name:base_wua_invoicing_pressurized_irrigation.categ_07

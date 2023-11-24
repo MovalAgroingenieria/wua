@@ -54,8 +54,9 @@ class WuaInvoiceset(models.Model):
         if wc_no_irrigationpoints:
             message_wc_no_irrigationpoints = \
                 _('It is not possible to generate invoices. The following '
-                  'water connections do not have irrigation points (and, '
-                  'therefore, their consumptions cannot be invoiced)')
+                  'water connections do not have irrigation points but '
+                  'have some consumption greater than 0 (and, '
+                  'therefore, that consumption cannot be invoiced)')
             raise exceptions.UserError(
                 message_wc_no_irrigationpoints + ': ' +
                 wc_no_irrigationpoints)
@@ -68,21 +69,20 @@ class WuaInvoiceset(models.Model):
                 product_id, categ_code, item_ids, partnerlinks)
 
     def get_wc_no_irrigationpoints(self, presconsumption_ids):
-        resp = ''
+        resp = []
         wc_ids = []
         presconsumptions = self.env['wua.presconsumption'].browse(
             presconsumption_ids)
-        for presconsumption in (presconsumptions or []):
-            wc_ids.append(presconsumption.waterconnection_id.id)
+        # Only relevant if consumptions > 0 and not irrigationpoints
+        wc_ids = presconsumptions.filtered(lambda x: x.volume_real > 0).\
+            mapped(lambda x: x.waterconnection_id.id)
         if len(wc_ids) > 0:
             wc_ids = sorted(list(set(wc_ids)))
             waterconnections = self.env['wua.waterconnection'].browse(wc_ids)
             for waterconnection in waterconnections:
                 if not waterconnection.irrigationpoint_ids:
-                    resp = resp + ', ' + waterconnection.name
-            if resp:
-                resp = resp[2:]
-        return resp
+                    resp.append(waterconnection.name)
+        return ', '.join(resp)
 
     def _get_description_categ07_normal(
             self, partnerlink, parcel, waterconnection,
@@ -545,7 +545,8 @@ class WuaInvoicesetLine(models.Model):
                     waterconnection_id, irrigationshed_id, hydraulicsector_id,
                     adjustement_volume, volume_real
                     FROM wua_presconsumption
-                    WHERE product_id=%s and invoiceset_id IS NULL AND validated
+                    WHERE product_id=%s and NOT invoiced_consumption AND
+                    validated
                     """, (user_id, user_id, invoicesetline_id, product_id))
                 self.env.cr.execute("""
                     UPDATE wua_presconsumption

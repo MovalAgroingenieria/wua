@@ -273,7 +273,7 @@ class WuaInvoicesetLine(models.Model):
                     adjustement_volume, volume_real
                     FROM wua_presconsumption
                     WHERE (product_id=%s or product_id=%s)
-                    and invoiceset_id is null
+                    and NOT invoiced_consumption
                     """, (user_id, user_id, invoicesetline_id,
                           product_id, product_tmpl_id))
                 self.env.cr.execute("""
