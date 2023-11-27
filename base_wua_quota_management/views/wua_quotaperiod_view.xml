@@ -532,6 +532,71 @@
         </field>
     </record>
 
+    <record id="wua_quotaperiod_line_parcel_view_pivot" model="ir.ui.view" >
+        <field name="name">Parcels of quota-period lines (pivot view)</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="arch" type="xml">
+            <pivot string="Quotas">
+                <field name="parcel_id"/>
+            </pivot>
+        </field>
+    </record>
+
+
+    <record id="technical_wua_quotaperiod_line_parcel_view_search" model="ir.ui.view" >
+        <field name="name">Parcels of quota-period lines (search view)</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <field name="tag_ids" string="Parcel Tag"/>
+                <field name="partner_id"/>
+                <field name="cadastral_reference"/>
+                <field name="hydraulicsector_id"/>
+                <field name="irrigationditch_id"/>
+                <filter string="Billable Water" name="billablewater"
+                 domain="[('is_billable_water','=',True)]"/>
+                <filter string="Billable Expenses" name="billableexpenses"
+                 domain="[('is_billable_expenses','=',True)]"/>
+                <separator/>
+                <filter string="Leased" name="leased"
+                 domain="[('leased_parcel','=',True)]"/>
+                <separator/>
+                <filter string="Active Agricultural Season" name="active_agriculturalseason"
+                 domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <filter string="Infrastructure: None" name="hydraulic_infrastructure_type_0"
+                 domain="[('hydraulic_infrastructure_type','=',False)]"/>
+                <filter string="Infrastructure: Pressurized Irrigation" name="hydraulic_infrastructure_type_1"
+                 domain="[('hydraulic_infrastructure_type','=',1)]"/>
+                <filter string="Infrastructure: Gravity Irrigation" name="hydraulic_infrastructure_type_2"
+                 domain="[('hydraulic_infrastructure_type','=',2)]"/>
+                <filter string="Infrastructure: Pressurized and Gravity Irrigation" name="hydraulic_infrastructure_type_3"
+                 domain="[('hydraulic_infrastructure_type','=',3)]"/>
+                <separator/>
+                <filter string="Water Right: Pressurized Irrigation" name="pressurizedirrigation"
+                 domain="[('pressurized_irrigation_right','=',True)]"/>
+                <filter string="Water Right: Gravity Irrigation" name="gravityfedirrigation"
+                 domain="[('gravityfed_irrigation_right','=',True)]"/>
+                <separator/>
+                <filter string="With Irrigation Worker" name="withirrigationworker"
+                 domain="[('with_irrigation_worker','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Irrigation Partner" name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Parcel" name="grouped_parcel"
+                     context="{'group_by':'parcel_id'}"/>
+                    <filter string="Hydraulic Sector" name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                    <filter string="Irrigation Ditch" name="irrigationditch"
+                     context="{'group_by':'irrigationditch_id'}"/>
+                    <filter string="Irrigation Worker" name="irrigationworker"
+                     context="{'group_by':'employee_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <record id="wua_quotaperiod_line_parcel_view_search" model="ir.ui.view" >
         <field name="name">Parcels of quota-period lines (search view)</field>
         <field name="model">wua.quotaperiod.line.parcel</field>
@@ -555,6 +620,9 @@
                 <separator/>
                 <filter string="Leased" name="leased"
                  domain="[('leased_parcel','=',True)]"/>
+                <separator/>
+                <filter string="Active Agricultural Season" name="active_agriculturalseason"
+                 domain="[('of_active_agriculturalseason','=',True)]"/>
                 <separator/>
                 <filter string="Infrastructure: None" name="hydraulic_infrastructure_type_0"
                  domain="[('hydraulic_infrastructure_type','=',False)]"/>
@@ -594,7 +662,7 @@
         <field name="model">wua.quotaperiod.line.parcel</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_quota_management_quotaperiod_line_parcel_quota_data_view_tree"
-                  create="false" edit="false" delete="false">
+                  create="false" edit="false" delete="false" default_order='parcel_id'>
                 <field name="parcel_id"/>
                 <field name="partner_id"/>
                 <field name="quotaperiod_id"/>
@@ -671,10 +739,36 @@
         </field>
     </record>
 
+    <record id="technical_quotaperiod_line_parcel_action"
+            model="ir.actions.act_window">
+        <field name="name">Parcels Quota</field>
+        <field name="res_model">wua.quotaperiod.line.parcel</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_ids"
+         eval="[(5, 0),
+                (0, 0, {'view_mode': 'tree',
+                        'view_id': ref('wua_quotaperiod_line_parcel_quota_data_view_tree')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_quotaperiod_line_parcel_view_pivot')})
+                ]"/>
+        <field name="search_view_id" ref="technical_wua_quotaperiod_line_parcel_view_search"/>
+        <field name="context">
+          {'order': 'parcel_id',
+           'search_default_active_agriculturalseason': True}
+        </field>
+    </record>
+
     <menuitem id="quotaperiod_menu"
               name="Quota Periods"
               parent="management_menu"
               sequence="2"
               action="wua_quotaperiod_action"/>
+
+    <menuitem id="technical_quotaperiod_line_parcel_menu"
+              name="Parcels Quota"
+              parent="technical_menu"
+              sequence="4"
+              action="technical_quotaperiod_line_parcel_action"/>
 
 </odoo>

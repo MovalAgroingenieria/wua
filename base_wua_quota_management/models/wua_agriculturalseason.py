@@ -248,7 +248,8 @@ class WuaAgriculturalseason(models.Model):
             'wua_individualinput', 'wua_cession', 'wua_generalinput',
             'wua_individualinput_massive_assignment',
             'wua_massive_assignments', 'wua_massive_cancel_balances',
-            'wua_massive_compensatorytransfers', 'wua_quota_general'
+            'wua_massive_compensatorytransfers', 'wua_quota_general',
+            'wua_quotaperiod_line_parcel',
         ]
         try:
             for model in models_to_update:

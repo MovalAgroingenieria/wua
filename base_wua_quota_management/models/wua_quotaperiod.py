@@ -1537,6 +1537,17 @@ class WuaQuotaperiodLineParcel(models.Model):
         comodel_name='wua.quotaperiod',
         compute='_compute_quotaperiod_id')
 
+    agriculturalseason_id = fields.Many2one(
+        string='Agricultural Season',
+        store=True,
+        comodel_name='wua.agriculturalseason',
+        compute='_compute_agriculturalseason_id')
+
+    of_active_agriculturalseason = fields.Boolean(
+        string='Of active ag.season',
+        store=True,
+        compute='_compute_of_active_agriculturalseason')
+
     superproduct_id = fields.Many2one(
         string='Superproduct',
         comodel_name='wua.superproduct',
@@ -1628,6 +1639,27 @@ class WuaQuotaperiodLineParcel(models.Model):
             if record.quotaperiodline_id:
                 quotaperiod_id = record.quotaperiodline_id.quotaperiod_id
             record.quotaperiod_id = quotaperiod_id
+
+    @api.depends('quotaperiodline_id', 'quotaperiodline_id.quotaperiod_id',
+                 'quotaperiodline_id.quotaperiod_id.'
+                 'of_active_agriculturalseason')
+    def _compute_of_active_agriculturalseason(self):
+        for record in self:
+            of_active_agriculturalseason = False
+            if record.quotaperiodline_id:
+                of_active_agriculturalseason = record.quotaperiodline_id.\
+                    quotaperiod_id.of_active_agriculturalseason
+            record.of_active_agriculturalseason = of_active_agriculturalseason
+
+    @api.depends('quotaperiodline_id', 'quotaperiodline_id.quotaperiod_id',
+                 'quotaperiodline_id.quotaperiod_id.agriculturalseason_id')
+    def _compute_agriculturalseason_id(self):
+        for record in self:
+            agriculturalseason_id = None
+            if record.quotaperiodline_id:
+                agriculturalseason_id = record.quotaperiodline_id.\
+                    quotaperiod_id.agriculturalseason_id
+            record.agriculturalseason_id = agriculturalseason_id
 
     @api.multi
     def _compute_superproduct_id(self):
