@@ -175,6 +175,12 @@ class WuaConfiguration(models.TransientModel):
         help='For public creation of SHP Parcels based on HTTP-GET '
              'requests, restriction to clientes from a IP address')
 
+    concessions_required = fields.Boolean(
+        string='Some Concession required',
+        default=False,
+        help='If checked it becomes mandatory that parcels have some '
+             'concession unless marked as not ')
+
     leased_dates_required = fields.Boolean(
         string='Leased dates required',
         default=False,
@@ -231,6 +237,8 @@ class WuaConfiguration(models.TransientModel):
                            self.area_measurement_equivalence)
         values.set_default('wua.configuration', 'volume_time_equivalence',
                            self.volume_time_equivalence)
+        values.set_default('wua.configuration', 'concessions_required',
+                           self.concessions_required)
         values.set_default('wua.configuration', 'polling_system_type',
                            self.polling_system_type)
         values.set_default('wua.configuration', 'polling_system_interval',

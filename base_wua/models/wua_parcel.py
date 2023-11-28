@@ -269,6 +269,10 @@ class WuaParcel(models.Model):
         string='Lease dates required',
         compute='_compute_lease_dates_required',)
 
+    concessions_required = fields.Boolean(
+        string='Concessions required',
+        compute='_compute_concessions_required',)
+
     internal_notes = fields.Html(string='Internal Notes')
 
     street_view_active = fields.Boolean(
@@ -308,6 +312,10 @@ class WuaParcel(models.Model):
         comodel_name='wua.parceltag',
         relation='wua_parcel_parceltag_rel',
         column1='parcel_id', column2='parceltag_id')
+
+    optional_concessions = fields.Boolean(
+        string='Concessions not mandatory',
+        default=False,)
 
     concession_ids = fields.Many2many(
         string='Concessions',
@@ -699,6 +707,13 @@ class WuaParcel(models.Model):
             record.owner_id = owner_id
 
     @api.multi
+    def _compute_concessions_required(self):
+        concessions_required = self.env['ir.values'].get_default(
+            'wua.configuration', 'concessions_required')
+        for record in self:
+            record.concessions_required = concessions_required
+
+    @api.multi
     def _compute_lease_dates_required(self):
         leased_dates_required = self.env['ir.values'].get_default(
             'wua.configuration', 'leased_dates_required')
@@ -1043,6 +1058,16 @@ class WuaParcel(models.Model):
         name_no_blanks = self.name.strip()
         if name_no_blanks == '':
             raise exceptions.ValidationError(_('Empty parcel code.'))
+
+    @api.constrains('concession_ids', 'optional_concessions')
+    def _check_some_concession_ids(self):
+        concessions_required = self.env['ir.values'].get_default(
+            'wua.configuration', 'concessions_required')
+        if (concessions_required and not self.optional_concessions and
+                len(self.concession_ids) == 0):
+            raise exceptions.ValidationError(
+                _('Parcel does not have any concession, add one or mark it '
+                  'as not required.'))
 
     @api.constrains('cadastral_sector')
     def _check_cadastral_sector(self):

@@ -62,6 +62,8 @@
                          invisible="1"/>
                         <field name="lease_dates_required"
                          invisible="1"/>
+                        <field name="concessions_required"
+                         invisible="1"/>
                         <field name="parcel_type" widget="radio"
                          options="{'horizontal': true}"
                          style="width:270px"/>
@@ -181,6 +183,11 @@
                                  digits="(10, 5)"
                                  attrs="{'invisible':
                                     [('street_view_active','=', False)]}"/>
+                                <newline/>
+                                <field name="optional_concessions"
+                                    attrs="{'invisible': [
+                                    ('concessions_required', '!=', True),]}"
+                                    colspan="4"/>
                                 <newline/>
                                 <field name="leased_parcel"
                                  colspan="4" readonly="1"/>
