@@ -662,7 +662,7 @@
         <field name="model">wua.quotaperiod.line.parcel</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_quota_management_quotaperiod_line_parcel_quota_data_view_tree"
-                  create="false" edit="false" delete="false" default_order='parcel_id'>
+                  create="false" edit="false" delete="false">
                 <field name="parcel_id"/>
                 <field name="partner_id"/>
                 <field name="quotaperiod_id"/>
@@ -670,6 +670,21 @@
                 <field name="provision"/>
                 <field name="area_official"/>
                 <field name="volume"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="technical_wua_quotaperiod_line_parcel_quota_data_view_tree" model="ir.ui.view" >
+        <field name="name">Parcels of quota-period lines, with quota data (tree view)</field>
+        <field name="model">wua.quotaperiod.line.parcel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_quota_management_technical_quotaperiod_line_parcel_quota_data_view_tree"
+                  create="false" edit="false" delete="false" default_order='parcel_id'>
+                <field name="parcel_id"/>
+                <field name="partner_id"/>
+                <field name="quotaperiod_id"/>
+                <field name="superproduct_id"/>
+                <field name="area_official"/>
             </tree>
         </field>
     </record>
@@ -748,7 +763,7 @@
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
-                        'view_id': ref('wua_quotaperiod_line_parcel_quota_data_view_tree')}),
+                        'view_id': ref('technical_wua_quotaperiod_line_parcel_quota_data_view_tree')}),
                 (0, 0, {'view_mode': 'pivot',
                         'view_id': ref('wua_quotaperiod_line_parcel_view_pivot')})
                 ]"/>

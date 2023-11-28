@@ -1551,6 +1551,7 @@ class WuaQuotaperiodLineParcel(models.Model):
     superproduct_id = fields.Many2one(
         string='Superproduct',
         comodel_name='wua.superproduct',
+        store=True,
         compute='_compute_superproduct_id')
 
     provision = fields.Float(
@@ -1661,7 +1662,7 @@ class WuaQuotaperiodLineParcel(models.Model):
                     quotaperiod_id.agriculturalseason_id
             record.agriculturalseason_id = agriculturalseason_id
 
-    @api.multi
+    @api.depends('quotaperiodline_id', 'quotaperiodline_id.superproduct_id')
     def _compute_superproduct_id(self):
         for record in self:
             superproduct_id = None
