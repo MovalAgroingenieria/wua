@@ -543,11 +543,11 @@ class WuaMassiveCompensatorytransfersPartner(models.Model):
                 record.selected = True
 
     @api.multi
-    def add_to_massive_compensatorytransfer(self):
+    def add_to_massive_compensatorytransfers(self):
         vals = {'selected': True, }
         self.write(vals)
 
     @api.multi
-    def remove_from_massive_compensatorytransfer(self):
+    def remove_from_massive_compensatorytransfers(self):
         vals = {'selected': False, }
         self.write(vals)
