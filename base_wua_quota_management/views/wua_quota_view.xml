@@ -114,6 +114,10 @@
                         name="active_agriculturalseason"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
                 <separator/>
+                <filter string="Quotaperiod Not Closed"
+                        name="not_closed_quotaperiod"
+                        domain="[('closed_quotaperiod','=',False)]"/>
+                <separator/>
                 <filter string="Positive Quotas"
                         name="positive_quotas"
                         domain="[('balance','&gt;=',0)]"/>
@@ -214,7 +218,8 @@
         <field name="context">
           {'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
-           'search_default_active_agriculturalseason': True}
+           'search_default_active_agriculturalseason': True,
+           'search_default_not_closed_quotaperiod': True,}
         </field>
     </record>
 

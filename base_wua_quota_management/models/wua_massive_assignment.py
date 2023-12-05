@@ -152,6 +152,11 @@ class WuaMassiveAssignments(models.Model):
         store=True,
         compute='_compute_of_active_agriculturalseason')
 
+    closed_quotaperiod = fields.Boolean(
+        string='Closed Quota Period',
+        store=True,
+        compute='_compute_closed_quotaperiod')
+
     name = fields.Char(
         string='Massive Transfer',
         size=MAX_SIZE_NAME,
@@ -314,6 +319,14 @@ class WuaMassiveAssignments(models.Model):
                record.agriculturalseason_id.active_agriculturalseason):
                 of_active_agriculturalseason = True
             record.of_active_agriculturalseason = of_active_agriculturalseason
+
+    @api.depends('quotaperiod_id', 'quotaperiod_id.is_closed')
+    def _compute_closed_quotaperiod(self):
+        for record in self:
+            closed_quotaperiod = False
+            if (record.quotaperiod_id and record.quotaperiod_id.is_closed):
+                closed_quotaperiod = True
+            record.closed_quotaperiod = closed_quotaperiod
 
     @api.depends('superproduct_id', 'superproduct_id.superproduct_code')
     def _compute_name(self):

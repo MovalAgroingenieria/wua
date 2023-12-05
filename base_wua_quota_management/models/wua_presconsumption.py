@@ -136,6 +136,7 @@ class WuaPresconsumption(models.Model):
                 'domain': [('id', 'in', self.hydricmovement_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
-                            'search_default_active_agriculturalseason': True}
+                            'search_default_active_agriculturalseason': True,
+                            'search_default_not_closed_quotaperiod': True}
                 }
             return act_window

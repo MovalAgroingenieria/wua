@@ -101,6 +101,11 @@ class WuaMassiveCancelBalances(models.Model):
         ondelete='restrict',
         default=_default_quotaperiod_id)
 
+    closed_quotaperiod = fields.Boolean(
+        string='Closed Quota Period',
+        store=True,
+        compute='_compute_closed_quotaperiod')
+
     superproduct_id = fields.Many2one(
         string='Superproduct',
         comodel_name='wua.superproduct',
@@ -296,6 +301,14 @@ class WuaMassiveCancelBalances(models.Model):
             'limit': 10000000,
             }
         return act_window
+
+    @api.depends('quotaperiod_id', 'quotaperiod_id.is_closed')
+    def _compute_closed_quotaperiod(self):
+        for record in self:
+            closed_quotaperiod = False
+            if (record.quotaperiod_id and record.quotaperiod_id.is_closed):
+                closed_quotaperiod = True
+            record.closed_quotaperiod = closed_quotaperiod
 
     @api.depends('agriculturalseason_id')
     def _compute_of_active_agriculturalseason(self):

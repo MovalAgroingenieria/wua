@@ -170,6 +170,11 @@ class WuaCession(models.Model):
         default=0,
         required=True)
 
+    closed_quotaperiod = fields.Boolean(
+        string='Closed Quota Period',
+        store=True,
+        compute='_compute_closed_quotaperiod')
+
     of_active_agriculturalseason = fields.Boolean(
         string='Of active ag.season',
         store=True,
@@ -259,6 +264,14 @@ class WuaCession(models.Model):
                record.agriculturalseason_id.active_agriculturalseason):
                 of_active_agriculturalseason = True
             record.of_active_agriculturalseason = of_active_agriculturalseason
+
+    @api.depends('quotaperiod_id', 'quotaperiod_id.is_closed')
+    def _compute_closed_quotaperiod(self):
+        for record in self:
+            closed_quotaperiod = False
+            if (record.quotaperiod_id and record.quotaperiod_id.is_closed):
+                closed_quotaperiod = True
+            record.closed_quotaperiod = closed_quotaperiod
 
     @api.depends('quota_id', 'quota_id.name')
     def _compute_quota_name(self):

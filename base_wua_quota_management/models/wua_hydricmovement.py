@@ -107,6 +107,11 @@ class WuaHydricmovement(models.Model):
         store=True,
         compute='_compute_of_active_agriculturalseason')
 
+    closed_quotaperiod = fields.Boolean(
+        string='Closed Quota Period',
+        store=True,
+        compute='_compute_closed_quotaperiod')
+
     type = fields.Selection([
         ('multiple_assign', 'Multiple Assignment'),
         ('pos_indiv_assign', 'Individual Assignment'),
@@ -305,6 +310,14 @@ class WuaHydricmovement(models.Model):
             if record.agriculturalseason_id.active_agriculturalseason:
                 of_active_agriculturalseason = True
             record.of_active_agriculturalseason = of_active_agriculturalseason
+
+    @api.depends('quotaperiod_id', 'quotaperiod_id.is_closed')
+    def _compute_closed_quotaperiod(self):
+        for record in self:
+            closed_quotaperiod = False
+            if (record.quotaperiod_id and record.quotaperiod_id.is_closed):
+                closed_quotaperiod = True
+            record.closed_quotaperiod = closed_quotaperiod
 
     @api.depends('type')
     def _compute_is_consumption(self):

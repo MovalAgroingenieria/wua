@@ -66,6 +66,11 @@ class WuaQuotaGeneral(models.Model):
         store=True,
         compute='_compute_of_active_agriculturalseason')
 
+    closed_quotaperiod = fields.Boolean(
+        string='Closed Quota Period',
+        store=True,
+        compute='_compute_closed_quotaperiod')
+
     is_current_quotaperiod = fields.Boolean(
         string='Current quota period',
         related='quotaperiod_id.is_current_quotaperiod')
@@ -155,6 +160,14 @@ class WuaQuotaGeneral(models.Model):
             if record.agriculturalseason_id.active_agriculturalseason:
                 of_active_agriculturalseason = True
             record.of_active_agriculturalseason = of_active_agriculturalseason
+
+    @api.depends('quotaperiod_id', 'quotaperiod_id.is_closed')
+    def _compute_closed_quotaperiod(self):
+        for record in self:
+            closed_quotaperiod = False
+            if (record.quotaperiod_id and record.quotaperiod_id.is_closed):
+                closed_quotaperiod = True
+            record.closed_quotaperiod = closed_quotaperiod
 
     @api.depends('generalinput_ids', 'generalinput_ids.volume')
     def _compute_water_contributed(self):

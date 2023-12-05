@@ -91,6 +91,11 @@
                 <filter string="Active Agricultural Season"
                         name="active_agriculturalseason"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
+                <separator/>
+                <filter string="Quotaperiod Not Closed"
+                        name="not_closed_quotaperiod"
+                        domain="[('closed_quotaperiod','=',False)]"/>
+                <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Agricultural Season"
                             name="grouped_agriculturalseason"
@@ -138,7 +143,8 @@
         <field name="context">
           {'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
-           'search_default_active_agriculturalseason': True,}
+           'search_default_active_agriculturalseason': True,
+           'search_default_not_closed_quotaperiod': True,}
         </field>
     </record>
 

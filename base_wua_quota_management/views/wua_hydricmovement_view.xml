@@ -178,6 +178,10 @@
                         name="active_agriculturalseason"
                         domain="[('of_active_agriculturalseason','=',True)]"/>
                 <separator/>
+                <filter string="Quotaperiod Not Closed"
+                        name="not_closed_quotaperiod"
+                        domain="[('closed_quotaperiod','=',False)]"/>
+                <separator/>
                 <filter string="Hydric Inputs"
                         name="hydric_inputs"
                         domain="[('is_consumption','=',False)]"/>
@@ -272,7 +276,8 @@
         <field name="context">
           {'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
-           'search_default_active_agriculturalseason': True}
+           'search_default_active_agriculturalseason': True,
+           'search_default_not_closed_quotaperiod': True}
         </field>
     </record>
 
@@ -296,7 +301,8 @@
           {'order': 'created_date',
            'compressed_agriculturalseason': True,
            'compressed_quotaperiod': True,
-           'search_default_active_agriculturalseason': True}
+           'search_default_active_agriculturalseason': True,
+           'search_default_not_closed_quotaperiod': True,}
         </field>
     </record>
 

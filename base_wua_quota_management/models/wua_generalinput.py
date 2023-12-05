@@ -139,6 +139,11 @@ class WuaGeneralinput(models.Model):
         store=True,
         compute='_compute_of_active_agriculturalseason')
 
+    closed_quotaperiod = fields.Boolean(
+        string='Closed Quota Period',
+        store=True,
+        compute='_compute_closed_quotaperiod')
+
     quota_general_id = fields.Many2one(
         string='Quota General',
         comodel_name='wua.quota.general',
@@ -186,6 +191,14 @@ class WuaGeneralinput(models.Model):
                record.agriculturalseason_id.active_agriculturalseason):
                 of_active_agriculturalseason = True
             record.of_active_agriculturalseason = of_active_agriculturalseason
+
+    @api.depends('quotaperiod_id', 'quotaperiod_id.is_closed')
+    def _compute_closed_quotaperiod(self):
+        for record in self:
+            closed_quotaperiod = False
+            if (record.quotaperiod_id and record.quotaperiod_id.is_closed):
+                closed_quotaperiod = True
+            record.closed_quotaperiod = closed_quotaperiod
 
     @api.depends('quota_general_id', 'quota_general_id.pos_superproduct')
     def _compute_pos_superproduct(self):
