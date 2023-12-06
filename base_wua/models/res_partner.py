@@ -214,6 +214,11 @@ class ResPartner(models.Model):
     date_now = fields.Datetime(
         default=datetime.datetime.now())
 
+    with_notes = fields.Boolean(
+        string='With notes',
+        store=True,
+        compute='_compute_with_notes')
+
     _sql_constraints = [
         ('valid_parcel_owner_number',
          'CHECK (parcel_owner_number >= 0)',
@@ -431,6 +436,14 @@ class ResPartner(models.Model):
                         break
             record.with_legalrep = with_legalrep
             record.legalrep_id = legalrep_id
+
+    @api.depends('comment')
+    def _compute_with_notes(self):
+        for record in self:
+            with_notes = False
+            if record.comment and tools.html2plaintext(record.comment).strip():
+                with_notes = True
+            record.with_notes = with_notes
 
     @api.constrains('partner_code')
     def _check_partner_code(self):
