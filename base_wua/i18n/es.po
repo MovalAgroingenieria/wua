@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-28 11:36+0000\n"
-"PO-Revision-Date: 2023-11-28 11:36+0000\n"
+"POT-Creation-Date: 2023-12-07 15:07+0000\n"
+"PO-Revision-Date: 2023-12-07 15:07+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -412,6 +412,11 @@ msgid "<span>m<sup>2</sup></span>"
 msgstr "<span>m<sup>2</sup></span>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.view_partner_form
+msgid "<strong>( NOTES PRESENT )</strong>"
+msgstr "<strong>( HAY NOTAS )</strong>"
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
@@ -771,11 +776,6 @@ msgid "Banking Mandates (low-level)"
 msgstr "Mandatos bancarios (a bajo nivel)"
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_034
-msgid "Barley of 2 races"
-msgstr "Cebada de 2 carreras"
-
-#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_035
 msgid "Barley of 6 races"
 msgstr "Cebada de 6 carreras"
@@ -838,6 +838,11 @@ msgstr "Por intervalos de área diferentes"
 #: selection:wua.configuration,polling_system_type:0
 msgid "By identical area intervals"
 msgstr "Por intervalos de área iguales"
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_034
+msgid "CEBADA"
+msgstr "CEBADA"
 
 #. module: base_wua
 #: selection:wua.parcel,title_deed_register_code_type:0
@@ -1081,6 +1086,11 @@ msgstr "Concesiones"
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_optional_concessions
 msgid "Concessions not mandatory"
 msgstr "Concesiones no obligatorias"
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_concessions_required
+msgid "Concessions required"
+msgstr "Concesiones requeridas"
 
 #. module: base_wua
 #: model:ir.ui.menu,name:base_wua.base_wua_census_configuration_menu
@@ -1777,11 +1787,6 @@ msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_143
-msgid "Hard wheat"
-msgstr "Trigo duro"
-
-#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_016
 msgid "Hazel"
 msgstr "Avellano"
@@ -1850,6 +1855,11 @@ msgstr "Si está activo, es obligatio que las parcelas tengan al menos una conce
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_leased_dates_required
 msgid "If checked the leased from and leased to fields becomes mandatory"
 msgstr "Si está activo, las fechas de arrendamiento 'desde' y 'hasta' pasan a ser obligatorias (En parcelas arrendadas)"
+
+#. module: base_wua
+#: model:ir.model.fields,help:base_wua.field_wua_configuration_show_partner_notes
+msgid "If checked the partner notes of the partner will be advised"
+msgstr "Si está activo, se mostrarán las notas del socio"
 
 #. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_parcel_partnerlink_is_usufructuary
@@ -2162,6 +2172,11 @@ msgid "Leased dates required"
 msgstr "Fechas de arrendamiento obligatorias"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_leaser_id
+msgid "Leaser"
+msgstr "Arrendatario"
+
+#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_127
 msgid "Leek"
 msgstr "Puerro"
@@ -2398,6 +2413,12 @@ msgstr "No disponible"
 #: selection:wua.parcel,state:0
 msgid "Not billable"
 msgstr "No facturable"
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_res_partner_show_notes_conf
+#: model:ir.model.fields,field_description:base_wua.field_res_users_show_notes_conf
+msgid "Note advice configuration"
+msgstr "Aviso de notas presentes"
 
 #. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_url_gis_viewer
@@ -3241,6 +3262,11 @@ msgid "Set a new parcel code"
 msgstr "Asignar un nuevo código de parcela"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wua_configuration_show_partner_notes
+msgid "Show partner notes"
+msgstr "Mostrar las notas del socio"
+
+#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_142
 msgid "Soft and semi-hard wheat"
 msgstr "Trigo blando y semiduro"
@@ -3415,6 +3441,11 @@ msgid "TIN (legal rep.)"
 msgstr "NIF (rep. legal)"
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_143
+msgid "TRIGO"
+msgstr "TRIGO"
+
+#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_145
 msgid "Table grapes"
 msgstr "Uva de mesa"
@@ -3453,14 +3484,14 @@ msgid "The \"URL GIS Viewer WMS\" parameter or \"URL GIS Viewer WFS\" are not po
 msgstr "El parámetro \"URL del servicio WMS\" o el parámetro \"URL del servicio WFS\" no ha sido inicializado."
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:531
-#: code:addons/base_wua/models/res_partner.py:559
+#: code:addons/base_wua/models/res_partner.py:548
+#: code:addons/base_wua/models/res_partner.py:583
 #, python-format
 msgid "The VAT code (TIN) already exists."
 msgstr "El código VAT (TIN) ya existe."
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:461
+#: code:addons/base_wua/models/res_partner.py:478
 #, python-format
 msgid "The VAT number [%s] for partner [%s] is invalid."
 msgstr "The VAT number [%s] for partner [%s] is invalid."
@@ -3592,14 +3623,14 @@ msgid "The orientation must be a value between 0 and 360 degrees."
 msgstr "La orientación debe ser un valor entre 0 y 360 grados."
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:526
-#: code:addons/base_wua/models/res_partner.py:541
+#: code:addons/base_wua/models/res_partner.py:543
+#: code:addons/base_wua/models/res_partner.py:565
 #, python-format
 msgid "The partner code already exists."
 msgstr "El código de socio ya existe."
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:440
+#: code:addons/base_wua/models/res_partner.py:457
 #, python-format
 msgid "The partner code must be a positive value."
 msgstr "El código de socio debe ser un valor positivo."
@@ -3622,7 +3653,7 @@ msgid "The sum of subparcel areas must be the parcel official area."
 msgstr "La suma de las áreas de las subparcelas debe coincidir con el área declarada."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_config_settings.py:313
+#: code:addons/base_wua/models/wua_config_settings.py:321
 #, python-format
 msgid "The table does not exists"
 msgstr "La tabla del perímetro no existe"
@@ -3996,6 +4027,13 @@ msgstr "Con plan de cultivo"
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
 msgid "With legal representative"
 msgstr "Con representante legal"
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_res_partner_with_notes
+#: model:ir.model.fields,field_description:base_wua.field_res_users_with_notes
+#: model:ir.ui.view,arch_db:base_wua.view_partner_search
+msgid "With notes"
+msgstr "Con notas"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_with_votes

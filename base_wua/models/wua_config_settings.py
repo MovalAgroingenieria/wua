@@ -197,6 +197,12 @@ class WuaConfiguration(models.TransientModel):
     mail_leaser_address = fields.Char(
         string='Mail receiver for lease reports',)
 
+    show_partner_notes = fields.Boolean(
+        string='Show partner notes',
+        default=False,
+        help='If checked the partner notes of the partner will be advised'
+    )
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -294,7 +300,9 @@ class WuaConfiguration(models.TransientModel):
                            'is_area_intersected_calculated',
                            self.is_area_intersected_calculated)
         values.set_default('wua.configuration', 'intersection_perimeter_table',
-                           self.intersection_perimeter_table)
+                           self.intersection_perimeter_table),
+        values.set_default('wua.configuration', 'show_partner_notes',
+                           self.show_partner_notes)
         # If is gonna be calculated, then check postgis and table selected
         # exists
         if (self.is_area_intersected_calculated and

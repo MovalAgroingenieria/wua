@@ -219,6 +219,10 @@ class ResPartner(models.Model):
         store=True,
         compute='_compute_with_notes')
 
+    show_notes_conf = fields.Boolean(
+        string='Note advice configuration',
+        compute='_compute_note_showing_conf')
+
     _sql_constraints = [
         ('valid_parcel_owner_number',
          'CHECK (parcel_owner_number >= 0)',
@@ -544,6 +548,13 @@ class ResPartner(models.Model):
                 raise exceptions.UserError(_('The VAT code (TIN) '
                                              'already exists.'))
         return new_partner
+
+    @api.multi
+    def _compute_note_showing_conf(self):
+        show_partner_notes = self.env['ir.values'].get_default(
+            'wua.configuration', 'show_partner_notes')
+        for record in self:
+            record.show_notes_conf = show_partner_notes
 
     @api.multi
     def write(self, vals):

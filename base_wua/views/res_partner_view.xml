@@ -94,8 +94,7 @@
                 <field name="birthdate"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="name_alias"
-                 attrs="{'invisible':[('is_wua_partner','=',False)]}"
-                 groups="base_wua.group_wua_user"/>
+                 attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_owner" readonly="1"
                  attrs="{'invisible':[('is_wua_partner','=',False)]}"/>
                 <field name="is_lessee" readonly="1"
@@ -114,7 +113,6 @@
             </xpath>
             <xpath expr="//page[@name='internal_notes']"
                    position="attributes">
-                <attribute name="t-attf-class">{'with_notes_color': record.with_notes}</attribute>
                 <attribute name="groups">base_wua.group_wua_user</attribute>
             </xpath>
             <xpath expr="//page[@name='sales_purchases']"
@@ -138,6 +136,15 @@
             </xpath>
             <xpath expr="//div[@t-if='record.fax.raw_value']" position="after">
                 <div t-if="record.type.raw_value === 'wua_legalrep'">LEGAL REPRESENTATIVE</div>
+            </xpath>
+            <xpath expr="//notebook[1]" position="before">
+                <field name="with_notes" invisible="1"/>
+                <field name="show_notes_conf" invisible="1"/>
+                <div name="hasnotes"
+                     style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                     attrs="{'invisible': ['|', ('with_notes', '=', False), ('show_notes_conf', '=', False)]}">
+                     <strong>( NOTES PRESENT )</strong>
+                </div>
             </xpath>
         </field>
     </record>
@@ -165,7 +172,7 @@
                 </attribute>
             </xpath>
             <xpath expr="//field[@name='display_name']" position="before">
-                <field name="name_alias" invisible="1" groups="base_wua.group_wua_user"/>
+                <field name="name_alias" invisible="1"/>
                 <field name="partner_code"/>
             </xpath>
             <xpath expr="//field[@name='phone']" position="attributes">
@@ -189,6 +196,7 @@
                 <field name="parcel_owner_area"/>
                 <field name="parcel_lessee_number"/>
                 <field name="parcel_lessee_area"/>
+                <field name="comment" invisible="1"/>
                 <button type="object" class="oe_stat_button"
                         icon="fa-user"
                         attrs="{'invisible':
@@ -212,7 +220,7 @@
             <search>
                 <field name="partner_code"/>
                 <field name="display_name"/>
-                <field name="name_alias" groups="base_wua.group_wua_user"/>
+                <field name="name_alias"/>
                 <field name="category_id"/>
                 <filter string="Persons" name="notiscompany"
                  domain="[('is_company','=',False)]"/>
@@ -229,6 +237,8 @@
                 <filter string="With legal representative" name="with_legalrep_yes"
                  domain="[('with_legalrep','=',True)]"/>
                 <separator/>
+                <filter string="With notes" name="with_notes" domain="[('with_notes','=',True)]" />
+                <separator/>
                 <filter string="Archived" name="inactive"
                  domain="[('active','=',False)]"/>
                 <group expand="0" string="Group By">
@@ -241,9 +251,6 @@
                     <filter string="Totals"
                      name="totals"
                      context="{'group_by':'is_wua_partner'}"/>
-                    <filter string="Payment mode (customer)"
-                     name="group_customer_payment_mode_id"
-                     context="{'group_by': 'computed_customer_payment_mode_id'}"/>
                 </group>
             </search>
         </field>
