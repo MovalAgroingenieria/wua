@@ -13,16 +13,23 @@ class WuaInvoicesetLineParcel(models.Model):
         digits=(32, 4),
         index=True,)
 
+    area_drainage = fields.Float(
+        string='Drainage Area',
+        digits=(32, 4),
+        index=True,)
+
 
 class WuaInvoicesetLine(models.Model):
     _inherit = 'wua.invoiceset.line'
 
     def _get_sql_insert_fields_select_parcel(self):
         new_sql = super(WuaInvoicesetLine, self).\
-            _get_sql_insert_fields_select_parcel() + ', area_irrigation '
+            _get_sql_insert_fields_select_parcel() + ', area_irrigation, ' + \
+            'area_drainage, '
         return new_sql
 
     def _get_sql_select_fields_select_parcel(self):
         new_sql = super(WuaInvoicesetLine, self).\
-            _get_sql_select_fields_select_parcel() + ', area_irrigation '
+            _get_sql_select_fields_select_parcel() + ', area_irrigation, ' + \
+            'area_drainage, '
         return new_sql

@@ -11,5 +11,6 @@ class ProductTemplate(models.Model):
     parcel_area_to_be_invoiced = fields.Selection(
         selection_add=[
             ('area_irrigation', 'Irrigation Area'),
+            ('area_drainage', 'Drainage Area'),
         ],
     )
