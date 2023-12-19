@@ -25,11 +25,11 @@ class WuaInvoicesetLine(models.Model):
     def _get_sql_insert_fields_select_parcel(self):
         new_sql = super(WuaInvoicesetLine, self).\
             _get_sql_insert_fields_select_parcel() + ', area_irrigation, ' + \
-            'area_drainage, '
+            'area_drainage '
         return new_sql
 
     def _get_sql_select_fields_select_parcel(self):
         new_sql = super(WuaInvoicesetLine, self).\
             _get_sql_select_fields_select_parcel() + ', area_irrigation, ' + \
-            'area_drainage, '
+            'area_drainage '
         return new_sql
