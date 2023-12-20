@@ -1259,7 +1259,7 @@ class WuaInvoiceset(models.Model):
                 if partner.id != partner_shipping_id:
                     invoice_vals.update({'partner_shipping_id':
                                          partner_shipping_id})
-                self.env['account.invoice'].create(invoice_vals)
+                invoice = self.env['account.invoice'].create(invoice_vals)
                 number_of_invoices = number_of_invoices + 1
         return number_of_invoices
 

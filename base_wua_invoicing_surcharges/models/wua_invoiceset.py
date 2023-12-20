@@ -14,31 +14,45 @@ class WuaInvoiceset(models.Model):
     # called when the "invoiceline_ids" field is None.
     @api.multi
     def unlink(self):
-        invoice_ids = []
+        invoice_variable_ids = []
+        invoice_fixed_ids = []
+        invoice_total_variable_ids = []
         for record in self:
             for line in record.line_ids:
                 if line.categ_id.productcategory_code == 16:
                     for l_invoice_variable in \
                             line.line_invoice_with_variable_surcharge_ids:
-                        invoice_ids.append(l_invoice_variable.invoice_id.id)
+                        invoice_variable_ids.append(
+                            l_invoice_variable.invoice_id.id)
                 elif line.categ_id.productcategory_code == 17:
                     for l_invoice_fixed in \
                             line.line_invoice_with_fixed_surcharge_ids:
-                        invoice_ids.append(l_invoice_fixed.invoice_id.id)
+                        invoice_fixed_ids.append(l_invoice_fixed.invoice_id.id)
                 elif line.categ_id.productcategory_code == 18:
                     for l_invoice_total_variable in \
                             line.\
                             line_invoice_with_total_variable_surcharge_ids:
-                        invoice_ids.append(
+                        invoice_total_variable_ids.append(
                             l_invoice_total_variable.invoice_id.id)
         res = super(WuaInvoiceset, self).unlink()
-        if invoice_ids:
-            invoice_ids = list(set(invoice_ids))
+        if invoice_variable_ids:
+            invoice_ids = list(set(invoice_variable_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
-            invoices._compute_number_of_variable_surcharges()
-            invoices._compute_number_of_total_variable_surcharges()
-            invoices._compute_number_of_fixed_surcharges()
+            for invoice in invoices:
+                invoices.number_of_variable_surcharges -= 1
+        if invoice_fixed_ids:
+            invoice_ids = list(set(invoice_fixed_ids))
+            invoices = \
+                self.env['account.invoice'].browse(invoice_ids)
+            for invoice in invoices:
+                invoices.number_of_fixed_surcharges -= 1
+        if invoice_total_variable_ids:
+            invoice_ids = list(set(invoice_total_variable_ids))
+            invoices = \
+                self.env['account.invoice'].browse(invoice_ids)
+            for invoice in invoices:
+                invoices.number_of_total_variable_surcharges -= 1
         return res
 
     def select_invoice_items_other_types(self, productcategory_code,
@@ -224,30 +238,84 @@ class WuaInvoiceset(models.Model):
             data['partner_id'] = invoice_data_line['key2']
         return data
 
-    # See comment of "unlink".
-    def after_cancel_invoiceset(self, invoiceset):
-        super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
-        invoice_ids = []
+    def after_calculate_invoiceset(self, invoiceset):
+        super(WuaInvoiceset, self).after_calculate_invoiceset(invoiceset)
+        invoice_variable_ids = []
+        invoice_fixed_ids = []
+        invoice_total_variable_ids = []
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code == 16:
                 for l_invoice_variable in \
                         line.line_invoice_with_variable_surcharge_ids:
-                    invoice_ids.append(l_invoice_variable.invoice_id.id)
+                    invoice_variable_ids.append(
+                        l_invoice_variable.invoice_id.id)
             elif line.categ_id.productcategory_code == 17:
                 for l_invoice_fixed in \
                         line.line_invoice_with_fixed_surcharge_ids:
-                    invoice_ids.append(l_invoice_fixed.invoice_id.id)
+                    invoice_fixed_ids.append(l_invoice_fixed.invoice_id.id)
             elif line.categ_id.productcategory_code == 18:
                 for l_invoice_total_variable in \
                         line.line_invoice_with_total_variable_surcharge_ids:
-                    invoice_ids.append(l_invoice_total_variable.invoice_id.id)
-        if invoice_ids:
-            invoice_ids = list(set(invoice_ids))
+                    invoice_total_variable_ids.append(
+                        l_invoice_total_variable.invoice_id.id)
+        if invoice_variable_ids:
+            invoice_ids = list(set(invoice_variable_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
-            invoices._compute_number_of_variable_surcharges()
-            invoices._compute_number_of_fixed_surcharges()
-            invoices._compute_number_of_total_variable_surcharges()
+            for invoice in invoices:
+                invoices.number_of_variable_surcharges += 1
+        if invoice_fixed_ids:
+            invoice_ids = list(set(invoice_fixed_ids))
+            invoices = \
+                self.env['account.invoice'].browse(invoice_ids)
+            for invoice in invoices:
+                invoices.number_of_fixed_surcharges += 1
+        if invoice_total_variable_ids:
+            invoice_ids = list(set(invoice_total_variable_ids))
+            invoices = \
+                self.env['account.invoice'].browse(invoice_ids)
+            for invoice in invoices:
+                invoices.number_of_total_variable_surcharges += 1
+
+    # See comment of "unlink".
+    def after_cancel_invoiceset(self, invoiceset):
+        super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
+        invoice_variable_ids = []
+        invoice_fixed_ids = []
+        invoice_total_variable_ids = []
+        for line in invoiceset.line_ids:
+            if line.categ_id.productcategory_code == 16:
+                for l_invoice_variable in \
+                        line.line_invoice_with_variable_surcharge_ids:
+                    invoice_variable_ids.append(
+                        l_invoice_variable.invoice_id.id)
+            elif line.categ_id.productcategory_code == 17:
+                for l_invoice_fixed in \
+                        line.line_invoice_with_fixed_surcharge_ids:
+                    invoice_fixed_ids.append(l_invoice_fixed.invoice_id.id)
+            elif line.categ_id.productcategory_code == 18:
+                for l_invoice_total_variable in \
+                        line.line_invoice_with_total_variable_surcharge_ids:
+                    invoice_total_variable_ids.append(
+                        l_invoice_total_variable.invoice_id.id)
+        if invoice_variable_ids:
+            invoice_ids = list(set(invoice_variable_ids))
+            invoices = \
+                self.env['account.invoice'].browse(invoice_ids)
+            for invoice in invoices:
+                invoices.number_of_variable_surcharges -= 1
+        if invoice_fixed_ids:
+            invoice_ids = list(set(invoice_fixed_ids))
+            invoices = \
+                self.env['account.invoice'].browse(invoice_ids)
+            for invoice in invoices:
+                invoices.number_of_fixed_surcharges -= 1
+        if invoice_total_variable_ids:
+            invoice_ids = list(set(invoice_total_variable_ids))
+            invoices = \
+                self.env['account.invoice'].browse(invoice_ids)
+            for invoice in invoices:
+                invoices.number_of_total_variable_surcharges -= 1
 
 
 class WuaInvoicesetLine(models.Model):

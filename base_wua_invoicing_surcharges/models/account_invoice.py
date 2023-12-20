@@ -39,61 +39,19 @@ class AccountInvoice(models.Model):
     invoiceline_total_variable_surcharge_ids = fields.One2many(
         string='Invoice Lines Variable Surcharges (Total amount)',
         comodel_name='account.invoice.line',
-        inverse_name='invoice_with_variable_surcharge_id')
+        inverse_name='invoice_with_total_variable_surcharge_id')
 
     number_of_variable_surcharges = fields.Integer(
         string='Invoicing Processes Variable Surcharges',
-        store=True,
-        index=True,
-        compute='_compute_number_of_variable_surcharges')
+        index=True,)
 
     number_of_fixed_surcharges = fields.Integer(
         string='Number of fixed surcharges',
-        store=True,
-        index=True,
-        compute='_compute_number_of_fixed_surcharges',)
+        index=True,)
 
     number_of_total_variable_surcharges = fields.Integer(
         string='Invoicing Processes Variable Surcharges (Total amount)',
-        store=True,
-        index=True,
-        compute='_compute_number_of_total_variable_surcharges')
-
-    @api.depends('invoiceline_variable_surcharge_ids')
-    def _compute_number_of_variable_surcharges(self):
-        for record in self:
-            number_of_variable_surcharges = 0
-            invoiceset_ids = []
-            for invoiceline in record.invoiceline_variable_surcharge_ids:
-                if (invoiceline.invoiceset_id.id not in invoiceset_ids):
-                    number_of_variable_surcharges += 1
-                    invoiceset_ids.append(invoiceline.invoiceset_id.id)
-            record.number_of_variable_surcharges = \
-                number_of_variable_surcharges
-
-    @api.depends('invoiceline_total_variable_surcharge_ids')
-    def _compute_number_of_total_variable_surcharges(self):
-        for record in self:
-            number_of_total_variable_surcharges = 0
-            invoiceset_ids = []
-            for invoiceline in record.invoiceline_total_variable_surcharge_ids:
-                if (invoiceline.invoiceset_id.id not in invoiceset_ids):
-                    number_of_total_variable_surcharges += 1
-                    invoiceset_ids.append(invoiceline.invoiceset_id.id)
-            record.number_of_total_variable_surcharges = \
-                number_of_total_variable_surcharges
-
-    @api.depends('invoiceline_fixed_surcharge_ids')
-    def _compute_number_of_fixed_surcharges(self):
-        for record in self:
-            number_of_fixed_surcharges = 0
-            invoiceset_ids = []
-            for invoiceline in record.invoiceline_fixed_surcharge_ids:
-                if (invoiceline.invoiceset_id.id not in invoiceset_ids):
-                    number_of_fixed_surcharges += 1
-                    invoiceset_ids.append(invoiceline.invoiceset_id.id)
-            record.number_of_fixed_surcharges = \
-                number_of_fixed_surcharges
+        index=True,)
 
     # It is not necessary "api.depends" (get from parent method).
     def _compute_amount(self):
