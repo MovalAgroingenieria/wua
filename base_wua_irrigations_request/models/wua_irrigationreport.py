@@ -15,6 +15,9 @@ class WuaIrrigationReport(models.Model):
         ondelete='restrict',
         readonly=True)
 
+    irrigationsrequest_sequence = fields.Integer(
+        string="Irrigation Number",)
+
     mapped_to_irrigationsrequest = fields.Boolean(
         string='Mapped to an irrigations request',
         store=True,

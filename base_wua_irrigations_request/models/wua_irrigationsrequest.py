@@ -475,6 +475,7 @@ class WuaIrrigationsrequest(models.Model):
                     'end_volume': volume_per_report,
                     'notes': notes,
                     'partner_signature': request.signature_image,
+                    'irrigationsrequest_sequence': i + 1
                     }).id)
         return resp
 

@@ -103,6 +103,16 @@ class WuaSuperproduct(models.Model):
         digits=(32, 2),
         compute='_compute_total_output')
 
+    used_on_excess_calculus = fields.Boolean(
+        string='Used on excess calculus',
+        required=True,
+        default=False)
+
+    max_volume_per_area = fields.Float(
+        string='Maximun volume per area',
+        required=True,
+        default=0.0)
+
     balance = fields.Float(
         string='Balance, in m³ (active agricultural season)',
         digits=(32, 2),
@@ -455,3 +465,72 @@ class WuaSuperproduct(models.Model):
                 self.env.invalidate_all()
             except Exception:
                 self.env.cr.rollback()
+
+    def do_notify_excess_volume(self):
+        mail_template = self.env.ref(
+            'base_wua_quota_management.'
+            'superproduct_excess_volume_email_template')
+        min_balance_threshold = self.env['ir.values'].get_default(
+            'wua.quotas.configuration', 'min_balance_threshold') or 0.0
+        if (mail_template):
+            body_html = _('<p>Partners with excess balance:</p>') + u'<br/>'
+            superproducts_used_in_calculus = self.env['wua.superproduct'].\
+                search([('used_on_excess_calculus', '=', True)])
+            if (superproducts_used_in_calculus and
+                    len(superproducts_used_in_calculus) > 0):
+                superproduct_ids = ','.join(
+                    superproducts_used_in_calculus.mapped(lambda x: str(x.id)))
+                total_volume_area = sum(
+                    superproducts_used_in_calculus.mapped(
+                        lambda x: x.max_volume_per_area))
+                partners_for_notify = []
+                try:
+                    self.env.cr.execute(
+                        """
+                        SELECT a.partner_id, a.total_area, b.total_balance FROM
+                            (SELECT sum(area_official_water_costs_net) *
+                        """ + str(total_volume_area) + """ AS
+                            total_area, partner_id from wua_parcel_partnerlink
+                            WHERE active GROUP BY partner_id) a
+                        INNER JOIN
+                            (SELECT partner_id, sum(balance) AS total_balance
+                            FROM wua_quota WHERE of_active_agriculturalseason
+                            AND superproduct_id IN (""" + superproduct_ids +
+                        """) GROUP BY
+                            partner_id) b
+                        ON a.partner_id = b.partner_id
+                        WHERE
+                            b.total_balance > a.total_area AND a.total_area >
+                        """ + str(min_balance_threshold))
+                    partners_for_notify = [
+                        [partner_id[0], partner_id[1], partner_id[2]] for
+                        partner_id in self.env.cr.fetchall()]
+                except Exception:
+                    partners_for_notify = []
+                table_html = u'''
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Socio</th>
+                                <th>Saldo Socio (m³)</th>
+                                <th>Saldo Máximo (m³)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                '''
+                for partner in partners_for_notify:
+                    table_html += u'''
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%s</td>
+                    </tr>
+                    ''' % (self.env['res.partner'].browse(partner[0]).
+                           name_get()[0][1], partner[2], partner[1])
+                table_html += u'''
+                        </tbody>
+                    </table>
+                '''
+                body_html += table_html
+                mail_template.body_html = body_html
+                mail_template.send_mail(self.id, force_send=True)

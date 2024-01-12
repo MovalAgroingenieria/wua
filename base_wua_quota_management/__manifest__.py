@@ -29,6 +29,8 @@
         "data/wua_massive_cancel_balances_sequence.xml",
         "data/wua_massive_assignments_sequence.xml",
         "data/wua_massive_compensatorytransfers_sequence.xml",
+        "data/wua_superproduct_excess_volume_mail_template.xml",
+        "data/wua_superproduct_excess_volume_notify_cron.xml",
         "wizard/wizard_generate_quotaperiods_view.xml",
         "wizard/wizard_set_activeagriculturalseason_view.xml",
         "wizard/wizard_recalculate_quotas_view.xml",

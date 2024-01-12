@@ -46,6 +46,16 @@
                                        style="width:100px"
                                        attrs="{'readonly': [('id','>',0)]}"/>
                             </div>
+                            <div name="used_on_excess_calculus_div">
+                                <label for="used_on_excess_calculus"/>
+                                <field name="used_on_excess_calculus"
+                                       style="width:100px"/>
+                            </div>
+                            <div name="max_volume_per_area_div" attrs="{'invisible': [('used_on_excess_calculus','!=',True)]}">
+                                <label for="max_volume_per_area"/>
+                                <field name="max_volume_per_area"
+                                       style="width:100px"/>
+                            </div>
                             <div>
                                 <div class="oe_edit_only">
                                     <label class="oe_edit_only"
