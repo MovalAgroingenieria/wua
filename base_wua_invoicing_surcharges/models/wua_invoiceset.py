@@ -40,19 +40,19 @@ class WuaInvoiceset(models.Model):
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_variable_surcharges -= 1
+                invoice.number_of_variable_surcharges -= 1
         if invoice_fixed_ids:
             invoice_ids = list(set(invoice_fixed_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_fixed_surcharges -= 1
+                invoice.number_of_fixed_surcharges -= 1
         if invoice_total_variable_ids:
             invoice_ids = list(set(invoice_total_variable_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_total_variable_surcharges -= 1
+                invoice.number_of_total_variable_surcharges -= 1
         return res
 
     def select_invoice_items_other_types(self, productcategory_code,
@@ -263,19 +263,19 @@ class WuaInvoiceset(models.Model):
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_variable_surcharges += 1
+                invoice.number_of_variable_surcharges += 1
         if invoice_fixed_ids:
             invoice_ids = list(set(invoice_fixed_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_fixed_surcharges += 1
+                invoice.number_of_fixed_surcharges += 1
         if invoice_total_variable_ids:
             invoice_ids = list(set(invoice_total_variable_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_total_variable_surcharges += 1
+                invoice.number_of_total_variable_surcharges += 1
 
     # See comment of "unlink".
     def after_cancel_invoiceset(self, invoiceset):
@@ -303,19 +303,19 @@ class WuaInvoiceset(models.Model):
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_variable_surcharges -= 1
+                invoice.number_of_variable_surcharges -= 1
         if invoice_fixed_ids:
             invoice_ids = list(set(invoice_fixed_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_fixed_surcharges -= 1
+                invoice.number_of_fixed_surcharges -= 1
         if invoice_total_variable_ids:
             invoice_ids = list(set(invoice_total_variable_ids))
             invoices = \
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
-                invoices.number_of_total_variable_surcharges -= 1
+                invoice.number_of_total_variable_surcharges -= 1
 
 
 class WuaInvoicesetLine(models.Model):
