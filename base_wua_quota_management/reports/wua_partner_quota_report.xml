@@ -220,44 +220,24 @@
                                                 <t t-set="total_consumption" t-value="0.0" />
                                                 <t t-set="total_balance" t-value="0.0" />
                                                 <!-- Total sum -->
-                                                <t t-foreach="quotas" t-as="q">
+                                                <t t-set="quotas_totalized" t-value="quotas.filtered(lambda x: not x.superproduct_id.is_debt_supraproduct)"/>
+                                                <t t-set="quotas_not_totalized" t-value="quotas.filtered(lambda x: x.superproduct_id.is_debt_supraproduct)"/>
+                                                <t t-foreach="quotas_totalized" t-as="q">
                                                     <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
                                                         <td name="td_superproduct">
                                                             <span t-field="q.superproduct_id" />
                                                         </td>
                                                         <td name="td_input" class="text-right">
-                                                            <t t-set="individual_total_input" t-value="0.0" />
-                                                            <t t-foreach="q.hydricmovement_ids" t-as="h">
-                                                                <t t-if="not h.individualinput_id or h.individualinput_id.category_id.quota_report_totalize">
-                                                                    <t t-if ="h.accounting_volume &gt; 0">
-                                                                        <t t-set="total_input" t-value="total_input + h.accounting_volume"/>
-                                                                        <t t-set="individual_total_input" t-value="individual_total_input + h.accounting_volume"/>
-                                                                    </t>
-                                                                </t>
-                                                            </t>
-                                                            <span t-esc="individual_total_input" t-options='{"widget": "float", "precision": 2}'/>
+                                                            <t t-set="total_input" t-value="total_input + q.accumulated_input"/>
+                                                            <span t-esc="q.accumulated_input" t-options='{"widget": "float", "precision": 2}'/>
                                                         </td>
                                                         <td name="td_consumption" class="text-right">
-                                                            <t t-set="individual_total_consumption" t-value="0.0" />
-                                                            <t t-foreach="q.hydricmovement_ids" t-as="h">
-                                                                <t t-if="not h.individualinput_id or h.individualinput_id.category_id.quota_report_totalize">
-                                                                    <t t-if="h.accounting_volume &lt; 0 ">
-                                                                        <t t-set="total_consumption" t-value="total_consumption - h.accounting_volume"/>
-                                                                        <t t-set="individual_total_consumption" t-value="individual_total_consumption - h.accounting_volume"/>
-                                                                    </t>
-                                                                </t>
-                                                            </t>
-                                                            <span t-esc="individual_total_consumption" t-options='{"widget": "float", "precision": 2}'/>
+                                                            <t t-set="total_consumption" t-value="total_consumption + q.accumulated_consumption"/>
+                                                            <span t-esc="q.accumulated_consumption" t-options='{"widget": "float", "precision": 2}'/>
                                                         </td>
                                                         <td name="td_balance" class="text-right">
-                                                            <t t-set="individual_total_balance" t-value="0.0"/>
-                                                            <t t-foreach="q.hydricmovement_ids" t-as="h">
-                                                                <t t-if="not h.individualinput_id or h.individualinput_id.category_id.quota_report_totalize">
-                                                                    <t t-set="total_balance" t-value="total_balance + h.accounting_volume"/>
-                                                                    <t t-set="individual_total_balance" t-value="individual_total_balance + h.accounting_volume"/>
-                                                                </t>
-                                                            </t>
-                                                            <span t-esc="individual_total_balance" t-options='{"widget": "float", "precision": 2}'/>
+                                                            <t t-set="total_balance" t-value="total_balance + q.balance"/>
+                                                            <span t-esc="q.balance" t-options='{"widget": "float", "precision": 2}'/>
                                                         </td>
                                                     </tr>
                                                 </t>
@@ -281,6 +261,52 @@
                                                 </tr>
                                             </tbody>
                                         </table>
+                                        <t t-if="len(quotas_not_totalized) > 0">
+                                            <table class="table table-striped" style="width:100%;">
+                                                <thead>
+                                                    <th name="th_superproduct_not_totalized">Debt type</th>
+                                                    <th name="th_consumption_not_totalized" class="text-right">Debt (m<sup>3</sup>)
+                                                    </th>
+                                                    <th name="th_input_not_totalized" class="text-right">Compensated (m<sup>3</sup>)
+                                                    </th>
+                                                    <th name="th_balance_not_totalized" class="text-right">Balance (m<sup>3</sup>)
+                                                    </th>
+                                                </thead>
+                                                <tbody>
+                                                    <t t-foreach="quotas_not_totalized" t-as="q">
+                                                        <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
+                                                            <td name="td_superproduct_not_totalized">
+                                                                <span t-field="q.superproduct_id" />
+                                                            </td>
+                                                            <td name="td_consumption_not_totalized" class="text-right">
+                                                                <t t-set="total_consumption" t-value="total_consumption + q.accumulated_consumption"/>
+                                                                <span t-esc="q.accumulated_consumption" t-options='{"widget": "float", "precision": 2}'/>
+                                                            </td>
+                                                            <td name="td_input_not_totalized" class="text-right">
+                                                                <t t-set="total_input" t-value="total_input + q.accumulated_input"/>
+                                                                <span t-esc="q.accumulated_input" t-options='{"widget": "float", "precision": 2}'/>
+                                                            </td>
+                                                            <td name="td_balance_not_totalized" class="text-right">
+                                                                <t t-set="total_balance" t-value="total_balance + q.balance"/>
+                                                                <span t-esc="q.balance" t-options='{"widget": "float", "precision": 2}'/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                    <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
+                                                        <td></td>
+                                                        <td name="td_total_input_not_totalized" class="text-right">
+                                                        </td>
+                                                        <td name="td_total_consumption_not_totalized" class="text-right">
+                                                        </td>
+                                                        <td name="td_total_balance_not_totalized" class="text-right">
+                                                            <strong>
+                                                                <t t-esc="total_balance" t-options='{"widget": "float", "precision": 2}'/>
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </t>
                                     </t>
                                 </t>
                             </t>

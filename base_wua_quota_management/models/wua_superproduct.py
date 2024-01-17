@@ -132,6 +132,12 @@ class WuaSuperproduct(models.Model):
 
     notes = fields.Html(string='Notes')
 
+    is_debt_supraproduct = fields.Boolean(
+        string='Is a debt supraproduct',
+        default=False,
+        help='If checked, the superproduct will be considered as debt '
+             'in parcel quota report.')
+
     _sql_constraints = [
         ('valid_superproduct_code', 'CHECK (superproduct_code > 0)',
          'The superproduct code must be a positive value.'),
