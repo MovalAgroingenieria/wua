@@ -1642,6 +1642,9 @@ class WuaParcel(models.Model):
     def test_other_slave_data(self, vals):
         irrigation_model_type = int(self.env['ir.values'].get_default(
             'wua.infrastructure.configuration', 'irrigation_model_type'))
+        check_wcs_diff_sector = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'check_waterconnections_different_hydraulic_sectors')
         if ('irrigationpointwc_ids' in vals and
            (irrigation_model_type == 0 or irrigation_model_type == 2)):
             correct_waterconnections_no_repeat = \
@@ -1649,12 +1652,13 @@ class WuaParcel(models.Model):
             if not correct_waterconnections_no_repeat:
                 raise exceptions.UserError(_('There are repeated water '
                                              'connections.'))
-            waterconnections_from_one_hydraulicsector = \
-                self.waterconnections_from_one_hydraulicsector(
-                    vals['irrigationpointwc_ids'])
-            if not waterconnections_from_one_hydraulicsector:
-                raise exceptions.UserError(_('The hydraulic sectors '
-                                             'are differents.'))
+            if (check_wcs_diff_sector):
+                waterconnections_from_one_hydraulicsector = \
+                    self.waterconnections_from_one_hydraulicsector(
+                        vals['irrigationpointwc_ids'])
+                if not waterconnections_from_one_hydraulicsector:
+                    raise exceptions.UserError(_('The hydraulic sectors '
+                                                 'are differents.'))
         if ('subparcel_ids' in vals and
            (irrigation_model_type == 1 or irrigation_model_type == 2)):
             correct_irrigationgates_no_repeat = \

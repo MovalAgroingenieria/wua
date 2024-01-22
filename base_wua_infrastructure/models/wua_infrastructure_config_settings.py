@@ -17,6 +17,13 @@ class WuaInfrastructureConfiguration(models.TransientModel):
         'Irrigation Model Type',
         help='Irrigation types used in this water user association')
 
+    check_waterconnections_different_hydraulic_sectors = fields.Boolean(
+        string='Check Waterconnections Different Sector',
+        default=True,
+        help='If checked it will not be possible to link waterconnections '
+             'with different hydraulic sectors'
+    )
+
     url_gis_googlemaps = fields.Char(
         string='Google Maps URL',
         size=255,
@@ -60,6 +67,10 @@ class WuaInfrastructureConfiguration(models.TransientModel):
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
+        values.set_default(
+            'wua.infrastructure.configuration',
+            'check_waterconnections_different_hydraulic_sectors',
+            self.check_waterconnections_different_hydraulic_sectors)
         values.set_default('wua.infrastructure.configuration',
                            'irrigation_model_type',
                            self.irrigation_model_type)
