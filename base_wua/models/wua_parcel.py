@@ -3214,6 +3214,11 @@ class WuaParcelPartnerlink(models.Model):
         store=True,
         compute="_compute_lessor_partner_id")
 
+    concession_ids = fields.Many2many(
+        string='Concessions',
+        comodel_name='wua.concession',
+        related='parcel_id.concession_ids',)
+
     # Aux fields
     lease_info_html_table = fields.Html(
         string='Lease info HTML table',

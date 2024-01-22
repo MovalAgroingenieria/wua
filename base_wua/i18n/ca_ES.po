@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-07 15:10+0000\n"
-"PO-Revision-Date: 2023-12-07 15:10+0000\n"
+"POT-Creation-Date: 2024-01-22 16:00+0000\n"
+"PO-Revision-Date: 2024-01-22 16:00+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1076,6 +1076,7 @@ msgstr "Enllaç a la concessió d'una parcel·la"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_concession_ids
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partnerlink_concession_ids
 #: model:ir.ui.menu,name:base_wua.wua_technical_concessionlinks_menu
 #: model:ir.ui.view,arch_db:base_wua.wua_config_settings_view_form
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_form
@@ -2177,11 +2178,6 @@ msgid "Leased dates required"
 msgstr "Es requereixen dates de lloguer"
 
 #. module: base_wua
-#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_leaser_id
-msgid "Leaser"
-msgstr "Arrendatar -se"
-
-#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_127
 msgid "Leek"
 msgstr "Puerro"
@@ -2420,6 +2416,12 @@ msgid "Not billable"
 msgstr "No facturable"
 
 #. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_res_partner_show_notes_conf
+#: model:ir.model.fields,field_description:base_wua.field_res_users_show_notes_conf
+msgid "Note advice configuration"
+msgstr "Avís de notes presents"
+
+#. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_url_gis_viewer
 msgid "Note: Valid URL of the related gis viewer"
 msgstr "Nota: URL vàlid del visualitzador gis relacionat"
@@ -2555,7 +2557,7 @@ msgid "Onion"
 msgstr "Cebolla"
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:474
+#: code:addons/base_wua/models/res_partner.py:491
 #, python-format
 msgid "Only one legal representative is allowed."
 msgstr "Només es permet un representant legal."
@@ -2777,7 +2779,7 @@ msgstr "Parce·la:"
 #. module: base_wua
 #: code:addons/base_wua/controllers/partner.py:43
 #: code:addons/base_wua/controllers/partner.py:75
-#: code:addons/base_wua/models/res_partner.py:644
+#: code:addons/base_wua/models/res_partner.py:668
 #: code:addons/base_wua/models/wua_parcel.py:1762
 #: model:ir.actions.act_window,name:base_wua.res_partner_partnerlink_action
 #: model:ir.actions.act_window,name:base_wua.wua_parcel_action
@@ -2922,11 +2924,6 @@ msgid "Payer"
 msgstr "Pagador"
 
 #. module: base_wua
-#: model:ir.ui.view,arch_db:base_wua.view_partner_search
-msgid "Payment mode (customer)"
-msgstr "Mode de pagament (client)"
-
-#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_088
 msgid "Peach"
 msgstr "Melocotonero"
@@ -3019,7 +3016,7 @@ msgid "Portal User can edit"
 msgstr "Usuaris de portal poden editar"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_config_settings.py:305
+#: code:addons/base_wua/models/wua_config_settings.py:313
 #, python-format
 msgid "Postgis Extension not created"
 msgstr "L'extensió Postgis no s'ha creat"
@@ -3483,14 +3480,14 @@ msgid "The \"URL GIS Viewer WMS\" parameter or \"URL GIS Viewer WFS\" are not po
 msgstr "El paràmetre \" URL GIS Viewer WMS \" o \" URL GIS Viewer WFS \" no es reuneixen."
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:531
-#: code:addons/base_wua/models/res_partner.py:559
+#: code:addons/base_wua/models/res_partner.py:548
+#: code:addons/base_wua/models/res_partner.py:583
 #, python-format
 msgid "The VAT code (TIN) already exists."
 msgstr "El codi VAT (TIN) ja existeix"
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:461
+#: code:addons/base_wua/models/res_partner.py:478
 #, python-format
 msgid "The VAT number [%s] for partner [%s] is invalid."
 msgstr "The VAT number [%s] for partner [%s] is invalid."
@@ -3629,7 +3626,7 @@ msgid "The partner code already exists."
 msgstr "El codi de soci ja existeix"
 
 #. module: base_wua
-#: code:addons/base_wua/models/res_partner.py:440
+#: code:addons/base_wua/models/res_partner.py:457
 #, python-format
 msgid "The partner code must be a positive value."
 msgstr "El codi de soci ha de ser un valor positiu"
@@ -3652,7 +3649,7 @@ msgid "The sum of subparcel areas must be the parcel official area."
 msgstr "La suma de les àrees de les subparcel·les ha de coincidir amb l'àrea declarada"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_config_settings.py:313
+#: code:addons/base_wua/models/wua_config_settings.py:321
 #, python-format
 msgid "The table does not exists"
 msgstr "La taula no existeix"
