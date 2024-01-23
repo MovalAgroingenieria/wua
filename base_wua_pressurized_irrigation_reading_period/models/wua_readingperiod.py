@@ -195,20 +195,25 @@ class WuaReadingperiod(models.Model):
 
     @api.model
     def create(self, vals):
-        readingperiods = self.env['wua.readingperiod'].search([])
-        some_overlapping = False
-        i = 0
-        while (i < len(readingperiods) and not some_overlapping):
-            rp = readingperiods[i]
-            some_overlapping = ((vals['initial_date'] >= rp.initial_date and
-                                 vals['initial_date'] <= rp.end_date) or
-                                (vals['end_date'] >= rp.initial_date and
-                                 vals['end_date'] <= rp.end_date))
-            i = i + 1
-        if (some_overlapping):
-            raise exceptions.UserError(_(
-                'The reading period limits overlaps with another reading'
-                ' period.'))
+        model_values = self.env['ir.values'].sudo()
+        allow_overlapping_reading_period = model_values.get_default(
+            'wua.irrigation.configuration', 'allow_overlapping_reading_period')
+        if (not allow_overlapping_reading_period):
+            readingperiods = self.env['wua.readingperiod'].search([])
+            some_overlapping = False
+            i = 0
+            while (i < len(readingperiods) and not some_overlapping):
+                rp = readingperiods[i]
+                some_overlapping = ((vals['initial_date'] >=
+                                     rp.initial_date and
+                                    vals['initial_date'] <= rp.end_date) or
+                                    (vals['end_date'] >= rp.initial_date and
+                                    vals['end_date'] <= rp.end_date))
+                i = i + 1
+            if (some_overlapping):
+                raise exceptions.UserError(_(
+                    'The reading period limits overlaps with another reading'
+                    ' period.'))
         return super(WuaReadingperiod, self).create(vals)
 
     @api.multi

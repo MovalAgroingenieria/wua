@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-09 11:55+0000\n"
-"PO-Revision-Date: 2022-11-09 11:55+0000\n"
+"POT-Creation-Date: 2024-01-23 11:45+0000\n"
+"PO-Revision-Date: 2024-01-23 11:45+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -44,6 +44,11 @@ msgid "Agricultural Season"
 msgstr "Campaña"
 
 #. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_irrigation_configuration_allow_overlapping_reading_period
+msgid "Allow Overlapping Reading Periods"
+msgstr "Permitir solapamientos en períodos de lectura"
+
+#. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_readingperiodline_ids
 msgid "Associated Hydraulic-Sectors"
 msgstr "Sectores hidraúlicos asociados"
@@ -74,10 +79,15 @@ msgid "Closed"
 msgstr "Cerrado"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:297
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:294
 #, python-format
 msgid "Configuration of Reading-Period Lines"
 msgstr "Configuración de líneas del período de lectura"
+
+#. module: base_wua_pressurized_irrigation_reading_period
+#: model:ir.model,name:base_wua_pressurized_irrigation_reading_period.model_wua_irrigation_configuration
+msgid "Configuration of irrigation with type of water"
+msgstr "Configuración de riego con tipo de agua"
 
 #. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_readingperiod_view_form
@@ -158,8 +168,8 @@ msgid "Entity (pressure reading)"
 msgstr "Elemento (lectura de presión)"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:378
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:534
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:375
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:530
 #, python-format
 msgid "Error when updating records."
 msgstr "Error al actualizar los registros."
@@ -236,7 +246,7 @@ msgid "Irrigation sheds of reading-period line"
 msgstr "Casetas de la línea del período de lectura"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:554
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:550
 #, python-format
 msgid "Irrigationshed"
 msgstr "Caseta"
@@ -303,7 +313,7 @@ msgid "N. waterconnections"
 msgstr "Nº Tomas"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:263
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:260
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_line_irrigationshed_negative_reading_ids
 #, python-format
 msgid "Negative Readings"
@@ -357,7 +367,7 @@ msgid "Opened"
 msgstr "Abierto"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:324
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:321
 #, python-format
 msgid "Operation not allowed: this reading period has some associated readings. Before canceling, it is mandatory to remove this readings."
 msgstr "Operación no permitida: este período de lectura tiene alguna lectura asociada. Antes de cancelar, es necesario eliminar las lecturas asociadas."
@@ -384,6 +394,7 @@ msgstr "Período de lectura"
 #. module: base_wua_pressurized_irrigation_reading_period
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_reading_period.wua_reading_period_action
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_reading_period.wua_reading_menu
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_reading_period.wua_irrigation_config_settings_view_form
 msgid "Reading Periods"
 msgstr "Períodos de lectura"
 
@@ -405,7 +416,7 @@ msgid "Readingperiodlineirrigationshed id"
 msgstr "Readingperiodlineirrigationshed id"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:237
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:234
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_reading_period.field_wua_readingperiod_line_irrigationshed_reading_ids
 #, python-format
 msgid "Readings"
@@ -462,19 +473,19 @@ msgid "State: Opened"
 msgstr "Estado: Abierto"
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:200
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:192
 #, python-format
 msgid "The reading period limits are outside of all agricultural seasons."
 msgstr "Los límites del período de lectura están fuera de todas las campañas."
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:217
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:214
 #, python-format
 msgid "The reading period limits overlaps with another reading period."
 msgstr "Los límites del período de lectura coinciden con los de otro período."
 
 #. module: base_wua_pressurized_irrigation_reading_period
-#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:312
+#: code:addons/base_wua_pressurized_irrigation_reading_period/models/wua_readingperiod.py:309
 #, python-format
 msgid "There cannot be more than one open reading period."
 msgstr "No puede haber más de un período de lectura abierto."
