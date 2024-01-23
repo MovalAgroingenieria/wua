@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-17 11:21+0000\n"
-"PO-Revision-Date: 2024-01-17 11:21+0000\n"
+"POT-Creation-Date: 2024-01-23 13:53+0000\n"
+"PO-Revision-Date: 2024-01-23 13:53+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgid " Socios con exceso saldo en supraproductos"
 msgstr " Socios con exceso saldo en supraproductos"
 
 #. module: base_wua_quota_management
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_rules_count
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_rules_count_13621
 msgid "# Analytic Rules"
 msgstr "# Regles analítiques"
 
@@ -995,7 +995,7 @@ msgstr "Cat. (assig. indv.)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_category_id
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_id_13015
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_id_13953
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_category_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_category_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_category_id
@@ -1177,6 +1177,11 @@ msgstr "Compensació Masiva"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_generalinput_concession_id
 msgid "Concession"
 msgstr "Concessió"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_concession_ids
+msgid "Concessions"
+msgstr "Concessions"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.menu,name:base_wua_quota_management.configuration_menu
@@ -1707,7 +1712,7 @@ msgstr "Introduïu la data d'inici de cada període de quota i, opcionalment, un
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Element (producte)"
+msgstr "Element (WUA Product Template)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_agriculturalseason
@@ -1732,7 +1737,7 @@ msgstr "Element (caseta)"
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Element (parcel·la)"
+msgstr "Entity (parcel)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_presconsumption
@@ -1742,7 +1747,7 @@ msgstr "Element (consum de pressió)"
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_reading
 msgid "Entity (pressure reading)"
-msgstr "Element (lectura de pressió)"
+msgstr "Entity (pressure reading)"
 
 #. module: base_wua_quota_management
 #: model:ir.model,name:base_wua_quota_management.model_wua_waterconnection
@@ -2146,7 +2151,7 @@ msgstr "Consums hídrics"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_category_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_id
-#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_id_16569
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_id_15973
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_individualinput_massive_assignment_line_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_id
@@ -3262,7 +3267,7 @@ msgstr "Parcel·les de línia de període de quota"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_waterconnection_reading_report_document
 msgid "Partner"
-msgstr "Soci"
+msgstr "Empresa"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_partner_code
@@ -4361,7 +4366,7 @@ msgstr "El cedent i el cessionari no poden ser el mateix soci."
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_volume
 msgid "The volume in m3."
-msgstr "El volum en m³."
+msgstr "El volum en m3."
 
 #. module: base_wua_quota_management
 #: sql_constraint:wua.hydricmovement:0
@@ -4810,12 +4815,6 @@ msgid "Watering Request"
 msgstr "Sol·licitud de reg"
 
 #. module: base_wua_quota_management
-#: model:product.template,name:base_wua_quota_management.superproduct_gravity_irrigation_product_template
-#: model:wua.superproduct,name:base_wua_quota_management.superproduct_gravity_irrigation
-msgid "Waters of gravity irrigation"
-msgstr "Aigües per a reg per gravetat"
-
-#. module: base_wua_quota_management
 #: model:product.template,name:base_wua_quota_management.superproduct_irrigation_reports_product_template
 #: model:wua.superproduct,name:base_wua_quota_management.superproduct_irrigation_reports
 msgid "Waters of irrigation reports"
@@ -4898,7 +4897,7 @@ msgstr "dies"
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:391
-#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:586
+#: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:591
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1406
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:69
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:104

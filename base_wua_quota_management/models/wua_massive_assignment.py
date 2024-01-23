@@ -538,6 +538,11 @@ class WuaMassiveAssignmentsParcel(models.Model):
         required=True,
         ondelete='restrict')
 
+    concession_ids = fields.Many2many(
+        string='Concessions',
+        comodel_name='wua.concession',
+        related='parcel_id.concession_ids',)
+
     area_official = fields.Float(
         string='Official Area',
         digits=(32, 4))
