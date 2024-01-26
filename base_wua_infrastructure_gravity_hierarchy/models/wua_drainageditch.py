@@ -2,6 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from lxml import etree
 from odoo import models, fields, api, exceptions, _
 from odoo.http import request
 from Crypto.Cipher import AES
@@ -251,6 +252,18 @@ class WuaDrainageditch(models.Model):
         'hide the register without removing it. For see archived register, ' +
         'go to "Search-Filters" in tree view')
 
+    total_affected_area_official = fields.Float(
+        string='Cumulative area of parcels',
+        digits=(32, 4),
+        store=True,
+        compute='_compute_total_affected_area_official')
+
+    total_affected_area_official_hec = fields.Float(
+        string='Cumulative area of parcels (hectares)',
+        digits=(32, 4),
+        store=True,
+        compute='_compute_total_affected_area_official_hec')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.')]
 
@@ -313,6 +326,67 @@ class WuaDrainageditch(models.Model):
                         record['parcel_' + str(level).zfill(2) + '_ids'])
                 level -= 1
             record.number_of_parcels = number_of_parcels
+
+    @api.depends('parcel_01_ids', 'parcel_02_ids',
+                 'parcel_03_ids', 'parcel_04_ids',
+                 'parcel_05_ids', 'parcel_06_ids',
+                 'parcel_07_ids', 'parcel_08_ids',
+                 'parcel_09_ids', 'parcel_10_ids',
+                 'parcel_11_ids', 'parcel_12_ids',
+                 'parcel_13_ids', 'parcel_14_ids',
+                 'parcel_15_ids', 'parcel_16_ids',
+                 'parcel_17_ids', 'parcel_18_ids',
+                 'parcel_19_ids', 'parcel_20_ids',
+                 'parcel_21_ids', 'parcel_22_ids',
+                 'parcel_23_ids', 'parcel_24_ids',
+                 'parcel_25_ids', 'parcel_26_ids',
+                 'parcel_27_ids', 'parcel_28_ids',
+                 'parcel_29_ids', 'parcel_30_ids',
+                 'parcel_01_ids.active', 'parcel_02_ids.active',
+                 'parcel_03_ids.active', 'parcel_04_ids.active',
+                 'parcel_05_ids.active', 'parcel_06_ids.active',
+                 'parcel_07_ids.active', 'parcel_08_ids.active',
+                 'parcel_09_ids.active', 'parcel_10_ids.active',
+                 'parcel_11_ids.active', 'parcel_12_ids.active',
+                 'parcel_13_ids.active', 'parcel_14_ids.active',
+                 'parcel_15_ids.active', 'parcel_16_ids.active',
+                 'parcel_17_ids.active', 'parcel_18_ids.active',
+                 'parcel_19_ids.active', 'parcel_20_ids.active',
+                 'parcel_21_ids.active', 'parcel_22_ids.active',
+                 'parcel_23_ids.active', 'parcel_24_ids.active',
+                 'parcel_25_ids.active', 'parcel_26_ids.active',
+                 'parcel_27_ids.active', 'parcel_28_ids.active',
+                 'parcel_29_ids.active', 'parcel_30_ids.active')
+    def _compute_total_affected_area_official(self):
+        max_level = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration',
+            'max_levels_gravity_drainage')
+        for record in self:
+            total_affected_area_official = 0.0
+            level = max_level
+            some_level = False
+            while (not some_level and level > 0):
+                if record['parcel_' + str(level).zfill(2) + '_ids']:
+                    some_level = True
+                    for parcel in \
+                            record['parcel_' + str(level).zfill(2) + '_ids']:
+                        total_affected_area_official += parcel.area_official
+                level -= 1
+            record.total_affected_area_official = total_affected_area_official
+
+    @api.depends('total_affected_area_official')
+    def _compute_total_affected_area_official_hec(self):
+        factor = 1
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        if area_measurement_type == 1:
+            area_measurement_equivalence = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_equivalence')
+        if area_measurement_equivalence > 0:
+            factor = area_measurement_equivalence
+            for record in self:
+                record.total_affected_area_official_hec = \
+                    factor * record.total_affected_area_official
 
     @api.multi
     def _compute_gis_viewer_link(self):
@@ -410,6 +484,50 @@ class WuaDrainageditch(models.Model):
                                                'be used in the name of the '
                                                'irrigation ditch.'))
         return new_drainageditch
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaDrainageditch, self).fields_view_get(
+            view_id=view_id,
+            view_type=view_type,
+            toolbar=toolbar,
+            submenu=submenu)
+        doc = etree.XML(res['arch'])
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        area_measurement_name = ''
+        if area_measurement_type == 1:
+            area_measurement_name = self.env['ir.values'].get_default(
+                'wua.configuration', 'area_measurement_name')
+            area_measurement_name = area_measurement_name.decode('utf_8')
+        if area_measurement_name != '':
+            area_measurement_name = ' (' + \
+                area_measurement_name.lower() + ')'
+            for node in doc.xpath(
+                    "//field[@name='total_affected_area_official']"):
+                original_label = \
+                    self.sudo().get_value_from_translation(
+                        'base_wua_infrastructure',
+                        self.__class__.total_affected_area_official.string)
+                posBracket = original_label.find(' (')
+                if posBracket != -1:
+                    original_label = original_label[:posBracket]
+                node.set('string', original_label + area_measurement_name)
+        res['arch'] = etree.tostring(doc)
+        return res
+
+    def get_value_from_translation(self, module, src):
+        resp = src
+        lang = self.env.context.get('lang')
+        translations = self.env['ir.translation']
+        condition = [('lang', '=', lang),
+                     ('module', '=', module),
+                     ('src', '=', src)]
+        filtered_translations = translations.search(condition)
+        if len(filtered_translations) > 0:
+            resp = filtered_translations[0].value
+        return resp
 
     @api.multi
     def write(self, vals):

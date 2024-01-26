@@ -39,6 +39,15 @@ class WuaValve(models.Model):
         index=True,
     )
 
+    valve_state = fields.Selection([
+        ('00_open', 'Open Valve'),
+        ('01_closed', 'Closed Valve'),
+        ],
+        default='00_open',
+        string='Valve State',
+        required=True,
+    )
+
     active = fields.Boolean(
         default=True,
         help='If the active field is set to False, it will allow you to ' +

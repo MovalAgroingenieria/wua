@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-03 14:27+0000\n"
-"PO-Revision-Date: 2023-10-03 14:27+0000\n"
+"POT-Creation-Date: 2024-01-26 18:09+0000\n"
+"PO-Revision-Date: 2024-01-26 18:09+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,7 +21,7 @@ msgid "<strong>Gravity&amp;nbsp;Irrigation</strong>"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:428
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:499
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:411
 #, python-format
 msgid "A ditch cannot be supplied by itself."
@@ -34,7 +34,7 @@ msgid "A non-main ditch must be supplied by another."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:381
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:408
 #, python-format
 msgid "A non-main drainage ditch must drain to another."
 msgstr ""
@@ -56,7 +56,7 @@ msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model,name:base_wua_infrastructure_gravity_hierarchy.model_wua_infrastructure_configuration
-msgid "Configuration of base_wua_infrastructure_primary module"
+msgid "Configuration of base_wua_infrastructure module"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
@@ -67,6 +67,17 @@ msgstr ""
 #. module: base_wua_infrastructure_gravity_hierarchy
 #: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_create_date
 msgid "Created on"
+msgstr ""
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_total_affected_area_official
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_view_form
+msgid "Cumulative area of parcels"
+msgstr ""
+
+#. module: base_wua_infrastructure_gravity_hierarchy
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_drainageditch_total_affected_area_official_hec
+msgid "Cumulative area of parcels (hectares)"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
@@ -132,7 +143,7 @@ msgid "Drained to"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:367
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:394
 #, python-format
 msgid "Empty Value."
 msgstr ""
@@ -168,14 +179,13 @@ msgid "Entity (watering)"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_invoiceset.py:63
-#, python-format
-msgid "Error when updating records."
+#: sql_constraint:wua.drainageditch:0
+msgid "Existing Name."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: sql_constraint:wua.drainageditch:0
-msgid "Existing Name."
+#: model:ir.model.fields,field_description:base_wua_infrastructure_gravity_hierarchy.field_wua_parcel_flowdivider_id_domain
+msgid "Flowdivider id domain"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
@@ -666,7 +676,7 @@ msgid "Parcel"
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:535
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:606
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:481
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_drainageditch_parcels_action_gh
 #: model:ir.actions.server,name:base_wua_infrastructure_gravity_hierarchy.wua_irrigationditch_parcels_action_gh
@@ -1012,13 +1022,13 @@ msgid "The \"Max. Levels\" value has to be between 1 and 30."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:421
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:492
 #, python-format
 msgid "The character \"/\" cannot be used in the name of the drainage ditch."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:409
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:436
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:392
 #: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_irrigationditch.py:405
 #, python-format
@@ -1026,14 +1036,14 @@ msgid "The character \"/\" cannot be used in the name of the irrigation ditch."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:405
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:438
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:432
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:509
 #, python-format
 msgid "The drainage ditch code already exists."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:372
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:399
 #, python-format
 msgid "The drainage ditch code must be a positive value."
 msgstr ""
@@ -1050,13 +1060,13 @@ msgid "The main ditch cannot be supplied by any other."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:378
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:405
 #, python-format
 msgid "The main drainage ditch cannot drains to any other."
 msgstr ""
 
 #. module: base_wua_infrastructure_gravity_hierarchy
-#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:390
+#: code:addons/base_wua_infrastructure_gravity_hierarchy/models/wua_drainageditch.py:417
 #, python-format
 msgid "You cannot create a drainage ditch that depends on a ditch of the highest level (%s)."
 msgstr ""
