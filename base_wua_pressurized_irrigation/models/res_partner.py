@@ -2,7 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, tools
+from odoo import models, fields, api, tools, _
 
 
 class ResPartnerWaterconnection(models.Model):
@@ -60,3 +60,19 @@ class ResPartnerWaterconnection(models.Model):
                 """)
         except Exception:
             self.env.cr.rollback()
+
+    def action_show_watermeter_id(self):
+        self.ensure_one()
+        id_form_view = self.env.ref(
+            'base_wua_pressurized_irrigation.wua_watermeter_view_form').id
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Watermeter'),
+            'res_model': 'wua.watermeter',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'views': [(id_form_view, 'form')],
+            'target': 'current',
+            'res_id': self.watermeter_id.id
+            }
+        return act_window
