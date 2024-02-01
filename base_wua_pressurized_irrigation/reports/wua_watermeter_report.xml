@@ -29,7 +29,7 @@
     <template id="wua_watermeter_technical_sheet_report_document">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
-                <div class="page" style="border: 2px solid lightgrey; padding: 4px;">
+                <div class="page" style="border: 2px solid lightgrey; padding: 4px; width: 63%;">
                     <!-- Vars -->
                     <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
@@ -39,76 +39,73 @@
                             <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
                                 <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
                                 <div style="float: left; display: inline;">
-                                    <strong><t t-if="o.name"><span t-field="o.name"></span></t></strong>
+                                    <strong><t t-if="o.name"><span t-field="o.name"/></t></strong>
                                 </div>
                                 <div style="float: right; font-size: 1.5em;"><span class="fa fa-moval-logo"/></div>
                             </div>
                         </t>
                         <t t-else="">
-                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
-                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
-                                <div style="float: left; display: inline;">
-                                    <strong><t t-if="o.name"><span t-field="o.name"></span></t></strong>
+                            <div class="col-xs-12 bg-theme-report-color text-center" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px; color: white;">
+                                <div style="display: inline-block; font-size: 1.5em; vertical-align: middle; margin-bottom:4px; margin-right:4px;">
+                                    <span class="fa fa-moval-water-counter"></span>
                                 </div>
-                                <div style="float: right; font-size: 1.5em;"><span class="fa fa-moval-logo"/></div>
+                                <div style="display: inline-block; vertical-align: middle;">
+                                    <strong><t t-if="o.name"><span t-field="o.name"/></t></strong>
+                                </div>
                             </div>
                         </t>
                     </div>
-                    <div style="font-size: 0.8em;">
-                        <div class="row" style="margin-bottom: 4px; margin-top: 4px;">
-                            <div class="col-xs-12" style="display: table;">
-                                <div style="display: table-cell; border-right: 1px solid lightgrey;">
-                                    <table name="watermeter_data_left" class="table-condensed table-striped" style="width:100%;">
-                                        <tbody>
-                                            <tr name="tr_installation_date">
-                                                <td><span>Installation date:</span></td>
-                                                <td class="text-right"><span t-field="o.installation_date"/></td>
-                                            </tr>
-                                            <tr name="tr_serial_number">
-                                                <td><span>Serial Num.:</span></td>
-                                                <td class="text-right"><span t-field="o.serial_number"/></td>
-                                            </tr>
-                                            <tr name="tr_watermeter_brand">
-                                                <td><span>Brand:</span></td>
-                                                <td class="text-right"><span t-field="o.watermeter_brand"/></td>
-                                            </tr>
-                                            <tr name="tr_watermeter_model">
-                                                <td><span>Model:</span></td>
-                                                <td class="text-right"><span t-field="o.watermeter_model"/></td>
-                                            </tr>
-                                            <tr name="tr_nominal_diameter">
-                                                <td><span>Diameter:</span></td>
-                                                <td class="text-right">
-                                                    <span t-field="o.nominal_diameter"/>
-                                                    <span>mm</span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="text-center">
-                                    <div style="font-size: 0.3px; margin-bottom: 2px;">&amp;nbsp;</div>
-                                    <img t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' %
-                                    (o._get_or_generate_watermeter_link(), 3, 4, 0, 1)"/>
-                                </div>
+                    <div class="row" style="margin-bottom: 4px; margin-top: 4px;">
+                        <div class="col-xs-6" style="display: table;">
+                            <div style="display: table-cell; border-right: 1px solid lightgrey;">
+                                <table name="watermeter_data_left" class="table-condensed table-striped" style="width:50%;">
+                                    <tbody>
+                                        <tr name="tr_installation_date">
+                                            <td style="font-size: 0.6em"><span>Installation date:</span></td>
+                                            <td style="font-size: 0.6em" class="text-right"><span t-field="o.installation_date"/></td>
+                                        </tr>
+                                        <tr name="tr_serial_number">
+                                            <td style="font-size: 0.6em"><span>Serial Num.:</span></td>
+                                            <td style="font-size: 0.6em" class="text-right"><span t-field="o.serial_number"/></td>
+                                        </tr>
+                                        <tr name="tr_watermeter_brand">
+                                            <td style="font-size: 0.6em"><span>Brand:</span></td>
+                                            <td style="font-size: 0.6em" class="text-right"><span t-field="o.watermeter_brand"/></td>
+                                        </tr>
+                                        <tr name="tr_watermeter_model">
+                                            <td style="font-size: 0.6em"><span>Model:</span></td>
+                                            <td style="font-size: 0.6em" class="text-right"><span t-field="o.watermeter_model"/></td>
+                                        </tr>
+                                        <tr name="tr_nominal_diameter">
+                                            <td style="font-size: 0.6em"><span>Diameter:</span></td>
+                                            <td style="font-size: 0.6em" class="text-right">
+                                                <span t-field="o.nominal_diameter"/>
+                                                <span>mm</span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="font-size: 0.3em" class="text-center">
+                                <div style="font-size: 0.3px; margin-bottom: 2px;">&amp;nbsp;</div>
+                                <img style="width: 115px; margin-left: 8px; margin-top: 8px;" t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' % (o._get_or_generate_watermeter_link(), 3, 4, 0, 1)"/>
                             </div>
                         </div>
-                        <table name="watermeter_data_down" class="table-condensed table-striped" style="width:100%;">
-                            <tbody>
-                                <tr name="tr_partner_id">
-                                    <td class="text-center" style="width:100%;">
-                                        <t t-if="o.waterconnection_id.irrigationpoint_ids and len(o.waterconnection_id.irrigationpoint_ids) > 0">
-                                            <t t-set="partner_code" t-value="str(o.waterconnection_id.irrigationpoint_ids[0].partner_id.partner_code)"/>
-                                            <span>[ <span t-esc="partner_code"/> ]</span>
-                                            <strong><span t-field="o.waterconnection_id.irrigationpoint_ids[0].partner_id"/></strong>
-                                        </t>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
-
-                </div><!--end page -->
+                    <table name="watermeter_data_down" class="table-condensed table-striped" style="width:100%;">
+                        <tbody>
+                            <tr name="tr_partner_id">
+                                <td class="text-center" style="width:50%;">
+                                    <t t-if="o.waterconnection_id.irrigationpoint_ids and len(o.waterconnection_id.irrigationpoint_ids) &gt; 0">
+                                        <t t-set="partner_code" t-value="str(o.waterconnection_id.irrigationpoint_ids[0].partner_id.partner_code)"/>
+                                        <span style="font-size: 0.8em">[ <span t-esc="partner_code"/> ]</span>
+                                        <strong><span style="font-size: 0.8em" t-field="o.waterconnection_id.irrigationpoint_ids[0].partner_id"/></strong>
+                                    </t>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </t>
         </t>
     </template>
