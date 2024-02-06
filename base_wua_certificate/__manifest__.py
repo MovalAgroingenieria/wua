@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2021 Moval Agroingeniería
+# 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
@@ -26,6 +26,8 @@
         "data/wua_config_settings_data.xml",
         "data/mail_template_data.xml",
         "data/wua_certificate_type_data.xml",
+        "data/wua_certificate_creation_mail.xml",
+        "data/wua_certificate_creation_action.xml",
         "wizard/wizard_create_certificate_view.xml",
         "wizard/wizard_preview_certificate_view.xml",
         "views/resources.xml",

@@ -6,14 +6,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-20 14:20+0000\n"
-"PO-Revision-Date: 2023-09-20 14:20+0000\n"
+"POT-Creation-Date: 2024-02-06 13:52+0000\n"
+"PO-Revision-Date: 2024-02-06 13:52+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_certificate
+#: model:mail.template,body_html:base_wua_certificate.email_template_certificate_creation
+msgid "\n"
+"                \n"
+"                <p>Created new certificate with the following details:</p>\n"
+"                <ul>\n"
+"                    <li>Element identifier: ${object.name}</li>\n"
+"                    <li>Date of issue: ${object.date_of_issue}</li>\n"
+"                    <li>Type of certificate: ${object.certificatetype_id.name}</li>\n"
+"                    <li>Issuer: ${object.partner_id.name}</li>\n"
+"                </ul>\n"
+"                \n"
+"            "
+msgstr "\n"
+"                \n"
+"                <p>Creat nou certificat amb els detalls següents:</p>\n"
+"                <ul>\n"
+"                    <li>Identificador d'elements: ${object.name}</li>\n"
+"                    <li>Data d'emissió: ${object.date_of_issue}</li>\n"
+"                    <li>Tipus de certificat: ${object.certificatetype_id.name}</li>\n"
+"                    <li>Emissor: ${object.partner_id.name}</li>\n"
+"                </ul>\n"
+"                \n"
+"            "
 
 #. module: base_wua_certificate
 #: model:mail.template,report_name:base_wua_certificate.certificatetype_no_variation_email_template
@@ -243,7 +268,7 @@ msgstr "<strong>Escala</strong>"
 
 #. module: base_wua_certificate
 #: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "<u><b><font style=\"font-size: 18px;\">CERTIFICO:</font></b></u>"
+msgid "<u><b><font style=\"font-size: 18px;\">CERTIFY:</font></b></u>"
 msgstr "<u><b><font style=\"font-size: 18px;\">CERTIFIQUE:</font></b></u>"
 
 #. module: base_wua_certificate
@@ -303,6 +328,11 @@ msgstr "IP client permesa per a peticions HTTP-GET anònimes"
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_allowed_request_for_portal_user
 msgid "Allowed request for portal user"
 msgstr "Sol·licituds de certificat permeses per als usuaris de portal"
+
+#. module: base_wua_certificate
+#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
+msgid "And as evidence thereof, I hereby issue this certificate in {{ partner.company_id.city }} on {{ current_month }} {{ current_day }}th, {{ current_year }}.<br>"
+msgstr "I perquè consti, a petició de l'interesat, expedeixo el present, a {{ partner.company_id.city }}, a {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_partner_id
@@ -461,6 +491,11 @@ msgstr "Tipus de certificat:"
 #: model:ir.ui.menu,name:base_wua_certificate.certificate_type_menu
 msgid "Certificate Types"
 msgstr "Tipus de certificat"
+
+#. module: base_wua_certificate
+#: model:mail.template,subject:base_wua_certificate.email_template_certificate_creation
+msgid "Certificate creation - ${object.name}"
+msgstr "Creació de certificats- ${object.name}"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_configuration_portaluser_certificatetype_id
@@ -693,7 +728,7 @@ msgstr "Generar SHP de parcel·la"
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_one_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_search
 msgid "Group By"
-msgstr "Agrupar per"
+msgstr "Agrupa Per"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_id
@@ -787,7 +822,7 @@ msgstr "Parcel·la"
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_parcel___last_update
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_write_uid
@@ -796,7 +831,7 @@ msgstr "Última modificació el "
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_write_uid
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Darrera Actualització per"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wizard_create_certificate_write_date
@@ -805,7 +840,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_type_write_date
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera Actualització el"
 
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/wua_certificate.py:660
@@ -816,7 +851,7 @@ msgstr "Correu amb certificat"
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_parcel_is_main
 msgid "Main"
-msgstr "Regant"
+msgstr "Principal"
 
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_main_page
@@ -978,12 +1013,12 @@ msgstr "Parcel·les"
 #. module: base_wua_certificate
 #: model:ir.model.fields,field_description:base_wua_certificate.field_wua_certificate_partner_name
 msgid "Partner Name"
-msgstr "Nom de l'empresa"
+msgstr "Nom del soci"
 
 #. module: base_wua_certificate
 #: model:ir.model,name:base_wua_certificate.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Partner of a WUA"
+msgstr "Soci"
 
 #. module: base_wua_certificate
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_config_settings_view_form
@@ -1024,10 +1059,6 @@ msgstr "Imprimeix"
 msgid "Processing Status"
 msgstr "Estat"
 
-#. module: base_wua_certificate
-#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "Que <b>{{ partner.name }}</b>, con domicilio en <b>{{ partner.street }}, {{partner.city}} -{{partner.state_id.name}}-</b>, y DNI/CIF <b>{{ partner.vat }}</b>, figura en el censo de partícipes y/o titulares de esta comunidad de regantes, en las parcelas listadas en la siguiente página, estando dichas parcelas autorizadas para el uso, en regadío agrícola, del agua distribuida por esta corporación.<br>"
-msgstr "Que <b>{{ partner.name }}</b>, amb domicili a <b>{{ partner.street }}, {{partner.city}} -{{partner.state_id.name}}-</b>, i amb DNI/CIF <b>{{ partner.vat }}</b>, figura al cens de participants i/o titulars d'aquesta comunitat de regants, a les parcel·les llistades a la pàgina següent, estant aquestes parcel·les autoritzades per a l'ús, en regadiu agrícola, de l'aigua distribuïda per aquesta corporació.<br>"
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/wizard/wizard_create_certificate.py:57
 #, python-format
@@ -1093,6 +1124,11 @@ msgid "Send"
 msgstr "Envia"
 
 #. module: base_wua_certificate
+#: model:ir.actions.server,name:base_wua_certificate.action_send_email_on_certificate_creation
+msgid "Send mail on certificate creation"
+msgstr "Envieu el correu a la creació de certificats"
+
+#. module: base_wua_certificate
 #: selection:wua.certificate,state:0
 msgid "Sent"
 msgstr "Enviat"
@@ -1146,6 +1182,11 @@ msgstr "Estat: Enviada"
 #: model:ir.ui.view,arch_db:base_wua_certificate.wua_certificate_view_search
 msgid "State: Validated"
 msgstr "Estat: Validat"
+
+#. module: base_wua_certificate
+#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
+msgid "That <b>{{ partner.name }}</b>, located at <b>{{ partner.street }}, {{partner.city}} -{{partner.state_id.name}}-</b>, and holder of identity document number <b>{{ partner.vat }}</b> is enrolled in the census of this water users association, with the parcels listed on the next page. These parcels are authorized for the use of the water distributed by this corporation, for agricultural irrigation.<br>"
+msgstr "Que <b>{{ partner.name }}</b>, amb domicili en <b>{{ partner.street }}, {{partner.city}} -{{partner.state_id.name}}-</b>, i DNI/CIF <b>{{ partner.vat }}</b>, està en el cens de partícips i/o titulars d'aquesta comunitat de regants, en les parcel·les llistades en la següent pàgina, i estes parcel·les autoritzades per a l'ús, en regadiu agrícola, de l'aigua distribuïda per aquesta corporació.<br>"
 
 #. module: base_wua_certificate
 #: sql_constraint:wua.certificate.type:0
@@ -1267,10 +1308,6 @@ msgstr "En crear un certificat, afegir una parcel·la si el soci és pagador"
 msgid "With mail template"
 msgstr "Amb plantilla de correu"
 
-#. module: base_wua_certificate
-#: model:wua.certificate.type,main_page:base_wua_certificate.certificatetype_no_variation
-msgid "Y para que conste, a petición del interesado, expido el presente, en {{ partner.company_id.city }}, a {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
-msgstr "I perquè consti, a petició de l'interessat, expedeixo el present, a {{ partner.company_id.city }}, el {{ current_day }} de {{ current_month }} de {{ current_year }}.<br>"
 #. module: base_wua_certificate
 #: code:addons/base_wua_certificate/models/wua_certificate.py:662
 #, python-format
