@@ -645,8 +645,10 @@ class WuaAssembly(models.Model):
     def name_get(self):
         result = []
         default_locale = locale.setlocale(locale.LC_TIME)
-        is_english = ('lang' in self.env.context and
-                      self.env.context['lang'] == 'en_US')
+        if (self.env.context and 'lang' in self.env.context):
+            is_english = self.env.context['lang'] == 'en_US'
+        else:
+            is_english = True
         for record in self:
             try:
                 if is_english:

@@ -556,7 +556,10 @@ class WuaComparativeSubparcelPresconsumption(models.Model):
     def name_get(self):
         result = []
         default_locale = locale.setlocale(locale.LC_TIME)
-        is_english = self.env.context['lang'] == 'en_US'
+        if (self.env.context and 'lang' in self.env.context):
+            is_english = self.env.context['lang'] == 'en_US'
+        else:
+            is_english = True
         for record in self:
             subparcel_code = record.subparcel_id.subparcel_code
             try:
