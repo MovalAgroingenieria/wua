@@ -5,6 +5,7 @@
 import json
 from datetime import datetime
 from jinja2 import Template, TemplateError
+from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
 
@@ -253,6 +254,34 @@ class ResFile(models.Model):
                     raise exceptions.UserError(
                         _('A seller and a buyer are required for this type '
                           'of file.'))
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(ResFile, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        # Hide actions only to portal users
+        actions_to_hide = \
+            ['wua_crm_filemgmt.wua_generate_files_parcel_shp',
+             'wua_crm_filemgmt.res_file_print_selected_report']
+        access_to_actions = True
+        is_filemgmt_portal_group = self.env.user.has_group(
+            'crm_filemgmt.group_file_portal')
+        if is_filemgmt_portal_group:
+            access_to_actions = False
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            if not access_to_actions:
+                actions_to_show = []
+                actions_menu = res.get('toolbar', {}).get('action', [])
+                if actions_menu:
+                    for action_menu in actions_menu:
+                        if action_menu['xml_id'] not in actions_to_hide:
+                            actions_to_show.append(action_menu)
+                    res['toolbar']['action'] = actions_to_show
+            res['arch'] = etree.tostring(doc)
+        return res
 
 
 class ResFilePartnerlink(models.Model):

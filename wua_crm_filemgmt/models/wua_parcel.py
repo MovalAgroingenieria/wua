@@ -2,7 +2,7 @@
 # 2020 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-
+from lxml import etree
 from odoo import models, fields, api, _
 
 
@@ -30,13 +30,16 @@ class WuaParcel(models.Model):
 
     @api.multi
     def _compute_number_of_files(self):
-        for record in self:
-            number_of_files = 0
-            parcellinks_of_parcel = self.sudo().env['res.file.parcellink'].\
-                search([('parcel_id', '=', record.id)])
-            if parcellinks_of_parcel:
-                number_of_files = len(parcellinks_of_parcel)
-            record.number_of_files = number_of_files
+        access_file_filemgmt = \
+            self.env['res.file']._check_access_file_filemgmt()
+        if access_file_filemgmt:
+            for record in self:
+                number_of_files = 0
+                parcellinks_of_parcel = self.env['res.file.parcellink'].\
+                    search([('parcel_id', '=', record.id)])
+                if parcellinks_of_parcel:
+                    number_of_files = len(parcellinks_of_parcel)
+                record.number_of_files = number_of_files
 
     @api.multi
     def action_get_files(self):
@@ -63,8 +66,14 @@ class WuaParcel(models.Model):
 
     @api.multi
     def _compute_number_of_file_registers(self):
-        for record in self:
-            record.number_of_file_registers = len(record.file_res_letter_ids)
+        access_file_filemgmt = \
+            self.env['res.file']._check_access_file_filemgmt()
+        access_letter_lettermgmt = \
+            self.env['res.letter']._check_access_letter_lettermgmt()
+        if access_file_filemgmt and access_letter_lettermgmt:
+            for record in self:
+                record.number_of_file_registers = \
+                    len(record.file_res_letter_ids)
 
     @api.multi
     def action_get_registers(self):
@@ -91,14 +100,49 @@ class WuaParcel(models.Model):
 
     @api.depends('file_ids')
     def _compute_file_res_letter_ids(self):
-        for record in self:
-            parcel_file_ids = []
-            registers_of_parcel = []
-            if record.file_ids:
-                for parcel_file_id in record.file_ids:
-                    parcel_file_ids.append(parcel_file_id.file_id.id)
-            if len(parcel_file_ids) > 0:
-                registers_of_parcel = self.env['res.letter'].search(
-                    [('file_id.id', 'in', parcel_file_ids)])
-            if registers_of_parcel:
-                record.file_res_letter_ids = registers_of_parcel
+        access_file_filemgmt = \
+            self.env['res.file']._check_access_file_filemgmt()
+        access_letter_lettermgmt = \
+            self.env['res.letter']._check_access_letter_lettermgmt()
+        if access_file_filemgmt and access_letter_lettermgmt:
+            for record in self:
+                parcel_file_ids = []
+                registers_of_parcel = []
+                if record.file_ids:
+                    for parcel_file_id in record.file_ids:
+                        parcel_file_ids.append(parcel_file_id.file_id.id)
+                if len(parcel_file_ids) > 0:
+                    registers_of_parcel = self.env['res.letter'].search(
+                        [('file_id.id', 'in', parcel_file_ids)])
+                if registers_of_parcel:
+                    record.file_res_letter_ids = registers_of_parcel
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaParcel, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        access_file_filemgmt = \
+            self.env['res.file']._check_access_file_filemgmt()
+        access_letter_lettermgmt = \
+            self.env['res.letter']._check_access_letter_lettermgmt()
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            if not access_file_filemgmt and not access_letter_lettermgmt:
+                for node in doc.xpath(
+                        "//button[@name='action_get_registers']"):
+                    node.set('modifiers', '{"invisible": true}')
+                for node in doc.xpath(
+                        "//button[@name='action_get_files']"):
+                    node.set('modifiers', '{"invisible": true}')
+            if not access_file_filemgmt or not access_letter_lettermgmt:
+                for node in doc.xpath(
+                        "//button[@name='action_get_registers']"):
+                    node.set('modifiers', '{"invisible": true}')
+            if not access_file_filemgmt:
+                for node in doc.xpath(
+                        "//button[@name='action_get_files']"):
+                    node.set('modifiers', '{"invisible": true}')
+            res['arch'] = etree.tostring(doc)
+        return res
