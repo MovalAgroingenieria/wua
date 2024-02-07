@@ -10,6 +10,7 @@
             <xpath expr="//group[@name='master_data_fields']" position="inside">
                 <field name="category_is_lease" invisible="1"/>
                 <field name="category_is_trading" invisible="1"/>
+                <field name="category_is_complaint" invisible="1"/>
                 <field name="category_report_id_domain" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='category_id']" position="replace">
@@ -30,7 +31,9 @@
                 <field name="partnerlink_ids"
                        context="{'tree_view_ref': 'crm_filemgmt.res_file_partnerlink_view_tree'}"
                        attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
-                               'invisible':['|',('category_is_lease', '=', True),('category_is_trading', '=', True)]}"/>
+                               'invisible':['|','|',('category_is_lease', '=', True),
+                                                    ('category_is_trading', '=', True),
+                                                    ('category_is_complaint', '=', True)]}"/>
                 <field name="partnerlink_lease_ids"
                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_lease'}"
                        attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
@@ -39,6 +42,10 @@
                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_trading'}"
                        attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
                                'invisible':[('category_is_trading', '=', False)]}"/>
+                <field name="partnerlink_complaint_ids"
+                       context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_complaint'}"
+                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                               'invisible':[('category_is_complaint', '=', False)]}"/>
             </xpath>
             <xpath expr="//page[@name='attachments']" position="before">
                 <page name="parcellink_page" string="Parcel Links">
@@ -79,12 +86,9 @@
         <field name="arch" type="xml">
             <tree class="o_res_file_partnerlink_view_tree" editable="bottom">
                 <field name="category_is_lease" invisible="1"/>
-                <!--<field name="category_id" readonly="1"/>-->
                 <field name="partner_id"/>
-                <field name="is_lessor" attrs="{'readonly':[('is_tenant','=',True)],
-                                                'required':[('category_is_lease', '=', True)]}"/>
-                <field name="is_tenant" attrs="{'readonly':[('is_lessor','=',True)],
-                                                'required':[('category_is_lease', '=', True)]}"/>
+                <field name="is_lessor" attrs="{'required':[('category_is_lease', '=', True)]}"/>
+                <field name="is_tenant" attrs="{'required':[('category_is_lease', '=', True)]}"/>
                 <field name="is_main"/>
             </tree>
         </field>
@@ -96,12 +100,23 @@
         <field name="arch" type="xml">
             <tree class="o_res_file_partnerlink_view_tree" editable="bottom">
                 <field name="category_is_trading" invisible="1"/>
-                <!--<field name="category_id" readonly="1"/>-->
                 <field name="partner_id"/>
-                <field name="is_seller" attrs="{'readonly':[('is_buyer','=',True)],
-                                                'required':[('category_is_trading', '=', True)]}"/>
-                <field name="is_buyer" attrs="{'readonly':[('is_seller','=',True)],
-                                               'required':[('category_is_trading', '=', True)]}"/>
+                <field name="is_seller" attrs="{'required':[('category_is_trading', '=', True)]}"/>
+                <field name="is_buyer" attrs="{'required':[('category_is_trading', '=', True)]}"/>
+                <field name="is_main"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_file_partnerlink_view_tree_complaint" model="ir.ui.view">
+        <field name="name">File Partnerlink (tree view)</field>
+        <field name="model">res.file.partnerlink</field>
+        <field name="arch" type="xml">
+            <tree class="o_res_file_partnerlink_view_tree" editable="bottom">
+                <field name="category_is_complaint" invisible="1"/>
+                <field name="partner_id"/>
+                <field name="is_complainant" attrs="{'required':[('category_is_complaint', '=', True)]}"/>
+                <field name="is_denounced" attrs="{'required':[('category_is_complaint', '=', True)]}"/>
                 <field name="is_main"/>
             </tree>
         </field>

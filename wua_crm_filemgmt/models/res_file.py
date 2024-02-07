@@ -33,6 +33,11 @@ class ResFile(models.Model):
         default=False,
         compute="_compute_category_is_trading")
 
+    category_is_complaint = fields.Boolean(
+        string='Category is complaint',
+        default=False,
+        compute="_compute_category_is_complaint")
+
     leased_from = fields.Date(
         string="Lease from",
         track_visibility='onchange',
@@ -49,6 +54,11 @@ class ResFile(models.Model):
         inverse_name='file_id')
 
     partnerlink_trading_ids = fields.One2many(
+        string='Partners',
+        comodel_name='res.file.partnerlink',
+        inverse_name='file_id')
+
+    partnerlink_complaint_ids = fields.One2many(
         string='Partners',
         comodel_name='res.file.partnerlink',
         inverse_name='file_id')
@@ -81,6 +91,12 @@ class ResFile(models.Model):
             if record.partnerlink_trading_ids:
                 record.partnerlink_ids = record.partnerlink_trading_ids
 
+    @api.depends('partnerlink_complaint_ids')
+    def _insert_partnerlink_ids_from_complaint(self):
+        for record in self:
+            if record.partnerlink_trading_ids:
+                record.partnerlink_ids = record.partnerlink_complaint_ids
+
     @api.depends('parcellink_ids')
     def _compute_has_parcellinks(self):
         for record in self:
@@ -108,6 +124,16 @@ class ResFile(models.Model):
             if record.category_id.id == category_is_trading_id:
                 category_is_trading = True
             record.category_is_trading = category_is_trading
+
+    @api.depends('category_id')
+    def _compute_category_is_complaint(self):
+        for record in self:
+            category_is_complaint = False
+            category_is_complaint_id = self.env.ref(
+                'wua_crm_filemgmt.resfilecategory_complaint_file').id
+            if record.category_id.id == category_is_complaint_id:
+                category_is_complaint = True
+            record.category_is_complaint = category_is_complaint
 
     @api.depends('category_id')
     def _compute_category_report_id_domain(self):
@@ -209,8 +235,7 @@ class ResFile(models.Model):
         if self.category_report_id.iractreportxml_id:
             report_name = self.category_report_id.iractreportxml_id.report_name
         return self.env['report'].with_context(
-            {'lang': self.partner_id.lang}).get_action(
-                self, report_name)
+            {'lang': self.partner_id.lang}).get_action(self, report_name)
 
     @api.constrains('parcellink_ids')
     def _check_parcellink_ids(self):
@@ -255,6 +280,22 @@ class ResFile(models.Model):
                         _('A seller and a buyer are required for this type '
                           'of file.'))
 
+    @api.constrains('partnerlink_ids', 'partnerlink_complaint_ids')
+    def _check_category_trading_partnerlink_ids(self):
+        if len(self) == 1:
+            current_file = self
+            complainant_found = denounced_found = False
+            if current_file.category_is_complaint:
+                for partnerlink in current_file.partnerlink_ids:
+                    if partnerlink.is_complainant:
+                        complainant_found = True
+                    if partnerlink.is_denounced:
+                        denounced_found = True
+                if not complainant_found or not denounced_found:
+                    raise exceptions.UserError(
+                        _('A complainant and a denounced are required for '
+                          'this type of file.'))
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
                         submenu=False):
@@ -295,6 +336,10 @@ class ResFilePartnerlink(models.Model):
         string='Category is trading',
         related='file_id.category_is_trading')
 
+    category_is_complaint = fields.Boolean(
+        string='Category is complaint',
+        related='file_id.category_is_complaint')
+
     is_lessor = fields.Boolean(
         string='Lessor')
 
@@ -306,6 +351,12 @@ class ResFilePartnerlink(models.Model):
 
     is_buyer = fields.Boolean(
         string='Buyer')
+
+    is_complainant = fields.Boolean(
+        string='Complainant')
+
+    is_denounced = fields.Boolean(
+        string='Denounced')
 
     @api.onchange('is_main', 'is_lessor', 'is_tenant')
     def _onchange_lessor_tenant(self):
@@ -321,6 +372,14 @@ class ResFilePartnerlink(models.Model):
             if record.is_seller:
                 record.is_main = False
             if record.is_buyer:
+                record.is_main = True
+
+    @api.onchange('is_main', 'is_complainant', 'is_denounced')
+    def _onchange_complainant_denounced(self):
+        for record in self:
+            if record.is_denounced:
+                record.is_main = False
+            if record.is_complainant:
                 record.is_main = True
 
 

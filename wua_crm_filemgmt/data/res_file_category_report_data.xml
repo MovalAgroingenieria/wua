@@ -176,11 +176,27 @@
                     <br/>
                     <b>5ª. Jurisdiction.</b><br/>
                     The parties, expressly waiving any jurisdiction that may correspond to them, for questions that may arise or actions brought on the
-                    interpretation of compliance or non-compliance with what is agreed herein, expressly submit to the Judges and Courts of 
+                    interpretation of compliance or non-compliance with what is agreed herein, expressly submit to the Judges and Courts of
                     {% if record.env.user.city %} {{ record.env.user.city }}. {% else %} <span style="color:red;">Not found</span>.{% endif %}<br/>
                     <br/>
                     And for the record, they sign this trading contract, in duplicate, on the date and place indicated above.
                 </p>
+            </field>
+        </record>
+
+       <record id="resfilecategoryreport_complaint" model="res.file.category.report" forcecreate="False">
+            <field name="name">Complaint standard</field>
+            <field name="category_id" ref="wua_crm_filemgmt.resfilecategory_complaint_file"/>
+            <field name="iractreportxml_id" ref="wua_crm_filemgmt.res_file_category_report_complaint"/>
+            <field name="report_template_start" type="html">
+                <p style="text-align: right;">
+                    In {% if record.env.user.city %} {{ record.env.user.city }}, {% else %}
+                    <span style="color:red;">Not found</span>, {% endif %} a
+                    {{ record.env['wua.parcel'].transform_date_to_locale(record.date_file) }}<br/>
+                </p>
+            </field>
+            <field name="report_template_end" type="html">
+                <p><i>Free text</i></p>
             </field>
         </record>
 

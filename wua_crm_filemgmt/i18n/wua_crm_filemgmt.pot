@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-16 16:05+0000\n"
-"PO-Revision-Date: 2023-01-16 16:05+0000\n"
+"POT-Creation-Date: 2024-02-07 15:52+0000\n"
+"PO-Revision-Date: 2024-02-07 15:52+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,12 +16,14 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_complaint_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_lease_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_trading_document
 msgid "&amp;nbsp;"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_complaint_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_lease_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_trading_document
 msgid "(NIF:&amp;nbsp;"
@@ -125,7 +127,7 @@ msgid "<b>1st. Trading.</b><br>\n"
 "                    <br>\n"
 "                    <b>5ª. Jurisdiction.</b><br>\n"
 "                    The parties, expressly waiving any jurisdiction that may correspond to them, for questions that may arise or actions brought on the\n"
-"                    interpretation of compliance or non-compliance with what is agreed herein, expressly submit to the Judges and Courts of \n"
+"                    interpretation of compliance or non-compliance with what is agreed herein, expressly submit to the Judges and Courts of\n"
 "                    {% if record.env.user.city %} {{ record.env.user.city }}. {% else %} <span style=\"color:red;\">Not found</span>.{% endif %}<br>\n"
 "                    <br>\n"
 "                    And for the record, they sign this trading contract, in duplicate, on the date and place indicated above."
@@ -177,19 +179,24 @@ msgid "<b>Total area:</b>"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:res.file.category.report,report_template_end:wua_crm_filemgmt.resfilecategoryreport_complaint
+msgid "<i>Free text</i>"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_add_parcels_to_file_view_form
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_partner_file_view_form
+msgid "<span class=\"fa fa-lg fa-filemgmt-files\"/>\n"
+"                            <span style=\"margin-left:8px;\">Create file</span>"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_add_parcels_to_file_view_form
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_partner_file_view_form
 msgid "<span class=\"fa fa-lg fa-info-circle\"/>\n"
 "                    <span> All other parameters of the File are edited after its creation.\n"
 "                           One partner is selected as File's main and repeated items are removed.\n"
 "                    </span>"
-msgstr ""
-
-#. module: wua_crm_filemgmt
-#: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_add_parcels_to_file_view_form
-#: model:ir.ui.view,arch_db:wua_crm_filemgmt.wizard_partner_file_view_form
-msgid "<span class=\"fa fa-lg fa-moval-files\"/>\n"
-"                            <span style=\"margin-left:8px;\">Create file</span>"
 msgstr ""
 
 #. module: wua_crm_filemgmt
@@ -209,6 +216,7 @@ msgid "<span class=\"o_stat_text\">\n"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_complaint_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_lease_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_trading_document
 msgid "<span>-&amp;nbsp;</span>"
@@ -252,9 +260,24 @@ msgid "<strong>Buyer</strong>"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_complaint_document
+msgid "<strong>COMPLIANT REPORT</strong>"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_complaint_document
+msgid "<strong>Complainant</strong>"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_lease_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_trading_document
 msgid "<strong>Conformity</strong>"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_complaint_document
+msgid "<strong>Denounced</strong>"
 msgstr ""
 
 #. module: wua_crm_filemgmt
@@ -295,13 +318,19 @@ msgid "<strong>Whereas</strong>"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:234
+#: code:addons/wua_crm_filemgmt/models/res_file.py:296
+#, python-format
+msgid "A complainant and a denounced are required for this type of file."
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: code:addons/wua_crm_filemgmt/models/res_file.py:264
 #, python-format
 msgid "A lessor and a tenant are required for this type of file."
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:250
+#: code:addons/wua_crm_filemgmt/models/res_file.py:280
 #, python-format
 msgid "A seller and a buyer are required for this type of file."
 msgstr ""
@@ -365,6 +394,12 @@ msgid "Category Report Name"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_is_complaint
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_category_is_complaint
+msgid "Category is complaint"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_is_lease
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_category_is_lease
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_category_is_lease
@@ -401,7 +436,28 @@ msgid "Code"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_is_complainant
+msgid "Complainant"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:res.file.category,name:wua_crm_filemgmt.resfilecategory_complaint_file
+msgid "Complaint"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.actions.report.xml,name:wua_crm_filemgmt.res_file_category_report_complaint
+msgid "Complaint report"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:res.file.category.report,name:wua_crm_filemgmt.resfilecategoryreport_complaint
+msgid "Complaint standard"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.actions.act_window,name:wua_crm_filemgmt.action_add_parcels_to_file
+#: model:ir.actions.act_window,name:wua_crm_filemgmt.action_add_partners_to_file
 msgid "Create File"
 msgstr ""
 
@@ -422,6 +478,11 @@ msgid "Created on"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_is_denounced
+msgid "Denounced"
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_date_file
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_date_file
 msgid "Discharge date"
@@ -436,13 +497,13 @@ msgid "Display Name"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:157
+#: code:addons/wua_crm_filemgmt/models/res_file.py:184
 #, python-format
 msgid "ERROR IN END TEMPLATE"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:138
+#: code:addons/wua_crm_filemgmt/models/res_file.py:165
 #, python-format
 msgid "ERROR IN START TEMPLATE"
 msgstr ""
@@ -470,7 +531,7 @@ msgid "File Category Report"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/wua_parcel.py:53
+#: code:addons/wua_crm_filemgmt/models/wua_parcel.py:56
 #, python-format
 msgid "File Parcellinks"
 msgstr ""
@@ -481,7 +542,7 @@ msgid "File Registry"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/wua_parcel.py:80
+#: code:addons/wua_crm_filemgmt/models/wua_parcel.py:89
 #, python-format
 msgid "File registers"
 msgstr ""
@@ -522,7 +583,7 @@ msgid "Has parcellinks"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_id_10970
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_id_9146
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_id
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_id
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_id
@@ -530,12 +591,13 @@ msgid "ID"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:182
+#: code:addons/wua_crm_filemgmt/models/res_file.py:213
 #, python-format
 msgid "If a file already has parcels, this operation is not possible."
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:res.file.category.report,report_template_start:wua_crm_filemgmt.resfilecategoryreport_complaint
 #: model:res.file.category.report,report_template_start:wua_crm_filemgmt.resfilecategoryreport_lease
 #: model:res.file.category.report,report_template_start:wua_crm_filemgmt.resfilecategoryreport_trading
 msgid "In {% if record.env.user.city %} {{ record.env.user.city }}, {% else %}\n"
@@ -615,7 +677,7 @@ msgid "Log of Files Movements"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:179
+#: code:addons/wua_crm_filemgmt/models/res_file.py:210
 #, python-format
 msgid "No main partner has been selected for this file."
 msgstr ""
@@ -678,13 +740,14 @@ msgid "Parcel Links"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:167
+#: code:addons/wua_crm_filemgmt/models/res_file.py:198
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_ids
 #, python-format
 msgid "Parcels"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_complaint_ids
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_lease_ids
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_trading_ids
 msgid "Partners"
@@ -767,7 +830,7 @@ msgid "The rustic properties described in the section <b>Involved parcels</b> ar
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:219
+#: code:addons/wua_crm_filemgmt/models/res_file.py:249
 #, python-format
 msgid "There are repeated parcels."
 msgstr ""
