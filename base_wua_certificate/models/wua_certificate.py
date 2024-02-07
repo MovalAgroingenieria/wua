@@ -577,7 +577,8 @@ class WuaCertificate(models.Model):
                     as zip_file:
                 for record in self:
                     parcels_of_certificate = record.certificateparcel_ids.\
-                        mapped(lambda x: x.parcel_id)
+                        filtered(lambda x: x.included_in_certificate).mapped(
+                            lambda x: x.parcel_id)
                     result = parcels_of_certificate.generate_parcel_shp(
                         record.partner_id)
                     zip_file.writestr(
@@ -588,7 +589,8 @@ class WuaCertificate(models.Model):
             filename = certificates_label + '.zip'
         # Just one certificate (Form or tree view with one selected)
         else:
-            parcels_of_certificate = self.certificateparcel_ids.mapped(
+            parcels_of_certificate = self.certificateparcel_ids.filtered(
+                lambda x: x.included_in_certificate).mapped(
                 lambda x: x.parcel_id)
             result = parcels_of_certificate.generate_parcel_shp(
                 self.partner_id)
