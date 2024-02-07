@@ -17,14 +17,16 @@
 
     <template id="account_invoice_report_with_payments" inherit_id="account.report_invoice_document" primary="True">
         <xpath expr="//tr[@name='tr_total']" position="after">
-            <t t-foreach="o.payment_ids" t-as="payment" name="payments_loop">
+            <t t-set="invoice_payments" t-value="o._get_invoice_payments(o)"/>
+            <t t-foreach="invoice_payments" t-as="payment" name="payments_loop">
                 <tr>
                     <td>
                         <span>Paid on</span>
-                        <span t-field="payment.payment_date"/>
+                        <t t-set="paid_on" t-value="o.env['wua.parcel'].transform_date_to_locale(payment[0], lang=o.partner_id.lang)"/>
+                        <span t-esc="paid_on"/>
                     </td>
                     <td class="text-right">
-                        <span t-field="payment.amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                        <span t-esc="payment[1]" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                     </td>
                 </tr>
             </t>
