@@ -7,10 +7,10 @@
             <field name="model_id" ref="model_wua_certificate" />
             <field name="state">code</field>
             <field name="code">
-            <![CDATA[
-if record:
-    template = env.ref('base_wua_certificate.email_template_certificate_creation')
-    template.sudo().send_mail(record.id, force_send=True)
+<![CDATA[
+    if record:
+        template = env.ref('base_wua_certificate.email_template_certificate_creation')
+        template.sudo().send_mail(record.id, force_send=True)
 True]]>
             </field>
         </record>
@@ -19,12 +19,12 @@ True]]>
             <field name="name">Action rule to send mail on certificate creation</field>
             <field name="sequence">10</field>
             <field name="model_id" ref="model_wua_certificate" />
-            <field name="server_action_ids"
-                eval="[(6, 0, [ref('action_send_email_on_certificate_creation')])]" />
+            <field name="server_action_ids" eval="[(6, 0, [ref('action_send_email_on_certificate_creation')])]" />
             <field name="kind">on_create</field>
-            <field name="domain_force">[]</field>
+            <field name="domain_force">[('requested_from_portal', '=', True)]</field>
             <field name="active">False</field>
         </record>
+
 
     </data>
 
