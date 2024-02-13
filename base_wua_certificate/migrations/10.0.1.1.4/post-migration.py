@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-# 2023 Moval Agroingeniería
+# 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-
-from odoo import api, SUPERUSER_ID
 
 
 def migrate(cr, version):
-    env = api.Environment(cr, SUPERUSER_ID, {})
-    certificates_parcel = env['wua.certificate.parcel'].search([])
-    for cp in certificates_parcel:
-        cp.area_gis = cp.parcel_id.area_gis
+    if not version:
+        return
+    # Actualizar el dominio de la acción automática
+    cr.execute("""
+        UPDATE base_action_rule
+        SET filter_domain = '[("requested_from_portal", "=", True)]'
+        WHERE id = (SELECT res_id FROM ir_model_data WHERE module = 'base_wua_certificate' AND name = 'action_rule_send_email_on_certificate_creation');
+    """)
