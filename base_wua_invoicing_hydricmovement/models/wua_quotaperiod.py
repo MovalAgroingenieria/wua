@@ -32,6 +32,13 @@ class WuaQuotaperiod(models.Model):
                      INNER JOIN wua_presconsumption wp1 ON wp1.id =
                      wr1.presconsumption_id WHERE
                      wp1.invoiced_consumption_quota)""")
+                self.env.cr.execute("""
+                    UPDATE wua_irrigationreport
+                    SET invoiced_irrigationreport_quota = TRUE WHERE id IN
+                    (SELECT DISTINCT(wi1.id) FROM wua_irrigationreport wi1
+                     INNER JOIN wua_hydricmovement wh1 ON wi1.id =
+                     wh1.irrigationreport_id WHERE
+                     wh1.invoiced_hydricmovement)""")
             except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when '

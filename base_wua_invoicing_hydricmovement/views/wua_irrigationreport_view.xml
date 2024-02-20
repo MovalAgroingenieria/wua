@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_irrigationreport_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Reports (form view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_invoicing_irrigation_report.wua_irrigationreport_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='volume_real']" position="after">
+                <field name="invoiced_irrigationreport_quota" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='price_unit']" position="attributes">
+                <attribute name="attrs">{'invisible': [('invoiced','=', False), ('invoiced_irrigationreport_quota','=',False)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='sum_price_subtotal']" position="attributes">
+                <attribute name="attrs">{'invisible': [('invoiced','=', False), ('invoiced_irrigationreport_quota','=',False)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='initial_volume']" position="attributes">
+                <attribute name="attrs">{'readonly':['|', ('invoiced_irrigationreport_quota','=',True),
+                        ('invoiced', '=', True)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='end_volume']" position="attributes">
+                <attribute name="attrs">{'readonly':['|', ('invoiced_irrigationreport_quota','=',True),
+                        ('invoiced', '=', True)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='hours']" position="attributes">
+                <attribute name="attrs">{'readonly':['|', ('invoiced_irrigationreport_quota','=',True),
+                        ('invoiced', '=', True)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='conversion_factor']" position="attributes">
+                <attribute name="attrs">{'readonly':['|', ('invoiced_irrigationreport_quota','=',True),
+                        ('invoiced', '=', True)]}
+                </attribute>
+            </xpath>
+            <xpath expr="//field[@name='adjustement_volume']" position="attributes">
+                <attribute name="attrs">{'readonly':['|', ('invoiced_irrigationreport_quota','=',True),
+                        ('invoiced', '=', True)]}
+                </attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Reports (tree view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_invoicing_irrigation_report.wua_irrigationreport_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoiced']" position="after">
+                <field name="invoiced_irrigationreport_quota" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationreport_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Reports (search view)</field>
+        <field name="model">wua.irrigationreport</field>
+        <field name="inherit_id" ref="base_wua_invoicing_irrigation_report.wua_irrigationreport_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='invoiced_no']" position="after">
+                <separator/>
+                <filter name="invoiced_irrigationreport_quota_yes" string="Invoiced By Quota: Yes"
+                    domain="[('invoiced_irrigationreport_quota','=',True)]"/>
+                <filter name="invoiced_irrigationreport_quota_no" string="Invoiced By Quota: No"
+                    domain="[('invoiced_irrigationreport_quota','=',False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -18,6 +18,7 @@ class WuaInvoiceset(models.Model):
     def unlink(self):
         hydricmovement_ids = []
         quota_pres_consumption_ids = []
+        quota_irrigationreport_ids = []
         for record in self:
             hydricmovements = self.env['wua.hydricmovement'].search(
                 [('invoiceset_id', '=', record.id)])
@@ -27,6 +28,10 @@ class WuaInvoiceset(models.Model):
                         invoiced_consumption_quota:
                     quota_pres_consumption_ids.append(
                         hydricmovement.presconsumption_id.id)
+                if hydricmovement.irrigationreport_id.\
+                        invoiced_irrigationreport_quota:
+                    quota_irrigationreport_ids.append(
+                        hydricmovement.irrigationreport_id.id)
         res = super(WuaInvoiceset, self).unlink()
         if hydricmovement_ids:
             hydricmovements = self.env['wua.hydricmovement'].browse(
@@ -41,6 +46,11 @@ class WuaInvoiceset(models.Model):
                 quota_pres_consumption_ids)
             quota_pres_consumptions.write(
                 {'invoiced_consumption_quota': False})
+        if quota_irrigationreport_ids:
+            quota_irrigationreports = self.env['wua.irrigationreport'].browse(
+                quota_irrigationreport_ids)
+            quota_irrigationreports.write(
+                {'invoiced_irrigationreport_quota': False})
         return res
 
     def select_invoice_items_other_types(self, productcategory_code,
@@ -156,6 +166,7 @@ class WuaInvoiceset(models.Model):
         super(WuaInvoiceset, self).after_cancel_invoiceset(invoiceset)
         hydricmovement_ids = []
         quota_pres_consumption_ids = []
+        quota_irrigationreport_ids = []
         for line in invoiceset.line_ids:
             if line.categ_id.productcategory_code == 14:
                 for line_hydricmovement in line.line_hydricmovement_ids:
@@ -166,6 +177,12 @@ class WuaInvoiceset(models.Model):
                         quota_pres_consumption_ids.append(
                             line_hydricmovement.hydricmovement_id.
                             presconsumption_id.id)
+                    if line_hydricmovement.hydricmovement_id.\
+                            irrigationreport_id.\
+                            invoiced_irrigationreport_quota:
+                        quota_irrigationreport_ids.append(
+                            line_hydricmovement.hydricmovement_id.
+                            irrigationreport_id.id)
         if hydricmovement_ids:
             hydricmovement_ids = list(set(hydricmovement_ids))
             hydricmovements = \
@@ -179,6 +196,12 @@ class WuaInvoiceset(models.Model):
             quota_pres_consumption = self.env['wua.presconsumption'].browse(
                 quota_pres_consumption_ids)
             quota_pres_consumption.write({'invoiced_consumption_quota': False})
+        if quota_irrigationreport_ids:
+            quota_irrigationreport_ids = list(set(quota_irrigationreport_ids))
+            quota_irrigationreport = self.env['wua.irrigationreport'].\
+                browse(quota_irrigationreport_ids)
+            quota_irrigationreport.write(
+                {'invoiced_irrigationreport_quota': False})
 
     def after_calculate_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_calculate_invoiceset(invoiceset)
@@ -188,17 +211,28 @@ class WuaInvoiceset(models.Model):
                     line.line_hydricmovement_ids.filtered(
                         lambda x: x.selected is True)
                 quota_pres_consumption_ids = []
+                quota_irrigationreport_ids = []
                 for hidmov in selected_hydricmovements:
                     if hidmov.hydricmovement_id.presconsumption_id and \
                             hidmov.hydricmovement_id.type == \
                             'pres_consumption':
                         quota_pres_consumption_ids.append(
                             hidmov.hydricmovement_id.presconsumption_id.id)
+                    if hidmov.hydricmovement_id.irrigationreport_id and \
+                            hidmov.hydricmovement_id.type == \
+                            'irrig_report':
+                        quota_irrigationreport_ids.append(
+                            hidmov.hydricmovement_id.irrigationreport_id.id)
                 quota_pres_consumption = \
                     self.env['wua.presconsumption'].browse(
                         quota_pres_consumption_ids)
                 quota_pres_consumption.write(
                     {'invoiced_consumption_quota': True})
+                quota_irrigationreport = \
+                    self.env['wua.irrigationreport'].browse(
+                        quota_irrigationreport_ids)
+                quota_irrigationreport.write(
+                    {'invoiced_irrigationreport_quota': True})
                 # Add invoiced and invoiceset_id to hydricmovement selected
                 hydricmovement_ids = selected_hydricmovements.mapped(
                     lambda x: x.hydricmovement_id.id)
