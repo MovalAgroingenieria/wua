@@ -58,6 +58,15 @@ class WuaNegativeReading(models.Model):
         compute='_compute_hydraulic_infrastructure_data',
         ondelete='restrict')
 
+    partner_id = fields.Many2one(
+        string='WUA Partner',
+        comodel_name='res.partner',
+        index=True,
+        ondelete='restrict',
+        store=True,
+        compute='_compute_hydraulic_infrastructure_data',
+    )
+
     presconsumption_volume = fields.Float(
         string='Value (m³)',
         digits=(32, 4),
@@ -76,6 +85,7 @@ class WuaNegativeReading(models.Model):
             waterconnection_id_value = None
             irrigationshed_id_value = None
             hydraulicsector_value = None
+            partner_id_value = None
             if record.watermeter_id:
                 waterconnection_id_value = \
                     record.watermeter_id.waterconnection_id
@@ -83,9 +93,12 @@ class WuaNegativeReading(models.Model):
                     record.watermeter_id.irrigationshed_id
                 hydraulicsector_value = \
                     record.watermeter_id.hydraulicsector_id
+                if (waterconnection_id_value):
+                    partner_id_value = waterconnection_id_value.partner_id
             record.waterconnection_id = waterconnection_id_value
             record.irrigationshed_id = irrigationshed_id_value
             record.hydraulicsector_id = hydraulicsector_value
+            record.partner_id = partner_id_value
 
     @api.depends('reading_time', 'watermeter_id')
     def _compute_name(self):
@@ -101,8 +114,8 @@ class WuaNegativeReading(models.Model):
                    offset=0, limit=None, orderby=False, lazy=True):
         if 'volume' in fields:
             fields.remove('volume')
-            return super(WuaNegativeReading, self).read_group(
-                domain, fields, groupby, offset, limit, orderby, lazy)
+        return super(WuaNegativeReading, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
 
     @api.multi
     def name_get(self):

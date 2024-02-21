@@ -60,6 +60,7 @@
              class="o_base_wua_pressurized_irrigation_readings_view_tree">
                 <field name="watermeter_id"/>
                 <field name="waterconnection_id"/>
+                <field name="partner_id" invisible="1"/>
                 <field name="reading_time"/>
                 <field name="volume"/>
                 <field name="initialization_reading" string="Init. Reading"/>
@@ -161,11 +162,23 @@
         </field>
     </record>
 
+    <record id="wua_reading_view_pivot" model="ir.ui.view">
+        <field name="name">Readings (pivot view)</field>
+        <field name="model">wua.reading</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="false">
+                <field name="presconsumption_volume" type="measure"/>
+                <field name="presconsumption_adjustement_volume" type="measure"/>
+                <field name="presconsumption_volume_real" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_reading_action" model="ir.actions.act_window">
         <field name="name">Readings</field>
         <field name="res_model">wua.reading</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" ref="wua_reading_view_tree"/>
         <field name="search_view_id" ref="wua_reading_view_search"/>
         <field name="context">{'search_default_watermeter': 0}</field>

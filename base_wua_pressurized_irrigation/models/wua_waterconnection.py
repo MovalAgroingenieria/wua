@@ -76,6 +76,15 @@ class WuaWaterconnection(models.Model):
         store=True,
     )
 
+    partner_id = fields.Many2one(
+        string='WUA Partner',
+        comodel_name='res.partner',
+        index=True,
+        ondelete='restrict',
+        store=True,
+        compute='_compute_partner_id',
+    )
+
     @api.depends('watermeter_id')
     def _compute_with_watermeter(self):
         for record in self:
@@ -107,6 +116,15 @@ class WuaWaterconnection(models.Model):
             if record.watermeter_id:
                 average_consumption = record.watermeter_id.average_consumption
             record.average_consumption = average_consumption
+
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.partner_id')
+    def _compute_partner_id(self):
+        for record in self:
+            partner_id = None
+            if (record.irrigationpoint_ids and
+                    len(record.irrigationpoint_ids) > 0):
+                partner_id = record.irrigationpoint_ids[0].partner_id
+            record.partner_id = partner_id
 
     @api.depends('irrigation_schedule_ids')
     def _compute_number_of_irrigation_schedules(self):

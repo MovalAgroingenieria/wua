@@ -77,11 +77,21 @@
         </field>
     </record>
 
+    <record id="wua_negative_reading_view_pivot" model="ir.ui.view">
+        <field name="name">Negative Readings (pivot view)</field>
+        <field name="model">wua.negative.reading</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values" display_quantity="false">
+                <field name="presconsumption_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_negative_reading_action" model="ir.actions.act_window">
         <field name="name">Negative Readings</field>
         <field name="res_model">wua.negative.reading</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" ref="wua_negative_reading_view_tree"/>
         <field name="search_view_id" ref="wua_negative_reading_view_search"/>
     </record>

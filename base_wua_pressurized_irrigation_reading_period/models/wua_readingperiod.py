@@ -229,13 +229,17 @@ class WuaReadingperiod(models.Model):
         search_view = self.env.ref(
             'base_wua_pressurized_irrigation.'
             'wua_reading_view_search')
+        id_pivot_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_reading_view_pivot').id
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Readings'),
             'res_model': 'wua.reading',
             'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'view_mode': 'tree,pivot',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form'),
+                      (id_pivot_view, 'pivot')],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
@@ -252,6 +256,9 @@ class WuaReadingperiod(models.Model):
         id_tree_view = self.env.ref(
             'base_wua_pressurized_irrigation.'
             'wua_negative_reading_view_tree').id
+        id_pivot_view = self.env.ref(
+            'base_wua_pressurized_irrigation.'
+            'wua_negative_reading_view_pivot').id
         search_view = self.env.ref(
             'base_wua_pressurized_irrigation.'
             'wua_negative_reading_view_search')
@@ -260,8 +267,9 @@ class WuaReadingperiod(models.Model):
             'name': _('Negative Readings'),
             'res_model': 'wua.negative.reading',
             'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'view_mode': 'tree,pivot',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form'),
+                      (id_pivot_view, 'pivot')],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
