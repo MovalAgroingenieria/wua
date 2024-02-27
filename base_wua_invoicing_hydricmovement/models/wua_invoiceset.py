@@ -281,6 +281,10 @@ class WuaInvoicesetLine(models.Model):
                 self.env['ir.values'].get_default(
                     'wua.invoicing.configuration',
                     'allowed_multiple_invoicing_of_hydricmovement')
+            invoicing_hydricmovement_selected_default = \
+                self.env['ir.values'].get_default(
+                    'wua.invoicing.configuration',
+                    'invoicing_hydricmovement_selected_default')
             try:
                 self.env.cr.savepoint()
                 if allowed_multiple_invoicing_of_hydricmovement:
@@ -292,7 +296,7 @@ class WuaInvoicesetLine(models.Model):
                     event_time, volume, description, type)
                     SELECT
                     nextval('wua_invoiceset_line_hydricmovement_id_seq'),
-                    %s, %s, now(), now(), %s, id, TRUE,
+                    %s, %s, now(), now(), %s, id, %s,
                     quotaperiod_id, superproduct_id, partner_id, category_id,
                     event_time, volume, description, type
                     FROM wua_hydricmovement WHERE of_active_agriculturalseason
@@ -304,7 +308,9 @@ class WuaInvoicesetLine(models.Model):
                                     state = 'executed')
                             ELSE TRUE
                         END;
-                    """, (user_id, user_id, invoicesetline_id, superproduct_id))
+                    """, (user_id, user_id, invoicesetline_id,
+                          superproduct_id,
+                          invoicing_hydricmovement_selected_default))
                 else:
                     self.env.cr.execute("""
                     INSERT INTO wua_invoiceset_line_hydricmovement (id,
@@ -314,7 +320,7 @@ class WuaInvoicesetLine(models.Model):
                     event_time, volume, description, type)
                     SELECT
                     nextval('wua_invoiceset_line_hydricmovement_id_seq'),
-                    %s, %s, now(), now(), %s, id, TRUE,
+                    %s, %s, now(), now(), %s, id, %s,
                     quotaperiod_id, superproduct_id, partner_id, category_id,
                     event_time, volume, description, type
                     FROM wua_hydricmovement WHERE of_active_agriculturalseason
@@ -327,7 +333,9 @@ class WuaInvoicesetLine(models.Model):
                                     state = 'executed')
                             ELSE TRUE
                         END;
-                    """, (user_id, user_id, invoicesetline_id, superproduct_id))
+                    """, (user_id, user_id, invoicesetline_id,
+                          superproduct_id,
+                          invoicing_hydricmovement_selected_default))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 # self.env.cr.execute("""

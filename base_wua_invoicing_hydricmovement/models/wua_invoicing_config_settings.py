@@ -23,6 +23,12 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If enabled, invoicing of the hydric movements based on '
              'presconsumptions will be grouped using the same waterconnection')
 
+    invoicing_hydricmovement_selected_default = fields.Boolean(
+        string='Invoicing of Hydric Movements selected by default',
+        default=False,
+        help='If enabled, the hydric movements will be selected by default '
+    )
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -39,3 +45,7 @@ class WuaInvoicingConfiguration(models.TransientModel):
             'wua.invoicing.configuration',
             'invoicing_hydricmovement_grouped_by_wc',
             self.invoicing_hydricmovement_grouped_by_wc)
+        values.set_default(
+            'wua.invoicing.configuration',
+            'invoicing_hydricmovement_selected_default',
+            self.invoicing_hydricmovement_selected_default)
