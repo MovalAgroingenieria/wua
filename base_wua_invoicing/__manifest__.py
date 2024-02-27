@@ -24,6 +24,7 @@
         "account_due_list_payment_mode",
         "account_credit_control_dunning_fees",
         "account_analytic_default",
+        "account_payment_return"
     ],
     "data": [
         "security/security.xml",
