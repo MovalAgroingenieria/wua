@@ -102,9 +102,9 @@
                     <tbody>
                         <t t-set="total_area_official" t-value="0.0"/>
                         <tr t-foreach="certificateparcel_ids" t-as="l">
-                            <td align="left"><span t-field="l.parcel_id"/></td>
-                            <td align="center"><span t-field="l.cadastral_reference"/></td>
-                            <td align="right">
+                            <td name="td_parcel_id" align="left"><span t-field="l.parcel_id"/></td>
+                            <td name="td_cadasstral_reference" align="center"><span t-field="l.cadastral_reference"/></td>
+                            <td name="td_area_official"align="right">
                                 <t t-if="use_intersected_area">
                                     <span t-field="l.area_intersected_perimeter"/>
                                     <t t-set="total_area_official" t-value="total_area_official + l.area_intersected_perimeter"/>
