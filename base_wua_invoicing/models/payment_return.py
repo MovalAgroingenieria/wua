@@ -58,7 +58,7 @@ class PaymentReturn(models.Model):
                 expense_lines_vals.append({
                     'move_id': move.id,
                     'debit': return_line.expense_amount,
-                    'name': move.ref + " " + move.reason_id.name,
+                    'name': move.ref + u" " + return_line.reason_id.name,
                     'credit': 0.0,
                     'partner_id': return_line.expense_partner_id.id,
                     'account_id': return_line.expense_account.id,
