@@ -225,9 +225,9 @@
                                 <table class="table table-striped" style="margin-top: 2px;">
                                     <thead>
                                         <tr>
-                                            <th width="20%" class="text-center">Parcel</th>
+                                            <th width="20%" name="th_parcel_id" class="text-center">Parcel</th>
                                             <th width="18%" class="text-center" name="th_cadastral_reference_name">Cadastral reference</th>
-                                            <th width="12%" class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
+                                            <th width="12%" name="th_area_official_name" class="text-right">Area (<t t-esc="measurement_unit"/>)</th>
                                             <th width="10%" name="th_irrigation_partner_name" class="text-center">Irrigation partner</th>
                                             <th width="12%" class="text-center" name="th_profile_name">Profile</th>
                                             <th width="10%" name="th_ownership_name" class="text-right">Ownership (%)</th>
@@ -237,9 +237,9 @@
                                     </thead>
                                     <tbody>
                                         <tr t-foreach="o.partnerlink_ids" t-as="p" style="page-break-inside: avoid;">
-                                            <td class="text-center"><span t-field="p.parcel_id"/></td>
+                                            <td name="td_parcel_id" class="text-center"><span t-field="p.parcel_id"/></td>
                                             <td class="text-center" name="td_cadastral_reference_name"><span t-field="p.parcel_id.cadastral_reference"/></td>
-                                            <td class="text-right"><span t-field="p.area_official"/></td>
+                                            <td class="text-right" name="td_area_official_name"><span t-field="p.area_official"/></td>
                                             <td name="td_irrigation_partner_name" class="text-center">
                                                 <t t-if="p.irrigation_partner == True"><span>Yes</span></t>
                                                 <t t-else=""><span>No</span></t>
