@@ -309,9 +309,12 @@ class WuaInvoicesetLine(models.Model):
                             ELSE TRUE
                         END;
                     """, (user_id, user_id, invoicesetline_id,
-                          superproduct_id,
-                          invoicing_hydricmovement_selected_default))
+                          "TRUE" if invoicing_hydricmovement_selected_default
+                          else "FALSE",
+                          superproduct_id
+                          ))
                 else:
+                    print(id)
                     self.env.cr.execute("""
                     INSERT INTO wua_invoiceset_line_hydricmovement (id,
                     create_uid, write_uid, create_date, write_date,
@@ -334,8 +337,10 @@ class WuaInvoicesetLine(models.Model):
                             ELSE TRUE
                         END;
                     """, (user_id, user_id, invoicesetline_id,
-                          superproduct_id,
-                          invoicing_hydricmovement_selected_default))
+                          "TRUE" if invoicing_hydricmovement_selected_default
+                          else "FALSE",
+                          superproduct_id
+                          ))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 # self.env.cr.execute("""
