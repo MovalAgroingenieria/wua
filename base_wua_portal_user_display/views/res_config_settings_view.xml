@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="portal_user_display_form" model="ir.ui.view">
+        <field name="name">Portal user display</field>
+        <field name="model">base.config.settings</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header style="padding: 4px 0px;">
+                    <button string="Save" type="object" name="execute" class="oe_highlight"/>
+                    <button string="Cancel" type="object" name="cancel" class="oe_link"/>
+                </header>
+                <sheet>
+                    <!--
+                    <group name="sidebar_view" string="Sidebar">
+                        <group name="apps_display" string="Applications">
+                            <field name="sidebar_irrigation_menu"/>
+                            <div/>
+                        </group>
+                    </group>
+                    <hr/>
+                    -->
+                    <group name="res_partner_form_view" string="Partner form view">
+                        <group name="fields_display" string="Fields">
+                            <field name="field_credit_overdue"/>
+                            <field name="field_website"/>
+                            <field name="field_category_id"/>
+                            <field name="field_updated_in_remotecontrol"/>
+                            <field name="field_fax"/>
+                            <field name="field_email_score"/>
+                            <field name="field_email_bounced"/>
+                            <field name="field_gender"/>
+                            <field name="field_birthdate"/>
+                            <field name="field_name_alias"/>
+                            <field name="field_title"/>
+                            <field name="field_lang"/>
+                            <div/>
+                        </group>
+                        <group name="buttons_display" string="Buttons">
+                            <field name="button_comparative_presconsumption"/>
+                            <field name="button_website_publish"/>
+                            <field name="button_act_show_contract"/>
+                            <field name="button_aggregate_quotas"/>
+                            <div/>
+                        </group>
+                        <group name="actions_display" string="Actions">
+                            <field name="actions_droplist"/>
+                            <field name="action_generate_partner_parcel_shp"
+                                attrs="{'invisible': [('actions_droplist','=', False)]}"/>
+                            <field name="action_synchronize_partners"
+                                attrs="{'invisible': [('actions_droplist','=', False)]}"/>
+                            <div/>
+                        </group>
+                        <group name="print_display" string="Print">
+                            <field name="print_droplist"/>
+                            <field name="wua_partner_report"
+                                attrs="{'invisible': [('print_droplist','=', False)]}"/>
+                            <field name="wua_owner_report"
+                                attrs="{'invisible': [('print_droplist','=', False)]}"/>
+                            <field name="wua_tenant_report"
+                                attrs="{'invisible': [('print_droplist','=', False)]}"/>
+                            <field name="wua_lessor_report"
+                                attrs="{'invisible': [('print_droplist','=', False)]}"/>
+                            <div/>
+                        </group>
+                        <!--
+                        <group name="attachments_display" string="Attachments">
+                            <field name="attachments"/>
+                            <div/>
+                        </group>
+                        -->
+                    </group>
+                    <hr/>
+                    <!--
+                    <group name="wua_parcel_config" string="Parcel">
+                        <group name="fields_display" string="Fields display">
+                        </group>
+                        <group name="buttons_display" string="Buttons display">
+                        </group>
+                    </group>
+                    -->
+                    </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_portal_user_display_form" model="ir.actions.act_window">
+        <field name="name">Portal user display action</field>
+        <field name="res_model">base.config.settings</field>
+        <field name="view_id" ref="portal_user_display_form"/>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+    <menuitem name="Portal user display" id="portal_user_display_menu" parent="base.menu_users"
+        action="action_portal_user_display_form" sequence="10"/>
+
+</odoo>
