@@ -225,9 +225,13 @@ class WuaCertificate(models.Model):
                 if (record.user_who_signs_id.user_id and
                    record.user_who_signs_id.user_id.firstname):
                     signer = record.user_who_signs_id.user_id
-                    name_of_signer = (signer.firstname + ' ' +
-                                      signer.lastname +
-                                      ' ' + signer.lastname2).strip()
+                    name_of_signer = signer.firstname.strip()
+                    if (signer.lastname):
+                        name_of_signer = (name_of_signer + ' ' +
+                                          signer.lastname).strip()
+                    if (signer.lastname2):
+                        name_of_signer = (name_of_signer + ' ' +
+                                          signer.lastname2).strip()
             record.name_of_signer = name_of_signer
 
     @api.depends('certificateparcel_ids')
