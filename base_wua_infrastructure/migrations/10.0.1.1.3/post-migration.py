@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-# 2021 Moval Agroingeniería
+# 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import api, SUPERUSER_ID, tools
 
 
-def post_init_hook(cr, registry):
+def migrate(cr, version):
     env = api.Environment(cr, SUPERUSER_ID, {})
     tools.drop_view_if_exists(env.cr, 'res_partner_waterconnection')
     env.cr.execute("""
