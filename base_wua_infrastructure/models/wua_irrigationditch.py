@@ -395,13 +395,17 @@ class WuaIrrigationditch(models.Model):
             id_form_view = \
                 self.env.ref('base_wua.'
                              'wua_parcel_view_form').id
+            id_pivot_view = \
+                self.env.ref('base_wua.'
+                             'wua_parcel_view_pivot').id
             act_window = {
                 'type': 'ir.actions.act_window',
                 'name': _('Parcels'),
                 'res_model': 'wua.parcel',
                 'view_type': 'form',
                 'view_mode': 'tree',
-                'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+                'views': [(id_tree_view, 'tree'), (id_form_view, 'form'),
+                          (id_pivot_view, 'pivot')],
                 'domain': condition,
                 'target': 'current',
                 'context': self.env.context,
