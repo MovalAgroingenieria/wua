@@ -57,6 +57,14 @@ class ResNotification(models.Model):
         store=True,
         compute='_compute_parcel_lessee_area_hec',)
 
+    parcel_ids = fields.One2many(
+        string='Parcels',
+        comodel_name='wua.parcel',
+        related='partner_id.parcel_ids',
+        inverse_name='partner_id',
+        store=True,
+    )
+
     @api.depends('partner_id')
     def _compute_is_wua_partner(self):
         for record in self:
