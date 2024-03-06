@@ -126,7 +126,8 @@ class ResNotification(models.Model):
         for record in self:
             parcel_lessee_area_hec = 0
             if record.partner_id:
-                parcel_lessee_area_hec = record.partner_id.parcel_lessee_area_hec
+                parcel_lessee_area_hec = \
+                    record.partner_id.parcel_lessee_area_hec
             record.parcel_lessee_area_hec = parcel_lessee_area_hec
 
     @api.multi
