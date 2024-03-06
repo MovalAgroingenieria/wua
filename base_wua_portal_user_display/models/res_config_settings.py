@@ -76,6 +76,10 @@ class BaseConfigSettings(models.TransientModel):
         string="Aggregate quotas",
         default=True)
 
+    button_tracking_emails = fields.Boolean(
+        string="Tracking emails",
+        default=True)
+
     actions_droplist = fields.Boolean(
         string="Actions droplist",
         default=True)
@@ -84,9 +88,9 @@ class BaseConfigSettings(models.TransientModel):
         string="Print droplist",
         default=True)
 
-    # attachments = fields.Boolean(
-    #     string="Attachments",
-    #     default=True)
+    attachments = fields.Boolean(
+        string="Attachments",
+        default=True)
 
     action_generate_partner_parcel_shp = fields.Boolean(
         string="Generate Parcel SHP",
@@ -151,12 +155,14 @@ class BaseConfigSettings(models.TransientModel):
                            self.button_act_show_contract)
         values.set_default('base.config.settings', 'button_aggregate_quotas',
                            self.button_aggregate_quotas)
+        values.set_default('base.config.settings', 'button_tracking_emails',
+                           self.button_tracking_emails)
         values.set_default('base.config.settings', 'actions_droplist',
                            self.actions_droplist)
         values.set_default('base.config.settings', 'print_droplist',
                            self.print_droplist)
-        # values.set_default('base.config.settings', 'attachments',
-        #                    self.attachments)
+        values.set_default('base.config.settings', 'attachments',
+                           self.attachments)
         values.set_default('base.config.settings',
                            'action_generate_partner_parcel_shp',
                            self.action_generate_partner_parcel_shp)

@@ -22,7 +22,7 @@ class ResPartner(models.Model):
             return res
 
         # Get config params
-        # Sidebar
+        # Sidebar (TODO)
         # show_sidebar_irrigation_menu = self.env['ir.values'].get_default(
         #     'base.config.settings', 'sidebar_irrigation_menu')
         # Fields
@@ -62,14 +62,13 @@ class ResPartner(models.Model):
             'base.config.settings', 'button_act_show_contract')
         show_button_aggregate_quotas = self.env['ir.values'].get_default(
             'base.config.settings', 'button_aggregate_quotas')
-        # Toolbar actions, print and attachments
+        show_button_tracking_emails = self.env['ir.values'].get_default(
+            'base.config.settings', 'button_tracking_emails')
+        # Toolbar actions and print (attachments is done by javascript)
         show_actions_droplist = self.env['ir.values'].get_default(
             'base.config.settings', 'actions_droplist')
         show_print_droplist = self.env['ir.values'].get_default(
             'base.config.settings', 'print_droplist')
-        # show_attachments = self.env['ir.values'].get_default(
-        #     'base.config.settings', 'attachments')
-        # Actions
         actions_to_remove = []
         show_action_generate_partner_parcel_shp = \
             self.env['ir.values'].get_default(
@@ -104,19 +103,6 @@ class ResPartner(models.Model):
                 'base.config.settings', 'wua_tenant_report')
         if not show_wua_tenant_report:
             docs_to_remove.append('base_wua.wua_tenant_report')
-
-        # Sidebar
-        # group_user = self.env.ref('base.group_user')
-        # group_wua_user = self.env.ref('base_wua.group_wua_user')
-        # group_wua_portal_user = self.env.ref('base_wua.group_wua_portal_user')
-        # irrigation_menu = self.env.ref(
-        #     'wua_structure_irrigation.base_wua_irrigation_menu')
-        # if not show_sidebar_irrigation_menu:
-        #     if group_wua_portal_user in irrigation_menu.groups_id:
-        #         irrigation_menu.groups_id = [(3, group_wua_portal_user.id)]
-        # else:
-        #     if group_wua_portal_user not in irrigation_menu.groups_id:
-        #         irrigation_menu.groups_id = [(4, group_wua_portal_user.id)]
 
         if view_type == 'form':
             doc = etree.XML(res['arch'])
@@ -178,6 +164,12 @@ class ResPartner(models.Model):
                         "//button[@name='action_get_partner_"
                         "aggregate_quotas']"):
                     node.set('modifiers', '{"invisible": true}')
+            if not show_button_tracking_emails:
+                button_action_id = self.env.ref(
+                    'mail_tracking.action_view_mail_tracking_email').id
+                for node in doc.xpath(
+                        "//button[@name='%s']" % button_action_id):
+                    node.set('modifiers', '{"invisible": true}')
             # Actions
             if not show_actions_droplist:
                 res['toolbar']['action'] = []
@@ -198,13 +190,6 @@ class ResPartner(models.Model):
                     if print_doc['xml_id'] not in docs_to_remove:
                         docs_to_show.append(print_doc)
                 res['toolbar']['print'] = docs_to_show
-            # Attachments
-            # if not show_attachments:
-            #    portal_attachment_access = self.env['ir.model.access'].search(
-            #        [('name', '=', 'ir.attachment.portal')])
-            #    portal_attachment_access.perm_read = False
-            #    self.env['ir.module.module'].search(
-            #        [('name', '=', 'base_wua')]).button_immediate_upgrade()
 
             res['arch'] = etree.tostring(doc)
 
@@ -216,7 +201,6 @@ class ResPartner(models.Model):
             # Print
             if not show_print_droplist:
                 res['toolbar']['print'] = []
-            # Attachments
 
             res['arch'] = etree.tostring(doc)
 

@@ -20,6 +20,7 @@
     ],
     "data": [
         "data/res_config_settings_data.xml",
+        "views/resources.xml",
         "views/res_config_settings_view.xml",
     ],
     "installable": True,
