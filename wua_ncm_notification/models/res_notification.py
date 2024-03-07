@@ -61,8 +61,6 @@ class ResNotification(models.Model):
         string='Parcels',
         comodel_name='wua.parcel',
         related='partner_id.parcel_ids',
-        inverse_name='partner_id',
-        store=True,
     )
 
     @api.depends('partner_id')
