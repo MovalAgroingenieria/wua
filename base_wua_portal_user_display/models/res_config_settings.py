@@ -80,6 +80,18 @@ class BaseConfigSettings(models.TransientModel):
         string="Tracking emails",
         default=True)
 
+    button_gravity_consumptions = fields.Boolean(
+        string="Gravity consumptions",
+        default=True)
+
+    button_hydric_movements = fields.Boolean(
+        string="Hydric movements",
+        default=True)
+
+    button_watering_requests = fields.Boolean(
+        string="Watering requests",
+        default=True)
+
     actions_droplist = fields.Boolean(
         string="Actions droplist",
         default=True)
@@ -114,6 +126,10 @@ class BaseConfigSettings(models.TransientModel):
 
     wua_tenant_report = fields.Boolean(
         string="Tenant report",
+        default=True)
+
+    wua_quota_report = fields.Boolean(
+        string="Quota report",
         default=True)
 
     @api.multi
@@ -157,6 +173,15 @@ class BaseConfigSettings(models.TransientModel):
                            self.button_aggregate_quotas)
         values.set_default('base.config.settings', 'button_tracking_emails',
                            self.button_tracking_emails)
+        values.set_default('base.config.settings',
+                           'button_gravity_consumptions',
+                           self.button_gravity_consumptions)
+        values.set_default('base.config.settings',
+                           'button_hydric_movements',
+                           self.button_hydric_movements)
+        values.set_default('base.config.settings',
+                           'button_watering_requests',
+                           self.button_watering_requests)
         values.set_default('base.config.settings', 'actions_droplist',
                            self.actions_droplist)
         values.set_default('base.config.settings', 'print_droplist',
@@ -177,3 +202,5 @@ class BaseConfigSettings(models.TransientModel):
                            self.wua_owner_report)
         values.set_default('base.config.settings', 'wua_tenant_report',
                            self.wua_tenant_report)
+        values.set_default('base.config.settings', 'wua_quota_report',
+                           self.wua_quota_report)
