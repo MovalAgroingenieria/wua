@@ -46,6 +46,11 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
         default=False,
         required=True,)
 
+    allow_notes_in_signature = fields.Boolean(
+        string='Allow notes with the partner signature',
+        default=False,
+        required=True,)
+
     @api.onchange('assembly_state_id')
     def _onchange_assembly_state_id(self):
         if not self.assembly_country_id:
@@ -81,3 +86,6 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
                            self.assembly_secretary_id.id)
         values.set_default('wua.assembly.configuration',
                            'vat_required', self.vat_required)
+        values.set_default('wua.assembly.configuration',
+                           'allow_notes_in_signature',
+                           self.allow_notes_in_signature)

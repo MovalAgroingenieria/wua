@@ -4,6 +4,7 @@
 
 import base64
 import locale
+from lxml import etree
 from datetime import datetime
 from odoo import models, fields, api, modules, _
 
@@ -132,6 +133,18 @@ class WuaAttendance(models.Model):
     compressed_assignors = fields.Html(
         string='Assignors (compressed)',
         compute='_compute_compressed_assignors')
+
+    attendance_notes = fields.Text(
+        string='Attendance Notes')
+
+    param_allow_notes_in_signature = fields.Boolean(
+        string='Allow notes with the partner signature',
+        compute='_compute_param_allow_notes_in_signature')
+
+    with_attendance_notes = fields.Boolean(
+        string='There are notes (y/n)',
+        default=False,
+        readonly="1")
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -297,6 +310,18 @@ class WuaAttendance(models.Model):
             record.assignors = assignors
 
     @api.multi
+    def _compute_param_allow_notes_in_signature(self):
+        param_allow_notes_in_signature = True
+        value_of_param_allow_notes_in_signature = \
+            self.env['ir.values'].get_default(
+                'wua.assembly.configuration', 'allow_notes_in_signature')
+        if not value_of_param_allow_notes_in_signature:
+            param_allow_notes_in_signature = False
+        for record in self:
+            record.param_allow_notes_in_signature = \
+                param_allow_notes_in_signature
+
+    @api.multi
     def _compute_compressed_assignors(self):
         model_wua_delegationvote = self.env['wua.delegationvote']
         for record in self:
@@ -386,4 +411,27 @@ class WuaAttendance(models.Model):
             toolbar=toolbar, submenu=submenu)
         if view_type == 'form':
             res['toolbar']['print'] = []
+        value_of_param_allow_notes_in_signature = \
+            self.env['ir.values'].get_default(
+                'wua.assembly.configuration', 'allow_notes_in_signature')
+        if not value_of_param_allow_notes_in_signature:
+            if view_type == 'tree':
+                doc = etree.XML(res['arch'])
+                for tree in doc.xpath('//tree'):
+                    node_to_remove = None
+                    for field in tree:
+                        node_as_str = etree.tostring(field)
+                        if node_as_str.find('name="attendance_notes"') != -1:
+                            node_to_remove = field
+                            break
+                    if node_to_remove is not None:
+                        tree.remove(node_to_remove)
+                res['arch'] = etree.tostring(doc)
         return res
+
+    @api.model
+    def action_activate_notes(self, attendance_id):
+        if attendance_id:
+            attendance = self.browse(attendance_id)
+            if attendance:
+                attendance.write({'with_attendance_notes': True, })

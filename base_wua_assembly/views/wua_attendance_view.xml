@@ -27,12 +27,23 @@
         </field>
     </record>
 
+    <record id="wua_attendance_activate_notes" model="ir.actions.server">
+        <field name="name">Enter notes</field>
+        <field name="model_id" ref="base_wua_assembly.model_wua_attendance"/>
+        <field name="code">
+            if context.get('active_id'):
+                action = env['wua.attendance'].action_activate_notes(context['active_id'])
+        </field>
+    </record>
+
     <record id="wua_attendance_particular_view_form" model="ir.ui.view">
         <field name="name">Attendances (form view)</field>
         <field name="model">wua.attendance</field>
         <field name="arch" type="xml">
             <form create="0" edit="0" delete="0" duplicate="false">
                 <field name="assembly_state" invisible="1"/>
+                <field name="param_allow_notes_in_signature" invisible="1"/>
+                <field name="with_attendance_notes" invisible="1"/>
                 <script>
                     $(document).ready(function(){
                     $(".btn.btn-primary.btn-sm.o_form_button_save").hide();
@@ -81,6 +92,18 @@
                                attrs="{'invisible': [('votes_delegation','=',0)]}"/>
                     </group>
                 </group>
+                <div name="button_activate_notes" colspan="2"
+                     class="text-center" style="margin-top:12px;margin-bottom:10px;"
+                     attrs="{'invisible': [('param_allow_notes_in_signature','=',False)]}">
+                    <button name="%(wua_attendance_activate_notes)d" type="action"
+                            string="Enter notes"
+                            class="btn-primary"
+                            attrs="{'invisible': ['|',('assembly_state','!=','03_in_progress'),('with_attendance_notes','=',True)]}"/>
+                    <h4 attrs="{'invisible': [('with_attendance_notes','=',False)]}">ATTENDANCE NOTES</h4>
+                    <field name="attendance_notes"
+                           style="margin-top:10px;"
+                           attrs="{'invisible': [('with_attendance_notes','=',False)]}"/>
+                </div>
                 <div class="mw-100 text-center" style="margin-bottom:20px">
                     <field name="attendance_signature" widget="signature"
                            nolabel="1"
@@ -119,6 +142,8 @@
                        string="Attendee Name"/>
                 <field name="represented_partner"
                        string="Represents..."/>
+                <field name="attendance_notes"
+                       string="Attendance Notes"/>
                 <field name="votes_total"
                        string="Total Votes"/>
                 <field name="attendance_signature"
