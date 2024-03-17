@@ -48,7 +48,7 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
 
     allow_notes_in_signature = fields.Boolean(
         string='Allow notes with the partner signature',
-        default=False,
+        default=True,
         required=True,)
 
     @api.onchange('assembly_state_id')

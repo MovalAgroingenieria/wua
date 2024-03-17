@@ -315,6 +315,8 @@ class WuaAttendance(models.Model):
         value_of_param_allow_notes_in_signature = \
             self.env['ir.values'].get_default(
                 'wua.assembly.configuration', 'allow_notes_in_signature')
+        if value_of_param_allow_notes_in_signature is None:
+            value_of_param_allow_notes_in_signature = True
         if not value_of_param_allow_notes_in_signature:
             param_allow_notes_in_signature = False
         for record in self:
@@ -414,6 +416,8 @@ class WuaAttendance(models.Model):
         value_of_param_allow_notes_in_signature = \
             self.env['ir.values'].get_default(
                 'wua.assembly.configuration', 'allow_notes_in_signature')
+        if value_of_param_allow_notes_in_signature is None:
+            value_of_param_allow_notes_in_signature = True
         if not value_of_param_allow_notes_in_signature:
             if view_type == 'tree':
                 doc = etree.XML(res['arch'])
