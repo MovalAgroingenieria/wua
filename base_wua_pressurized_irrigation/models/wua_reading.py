@@ -238,9 +238,17 @@ class WuaReading(models.Model):
         # of the watermeter.
         watermeter = self.env['wua.watermeter'].browse(vals['watermeter_id'])
         if watermeter:
-            vals_watermeter = {
-                'last_reading_time': reading_end_time,
-                'last_reading_value': end_volume, }
+            if new_presconsumption:
+                vals_watermeter = {
+                    'last_reading_time': reading_end_time,
+                    'last_reading_value': end_volume,
+                    'last_reading_consumption':
+                        new_presconsumption.volume_real}
+            else:
+                vals_watermeter = {
+                    'last_reading_time': reading_end_time,
+                    'last_reading_value': end_volume,
+                    'last_reading_consumption': 0}
             watermeter.write(vals_watermeter)
         # Creation of reading.
         new_reading = super(WuaReading, self).create(vals)
@@ -261,6 +269,8 @@ class WuaReading(models.Model):
                     })
                     self.presconsumption_id.update_volume_perunitareas()
                 self.watermeter_id.last_reading_value = vals['volume']
+                self.watermeter_id.last_reading_consumption = \
+                    vals["last_reading_consumption"]
         return resp
 
     @api.multi
@@ -359,12 +369,16 @@ class WuaReading(models.Model):
         # the new "last-reading".
         new_last_reading_time = None
         new_last_reading_value = 0
+        new_last_reading_consumption = 0
         if new_last_reading:
             new_last_reading_time = new_last_reading.reading_time
             new_last_reading_value = new_last_reading.volume
+            new_last_reading_consumption = \
+                new_last_reading.presconsumption_volume_real
         vals_watermeter = {
             'last_reading_time': new_last_reading_time,
-            'last_reading_value': new_last_reading_value, }
+            'last_reading_value': new_last_reading_value,
+            'last_reading_consumption': new_last_reading_consumption}
         watermeter.write(vals_watermeter)
         return resp
 

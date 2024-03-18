@@ -11,10 +11,10 @@
              position="after">
                 <field name="last_invoiced_presconsumption"/>
             </xpath>
-            <xpath expr="//field[@name='last_reading_value']"
+            <xpath expr="//field[@name='last_reading_consumption']"
              position="after">
                 <field name="product_id"
-                 domain="[('categ_id.productcategory_code','=',7)]"/>                          
+                 domain="[('categ_id.productcategory_code','=',7)]"/>
             </xpath>
         </field>
     </record>
@@ -25,8 +25,11 @@
         <field name="inherit_id"
                ref="base_wua_pressurized_irrigation.wua_waterconnection_view_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='last_reading_value']" position="after">
+            <xpath expr="//field[@name='last_reading_consumption']" position="after">
                 <field name="product_id"/>
+            </xpath>
+            <xpath expr="//field[@name='last_reading_value']" position="after">
+                <field name="last_invoiced_presconsumption"/>
             </xpath>
         </field>
     </record>
@@ -35,7 +38,7 @@
         <field name="name">Water Connections (search view)</field>
         <field name="model">wua.waterconnection</field>
         <field name="inherit_id"
-               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_search"/>        
+               ref="base_wua_pressurized_irrigation.wua_waterconnection_view_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='watermeter_id']" position="after">
                 <field name="product_id"/>

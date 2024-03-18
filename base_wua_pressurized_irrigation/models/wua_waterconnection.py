@@ -85,6 +85,14 @@ class WuaWaterconnection(models.Model):
         compute='_compute_partner_id',
     )
 
+    last_reading_consumption = fields.Float(
+        string='Last Consumption Value',
+        digits=(32, 4),
+        store=True,
+        compute='_compute_last_reading_consumption_value',
+        group_operator=False,
+    )
+
     @api.depends('watermeter_id')
     def _compute_with_watermeter(self):
         for record in self:
@@ -154,6 +162,15 @@ class WuaWaterconnection(models.Model):
             record.number_of_irrigation_events = \
                 number_of_irrigation_events
 
+    @api.depends('watermeter_id', 'watermeter_id.last_reading_consumption')
+    def _compute_last_reading_consumption_value(self):
+        for record in self:
+            last_reading_consumption = 0
+            if record.watermeter_id:
+                last_reading_consumption = \
+                    record.watermeter_id.last_reading_consumption
+            record.last_reading_consumption = last_reading_consumption
+
     @api.model
     def create(self, vals):
         waterconnection = super(WuaWaterconnection, self).create(vals)
@@ -212,15 +229,19 @@ class WuaWaterconnection(models.Model):
             # It's necessary to create a initialization reading.
             last_reading_time = current_date
             last_reading_value = 0
+            last_reading_consumption = 0
             watermeter = self.env['wua.watermeter'].browse(watermeter_id)
             if watermeter.last_reading_time:
                 last_reading_time = watermeter.last_reading_time
             if watermeter.last_reading_value:
                 last_reading_value = watermeter.last_reading_value
+            if watermeter.last_reading_consumption:
+                last_reading_consumption = watermeter.last_reading_consumption
             vals_new_initialization_reading = {
                 'watermeter_id': watermeter_id,
                 'reading_time': last_reading_time,
                 'volume': last_reading_value,
+                'volume_real': last_reading_consumption,
                 'initialization_reading': True, }
             self.env['wua.reading'].create(
                 vals_new_initialization_reading)

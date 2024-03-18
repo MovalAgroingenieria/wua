@@ -179,11 +179,21 @@
         </field>
     </record>
 
+    <record id="wua_waterconnection_view_pivot" model="ir.ui.view">
+        <field name="name">Water Connections (pivot view)</field>
+        <field name="model">wua.waterconnection</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="name"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_waterconnection_action" model="ir.actions.act_window">
         <field name="name">Water Connections</field>
         <field name="res_model">wua.waterconnection</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_mode">tree,form,kanban,pivot</field>
         <field name="view_id" ref="wua_waterconnection_view_tree"/>
         <field name="search_view_id"
          ref="wua_waterconnection_view_search"/>

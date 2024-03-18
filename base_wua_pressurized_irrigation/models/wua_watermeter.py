@@ -134,6 +134,11 @@ class WuaWatermeter(models.Model):
         'hide the register without removing it. For see archived register, ' +
         'go to "Search-Filters" in tree view')
 
+    last_reading_consumption = fields.Float(
+        string='Last Consumption (m³)',
+        digits=(32, 2),
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_nominal_diameter',
