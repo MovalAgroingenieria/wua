@@ -24,8 +24,10 @@ class WuaWatering(models.Model):
                     item_01 = condition_item[0]
                     item_02 = condition_item[1]
                     item_03 = condition_item[2]
-                    if item_01 == 'irrigationditch_id':
-                        item_01 = 'main_irrigationditch_id'
+                    # Modified EIS (2024-03-18)
+                    # This is not necessary! (remove method?)
+                    # if item_01 == 'irrigationditch_id':
+                    #     item_01 = 'main_irrigationditch_id'
                     resp_item = (item_01, item_02, item_03)
                     resp.append(resp_item)
         return resp
