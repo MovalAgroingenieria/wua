@@ -35,7 +35,9 @@
         "views/wua_irrigationgate_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/hr_views.xml",
-        "reports/wua_wateringrequest_report.xml", ],
+        "reports/wua_wateringrequest_report.xml",
+        "reports/wua_watering_report.xml",
+    ],
     "installable": True,
     "application": True,
 }

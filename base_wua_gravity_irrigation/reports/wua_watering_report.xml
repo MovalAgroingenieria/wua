@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report id="action_wua_watering_report"
+            string="Watering report"
+            model="wua.watering"
+            report_type="qweb-pdf"
+            name="base_wua_gravity_irrigation.report_wua_watering"
+            file="base_wua_gravity_irrigation.report_wua_watering"
+            paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <template id="report_wua_watering">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <t t-call="base_wua_gravity_irrigation.report_wua_watering_document"/>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_wua_watering_document">
+
+        <!-- Vars -->
+            <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+            <t t-set="printing_date" t-value="o.env['wua.parcel'].transform_date_to_locale(
+                        datetime.datetime.now().date().strftime('%Y-%m-%d'))"/>
+            <t t-set="is_reservoir_volume_minor_watering_volume" t-value="o.is_reservoir_volume_minor_watering_volume"/>
+
+        <div class="page">
+
+            <!-- Report title -->
+            <div name="title" class="text-center" style="font-size: 16px;">
+                <strong>Watering report</strong>
+                <t t-if="o.name">
+                    <div>
+                        <span>[ </span>
+                        <span style="color: grey;" t-field="o.display_name"/>
+                        <span>&amp;nbsp;]</span>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Watering main data -->
+            <div name="wua_watering_main_data">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-file-irrigation"/></div>
+                            <div style="float: left; display: inline;"><strong>Watering</strong></div>
+                            <div style="float: right; width: 32px;">
+                                <t t-if="o.is_open"><span class="fa fa-moval-lock-open"/></t>
+                                <t t-else=""><span class="fa fa-lock"/></t>
+                            </div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-file-irrigation"/></div>
+                            <div style="float: left; display: inline;"><strong>Watering</strong></div>
+                            <div style="float: right; width: 32px;">
+                                <t t-if="o.is_open"><span class="fa fa-moval-lock-open"/></t>
+                                <t t-else=""><span class="fa fa-lock"/></t>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="width: 50%; display: table-cell;">
+                            <table style="width: 100%;">
+                                <tbody>
+                                    <tr name="tr_state">
+                                        <td><span>State</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.state"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_irrigationditch_id">
+                                        <td><span>Irrigation ditch</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.irrigationditch_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_wateringperiod_id">
+                                        <td><span>Period</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.wateringperiod_id"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_number">
+                                        <td><span>Number</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.number"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_only_cultivable_subparcel">
+                                        <td><span>Only cultivable</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.only_cultivable_subparcel">
+                                                <span>Yes</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span>No</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_publication_permission">
+                                        <td><span>Publication permission</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.publication_permission">
+                                                <span>Yes</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span>No</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_publishable">
+                                        <td><span>Publishable</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.publishable">
+                                                <span>Yes</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span>No</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_printing_date">
+                                        <td><span>Printing date</span></td>
+                                        <td class="text-right">
+                                            <b><span t-esc="printing_date"/></b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display: table-cell; padding-left: 32px;">
+                            <table style="width: 100%;">
+                                <tbody>
+                                    <tr name="tr_calculation_model">
+                                        <td><span>Calculation model</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.calculation_model"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_initial_time">
+                                        <td><span>Initial time</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.initial_time"/>
+                                        </td>
+                                    </tr>
+                                    <t t-if="o.calculation_model != 2">
+                                        <tr name="tr_wateringtime_perunitarea">
+                                            <td><span>Water. Min./Area U.</span></td>
+                                            <td class="text-right">
+                                                <span t-field="o.wateringtime_perunitarea"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr name="tr_volume_perunitime">
+                                        <td><span>Litres / Sec.</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.volume_perunitime"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_distribute_extra_volume">
+                                        <td><span>Distribute extra vol.</span></td>
+                                        <td class="text-right">
+                                            <t t-if="o.distribute_extra_volume">
+                                                <span>Yes</span>
+                                            </t>
+                                            <t t-else="">
+                                                <span>No</span>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_watering_early_start">
+                                        <td><span>Allowed early start</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.watering_early_start"/>
+                                            <span>days</span>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_early_shutdown_time">
+                                        <td><span>Early Shutdown</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.early_shutdown_time"/>
+                                            <span>min.</span>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_reservoiremptying_end_time_manual">
+                                        <td><span>Reservoir End Time (manual)</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.reservoiremptying_end_time_manual"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Watering values -->
+            <div name="wua_watering_values">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-sticky-note"/></div>
+                            <div style="float: left; display: inline;"><strong>Values</strong></div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-sticky-note"/></div>
+                            <div style="float: left; display: inline;"><strong>Values</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="width: 50%; display: table-cell;">
+                            <table style="width: 100%;">
+                                <tbody>
+                                    <tr name="tr_watering_initial_time">
+                                        <td><span>Watering Start Time</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.watering_initial_time"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_watering_end_time">
+                                        <td><span>Watering End Time</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.watering_end_time"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_watering_duration_ddhhmm">
+                                        <td><span>Watering Time</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.watering_duration_ddhhmm"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_reservoiremptying_end_time">
+                                        <td><span>Reservoir End Time</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.reservoiremptying_end_time"/>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_reservoiremptying_duration_ddhhmm">
+                                        <td><span>Reservoir Time</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.reservoiremptying_duration_ddhhmm"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display: table-cell; padding-left: 32px;">
+                            <table style="width: 100%;">
+                                <tbody>
+                                    <tr name="tr_watering_volume">
+                                        <td><span>Watering Vol.</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.watering_volume"/>
+                                            <span>m³</span>
+                                        </td>
+                                    </tr>
+                                    <t t-if="is_reservoir_volume_minor_watering_volume">
+                                        <tr name="tr_reservoir_volume_copy">
+                                            <td><span>Reservoir Vol.</span></td>
+                                            <td class="text-right" style="color:Red;font-weight: bold;">
+                                                <span t-field="o.reservoir_volume_copy"/>
+                                                <span>m³</span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-else="">
+                                        <tr name="tr_reservoir_volume">
+                                            <td><span>Reservoir Vol.</span></td>
+                                            <td class="text-right">
+                                                <span t-field="o.reservoir_volume"/>
+                                                <span>m³</span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr name="tr_extra_volume">
+                                        <td><span>Extra Vol.</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.extra_volume"/>
+                                            <span>m³</span>
+                                        </td>
+                                    </tr>
+                                    <tr name="tr_total_accumulated_delay_time">
+                                        <td><span>Accum. Delay</span></td>
+                                        <td class="text-right">
+                                            <span t-field="o.total_accumulated_delay_time"/>
+                                            <span>min.</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gravity consumptions data -->
+            <div name="gravconsumptions_data">
+                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-irrigation"/></div>
+                            <div style="float: left; display: inline;"><strong>Consumptions</strong></div>
+                       </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-irrigation"/></div>
+                            <div style="float: left; display: inline;"><strong>Consumptions</strong></div>
+                        </div>
+                    </t>
+                </div>
+                <table class="table" style="width:100%;">
+                    <thead>
+                        <th name="th_subparcel_id" width="22%">Subparcel</th>
+                        <th name="th_watering_initial_time" class="text-center">Initial date</th>
+                        <th name="th_watering_end_time" class="text-center">End date</th>
+                        <th name="th_watering_duration" class="text-right">Duration (min)</th>
+                        <th name="th_area_official" class="text-right">Area (ha)</th>
+                        <th name="th_watering_volume_real" class="text-right">Volume (m³)</th>
+                        <th name="th_partner_id">Irrigator</th>
+                        <th name="th_state" class="text-center">State</th>
+                        <!--<th name="th_gravconsumption_type" class="text-center">Type</th>-->
+                    </thead>
+                    <tbody>
+                        <t t-foreach="o.gravconsumption_ids" t-as="c" style="page-break-inside: avoid;">
+                            <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
+                                <td name="td_subparcel_id">
+                                    <span t-field="c.subparcel_id"/>
+                                </td>
+                                <td name="td_watering_initial_time" class="text-center">
+                                    <span t-field="c.watering_initial_time"/>
+                                </td>
+                                <td name="td_watering_end_time" class="text-center">
+                                    <span t-field="c.watering_end_time"/>
+                                </td>
+                                <td name="td_watering_duration" class="text-right">
+                                    <span t-field="c.watering_duration"/>
+                                </td>
+                                <td name="td_area_official" class="text-right">
+                                    <span t-field="c.area_official"/>
+                                </td>
+                                <td name="td_watering_volume_real" class="text-right">
+                                    <span t-field="c.watering_volume_real"/>
+                                </td>
+                                <td name="td_partner_id">
+                                    <span t-field="c.partner_id"/>
+                                </td>
+                                 <td name="td_state" class="text-center">
+                                    <span t-field="c.state"/>
+                                </td>
+                                <!--
+                                 <td name="td_gravconsumption_type" class="text-center">
+                                    <span t-field="c.gravconsumption_type"/>
+                                </td>
+                                -->
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Show notes if filled -->
+            <t t-if="o.env['wua.parcel'].is_html_field_filled(o.notes)">
+                <div name="section_notes" style="page-break-inside: avoid;">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-pencil-square-o"/></div>
+                                <div style="float: left; display: inline;"><strong>Notes</strong></div>
+                        </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-pencil-square-o"/></div>
+                                <div style="float: left; display: inline;"><strong>Notes</strong></div>
+                            </div>
+                        </t>
+                    </div>
+                    <div><span t-field="o.notes"/></div>
+                </div>
+            </t>
+
+        </div><!-- end page -->
+    </template>
+
+</odoo>
