@@ -4,6 +4,7 @@
 
 import datetime
 from odoo import models, fields, api, exceptions, _
+from lxml import etree
 
 
 class WuaCropplan(models.Model):
@@ -157,6 +158,23 @@ class WuaCropplan(models.Model):
         default=False,
         store=True,
         compute='_compute_is_portal_user')
+
+    with_second_cultivation = fields.Boolean(
+        string="With Second Cultivation",
+        compute='_compute_with_second_cultivation',
+        store=True
+    )
+
+    @api.depends('enrolledsubparcel_ids',
+                 'enrolledsubparcel_ids.with_second_cultivation')
+    def _compute_with_second_cultivation(self):
+        for record in self:
+            with_second_cultivation = False
+            if record.enrolledsubparcel_ids:
+                for enrolledsubparcel in record.enrolledsubparcel_ids:
+                    if enrolledsubparcel.with_second_cultivation:
+                        with_second_cultivation = True
+            record.with_second_cultivation = with_second_cultivation
 
     @api.constrains('state', 'enrolledsubparcel_ids')
     def _check_flowmeter_id(self):
@@ -928,6 +946,24 @@ class WuaEnrolledsubparcel(models.Model):
         index=True,
         ondelete='restrict')
 
+    second_cultivation_id = fields.Many2one(
+        string='Second Cultivation',
+        comodel_name='wua.cultivation',
+        index=True,
+        ondelete='restrict')
+
+    second_cultivationvariety_id = fields.Many2one(
+        string='Second Variety',
+        comodel_name='wua.cultivation.variety',
+        index=True,
+        ondelete='restrict')
+
+    with_second_cultivation = fields.Boolean(
+        string="With Second Cultivation",
+        compute='_compute_with_second_cultivation',
+        store=True
+    )
+
     irrigationsystem_id = fields.Many2one(
         string='Irrigation System',
         comodel_name='wua.irrigationsystem',
@@ -1038,6 +1074,56 @@ class WuaEnrolledsubparcel(models.Model):
         for record in self:
             record.county_id = record.parcel_id.county_id
 
+    @api.depends('second_cultivation_id')
+    def _compute_with_second_cultivation(self):
+        for record in self:
+            with_second_cultivation = False
+            if record.second_cultivation_id:
+                with_second_cultivation = True
+            record.with_second_cultivation = with_second_cultivation
+
+    @api.constrains('cultivation_id', 'second_cultivation_id')
+    def _check_second_cultivation_id(self):
+        without_cultivation = self.env.ref('base_wua.cultivation_135').id
+        for record in self:
+            if (not record.cultivation_id or
+                record.cultivation_id.id == without_cultivation) and \
+                    record.second_cultivation_id:
+                raise exceptions.ValidationError(
+                    _("Second cultivation should be filled"
+                      " when the first cultivation has a cultivation."))
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaEnrolledsubparcel, self).\
+            fields_view_get(view_id=view_id,
+                            view_type=view_type,
+                            toolbar=toolbar,
+                            submenu=submenu)
+        enrolledsubparcel_with_two_cultivations = self.env['ir.values'].\
+            get_default('wua.irrigation.configuration',
+                        'enrolledsubparcel_with_two_cultivations')
+        doc = etree.XML(res['arch'])
+        xpath_second_cultivation_id =\
+            doc.xpath("//field[@name='second_cultivation_id']")
+        xpath_second_cultivationvariety_id =\
+            doc.xpath("//field[@name='second_cultivationvariety_id']")
+        if view_type == 'form' and enrolledsubparcel_with_two_cultivations:
+            for node in xpath_second_cultivation_id:
+                node.set('invisible', '0')
+            for node in xpath_second_cultivationvariety_id:
+                node.set('invisible', '0')
+        if view_type == 'tree' and enrolledsubparcel_with_two_cultivations:
+            for node in xpath_second_cultivation_id:
+                node.set('invisible', '0')
+                node.set('modifiers', '{"tree_invisible": false}')
+            for node in xpath_second_cultivationvariety_id:
+                node.set('invisible', '0')
+                node.set('modifiers', '{"tree_invisible": false}')
+            res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res
+
     @api.onchange('parcel_id')
     def _onchange_parcel_id(self):
         self.area_perc = 100
@@ -1071,6 +1157,8 @@ class WuaEnrolledsubparcel(models.Model):
                    subparceltype_id).is_cultivable:
                     vals['cultivation_id'] = None
                     vals['cultivationvariety_id'] = None
+                    vals['second_cultivation_id'] = None
+                    vals['second_cultivationvariey_id'] = None
                     vals['irrigationsystem_id'] = None
                     vals['productionmethod_id'] = None
         new_enrolledsubparcel = super(WuaEnrolledsubparcel, self).create(vals)
@@ -1085,6 +1173,8 @@ class WuaEnrolledsubparcel(models.Model):
                    subparceltype_id).is_cultivable:
                     vals['cultivation_id'] = None
                     vals['cultivationvariety_id'] = None
+                    vals['second_cultivation_id'] = None
+                    vals['second_cultivationvariey_id'] = None
                     vals['irrigationsystem_id'] = None
                     vals['productionmethod_id'] = None
         super(WuaEnrolledsubparcel, self).write(vals)

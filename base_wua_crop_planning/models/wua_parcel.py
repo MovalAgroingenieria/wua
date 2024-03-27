@@ -43,6 +43,21 @@ class WuaParcel(models.Model):
         string='Permanent',
         default=False)
 
+    with_second_cultivation = fields.Boolean(
+        string="With Second Cultivation",
+        compute='_compute_with_second_cultivation',
+        store=True
+    )
+
+    @api.depends('cropplan_id', 'cropplan_id.with_second_cultivation')
+    def _compute_with_second_cultivation(self):
+        for record in self:
+            with_second_cultivation = False
+            if record.cropplan_id and \
+                    record.cropplan_id.with_second_cultivation:
+                with_second_cultivation = True
+            record.with_second_cultivation = with_second_cultivation
+
     @api.multi
     def _compute_number_of_enrolledsubparcels(self):
         for record in self:

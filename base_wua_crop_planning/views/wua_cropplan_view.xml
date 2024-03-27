@@ -293,6 +293,11 @@
                                'required':[('cultivationvariety_id','!=', False)]}"/>
                 <field name="cultivationvariety_id" widget="many2one_unclickable"
                        attrs="{'readonly':[('is_cultivable','=', False)]}"/>
+                <field name="second_cultivation_id" widget="many2one_unclickable"
+                       attrs="{'readonly':[('is_cultivable','=', False)],
+                               'required':[('cultivationvariety_id','!=', False)]}" invisible="1"/>
+                <field name="second_cultivationvariety_id" widget="many2one_unclickable"
+                       attrs="{'readonly':[('is_cultivable','=', False)]}" invisible="1"/>
                 <field name="irrigationsystem_id" widget="many2one_unclickable"
                        attrs="{'readonly':[('is_cultivable','=', False)]}"/>
                 <field name="productionmethod_id" widget="many2one_unclickable"
