@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 15:36+0000\n"
-"PO-Revision-Date: 2023-09-07 15:36+0000\n"
+"POT-Creation-Date: 2024-03-27 20:10+0000\n"
+"PO-Revision-Date: 2024-03-27 20:10+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -17,6 +17,8 @@ msgstr ""
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_active
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_active
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_active
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
 #: selection:wua.flowmeter,state:0
 msgid "Active"
@@ -29,6 +31,8 @@ msgstr "Arxivat"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_form
 msgid "Are you sure you want to toggle visibility?"
 msgstr "Esteu segur que voleu modificar la visibilitat?"
 
@@ -38,7 +42,7 @@ msgid "Bidirectional"
 msgstr "Bidireccional"
 
 #. module: base_wua_infrastructure_primary
-#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:181
+#: code:addons/base_wua_infrastructure_primary/models/wua_flowmeter.py:187
 #, python-format
 msgid "Blanks are not allowed in the name of the flowmeter."
 msgstr "No es permeten els blancs al nom del cabalímetre."
@@ -74,6 +78,7 @@ msgstr "Connectat a la captació: Sí"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_create_uid
 msgid "Created by"
 msgstr "Creat per"
 
@@ -82,6 +87,7 @@ msgstr "Creat per"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_create_date
 msgid "Created on"
 msgstr "Creat el"
 
@@ -101,8 +107,9 @@ msgstr "Descartat"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_display_name
 msgid "Display Name"
-msgstr "Mostra el nom"
+msgstr "Mostrar Nom"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
@@ -130,6 +137,11 @@ msgstr "Element (filtres)"
 #: model:ir.model,name:base_wua_infrastructure_primary.model_wua_flowmeter
 msgid "Entity (flowmeter)"
 msgstr "Element (cabalímetre)"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model,name:base_wua_infrastructure_primary.model_wua_hydraulicsector
+msgid "Entity (hydraulic sector)"
+msgstr "Element (sector hydràulic)"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model,name:base_wua_infrastructure_primary.model_wua_intake
@@ -274,14 +286,27 @@ msgstr "Agrupar per"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_hydraulicsector_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_hydraulicsector_id
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_filteringstation_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_form
 msgid "Hydraulic Sector"
 msgstr "Sector hidràulic"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model,name:base_wua_infrastructure_primary.model_wua_intake_hydraulicsectorlink
+msgid "Hydraulic sector of intake"
+msgstr "Hydraulic sector of intake"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_ids
+msgid "Hydraulic sectors of intake"
+msgstr "Sectors hidràulics de la captació"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_id_11759
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_id_7477
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_id
 msgid "ID"
 msgstr "ID"
@@ -293,7 +318,14 @@ msgid "Identifier"
 msgstr "Identificador"
 
 #. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_name
+msgid "Identifier of hydraulic-sector link"
+msgstr "Identificador de l'enllaç captació-sector"
+
+#. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_filteringstation_active
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_active
+#: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_intake_active
 msgid "If the active field is set to False, it will allow you to hide the register without removing it. For see archived register, go to \"Search-Filters\" in tree view"
 msgstr "Si el camp actiu està com a fals, això li permetrà ocultar el registre sense esborrar-ho. Per veure registres arxivats, anar a \"Buscar-Filtres\" en la vista arbre"
 
@@ -314,8 +346,10 @@ msgstr "Independent"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_intake_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_intake_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_name
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_hydraulicsectorlink_view_search
 msgid "Intake"
 msgstr "Captació"
 
@@ -335,11 +369,19 @@ msgid "Intake code can not be negative."
 msgstr "El codi de la captació no pot ser negatiu."
 
 #. module: base_wua_infrastructure_primary
+#: code:addons/base_wua_infrastructure_primary/models/wua_hydraulicsector.py:27
 #: model:ir.actions.act_window,name:base_wua_infrastructure_primary.wua_intake_action
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_intake_ids
 #: model:ir.ui.menu,name:base_wua_infrastructure_primary.wua_intake_menu
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_hydraulicsector_view_form
+#, python-format
 msgid "Intakes"
 msgstr "Captacions"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_hydraulicsector_hydraulicsectorlink_ids
+msgid "Intakes of hydraulic sector"
+msgstr "Captacions del sector hidràulic"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_intake_ids
@@ -351,6 +393,7 @@ msgstr "Captacions relacionades amb el cabalímetre"
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink___last_update
 msgid "Last Modified on"
 msgstr "Última modificació el "
 
@@ -358,23 +401,40 @@ msgstr "Última modificació el "
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_write_uid
 msgid "Last Updated by"
-msgstr "Darrera Actualització per"
+msgstr "Última actualització per"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_type_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_filteringstation_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_write_date
 msgid "Last Updated on"
-msgstr "Darrera Actualització el"
+msgstr "Última actualització el"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
 #: selection:wua.flowmeter,type:0
 msgid "Level Probe"
 msgstr "Sonda nivell"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_sectors_as_text
+msgid "List of sectors (as text)"
+msgstr "Llista de sectors (com a text)"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_form
+msgid "N. Irrig. Sheds"
+msgstr "N. casetes"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_form
+msgid "N. Water Connec."
+msgstr "N. preses"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_infrastructure_configuration_url_gis_viewer_filteringstation_param
@@ -425,7 +485,17 @@ msgid "Notes about intake"
 msgstr "Notes sobre la captació"
 
 #. module: base_wua_infrastructure_primary
-#: code:addons/base_wua_infrastructure_primary/models/wua_intake.py:162
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_number_of_irrigationsheds
+msgid "Number of irrigation sheds"
+msgstr "Nº casetes"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_intake_hydraulicsectorlink_number_of_waterconnections
+msgid "Number of water connections"
+msgstr "Nº presses"
+
+#. module: base_wua_infrastructure_primary
+#: code:addons/base_wua_infrastructure_primary/models/wua_intake.py:188
 #, python-format
 msgid "Only one intake per flowmeter is allowed."
 msgstr "Només es permet una presa per cabalímetre."
@@ -465,6 +535,17 @@ msgstr "Foto / Imatge"
 #: selection:wua.intake,type:0
 msgid "Pressure"
 msgstr "Pressió"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_hydraulicsectorlink_view_search
+msgid "Search reservoirs"
+msgstr "Search reservoirs"
+
+#. module: base_wua_infrastructure_primary
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_intake_view_tree
+msgid "Sectors"
+msgstr "Sectors"
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.model.fields,field_description:base_wua_infrastructure_primary.field_wua_flowmeter_state
@@ -513,6 +594,11 @@ msgstr "The nominal flow rate of filteringstation"
 #: model:ir.model.fields,help:base_wua_infrastructure_primary.field_wua_flowmeter_nominal_water_flow
 msgid "The nominal flow rate of flow-meter"
 msgstr "El cabal nominal de l'cabalímetre"
+
+#. module: base_wua_infrastructure_primary
+#: sql_constraint:wua.intake.hydraulicsectorlink:0
+msgid "There are repeated hydraulic-sector links."
+msgstr "Hi ha enllaços captació-sector repetits."
 
 #. module: base_wua_infrastructure_primary
 #: model:ir.ui.view,arch_db:base_wua_infrastructure_primary.wua_flowmeter_view_search
