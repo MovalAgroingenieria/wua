@@ -23,6 +23,7 @@
         "views/wua_intake_view.xml",
         "views/wua_filteringstation_view.xml",
         "views/wua_filteringstation_type_view.xml",
+        "views/wua_hydraulicsector_view.xml",
     ],
     "installable": True,
     "application": True,

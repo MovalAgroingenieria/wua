@@ -85,6 +85,15 @@ class WuaIntake(models.Model):
         'hide the register without removing it. For see archived register, ' +
         'go to "Search-Filters" in tree view')
 
+    hydraulicsectorlink_ids = fields.One2many(
+        string='Hydraulic sectors of intake',
+        comodel_name='wua.intake.hydraulicsectorlink',
+        inverse_name='intake_id',)
+
+    sectors_as_text = fields.Char(
+        string='List of sectors (as text)',
+        compute='_compute_sectors_as_text',)
+
     _sql_constraints = [
         ('unique_intake_code',
          'UNIQUE (intake_code)',
@@ -151,6 +160,17 @@ class WuaIntake(models.Model):
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
 
+    @api.multi
+    def _compute_sectors_as_text(self):
+        for record in self:
+            sectors_as_text = ''
+            if record.hydraulicsectorlink_ids:
+                for hydraulicsectorlink in record.hydraulicsectorlink_ids:
+                    sectors_as_text = sectors_as_text + \
+                        hydraulicsectorlink.hydraulicsector_id.name + ', '
+                sectors_as_text = sectors_as_text[:-2]
+            record.sectors_as_text = sectors_as_text
+
     @api.constrains('flowmeter_id')
     def _check_flowmeter_id(self):
         if len(self) == 1:
@@ -185,3 +205,61 @@ class WuaIntake(models.Model):
             parcel_model.create_intake_triggers()
         except Exception:
             pass
+
+
+class WuaIntakeHydraulicsectorlink(models.Model):
+    _name = 'wua.intake.hydraulicsectorlink'
+    _description = 'Hydraulic sector of intake'
+
+    # Size of "name" field, in the model.
+    MAX_SIZE_CODE_INTAKE = 4
+    MAX_SIZE_CODE_HYDRAULICSECTOR = 4
+
+    intake_id = fields.Many2one(
+        string='Intake',
+        comodel_name='wua.intake',
+        required=True,
+        index=True,
+        ondelete='cascade',)
+
+    hydraulicsector_id = fields.Many2one(
+        string='Hydraulic Sector',
+        comodel_name='wua.hydraulicsector',
+        required=True,
+        index=True,
+        ondelete='restrict',)
+
+    name = fields.Char(
+        string='Identifier of hydraulic-sector link',
+        size=MAX_SIZE_CODE_INTAKE + MAX_SIZE_CODE_HYDRAULICSECTOR + 1,
+        store=True,
+        index=True,
+        compute='_compute_name',)
+
+    number_of_irrigationsheds = fields.Integer(
+        string='Number of irrigation sheds',
+        related='hydraulicsector_id.number_of_irrigationsheds',)
+
+    number_of_waterconnections = fields.Integer(
+        string='Number of water connections',
+        related='hydraulicsector_id.number_of_waterconnections',)
+
+    _sql_constraints = [
+        ('name_unique',
+         'UNIQUE (name)',
+         'There are repeated hydraulic-sector links.'),
+        ]
+
+    @api.depends('intake_id',
+                 'intake_id.intake_code',
+                 'hydraulicsector_id',
+                 'hydraulicsector_id.hydraulicsector_code')
+    def _compute_name(self):
+        for record in self:
+            name = ''
+            if record.intake_id and record.hydraulicsector_id:
+                name = str(record.intake_id.intake_code).zfill(
+                    self.MAX_SIZE_CODE_INTAKE) + '-' + \
+                    str(record.hydraulicsector_id.hydraulicsector_code).zfill(
+                        self.MAX_SIZE_CODE_HYDRAULICSECTOR)
+            record.name = name

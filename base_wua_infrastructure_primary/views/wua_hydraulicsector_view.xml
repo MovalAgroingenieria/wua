@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_hydraulicsector_view_form" model="ir.ui.view">
+        <field name="name">Hydraulic Sectors (form view)</field>
+        <field name="model">wua.hydraulicsector</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_hydraulicsector_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button" position="after">
+                <button name="action_show_intakes"
+                        type="object"
+                        class="oe_stat_button"
+                        string="Intakes"
+                        icon="fa-tint"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_intake_hydraulicsectorlink_view_tree" model="ir.ui.view">
+        <field name="name">Intakes of hydraulic-sector link (tree view)</field>
+        <field name="model">wua.intake.hydraulicsectorlink</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false">
+                <field name="intake_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_intake_hydraulicsectorlink_view_search" model="ir.ui.view">
+        <field name="name">Intakes of hydraulic-sector link (search view)</field>
+        <field name="model">wua.intake.hydraulicsectorlink</field>
+        <field name="arch" type="xml">
+            <search string="Search reservoirs">
+                <field name="intake_id" string="Intake"/>
+            </search>
+        </field>
+    </record>
+
+</odoo>

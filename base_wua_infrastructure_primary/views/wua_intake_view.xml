@@ -37,6 +37,20 @@
                     </group>
                     <group name="slave_data">
                         <notebook name="slave_data_notebook">
+                            <page name="page_hydraulicsectors" string="Sectors">
+                                <field name="hydraulicsectorlink_ids" nolabel="1">
+                                    <tree editable="bottom"
+                                          class="o_intake_hydraulicsectorlink">
+                                        <field name="hydraulicsector_id"
+                                            string="Hydraulic Sector"
+                                            options="{'no_quick_create': True, 'no_create_edit': True}"/>
+                                        <field name="number_of_irrigationsheds"
+                                            string="N. Irrig. Sheds"/>
+                                        <field name="number_of_waterconnections"
+                                            string="N. Water Connec."/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
                             </page>
@@ -64,6 +78,8 @@
                 <field name="type"/>
                 <field name="category"/>
                 <field name="flowmeter_id"/>
+                <field name="sectors_as_text"
+                       string="Sectors"/>
             </tree>
         </field>
     </record>
