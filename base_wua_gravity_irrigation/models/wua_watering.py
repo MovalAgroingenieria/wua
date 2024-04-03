@@ -18,7 +18,7 @@ class WuaWatering(models.Model):
     MAX_SIZE_IRRIGATIONDITCH_CODE = 4
     MAX_SIZE_NUMBER = 4
     MAX_SIZE_NAME = 12 + MAX_SIZE_IRRIGATIONDITCH_CODE + MAX_SIZE_NUMBER
-    MAX_SIZE_DESCRIPTION = 75
+    MAX_SIZE_DESCRIPTION = 255
 
     def _default_calculation_model(self):
         resp = 3
@@ -87,6 +87,11 @@ class WuaWatering(models.Model):
         compute='_compute_name',
         index=True)
 
+    description = fields.Char(
+        string='Description',
+        size=MAX_SIZE_DESCRIPTION,
+        index=True)
+
     calculation_model = fields.Selection([
         (1, 'Constant Irrigation Allocation'),
         (2, 'Only on Request'),
@@ -95,8 +100,9 @@ class WuaWatering(models.Model):
         required=True,
         default=_default_calculation_model)
 
-    wateringtime_perunitarea = fields.Integer(
+    wateringtime_perunitarea = fields.Float(
         string='Water. Min./Area U.',
+        digits=(32, 4),
         required=True,
         default=_default_wateringtime_perunitarea)
 
@@ -414,7 +420,6 @@ class WuaWatering(models.Model):
 
     @api.multi
     def _compute_allow_select(self):
-        allow_select = False
         allow_select = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'watering_allow_open_period')
         for record in self:

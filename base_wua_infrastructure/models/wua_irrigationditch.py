@@ -56,8 +56,9 @@ class WuaIrrigationditch(models.Model):
         default=0,
         required=True)
 
-    wateringduration_area_ratio = fields.Integer(
+    wateringduration_area_ratio = fields.Float(
         string='Watering Duration x Area Ratio (min)',
+        digits=(32, 4),
         default=0,
         required=True)
 

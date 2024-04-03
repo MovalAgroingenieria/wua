@@ -34,8 +34,9 @@ class WuaIrrigationConfiguration(models.TransientModel):
         default='undefined',
         help='When create a new water meter, default type')
 
-    default_wateringtime_perunitarea = fields.Integer(
+    default_wateringtime_perunitarea = fields.Float(
         string='Watering Min./Area U.',
+        digits=(32, 4),
         default=0,
         help='Default watering time per area unit '
              '(if the chosen irrigation ditch does not have this value)')
