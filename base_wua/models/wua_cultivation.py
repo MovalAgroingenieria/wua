@@ -32,6 +32,9 @@ class WuaCultivation(models.Model):
 
     notes = fields.Html(string='Notes')
 
+    active = fields.Boolean(
+        default=True, )
+
     @api.multi
     def _compute_number_of_varieties(self):
         for record in self:

@@ -16,8 +16,19 @@
         <field name="name">Cultivations (form view)</field>
         <field name="model">wua.cultivation</field>
         <field name="arch" type="xml">
+            <field name="active" invisible="1"/>
             <form duplicate="0">
                 <div name="buttons" class="oe_button_box">
+                    <button name="toggle_active"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-archive"
+                            confirm="Are you sure you want to toggle visibility?"
+                            groups="base_wua.group_wua_user">
+                            <field name="active"
+                                   widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                    </button>
                     <button name="%(wua_cultivation_subparcel_action)d"
                             type="action"
                             class="oe_stat_button"
@@ -70,6 +81,9 @@
             <search>
                 <field name="name"/>
                 <field name="description"/>
+                <filter name="inactive"
+                        string="Archived"
+                        domain="[('active', '=', False)]"/>
             </search>
         </field>
     </record>
