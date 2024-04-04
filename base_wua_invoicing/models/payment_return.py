@@ -27,7 +27,8 @@ class PaymentReturn(models.Model):
             move_amount = self._get_move_amount(return_line)
             move_line2 = self.env['account.move.line'].with_context(
                 check_move_validity=False).create({
-                    'name': move.ref + u" " + return_line.reason_id.name,
+                    'name': move.ref + u" " + (
+                        return_line.reason_id.name or u''),
                     'debit': move_amount,
                     'credit': 0.0,
                     'account_id': return_line.move_line_ids[0].account_id.id,
@@ -47,7 +48,8 @@ class PaymentReturn(models.Model):
             if return_line.expense_amount:
                 expense_lines_vals = []
                 expense_lines_vals.append({
-                    'name': move.ref + u" " + return_line.reason_id.name,
+                    'name': move.ref + u" " + (
+                        return_line.reason_id.name or u''),
                     'move_id': move.id,
                     'debit': 0.0,
                     'credit': return_line.expense_amount,
@@ -58,7 +60,8 @@ class PaymentReturn(models.Model):
                 expense_lines_vals.append({
                     'move_id': move.id,
                     'debit': return_line.expense_amount,
-                    'name': move.ref + u" " + return_line.reason_id.name,
+                    'name': move.ref + u" " + (
+                        return_line.reason_id.name or u''),
                     'credit': 0.0,
                     'partner_id': return_line.expense_partner_id.id,
                     'account_id': return_line.expense_account.id,
@@ -70,7 +73,8 @@ class PaymentReturn(models.Model):
             for extra_line_vals in extra_lines_vals:
                 move_line_obj.create(extra_line_vals)
         move_line_obj.create({
-            'name': move.ref + u" " + return_line.reason_id.name,
+            'name': move.ref + u" " + (
+                return_line.reason_id.name or u''),
             'debit': 0.0,
             'credit': total_amount,
             'account_id': self.journal_id.default_credit_account_id.id,
