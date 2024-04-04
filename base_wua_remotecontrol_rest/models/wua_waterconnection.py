@@ -319,7 +319,7 @@ class WuaWaterconnection(models.Model):
             '</span><span>' + label_valve_scheduled + \
             '</span><span style="color: ' + valve_state_color + '">' + \
             label_valve_state + ' ' + valve_state + '</span>' + '</div>'
-        resp = '<div class="panel-body text-left" ' + \
+        resp = '<div class="panel-body-wua text-left" ' + \
                'style="' + \
                'color: ' + info_color + ';">' + \
                body + '</div>'
