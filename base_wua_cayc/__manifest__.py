@@ -16,7 +16,6 @@
     ],
     "data": [
         "views/res_company_view.xml",
-        "views/wua_parcel_view.xml",
     ],
     "installable": True,
     "application": False,
