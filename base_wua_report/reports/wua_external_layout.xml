@@ -92,142 +92,73 @@
     <template id="external_layout_header">
         <div class="header">
             <div class="row">
-                <!-- Header for Vendor Bills -->
-                <t t-if="docs and docs[0]._name == 'account.invoice' and (o.type == 'in_invoice' or o.type == 'in_refund')">
-                    <div class="col-xs-2">
-                        <img t-if="o.partner_id.image" t-att-src="'data:image/png;base64,%s' % o.partner_id.image"
-                            style="max-height: 130px; max-width: 130px; margin-top: 4px; margin-bottom: 4px; margin-left: 4px;"/>
-                    </div>
-                    <div class="col-xs-9" style="margin-bottom: 6px;">
-                        <div name="vendor_address">
-                            <t t-if="o.partner_id.display_name">
-                                <li style="list-style:none; margin-bottom: 6px;">
-                                    <strong><span t-field="o.partner_id.display_name"/></strong>
-                                </li>
-                            </t>
-                            <t t-if="o.partner_id.vat">
-                                <!-- The two first chars are sliced -->
-                                <t t-set="mod_vat" t-value="o.partner_id.vat[2:]"/>
-                                <li style="list-style:none;">TIN: <span t-esc="mod_vat"/></li>
-                            </t>
-                            <t t-if="o.partner_id.street or o.partner_id.street2">
-                                <li style="list-style:none;">
-                                    <span t-field="o.partner_id.street"/>
-                                    <t t-if="o.partner_id.street2">
-                                        <span t-field="o.partner_id.street2"/>
-                                    </t>
-                                    <t t-if="o.partner_id.city">
-                                        <span t-field="o.partner_id.city"/>
-                                    </t>
-                                    <t t-if="o.partner_id.zip">
-                                        <span t-field="o.partner_id.zip"/>
-                                    </t>
-                                    <t t-if="o.partner_id.state_id">
-                                        <span t-field="o.partner_id.state_id"/>
-                                    </t>
-                                    <t t-if="o.partner_id.country_id">
-                                        <span t-field="o.partner_id.country_id"/>
-                                    </t>
-                                </li>
-                            </t>
+                <div class="col-xs-2">
+                    <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
+                        style="max-height: 130px; max-width: 130px; margin-top: 4px; margin-bottom: 4px; margin-left: 4px;"/>
+                </div>
+                <div class="col-xs-9" style="margin-bottom: 6px;">
+                    <div name="company_address">
+                        <t t-set="company" t-value="company.sudo()"/>
+                        <t t-if="company.name">
+                            <li style="list-style:none; margin-bottom: 6px;">
+                                <strong><span t-field="company.name"/></strong>
+                            </li>
+                        </t>
+                        <t t-if="company.vat">
+                            <!-- The two first chars are sliced -->
+                            <t t-set="mod_vat" t-value="company.vat[2:]"/>
+                            <li style="list-style:none;">TIN: <span t-esc="mod_vat"/></li>
+                        </t>
+                        <t t-if="company.street or company.street2">
+                            <li style="list-style:none;">
+                                <span t-field="company.street"/>
+                                <t t-if="company.street2">
+                                    <span t-field="company.street2"/>
+                                </t>
+                                <t t-if="company.city">
+                                    <span t-field="company.city"/>
+                                </t>
+                                <t t-if="company.zip">
+                                    <span t-field="company.zip"/>
+                                </t>
+                                <t t-if="company.state_id">
+                                    <span t-field="company.state_id"/>
+                                </t>
+                                <t t-if="company.country_id">
+                                    <span t-field="company.country_id"/>
+                                </t>
+                            </li>
+                        </t>
+                        <t t-if="company.partner_id">
                             <li style="list-style:none; margin-left: 2px; width: 100%;">
-                                <t t-if="o.partner_id.email">
+                                <t t-if="company.partner_id.email">
                                     <span class="fa fa-envelope theme-report-color" style="display: inline;">
-                                        <t t-set="email" t-value="o.partner_id.email"/>
+                                        <t t-set="email" t-value="company.sudo().partner_id.email"/>
                                         <a style="color: black;" href="mailto:email">
                                             <span style="font-size: 13px;" t-esc="email"/>
                                         </a>
                                     </span><br/>
                                 </t>
-                                <t t-if="o.partner_id.website">
+                                <t t-if="company.partner_id.website">
                                     <span class="fa fa-globe theme-report-color" style="display: inline;">
-                                        <t t-set="website" t-value="o.partner_id.website"/>
+                                        <t t-set="website" t-value="company.sudo().partner_id.website"/>
                                         <a class="theme-report-color" href="website">
                                             <span style="font-size: 13px;" t-esc="website"/>
                                         </a>
                                     </span><br/>
                                 </t>
-                                <t t-if="o.partner_id.phone">
+                                <t t-if="company.partner_id.phone">
                                     <span class="fa fa-phone theme-report-color" style="display: inline;">
-                                        <t t-set="phone" t-value="o.partner_id.phone"/>
+                                        <t t-set="phone" t-value="company.sudo().partner_id.phone"/>
                                         <a style="color: black;" href="callto:phone">
                                             <span style="font-size: 13px;" t-esc="phone"/>
                                         </a>
                                     </span><br/>
                                 </t>
                             </li>
-                        </div>
+                        </t>
                     </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-2">
-                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
-                            style="max-height: 130px; max-width: 130px; margin-top: 4px; margin-bottom: 4px; margin-left: 4px;"/>
-                    </div>
-                    <div class="col-xs-9" style="margin-bottom: 6px;">
-                        <div name="company_address">
-                            <t t-set="company" t-value="company.sudo()"/>
-                            <t t-if="company.name">
-                                <li style="list-style:none; margin-bottom: 6px;">
-                                    <strong><span t-field="company.name"/></strong>
-                                </li>
-                            </t>
-                            <t t-if="company.vat">
-                                <!-- The two first chars are sliced -->
-                                <t t-set="mod_vat" t-value="company.vat[2:]"/>
-                                <li style="list-style:none;">TIN: <span t-esc="mod_vat"/></li>
-                            </t>
-                            <t t-if="company.street or company.street2">
-                                <li style="list-style:none;">
-                                    <span t-field="company.street"/>
-                                    <t t-if="company.street2">
-                                        <span t-field="company.street2"/>
-                                    </t>
-                                    <t t-if="company.city">
-                                        <span t-field="company.city"/>
-                                    </t>
-                                    <t t-if="company.zip">
-                                        <span t-field="company.zip"/>
-                                    </t>
-                                    <t t-if="company.state_id">
-                                        <span t-field="company.state_id"/>
-                                    </t>
-                                    <t t-if="company.country_id">
-                                        <span t-field="company.country_id"/>
-                                    </t>
-                                </li>
-                            </t>
-                            <t t-if="company.partner_id">
-                                <li style="list-style:none; margin-left: 2px; width: 100%;">
-                                    <t t-if="company.partner_id.email">
-                                        <span class="fa fa-envelope theme-report-color" style="display: inline;">
-                                            <t t-set="email" t-value="company.sudo().partner_id.email"/>
-                                            <a style="color: black;" href="mailto:email">
-                                                <span style="font-size: 13px;" t-esc="email"/>
-                                            </a>
-                                        </span><br/>
-                                    </t>
-                                    <t t-if="company.partner_id.website">
-                                        <span class="fa fa-globe theme-report-color" style="display: inline;">
-                                            <t t-set="website" t-value="company.sudo().partner_id.website"/>
-                                            <a class="theme-report-color" href="website">
-                                                <span style="font-size: 13px;" t-esc="website"/>
-                                            </a>
-                                        </span><br/>
-                                    </t>
-                                    <t t-if="company.partner_id.phone">
-                                        <span class="fa fa-phone theme-report-color" style="display: inline;">
-                                            <t t-set="phone" t-value="company.sudo().partner_id.phone"/>
-                                            <a style="color: black;" href="callto:phone">
-                                                <span style="font-size: 13px;" t-esc="phone"/>
-                                            </a>
-                                        </span><br/>
-                                    </t>
-                                </li>
-                            </t>
-                        </div>
-                    </div>
-                </t>
+                </div>
                 <div class="col-xs-1" name="part3">
                     <!-- This subdivision is the anchor for picking operations barcode insert -->
                 </div>
