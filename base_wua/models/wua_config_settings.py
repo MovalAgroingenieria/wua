@@ -175,6 +175,15 @@ class WuaConfiguration(models.TransientModel):
         help='For public creation of SHP Parcels based on HTTP-GET '
              'requests, restriction to clientes from a IP address')
 
+    additional_shp_file_ids = fields.Many2many(
+        comodel_name='ir.attachment',
+        relation='wua_configuration_attachment_rel',
+        column1='configuration_id',
+        column2='attachment_id',
+        string='SHP Attachments',
+        domain=[('for_shp_generation', '=', True)],
+    )
+
     concessions_required = fields.Boolean(
         string='Some Concession required',
         default=False,
@@ -287,6 +296,8 @@ class WuaConfiguration(models.TransientModel):
                            self.reports_consent_clauses)
         values.set_default('wua.configuration', 'ip_remote_address_for_shp',
                            self.ip_remote_address_for_shp)
+        values.set_default('wua.configuration', 'additional_shp_file_ids',
+                           self.additional_shp_file_ids.ids)
         values.set_default('wua.configuration', 'leased_dates_required',
                            self.leased_dates_required)
         values.set_default('wua.configuration', 'notice_leased_days',
@@ -341,3 +352,15 @@ class WuaConfiguration(models.TransientModel):
                 self.env.invalidate_all()
             except Exception:
                 self.env.cr.rollback()
+
+    @api.model
+    def get_default_values(self, fields):
+        IrValues = self.env['ir.values'].sudo()
+        shp_file_ids = IrValues.get_default(
+            'wua.configuration', 'additional_shp_file_ids')
+        lines = False
+        if shp_file_ids:
+            lines = [(6, 0, shp_file_ids)]
+        return {
+            'additional_shp_file_ids': lines,
+        }

@@ -11,6 +11,7 @@ import base64
 import logging
 import requests
 import json
+import zipfile
 from pyproj import Proj, transform
 from PIL import Image, ImageDraw, ImageFont
 from lxml import etree
@@ -1708,12 +1709,38 @@ class WuaParcel(models.Model):
             # Added to make sure some parcels are stored
             self.env.cr.commit()
 
-    def _process_zip_shp_result(self, parcel_shp, partner_id):
+    def _process_zip_shp_result(
+            self, parcel_shp, partner_id=None, from_certificate=False):
+        additional_shp_file_ids = self.env['ir.values'].get_default(
+            'wua.configuration', 'additional_shp_file_ids')
+        processed_zip = parcel_shp
+        if (additional_shp_file_ids and len(additional_shp_file_ids) > 0):
+            zip_modificated = io.BytesIO()
+            zip_ok = False
+            with zipfile.ZipFile(
+                    zip_modificated, "a", zipfile.ZIP_STORED, False) as \
+                    new_zfile:
+                old_zfile = zipfile.ZipFile(
+                    parcel_shp, "a", zipfile.ZIP_STORED, False)
+                if len(old_zfile.filelist) > 0:
+                    zip_ok = True
+                    # Add old files to new ZIP
+                    for file_info in old_zfile.infolist():
+                        with old_zfile.open(file_info) as source_file:
+                            new_zfile.writestr(file_info, source_file.read())
+                    # Add new attachments to new ZIP
+                    additional_shp_file_ids = self.env['ir.attachment'].browse(
+                        additional_shp_file_ids)
+                    for attachment in additional_shp_file_ids:
+                        file_content = base64.b64decode(attachment.datas)
+                        new_zfile.writestr(attachment.name, file_content)
+            if (zip_ok):
+                processed_zip = zip_modificated
         # HOOK: To be inherited by children
-        return parcel_shp
+        return processed_zip
 
     @api.multi
-    def generate_parcel_shp(self, partner_id=None):
+    def generate_parcel_shp(self, partner_id=None, from_certificate=False):
         url_gis_viewer_wfs = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_wfs')
         if (not url_gis_viewer_wfs):
