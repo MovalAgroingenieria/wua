@@ -15,7 +15,6 @@
         "base_wua_infrastructure_gravity_hierarchy",
     ],
     "data": [
-        "views/wua_parcel_view.xml",
     ],
     "installable": True,
     "application": False,

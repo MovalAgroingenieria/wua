@@ -7,7 +7,6 @@ class WuaParcel(models.Model):
     intake_id = fields.Many2one(
         string="Intake",
         comodel_name='wua.intake',
-        index=True,
         store=True,
         compute="_compute_intake_id")
 
