@@ -5,12 +5,20 @@
 import pytz
 import datetime
 import requests
+import logging
 import json
-from odoo import models, _
+from odoo import models, api, fields, _
 
 
 class WuaWaterconnectionTelecontrol(models.Model):
     _inherit = 'wua.waterconnection.telecontrol'
+
+    valve_state = fields.Selection([
+        ('00', 'Cut Blocked'),
+        ('01', 'Blocked'),
+        ('02', 'Cut'),
+        ('03', 'Enabled')
+    ], string='Valve State')
 
     FACTOR_CONVERSION_M3H_LS = 3.6
 
@@ -64,6 +72,15 @@ class WuaWaterconnectionTelecontrol(models.Model):
                 others_wc_info[1] += ' - ' + error_message
         return others_wc_info
 
+    def map_valve_state_to_selection(self, value):
+        mapping = {
+            1: '00',
+            2: '01',
+            3: '02',
+            4: '03'
+        }
+        return mapping.get(value, False)
+
     # Hook
     def import_waterconnection_telecontrol_info_batchline(
             self, url_remotecontrol_rest, url_remotecontrol_rest_username,
@@ -90,6 +107,8 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         waterflow = wc_info['Caudal']
                         valve_open = wc_info['ValvulaAbierta']
                         valve_scheduled = wc_info['ModoAuto']
+                        valve_state = self.map_valve_state_to_selection(
+                            wc_info['EstadoValvula'])
                         valve_error = False
                         valve_error_msg = ''
                         watermeter_error = False
@@ -108,6 +127,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             'waterflow': waterflow / self.FACTOR_CONVERSION_M3H_LS,
                             'valve_open': valve_open,
                             'valve_scheduled': valve_scheduled,
+                            'valve_state': valve_state,
                             'data_time': data_time,
                             'valve_error': valve_error,
                             'valve_error_msg': valve_error_msg,
@@ -121,3 +141,93 @@ class WuaWaterconnectionTelecontrol(models.Model):
         except Exception as e:
             error_message = u'Batchline error:\n\n' + str(e) + '\n\n'
         return [wc_all_info, error_message]
+
+    @api.model
+    def create(self, vals):
+        telecontrol_info = super(WuaWaterconnectionTelecontrol, self).\
+            create(vals)
+        telecontrol_info.waterconnection_id.write({
+            'last_data_time': telecontrol_info.data_time,
+            'last_total_volume': telecontrol_info.total_volume,
+            'last_waterflow': telecontrol_info.waterflow,
+            'last_valve_open': telecontrol_info.valve_open,
+            'last_valve_scheduled': telecontrol_info.valve_scheduled,
+            'last_valve_state': telecontrol_info.valve_state,
+            'last_valve_error': telecontrol_info.valve_error,
+            'last_valve_error_msg': telecontrol_info.valve_error_msg,
+            'last_watermeter_error': telecontrol_info.watermeter_error,
+            'last_watermeter_error_msg': telecontrol_info.watermeter_error_msg,
+        })
+        return telecontrol_info
+
+    def refine_waterconnection_telecontrol_info(self, wc_info):
+        resp = []
+        waterconnections = self.env['wua.waterconnection']
+        for info in wc_info:
+            filtered_waterconnection = waterconnections.search(
+                [('name', '=', info['waterconnection'])])
+            if filtered_waterconnection:
+                waterconnection = filtered_waterconnection[0]
+                conversion_factor = waterconnection.conversion_factor
+                valve_error_msg = info['valve_error_msg']
+                if valve_error_msg in self.PRETTY_ERROR_VALVE_DICT:
+                    valve_error_msg = self.PRETTY_ERROR_VALVE_DICT[
+                        valve_error_msg]
+                watermeter_error_msg = info['watermeter_error_msg']
+                if watermeter_error_msg in self.PRETTY_ERROR_WATERMETER_DICT:
+                    watermeter_error_msg = self.PRETTY_ERROR_WATERMETER_DICT[
+                        watermeter_error_msg]
+                refined_wc_info = {
+                    'waterconnection_id': waterconnection.id,
+                    'valve_open': info['valve_open'],
+                    'valve_scheduled': info['valve_scheduled'],
+                    'valve_state': info['valve_state'],
+                    'valve_error': info['valve_error'],
+                    'valve_error_msg': valve_error_msg,
+                    'watermeter_error': info['watermeter_error'],
+                    'watermeter_error_msg': watermeter_error_msg,
+                    'total_volume': info['total_volume'],
+                    'waterflow': info['waterflow'] / conversion_factor,
+                    'data_time': info['data_time'],
+                    }
+                resp.append(refined_wc_info)
+        return resp
+
+    def save_waterconnection_telecontrol_info(self, wc_info,
+                                              update_log=True):
+        number_of_wc_info = len(wc_info)
+        if number_of_wc_info > 0:
+            for info in wc_info:
+                wc = self.env['wua.waterconnection'].browse(
+                    info['waterconnection_id'])
+                waterconnection_telecontrol_params = {
+                    'data_time': info['data_time'],
+                    'total_volume': info['total_volume'],
+                    'waterflow': info['waterflow'],
+                    'valve_open': info['valve_open'],
+                    'valve_scheduled': info['valve_scheduled'],
+                    'valve_state': info['valve_state'],
+                    'valve_error': info['valve_error'],
+                    'valve_error_msg': info['valve_error_msg'],
+                    'watermeter_error': info['watermeter_error'],
+                    'watermeter_error_msg': info['watermeter_error_msg'],
+                    'waterconnection_id': info['waterconnection_id'],
+                }
+                if (wc.telecontrol_ids and len(wc.telecontrol_ids) > 0):
+                    newest_info = wc.telecontrol_ids[-1]
+                    if (newest_info.data_time < info['data_time']):
+                        # WHILE For the case when MAX_COUNT_HIST get lower than
+                        # current data
+                        while (wc.telecontrol_ids and
+                                len(wc.telecontrol_ids) >=
+                                self.MAX_COUNT_HIST):
+                            # Unlink the last one
+                            wc.telecontrol_ids[0].unlink()
+                        self.create(waterconnection_telecontrol_params)
+                else:
+                    self.create(waterconnection_telecontrol_params)
+            if update_log:
+                _logger = logging.getLogger(self.__class__.__name__)
+                _logger.info(_('Remote Control: Saved Waterconnection'
+                               'Telecontrol Info') + '... ' +
+                             str(number_of_wc_info))
