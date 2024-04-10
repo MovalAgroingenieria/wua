@@ -17,6 +17,7 @@
     ],
     "data": [
         'data/product_category_data.xml',
+        'data/wua_invoicing_config_settings_data.xml',
         "security/ir.model.access.csv",
         'reports/report_wua_irrigationreport.xml',
         'views/resources.xml',

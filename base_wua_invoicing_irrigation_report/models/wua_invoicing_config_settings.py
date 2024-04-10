@@ -28,6 +28,12 @@ class WuaInvoicingConfiguration(models.TransientModel):
              'invoicing the irrigation reports can be setted directly on '
              'the partner')
 
+    irrigationreport_invoice_other_product = fields.Boolean(
+        string='Irrigation reports invoiced by any product',
+        default=False,
+        help='If enabled, the irrigationreport can be invoiced by any '
+             'product')
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -41,3 +47,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'irrigationreport_separate_invoicing',
                            self.irrigationreport_separate_invoicing)
+        values.set_default('wua.invoicing.configuration',
+                           'irrigationreport_invoice_other_product',
+                           self.irrigationreport_invoice_other_product)

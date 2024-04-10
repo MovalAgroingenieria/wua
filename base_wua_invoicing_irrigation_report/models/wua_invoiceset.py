@@ -300,11 +300,20 @@ class WuaInvoicesetLine(models.Model):
             super(WuaInvoicesetLine, self).populate_items_select()
 
     def populate_items_select_irrigationreport(self, product_id):
+        product_condition = ''
+        product_can_be_different = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'irrigationreport_invoice_other_product')
+        ireport_domain = [
+            ('of_active_agriculturalseason', '=', True),
+            ('is_validated', '=', True),
+            ('invoiced', '=', False),
+        ]
+        if (not product_can_be_different):
+            product_condition = ' AND i.product_id=' + str(product_id)
+            ireport_domain.append(('product_id.id', '=', product_id))
         irrigationreports = self.env['wua.irrigationreport'].search(
-            [('of_active_agriculturalseason', '=', True),
-             ('is_validated', '=', True),
-             ('invoiced', '=', False),
-             ('product_id.id', '=', product_id)])
+            ireport_domain)
         if irrigationreports:
             user_id = self.env.user.id
             invoicesetline_id = self.id
@@ -322,9 +331,8 @@ class WuaInvoicesetLine(models.Model):
                 i.product_id,i.partner_id,i.volume_real
                 FROM wua_irrigationreport i INNER JOIN wua_agriculturalseason a
                 ON i.agriculturalseason_id = a.id WHERE i.is_validated AND
-                a.active_agriculturalseason AND i.invoiced=FALSE AND
-                i.product_id=%s""", (user_id, user_id, invoicesetline_id,
-                                     product_id))
+                a.active_agriculturalseason AND i.invoiced=FALSE
+                """ + product_condition, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True

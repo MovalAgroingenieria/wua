@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-21 09:51+0000\n"
-"PO-Revision-Date: 2023-06-21 09:51+0000\n"
+"POT-Creation-Date: 2024-04-10 13:31+0000\n"
+"PO-Revision-Date: 2024-04-10 13:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -114,7 +114,7 @@ msgstr "Element (categoria de productes)"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_product_template
 msgid "Entity (WUA Product Template)"
-msgstr "Entity (WUA Product Template)"
+msgstr "Element (WUA Product Template)"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_intake
@@ -124,7 +124,7 @@ msgstr "Element (captació)"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_invoiceset
 msgid "Entity (invoice set)"
-msgstr "Entity (invoice set)"
+msgstr "Element (lot)"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_invoiceset_line
@@ -132,7 +132,7 @@ msgid "Entity (line of a WUA invoice set)"
 msgstr "Element (línia de lot de factures)"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:333
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:341
 #, python-format
 msgid "Error when updating records."
 msgstr "Error actualitzant el registre."
@@ -156,6 +156,11 @@ msgstr "Si està actiu, els lots de factures generaran una factura per cada part
 #: model:ir.model.fields,help:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_irrigationreport_readings_data_in_detail
 msgid "If enabled, the detail lines generated for irrigation reports with the time not in hours will show the initial and the final reading value"
 msgstr "Si està habilitat, les línies de detall generades per als informes de reg amb el temps no en hores mostraran el valor de lectura inicial i final"
+
+#. module: base_wua_invoicing_irrigation_report
+#: model:ir.model.fields,help:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_irrigationreport_invoice_other_product
+msgid "If enabled, the irrigationreport can be invoiced by any product"
+msgstr "Si està actiu, els informes de reg poden ser facturats per qualsevol producte"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,help:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_irrigationreport_separate_invoicing
@@ -227,7 +232,7 @@ msgid "Invoicing of Irrigation Reports"
 msgstr "Facturació de parts de reg"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:345
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_invoiceset.py:353
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_account_invoice_line_irrigationreport_id
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_irrigationreport_id
 #, python-format
@@ -268,6 +273,11 @@ msgstr "Part de reg: Mandat obligatori"
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_res_users_irrigationreport_payment_mode_id
 msgid "Irrigation report: Payment Mode"
 msgstr "Part de reg: Mode de pagament"
+
+#. module: base_wua_invoicing_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_irrigationreport_invoice_other_product
+msgid "Irrigation reports invoiced by any product"
+msgstr "Parts de reg facturats per qualsevol producte"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_invoiceset_line_irrigationreport
@@ -322,7 +332,7 @@ msgstr "Información de lectura en línea de detalle"
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_volume_real
 msgid "Real Volume (m³)"
-msgstr "Real Volume (m³)"
+msgstr "Volum real (m³)"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.actions.server,name:base_wua_invoicing_irrigation_report.wua_remove_irrigationreport_to_invoiceset
@@ -408,5 +418,5 @@ msgstr "albarà nº "
 #. module: base_wua_invoicing_irrigation_report
 #: model:product.uom,name:base_wua_invoicing_irrigation_report.product_uom_m3
 msgid "m3"
-msgstr "m3"
+msgstr "m³"
 
