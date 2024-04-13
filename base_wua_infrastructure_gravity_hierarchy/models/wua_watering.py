@@ -38,7 +38,7 @@ class WuaWatering(models.Model):
                     else:
                         resp_item = (item_01, item_02, item_03)
                         resp.append(resp_item)
-            if (resp and condition_irrigationditch_id and
+            if (condition_irrigationditch_id and
                condition_main_irrigationditch_id):
                 resp.append('|')
                 resp.append(condition_irrigationditch_id)
