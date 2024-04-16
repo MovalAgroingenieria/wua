@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-27 10:28+0000\n"
-"PO-Revision-Date: 2024-02-27 10:28+0000\n"
+"POT-Creation-Date: 2024-04-16 13:59+0000\n"
+"PO-Revision-Date: 2024-04-16 13:59+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -299,6 +299,11 @@ msgid "Cancelled Invoice"
 msgstr "Cancelled Invoice"
 
 #. module: base_wua_invoicing
+#: model:product.template,name:base_wua_invoicing.product_03
+msgid "Canon (ha)"
+msgstr "Canon (ha)"
+
+#. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_line_categ_id
 msgid "Category"
 msgstr "Category"
@@ -441,11 +446,6 @@ msgid "Default type for invoice set code"
 msgstr "Default type for invoice set code"
 
 #. module: base_wua_invoicing
-#: model:product.template,name:base_wua_invoicing.product_03
-msgid "Derrama Modernización"
-msgstr "Derrama Modernización"
-
-#. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_description
 msgid "Description"
 msgstr "Description"
@@ -564,6 +564,13 @@ msgid "Farm Property"
 msgstr "Farm Property"
 
 #. module: base_wua_invoicing
+#: selection:product.category,linkable_unit_type:0
+#: selection:product.template,linkable_unit_type:0
+#: selection:wua.invoiceset.line,linkable_unit_type:0
+msgid "Fixed Surcharge"
+msgstr "Fixed Surcharge"
+
+#. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_view_search
 #: selection:wua.invoiceset,state:0
 msgid "Generated"
@@ -615,13 +622,6 @@ msgstr "Hydraulic Order"
 #: model:ir.ui.view,arch_db:base_wua_invoicing.wua_invoiceset_line_waterconnection_view_search
 msgid "Hydraulic Sector"
 msgstr "Hydraulic Sector"
-
-#. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Hydricmovement"
-msgstr "Hydricmovement"
 
 #. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_account_invoice_tag_id
@@ -1111,11 +1111,6 @@ msgid "None"
 msgstr "None"
 
 #. module: base_wua_invoicing
-#: model:product.template,name:base_wua_invoicing.product_03
-msgid "Normal Contrib/hec"
-msgstr "Normal Contrib/hec"
-
-#. module: base_wua_invoicing
 #: model:product.template,name:base_wua_invoicing.product_01
 msgid "Normal Parcel Pay"
 msgstr "Normal Parcel Pay"
@@ -1231,11 +1226,6 @@ msgstr "Parcel Tags"
 #, python-format
 msgid "Parcels"
 msgstr "Parcels"
-
-#. module: base_wua_invoicing
-#: model:ir.model,name:base_wua_invoicing.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcels (integrated GIS)"
 
 #. module: base_wua_invoicing
 #: model:ir.model,name:base_wua_invoicing.model_wua_invoiceset_line_parcel
@@ -1459,13 +1449,6 @@ msgid "State"
 msgstr "State"
 
 #. module: base_wua_invoicing
-#: selection:product.category,linkable_unit_type:0
-#: selection:product.template,linkable_unit_type:0
-#: selection:wua.invoiceset.line,linkable_unit_type:0
-msgid "Tank Consumptions"
-msgstr "Tank Consumptions"
-
-#. module: base_wua_invoicing
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_taxes_id
 msgid "Tax Types"
 msgstr "Tax Types"
@@ -1529,6 +1512,20 @@ msgstr "Totals"
 #: model:ir.model.fields,field_description:base_wua_invoicing.field_wua_invoiceset_line_price_unit
 msgid "Unit Price"
 msgstr "Unit Price"
+
+#. module: base_wua_invoicing
+#: selection:product.category,linkable_unit_type:0
+#: selection:product.template,linkable_unit_type:0
+#: selection:wua.invoiceset.line,linkable_unit_type:0
+msgid "Variable Surcharge"
+msgstr "Variable Surcharge"
+
+#. module: base_wua_invoicing
+#: selection:product.category,linkable_unit_type:0
+#: selection:product.template,linkable_unit_type:0
+#: selection:wua.invoiceset.line,linkable_unit_type:0
+msgid "Variable Surcharge (Total)"
+msgstr "Variable Surcharge (Total)"
 
 #. module: base_wua_invoicing
 #: selection:account.invoice.line,invoice_type:0
@@ -1640,6 +1637,7 @@ msgstr "With Watering Shift"
 
 #. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.view_account_invoice_filter
+#: model:ir.ui.view,arch_db:base_wua_invoicing.view_account_move_filter
 msgid "With attachments"
 msgstr "With attachments"
 
@@ -1655,6 +1653,7 @@ msgstr "Without Category"
 
 #. module: base_wua_invoicing
 #: model:ir.ui.view,arch_db:base_wua_invoicing.view_account_invoice_filter
+#: model:ir.ui.view,arch_db:base_wua_invoicing.view_account_move_filter
 msgid "Without attachments"
 msgstr "Without attachments"
 
@@ -1748,3 +1747,4 @@ msgstr "parcel"
 #, python-format
 msgid "payer"
 msgstr "payer"
+

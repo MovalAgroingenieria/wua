@@ -7,7 +7,8 @@ from odoo import models, fields, api
 
 
 class AccountMove(models.Model):
-    _inherit = 'account.move'
+    _name = 'account.move'
+    _inherit = ['account.move', 'simpleattachment.model']
 
     @api.multi
     def _check_lock_date(self):
