@@ -11,3 +11,4 @@ from . import wua_reading
 from . import wua_quotaperiod
 from . import wua_invoicing_config_settings
 from . import wua_irrigationreport
+from . import wua_waterconnection
