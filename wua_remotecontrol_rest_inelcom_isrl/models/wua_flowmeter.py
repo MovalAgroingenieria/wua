@@ -18,6 +18,11 @@ class WuaFlowmeter(models.Model):
         default='01_hydrant',
     )
 
+    inelcom_hydrant_position = fields.Integer(
+        string='Irrigation Hydrant Position',
+        default='1',
+    )
+
     inelcom_irrigation_head_id = fields.Integer(
         string='Irrigation Head ID',
         default='0',

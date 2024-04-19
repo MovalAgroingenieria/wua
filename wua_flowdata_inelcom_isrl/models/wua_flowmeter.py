@@ -16,10 +16,9 @@ class WuaFlowmeter(models.Model):
     telecontrol_associated = fields.Selection(
         selection_add=[('inelcom_isrl', 'INELCOM (ISRL)')])
 
-    # We get this field from module 
-    # inelcom_id = fields.Char(
-    #     string='Inelcom code',
-    #     size=254,)
+    inelcom_flow_id = fields.Char(
+        string='Inelcom Flow code',
+        size=254,)
 
     @api.multi
     def action_get_flowdata_inelcom_isrl(self):
@@ -27,7 +26,8 @@ class WuaFlowmeter(models.Model):
         message = ""
         buttons = [{'type': 'ir.actions.act_window_close', 'name': _('Close')}]
         flowmeter = self
-        inelcom_id = self.inelcom_id
+        inelcom_id = self.inelcom_flow_id
+        inelcom_position = self.inelcom_hydrant_position - 1
         conversion_factor = self.conversion_factor
         id_session = False
         url, username, password = self._connection_params_inelcom_isrl()
@@ -70,7 +70,8 @@ class WuaFlowmeter(models.Model):
             if resprest.status_code == 200:
                 outputrest = json.loads(resprest.text)
                 if len(outputrest) > 0:
-                    flow_raw = outputrest[0]['listaCaudales'][0]['caudal']
+                    flow_raw = outputrest[0]['listaCaudales'][
+                        inelcom_position]['caudal']
                     flow = flow_raw / conversion_factor
                     # Create record with UTC time
                     self._create_record(flowmeter.id, now, flow)
@@ -120,7 +121,8 @@ class WuaFlowmeter(models.Model):
         measure_time = now_tz.strftime('%H:%M')
 
         for flowmeter in flowmeters:
-            inelcom_id = flowmeter.inelcom_id
+            inelcom_id = flowmeter.inelcom_flow_id
+            inelcom_position = flowmeter.inelcom_hydrant_position - 1
             conversion_factor = flowmeter.conversion_factor
             # Get session
             resprest = requests.post(url_open_session,
@@ -138,7 +140,8 @@ class WuaFlowmeter(models.Model):
                 if resprest.status_code == 200:
                     outputrest = json.loads(resprest.text)
                     if len(outputrest) > 0:
-                        flow_raw = outputrest[0]['listaCaudales'][0]['caudal']
+                        flow_raw = outputrest[0]['listaCaudales'][
+                            inelcom_position]['caudal']
                         flow = flow_raw / conversion_factor
                         # Create record with UTC time
                         self._create_record(flowmeter.id, now, flow)
@@ -158,7 +161,7 @@ class WuaFlowmeter(models.Model):
         current_flowmeters = self.env['wua.flowmeter'].search([])
         for flowmeter in current_flowmeters:
             if (flowmeter.telecontrol_associated == 'inelcom_isrl' and
-                    flowmeter.state == 'active' and flowmeter.inelcom_id):
+                    flowmeter.state == 'active' and flowmeter.inelcom_flow_id):
                 flowmeters.append(flowmeter)
         return flowmeters
 

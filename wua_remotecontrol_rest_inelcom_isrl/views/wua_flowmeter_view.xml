@@ -17,6 +17,11 @@
                                           ('inelcom_flowmeter_type', '!=', '01_hydrant')],
                             'required': [('telecontrol_rest_associated', '=', 'inelcom'),
                                          ('inelcom_flowmeter_type', '=', '01_hydrant')]}"/>
+                <field name="inelcom_hydrant_position"
+                    attrs="{'invisible':['|', ('telecontrol_rest_associated', '!=', 'inelcom'),
+                                          ('inelcom_flowmeter_type', '!=', '01_hydrant')],
+                            'required': [('telecontrol_rest_associated', '=', 'inelcom'),
+                                         ('inelcom_flowmeter_type', '=', '01_hydrant')]}"/>
                 <!-- Data needed when flowmeter on head -->
                 <field name="inelcom_irrigation_head_id"
                     attrs="{'invisible':['|', ('telecontrol_rest_associated', '!=', 'inelcom'),
