@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association: Flow Data INELCOM (ISRL)",
     "summary": "Get flow data from flowmeter INELCOM (ISRL)",
-    "version": '10.0.1.1.0',
+    "version": '10.0.1.1.1',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
