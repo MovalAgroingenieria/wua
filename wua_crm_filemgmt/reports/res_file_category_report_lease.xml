@@ -69,8 +69,9 @@
                                         </div>
                                         <div name="lessor_data">
                                             <t t-if="lessor.partner_id.name">
-                                                <strong><span t-field="lessor.partner_id.name"/></strong>
-                                                <t t-if="lessor.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="lessor.partner_id.vat"/>)</span></t>
+                                                <strong><span t-field="lessor.partner_id.name"/><span>&amp;nbsp;(<span t-field="lessor.partner_id.partner_code"/>)</span></strong>
+                                                <br/>
+                                                <t t-if="lessor.partner_id.vat"><span>NIF:&amp;nbsp;<span t-field="lessor.partner_id.vat"/></span></t>
                                                 <br/>
                                             </t>
                                             <t t-if="lessor.partner_id.street_type_show or lessor.partner_id.street or lessor.partner_id.street_num or lessor.partner_id.street2">
@@ -123,8 +124,9 @@
                                         </div>
                                         <div name="tenant_data">
                                             <t t-if="tenant.partner_id.name">
-                                                <strong><span t-field="tenant.partner_id.name"/></strong>
-                                                <t t-if="tenant.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="tenant.partner_id.vat"/>)</span></t>
+                                                <strong><span t-field="tenant.partner_id.name"/><span>&amp;nbsp;(<span t-field="tenant.partner_id.partner_code"/>)</span></strong>
+                                                <br/>
+                                                <t t-if="tenant.partner_id.vat"><span>NIF:&amp;nbsp;<span t-field="tenant.partner_id.vat"/></span></t>
                                                 <br/>
                                             </t>
                                             <t t-if="tenant.partner_id.street_type_show or tenant.partner_id.street or tenant.partner_id.street_num or tenant.partner_id.street2">

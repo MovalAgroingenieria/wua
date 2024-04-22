@@ -69,8 +69,9 @@
                                         </div>
                                         <div name="seller_data">
                                             <t t-if="seller.partner_id.name">
-                                                <strong><span t-field="seller.partner_id.name"/></strong>
-                                                <t t-if="seller.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="seller.partner_id.vat"/>)</span></t>
+                                                <strong><span t-field="seller.partner_id.name"/><span>&amp;nbsp;(<span t-field="seller.partner_id.partner_code"/>)</span></strong>
+                                                <br/>
+                                                <t t-if="seller.partner_id.vat"><span>NIF:&amp;nbsp;<span t-field="seller.partner_id.vat"/></span></t>
                                                 <br/>
                                             </t>
                                             <t t-if="seller.partner_id.street_type_show or seller.partner_id.street or seller.partner_id.street_num or seller.partner_id.street2">
@@ -123,8 +124,9 @@
                                         </div>
                                         <div name="buyer_data">
                                             <t t-if="buyer.partner_id.name">
-                                                <strong><span t-field="buyer.partner_id.name"/></strong>
-                                                <t t-if="buyer.partner_id.vat"><span>(NIF:&amp;nbsp;<span t-field="buyer.partner_id.vat"/>)</span></t>
+                                                <strong><span t-field="buyer.partner_id.name"/><span>&amp;nbsp;(<span t-field="buyer.partner_id.partner_code"/>)</span></strong>
+                                                <br/>
+                                                <t t-if="buyer.partner_id.vat"><span>NIF:&amp;nbsp;<span t-field="buyer.partner_id.vat"/></span></t>
                                                 <br/>
                                             </t>
                                             <t t-if="buyer.partner_id.street_type_show or buyer.partner_id.street or buyer.partner_id.street_num or buyer.partner_id.street2">
