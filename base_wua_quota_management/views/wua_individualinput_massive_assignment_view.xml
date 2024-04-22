@@ -113,6 +113,7 @@
                        string="Date" widget="date"/>
                 <field name="category_id"/>
                 <field name="reason"/>
+                <field name="total_volume"/>
                 <field name='total_effective_volume'/>
                 <field name='state'/>
             </tree>
@@ -154,13 +155,24 @@
         </field>
     </record>
 
+    <record id="wua_individualinput_massive_assignment_view_pivot" model="ir.ui.view">
+        <field name="name">Individual Inputs (pivot view)</field>
+        <field name="model">wua.individualinput.massive.assignment</field>
+        <field name="arch" type="xml">
+            <pivot string="Invoices Analysis" disable_linking="True">
+                <field name="superproduct_id" type="row"/>
+                <field name="total_volume" type="measure"/>
+                <field name="total_effective_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
 
     <record id="wua_individualinput_massive_assignment_action"
             model="ir.actions.act_window">
         <field name="name">Individual Inputs Massive Assignments</field>
         <field name="res_model">wua.individualinput.massive.assignment</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',

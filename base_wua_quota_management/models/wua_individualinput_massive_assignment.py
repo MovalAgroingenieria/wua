@@ -168,11 +168,13 @@ class WuaIndividualinputMassiveAssignment(models.Model):
 
     total_volume = fields.Float(
         string='Total Volume (m³)',
+        store=True,
         compute='_compute_total_volume',
     )
 
     total_effective_volume = fields.Float(
         string='Total Effective Volume (m³)',
+        store=True,
         compute='_compute_total_effective_volume',
     )
 
