@@ -99,6 +99,12 @@ class WuaCertificateType(models.Model):
         string='Include coordinate GRID in aerial images of parcel',
         default=False)
 
+    report_in_official_units = fields.Boolean(
+        string='Report in official units',
+        help='When creating a certificate, show the values in the '
+             'official units (ha)',
+        default=False)
+
     map_type_in_report = fields.Selection(
         selection=[
             ('00_none', 'No map'),
@@ -202,3 +208,21 @@ class WuaCertificateType(models.Model):
                 'domain': [('id', 'in', self.certificate_ids.ids)],
                 }
             return act_window
+    @api.model
+    def _compute_area_measurement_name(self, official_area):
+
+        area__measurement_type = official_area
+        results = ""
+        if area__measurement_type:
+            if area__measurement_type == 0:
+                results = _('ha')
+            else:
+                area_measurement_name = self.env['ir.values'].get_default(
+                    'wua.configuration', 'area_measurement_name')
+                if area_measurement_name:
+                    results = area_measurement_name.decode('utf_8')
+                else:
+                    results = ""
+        else:
+            results = _('ha')
+        return results

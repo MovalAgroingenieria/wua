@@ -93,7 +93,13 @@
                         <tr>
                             <th name="th_parcel_id" class="text-left">Land Parcel</th>
                             <th name="th_cadastral_reference" class="text-center">Cadastral Reference</th>
-                            <th name="th_area_official" class="text-right">Area (<span><t t-esc="measurement_unit"/></span>)</th>
+                            <t t-if="o.certificatetype_id.report_in_official_units">
+                                <t t-set="measurement_unit" t-value="_compute_area_measurement_name()"/>
+                                <th name="th_area_official" class="text-right">Area (<span><t t-esc="measurement_unit"/></span>)</th>
+                            </t>
+                            <t t-else="">
+                                <th name="th_area_official" class="text-right">Area (<span><t t-esc="measurement_unit"/></span>)</th>
+                            </t>
                             <th name="th_ownership_percentage" class="text-right">Ownership %</th>
                             <th name="th_water_costs_percentage" class="text-right">Water Costs %</th>
                             <th name="th_other_costs_percentage" class="text-right">Other Costs %</th>
