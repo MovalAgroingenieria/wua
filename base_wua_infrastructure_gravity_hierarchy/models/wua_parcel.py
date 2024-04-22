@@ -2,6 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from lxml import etree
 from odoo import models, fields, api
 import json
 
@@ -1115,6 +1116,24 @@ class WuaParcel(models.Model):
                 self.env.cr.rollback()
                 gis_drainageditch_ok = False
         return gis_parcels_ok and gis_drainageditch_ok
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaParcel, self).fields_view_get(
+            view_id=view_id, view_type=view_type,
+            toolbar=toolbar, submenu=submenu)
+        flowstopper_on_parcels = self.env['ir.values'].get_default(
+            'wua.infrastructure.configuration', 'flowstopper_on_parcels')
+        modifiers_for_flowdivider = '{"invisible": false}'
+        if (not flowstopper_on_parcels):
+            modifiers_for_flowdivider = '{"invisible": true}'
+        if (view_type == 'form'):
+            doc = etree.XML(res['arch'])
+            for node in doc.xpath("//field[@name='flowdivider_id']"):
+                node.set('modifiers', modifiers_for_flowdivider)
+            res['arch'] = etree.tostring(doc)
+        return res
 
     @api.multi
     def _compute_flowstopper_on_parcels(self):
