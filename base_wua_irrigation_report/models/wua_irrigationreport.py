@@ -195,6 +195,10 @@ class WuaIrrigationReport(models.Model):
         string='Overdue Receivable',
         help="Overdue amount this customer owes you.")
 
+    cancelled = fields.Boolean(
+        string="Irrigationreport Cancelled",
+        default=False)
+
     _sql_constraints = [
         ('valid_irrigationreport_time_range',
          'CHECK (report_initial_time <= report_end_time)',
@@ -606,6 +610,39 @@ class WuaIrrigationReport(models.Model):
     def cancel_irrigationreport(self):
         self.ensure_one()
         self.state = 'draft'
+
+    @api.multi
+    def change_to_active(self):
+        self.ensure_one()
+        self.cancelled = False
+
+    @api.multi
+    def change_to_cancelled(self):
+        self.ensure_one()
+        self.cancelled = True
+
+    @api.multi
+    def set_as_active(self, active_irrigationreports):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        irrigationreports = self.env['wua.irrigationreport'].browse(
+            active_irrigationreports)
+        for irrigationreport in irrigationreports:
+            if irrigationreport.cancelled:
+                irrigationreport.change_to_active()
+
+    @api.multi
+    def set_as_cancelled(self, active_irrigationreports):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        irrigationreports = self.env['wua.irrigationreport'].browse(
+            active_irrigationreports)
+        for irrigationreport in irrigationreports:
+            if (not irrigationreport.cancelled and
+               not irrigationreport.state == 'executed'):
+                irrigationreport.change_to_cancelled()
 
     @api.depends('partner_id', 'currency_id')
     def _compute_credit_overdue(self):

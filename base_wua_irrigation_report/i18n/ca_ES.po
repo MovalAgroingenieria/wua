@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-07 07:14+0000\n"
-"PO-Revision-Date: 2023-09-07 07:14+0000\n"
+"POT-Creation-Date: 2024-04-23 07:29+0000\n"
+"PO-Revision-Date: 2024-04-23 07:29+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,11 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.report_wua_irrigationreport_document
 msgid "&amp;nbsp;"
 msgstr "&amp;nbsp;"
+
+#. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
+msgid "( CANCELLED )"
+msgstr "( CANCEL·LAT )"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
@@ -214,6 +219,11 @@ msgid "<strong>Partner</strong>"
 msgstr "<strong>Soci</strong>"
 
 #. module: base_wua_irrigation_report
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_form
+msgid "Activate"
+msgstr "Activar"
+
+#. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_agriculturalseason_view_search
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
 msgid "Active Agricultural Season"
@@ -343,7 +353,7 @@ msgstr "Enter the water amount of a irrigation report as a hour-value (if not, a
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_intake
@@ -465,10 +475,16 @@ msgid "Irrigation report"
 msgstr "Part de Reg"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_cancelled
+#: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
+msgid "Irrigationreport Cancelled"
+msgstr "Cancel·lat"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report___last_update
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport___last_update
 msgid "Last Modified on"
-msgstr "Darrera modificació el"
+msgstr "Última modificació el "
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_write_uid
@@ -480,7 +496,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_write_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_write_date
 msgid "Last Updated on"
-msgstr "Darrera Actualització el"
+msgstr "Última actualització el"
 
 #. module: base_wua_irrigation_report
 #: model:res.groups,name:base_wua_irrigation_report.group_wua_irrigationreport_writer
@@ -644,13 +660,13 @@ msgid "The custom flow be 0 or a greater number"
 msgstr "El cabal específic ha de ser més gran o igual a 0"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:498
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:502
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr "Les dates de el part estan fora de la campanya activa."
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:236
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:240
 #: sql_constraint:wua.irrigationreport:0
 #, python-format
 msgid "The delivery note must be 0 or a greater number"
@@ -759,8 +775,10 @@ msgid "Without Irrigation Worker"
 msgstr "Sense regador"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:628
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:627
 #: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:638
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:665
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:675
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tens prou permisos per realitzar aquesta acció."
