@@ -6,8 +6,8 @@
 Water Users Association: Portal user display
 ============================================
 
-This module allows you to control what fields and smart-buttons are shown to
-portal users.
+This module allows you to control what fields, actions, printed documents and
+smart-buttons are shown to portal users.
 
 Description
 ===========
