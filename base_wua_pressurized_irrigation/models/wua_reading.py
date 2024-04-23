@@ -269,8 +269,9 @@ class WuaReading(models.Model):
                     })
                     self.presconsumption_id.update_volume_perunitareas()
                 self.watermeter_id.last_reading_value = vals['volume']
+            if 'last_reading_consumption' in vals:
                 self.watermeter_id.last_reading_consumption = \
-                    vals["last_reading_consumption"]
+                    vals['last_reading_consumption']
         return resp
 
     @api.multi
