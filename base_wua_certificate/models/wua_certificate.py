@@ -837,7 +837,6 @@ class WuaCertificate(models.Model):
     def _allowed_signature(self, certificate):
         return True
 
-
 class WuaCertificateParcel(models.Model):
     _name = 'wua.certificate.parcel'
     _description = 'Parcel of a certificate'
@@ -1031,3 +1030,4 @@ class WuaCertificateParcel(models.Model):
         return (cadastral_reference, area_official, ownership_percentage,
                 water_costs_percentage, other_costs_percentage,
                 area_intersected_perimeter, area_gis)
+

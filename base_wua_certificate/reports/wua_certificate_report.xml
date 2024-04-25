@@ -26,6 +26,8 @@
     <template id="report_wua_certificate_document">
         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
         <t t-set="use_intersected_area" t-value="o.env['ir.values'].get_default('wua.configuration', 'use_intersected_area') and o.env['ir.values'].get_default('wua.configuration', 'intersection_management')"/>
+        <t t-set="area_measurement_type" t-value="o.env['ir.values'].get_default('wua.configuration', 'area_measurement_type')"/>
+        <t t-set="area_measurement_equivalence" t-value="o.env['ir.values'].get_default('wua.configuration', 'area_measurement_equivalence')"/>
         <div name="full_report">
             <div class="row" name="section_master">
                 <!-- Title -->
@@ -94,7 +96,7 @@
                             <th name="th_parcel_id" class="text-left">Land Parcel</th>
                             <th name="th_cadastral_reference" class="text-center">Cadastral Reference</th>
                             <t t-if="o.certificatetype_id.report_in_official_units">
-                                <t t-set="measurement_unit" t-value="_compute_area_measurement_name()"/>
+                                <t t-set="measurement_unit" t-value="'ha'"/>
                                 <th name="th_area_official" class="text-right">Area (<span><t t-esc="measurement_unit"/></span>)</th>
                             </t>
                             <t t-else="">
@@ -112,14 +114,28 @@
                             <td name="td_cadastral_reference" align="center"><span t-field="l.cadastral_reference"/></td>
                             <td name="td_area_official" align="right">
                                 <t t-if="use_intersected_area">
-                                    <span t-field="l.area_intersected_perimeter"/>
-                                    <t t-set="total_area_official" t-value="total_area_official + l.area_intersected_perimeter"/>
+                                    <t t-if="area_measurement_type == 1 and o.certificatetype_id.report_in_official_units">
+                                        <t t-set="area_intersected_perimeter" t-value="'{:.4f}'.format(l.area_intersected_perimeter * area_measurement_equivalence).replace('.', ',')"/>
+                                        <span t-esc="area_intersected_perimeter" widget="float"/>
+                                        <t t-set="total_area_official" t-value="total_area_official + (l.area_intersected_perimeter * area_measurement_equivalence)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="l.area_intersected_perimeter"/>
+                                        <t t-set="total_area_official" t-value="total_area_official + l.area_intersected_perimeter"/>
+                                    </t>
                                 </t>
                                 <t t-else="">
-                                    <span t-field="l.area_official"/>
-                                    <t t-set="total_area_official" t-value="total_area_official + l.area_official"/>
+                                    <t t-if="area_measurement_type == 1 and o.certificatetype_id.report_in_official_units">
+                                        <t t-set="area_official" t-value="'{:.4f}'.format(l.area_official * area_measurement_equivalence).replace('.', ',')"/>
+                                        <span t-esc="area_official" widget="float"/>
+                                        <t t-set="total_area_official" t-value="total_area_official + (l.area_official * area_measurement_equivalence)"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span t-field="l.area_official"/>
+                                        <t t-set="total_area_official" t-value="total_area_official + l.area_official"/>
+                                    </t>
                                 </t>
-                             </td>
+                            </td>
                             <td name="td_ownership_percentage" align="right"><span t-field="l.ownership_percentage"/></td>
                             <td name="td_water_costs_percentage" align="right"><span t-field="l.water_costs_percentage"/></td>
                             <td name="td_other_costs_percentage" align="right"><span t-field="l.other_costs_percentage"/></td>
