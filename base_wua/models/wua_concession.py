@@ -19,5 +19,24 @@ class WuaConcession(models.Model):
     name = fields.Char(
         string='Water Concession')
 
+    associated_file = fields.Char(
+        string='File',
+        required=False)
+
+    annual_volume = fields.Integer(
+        string='Annual Volume (m³)',
+        required=False)
+
+    surface = fields.Float(
+        string='Surface (ha)',
+        digits=(32, 4),
+        required=False)
+
+    flow = fields.Float(
+        string='Flow (L/s)',
+        digits=(32, 4),
+        required=False)
+
     notes = fields.Html(
         string='Notes')
+
