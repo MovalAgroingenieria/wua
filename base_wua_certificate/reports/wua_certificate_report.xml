@@ -152,6 +152,48 @@
             <t t-else="">
                 <span>No parcel found for this partner.</span>
             </t>
+            <div class="row h4 mt28 mb4" name="section_detail" style="padding-bottom: 4px;">
+                <t t-if="report_style == 'light'">
+                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                        <div style="float: left; display: inline;"><strong>Concessions</strong></div>
+                   </div>
+                </t>
+                <t t-else="">
+                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                        <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                        <div style="float: left; display: inline;"><strong>Concessions</strong></div>
+                    </div>
+                </t>
+            </div>
+            <t t-if="o.certificateparcel_ids and o.certificatetype_id.include_concession_info">
+                <table name="concessions_table" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th name="th_parcel_id" class="text-left">Land Parcel</th>
+                            <th name="th_cadastral_reference" class="text-center">Cadastral Reference</th>
+                            <th name="th_concession_info" class="text-left">Concession</th>
+                        </tr>
+                    </thead>
+                    <tbody name="concessions_table_body">
+                        <t-foreach t-foreach="o.certificateparcel_ids" t-as="p">
+                            <tr t-foreach="p.parcel_id.concession_ids" t-as="c">
+                                <tr>
+                                    <td name="td_parcel_id" align="left"><span t-field="p.parcel_id"/></td>
+                                    <td name="td_cadastral_reference" align="center"><span t-field="p.cadastral_reference"/></td>
+                                    <td name="td_concession_info" align="left">
+                                        <span t-esc="c.name"/>
+                                        <t t-if="c.associated_file">
+                                            <span t-esc="' / ' + str(c.associated_file)"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </tr>
+                        </t-foreach>
+                    </tbody>
+                </table>
+            </t>
+
             <t t-if="o.rendered_final_paragraph">
                 <div name="final_paragraph_div" class="col-xs-12 text-justify" style="padding-left: 40px;padding-right: 40px;padding-top: 40px">
                     <span t-field="o.sudo().rendered_final_paragraph"/>

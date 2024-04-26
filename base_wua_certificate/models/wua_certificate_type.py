@@ -105,6 +105,12 @@ class WuaCertificateType(models.Model):
              'official units (ha)',
         default=False)
 
+    include_concession_info = fields.Boolean(
+        string='Show concession information',
+        help='When creating a certificate, includes the information of the '
+             'concession',
+        default=False)
+
     map_type_in_report = fields.Selection(
         selection=[
             ('00_none', 'No map'),
