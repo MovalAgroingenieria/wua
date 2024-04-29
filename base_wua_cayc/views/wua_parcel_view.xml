@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view" >
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='subparcels']"
+                   position="before">
+                <page name="parcel_classes" string="Classes">
+                    <field name="parcel_class_ids"
+                            context="{'tree_view_ref':
+                                        'base_wua_cayc.wua_edit_parcel_class_view_tree'}"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_edit_parcel_class_view_tree" model="ir.ui.view">
+        <field name="name">Parcel Classes</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_cayc_parcel_class_view_tree_notebook"
+                  editable="bottom">
+                <field name="name" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_parcel_class" invisible="1"/>
+                <field name="parcel_class"/>
+                <field name="area_official"/>
+                <field name="area_gis"/>
+                <button name="action_see_gis_viewer"
+                    type="object" class="oe_stat_button"
+                    string="GIS Viewer (zoom to parcel)"
+                    icon="fa-map-marker"
+                    attrs="{'invisible':
+                            ['|',('gis_viewer_link','=',False),
+                                    ('with_gis_parcel_class','=',False)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_class_view_tree" model="ir.ui.view" >
+        <field name="name">Parcel Classes (tree view)</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false"
+                class="o_base_wua_cayc_parcel_class_view_tree">
+                <field name="name" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_parcel_class" invisible="1"/>
+                <field name="parcel_id"/>
+                <field name="parcel_class"/>
+                <field name="area_official"/>
+                <field name="area_gis"/>
+                <button name="action_see_gis_viewer"
+                    type="object" class="oe_stat_button"
+                    string="GIS Viewer (zoom to parcel)"
+                    icon="fa-map-marker"
+                    attrs="{'invisible':
+                            ['|',('gis_viewer_link','=',False),
+                                    ('with_gis_parcel_class','=',False)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_class_view_search" model="ir.ui.view">
+        <field name="name">Parcel Classes (search view)</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="parcel_id"/>
+                <filter string="GIS Parcel Class: Yes" name="gisparcelclassyes"
+                 domain="[('with_gis_parcel_class','=',True)]"/>
+                <filter string="GIS Parcel Class: No" name="gisparcelclassno"
+                 domain="[('with_gis_parcel_class','=',False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Parcel" name="parcel_id"
+                     context="{'group_by':'parcel_id'}"/>
+                    <filter string="Parcel Class" name="parcel_class"
+                     context="{'group_by':'parcel_class'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_parcel_class_view_pivot" model="ir.ui.view" >
+        <field name="name">Parcel Classes (pivot view)</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="arch" type="xml">
+            <pivot string="Parcel Classes" display_quantity="true">
+                <field name="parcel_class"/>
+                <field name="area_official" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_class_view_tree" model="ir.ui.view" >
+        <field name="name">Parcel Classes (tree view)</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_cayc_parcel_class_view_tree">
+                <field name="name" invisible="1"/>
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_parcel_class" invisible="1"/>
+                <field name="parcel_id"/>
+                <field name="parcel_class"/>
+                <field name="area_official"/>
+                <field name="area_gis"/>
+                <button name="action_see_gis_viewer"
+                    type="object" class="oe_stat_button"
+                    string="GIS Viewer (zoom to parcel)"
+                    icon="fa-map-marker"
+                    attrs="{'invisible':
+                            ['|',('gis_viewer_link','=',False),
+                                    ('with_gis_parcel_class','=',False)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_parcel_class_action" model="ir.actions.act_window">
+        <field name="name">Parcel Classes</field>
+        <field name="res_model">wua.parcel.class</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_id" ref="wua_parcel_class_view_tree"/>
+        <field name="search_view_id" ref="wua_parcel_class_view_search"/>
+    </record>
+
+    <menuitem id="wua_parcel_class_menu"
+              name="Parcel Classes"
+              parent="base_wua.base_wua_census_landparcels_menu"
+              action="wua_parcel_class_action"
+              sequence="11"/>
+
+    <record id="wua_technical_parcel_classes_action" model="ir.actions.act_window">
+        <field name="name">Parcel Classes (low-level)</field>
+        <field name="res_model">wua.parcel.class</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_id" ref="wua_technical_parcel_class_view_tree"/>
+    </record>
+
+    <menuitem id="wua_technical_parcel_classes_menu"
+              name="Parcel Classes"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_parcel_classes_action"
+              sequence="1"
+              groups="base.group_system"/>
+
+</odoo>

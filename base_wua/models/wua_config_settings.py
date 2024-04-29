@@ -212,13 +212,6 @@ class WuaConfiguration(models.TransientModel):
         help='If checked the partner notes of the partner will be advised'
     )
 
-    @api.multi
-    def set_default_values(self):
-        values = self.env['ir.values'].sudo()
-        super(WuaConfiguration, self).set_default_values()
-        values.set_default('wua.configuration', 'mail_leaser_partner_id',
-                           self.mail_leaser_partner_id.id)
-
     _sql_constraints = [
         ('valid_area_measurement_equivalence',
          'CHECK (area_measurement_equivalence >= 0)',
