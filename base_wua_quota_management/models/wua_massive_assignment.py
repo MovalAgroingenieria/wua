@@ -308,11 +308,11 @@ class WuaMassiveAssignments(models.Model):
 
     @api.multi
     def _compute_total_assignment_volume(self):
-        self.ensure_one()
-        total_volume = 0
-        for parcel in self.selected_assignment_parcel_ids:
-            total_volume += parcel.assignment_provision_parcel
-        self.total_assignment_volume = total_volume
+        for record in self:
+            total_volume = 0
+            for parcel in record.selected_assignment_parcel_ids:
+                total_volume += parcel.assignment_provision_parcel
+            record.total_assignment_volume = total_volume
 
     @api.depends('agriculturalseason_id')
     def _compute_of_active_agriculturalseason(self):
