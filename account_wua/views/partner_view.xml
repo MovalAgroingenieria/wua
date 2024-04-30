@@ -17,14 +17,16 @@
                     {'invisible':[('is_wua_partner','=',False)]}
                 </attribute>
             </xpath>
-            <xpath expr="//group[@name='acc_purchase']" position="attributes">
+            <!-- This hide the purchase section, has been commented due to issues
+                of understanding with the customers -->
+            <!-- <xpath expr="//group[@name='acc_purchase']" position="attributes">
                 <attribute name="attrs">
                     {'invisible':[('is_wua_partner','=',True)]}
                 </attribute>
-            </xpath>
+            </xpath> -->
             <xpath expr="//field[@name='trust']" position="attributes">
                 <attribute name="invisible">True</attribute>
-            </xpath>            
+            </xpath>
         </field>
     </record>
 
