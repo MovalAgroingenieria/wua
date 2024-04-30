@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='apply_second_partner_coding']" position="after">
+                <field name="is_primary" invisible="1"/>
+                <div name="is_primary_secondary"
+                    class="oe_read_only text-center"
+                    colspan="2"
+                    style="display: inline-block; padding-top: 5px;padding-bottom: 5px;padding-left: 10px;">
+                    <strong attrs="{'invisible': [('is_primary', '=', False)]}">( PRIMARY PARTNER )</strong>
+                    <strong attrs="{'invisible': [('is_primary', '=', True)]}">( CHE PARTNER )</strong>
+                </div>
+                <field name="wuabase_id" class="oe_read_only" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_search" model="ir.ui.view">
+        <field name="name">Partners (search view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="before">
+                <field name="wuabase_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='notiscompany']" position="before">
+                <filter string="Primary Partner" name="primarypartner"
+                    domain="[('is_primary','=',True)]"/>
+                <filter string="CHE Partner" name="chepartner"
+                    domain="[('is_primary','=',False)]"/>
+                <separator/>
+            </xpath>
+            <xpath expr="//filter[@name='isacompany']" position="before">
+                <filter string="WUA Base"
+                     name="wuabase_id"
+                     context="{'group_by':'wuabase_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

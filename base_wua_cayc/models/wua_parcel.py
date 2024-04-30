@@ -111,7 +111,8 @@ class WuaParcel(models.Model):
                     with_gis_parcel_class = (SELECT NEW.name IN
                         (SELECT name FROM wua_gis_parcel_class)),
                     area_gis = (SELECT postgis.ST_Area(geom) * 0.0001
-                        FROM wua_gis_parcel_class WHERE name = NEW.name LIMIT 1) /
+                        FROM wua_gis_parcel_class WHERE name =
+                        NEW.name LIMIT 1) /
                         (
                             CASE
                                 WHEN (SELECT substring(
@@ -192,21 +193,36 @@ class WuaParcel(models.Model):
         gis_parcel_class_ok = self.set_gis_fields_parcel_class()
         return gis_parcels_ok and gis_parcel_class_ok
 
+    def should_create_parcel_class_on_creation(self, parcel_vals):
+        return ('parcel_class_ids' not in parcel_vals or
+                len(parcel_vals['parcel_class_ids']) < 1)
+
+    def populate_parcel_class_for_creation(self, parcel_vals):
+        parcel_vals['parcel_class_ids'] = [[
+            0,
+            False,
+            {
+                'area_official': parcel_vals['area_official'],
+                'parcel_class': 'SAR',
+                'active': parcel_vals['active'],
+            },
+        ]]
+
     @api.model
     def create(self, vals):
         if 'parcel_class_ids' in vals:
             self.populate_area_official_of_parcel_class(
                 vals['parcel_class_ids'], vals['area_official'])
+        if self.should_create_parcel_class_on_creation(vals):
+            self.populate_parcel_class_for_creation(vals)
         new_parcel = super(WuaParcel, self).create(vals)
-        if len(new_parcel.parcel_class_ids) == 0:
-            self.create_parcel_class_unique(new_parcel)
-        else:
-            correct_parcel_classes_area = self.is_parcel_classes_area_correct(
-                new_parcel.id, vals['area_official'],
-                vals['parcel_class_ids'])
-            if not correct_parcel_classes_area:
-                raise exceptions.UserError(_('The sum of classes areas must '
-                                             'be the parcel official area.'))
+        correct_parcel_classes_area = self.is_parcel_classes_area_correct(
+            new_parcel.id, vals['area_official'],
+            vals['parcel_class_ids'], vals)
+        if not correct_parcel_classes_area:
+            raise exceptions.UserError(_('The sum of classes areas must '
+                                         'be the parcel official area.'))
+        return new_parcel
 
     def do_process_slave_data_for_write(self, vals):
         super(WuaParcel, self).do_process_slave_data_for_write(vals)
@@ -217,7 +233,7 @@ class WuaParcel(models.Model):
         if 'parcel_class_ids' in vals:
             parcel_class_ids = vals['parcel_class_ids']
         correct_subparcels_area = self.is_parcel_classes_area_correct(
-            self.id, area_official, parcel_class_ids)
+            self.id, area_official, parcel_class_ids, vals)
         if not correct_subparcels_area:
             raise exceptions.UserError(_('The sum of parcel class areas '
                                          'must be the parcel official '
@@ -237,26 +253,17 @@ class WuaParcel(models.Model):
     def populate_area_official_of_parcel_class(
             self, parcel_class_ids, area_official):
         # if the record is the first class of the parcel
-        # and her area is 0, then populate the area.
+        # and the area is 0, then populate the area.
         if len(parcel_class_ids) == 1 and parcel_class_ids[0][0] == 0:
             vals = parcel_class_ids[0][2]
             if vals['area_official'] == 0:
                 vals.update({'area_official': area_official})
 
-    def create_parcel_class_unique(self, parcel):
-        parcel_class_model = self.env['wua.parcel.class']
-        vals = {
-            'parcel_id': parcel.id,
-            'area_official': parcel.area_official,
-            'parcel_class': 'SAR',
-            'active': parcel.active}
-        parcel_class_model.create(vals)
-
     # If the area_official parameter is -1, then find parcel
     # from parcel_id and get her area. If the parcel_class_ids parameter
     # is None, then find all parcel_classes from parcel_id and sum their area.
     def is_parcel_classes_area_correct(
-            self, parcel_id, area_official, parcel_class_ids):
+            self, parcel_id, area_official, parcel_class_ids, parcel_vals):
         total_area = 0
         if area_official == -1:
             parcels = self.env['wua.parcel']
@@ -316,7 +323,7 @@ class WuaParcelClass(models.Model):
     ], string='Parcel Class',
         required=True,
         index=True,
-        default='sar',
+        default='SAR',
     )
 
     active = fields.Boolean(

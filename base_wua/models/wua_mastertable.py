@@ -38,6 +38,11 @@ class WuaMastertable(models.Model):
 
     notes = fields.Text(string='Notes')
 
+    readonly = fields.Boolean(
+        string='Readonly',
+        default=False,
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ]
@@ -80,6 +85,15 @@ class WuaMastertable(models.Model):
         if 'description' in vals:
             self.refine_description(vals)
         return super(WuaMastertable, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        for record in self:
+            if record.readonly:
+                raise exceptions.UserError(
+                    _('You cannot delete a readonly record '
+                      '(Created by module).'))
+        super(WuaMastertable, self).unlink()
 
     def refine_name(self, vals):
         name = vals['name']

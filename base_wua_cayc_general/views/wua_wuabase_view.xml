@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_wuabase_view_form" model="ir.ui.view">
+        <field name="name">Base WUA's (form view)</field>
+        <field name="model">wua.wuabase</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                    </div>
+                    <group name="master_data" col="9">
+                        <group name="master_data_fields" colspan="6" col="4">
+                            <group name="master_data_fields_left" colspan="2">
+                                <field name="name"/>
+                                <field name="description"/>
+                            </group>
+                            <group name="master_data_fields_right" colspan="2">
+                            </group>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_wuabase_view_tree" model="ir.ui.view">
+        <field name="name">Base WUA's (tree view)</field>
+        <field name="model">wua.wuabase</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_cayc_general_wuabase_view_tree">
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_wuabase_view_search" model="ir.ui.view">
+        <field name="name">Base WUA's (search view)</field>
+        <field name="model">wua.wuabase</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_wuabase_action" model="ir.actions.act_window">
+        <field name="name">Base WUA's</field>
+        <field name="res_model">wua.wuabase</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_wuabase_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_wuabase_view_search"/>
+    </record>
+
+
+    <menuitem id="wua_wuabase_menu"
+              name="Base WUA's"
+              parent="base_wua.base_wua_census_configuration_menu"
+              action="wua_wuabase_action"
+              sequence="2"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

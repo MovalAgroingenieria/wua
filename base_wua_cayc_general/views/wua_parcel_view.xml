@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_parcel_view_form" model="ir.ui.view" >
+        <field name="name">Parcels (form view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_cayc.wua_parcel_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='cadastral_sector']"
+                   position="before">
+                <field name="is_primary" colspan="4"/>
+                <div colspan="4"/>
+                <field name="wuabase_id" colspan="8"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_search" model="ir.ui.view">
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="before">
+                <field name="wuabase_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='hydraulic_infrastructure_type_0']" position="before">
+                <filter string="Primary Parcel" name="primaryparcel"
+                    domain="[('is_primary','=',True)]"/>
+                <filter string="CHE Parcel" name="cheparcel"
+                    domain="[('is_primary','=',False)]"/>
+                <separator/>
+            </xpath>
+            <xpath expr="//filter[@name='hydraulicsector']" position="before">
+                <filter string="WUA Base"
+                     name="wuabase_id"
+                     context="{'group_by':'wuabase_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_class_view_tree" model="ir.ui.view" >
+        <field name="name">Parcel classes (form view)</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="inherit_id" ref="base_wua_cayc.wua_parcel_class_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']"
+                   position="before">
+                <field name="wuabase_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_class_view_tree" model="ir.ui.view" >
+        <field name="name">Parcel classes (form view)</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="inherit_id" ref="base_wua_cayc.wua_technical_parcel_class_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']"
+                   position="before">
+                <field name="wuabase_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_class_view_search" model="ir.ui.view">
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="inherit_id" ref="base_wua_cayc.wua_parcel_class_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']" position="before">
+                <field name="wuabase_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='parcel_id']" position="before">
+                <filter string="WUA Base"
+                     name="wuabase_id"
+                     context="{'group_by':'wuabase_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
