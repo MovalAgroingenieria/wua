@@ -12,6 +12,12 @@
                 <div colspan="4"/>
                 <field name="wuabase_id" colspan="8"/>
             </xpath>
+            <xpath expr="//field[@name='county_id']"
+                   position="before">
+                <field name="partner_type"
+                    style="width:300px"/>
+                <br/>
+            </xpath>
         </field>
     </record>
 
@@ -22,6 +28,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='hydraulicsector_id']" position="before">
                 <field name="wuabase_id"/>
+                <field name="octroi_id"/>
+                <field name="waterchannel_id"/>
             </xpath>
             <xpath expr="//filter[@name='hydraulic_infrastructure_type_0']" position="before">
                 <filter string="Primary Parcel" name="primaryparcel"
@@ -34,6 +42,15 @@
                 <filter string="WUA Base"
                      name="wuabase_id"
                      context="{'group_by':'wuabase_id'}"/>
+                <filter string="Partner Type"
+                     name="partner_type"
+                     context="{'group_by':'partner_type'}"/>
+                <filter string="Octroi"
+                     name="octroi_id"
+                     context="{'group_by':'octroi_id'}"/>
+                <filter string="Waterchannel"
+                     name="waterchannel_id"
+                     context="{'group_by':'waterchannel_id'}"/>
             </xpath>
         </field>
     </record>

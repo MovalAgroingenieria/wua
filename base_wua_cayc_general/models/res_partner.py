@@ -2,6 +2,7 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import math
 from odoo import models, fields, _, exceptions, api
 
 
@@ -22,6 +23,36 @@ class ResPartner(models.Model):
         store=True,
         index=True,
     )
+
+    partner_type = fields.Selection([
+        ('01_WUA', 'Water User Association'),
+        ('02_IND', 'Industry'),
+        ('03_WSP', 'Water Supply'),
+        ('04_HEL', 'Hydroelectric Producer'),
+    ], string='Partner Type',
+        index=True,
+    )
+
+    concession_as_volume = fields.Float(
+        string='Concession As Volume',
+        digits=(32, 4),
+        default=0,
+    )
+
+    concession_as_power = fields.Float(
+        string='Concession As Power',
+        digits=(32, 4),
+        default=0,
+    )
+
+    _sql_constraints = [
+        ('valid_concession_as_volume',
+         'CHECK (concession_as_volume >= 0)',
+         'The concession as volume must be a value zero or positive.'),
+        ('valid_concession_as_power',
+         'CHECK (concession_as_power >= 0)',
+         'The concession as power must be a value zero or positive.'),
+    ]
 
     @api.constrains('partner_code')
     def _check_partner_code(self):
@@ -44,21 +75,33 @@ class ResPartner(models.Model):
                     raise exceptions.ValidationError(
                         _('The WUA Base code does not exists.'))
 
-    @api.constrains('is_primary', 'partnerlink_ids')
-    def check_primary_partnerlinks(self):
+    @api.constrains('partner_code')
+    def _check_partner_code(self):
+        super(ResPartner, self)._check_partner_code()
+        if ((self.env.context.get('wua') == '1' or self.is_wua_partner) and
+                (not self.parent_id)):
+            # Primary partenr
+            if (self.partner_code > 9999 and self.partner_code / 10000 == 0):
+                raise exceptions.ValidationError(
+                    _('The secondary partner code must not end at 0.'))
+            else:
+                # Primary partner
+                code_to_search = str(self.partner_code).zfill(3)
+                if (self.partner_code > 10000):
+                    # Secondary partner
+                    code_to_search = str(self.partner_code / 10000).zfill(3)
+                wuabase = self.env['wua.wuabase'].search(
+                    [('name', '=', code_to_search)])
+                if (not wuabase or len(wuabase) < 1):
+                    raise exceptions.ValidationError(
+                        _('The WUA Base code does not exists.'))
+
+    @api.constrains('is_primary', 'partner_type')
+    def check_partner_type(self):
         for record in self:
-            if (len(record.partnerlink_ids) > 0):
-                if record.is_primary and len(record.partnerlink_ids.filtered(
-                        lambda x: not x.parcel_id.is_primary)) > 0:
-                    raise exceptions.ValidationError(
-                        _('A primary partner cannot have a non primary '
-                          'parcel.'))
-                elif not record.is_primary and len(
-                    record.partnerlink_ids.filtered(
-                        lambda x: x.parcel_id.is_primary)) > 0:
-                    raise exceptions.ValidationError(
-                        _('A CHE partner cannot have a non CHE '
-                          'parcel.'))
+            if (record.is_primary and not record.partner_type):
+                raise exceptions.ValidationError(
+                    _('A primary partner must have a valid partner type .'))
 
     @api.depends('partner_code')
     def _compute_is_primary(self):
@@ -82,3 +125,70 @@ class ResPartner(models.Model):
                 wuabase_id = self.env['wua.wuabase'].search(
                     [('name', '=', code_to_search)])
             record.wuabase_id = wuabase_id
+
+    @api.depends('parcel_owner_number_votes', 'parcel_owner_area_hec_votes',
+                 'is_primary', 'partner_type',
+                 'concession_as_volume', 'concession_as_power',)
+    def _compute_number_of_votes(self):
+        if len(self) != 1:
+            return
+        if self.is_primary and self.partner_type != '01_WUA':
+            polling_system_type = self.env['ir.values'].get_default(
+                'wua.configuration', 'polling_system_type')
+            votes = 0
+            divider = 1
+            if (self.partner_type in ['02_IND', '03_WSP']):
+                concession_value = self.concession_as_volume
+                if self.partner_type == '02_IND':
+                    divider = 1000
+                else:
+                    divider = 4000
+            else:
+                concession_value = self.concession_as_power
+                divider = 2.5
+            area_for_votes = concession_value / divider
+            if polling_system_type == 2 or polling_system_type == 3:
+                if polling_system_type == 2:
+                    polling_system_interval = self.env['ir.values'].\
+                        get_default('wua.configuration',
+                                    'polling_system_interval')
+                    if polling_system_interval > 0:
+                        polling_system_rounding_type = \
+                            self.env['ir.values'].\
+                            get_default('wua.configuration',
+                                        'polling_system_rounding_type')
+                        calc_votes =\
+                            area_for_votes / float(polling_system_interval)
+                        if polling_system_rounding_type == 0:
+                            votes = math.ceil(calc_votes)
+                        else:
+                            votes = math.floor(calc_votes)
+                if polling_system_type == 3:
+                    polling_system_intervals = self.env['ir.values'].\
+                        get_default('wua.configuration',
+                                    'polling_system_intervals')
+                    if polling_system_intervals:
+                        votes = self.assign_votes_by_range(
+                            area_for_votes, polling_system_intervals)
+            self.number_of_votes = votes
+        else:
+            super(ResPartner, self)._compute_number_of_votes()
+
+    def clear_vals_for_che_partner(self, vals):
+        vals['customer'] = False
+        vals['partner_type'] = None
+        vals['concession_as_volume'] = 0.0
+        vals['concession_as_power'] = 0.0
+
+    @api.model
+    def create(self, vals):
+        if ('partner_code' in vals and vals['partner_code'] > 9999):
+            self.clear_vals_for_che_partner(vals)
+        return super(ResPartner, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if ('partner_code' in vals and vals['partner_id'] > 9999):
+            # This could be an ensure one, but use for massive assignments
+            self.clear_vals_for_che_partner(vals)
+        return super(ResPartner, self).write(vals)

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_intake_view_form" model="ir.ui.view" >
+        <field name="name">Intakes (form view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category']"
+                   position="after">
+                <field name="octroi_id" required="1"/>
+                <field name="waterchannel_id" required="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_intake_view_tree" model="ir.ui.view" >
+        <field name="name">Intake (tree view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category']"
+                   position="after">
+                <field name="octroi_id" required="1"/>
+                <field name="waterchannel_id" required="1"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="wua_intake_view_search" model="ir.ui.view">
+        <field name="name">Intakes (search view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='category']" position="before">
+                <filter string="Octroi" name="octroi" context="{'group_by':'octroi_id'}"/>
+                <filter string="Waterchannel" name="waterchannel" context="{'group_by':'waterchannel_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

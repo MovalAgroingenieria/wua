@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_waterchannel_view_form" model="ir.ui.view">
+        <field name="name">Waterchannels (form view)</field>
+        <field name="model">wua.waterchannel</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                    </div>
+                    <group name="master_data" col="9">
+                        <group name="master_data_fields" colspan="6" col="4">
+                            <group name="master_data_fields_left" colspan="2">
+                                <field name="name"/>
+                                <field name="description"/>
+                            </group>
+                            <group name="master_data_fields_right" colspan="2">
+                            </group>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_waterchannel_view_tree" model="ir.ui.view">
+        <field name="name">Waterchannels (tree view)</field>
+        <field name="model">wua.waterchannel</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_cayc_general_waterchannel_view_tree">
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_waterchannel_view_search" model="ir.ui.view">
+        <field name="name">Waterchannels (search view)</field>
+        <field name="model">wua.waterchannel</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_waterchannel_action" model="ir.actions.act_window">
+        <field name="name">Waterchannels</field>
+        <field name="res_model">wua.waterchannel</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_waterchannel_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_waterchannel_view_search"/>
+    </record>
+
+
+    <menuitem id="wua_waterchannel_menu"
+              name="Waterchannels"
+              parent="base_wua.base_wua_census_configuration_menu"
+              action="wua_waterchannel_action"
+              sequence="4"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

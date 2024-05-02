@@ -13,9 +13,36 @@ class WuaParcel(models.Model):
         default=False,
     )
 
+    partner_type = fields.Selection([
+        ('01_WUA', 'Water User Association'),
+        ('02_IND', 'Industry'),
+        ('03_WSP', 'Water Supply'),
+        ('04_HEL', 'Hydroelectric Producer'),
+    ], string='Partner Type',
+        related='partner_id.partner_type',
+        store=True,
+        index=True,
+    )
+
     wuabase_id = fields.Many2one(
         string='WUA Base',
         comodel_name='wua.wuabase',
+        index=True,
+    )
+
+    octroi_id = fields.Many2one(
+        string='Octroi',
+        related='intake_id.octroi_id',
+        comodel_name='wua.octroi',
+        store=True,
+        index=True,
+    )
+
+    waterchannel_id = fields.Many2one(
+        string='Waterchannel',
+        related='intake_id.waterchannel_id',
+        comodel_name='wua.waterchannel',
+        store=True,
         index=True,
     )
 
@@ -33,8 +60,12 @@ class WuaParcel(models.Model):
     def check_primary_partnerlinks(self):
         for record in self:
             if (len(record.partnerlink_ids) > 0):
-                if record.is_primary and len(record.partnerlink_ids.filtered(
-                        lambda x: not x.partner_id.is_primary)) > 0:
+                # Primary cannot have more than one partnerlink and this¡
+                # partner must be primary
+                if record.is_primary and (
+                    len(record.partnerlink_ids) > 1 or
+                    len(record.partnerlink_ids.filtered(
+                        lambda x: not x.partner_id.is_primary)) > 0):
                     raise exceptions.ValidationError(
                         _('A primary parcel cannot have a non primary '
                           'partner.'))
