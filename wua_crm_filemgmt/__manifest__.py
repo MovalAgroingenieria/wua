@@ -28,6 +28,7 @@
         'reports/res_file_category_report_lease.xml',
         'reports/res_file_category_report_trading.xml',
         'reports/res_file_category_report_complaint.xml',
+        'reports/res_file_category_report_custom.xml',
         'data/res_file_category_report_data.xml',
     ],
     'installable': True,

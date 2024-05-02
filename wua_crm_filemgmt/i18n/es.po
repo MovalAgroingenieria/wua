@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-23 09:59+0000\n"
-"PO-Revision-Date: 2024-02-23 09:59+0000\n"
+"POT-Creation-Date: 2024-05-02 11:34+0000\n"
+"PO-Revision-Date: 2024-05-02 11:34+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,9 +23,13 @@ msgid "&amp;nbsp;"
 msgstr "&amp;nbsp;"
 
 #. module: wua_crm_filemgmt
-#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_complaint_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_lease_document
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_trading_document
+msgid "&amp;nbsp;("
+msgstr "&amp;nbsp;("
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_complaint_document
 msgid "(NIF:&amp;nbsp;"
 msgstr "(NIF:&amp;nbsp;"
 
@@ -279,6 +283,8 @@ msgstr "<b>Área total:</b>"
 
 #. module: wua_crm_filemgmt
 #: model:res.file.category.report,report_template_end:wua_crm_filemgmt.resfilecategoryreport_complaint
+#: model:res.file.category.report,report_template_end:wua_crm_filemgmt.resfilecategoryreport_custom
+#: model:res.file.category.report,report_template_start:wua_crm_filemgmt.resfilecategoryreport_custom
 msgid "<i>Free text</i>"
 msgstr "<i>Texto libre</i>"
 
@@ -536,8 +542,7 @@ msgstr "Dominio de ID de informe de categoría"
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_category_reports_ids
 #: model:ir.ui.menu,name:wua_crm_filemgmt.file_category_report menu
 msgid "Category reports"
-msgstr "Categorías de informe"
-
+msgstr "Informes categoría"
 
 #. module: wua_crm_filemgmt
 #: model:ir.actions.act_window,help:wua_crm_filemgmt.res_file_category_report_action
@@ -593,6 +598,16 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: wua_crm_filemgmt
+#: model:ir.actions.report.xml,name:wua_crm_filemgmt.res_file_category_report_custom
+msgid "Custom report"
+msgstr "Informe personalizado"
+
+#. module: wua_crm_filemgmt
+#: model:res.file.category.report,name:wua_crm_filemgmt.resfilecategoryreport_custom
+msgid "Custom standard (empty)"
+msgstr "Personalizado estándar (vacío)"
+
+#. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_partnerlink_is_denounced
 msgid "Denounced"
 msgstr "Denunciado"
@@ -626,7 +641,7 @@ msgstr "ERROR EN PLANTILLA INICIAL"
 #. module: wua_crm_filemgmt
 #: model:ir.model,name:wua_crm_filemgmt.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entidad (parcela)"
+msgstr "Elemento (parcela)"
 
 #. module: wua_crm_filemgmt
 #: sql_constraint:res.file.category.report:0
@@ -698,7 +713,7 @@ msgid "Has parcellinks"
 msgstr "Tiene parcelas"
 
 #. module: wua_crm_filemgmt
-#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_id_15286
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_id_8108
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_id
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_add_parcels_file_id
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_wizard_partner_file_id
@@ -792,6 +807,12 @@ msgstr "Ubicación"
 #: model:ir.model,name:wua_crm_filemgmt.model_res_file
 msgid "Log of Files Movements"
 msgstr "Bitácora de movimientos de expedientes"
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_lease_document
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.category_report_trading_document
+msgid "NIF:&amp;nbsp;"
+msgstr "NIF:&amp;nbsp;"
 
 #. module: wua_crm_filemgmt
 #: code:addons/wua_crm_filemgmt/models/res_file.py:210
@@ -1007,3 +1028,4 @@ msgstr "wizard.add.parcels.file"
 #: model:ir.model,name:wua_crm_filemgmt.model_wizard_partner_file
 msgid "wizard.partner.file"
 msgstr "wizard.partner.file"
+
