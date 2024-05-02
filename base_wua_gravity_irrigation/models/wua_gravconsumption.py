@@ -108,7 +108,7 @@ class WuaGravconsumption(models.Model):
         ('proposed', 'Proposed'),
         ('planned', 'Planned'),
         ('executed', 'Executed'),
-        ], string='State',
+        ], string='Request state',
         index=True,
         default='proposed')
 

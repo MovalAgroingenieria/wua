@@ -34,7 +34,7 @@ class WuaWateringperiod(models.Model):
     state = fields.Selection([
         ('open', 'Open'),
         ('closed', 'Closed'),
-        ], string='State',
+        ], string='Request state',
         index=True,
         default='closed')
 

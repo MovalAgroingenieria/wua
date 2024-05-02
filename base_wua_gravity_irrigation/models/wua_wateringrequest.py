@@ -92,7 +92,7 @@ class WuaWateringrequest(models.Model):
         ('pending', 'Pending Processing'),
         ('intermediate', 'Intermediate'),
         ('executed', 'Executed'),
-        ], string='State',
+        ], string='Request State',
         index=True,
         store=True,
         compute='_compute_state')

@@ -151,7 +151,7 @@ class WuaWatering(models.Model):
         ('draft', 'Draft'),
         ('calculated', 'Calculated'),
         ('validated', 'Validated'),
-        ], string='State',
+        ], string='Request state',
         index=True,
         default='draft')
 
