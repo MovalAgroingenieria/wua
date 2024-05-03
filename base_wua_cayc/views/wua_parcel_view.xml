@@ -17,6 +17,23 @@
         </field>
     </record>
 
+    <record id="wua_parcel_view_search" model="ir.ui.view" >
+        <field name="name">Parcels (search view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']"
+                   position="before">
+                <separator/>
+                <filter string="Parcel Mapped: Yes" name="parcelmappedyes"
+                 domain="[('mapped_parcel','=', True)]"/>
+                <filter string="Parcel Mapped: No" name="parcelmappedno"
+                 domain="[('mapped_parcel','=', False)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="wua_edit_parcel_class_view_tree" model="ir.ui.view">
         <field name="name">Parcel Classes</field>
         <field name="model">wua.parcel.class</field>

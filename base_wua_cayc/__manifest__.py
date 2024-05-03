@@ -17,8 +17,10 @@
     "data": [
         "security/ir.model.access.csv",
         "data/wua_config_settings_data.xml",
+        "data/wua_parcel_cron.xml",
         "views/resources.xml",
         "views/res_company_view.xml",
+        "views/res_partner_view.xml",
         "views/wua_parcel_view.xml",
         "views/wua_config_settings_view.xml",
         "reports/wua_parcel_report.xml",

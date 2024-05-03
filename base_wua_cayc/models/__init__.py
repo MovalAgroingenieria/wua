@@ -5,3 +5,4 @@
 from . import res_company
 from . import wua_parcel
 from . import wua_config_settings
+from . import res_partner

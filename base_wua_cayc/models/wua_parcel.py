@@ -5,12 +5,18 @@
 from Crypto.Cipher import AES
 from lxml import etree
 import datetime
+import logging
 import pytz
 from odoo import models, fields, api, exceptions, _
 
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
+
+    mapped_parcel = fields.Boolean(
+        string='Mapped Parcel',
+        default=False,
+    )
 
     parcel_class_ids = fields.One2many(
         string='Parcel Classes',
@@ -207,6 +213,162 @@ class WuaParcel(models.Model):
                 'active': parcel_vals['active'],
             },
         ]]
+
+    def _get_cayc_connect_query(self):
+        cayc_remote_ip = self.env['ir.values'].get_default(
+            'wua.configuration', 'cayc_remote_ip')
+        cayc_remote_port = self.env['ir.values'].get_default(
+            'wua.configuration', 'cayc_remote_port')
+        cayc_remote_database = self.env['ir.values'].get_default(
+            'wua.configuration', 'cayc_remote_database')
+        cayc_remote_database_user = self.env['ir.values'].get_default(
+            'wua.configuration', 'cayc_remote_database_user')
+        cayc_remote_database_password = self.env['ir.values'].get_default(
+            'wua.configuration', 'cayc_remote_database_password')
+        if (not cayc_remote_ip or not cayc_remote_port or not
+            cayc_remote_database or not cayc_remote_database_user or not
+                cayc_remote_database_password):
+            raise exceptions.UserError(
+                _('Missing some CAYC connect parameter.'))
+        cayc_general_connect_query = """
+                SELECT dblink_connect('conn_to_cayc', 'hostaddr=%s
+                port=%s dbname=%s user=%s password=%s') AS connection;
+            """ % (cayc_remote_ip, cayc_remote_port, cayc_remote_database,
+                   cayc_remote_database_user, cayc_remote_database_password)
+        return cayc_general_connect_query
+
+    def _reset_mapped_parcel_local(self):
+        self.env.cr.execute("""
+            UPDATE wua_parcel SET mapped_parcel = FALSE
+            WHERE active IS TRUE;
+        """)
+
+    def _open_cayc_connection(self, connection_query):
+        self.env.cr.execute(connection_query)
+        connect_result = self.env.cr.dictfetchall()
+        if (not connect_result or not
+                connect_result[0].get('connection') == 'OK'):
+            raise exceptions.ValidationError(
+                _('Could not connect to CAYC DB check connection parameters.'))
+
+    def _get_wuabase_id_from_cayc(self, wuabase):
+        wuabase_id = None
+        self.env.cr.execute("""
+            SELECT id FROM dblink('conn_to_cayc', 'SELECT id FROM
+            wua_wuabase WHERE name = ''%s'';') AS t(id INTEGER)
+        """ % wuabase)
+        wuabase_id_results = self.env.cr.dictfetchall()
+        if (wuabase_id_results and wuabase_id_results[0].get('id')):
+            wuabase_id = wuabase_id_results[0].get('id')
+        return wuabase_id
+
+    def _reset_mapped_parcel_remote(self, wuabase_id):
+        self.env.cr.execute("""
+            SELECT dblink_exec('conn_to_cayc', 'UPDATE wua_parcel
+            SET mapped_parcel = FALSE WHERE active AND NOT
+            is_primary AND wuabase_id = %s;')
+        """ % wuabase_id)
+
+    def _get_parcels_remote(self, wuabase_id):
+        parcels = False
+        self.env.cr.execute("""
+            SELECT STRING_AGG(quote_literal(name), ',') AS parcels FROM
+            dblink('conn_to_cayc',
+            'SELECT name FROM wua_parcel WHERE active AND NOT
+            is_primary AND wuabase_id = %s;') AS t(name TEXT);
+        """ % (wuabase_id))
+        parcel_results = self.env.cr.dictfetchall()
+        if (parcel_results and parcel_results[0].get('parcels')):
+            parcels = parcel_results[0].get('parcels')
+        return parcels
+
+    def _get_parcels_local(self):
+        parcels = False
+        self.env.cr.execute("""
+            SELECT STRING_AGG('''' || quote_literal(name) || '''', ',') AS
+            parcels FROM
+            wua_parcel WHERE active;
+        """)
+        parcel_results = self.env.cr.dictfetchall()
+        if (parcel_results and parcel_results[0].get('parcels')):
+            parcels = parcel_results[0].get('parcels')
+        return parcels
+
+    def _set_mapped_parcel_remote(self, parcels):
+        self.env.cr.execute("""
+            SELECT dblink_exec('conn_to_cayc',
+            'UPDATE wua_parcel SET mapped_parcel = TRUE
+            WHERE name IN (%s);');
+        """ % parcels)
+
+    def _set_mapped_parcel_local(self, parcels):
+        self.env.cr.execute("""
+            UPDATE wua_parcel SET mapped_parcel = TRUE WHERE
+            name IN (%s);
+        """ % parcels)
+
+    def _get_partner_of_mapped_parcels(self):
+        partner_ids = False
+        self.env.cr.execute("""
+            SELECT DISTINCT wpp1.partner_id
+            FROM wua_parcel_partnerlink wpp1 INNER JOIN wua_parcel wp1 ON
+            wp1.id = wpp1.parcel_id WHERE wp1.active AND wp1.mapped_parcel;
+        """)
+        partner_results = self.env.cr.fetchall()
+        if (partner_results and len(partner_results) > 0):
+            partner_ids = [partner[0] for partner in partner_results]
+        return partner_ids
+
+    @api.model
+    def refresh_mapped_field(self):
+        # Check parameters are filled
+        _logger = logging.getLogger(self.__class__.__name__)
+        connected_to_db = False
+        # Refresh Parcel Mapped field
+        try:
+            # Get connection parameters
+            cayc_general_connect_query = self._get_cayc_connect_query()
+            self.env.cr.savepoint()
+            # Set local parcels as not mapped
+            self._reset_mapped_parcel_local()
+            self._open_cayc_connection(cayc_general_connect_query)
+            connected_to_db = True
+            wua_code = self.env['res.company'].search([])[0].wua_code
+            wuabase_id = self._get_wuabase_id_from_cayc(wua_code)
+            # Set remote parcels as not mapped
+            self._reset_mapped_parcel_remote(wuabase_id)
+            # Get parcels that need to be updated
+            parcels = self._get_parcels_remote(wuabase_id)
+            if (parcels):
+                # Set local parcels as mapped
+                self._set_mapped_parcel_local(parcels)
+            # Get parcels that need to be updated on remote
+            parcels = self._get_parcels_local()
+            if (parcels):
+                # Set remote parcels as mapped
+                self._set_mapped_parcel_remote(parcels)
+            self.env.cr.commit()
+            self.env.invalidate_all()
+        except Exception as e:
+            self.env.cr.rollback()
+            _logger.error("An error occurred: %s", e)
+        finally:
+            # Always close db connection if entablished
+            if (connected_to_db):
+                self.env.cr.execute("""
+                SELECT dblink_disconnect('conn_to_cayc');
+            """)
+        # Refresh Partner Mapped field
+        try:
+            self.env.cr.savepoint()
+            partner_ids = self._get_partner_of_mapped_parcels()
+            if (partner_ids):
+                self.env['res.partner'].browse(partner_ids).write({
+                    'mapped_partner': True,
+                })
+        except Exception as e:
+            self.env.cr.rollback()
+            _logger.error("An error occurred: %s", e)
 
     @api.model
     def create(self, vals):

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_search" model="ir.ui.view">
+        <field name="name">Partners (search view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']"
+                   position="before">
+                <separator/>
+                <filter string="Partner Mapped: Yes" name="partnermappedyes"
+                 domain="[('mapped_partner','=', True)]"/>
+                <filter string="Partner Mapped: No" name="partnermappedno"
+                 domain="[('mapped_partner','=', False)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

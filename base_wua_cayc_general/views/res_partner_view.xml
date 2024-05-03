@@ -28,7 +28,7 @@
     <record id="view_partner_search" model="ir.ui.view">
         <field name="name">Partners (search view)</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base_wua.view_partner_search"/>
+        <field name="inherit_id" ref="base_wua_cayc.view_partner_search"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='category_id']" position="before">
                 <field name="wuabase_id"/>
@@ -47,6 +47,12 @@
                 <filter string="Partner Type"
                      name="partner_type"
                      context="{'group_by':'partner_type'}"/>
+            </xpath>
+            <xpath expr="//filter[@name='partnermappedyes']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//filter[@name='partnermappedno']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
         </field>
     </record>
