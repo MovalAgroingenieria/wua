@@ -402,7 +402,7 @@ class WuaParcel(models.Model):
                                          'area.'))
 
     def do_process_active_field(self, active):
-        super(WuaParcel, self).do_process_active_field()
+        super(WuaParcel, self).do_process_active_field(active)
         parcel_id = self.id
         parcel_classes = self.env['wua.parcel.class'].with_context(
             active_test=False)

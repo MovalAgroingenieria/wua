@@ -60,28 +60,7 @@ class ResPartner(models.Model):
         if ((self.env.context.get('wua') == '1' or self.is_wua_partner) and
                 (not self.parent_id)):
             # Primary partenr
-            if (self.partner_code > 9999 and self.partner_code / 10000 == 0):
-                raise exceptions.ValidationError(
-                    _('The secondary partner code must not end at 0.'))
-            else:
-                # Primary partner
-                code_to_search = str(self.partner_code).zfill(3)
-                if (self.partner_code > 10000):
-                    # Secondary partner
-                    code_to_search = str(self.partner_code / 10000).zfill(3)
-                wuabase = self.env['wua.wuabase'].search(
-                    [('name', '=', code_to_search)])
-                if (not wuabase or len(wuabase) < 1):
-                    raise exceptions.ValidationError(
-                        _('The WUA Base code does not exists.'))
-
-    @api.constrains('partner_code')
-    def _check_partner_code(self):
-        super(ResPartner, self)._check_partner_code()
-        if ((self.env.context.get('wua') == '1' or self.is_wua_partner) and
-                (not self.parent_id)):
-            # Primary partenr
-            if (self.partner_code > 9999 and self.partner_code / 10000 == 0):
+            if (self.partner_code > 9999 and self.partner_code % 10000 == 0):
                 raise exceptions.ValidationError(
                     _('The secondary partner code must not end at 0.'))
             else:
@@ -107,7 +86,7 @@ class ResPartner(models.Model):
     def _compute_is_primary(self):
         for record in self:
             is_primary = False
-            if (record.partner_code < 10000):
+            if (record.partner_code > 0 and record.partner_code < 10000):
                 is_primary = True
             record.is_primary = is_primary
 
@@ -132,7 +111,9 @@ class ResPartner(models.Model):
     def _compute_number_of_votes(self):
         if len(self) != 1:
             return
-        if self.is_primary and self.partner_type != '01_WUA':
+        if not self.is_primary:
+            self.number_of_votes = 0
+        elif self.partner_type != '01_WUA':
             polling_system_type = self.env['ir.values'].get_default(
                 'wua.configuration', 'polling_system_type')
             votes = 0
@@ -188,7 +169,6 @@ class ResPartner(models.Model):
 
     @api.multi
     def write(self, vals):
-        if ('partner_code' in vals and vals['partner_id'] > 9999):
-            # This could be an ensure one, but use for massive assignments
+        if ('partner_code' in vals and vals['partner_code'] > 9999):
             self.clear_vals_for_che_partner(vals)
         return super(ResPartner, self).write(vals)

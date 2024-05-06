@@ -9,4 +9,13 @@ def migrate(cr, version):
     env = api.Environment(cr, SUPERUSER_ID, {})
     parcels = env['wua.parcel'].search([])
     for parcel in parcels:
-        parcel.create_parcel_class_unique(parcel)
+        parcel.write({
+            'parcel_class_ids': [[
+                0,
+                False,
+                {
+                    'area_official': parcel.area_official,
+                    'parcel_class': 'SAR',
+                },
+            ]]
+        })

@@ -62,11 +62,12 @@
         <field name="model">wua.parcel.class</field>
         <field name="arch" type="xml">
             <tree create="false" edit="false" delete="false"
-                class="o_base_wua_cayc_parcel_class_view_tree">
+                class="o_base_wua_cayc_parcel_class_view_tree"
+                order="parcel_id asc">
+                <field name="parcel_id"/>
                 <field name="name"/>
                 <field name="gis_viewer_link" invisible="1"/>
                 <field name="with_gis_parcel_class" invisible="1"/>
-                <field name="parcel_id"/>
                 <field name="parcel_class"/>
                 <field name="area_official"/>
                 <field name="area_gis"/>
@@ -117,11 +118,11 @@
         <field name="name">Parcel Classes (tree view)</field>
         <field name="model">wua.parcel.class</field>
         <field name="arch" type="xml">
-            <tree class="o_base_wua_cayc_parcel_class_view_tree">
+            <tree class="o_base_wua_cayc_parcel_class_view_tree" order="parcel_id asc">
+                <field name="parcel_id"/>
                 <field name="name"/>
                 <field name="gis_viewer_link" invisible="1"/>
                 <field name="with_gis_parcel_class" invisible="1"/>
-                <field name="parcel_id"/>
                 <field name="parcel_class"/>
                 <field name="area_official"/>
                 <field name="area_gis"/>

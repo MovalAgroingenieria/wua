@@ -21,6 +21,7 @@ class WuaParcel(models.Model):
     ], string='Partner Type',
         related='partner_id.partner_type',
         store=True,
+        radonly=True,
         index=True,
     )
 
@@ -76,15 +77,23 @@ class WuaParcel(models.Model):
                         _('A CHE parcel cannot have a non CHE '
                           'partner.'))
 
-    @api.multi
-    def write(self, vals):
-        super(WuaParcel, self).write(vals)
-        if ('partner_id' in vals and vals['partner_id']):
-            # This could be an ensure one, but use for massive assignments
-            for record in self:
-                if (not record.wuabase_id):
-                    record.wuabase_id = record.partner_id.wuabase_id
-        return True
+    def _compute_partner_id(self):
+        super(WuaParcel, self)._compute_partner_id()
+        for record in self:
+            if not record.wuabase_id and record.partner_id.wuabase_id:
+                parcel_id = record.id
+                wuabase_id = record.partner_id.wuabase_id.id
+                try:
+                    self.env.cr.savepoint()
+                    self.env.cr.execute("""
+                    UPDATE wua_parcel SET wuabase_id=%s
+                    WHERE id=%s""", (wuabase_id, parcel_id))
+                    self.env.cr.execute("""
+                    UPDATE wua_parcel_class SET wuabase_id=%s
+                    WHERE parcel_id=%s""", (wuabase_id, parcel_id))
+                    self.env.cr.commit()
+                except Exception:
+                    self.env.cr.rollback()
 
     # Inherit method to ensure that parcels not primary have at least
     # one parcel class on creation

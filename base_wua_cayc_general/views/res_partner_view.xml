@@ -6,9 +6,13 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base_wua.view_partner_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="style">width:400px</attribute>
+            </xpath>
             <xpath expr="//field[@name='apply_second_partner_coding']" position="after">
                 <field name="is_primary" invisible="1"/>
                 <field name="partner_type" attrs="{'invisible': [('is_primary', '=', False)], 'required': [('is_primary', '=', True)]}" />
+                <field name="wuabase_id" class="oe_read_only" style="width: 220px;"/>
                 <div name="is_primary_secondary"
                     class="oe_read_only text-center"
                     colspan="2"
@@ -16,11 +20,10 @@
                     <strong attrs="{'invisible': [('is_primary', '=', False)]}">( PRIMARY PARTNER )</strong>
                     <strong attrs="{'invisible': [('is_primary', '=', True)]}">( CHE PARTNER )</strong>
                 </div>
-                <field name="wuabase_id" class="oe_read_only" />
             </xpath>
             <xpath expr="//field[@name='number_of_votes']" position="after">
-                <field name="concession_as_volume" attrs="{'invisible': [('partner_type', 'not in', ['02_IND', '03_WSP'])]}"/>
-                <field name="concession_as_power" attrs="{'invisible': [('partner_type', 'not in', ['02_IND', '03_WSP'])]}"/>
+                <field name="concession_as_volume" style="width:120px" attrs="{'invisible': [('partner_type', 'not in', ['02_IND', '03_WSP'])]}"/>
+                <field name="concession_as_power" style="width:120px" attrs="{'invisible': [('partner_type', 'not in', ['04_HEL'])]}"/>
             </xpath>
         </field>
     </record>
