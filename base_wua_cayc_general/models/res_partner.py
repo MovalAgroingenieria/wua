@@ -127,7 +127,7 @@ class ResPartner(models.Model):
             else:
                 concession_value = self.concession_as_power
                 divider = 2.5
-            area_for_votes = concession_value / divider
+            area_for_votes = (concession_value / divider) * 10000
             if polling_system_type == 2 or polling_system_type == 3:
                 if polling_system_type == 2:
                     polling_system_interval = self.env['ir.values'].\
