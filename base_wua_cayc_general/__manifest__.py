@@ -14,6 +14,8 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_cayc",
+        "base_wua_crop_planning",
+        "base_wua_infrastructure_pressurized_hierarchy",
     ],
     "data": [
         "security/ir.model.access.csv",

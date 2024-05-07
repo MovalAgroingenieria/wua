@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Hide consumption button  -->
+    <record id="view_partner_form_inherit_gravity_irrigation" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua_gravity_irrigation.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gravity_consumptions']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Hide cropplan data  -->
+    <record id="view_partner_form_inherit_infrastructure" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='%(base_wua_infrastructure.res_partner_irrigationpoints_action)d']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Hide cropplan data  -->
+    <record id="view_partner_form_inherit_cropplan" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua_crop_planning.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='cropplan_id']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_tree_inherit_cropplan" model="ir.ui.view">
+        <field name="name">Partners (form view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua_crop_planning.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='registered_cropplan']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_partner_form" model="ir.ui.view">
         <field name="name">Partners (form view)</field>
         <field name="model">res.partner</field>
@@ -24,6 +71,28 @@
             <xpath expr="//field[@name='number_of_votes']" position="after">
                 <field name="concession_as_volume" style="width:120px" attrs="{'invisible': [('partner_type', 'not in', ['02_IND', '03_WSP'])]}"/>
                 <field name="concession_as_power" style="width:120px" attrs="{'invisible': [('partner_type', 'not in', ['04_HEL'])]}"/>
+            </xpath>
+            <!-- Hide fields, buttons and pages on primary partners -->
+            <xpath expr="//field[@name='gender']"  position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='birthdate']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name_alias']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='is_owner']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='is_lessee']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='is_payer']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
+            </xpath>
+            <xpath expr="//page[@name='quotas']" position="attributes">
+                <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>
             </xpath>
         </field>
     </record>
@@ -59,5 +128,39 @@
             </xpath>
         </field>
     </record>
+
+    <record id="res_partner_primary_action" model="ir.actions.act_window">
+        <field name="name">Partners Primary</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_id" ref="base_wua.view_partner_tree"/>
+        <field name="domain">[('is_wua_partner','=',True), ('is_primary', '=', True)]</field>
+        <field name="search_view_id" ref="view_partner_search"/>
+        <field name="context">{'wua':'1','default_is_wua_partner':True, 'is_primary_partner': True}</field>
+    </record>
+
+    <record id="res_partner_che_action" model="ir.actions.act_window">
+        <field name="name">Partners CHE</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_id" ref="base_wua.view_partner_tree"/>
+        <field name="domain">[('is_wua_partner','=',True), ('is_primary', '=', False)]</field>
+        <field name="search_view_id" ref="view_partner_search"/>
+        <field name="context">{'wua':'1','default_is_wua_partner':True, 'is_primary_partner': False}</field>
+    </record>
+
+    <menuitem id="base_wua.res_partner_menu"
+              name="Partners Primary"
+              parent="base_wua.base_wua_census_partners_menu"
+              action="res_partner_primary_action"
+              sequence="1"/>
+
+    <menuitem id="res_partner_che_menu"
+              name="Partners CHE"
+              parent="base_wua.base_wua_census_partners_menu"
+              action="res_partner_che_action"
+              sequence="1"/>
 
 </odoo>

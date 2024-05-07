@@ -2,6 +2,7 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from lxml import etree
 from odoo import models, fields, api, _, exceptions
 
 
@@ -37,6 +38,7 @@ class WuaParcel(models.Model):
         comodel_name='wua.octroi',
         store=True,
         index=True,
+        readonly=True,
     )
 
     waterchannel_id = fields.Many2one(
@@ -45,6 +47,7 @@ class WuaParcel(models.Model):
         comodel_name='wua.waterchannel',
         store=True,
         index=True,
+        readonly=True,
     )
 
     @api.constrains('is_primary', 'parcel_class_ids')
@@ -102,7 +105,19 @@ class WuaParcel(models.Model):
             parcel_vals) and ('is_primary' not in parcel_vals or
                               not parcel_vals['is_primary'])
 
-    # Inherit and modify method, primary parcels don't have parcel classes
+    def populate_area_official_of_parcel_class(
+            self, parcel_class_ids, area_official):
+        # if the record is the first class of the parcel
+        # and the area is 0, then populate the area.
+        if len(parcel_class_ids) == 1 and parcel_class_ids[0][0] == 0:
+            vals = parcel_class_ids[0][2]
+            if vals['area_official'] == 0:
+                vals.update({'area_official': area_official})
+
+    # If the area_official parameter is -1, then find parcel
+    # from parcel_id and get her area. If the parcel_class_ids parameter
+    # is None, then find all parcel_classes from parcel_id and sum their area.
+    # Primary parcels don't have parcel classes
     def is_parcel_classes_area_correct(
             self, parcel_id, area_official, parcel_class_ids, parcel_vals):
         parcels = self.env['wua.parcel']
@@ -111,8 +126,96 @@ class WuaParcel(models.Model):
                 (parcel.is_primary and 'is_primary' not in parcel_vals)):
             return True
         else:
-            return super(WuaParcel, self).is_parcel_classes_area_correct(
-                parcel_id, area_official, parcel_class_ids, parcel_vals)
+            total_area = 0
+            if area_official == -1:
+                parcels = self.env['wua.parcel']
+                parcel = parcels.browse(parcel_id)
+                if parcel:
+                    area_official = parcel.area_official
+            unchanged_ids = []
+            condition = []
+            if parcel_class_ids is not None:
+                for parcel_class in parcel_class_ids:
+                    parcel_class_oper = parcel_class[0]
+                    parcel_class_id = parcel_class[1]
+                    parcel_class_vals = parcel_class[2]
+                    # unmodified area
+                    if parcel_class_oper == 4 or (
+                        parcel_class_oper == 1 and 'area_official' not in
+                            parcel_class_vals):
+                        unchanged_ids.append(parcel_class_id)
+                    # append parcel_class or update parcel_class with modified
+                    # area
+                    if parcel_class_oper == 0 or (
+                        parcel_class_oper == 1 and 'area_official' in
+                            parcel_class_vals):
+                        total_area = total_area + \
+                            parcel_class_vals['area_official']
+                if len(unchanged_ids) > 0:
+                    condition = [('id', 'in', unchanged_ids)]
+                    parcel_classs = self.env['wua.parcel.class']
+                    filtered_parcel_classes = parcel_classs.search(condition)
+                    for parcel_class in filtered_parcel_classes:
+                        total_area = total_area + parcel_class.area_official
+            else:
+                condition = [('parcel_id', '=', parcel_id)]
+                parcel_classes = self.env['wua.parcel.class']
+                filtered_parcel_classes = parcel_classes.search(condition)
+                for parcel_class in filtered_parcel_classes:
+                    total_area = total_area + parcel_class.area_official
+            # return area_official == total_area
+            return self.is_close(area_official, total_area)
+
+    def do_process_slave_data_for_write(self, vals):
+        super(WuaParcel, self).do_process_slave_data_for_write(vals)
+        area_official = -1
+        parcel_class_ids = None
+        if 'area_official' in vals:
+            area_official = vals['area_official']
+        if 'parcel_class_ids' in vals:
+            parcel_class_ids = vals['parcel_class_ids']
+        correct_subparcels_area = self.is_parcel_classes_area_correct(
+            self.id, area_official, parcel_class_ids, vals)
+        if not correct_subparcels_area:
+            raise exceptions.UserError(_('The sum of parcel class areas '
+                                         'must be the parcel official '
+                                         'area.'))
+
+    @api.model
+    def create(self, vals):
+        if 'parcel_class_ids' in vals:
+            self.populate_area_official_of_parcel_class(
+                vals['parcel_class_ids'], vals['area_official'])
+        if self.should_create_parcel_class_on_creation(vals):
+            self.populate_parcel_class_for_creation(vals)
+        new_parcel = super(WuaParcel, self).create(vals)
+        correct_parcel_classes_area = self.is_parcel_classes_area_correct(
+            new_parcel.id, vals['area_official'],
+            vals['parcel_class_ids'], vals)
+        if not correct_parcel_classes_area:
+            raise exceptions.UserError(_('The sum of classes areas must '
+                                         'be the parcel official area.'))
+        return new_parcel
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        result = super(WuaParcel, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        if view_type == 'tree' and self.env.context.get(
+                'is_primary_parcel', False):
+            doc = etree.XML(result['arch'])
+            hide_fields = [
+                'wuabase_id',
+                'intake_id',
+            ]
+            for field in hide_fields:
+                for node in doc.xpath("//field[@name='%s']" % field):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
+            result['arch'] = etree.tostring(doc)
+        return result
 
 
 class WuaParcelClass(models.Model):
@@ -124,4 +227,32 @@ class WuaParcelClass(models.Model):
         related='parcel_id.wuabase_id',
         store=True,
         index=True,
+        readonly=True,
+    )
+
+    intake_id = fields.Many2one(
+        string='Intake',
+        related='parcel_id.intake_id',
+        comodel_name='wua.intake',
+        store=True,
+        index=True,
+        readonly=True,
+    )
+
+    octroi_id = fields.Many2one(
+        string='Octroi',
+        related='parcel_id.octroi_id',
+        comodel_name='wua.octroi',
+        store=True,
+        index=True,
+        readonly=True,
+    )
+
+    waterchannel_id = fields.Many2one(
+        string='Waterchannel',
+        related='parcel_id.waterchannel_id',
+        comodel_name='wua.waterchannel',
+        store=True,
+        index=True,
+        readonly=True,
     )

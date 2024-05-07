@@ -17,6 +17,18 @@
         </field>
     </record>
 
+    <record id="wua_parcel_view_tree" model="ir.ui.view" >
+        <field name="name">Parcels (tree view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='cadastral_polygon']"
+                   position="before">
+                <field name="intake_id"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="wua_parcel_view_search" model="ir.ui.view" >
         <field name="name">Parcels (search view)</field>
         <field name="model">wua.parcel</field>
@@ -44,6 +56,7 @@
                 <field name="gis_viewer_link" invisible="1"/>
                 <field name="with_gis_parcel_class" invisible="1"/>
                 <field name="parcel_class"/>
+                <field name="resolution_year"/>
                 <field name="area_official"/>
                 <field name="area_gis"/>
                 <button name="action_see_gis_viewer"
@@ -57,6 +70,63 @@
         </field>
     </record>
 
+    <record id="wua_parcel_class_view_form" model="ir.ui.view" >
+        <field name="name">Parcel Classes (form view)</field>
+        <field name="model">wua.parcel.class</field>
+        <field name="arch" type="xml">
+            <form duplicate="0" create="false" delete="false">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="gis_viewer_link" invisible="1"/>
+                        <field name="with_gis_parcel_class" invisible="1"/>
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-archive"
+                                confirm="Are you sure you want to toggle visibility?"
+                                groups="base_wua.group_wua_user">
+                                <field name="active"
+                                 widget="boolean_button"
+                                 options='{"terminology": "archive"}'/>
+                        </button>
+                        <button name="action_see_gis_viewer"
+                                type="object"
+                                class="oe_stat_button"
+                                string="GIS Viewer"
+                                icon="fa-map-marker"
+                                attrs="{'invisible':
+                                        ['|',('gis_viewer_link','=',False),
+                                             ('with_gis_parcel_class','=',False)]}"
+                                groups="base_wua.group_wua_user,
+                                        base_wua.group_wua_portal_user"/>
+                    </div>
+                    <group name="master_data" col="9">
+                        <group name="master_data_fields" colspan="6" col="4">
+                            <group name="master_data_fields_left" colspan="2">
+                                <field name="parcel_id" readonly="1"/>
+                                <field name="parcel_class" readonly="1"/>
+                                <field name="resolution_year" readonly="1"/>
+                                <field name="class_sharer" readonly="1"/>
+                            </group>
+                            <group name="master_data_fields_right" colspan="2">
+                                <field name="area_official" readonly="1"/>
+                                <field name="area_gis"/>
+                            </group>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
     <record id="wua_parcel_class_view_tree" model="ir.ui.view" >
         <field name="name">Parcel Classes (tree view)</field>
         <field name="model">wua.parcel.class</field>
@@ -69,6 +139,8 @@
                 <field name="gis_viewer_link" invisible="1"/>
                 <field name="with_gis_parcel_class" invisible="1"/>
                 <field name="parcel_class"/>
+                <field name="class_sharer"/>
+                <field name="resolution_year"/>
                 <field name="area_official"/>
                 <field name="area_gis"/>
                 <button name="action_see_gis_viewer"
@@ -78,6 +150,7 @@
                     attrs="{'invisible':
                             ['|',('gis_viewer_link','=',False),
                                     ('with_gis_parcel_class','=',False)]}"/>
+                <field name="notes" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -98,6 +171,8 @@
                      context="{'group_by':'parcel_id'}"/>
                     <filter string="Parcel Class" name="parcel_class"
                      context="{'group_by':'parcel_class'}"/>
+                    <filter string="Class Sharer" name="class_sharer"
+                     context="{'group_by':'class_sharer'}"/>
                 </group>
             </search>
         </field>
@@ -124,6 +199,8 @@
                 <field name="gis_viewer_link" invisible="1"/>
                 <field name="with_gis_parcel_class" invisible="1"/>
                 <field name="parcel_class"/>
+                <field name="class_sharer"/>
+                <field name="resolution_year" invisible="1"/>
                 <field name="area_official"/>
                 <field name="area_gis"/>
                 <button name="action_see_gis_viewer"
@@ -133,6 +210,7 @@
                     attrs="{'invisible':
                             ['|',('gis_viewer_link','=',False),
                                     ('with_gis_parcel_class','=',False)]}"/>
+                <field name="notes" invisible="1"/>
             </tree>
         </field>
     </record>
@@ -140,7 +218,7 @@
     <record id="wua_parcel_class_action" model="ir.actions.act_window">
         <field name="name">Parcel Classes</field>
         <field name="res_model">wua.parcel.class</field>
-        <field name="view_mode">tree,pivot</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" ref="wua_parcel_class_view_tree"/>
         <field name="search_view_id" ref="wua_parcel_class_view_search"/>
     </record>
@@ -149,13 +227,15 @@
               name="Parcel Classes"
               parent="base_wua.base_wua_census_landparcels_menu"
               action="wua_parcel_class_action"
-              sequence="11"/>
+              sequence="12"/>
 
     <record id="wua_technical_parcel_classes_action" model="ir.actions.act_window">
         <field name="name">Parcel Classes (low-level)</field>
         <field name="res_model">wua.parcel.class</field>
-        <field name="view_mode">tree,pivot</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_id" ref="wua_technical_parcel_class_view_tree"/>
+        <field name="search_view_id" ref="wua_parcel_class_view_search"/>
     </record>
 
     <menuitem id="wua_technical_parcel_classes_menu"

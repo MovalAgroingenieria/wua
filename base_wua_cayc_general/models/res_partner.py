@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import math
+from lxml import etree
 from odoo import models, fields, _, exceptions, api
 
 
@@ -172,3 +173,25 @@ class ResPartner(models.Model):
         if ('partner_code' in vals and vals['partner_code'] > 9999):
             self.clear_vals_for_che_partner(vals)
         return super(ResPartner, self).write(vals)
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        result = super(ResPartner, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        if view_type == 'tree' and self.env.context.get(
+                'is_primary_partner', False):
+            doc = etree.XML(result['arch'])
+            hide_fields = [
+                'parcel_owner_number',
+                'parcel_owner_area',
+                'parcel_lessee_number',
+                'parcel_lessee_area',
+            ]
+            for field in hide_fields:
+                for node in doc.xpath("//field[@name='%s']" % field):
+                    node.set('invisible', '1')
+                    node.set('modifiers', '{"tree_invisible": true}')
+            result['arch'] = etree.tostring(doc)
+        return result

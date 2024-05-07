@@ -18,6 +18,11 @@ class WuaParcel(models.Model):
         default=False,
     )
 
+    class_sharer = fields.Char(
+        string='Class Sharer',
+        index=True,
+    )
+
     parcel_class_ids = fields.One2many(
         string='Parcel Classes',
         comodel_name='wua.parcel.class',
@@ -209,8 +214,9 @@ class WuaParcel(models.Model):
             False,
             {
                 'area_official': parcel_vals['area_official'],
-                'parcel_class': 'SAR',
-                'active': parcel_vals['active'],
+                'parcel_class': 'RH',
+                'active': parcel_vals['active'] if 'active' in
+                parcel_vals else False,
             },
         ]]
 
@@ -370,37 +376,6 @@ class WuaParcel(models.Model):
             self.env.cr.rollback()
             _logger.error("An error occurred: %s", e)
 
-    @api.model
-    def create(self, vals):
-        if 'parcel_class_ids' in vals:
-            self.populate_area_official_of_parcel_class(
-                vals['parcel_class_ids'], vals['area_official'])
-        if self.should_create_parcel_class_on_creation(vals):
-            self.populate_parcel_class_for_creation(vals)
-        new_parcel = super(WuaParcel, self).create(vals)
-        correct_parcel_classes_area = self.is_parcel_classes_area_correct(
-            new_parcel.id, vals['area_official'],
-            vals['parcel_class_ids'], vals)
-        if not correct_parcel_classes_area:
-            raise exceptions.UserError(_('The sum of classes areas must '
-                                         'be the parcel official area.'))
-        return new_parcel
-
-    def do_process_slave_data_for_write(self, vals):
-        super(WuaParcel, self).do_process_slave_data_for_write(vals)
-        area_official = -1
-        parcel_class_ids = None
-        if 'area_official' in vals:
-            area_official = vals['area_official']
-        if 'parcel_class_ids' in vals:
-            parcel_class_ids = vals['parcel_class_ids']
-        correct_subparcels_area = self.is_parcel_classes_area_correct(
-            self.id, area_official, parcel_class_ids, vals)
-        if not correct_subparcels_area:
-            raise exceptions.UserError(_('The sum of parcel class areas '
-                                         'must be the parcel official '
-                                         'area.'))
-
     def do_process_active_field(self, active):
         super(WuaParcel, self).do_process_active_field(active)
         parcel_id = self.id
@@ -411,57 +386,6 @@ class WuaParcel(models.Model):
         filtered_parcel_classes.write({
             'active': active
         })
-
-    def populate_area_official_of_parcel_class(
-            self, parcel_class_ids, area_official):
-        # if the record is the first class of the parcel
-        # and the area is 0, then populate the area.
-        if len(parcel_class_ids) == 1 and parcel_class_ids[0][0] == 0:
-            vals = parcel_class_ids[0][2]
-            if vals['area_official'] == 0:
-                vals.update({'area_official': area_official})
-
-    # If the area_official parameter is -1, then find parcel
-    # from parcel_id and get her area. If the parcel_class_ids parameter
-    # is None, then find all parcel_classes from parcel_id and sum their area.
-    def is_parcel_classes_area_correct(
-            self, parcel_id, area_official, parcel_class_ids, parcel_vals):
-        total_area = 0
-        if area_official == -1:
-            parcels = self.env['wua.parcel']
-            parcel = parcels.browse(parcel_id)
-            if parcel:
-                area_official = parcel.area_official
-        unchanged_ids = []
-        condition = []
-        if parcel_class_ids is not None:
-            for parcel_class in parcel_class_ids:
-                parcel_class_oper = parcel_class[0]
-                parcel_class_id = parcel_class[1]
-                parcel_class_vals = parcel_class[2]
-                # unmodified area
-                if parcel_class_oper == 4 or (parcel_class_oper == 1 and
-                   'area_official' not in parcel_class_vals):
-                    unchanged_ids.append(parcel_class_id)
-                # append parcel_class or update parcel_class with modified area
-                if parcel_class_oper == 0 or (parcel_class_oper == 1 and
-                   'area_official' in parcel_class_vals):
-                    total_area = total_area + \
-                        parcel_class_vals['area_official']
-            if len(unchanged_ids) > 0:
-                condition = [('id', 'in', unchanged_ids)]
-                parcel_classs = self.env['wua.parcel.class']
-                filtered_parcel_classes = parcel_classs.search(condition)
-                for parcel_class in filtered_parcel_classes:
-                    total_area = total_area + parcel_class.area_official
-        else:
-            condition = [('parcel_id', '=', parcel_id)]
-            parcel_classes = self.env['wua.parcel.class']
-            filtered_parcel_classes = parcel_classes.search(condition)
-            for parcel_class in filtered_parcel_classes:
-                total_area = total_area + parcel_class.area_official
-        # return area_official == total_area
-        return self.is_close(area_official, total_area)
 
 
 class WuaParcelClass(models.Model):
@@ -476,7 +400,7 @@ class WuaParcelClass(models.Model):
     )
 
     parcel_class = fields.Selection([
-        ('SAR', 'SAR'),
+        ('RH', 'RH'),
         ('ER', 'ER'),
         ('BR', 'BR'),
         ('NR', 'NR'),
@@ -485,7 +409,24 @@ class WuaParcelClass(models.Model):
     ], string='Parcel Class',
         required=True,
         index=True,
-        default='SAR',
+        default='RH',
+    )
+
+    class_sharer = fields.Char(
+        string='Class Sharer',
+        related='parcel_id.class_sharer',
+        store=True,
+        index=True,
+    )
+
+    resolution_year = fields.Integer(
+        string='Resolution Year',
+        index=True,
+        default=0,
+    )
+
+    notes = fields.Html(
+        string='Notes',
     )
 
     active = fields.Boolean(
@@ -533,6 +474,9 @@ class WuaParcelClass(models.Model):
         ('valid_area_gis',
          'CHECK (area_gis >= 0)',
          'The area gis must be a value zero or positive.'),
+        ('valid_resolution_year',
+         'CHECK (resolution_year >= 0)',
+         'The resolution year must be a value zero or positive.'),
     ]
 
     @api.model_cr
@@ -614,7 +558,7 @@ class WuaParcelClass(models.Model):
             view_type=view_type,
             toolbar=toolbar,
             submenu=submenu)
-        if view_type == 'tree':
+        if view_type == 'tree' or view_type == 'form':
             doc = etree.XML(res['arch'])
             area_measurement_type = self.env['ir.values'].get_default(
                 'wua.configuration', 'area_measurement_type')
@@ -668,3 +612,13 @@ class WuaParcelClass(models.Model):
                         ' (' + _('hectares') + ')')
             res['arch'] = etree.tostring(doc)
         return res
+
+    @api.multi
+    def action_see_gis_viewer(self):
+        self.ensure_one()
+        if self.gis_viewer_link:
+            return {
+                'type': 'ir.actions.act_url',
+                'url': self.gis_viewer_link,
+                'target': 'new',
+            }
