@@ -17,25 +17,25 @@
                                                   ('state','=','validated')]}"
                             groups="base_wua.group_wua_manager"/>
                     <button name="cancel_irrigationreport"
-                            string="Cancel"
+                            string="Set as Draft"
                             type="object"
                             class="oe_highlight"
                             attrs="{'invisible': ['|',('id','=',False),
                                                   ('state','=','draft')]}"
                             groups="base_wua.group_wua_manager"/>
                     <button name="change_to_active"
-                            type="object" string="Activate"
+                            type="object" string="Set as Active"
                             groups="base_wua.group_wua_manager"
                             attrs="{'invisible': [('cancelled','=',False)]}"/>
                     <button name="change_to_cancelled"
-                            type="object" string="Cancel"
+                            type="object" string="Set As Anulled"
                             groups="base_wua.group_wua_manager"
                             attrs="{'invisible': ['|',('cancelled', '=', True),
                                     ('state', '=', 'executed')]}"/>
                     <div name="consumption_cancelled"
                          style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
                          attrs="{'invisible':[('cancelled','=',False)]}">
-                         ( CANCELLED )
+                         ( ANULLED )
                     </div>
                     <field name="credit_overdue" invisible="1"/>
                     <div name="hascreditoverdue"
@@ -255,7 +255,7 @@
     </record>
 
     <record id="wua_cancel_irrigationreports" model="ir.actions.server">
-        <field name="name">Cancel</field>
+        <field name="name">Set as Draft</field>
         <field name="model_id" ref="model_wua_irrigationreport"/>
         <field name="state">code</field>
         <field name="code">
@@ -265,7 +265,7 @@
     </record>
 
     <record id="wua_action_cancel_irrigationreports" model="ir.values">
-        <field name="name">Cancel</field>
+        <field name="name">Set as Draft</field>
         <field name="model">wua.irrigationreport</field>
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
