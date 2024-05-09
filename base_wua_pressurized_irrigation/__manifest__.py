@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2017 Eduardo Iniesta - <einiesta@moval.es>
+# 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
     "name": "Pressurized Irrigation Management for Water Users Associations",
     "summary": "In a water users association, management of the "
                "pressurized irrigation",
-    "version": '10.0.1.1.3',
+    "version": '10.0.1.1.4',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

@@ -12,10 +12,12 @@ class WuaWaterconnectionIrrigationShift(models.Model):
 
     MAX_SIZE_NAME = 52
 
-    waterconnection_ids = fields.One2many(
+    waterconnection_ids = fields.Many2many(
         string='Water Connections',
         comodel_name='wua.waterconnection',
-        inverse_name='irrigation_shift_id',
+        relation='wua_waterconnection_irrigation_shift_rel',
+        column1='irrigation_shift_id',
+        column2='waterconnection_id',
         ondelete='set null',
     )
 
@@ -43,7 +45,7 @@ class WuaWaterconnectionIrrigationShift(models.Model):
     @api.multi
     def action_see_waterconnections(self):
         self.ensure_one()
-        condition = [('irrigation_shift_id', '=', self.id)]
+        condition = [('irrigation_shift_ids', '=', self.id)]
         id_form_view = self.env.ref(
             'base_wua_infrastructure.'
             'wua_waterconnection_view_form').id

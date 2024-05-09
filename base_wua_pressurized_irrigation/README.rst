@@ -26,6 +26,7 @@ Credits
 Contributors
 ------------
 
+* Samuel Fernandez <sfernandez@moval.es>
 * Alberto Hernández <ahernandez@moval.es>
 * Eduardo Iniesta <einiesta@moval.es>
 * Miguel Mora <mmora@moval.es>

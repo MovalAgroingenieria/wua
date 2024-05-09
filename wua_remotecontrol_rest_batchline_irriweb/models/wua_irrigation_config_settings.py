@@ -49,6 +49,10 @@ class WuaIrrigationConfiguration(models.TransientModel):
     import_from_hydraulicsector_batchline = fields.Boolean(
         string='Import from hydraulic sector')
 
+    import_irrigation_schedule_from_waterconnections_batchline = \
+        fields.Boolean(
+            string='Import Irrigation Schedule from waterconnection')
+
     php_frame_enabled = fields.Boolean(
         string='PHP (frames)',
         default=False)
@@ -211,4 +215,13 @@ class WuaIrrigationConfiguration(models.TransientModel):
         batchline_can_impport = self.env['ir.values'].get_default(
             'wua.irrigation.configuration',
             'import_from_hydraulicsector_batchline')
+        return other_can_import or batchline_can_impport
+
+    def import_irrigation_schedule_from_wc_any(self):
+        other_can_import = super(WuaIrrigationConfiguration, self).\
+            import_irrigation_schedule_from_wc_any()
+        # GET inelcom config
+        batchline_can_impport = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'import_irrigation_schedule_from_waterconnections_batchline')
         return other_can_import or batchline_can_impport

@@ -55,11 +55,6 @@
                         </span></div>
                 </button>
             </xpath>
-            <xpath expr="//field[@name='position']"
-                   position="after">
-                <div colspan="2"/>
-                <field name="irrigation_shift_id"/>
-            </xpath>
             <xpath expr="//field[@name='total_affected_area_official']"
              position="after">
                 <field name="watermeter_id"
@@ -73,6 +68,18 @@
                 <field name="last_reading_value"/>
                 <newline/>
                 <field name="last_reading_consumption" string="Last Reading (consumption)"/>
+            </xpath>
+            <xpath expr="//page[@name='parcels_page']" position="after">
+                <page name="irrigation_shifts" string="Irrigation Shifts">
+                <field name="irrigation_shift_ids">
+                    <tree create="true" edit="true" delete="true"
+                         class="o_base_wua_pressurized_irrigation_watermeters_view_tree_notebook">
+                        <field name="name"/>
+                        <field name="description"/>
+                        <field name="notes"/>
+                    </tree>
+                </field>
+                </page>
             </xpath>
             <xpath expr="//page[@name='parcels_page']" position="after">
                 <page name="watermeters_page" string="Water Meters">
@@ -106,7 +113,6 @@
             <xpath expr="//field[@name='number_of_parcels']" position="after">
                 <field name="number_of_irrigation_schedules" invisible="1"/>
                 <field name="number_of_irrigation_events" invisible="1"/>
-                <field name="irrigation_shift_id" invisible="1"/>
                 <field name="watermeter_id"/>
                 <button name="action_see_irrigation_schedules"
                         type="object" class="oe_stat_button"
@@ -150,11 +156,46 @@
                 <filter string="Without water meter" name="withoutwatermeter"
                  domain="[('with_watermeter','=',False)]"/>
             </xpath>
+            <!-- Al cambiar a many2many ya no se puede filtrar por este campo
             <xpath expr="//filter[@name='irrigation_shed']" position="after">
-                <filter string="Irrigation Shift"
+
+                    <filter string="Irrigation Shift"
                         name="irrigation_shift"
                         context="{'group_by':'irrigation_shift_id'}"/>
             </xpath>
+            -->
         </field>
     </record>
+    <record id="wua_technical_irrigationshiftlinks_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Shifts Links(tree view)</field>
+        <field name="model">wua.waterconnection.irrigation.shiftlink</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="waterconnection_id" />
+                <field name="irrigation_shift_id" />
+                <field name="description"/>
+                <field name="notes"/>
+            </tree>
+        </field>
+    </record>
+    <record id="wua_technical_irrigationshiftlinks_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Shifts Links(tree view)</field>
+        <field name="model">wua.waterconnection.irrigation.shiftlink</field>
+        <field name="arch" type="xml">
+            <search>
+            </search>
+        </field>
+    </record>
+    <record id="wua_technical_irrigation_shift_action" model="ir.actions.act_window">
+        <field name="name">Water Shifts</field>
+        <field name="res_model">wua.waterconnection.irrigation.shiftlink</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_technical_irrigationshiftlinks_view_tree"/>
+        <field name="search_view_id" ref="wua_technical_irrigationshiftlinks_view_search"/>
+    </record>
+    <menuitem id="menu_irrigation_shift"
+              name="Irrigation Shifts" sequence="10"
+              action="wua_technical_irrigation_shift_action"
+              parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"/>
+
 </odoo>

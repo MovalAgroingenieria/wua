@@ -31,7 +31,7 @@
                 <tr name="wc_irrigationshift" attrs="{'invisible': [('type','!=','waterconnection')]}">
                     <td>Waterconnection irrgation shift</td>
                     <td style="padding: 0px 4px"> -> </td>
-                    <td>{{ waterconnection.irrigation_shift_id.name }}</td>
+                    <td>{% for shift in waterconnection.irrigation_shift_ids %} {% if shift.name == 'SHIFT NAME' %} {{ shift.description }} {% endif %} {% endfor %}</td>
                 </tr>
                 <tr name="wc_lastreadingvalue" attrs="{'invisible': [('type','!=','waterconnection')]}">
                     <td>Waterconnection last reading (m³)</td>

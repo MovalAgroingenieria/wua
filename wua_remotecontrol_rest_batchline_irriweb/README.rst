@@ -14,7 +14,7 @@ Description
 
 Interface of Moval Regadio with the control remote BATCHLINE IRRIWEB,
 based on a REST API, and with the functional schema of the
-base_wua_remotecontrol_rest module. 
+base_wua_remotecontrol_rest module.
 
 Installation
 ============
@@ -35,6 +35,7 @@ Credits
 Contributors
 ------------
 
+* Samuel Fernandez <sfernandez@moval.es>
 * Alberto Hernández <ahernandez@moval.es>
 * Eduardo Iniesta <einiesta@moval.es>
 * Miguel Mora <mmora@moval.es>

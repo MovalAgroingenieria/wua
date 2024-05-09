@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wua_waterconnection_irrigation_schedule_view_form" model="ir.ui.view">
+        <field name="name">Irrigation Shift (form view)</field>
+        <field name="model">wua.waterconnection.irrigation.schedule</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='shift_number']" position="after">
+                <field name="irrigation_shift_id"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="wua_waterconnection_irrigation_schedule_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Shift (tree view)</field>
+        <field name="model">wua.waterconnection.irrigation.schedule</field>
+        <field name="inherit_id" ref="base_wua_pressurized_irrigation.wua_waterconnection_irrigation_schedule_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='waterconnection_id']" position="after">
+                <field name="irrigation_shift_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

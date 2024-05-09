@@ -118,13 +118,14 @@ class WuaWaterconnectionTelecontrol(models.Model):
                             date, '%Y-%m-%dT%H:%M:%S')
                         data_time = pytz.timezone('Europe/Madrid').\
                             localize(data_time)
-                        data_time = data_time.astimezone(pytz.timezone('UTC')).\
-                            strftime('%Y-%m-%d %H:%M:%S')
+                        data_time = data_time.astimezone(
+                            pytz.timezone('UTC')).strftime('%Y-%m-%d %H:%M:%S')
                         wc_all_info.append({
                             'waterconnection': waterconnection,
                             'total_volume': total_volume,
                             # m³/h -> l/s
-                            'waterflow': waterflow / self.FACTOR_CONVERSION_M3H_LS,
+                            'waterflow':
+                                waterflow / self.FACTOR_CONVERSION_M3H_LS,
                             'valve_open': valve_open,
                             'valve_scheduled': valve_scheduled,
                             'valve_state': valve_state,

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
+# 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
-from odoo import models, fields, api, _
+from odoo import models, fields, api, tools, _
 
 
 class WuaWaterconnection(models.Model):
@@ -42,10 +42,11 @@ class WuaWaterconnection(models.Model):
         store=True,
         compute='_compute_average_consumption')
 
-    irrigation_shift_id = fields.Many2one(
-        string='Irrigation Shift',
+    irrigation_shift_ids = fields.Many2many(
+        string='Irrigation Shifts',
         comodel_name='wua.waterconnection.irrigation.shift',
-        index=True,)
+        relation='wua_waterconnection_irrigation_shift_rel',
+        column1='waterconnection_id', column2='irrigation_shift_id')
 
     irrigation_schedule_ids = fields.One2many(
         string='Irrigation Schedules',
@@ -375,3 +376,55 @@ class WuaWaterconnection(models.Model):
             'context': {'from_shortcut': 1},
             }
         return act_window
+
+
+class WuaWaterconnectionIrrigationShiftlink(models.Model):
+    _name = 'wua.waterconnection.irrigation.shiftlink'
+    _auto = False
+    _description = 'Irrigationshift link of a waterconnection'
+
+    waterconnection_id = fields.Many2one(
+        string='Waterconnection Code',
+        comodel_name='wua.waterconnection',
+        required=True,
+        index=True,
+        ondelete='cascade')
+
+    irrigation_shift_id = fields.Many2one(
+        string='Irrigation Shift',
+        comodel_name='wua.waterconnection.irrigation.shift',
+        required=True,
+        index=True,
+        ondelete='cascade')
+
+    description = fields.Char(
+        string='Description',
+        related='irrigation_shift_id.description')
+
+    notes = fields.Html(
+        string='Notes',
+        related='irrigation_shift_id.notes')
+
+    @api.model_cr
+    def init(self):
+        self.env.cr.execute("""SELECT EXISTS(
+            SELECT * FROM information_schema.tables
+            WHERE table_name='wua_waterconnection_irrigation_shiftlink')""")
+        if self.env.cr.fetchone()[0]:
+            tools.drop_view_if_exists(
+                self.env.cr, 'wua_waterconnection_irrigation_shiftlink')
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                CREATE OR REPLACE VIEW wua_waterconnection_irrigation_shiftlink
+                AS (SELECT row_number() OVER() AS id, row.*
+                FROM (SELECT waterconnection.id
+                AS waterconnection_id, irrigation_shift.id
+                AS irrigation_shift_id, irrigation_shift.notes
+                FROM wua_waterconnection_irrigation_shift_rel rel
+                INNER JOIN wua_waterconnection waterconnection
+                ON rel.waterconnection_id = waterconnection.id INNER JOIN
+                wua_waterconnection_irrigation_shift irrigation_shift
+                ON rel.irrigation_shift_id = irrigation_shift.id) row)""")
+        except Exception:
+            self.env.cr.rollback()

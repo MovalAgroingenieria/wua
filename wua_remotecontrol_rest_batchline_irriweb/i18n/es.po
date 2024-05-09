@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-09 08:54+0000\n"
-"PO-Revision-Date: 2024-04-09 08:54+0000\n"
+"POT-Creation-Date: 2024-05-09 06:43+0000\n"
+"PO-Revision-Date: 2024-05-09 06:43+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
-#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_telecontrol.py:140
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_telecontrol.py:141
 #, python-format
 msgid " Cannot get token. "
 msgstr " No se pudo obtener el token. "
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
-#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_telecontrol.py:138
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_telecontrol.py:139
 #, python-format
 msgid " It is not possible to get the info. "
 msgstr " No es posible recuperar la información. "
@@ -68,6 +68,11 @@ msgstr "URL de la aplicación"
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_irrigation_configuration_automatic_census_synchronization_batchline
 msgid "Automatic Synchcron."
 msgstr "Sinc. automática"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_waterconnection_irrigation_shift_batchline_id
+msgid "Batchline Id"
+msgstr "Batchline Id"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
 #: selection:wua.waterconnection,last_valve_state:0
@@ -150,6 +155,16 @@ msgid "Entity (water connection)"
 msgstr "Elemento (toma)"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model,name:wua_remotecontrol_rest_batchline_irriweb.model_wua_waterconnection_irrigation_schedule
+msgid "Entity (waterconnection irrigation schedule)"
+msgstr "Elemento (programación de riego)"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model,name:wua_remotecontrol_rest_batchline_irriweb.model_wua_waterconnection_irrigation_shift
+msgid "Entity (waterconnection irrigation shift)"
+msgstr "Elemento (turno de riego)"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model,name:wua_remotecontrol_rest_batchline_irriweb.model_wua_waterconnection_telecontrol
 msgid "Entity (waterconnection telecontrol)"
 msgstr "Elemento (toma de telecontrol)"
@@ -192,6 +207,11 @@ msgid "ID"
 msgstr "ID"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_irrigation_configuration_import_irrigation_schedule_from_waterconnections_batchline
+msgid "Import Irrigation Schedule from waterconnection"
+msgstr "Importar programaciones de riego desde toma"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_irrigation_configuration_import_from_hydraulicsector_batchline
 msgid "Import from hydraulic sector"
 msgstr "Importación de lecturas de un sector hidráulico en telecontrol"
@@ -231,6 +251,11 @@ msgstr "Lecturas (IrriWEB)"
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_waterconnection_html_scheduling_frame
 msgid "IrriWEB Scheduling"
 msgstr "Programación (IrriWEB)"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_waterconnection_irrigation_schedule_irrigation_shift_id
+msgid "Irrigation Shift"
+msgstr "Turno de riego"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wizard_scheduling_waterconnection___last_update
@@ -366,7 +391,19 @@ msgid "Remote Control Batchline"
 msgstr "Telecontrol Batchline"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
-#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_telecontrol.py:231
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_irrigation_schedule.py:99
+#, python-format
+msgid "Remote Control: Error getting waterconnection irrigation schedule"
+msgstr "Telecontrol: Error obteniendo las programaciones de riego"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_irrigation_schedule.py:326
+#, python-format
+msgid "Remote Control: Saved Irrigation Schedules"
+msgstr "Telecontrol: Guardadas programaciones de riego"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_telecontrol.py:232
 #, python-format
 msgid "Remote Control: Saved WaterconnectionTelecontrol Info"
 msgstr "Remote Control: Saved WaterconnectionTelecontrol Info"
@@ -384,7 +421,7 @@ msgid "Schedule water connection"
 msgstr "Programación de toma"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
-#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection.py:266
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection.py:268
 #, python-format
 msgid "State not defined"
 msgstr "Estado no definido"
@@ -405,6 +442,12 @@ msgid "Telecontrol Error"
 msgstr "Error de Telecontrol"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_irrigation_schedule.py:130
+#, python-format
+msgid "The communication with the remote control is not enabled."
+msgstr "La comunicación con el telecontrol no esta habilitada."
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
 #: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_reading.py:18
 #, python-format
 msgid "The remote control is not enabled."
@@ -421,6 +464,12 @@ msgstr "No existe URL para la aplicación de telecontrol.."
 #, python-format
 msgid "Total"
 msgstr "Total"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: code:addons/wua_remotecontrol_rest_batchline_irriweb/models/wua_waterconnection_irrigation_schedule.py:287
+#, python-format
+msgid "Unable to get responses information."
+msgstr "Imposible obtener la información de la respuesta"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_irrigation_configuration_url_remotecontrol_rest_username_batchline
@@ -498,6 +547,11 @@ msgstr "Estado Contador:"
 #, python-format
 msgid "You are not the owner of the waterconnection"
 msgstr "No es el propietario de la toma"
+
+#. module: wua_remotecontrol_rest_batchline_irriweb
+#: model:ir.model.fields,field_description:wua_remotecontrol_rest_batchline_irriweb.field_wua_waterconnection_irrigation_shift_batchline_name
+msgid "batchline_name"
+msgstr "Nombre batchline"
 
 #. module: wua_remotecontrol_rest_batchline_irriweb
 #: model:ir.model.fields,help:wua_remotecontrol_rest_batchline_irriweb.field_wua_irrigation_configuration_automatic_census_synchronization_batchline
