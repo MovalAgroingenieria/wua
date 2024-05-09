@@ -291,7 +291,7 @@ class WuaParcel(models.Model):
     def _get_parcels_local(self):
         parcels = False
         self.env.cr.execute("""
-            SELECT STRING_AGG('''' || quote_literal(name) || '''', ',') AS
+            SELECT STRING_AGG('' || quote_literal(name) || '', ',') AS
             parcels FROM
             wua_parcel WHERE active;
         """)
@@ -301,11 +301,18 @@ class WuaParcel(models.Model):
         return parcels
 
     def _set_mapped_parcel_remote(self, parcels):
-        self.env.cr.execute("""
-            SELECT dblink_exec('conn_to_cayc',
-            'UPDATE wua_parcel SET mapped_parcel = TRUE
-            WHERE name IN (%s);');
-        """ % parcels)
+        batch_size = 100
+        parcels_list = parcels.split(',')
+        for i in xrange(0, len(parcels_list), batch_size):
+            batch = parcels_list[i:i+batch_size]
+            batch_str = ','.join(["'{}'".format(parcel.strip())
+                                 for parcel in batch])
+            query = """
+                SELECT dblink_exec('conn_to_cayc',
+                'UPDATE wua_parcel SET mapped_parcel = TRUE
+                WHERE name IN (%s);');
+            """ % batch_str
+            self.env.cr.execute(query)
 
     def _set_mapped_parcel_local(self, parcels):
         self.env.cr.execute("""

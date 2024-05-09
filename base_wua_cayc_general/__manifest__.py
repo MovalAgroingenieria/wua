@@ -19,6 +19,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/res_partner_cron.xml",
         "data/wua_wuabase_data.xml",
         "data/wua_octroi_data.xml",
         "data/wua_waterchannel_data.xml",
