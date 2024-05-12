@@ -78,11 +78,11 @@ class ResPartner(models.Model):
                 if (self.partner_code > 10000):
                     # Secondary partner
                     code_to_search = str(self.partner_code / 10000).zfill(3)
-                wuabase = self.env['wua.wuabase'].search(
-                    [('name', '=', code_to_search)])
-                if (not wuabase or len(wuabase) < 1):
-                    raise exceptions.ValidationError(
-                        _('The WUA Base code does not exists.'))
+                    wuabase = self.env['wua.wuabase'].search(
+                        [('name', '=', code_to_search)])
+                    if (not wuabase or len(wuabase) < 1):
+                        raise exceptions.ValidationError(
+                            _('The WUA Base code does not exists.'))
 
     @api.constrains('is_primary', 'partner_type')
     def check_partner_type(self):

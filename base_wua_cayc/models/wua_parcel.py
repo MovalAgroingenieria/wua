@@ -442,6 +442,10 @@ class WuaParcel(models.Model):
                 SELECT dblink_disconnect('conn_to_cayc');
             """)
         # Refresh Partner Mapped field
+        all_partners_wua = self.env['res.partner'].search(
+            [('partner_code', '>', 0)])
+        if all_partners_wua:
+            all_partners_wua.write({'mapped_partner': False, })
         try:
             self.env.cr.savepoint()
             partner_ids = self._get_partner_of_mapped_parcels()

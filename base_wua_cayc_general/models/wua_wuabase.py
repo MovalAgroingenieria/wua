@@ -17,7 +17,6 @@ class WuaWuabase(models.Model):
 
     name = fields.Char(
         string='Base Water User Association',
-        readonly=True,
     )
 
     partner_ids = fields.One2many(

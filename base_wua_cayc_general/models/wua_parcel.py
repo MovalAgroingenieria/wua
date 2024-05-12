@@ -166,6 +166,20 @@ class WuaParcel(models.Model):
             # return area_official == total_area
             return self.is_close(area_official, total_area)
 
+    def is_subparcels_area_correct(self, parcel_id,
+                                   area_official, subparcel_ids):
+        if area_official >= 0:
+            try:
+                # In CAyC, only one subparcel per parcel.
+                self.env.cr.savepoint()
+                self.env.cr.execute("""
+                UPDATE wua_parcel_subparcel SET area_official=%s
+                WHERE parcel_id=%s""", (area_official, parcel_id))
+                self.env.cr.commit()
+            except Exception:
+                self.env.cr.rollback()
+        return True
+
     def do_process_slave_data_for_write(self, vals):
         super(WuaParcel, self).do_process_slave_data_for_write(vals)
         area_official = -1
