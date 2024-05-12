@@ -15,10 +15,12 @@
     "depends": [
         "base_wua_cayc",
         "base_wua_crop_planning",
+        "base_wua_gravity_irrigation",
         "base_wua_infrastructure_pressurized_hierarchy",
     ],
     "data": [
         "security/ir.model.access.csv",
+        "data/res_partner_cron.xml",
         "data/wua_wuabase_data.xml",
         "data/wua_octroi_data.xml",
         "data/wua_waterchannel_data.xml",

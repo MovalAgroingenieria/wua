@@ -5,6 +5,7 @@
 from Crypto.Cipher import AES
 from lxml import etree
 import datetime
+import json
 import logging
 import pytz
 from odoo import models, fields, api, exceptions, _
@@ -291,7 +292,7 @@ class WuaParcel(models.Model):
     def _get_parcels_local(self):
         parcels = False
         self.env.cr.execute("""
-            SELECT STRING_AGG('''' || quote_literal(name) || '''', ',') AS
+            SELECT STRING_AGG('' || quote_literal(name) || '', ',') AS
             parcels FROM
             wua_parcel WHERE active;
         """)
@@ -301,11 +302,18 @@ class WuaParcel(models.Model):
         return parcels
 
     def _set_mapped_parcel_remote(self, parcels):
-        self.env.cr.execute("""
-            SELECT dblink_exec('conn_to_cayc',
-            'UPDATE wua_parcel SET mapped_parcel = TRUE
-            WHERE name IN (%s);');
-        """ % parcels)
+        batch_size = 100
+        parcels_list = parcels.split(',')
+        for i in xrange(0, len(parcels_list), batch_size):
+            batch = parcels_list[i:i+batch_size]
+            batch_str = ','.join(["'{}'".format(parcel.strip())
+                                 for parcel in batch])
+            query = """
+                SELECT dblink_exec('conn_to_cayc',
+                'UPDATE wua_parcel SET mapped_parcel = TRUE
+                WHERE name IN (%s);');
+            """ % batch_str
+            self.env.cr.execute(query)
 
     def _set_mapped_parcel_local(self, parcels):
         self.env.cr.execute("""
@@ -324,6 +332,75 @@ class WuaParcel(models.Model):
         if (partner_results and len(partner_results) > 0):
             partner_ids = [partner[0] for partner in partner_results]
         return partner_ids
+
+    def _get_parcel_classes_remote(self, wuabase_id):
+        parcel_classes = False
+        self.env.cr.execute("""
+            SELECT classes_data AS classes
+            FROM
+            dblink('conn_to_cayc',
+            'WITH aggregated_data AS (
+                SELECT wp1.name AS wp_name,
+                    jsonb_agg(
+                        jsonb_build_object(
+                        ''class_name'', wpc1.name,
+                        ''parcel_class'', wpc1.parcel_class,
+                        ''area_official'', wpc1.area_official,
+                        ''class_sharer'', COALESCE(wpc1.class_sharer, ''''),
+                        ''resolution_year'', wpc1.resolution_year,
+                        ''notes'', COALESCE(wpc1.notes, '''')
+                        )
+                    ) AS parcel_data
+                FROM wua_parcel wp1
+                INNER JOIN wua_parcel_class wpc1 ON wpc1.parcel_id = wp1.id
+                WHERE wp1.active AND NOT wp1.is_primary AND wp1.mapped_parcel
+                AND wp1.wuabase_id = %s
+                GROUP BY wp1.name
+            )
+            SELECT jsonb_object_agg(wp_name, parcel_data) AS classes_data
+            FROM aggregated_data') AS t(classes_data TEXT);
+        """ % (wuabase_id))
+        parcel_class_results = self.env.cr.dictfetchall()
+        if (parcel_class_results and parcel_class_results[0].get('classes')):
+            parcel_classes = json.loads(parcel_class_results[0].get('classes'))
+        return parcel_classes
+
+    def _set_parcel_classes_local(self, parcel_name, classes_data):
+        parcel_id = False
+        self.env.cr.execute("""
+            SELECT id FROM
+            wua_parcel WHERE active AND name = '%s';
+        """ % parcel_name)
+        parcel_id_result = self.env.cr.dictfetchall()
+        if (parcel_id_result and parcel_id_result[0].get('id')):
+            parcel_id = parcel_id_result[0].get('id')
+        if (parcel_id):
+            self.env.cr.execute("""
+                DELETE FROM wua_parcel_class WHERE parcel_id = %s;
+            """ % parcel_id)
+            values_query = []
+            for parcel_class in classes_data:
+                values_query.append('''
+                    (\'%s\', %s, \'%s\', %s, \'%s\', %s, \'%s\', %s)
+                ''' % (
+                    parcel_class['class_name'],
+                    parcel_id,
+                    parcel_class['parcel_class'],
+                    parcel_class['area_official'],
+                    parcel_class['class_sharer'],
+                    parcel_class['resolution_year'],
+                    parcel_class['notes'],
+                    'True',
+                    ))
+            self.env.cr.execute("""
+                INSERT INTO wua_parcel_class
+                    (name, parcel_id, parcel_class, area_official,
+                     class_sharer, resolution_year, notes, active)
+                VALUES
+                %s;
+            """ % (','.join(values_query)))
+            # After Insert the parcel classes update the area_official
+            # after commit
 
     @api.model
     def refresh_mapped_field(self):
@@ -365,6 +442,10 @@ class WuaParcel(models.Model):
                 SELECT dblink_disconnect('conn_to_cayc');
             """)
         # Refresh Partner Mapped field
+        all_partners_wua = self.env['res.partner'].search(
+            [('partner_code', '>', 0)])
+        if all_partners_wua:
+            all_partners_wua.write({'mapped_partner': False, })
         try:
             self.env.cr.savepoint()
             partner_ids = self._get_partner_of_mapped_parcels()
@@ -375,6 +456,35 @@ class WuaParcel(models.Model):
         except Exception as e:
             self.env.cr.rollback()
             _logger.error("An error occurred: %s", e)
+        connected_to_db = False
+        # Refresh Parcel Classes Data
+        try:
+            # Get connection parameters
+            cayc_general_connect_query = self._get_cayc_connect_query()
+            self.env.cr.savepoint()
+            self._open_cayc_connection(cayc_general_connect_query)
+            connected_to_db = True
+            wua_code = self.env['res.company'].search([])[0].wua_code
+            wuabase_id = self._get_wuabase_id_from_cayc(wua_code)
+            # Get parcels that need to be updated with class data
+            parcel_class_data = self._get_parcel_classes_remote(wuabase_id)
+            if (parcel_class_data):
+                # Update parcels with their classes
+                for parcel_name, classes in parcel_class_data.items():
+                    self._set_parcel_classes_local(parcel_name, classes)
+                    # self._set_mapped_parcel_local(parcels)
+            # Get parcels that need to be updated on remote
+            self.env.cr.commit()
+            self.env.invalidate_all()
+        except Exception as e:
+            self.env.cr.rollback()
+            _logger.error("An error occurred: %s", e)
+        finally:
+            # Always close db connection if entablished
+            if (connected_to_db):
+                self.env.cr.execute("""
+                SELECT dblink_disconnect('conn_to_cayc');
+            """)
 
     def do_process_active_field(self, active):
         super(WuaParcel, self).do_process_active_field(active)

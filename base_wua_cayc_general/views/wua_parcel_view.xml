@@ -217,10 +217,18 @@
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="wuabase_id"/>
             </xpath>
-            <xpath expr="//field[@name='registered_cropplan']" position="attributes">
+            <xpath expr="//field[@name='number_of_subparcels']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-            <xpath expr="//field[@name='number_of_subparcels']" position="attributes">
+        </field>
+    </record>
+
+    <record id="wua_parcel_view_tree_inherit_crop_planning" model="ir.ui.view">
+        <field name="name">Parcels (tree view)</field>
+        <field name="model">wua.parcel</field>
+        <field name="inherit_id" ref="base_wua_crop_planning.wua_parcel_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='registered_cropplan']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
         </field>
@@ -235,13 +243,6 @@
                 <field name="wuabase_id"/>
                 <field name="octroi_id"/>
                 <field name="waterchannel_id"/>
-            </xpath>
-            <xpath expr="//filter[@name='hydraulic_infrastructure_type_0']" position="before">
-                <filter string="Primary Parcel" name="primaryparcel"
-                    domain="[('is_primary','=',True)]"/>
-                <filter string="CHE Parcel" name="cheparcel"
-                    domain="[('is_primary','=',False)]"/>
-                <separator/>
             </xpath>
             <xpath expr="//filter[@name='hydraulicsector']" position="before">
                 <filter string="WUA Base"
