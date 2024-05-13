@@ -99,8 +99,8 @@ class WuaNegativeReading(models.Model):
                    offset=0, limit=None, orderby=False, lazy=True):
         if 'volume' in fields:
             fields.remove('volume')
-            return super(WuaNegativeReading, self).read_group(
-                domain, fields, groupby, offset, limit, orderby, lazy)
+        return super(WuaNegativeReading, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
 
     @api.multi
     def name_get(self):

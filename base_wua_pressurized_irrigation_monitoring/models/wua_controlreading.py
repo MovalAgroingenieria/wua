@@ -187,8 +187,8 @@ class WuaControlreading(models.Model):
                    offset=0, limit=None, orderby=False, lazy=True):
         if 'volume' in fields:
             fields.remove('volume')
-            return super(WuaControlreading, self).read_group(
-                domain, fields, groupby, offset, limit, orderby, lazy)
+        return super(WuaControlreading, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
 
     @api.model
     def create(self, vals):

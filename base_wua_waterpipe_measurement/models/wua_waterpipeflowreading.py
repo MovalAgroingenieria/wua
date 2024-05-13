@@ -134,13 +134,8 @@ class WuaWaterpipeflowreading(models.Model):
     @api.model
     def read_group(self, domain, fields, groupby,
                    offset=0, limit=None, orderby=False, lazy=True):
-        if ('volume' in fields or 'instant_flow' in fields):
-            if 'volume' in fields:
-                fields.remove('volume')
-            if 'instant_flow' in fields:
-                fields.remove('instant_flow')
-            return super(WuaWaterpipeflowreading, self).read_group(
-                domain, fields, groupby, offset, limit, orderby, lazy)
+        return super(WuaWaterpipeflowreading, self).read_group(
+            domain, fields, groupby, offset, limit, orderby, lazy)
 
     @api.model
     def create(self, vals):

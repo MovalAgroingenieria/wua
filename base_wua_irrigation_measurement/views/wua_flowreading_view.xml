@@ -103,6 +103,16 @@
       </field>
   </record>
 
+  <record id="wua_flowreading_view_pivot" model="ir.ui.view">
+    <field name="name">Flowreading (pivot view)</field>
+    <field name="model">wua.flowreading</field>
+    <field name="arch" type="xml">
+        <pivot string="Agregated Values" display_quantity="false">
+            <field name="volume" type="measure"/>
+        </pivot>
+    </field>
+  </record>
+
   <record id="wua_validate_flowreadings" model="ir.actions.server">
       <field name="name">Validate</field>
       <field name="model_id" ref="model_wua_flowreading"/>
@@ -143,7 +153,7 @@
       <field name="name">Flowmeter Readings</field>
       <field name="res_model">wua.flowreading</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,pivot</field>
       <field name="view_id" ref="wua_flowreading_view_tree"/>
       <field name="search_view_id" ref="wua_flowreading_view_search"/>
   </record>

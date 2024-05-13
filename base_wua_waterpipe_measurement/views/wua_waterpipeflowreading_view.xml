@@ -103,6 +103,16 @@
       </field>
   </record>
 
+  <record id="wua_waterpipeflowreading_view_pivot" model="ir.ui.view">
+    <field name="name">Waterpipe Flowreading (pivot view)</field>
+    <field name="model">wua.waterpipeflowreading</field>
+    <field name="arch" type="xml">
+        <pivot string="Agregated Values" display_quantity="false">
+            <field name="volume" type="measure"/>
+        </pivot>
+    </field>
+  </record>
+
   <record id="wua_validate_waterpipeflowreadings" model="ir.actions.server">
       <field name="name">Validate</field>
       <field name="model_id" ref="model_wua_waterpipeflowreading"/>
@@ -143,7 +153,7 @@
       <field name="name">Waterpipe Flowmeter Readings</field>
       <field name="res_model">wua.waterpipeflowreading</field>
       <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,pivot</field>
       <field name="view_id" ref="wua_waterpipeflowreading_view_tree"/>
       <field name="search_view_id" ref="wua_waterpipeflowreading_view_search"/>
   </record>
