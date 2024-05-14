@@ -138,6 +138,10 @@ class WuaPresconsumption(models.Model):
         readonly=True,
         index=True)
 
+    cancelled = fields.Boolean(
+        string="Presconsumption Cancelled",
+        default=False)
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Consumption.'),
         ('valid_reading_limits',
@@ -390,3 +394,35 @@ class WuaPresconsumption(models.Model):
             'volume_perunitareaandday': volume_perunitareaandday,
             'volume_perunitareaandday_hec': volume_perunitareaandday_hec
         })
+
+    @api.multi
+    def change_to_active(self):
+        self.ensure_one()
+        self.cancelled = False
+
+    @api.multi
+    def change_to_cancelled(self):
+        self.ensure_one()
+        self.cancelled = True
+
+    @api.multi
+    def set_as_active(self, active_presconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        presconsumptions = self.env['wua.presconsumption'].browse(
+            active_presconsumptions)
+        for presconsumption in presconsumptions:
+            if presconsumption.cancelled:
+                presconsumption.change_to_active()
+
+    @api.multi
+    def set_as_cancelled(self, active_presconsumptions):
+        if (not self.env.user.has_group('base_wua.group_wua_manager')):
+            raise exceptions.UserError(_(
+                'You do not have permission to execute this action.'))
+        presconsumptions = self.env['wua.presconsumption'].browse(
+            active_presconsumptions)
+        for presconsumption in presconsumptions:
+            if (not presconsumption.cancelled):
+                presconsumption.change_to_cancelled()

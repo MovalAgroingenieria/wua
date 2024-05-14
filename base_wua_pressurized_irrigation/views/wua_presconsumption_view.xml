@@ -6,6 +6,22 @@
         <field name="model">wua.presconsumption</field>
         <field name="arch" type="xml">
             <form create="0" delete="0" duplicate="0">
+                <field name="cancelled" invisible="1"/>
+                <header>
+                    <button name="change_to_active"
+                        type="object" string="Set as Active"
+                        groups="base_wua.group_wua_manager"
+                        attrs="{'invisible': [('cancelled','=',False)]}"/>
+                    <button name="change_to_cancelled"
+                        type="object" string="Set As Anulled"
+                        groups="base_wua.group_wua_manager"
+                        attrs="{'invisible': [('cancelled', '=', True)]}"/>
+                    <div name="consumption_cancelled"
+                         style="display: inline-block;color:red;padding-top: 5px;padding-bottom: 5px;padding-left: 10px;"
+                         attrs="{'invisible':[('cancelled','=',False)]}">
+                         ( ANULLED )
+                    </div>
+                </header>
                 <sheet>
                     <div name="buttons" class="oe_button_box">
                     </div>
