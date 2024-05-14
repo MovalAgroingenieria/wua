@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-29 07:29+0000\n"
-"PO-Revision-Date: 2024-04-29 07:29+0000\n"
+"POT-Creation-Date: 2024-05-14 08:31+0000\n"
+"PO-Revision-Date: 2024-05-14 08:31+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,14 +26,55 @@ msgid "<strong>Classes</strong>"
 msgstr "<strong>Classes</strong>"
 
 #. module: base_wua_cayc
+#: code:addons/base_wua_cayc/hooks.py:26
+#, python-format
+msgid "ATTENTION: it is not possible to install this module, because the dblink postgres extension cannot be installed."
+msgstr "ATENCIÓ: no es pot instal·lar aquest mòdul perquè no es pot instal·lar l'extensió postgres dblink."
+
+#. module: base_wua_cayc
 #: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_active
 msgid "Active"
 msgstr "Actiu"
 
 #. module: base_wua_cayc
+#: model:ir.ui.view,arch_db:base_wua_cayc.wua_parcel_class_view_form
+msgid "Are you sure you want to toggle visibility?"
+msgstr "Esteu segur que voleu modificar la visibilitat?"
+
+#. module: base_wua_cayc
 #: selection:wua.parcel.class,parcel_class:0
 msgid "BR"
 msgstr "BR"
+
+#. module: base_wua_cayc
+#: model:ir.ui.view,arch_db:base_wua_cayc.wua_config_settings_view_form
+msgid "CAYC Parameters"
+msgstr "Paràmetres CAYC"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_configuration_cayc_remote_database
+msgid "CAYC Remote Database"
+msgstr "Base de dades CAYC"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_configuration_cayc_remote_database_password
+msgid "CAYC Remote Database Password"
+msgstr "Contrasenya base de dades CAYC"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_configuration_cayc_remote_database_user
+msgid "CAYC Remote Database User"
+msgstr "Usuari base de dades CAYC"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_configuration_cayc_remote_ip
+msgid "CAYC Remote IP"
+msgstr "IP Servidor CAYC"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_configuration_cayc_remote_port
+msgid "CAYC Remote Port"
+msgstr "Port Servidor CAYC"
 
 #. module: base_wua_cayc
 #: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_area_official
@@ -46,6 +87,13 @@ msgid "Class Official Area ("
 msgstr "Àrea oficial ("
 
 #. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_class_sharer
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_sharer
+#: model:ir.ui.view,arch_db:base_wua_cayc.wua_parcel_class_view_search
+msgid "Class Sharer"
+msgstr "Partícip"
+
+#. module: base_wua_cayc
 #: model:ir.ui.view,arch_db:base_wua_cayc.wua_parcel_view_form
 msgid "Classes"
 msgstr "Classes"
@@ -54,6 +102,17 @@ msgstr "Classes"
 #: model:ir.model,name:base_wua_cayc.model_res_company
 msgid "Companies"
 msgstr "Empreses"
+
+#. module: base_wua_cayc
+#: model:ir.model,name:base_wua_cayc.model_wua_configuration
+msgid "Configuration of base_wua module"
+msgstr "Configuració del mòdul base_wua"
+
+#. module: base_wua_cayc
+#: code:addons/base_wua_cayc/models/wua_parcel.py:259
+#, python-format
+msgid "Could not connect to CAYC DB check connection parameters."
+msgstr "No s'ha pogut connectar amb la base de dades CAYC, comproveu els paràmetres de connexió."
 
 #. module: base_wua_cayc
 #: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_create_uid
@@ -107,6 +166,7 @@ msgstr "Classe GIS: Sí"
 
 #. module: base_wua_cayc
 #: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_gis_viewer_link
+#: model:ir.ui.view,arch_db:base_wua_cayc.wua_parcel_class_view_form
 msgid "GIS Viewer"
 msgstr "Visor GIS"
 
@@ -120,7 +180,7 @@ msgstr "Visor GIS (zoom parcel·la)"
 #. module: base_wua_cayc
 #: model:ir.ui.view,arch_db:base_wua_cayc.wua_parcel_class_view_search
 msgid "Group By"
-msgstr "Agrupa per"
+msgstr "Agrupar per"
 
 #. module: base_wua_cayc
 #: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_id
@@ -145,7 +205,24 @@ msgstr "Última actualització per"
 #. module: base_wua_cayc
 #: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_write_date
 msgid "Last Updated on"
-msgstr "Darrera Actualització el"
+msgstr "Última actualització el"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_mapped_parcel
+msgid "Mapped Parcel"
+msgstr "Parcel·la Vinculada"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_res_partner_mapped_partner
+#: model:ir.model.fields,field_description:base_wua_cayc.field_res_users_mapped_partner
+msgid "Mapped Partner"
+msgstr "Soci Vinculat"
+
+#. module: base_wua_cayc
+#: code:addons/base_wua_cayc/models/wua_parcel.py:239
+#, python-format
+msgid "Missing some CAYC connect parameter."
+msgstr "Falta algun paràmetre de connexió CAYC."
 
 #. module: base_wua_cayc
 #: selection:wua.parcel.class,parcel_class:0
@@ -161,6 +238,22 @@ msgstr "NER"
 #: selection:wua.parcel.class,parcel_class:0
 msgid "NR"
 msgstr "NR"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,help:base_wua_cayc.field_wua_configuration_url_gis_viewer_parcel_class_param
+msgid "Name of parcel class param in the GIS viewer url"
+msgstr "Nom del paràmetre classe a la URL del visor GIS"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_notes
+#: model:ir.ui.view,arch_db:base_wua_cayc.wua_parcel_class_view_form
+msgid "Notes"
+msgstr "Notes"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_configuration_url_gis_viewer_parcel_class_param
+msgid "Param for class parcel"
+msgstr "Paràmetre Classes"
 
 #. module: base_wua_cayc
 #: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_parcel_id
@@ -191,9 +284,39 @@ msgid "Parcel Classes (low-level)"
 msgstr "Classes (baix-nivell)"
 
 #. module: base_wua_cayc
+#: model:ir.ui.view,arch_db:base_wua_cayc.wua_parcel_view_search
+msgid "Parcel Mapped: No"
+msgstr "Parcel·la Vinculada: No"
+
+#. module: base_wua_cayc
+#: model:ir.ui.view,arch_db:base_wua_cayc.wua_parcel_view_search
+msgid "Parcel Mapped: Yes"
+msgstr "Parcel·la Vinculada: Sí"
+
+#. module: base_wua_cayc
+#: model:ir.ui.view,arch_db:base_wua_cayc.view_partner_search
+msgid "Partner Mapped: No"
+msgstr "Soci Vinculat: No"
+
+#. module: base_wua_cayc
+#: model:ir.ui.view,arch_db:base_wua_cayc.view_partner_search
+msgid "Partner Mapped: Yes"
+msgstr "Soci Vinculat: Sí"
+
+#. module: base_wua_cayc
+#: model:ir.model,name:base_wua_cayc.model_res_partner
+msgid "Partner of a WUA"
+msgstr "Soci"
+
+#. module: base_wua_cayc
 #: selection:wua.parcel.class,parcel_class:0
-msgid "SAR"
-msgstr "SAR"
+msgid "RH"
+msgstr "RH"
+
+#. module: base_wua_cayc
+#: model:ir.model.fields,field_description:base_wua_cayc.field_wua_parcel_class_resolution_year
+msgid "Resolution Year"
+msgstr "Any de resolució"
 
 #. module: base_wua_cayc
 #: sql_constraint:wua.parcel.class:0
@@ -206,16 +329,9 @@ msgid "The area official must be a value zero or positive."
 msgstr "Làrea oficial ha de tenir un valor positiu."
 
 #. module: base_wua_cayc
-#: code:addons/base_wua_cayc/models/wua_parcel.py:80
-#, python-format
-msgid "The sum of classes areas must be the parcel official area."
-msgstr "La suma de l'àrea de les classes ha de ser igual a l'àrea de regadiu de fet de la parcel·la."
-
-#. module: base_wua_cayc
-#: code:addons/base_wua_cayc/models/wua_parcel.py:94
-#, python-format
-msgid "The sum of parcel class areas must be the parcel official area."
-msgstr "La suma de l'àrea de les classes ha de ser igual a l'àrea de regadiu de fet de la parcel·la."
+#: sql_constraint:wua.parcel.class:0
+msgid "The resolution year must be a value zero or positive."
+msgstr "Any de resolució ha de ser més gran que 0."
 
 #. module: base_wua_cayc
 #: model:ir.model.fields,field_description:base_wua_cayc.field_res_company_wua_code
@@ -873,8 +989,8 @@ msgid "[154] CONSTRUCCIONES ELECTROMECÁNICAS SABERO SL"
 msgstr "[154] CONSTRUCCIONES ELECTROMECÁNICAS SABERO SL"
 
 #. module: base_wua_cayc
-#: code:addons/base_wua_cayc/models/wua_parcel.py:354
-#: code:addons/base_wua_cayc/models/wua_parcel.py:362
+#: code:addons/base_wua_cayc/models/wua_parcel.py:714
+#: code:addons/base_wua_cayc/models/wua_parcel.py:722
 #, python-format
 msgid "hectares"
 msgstr "hectàrees"

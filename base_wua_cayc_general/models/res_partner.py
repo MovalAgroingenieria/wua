@@ -19,14 +19,14 @@ class ResPartner(models.Model):
     ]
 
     is_primary = fields.Boolean(
-        string='Is primary',
+        string='Is primary Partner',
         compute='_compute_is_primary',
         store=True,
         index=True,
     )
 
     wuabase_id = fields.Many2one(
-        string='WUA Base',
+        string='Primary Entity',
         comodel_name='wua.wuabase',
         compute='_compute_wuabase_id',
         store=True,
@@ -82,7 +82,7 @@ class ResPartner(models.Model):
                         [('name', '=', code_to_search)])
                     if (not wuabase or len(wuabase) < 1):
                         raise exceptions.ValidationError(
-                            _('The WUA Base code does not exists.'))
+                            _('The Primary Entity code does not exists.'))
 
     @api.constrains('is_primary', 'partner_type')
     def check_partner_type(self):
@@ -188,15 +188,18 @@ class ResPartner(models.Model):
         result = super(ResPartner, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar,
             submenu=submenu)
-        if view_type == 'tree' and self.env.context.get(
-                'is_primary_partner', False):
+        if view_type == 'tree':
             doc = etree.XML(result['arch'])
-            hide_fields = [
-                'parcel_owner_number',
-                'parcel_owner_area',
-                'parcel_lessee_number',
-                'parcel_lessee_area',
-            ]
+            if (self.env.context.get('is_primary_partner', False)):
+                hide_fields = [
+                    'parcel_owner_number',
+                    'parcel_lessee_number',
+                    'parcel_lessee_area',
+                ]
+            else:
+                hide_fields = [
+                    'partner_type',
+                ]
             for field in hide_fields:
                 for node in doc.xpath("//field[@name='%s']" % field):
                     node.set('invisible', '1')

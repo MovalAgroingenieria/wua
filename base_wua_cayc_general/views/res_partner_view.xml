@@ -97,6 +97,17 @@
         </field>
     </record>
 
+    <record id="view_partner_tree" model="ir.ui.view">
+        <field name="name">Partners (tree view)</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base_wua.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="before">
+                <field name="partner_type"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_partner_search" model="ir.ui.view">
         <field name="name">Partners (search view)</field>
         <field name="model">res.partner</field>
@@ -106,7 +117,7 @@
                 <field name="wuabase_id"/>
             </xpath>
             <xpath expr="//filter[@name='isacompany']" position="before">
-                <filter string="WUA Base"
+                <filter string="Primary Entity"
                      name="wuabase_id"
                      context="{'group_by':'wuabase_id'}"/>
                 <filter string="Partner Type"
@@ -141,7 +152,7 @@
         <field name="view_id" ref="base_wua.view_partner_tree"/>
         <field name="domain">[('is_wua_partner','=',True), ('is_primary', '=', False)]</field>
         <field name="search_view_id" ref="view_partner_search"/>
-        <field name="context">{'wua':'1','default_is_wua_partner':True, 'is_primary_partner': False}</field>
+        <field name="context">{'wua':'1','default_is_wua_partner':True, 'is_primary_partner': False, 'create': False, 'edit': False, 'delete': False}</field>
     </record>
 
     <menuitem id="base_wua.res_partner_menu"

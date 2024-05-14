@@ -8,7 +8,7 @@ from odoo import models, fields, api
 class WuaWuabase(models.Model):
     _inherit = 'wua.mastertable'
     _name = 'wua.wuabase'
-    _description = 'Entity (Base Water User Association)'
+    _description = 'Entity (Primary Entity)'
     _order = 'name'
 
     _size_name = 3
@@ -16,11 +16,11 @@ class WuaWuabase(models.Model):
     _numeric_name = True
 
     name = fields.Char(
-        string='Base Water User Association',
+        string='Primary Entity',
     )
 
     partner_ids = fields.One2many(
-        string='Partners',
+        string='WUA Partners',
         comodel_name='res.partner',
         inverse_name='wuabase_id',
     )

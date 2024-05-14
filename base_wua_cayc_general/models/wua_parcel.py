@@ -27,7 +27,7 @@ class WuaParcel(models.Model):
     )
 
     wuabase_id = fields.Many2one(
-        string='WUA Base',
+        string='Primary Entity',
         comodel_name='wua.wuabase',
         index=True,
     )
@@ -217,13 +217,21 @@ class WuaParcel(models.Model):
         result = super(WuaParcel, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar,
             submenu=submenu)
-        if view_type == 'tree' and self.env.context.get(
-                'is_primary_parcel', False):
+        if view_type == 'tree':
             doc = etree.XML(result['arch'])
-            hide_fields = [
-                'wuabase_id',
-                'intake_id',
-            ]
+            if (self.env.context.get('is_primary_parcel', False)):
+                hide_fields = [
+                    'wuabase_id',
+                    'intake_id',
+                    'class_sharer',
+                ]
+            else:
+                hide_fields = [
+                    'mapped_to_current_quotaperiod',
+                    'cadastral_polygon',
+                    'cadastral_parcel',
+                    'cadastral_reference',
+                ]
             for field in hide_fields:
                 for node in doc.xpath("//field[@name='%s']" % field):
                     node.set('invisible', '1')
@@ -236,7 +244,7 @@ class WuaParcelClass(models.Model):
     _inherit = 'wua.parcel.class'
 
     wuabase_id = fields.Many2one(
-        string='WUA Base',
+        string='Primary Entity',
         comodel_name='wua.wuabase',
         related='parcel_id.wuabase_id',
         store=True,

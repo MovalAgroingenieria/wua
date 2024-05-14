@@ -6,7 +6,7 @@
     "name": "Water Users Association: CAYC Management",
     "summary": "CAYC management for any water users association",
     "description": "Includes wua code on the company form view",
-    "version": '10.0.1.1.1',
+    "version": '10.0.1.1.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

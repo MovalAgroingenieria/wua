@@ -14,6 +14,10 @@
                                         'base_wua_cayc.wua_edit_parcel_class_view_tree'}"/>
                 </page>
             </xpath>
+            <xpath expr="//field[@name='cadastral_sector']"
+                   position="before">
+                <field name="class_sharer" colspan="8"/>
+            </xpath>
         </field>
     </record>
 
@@ -56,9 +60,9 @@
                 <field name="gis_viewer_link" invisible="1"/>
                 <field name="with_gis_parcel_class" invisible="1"/>
                 <field name="parcel_class"/>
-                <field name="resolution_year"/>
+                <field name="resolution_year" invisible="1"/>
                 <field name="area_official"/>
-                <field name="area_gis"/>
+                <field name="area_gis" invisible="1"/>
                 <button name="action_see_gis_viewer"
                     type="object" class="oe_stat_button"
                     string="GIS Viewer (zoom to parcel)"
@@ -140,9 +144,9 @@
                 <field name="with_gis_parcel_class" invisible="1"/>
                 <field name="parcel_class"/>
                 <field name="class_sharer"/>
-                <field name="resolution_year"/>
+                <field name="resolution_year" invisible="1"/>
                 <field name="area_official"/>
-                <field name="area_gis"/>
+                <field name="area_gis" invisible="1"/>
                 <button name="action_see_gis_viewer"
                     type="object" class="oe_stat_button"
                     string="GIS Viewer (zoom to parcel)"
@@ -202,7 +206,7 @@
                 <field name="class_sharer"/>
                 <field name="resolution_year" invisible="1"/>
                 <field name="area_official"/>
-                <field name="area_gis"/>
+                <field name="area_gis" invisible="1"/>
                 <button name="action_see_gis_viewer"
                     type="object" class="oe_stat_button"
                     string="GIS Viewer (zoom to parcel)"
