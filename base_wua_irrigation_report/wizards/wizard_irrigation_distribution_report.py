@@ -32,23 +32,27 @@ class WizardIrrigationDistributionReport(models.TransientModel):
 
     def _default_num_irrigations_reports(self):
         active_ids = self.env.context['active_ids']
-        older_selected_irrigation_report = \
-            self.env['wua.irrigationreport'].search(
-                [('id', 'in', active_ids)],
-                order="report_initial_time",
-                limit=1)
-        newer_selected_irrigation_report = \
-            self.env['wua.irrigationreport'].search(
-                [('id', 'in', active_ids)],
-                order="report_initial_time desc",
-                limit=1)
-        selected_irrigationreport_ids = \
-            self.env['wua.irrigationreport'].search([
-                ('report_initial_time', '>=',
-                    older_selected_irrigation_report.report_initial_time),
-                ('report_initial_time', '<=',
-                    newer_selected_irrigation_report.report_initial_time)
-                ], order="report_initial_time").ids
+        selected_irrigationreport_ids = 0
+        if self.select_all_between_dates:
+            older_selected_irrigation_report = \
+                self.env['wua.irrigationreport'].search(
+                    [('id', 'in', active_ids)],
+                    order="report_initial_time",
+                    limit=1)
+            newer_selected_irrigation_report = \
+                self.env['wua.irrigationreport'].search(
+                    [('id', 'in', active_ids)],
+                    order="report_initial_time desc",
+                    limit=1)
+            selected_irrigationreport_ids = \
+                self.env['wua.irrigationreport'].search([
+                    ('report_initial_time', '>=',
+                        older_selected_irrigation_report.report_initial_time),
+                    ('report_initial_time', '<=',
+                        newer_selected_irrigation_report.report_initial_time)
+                    ], order="report_initial_time").ids
+        else:
+            selected_irrigationreport_ids = active_ids
         num_irrigations_reports = len(selected_irrigationreport_ids)
         return num_irrigations_reports
 
@@ -101,41 +105,70 @@ class WizardIrrigationDistributionReport(models.TransientModel):
         string="Show selected reports",
         default=False)
 
-    @api.depends('initial_date', 'end_date')
+    select_all_between_dates = fields.Boolean(
+        string="Select all between dates",
+        default=False)
+
+    @api.depends('initial_date', 'end_date', 'select_all_between_dates')
     def _compute_num_irrigations_reports(self):
         if self.initial_date > self.end_date:
             raise exceptions.UserError(_('Incorrect dates,\
                 the initial date is before the end date.'))
-        if self.initial_date and self.end_date:
+        selected_irrigationreport_ids = 0
+        if (self.initial_date and self.end_date and
+                self.select_all_between_dates):
             selected_irrigationreport_ids = \
                 self.env['wua.irrigationreport'].search([
                     ('report_initial_time', '>=', self.initial_date),
                     ('report_initial_time', '<=', self.end_date)
                     ], order="report_initial_time").ids
+        elif (self.initial_date and self.end_date and not
+                self.select_all_between_dates):
+            active_ids = self.env.context['active_ids']
+            selected_irrigationreport_ids = \
+                self.env['wua.irrigationreport'].search([
+                    ('id', 'in', active_ids)], order="report_initial_time").ids
         for record in self:
             record.num_irrigations_reports = len(selected_irrigationreport_ids)
 
-    @api.depends('initial_date', 'end_date')
+    @api.depends('initial_date', 'end_date', 'select_all_between_dates')
     def _compute_irrigationreport_ids(self):
         if self.initial_date > self.end_date:
             raise exceptions.UserError(_('Incorrect dates,\
                 the initial date is before the end date.'))
-        selected_irrigationreport_ids = \
-            self.env['wua.irrigationreport'].search([
-                ('report_initial_time', '>=', self.initial_date),
-                ('report_initial_time', '<=', self.end_date)
-                ], order="report_initial_time").ids
-        for record in self:
-            record.irrigationreport_ids = selected_irrigationreport_ids
-
-    @api.onchange('initial_date', 'end_date')
-    def _recalculate_num_irrigations_reports(self):
-        if self.initial_date and self.end_date:
+        selected_irrigationreport_ids = False
+        if (self.initial_date and self.end_date and
+                self.select_all_between_dates):
             selected_irrigationreport_ids = \
                 self.env['wua.irrigationreport'].search([
                     ('report_initial_time', '>=', self.initial_date),
                     ('report_initial_time', '<=', self.end_date)
                     ], order="report_initial_time").ids
+        elif (self.initial_date and self.end_date and not
+                self.select_all_between_dates):
+            active_ids = self.env.context['active_ids']
+            selected_irrigationreport_ids = \
+                self.env['wua.irrigationreport'].search([
+                    ('id', 'in', active_ids)], order="report_initial_time").ids
+        for record in self:
+            record.irrigationreport_ids = selected_irrigationreport_ids
+
+    @api.onchange('initial_date', 'end_date', 'select_all_between_dates')
+    def _recalculate_num_irrigations_reports(self):
+        selected_irrigationreport_ids = 0
+        if (self.initial_date and self.end_date and
+                self.select_all_between_dates):
+            selected_irrigationreport_ids = \
+                self.env['wua.irrigationreport'].search([
+                    ('report_initial_time', '>=', self.initial_date),
+                    ('report_initial_time', '<=', self.end_date)
+                    ], order="report_initial_time").ids
+        elif (self.initial_date and self.end_date and not
+                self.select_all_between_dates):
+            active_ids = self.env.context['active_ids']
+            selected_irrigationreport_ids = \
+                self.env['wua.irrigationreport'].search([
+                    ('id', 'in', active_ids)], order="report_initial_time").ids
         for record in self:
             record.num_irrigations_reports = len(selected_irrigationreport_ids)
 

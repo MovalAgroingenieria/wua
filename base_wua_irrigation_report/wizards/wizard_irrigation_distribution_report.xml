@@ -6,8 +6,6 @@
         <field name="model">wizard.irrigation.distribution.report</field>
         <field name="arch" type="xml">
             <form string="Print irrigation distribution report">
-                <div><b>Note: All irrigation report reports between the dates are selected.</b></div>
-                <br/>
                 <group name="main_data">
                     <group>
                         <field name="initial_date"/>
@@ -15,10 +13,14 @@
                     </group>
                     <group>
                         <field name="num_irrigations_reports"/>
+                        <field name="select_all_between_dates"/>
                         <field name="show_selected_reports"/>
-                        <div></div>
+                        <div/>
                     </group>
                 </group>
+                <p attrs="{'invisible': [('select_all_between_dates','=', False)]}">
+                    <b>Note:</b> All irrigation report reports between the dates are be selected.
+                </p>
                 <field name="irrigationreport_ids" attrs="{'invisible': [('show_selected_reports','=', False)]}" nolabel="1"
                     context="{'tree_view_ref': 'base_wua_irrigation_report.wua_irrigationreport_view_tree_wizard'}"/>
                 <footer>
