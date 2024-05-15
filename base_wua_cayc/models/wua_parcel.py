@@ -188,7 +188,7 @@ class WuaParcel(models.Model):
                 self.env.cr.execute("""
                     UPDATE public.wua_parcel_class wpc1
                     SET with_gis_parcel_class = TRUE, area_gis =
-                        (postgis.ST_Area(wpc1.geom) * 0.0001) / %s
+                        (postgis.ST_Area(wgpc1.geom) * 0.0001) / %s
                     FROM public.wua_gis_parcel_class wgpc1
                     WHERE wpc1.name = wgpc1.name;
                 """, [area_measurement_equivalence])

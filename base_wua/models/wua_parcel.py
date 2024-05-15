@@ -839,6 +839,19 @@ class WuaParcel(models.Model):
         resp = byte_array.getvalue()
         return resp
 
+    def _get_aerial_image_layers(self, parcel):
+        return self._aerial_img_layers
+
+    def _get_aerial_image_layers_styles(self, parcel):
+        return self._aerial_img_layers_styles
+
+    def _get_wfs_response(self, wfs, parcel):
+        filterxml = '<Filter><PropertyIsEqualTo><ValueReference>name' +\
+            '</ValueReference><Literal>' + parcel.name + '</Literal>' +\
+            '</PropertyIsEqualTo></Filter>'
+        response = wfs.getfeature(typename='fes:parcel', filter=filterxml)
+        return response
+
     @api.multi
     def _compute_aerial_img_current(self):
         url_gis_viewer_wms = self.env['ir.values'].get_default(
@@ -859,13 +872,9 @@ class WuaParcel(models.Model):
                 timeout=self.OWS_SERVICES_TIMEOUT)
             for record in self:
                 if record.with_gis_parcel:
-                    filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
-                        '>name</ValueReference><Literal>' + record.name +\
-                        '</Literal></PropertyIsEqualTo></Filter>'
                     sld_body = record.get_sld_body()
                     try:
-                        response = wfs.getfeature(typename='fes:parcel',
-                                                  filter=filterxml)
+                        response = record._get_wfs_response(wfs, record)
                         parsed_response = ElementTree.fromstring(
                             response.getvalue())
                         ns = parsed_response[0].tag.split('}')[0] + '}'
@@ -920,8 +929,9 @@ class WuaParcel(models.Model):
                         resolution = data_pnoa_parsed['features'][0][
                             'properties']['RESOLUCION']
                         img = wms.getmap(
-                            layers=record._aerial_img_layers,
-                            styles=record._aerial_img_layers_styles,
+                            layers=record._get_aerial_image_layers(record),
+                            styles=record._get_aerial_image_layers_styles(
+                                record),
                             srs=crs, bbox=bbox, size=(width, height),
                             format=self._aerial_img_format, transparent=True,
                             SLD_BODY=sld_body)
@@ -1884,13 +1894,9 @@ class WuaParcel(models.Model):
                 timeout=self.OWS_SERVICES_TIMEOUT)
             for record in self:
                 if record.with_gis_parcel:
-                    filterxml = '<Filter><PropertyIsEqualTo><ValueReference' +\
-                        '>name</ValueReference><Literal>' + record.name +\
-                        '</Literal></PropertyIsEqualTo></Filter>'
                     sld_body = record.get_sld_body()
                     try:
-                        response = wfs.getfeature(typename='fes:parcel',
-                                                  filter=filterxml)
+                        response = record._get_wfs_response(wfs, record)
                         parsed_response = ElementTree.fromstring(
                             response.getvalue())
                         ns = parsed_response[0].tag.split('}')[0] + '}'
@@ -1945,8 +1951,9 @@ class WuaParcel(models.Model):
                         resolution = data_pnoa_parsed['features'][0][
                             'properties']['RESOLUCION']
                         img = wms.getmap(
-                            layers=record._aerial_img_layers,
-                            styles=record._aerial_img_layers_styles,
+                            layers=record._get_aerial_image_layers(record),
+                            styles=record._get_aerial_image_layers_styles(
+                                record),
                             srs=crs, bbox=bbox, size=(width, height),
                             format=self._aerial_img_format,
                             transparent=True, SLD_BODY=sld_body)

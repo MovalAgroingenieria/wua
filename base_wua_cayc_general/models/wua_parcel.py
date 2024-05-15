@@ -2,6 +2,9 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from Crypto.Cipher import AES
+import datetime
+import pytz
 from lxml import etree
 from odoo import models, fields, api, _, exceptions
 
@@ -210,6 +213,148 @@ class WuaParcel(models.Model):
             raise exceptions.UserError(_('The sum of classes areas must '
                                          'be the parcel official area.'))
         return new_parcel
+
+    # Replaced
+    @api.multi
+    def _compute_gis_viewer_link(self):
+        url = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer')
+        username = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_username')
+        password = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_password')
+        parcel_param = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_parcel_param')
+        # Should be a parameter?
+        wuabase_param = 'wuabaseid'
+        for record in self:
+            url_for_record = url
+            if url_for_record:
+                param_for_url = parcel_param
+                if (record.is_primary):
+                    param_for_url = wuabase_param
+                if param_for_url:
+                    sep_char = u'?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = u'&'
+                    url_for_record = url_for_record + sep_char + \
+                        param_for_url + u'=' + record.name
+            if (url_for_record and username and password and (not
+               self.env.user.has_group('base_wua.group_wua_portal_user'))):
+                credentials = username + "-" + password
+                credentials = credentials.ljust(32)
+                current_datetime = pytz.utc.localize(datetime.datetime.now())
+                current_datetime = current_datetime.astimezone(
+                    pytz.timezone('Europe/Madrid'))
+                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+                minimum = int(current_datetime[14:])
+                if minimum < 30:
+                    minimum = '00'
+                else:
+                    minimum = '30'
+                iv = current_datetime[:14] + minimum
+                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
+                cipher_text = aes_encryptor.encrypt(credentials)
+                cipher_text = cipher_text.encode('base64')
+                sep_char = '?'
+                if url_for_record.find('?') != -1:
+                    sep_char = '&'
+                url_for_record = url_for_record + sep_char + \
+                    "arg=" + cipher_text
+            if not url_for_record:
+                url_for_record = ''
+            record.gis_viewer_link = url_for_record
+
+    # Added set gis fields for parcels primary
+    def set_gis_fields(self):
+        gis_parcels_ok = super(WuaParcel, self).set_gis_fields()
+        gis_parcels_primary_ok = True
+        area_measurement_equivalence = 1
+        area_measurement_type = self.env['ir.values'].get_default(
+            'wua.configuration', 'area_measurement_type')
+        if area_measurement_type == 1:
+            area_measurement_equivalence = \
+                self.env['ir.values'].get_default(
+                    'wua.configuration', 'area_measurement_equivalence')
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                UPDATE public.wua_parcel wp1
+                SET with_gis_parcel = TRUE, area_gis =
+                (postgis.ST_Area(wgw1.geom) * 0.0001) / %s
+                FROM public.wua_gis_wuabase wgw1 WHERE wp1.name = wgw1.name;
+            """, [area_measurement_equivalence])
+            self.env.cr.commit()
+            self.env.invalidate_all()
+        except Exception:
+            self.env.cr.rollback()
+            gis_parcels_ok = False
+        return gis_parcels_ok and gis_parcels_primary_ok
+
+    # Aerial image changes for primary parcels
+    def _get_aerial_image_layers(self, parcel):
+        layers_for_wms = self._aerial_img_layers
+        if (parcel.is_primary):
+            layers_for_wms = [
+                'pnoa', 'wuabase', 'wuabase_perimeter', 'n_arrow']
+        return layers_for_wms
+
+    def _get_wfs_response(self, wfs, parcel):
+        typename = 'fes:parcel'
+        if (parcel.is_primary):
+            typename = 'fes:wuabase'
+        filterxml = '<Filter><PropertyIsEqualTo><ValueReference>name' +\
+            '</ValueReference><Literal>' + parcel.name + '</Literal>' +\
+            '</PropertyIsEqualTo></Filter>'
+        response = wfs.getfeature(typename=typename, filter=filterxml)
+        return response
+
+    def get_sld_body(self):
+        body = ''
+        if (self.is_primary):
+            body = body + '<?xml version="1.0" encoding="UTF-8"?>' +\
+                '<StyledLayerDescriptor version="1.0.0" ' + \
+                'xmlns="http://www.opengis.net/sld" xmlns:ogc="' +\
+                'http://www.opengis.net/ogc" xmlns:xlink="' +\
+                'http://www.w3.org/1999/xlink" xmlns:xsi="' +\
+                'http://www.w3.org/2001/XMLSchema-instance"' +\
+                'xsi:schemaLocation="http://www.opengis.net/sld ' +\
+                'http://schemas.opengis.net/sld/1.0.0/StyledLaye' +\
+                'rDescriptor.xsd">' +\
+                '<NamedLayer><Name>wuabase</Name>' +\
+                '<UserStyle><Title>xxx</Title><FeatureTypeStyle>' +\
+                '<Rule><Filter><PropertyIsLike ' +\
+                'wildCard="*" singleChar="." escape="!"><Property' +\
+                'Name>name</PropertyName><Literal>' + self.name +\
+                '</Literal></PropertyIsLike></Filter>' +\
+                '<PolygonSymbolizer>' +\
+                '<Stroke>' +\
+                '<CssParameter name="stroke">#000000</CssParameter>' +\
+                '<CssParameter name="stroke-width">14</CssParameter>' +\
+                '<CssParameter name="stroke-linecap">round</CssParameter>' +\
+                '</Stroke>' +\
+                '</PolygonSymbolizer>' +\
+                '</Rule></FeatureTypeStyle>' +\
+                '</UserStyle></NamedLayer>' +\
+                '<NamedLayer><Name>wuabase_perimeter</Name>' +\
+                '<UserStyle><Title>xxx2</Title><FeatureTypeStyle>' +\
+                '<Rule><Filter><PropertyIsLike ' +\
+                'wildCard="*" singleChar="." escape="!"><Property' +\
+                'Name>name</PropertyName><Literal>' + self.name +\
+                '</Literal></PropertyIsLike></Filter>' +\
+                '<PolygonSymbolizer>' +\
+                '<Stroke>' +\
+                '<CssParameter name="stroke">#ffffff</CssParameter>' +\
+                '<CssParameter name="stroke-width">5</CssParameter>' +\
+                '<CssParameter name="stroke-linecap">round</CssParameter>' +\
+                '</Stroke>' +\
+                '</PolygonSymbolizer>' +\
+                '</Rule></FeatureTypeStyle>' +\
+                '</UserStyle></NamedLayer>' +\
+                '</StyledLayerDescriptor>'
+        else:
+            body = body + super(WuaParcel, self).get_sld_body()
+        return body
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
