@@ -59,6 +59,9 @@ class ResPartner(models.Model):
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
+            'context': {
+                'group_by': 'categ_id',
+            },
             }
         return act_window
 
