@@ -1340,7 +1340,31 @@ class WuaInvoiceset(models.Model):
 
     # Run after the calculation (hook).
     def after_calculate_invoiceset(self, invoiceset):
-        pass
+        for line in invoiceset.line_ids:
+            if line.categ_id.productcategory_code in [1, 3, 4]:
+                unselected_parcel_lines = \
+                    line.line_parcel_ids.filtered(
+                        lambda x: x.selected is False)
+                if unselected_parcel_lines:
+                    unselected_parcel_lines.unlink()
+            elif line.categ_id.productcategory_code in [2]:
+                unselected_partner_lines = \
+                    line.line_partner_ids.filtered(
+                        lambda x: x.selected is False)
+                if unselected_partner_lines:
+                    unselected_partner_lines.unlink()
+            elif line.categ_id.productcategory_code in [5]:
+                unselected_waterconnection_lines = \
+                    line.line_waterconnection_ids.filtered(
+                        lambda x: x.selected is False)
+                if unselected_waterconnection_lines:
+                    unselected_waterconnection_lines.unlink()
+            elif line.categ_id.productcategory_code in [6]:
+                unselected_irrigationgate_lines = \
+                    line.line_irrigationgate_ids.filtered(
+                        lambda x: x.selected is False)
+                if unselected_irrigationgate_lines:
+                    unselected_irrigationgate_lines.unlink()
 
     @api.multi
     def cancel_invoiceset(self):
