@@ -28,7 +28,15 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='cadastral_polygon']"
                    position="before">
-                <field name="intake_id"/>
+                <field name="intake_cayc" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='intake_id']"
+                   position="attributes">
+                <attribute name="invisible">0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='area_official']"
+                   position="after">
+                <field name="area_official_cayc" invisible="1"/>
             </xpath>
         </field>
     </record>
@@ -46,6 +54,21 @@
                 <filter string="Parcel Mapped: No" name="parcelmappedno"
                  domain="[('mapped_parcel','=', False)]"/>
                 <separator/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_partnerlink_view_tree" model="ir.ui.view" >
+        <field name="name">Partner Links (tree view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='area_official']" position="after">
+                <field name="area_official_cayc" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='cadastral_reference']" position="before">
+                <field name="intake_id"/>
+                <field name="intake_cayc"  invisible="1"/>
             </xpath>
         </field>
     </record>

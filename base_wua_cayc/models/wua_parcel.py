@@ -24,6 +24,17 @@ class WuaParcel(models.Model):
         index=True,
     )
 
+    intake_cayc = fields.Char(
+        string='Intake Cayc',
+        index=True,
+    )
+
+    area_official_cayc = fields.Float(
+        string='Area CAYC',
+        digits=(32, 4),
+        default=0,
+    )
+
     parcel_class_ids = fields.One2many(
         string='Parcel Classes',
         comodel_name='wua.parcel.class',
@@ -244,9 +255,10 @@ class WuaParcel(models.Model):
                    cayc_remote_database_user, cayc_remote_database_password)
         return cayc_general_connect_query
 
-    def _reset_mapped_parcel_local(self):
+    def _reset_cayc_data_parcel_local(self):
         self.env.cr.execute("""
-            UPDATE wua_parcel SET mapped_parcel = FALSE
+            UPDATE wua_parcel SET intake_cayc = '',
+            area_official_cayc = 0, mapped_parcel = FALSE
             WHERE active IS TRUE;
         """)
 
@@ -279,14 +291,21 @@ class WuaParcel(models.Model):
     def _get_parcels_remote(self, wuabase_id):
         parcels = False
         self.env.cr.execute("""
-            SELECT STRING_AGG(quote_literal(name), ',') AS parcels FROM
+            SELECT quote_literal(name) AS parcel,
+            quote_literal(COALESCE(intake, '')) AS intake, area_official FROM
             dblink('conn_to_cayc',
-            'SELECT name FROM wua_parcel WHERE active AND NOT
-            is_primary AND wuabase_id = %s;') AS t(name TEXT);
+            'SELECT wp1.name, wi1.name AS intake,
+             wp1.area_official
+             FROM wua_parcel wp1
+             LEFT JOIN wua_intake wi1
+             ON wi1.id = wp1.intake_id
+             WHERE wp1.active AND NOT
+             wp1.is_primary AND wp1.wuabase_id = %s;') AS
+            t(name TEXT, intake TEXT, area_official NUMERIC);
         """ % (wuabase_id))
         parcel_results = self.env.cr.dictfetchall()
-        if (parcel_results and parcel_results[0].get('parcels')):
-            parcels = parcel_results[0].get('parcels')
+        if (parcel_results and len(parcel_results) > 0):
+            parcels = parcel_results
         return parcels
 
     def _get_parcels_local(self):
@@ -316,10 +335,12 @@ class WuaParcel(models.Model):
             self.env.cr.execute(query)
 
     def _set_mapped_parcel_local(self, parcels):
-        self.env.cr.execute("""
-            UPDATE wua_parcel SET mapped_parcel = TRUE WHERE
-            name IN (%s);
-        """ % parcels)
+        for parcel in parcels:
+            self.env.cr.execute("""
+                UPDATE wua_parcel SET mapped_parcel = TRUE, intake_cayc = %s,
+                area_official_cayc = %s
+                WHERE name IN (%s);
+        """ % (parcel['intake'], parcel['area_official'], parcel['parcel']))
 
     def _get_partner_of_mapped_parcels(self):
         partner_ids = False
@@ -412,8 +433,8 @@ class WuaParcel(models.Model):
             # Get connection parameters
             cayc_general_connect_query = self._get_cayc_connect_query()
             self.env.cr.savepoint()
-            # Set local parcels as not mapped
-            self._reset_mapped_parcel_local()
+            # Set local parcels as not mapped, and remove cayc intake and area
+            self._reset_cayc_data_parcel_local()
             self._open_cayc_connection(cayc_general_connect_query)
             connected_to_db = True
             wua_code = self.env['res.company'].search([])[0].wua_code
@@ -472,7 +493,6 @@ class WuaParcel(models.Model):
                 # Update parcels with their classes
                 for parcel_name, classes in parcel_class_data.items():
                     self._set_parcel_classes_local(parcel_name, classes)
-                    # self._set_mapped_parcel_local(parcels)
             # Get parcels that need to be updated on remote
             self.env.cr.commit()
             self.env.invalidate_all()
@@ -496,6 +516,28 @@ class WuaParcel(models.Model):
         filtered_parcel_classes.write({
             'active': active
         })
+
+
+class WuaParcelPartnerlink(models.Model):
+    _inherit = 'wua.parcel.partnerlink'
+
+    intake_id = fields.Many2one(
+        string='Intake',
+        comodel_name='wua.intake',
+        related='parcel_id.intake_id',
+    )
+
+    intake_cayc = fields.Char(
+        string='Intake Cayc',
+        index=True,
+        related='parcel_id.intake_cayc'
+    )
+
+    area_official_cayc = fields.Float(
+        string='Area CAYC',
+        digits=(32, 4),
+        related='parcel_id.area_official_cayc'
+    )
 
 
 class WuaParcelClass(models.Model):
