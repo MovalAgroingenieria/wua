@@ -12,6 +12,7 @@ class WuaParcel(models.Model):
         string='Intake',
         comodel_name='wua.intake',
         index=True,
+        ondelete='restrict',
     )
 
     def check_gis_flowmeter_created(self):
