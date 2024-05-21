@@ -52,6 +52,22 @@
                 <field name="invoiceset_id"/>
                 <field name="state_tag_ids" widget="many2many_tags" invisible="1"/>
             </xpath>
+            <xpath expr="//field[@name='amount_total_signed']" position="after">
+                <field name="amount_untaxed" invisible="1"/>
+                <field name="amount_tax" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="invoice_supplier_tree" model="ir.ui.view">
+        <field name="name">Invoices (tree view)</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_supplier_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total_signed']" position="after">
+                <field name="amount_untaxed" invisible="1"/>
+                <field name="amount_tax" invisible="1"/>
+            </xpath>
         </field>
     </record>
 
