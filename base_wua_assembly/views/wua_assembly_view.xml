@@ -240,6 +240,55 @@
                                 <field name="rendered_final_paragraph"
                                        class="oe_read_only" style="margin-top:10px"/>
                             </page>
+                            <page name="page_voting_ballot"
+                                  string="Voting Ballot"
+                                  groups="base_wua.group_wua_user">
+                                <field name="attendee_text_on_ballot"/>
+                            </page>
+                            <page name="page_delegationvote_text" string="Delegation Vote Text">
+                                <br/>
+                                <label for="delegation_vote_main_text" class="oe_edit_only"/>
+                                <field name="delegation_vote_main_text" class="oe_edit_only"
+                                    attrs="{'readonly': [('state','=','04_finished')]}"/>
+                                <div class="oe_edit_only text-muted text-right" style="margin-top: 0px;">
+                                    <span>This field allows jinja2 variables {{ object.attribute }}.
+                                          The only available object is assembly.
+                                    </span>
+                                </div>
+                                <field name="rendered_delegation_vote_main_text" class="oe_read_only"/>
+                                <br/><br/>
+                                <label for="delegation_vote_footer_text" class="oe_edit_only"/>
+                                <field name="delegation_vote_footer_text" class="oe_edit_only"
+                                    attrs="{'readonly': [('state','=','04_finished')]}"/>
+                                <div class="oe_edit_only text-muted text-right" style="margin-top: 0px;">
+                                    <span>This field allows jinja2 variables {{ object.attribute }}.
+                                          The only available object is assembly.
+                                    </span>
+                                </div>
+                                <field name="rendered_delegation_vote_footer_text" class="oe_read_only"/>
+                            </page>
+                            <page name="page_representation_text" string="Representation Text">
+                                <br/>
+                                <label for="representation_main_text" class="oe_edit_only"/>
+                                <field name="representation_main_text" class="oe_edit_only"
+                                    attrs="{'readonly': [('state','=','04_finished')]}"/>
+                                <div class="oe_edit_only text-muted text-right" style="margin-top: 0px;">
+                                    <span>This field allows jinja2 variables {{ object.attribute }}.
+                                          The only available object is assembly.
+                                    </span>
+                                </div>
+                                <field name="rendered_representation_main_text" class="oe_read_only"/>
+                                <br/><br/>
+                                <label for="representation_footer_text" class="oe_edit_only"/>
+                                <field name="representation_footer_text" class="oe_edit_only"
+                                    attrs="{'readonly': [('state','=','04_finished')]}"/>
+                                <div class="oe_edit_only text-muted text-right" style="margin-top: 0px;">
+                                    <span>This field allows jinja2 variables {{ object.attribute }}.
+                                          The only available object is assembly.
+                                    </span>
+                                </div>
+                                <field name="rendered_representation_footer_text" class="oe_read_only"/>
+                            </page>
                         </notebook>
                     </group>
                 </sheet>

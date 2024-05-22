@@ -104,6 +104,151 @@ class WuaAssembly(models.Model):
             '<b>AGENDA</b>:<br></p>')
         return resp
 
+    def _default_attendee_text_on_ballot(self):
+        resp = _('''
+            <p>Mr./Mrs.:
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            Area:</p><p>Partner Code:</p>
+        ''')
+        return resp
+
+    def _default_delegation_vote_main_text(self):
+        delegation_vote_main_text = _(
+            '<div style="text-align: justify;">Mr. &nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '<b></b> with Community Member No. <b>&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>, by '
+            'virtue of the provisions of the perminent articles of the Statut'
+            'es of the {{ assembly.president_id.company_id.name }}, <b>AUTHOR'
+            'IZE</b>:<br><br>Mr. <b>&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '</b> to represent him '
+            'at the {{ assembly.issue }} of this Water Association Community,'
+            ' which will take place on the next {{ assembly_day }} of {{ asse'
+            'mbly_month }} of {{ assembly_year }}.<br><br><div style="text-al'
+            'ign: center;"><br>The Authorized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
+            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
+            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp; The Communard<br><br><br><br><br>VAT &nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
+            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VAT'
+            ' <br><br><b>THE COMMUNITY SECRETARY</b><br><br>'
+            '<br><br>VAT {{ assembly.secretary_id.vat }}<br></div></div>')
+        last_record = self.env['wua.assembly'].search(
+            [], order='write_date desc', limit=1)
+        if last_record and last_record.delegation_vote_main_text:
+            delegation_vote_main_text = last_record.delegation_vote_main_text
+        return delegation_vote_main_text
+
+    def _default_delegation_vote_footer_text(self):
+        delegation_vote_footer_text = _(
+            '<p><b>NOTE</b>: By virtue of the pertinent Statutes, the Authori'
+            'zations must be submitted to the Irrigation Community, for its v'
+            'erification and legitimation by the Secretary of the Community. '
+            'Failure to comply with this rule will invalidate any Authorizati'
+            'on.</p>')
+        last_record = self.env['wua.assembly'].search(
+            [], order='write_date desc', limit=1)
+        if last_record and last_record.delegation_vote_footer_text:
+            delegation_vote_footer_text = \
+                last_record.delegation_vote_footer_text
+        return delegation_vote_footer_text
+
+    def _default_representation_main_text(self):
+        representation_main_text = _(
+            '<div style="text-align: justify;">Mr. <b>&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '</b> '
+            'with Community Member No. <b><b>&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>, by '
+            'virtue of the provisions of the perminent articles of the Statut'
+            'es of the {{ assembly.president_id.company_id.name }}, <b>AUTHOR'
+            'IZE</b>:<br><br>Mr. <b>&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '</b> to represent him '
+            'at the {{ assembly.issue }} of this Water Association Community,'
+            ' which will take place on the next {{ assembly_day }} of {{ asse'
+            'mbly_month }} of {{ assembly_year }}.<br><br><div style="text-al'
+            'ign: center;"><br>The Authorized&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
+            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n'
+            'bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbs'
+            'p;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            'The Communard<br><br><br><br><br>VAT &nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;VAT &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br><br><b>THE '
+            'COMMUNITY SECRETARY</b><br><br><br><br>VAT '
+            '{{ assembly.secretary_id.vat }}<br></div></div>')
+        last_record = self.env['wua.assembly'].search(
+            [], order='write_date desc', limit=1)
+        if last_record and last_record.representation_main_text:
+            representation_main_text = last_record.representation_main_text
+        return representation_main_text
+
+    def _default_representation_footer_text(self):
+        representation_footer_text = _(
+            '<p><b>NOTE</b>: By virtue of the pertinent Statutes, the Authori'
+            'zations must be submitted to the Irrigation Community, for its v'
+            'erification and legitimation by the Secretary of the Community. '
+            'Failure to comply with this rule will invalidate any Authorizati'
+            'on.</p>')
+        last_record = self.env['wua.assembly'].search(
+            [], order='write_date desc', limit=1)
+        if last_record and last_record.representation_footer_text:
+            representation_footer_text = \
+                last_record.representation_footer_text
+        return representation_footer_text
+
     assembly_date = fields.Date(
         string='Date of the assembly',
         default=lambda self: fields.datetime.now(),
@@ -229,6 +374,11 @@ class WuaAssembly(models.Model):
     public_notes = fields.Html(
         string='Public Notes',)
 
+    attendee_text_on_ballot = fields.Html(
+        string='Public Notes',
+        default=_default_attendee_text_on_ballot,
+    )
+
     public_notes_text = fields.Char(
         string="Public Notes (as text)",
         store=True,
@@ -325,6 +475,41 @@ class WuaAssembly(models.Model):
     rendered_final_paragraph = fields.Html(
         string='Preview of final paragraph',
         compute='_compute_rendered_final_paragraph',)
+
+    delegation_vote_main_text = fields.Html(
+        string='Delegation vote main text',
+        default=_default_delegation_vote_main_text,
+    )
+
+    rendered_delegation_vote_main_text = fields.Html(
+        string='Rendered delegation vote main text',
+        compute="_compute_rendered_delegation_vote_main_text",
+    )
+
+    delegation_vote_footer_text = fields.Html(
+        string='Delegation vote footer text',
+        default=_default_delegation_vote_footer_text,
+    )
+
+    rendered_delegation_vote_footer_text = fields.Html(
+        string='Rendered delegation vote footer text',
+        compute="_compute_rendered_delegation_vote_footer_text",)
+
+    representation_main_text = fields.Html(
+        string='Representation main text',
+        default=_default_representation_main_text,)
+
+    rendered_representation_main_text = fields.Html(
+        string='Rendered representation main text',
+        compute="_compute_rendered_representation_main_text",)
+
+    representation_footer_text = fields.Html(
+        string='Representation footer text',
+        default=_default_representation_footer_text,)
+
+    rendered_representation_footer_text = fields.Html(
+        string='Rendered representation footer text',
+        compute="_compute_rendered_representation_footer_text",)
 
     date_now = fields.Datetime(
         default=datetime.datetime.now())
@@ -566,6 +751,46 @@ class WuaAssembly(models.Model):
                     record.sudo()._get_rendered_text(publication_text=False)
             record.rendered_final_paragraph = rendered_final_paragraph
 
+    @api.multi
+    def _compute_rendered_delegation_vote_footer_text(self):
+        for record in self:
+            rendered_delegation_vote_footer_text = ''
+            if record.delegation_vote_footer_text:
+                rendered_delegation_vote_footer_text = \
+                    record.sudo()._get_rendered_delegation_vote_footer_text()
+            record.rendered_delegation_vote_footer_text = \
+                rendered_delegation_vote_footer_text
+
+    @api.multi
+    def _compute_rendered_delegation_vote_main_text(self):
+        for record in self:
+            rendered_delegation_vote_main_text = ''
+            if record.delegation_vote_main_text:
+                rendered_delegation_vote_main_text = \
+                    record.sudo()._get_rendered_delegation_vote_main_text()
+            record.rendered_delegation_vote_main_text = \
+                rendered_delegation_vote_main_text
+
+    @api.multi
+    def _compute_rendered_representation_footer_text(self):
+        for record in self:
+            rendered_representation_footer_text = ''
+            if record.representation_footer_text:
+                rendered_representation_footer_text = \
+                    record.sudo()._get_rendered_representation_footer_text()
+            record.rendered_representation_footer_text = \
+                rendered_representation_footer_text
+
+    @api.multi
+    def _compute_rendered_representation_main_text(self):
+        for record in self:
+            rendered_representation_main_text = ''
+            if record.representation_main_text:
+                rendered_representation_main_text = \
+                    record.sudo()._get_rendered_representation_main_text()
+            record.rendered_representation_main_text = \
+                rendered_representation_main_text
+
     def _get_rendered_text(self, publication_text=True):
         resp = ''
         lang = self.env.context['lang']
@@ -584,6 +809,102 @@ class WuaAssembly(models.Model):
                                                'd', locale=lang),
                 assembly_month=dates.format_date(date_of_assembly,
                                                  'LLLL', locale=lang),)
+        except TemplateError as e:
+            resp = '<p style="text-align:center;color:red;">' + \
+                '<b><font style="font-size: 14px;">' + \
+                _('ERROR IN TEMPLATE') + '</font></b></p>' + \
+                '<p><br>' + e.message + '</p>'
+        return resp
+
+    def _get_rendered_delegation_vote_footer_text(self):
+        resp = ''
+        lang = self.env.context['lang']
+        if not lang:
+            lang = 'en_US'
+        try:
+            if self.assembly_date:
+                date_of_assembly = datetime.datetime.strptime(
+                    self.assembly_date, '%Y-%m-%d')
+                template = Template(self.delegation_vote_footer_text)
+                resp = template.render(
+                    assembly=self,
+                    assembly_day=dates.format_date(
+                        date_of_assembly, 'd', locale=lang),
+                    assembly_month=dates.format_date(
+                        date_of_assembly, 'LLLL', locale=lang),)
+        except TemplateError as e:
+            resp = '<p style="text-align:center;color:red;">' + \
+                '<b><font style="font-size: 14px;">' + \
+                _('ERROR IN TEMPLATE') + '</font></b></p>' + \
+                '<p><br>' + e.message + '</p>'
+        return resp
+
+    def _get_rendered_delegation_vote_main_text(self):
+        resp = ''
+        lang = self.env.context['lang']
+        if not lang:
+            lang = 'en_US'
+        try:
+            if self.assembly_date:
+                date_of_assembly = datetime.datetime.strptime(
+                    self.assembly_date, '%Y-%m-%d')
+                template = Template(self.delegation_vote_main_text)
+                resp = template.render(
+                    assembly=self,
+                    assembly_day=dates.format_date(
+                        date_of_assembly, 'd', locale=lang),
+                    assembly_month=dates.format_date(
+                        date_of_assembly, 'LLLL', locale=lang),
+                    assembly_year=dates.format_date(
+                        date_of_assembly, 'Y', locale=lang),)
+        except TemplateError as e:
+            resp = '<p style="text-align:center;color:red;">' + \
+                '<b><font style="font-size: 14px;">' + \
+                _('ERROR IN TEMPLATE') + '</font></b></p>' + \
+                '<p><br>' + e.message + '</p>'
+        return resp
+
+    def _get_rendered_representation_main_text(self):
+        resp = ''
+        lang = self.env.context['lang']
+        if not lang:
+            lang = 'en_US'
+        try:
+            if self.assembly_date:
+                date_of_assembly = datetime.datetime.strptime(
+                    self.assembly_date, '%Y-%m-%d')
+                template = Template(self.representation_main_text)
+                resp = template.render(
+                    assembly=self,
+                    assembly_day=dates.format_date(
+                        date_of_assembly, 'd', locale=lang),
+                    assembly_month=dates.format_date(
+                        date_of_assembly, 'LLLL', locale=lang),
+                    assembly_year=dates.format_date(
+                        date_of_assembly, 'Y', locale=lang),)
+        except TemplateError as e:
+            resp = '<p style="text-align:center;color:red;">' + \
+                '<b><font style="font-size: 14px;">' + \
+                _('ERROR IN TEMPLATE') + '</font></b></p>' + \
+                '<p><br>' + e.message + '</p>'
+        return resp
+
+    def _get_rendered_representation_footer_text(self):
+        resp = ''
+        lang = self.env.context['lang']
+        if not lang:
+            lang = 'en_US'
+        try:
+            if self.assembly_date:
+                date_of_assembly = datetime.datetime.strptime(
+                    self.assembly_date, '%Y-%m-%d')
+                template = Template(self.representation_footer_text)
+                resp = template.render(
+                    assembly=self,
+                    assembly_day=dates.format_date(
+                        date_of_assembly, 'd', locale=lang),
+                    assembly_month=dates.format_date(
+                        date_of_assembly, 'LLLL', locale=lang),)
         except TemplateError as e:
             resp = '<p style="text-align:center;color:red;">' + \
                 '<b><font style="font-size: 14px;">' + \
