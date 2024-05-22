@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wua_invoiceset_line_parcel_view_search" model="ir.ui.view" >
+            <field name="name">Invoice-set line for parcels (search view)</field>
+            <field name="model">wua.invoiceset.line.parcel</field>
+            <field name="inherit_id" ref="base_wua_invoicing.wua_invoiceset_line_parcel_view_search"/>
+            <field name="arch" type="xml">
+                    <xpath expr="//search" position="inside">
+                        <field name="intake_id"/>
+                    </xpath>
+                    <xpath expr="//group" position="inside">
+                        <filter string="Intake" name="intake"
+                                context="{'group_by':'intake_id'}"/>
+                    </xpath>
+            </field>
+    </record>
+</odoo>
