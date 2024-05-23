@@ -16,6 +16,12 @@ class WuaIrrigationConfiguration(models.TransientModel):
         default=0,
         help="The number of previous days allowed to start a watering.")
 
+    notice_prior_irrigation_days = fields.Integer(
+        string='Notice Prior Irrigation Days',
+        default=0,
+        help='the number of days to notify irrigation prior'
+    )
+
     _sql_constraints = [
         ('early_start_days_positive',
          'CHECK (watering_allow_early_start >= 0)',
@@ -32,3 +38,6 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'watering_allow_early_start',
                            self.watering_allow_early_start)
+        values.set_default('wua.irrigation.configuration',
+                           'notice_prior_irrigation_days',
+                           self.notice_prior_irrigation_days)

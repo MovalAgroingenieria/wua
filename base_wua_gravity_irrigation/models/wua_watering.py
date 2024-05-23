@@ -275,6 +275,11 @@ class WuaWatering(models.Model):
         compute='_compute_watering_early_start',
         help="The number of previous days allowed to start a watering.")
 
+    notice_prior_irrigation = fields.Html(
+        string='Notice Prior Irrigation',
+        compute='_compute_notice_prior_irrigation',
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Watering.'),
@@ -455,6 +460,56 @@ class WuaWatering(models.Model):
             record.publishable = record.publication_permission and \
                 record.state == 'validated' and \
                 record.wateringperiod_id.publishable
+
+    @api.depends('state')
+    def _compute_notice_prior_irrigation(self):
+        for record in self:
+            if record.state == 'calculated':
+                messages = []
+                notice_days = self.env['ir.values'].\
+                    get_default('wua.irrigation.configuration',
+                                'notice_prior_irrigation_days')
+                if notice_days != 0:
+                    for gravconsumption in record.gravconsumption_ids:
+                        parcel = gravconsumption.parcel_id
+                        if gravconsumption.watering_end_time:
+                            end_time = fields.Datetime.from_string(
+                                gravconsumption.watering_end_time)
+                            start_time_threshold = \
+                                end_time - timedelta(days=notice_days)
+                            start_time_threshold_str = \
+                                start_time_threshold.strftime(
+                                    '%Y-%m-%d %H:%M:%S')
+                            previous_gravconsumptions = \
+                                self.env['wua.gravconsumption'].search([
+                                    ('parcel_id', '=', parcel.id),
+                                    ('state', 'in', ['planned', 'executed']),
+                                    ('watering_end_time', '>',
+                                        start_time_threshold_str),
+                                    ('watering_end_time', '<',
+                                        gravconsumption.watering_end_time),
+                                    ('id', '!=', gravconsumption.id)
+                                ])
+                            if previous_gravconsumptions:
+                                message = _("""
+                                    Parcel {} has a irrigation
+                                    previous to the
+                                    notice prior irrigation
+                                    days threshold.""").format(parcel.name)
+                                messages.append(message)
+                        else:
+                            message = _("""
+                                Parcel {} has a irrigation
+                                previous to the notice prior
+                                irrigation days threshold.""")\
+                                .format(parcel.name)
+                            messages.append(message)
+                    if messages:
+                        record.notice_prior_irrigation = \
+                            u'<span style="color: red;">{}</span>'.format(
+                                u'<br/>'.join(messages))
+                    else:
+                        record.notice_prior_irrigation = False
 
     @api.onchange('irrigationditch_id', 'wateringperiod_id')
     def _onchange_irrigationditch_wateringperiod_id(self):
