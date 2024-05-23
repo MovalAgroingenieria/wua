@@ -72,11 +72,11 @@
             <xpath expr="//page[@name='parcels_page']" position="after">
                 <page name="irrigation_shifts" string="Irrigation Shifts">
                 <field name="irrigation_shift_ids">
-                    <tree create="true" edit="true" delete="true"
-                         class="o_base_wua_pressurized_irrigation_watermeters_view_tree_notebook">
-                        <field name="name"/>
-                        <field name="description"/>
-                        <field name="notes"/>
+                    <tree editable="bottom"
+                        class="o_base_wua_parcel_partnerlink_view_tree_notebook">
+                        <field name="irrigation_shift_id"/>
+                        <field name="description" readonly="1"/>
+                        <field name="notes" readonly="1"/>
                     </tree>
                 </field>
                 </page>
@@ -198,4 +198,38 @@
               action="wua_technical_irrigation_shift_action"
               parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"/>
 
+    <record id="wua_waterconnection_irrigation_shift_rel_view_tree" model="ir.ui.view">
+        <field name="name">Irrigation Shifts Links(tree view)</field>
+        <field name="model">wua.waterconnection.irrigation.shift.relation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="waterconnection_id" />
+                <field name="irrigation_shift_id" />
+            </tree>
+        </field>
+    </record>
+    <record id="wua_waterconnection_irrigation_shift_rel_view_search" model="ir.ui.view">
+        <field name="name">Irrigation Shifts</field>
+        <field name="model">wua.waterconnection.irrigation.shift.relation</field>
+        <field name="arch" type="xml">
+            <search>
+            </search>
+        </field>
+    </record>
+    <record id="wua_waterconnection_irrigation_shift_rel_action" model="ir.actions.act_window">
+        <field name="name">Irrigation Shift</field>
+        <field name="res_model">wua.waterconnection.irrigation.shift.relation</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="wua_waterconnection_irrigation_shift_rel_view_tree"/>
+        <field name="search_view_id" ref="wua_waterconnection_irrigation_shift_rel_view_search"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to add a new Irrigation Shift.
+            </p>
+        </field>
+    </record>
+    <menuitem id="menu_irrigation_shift_technical"
+              name="Irrigation Shifts Technical" sequence="10"
+              action="wua_waterconnection_irrigation_shift_rel_action"
+              parent="base_wua_infrastructure.base_wua_infrastructure_technical_menu"/>
 </odoo>

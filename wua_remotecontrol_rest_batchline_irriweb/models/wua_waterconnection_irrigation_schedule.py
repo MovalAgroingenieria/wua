@@ -181,7 +181,7 @@ class WuaWaterconnectionIrrigationSchedule(models.Model):
         wc_ids = [wc.id for wc in list_of_wc]
         if wc_ids:
             self.env.cr.execute("""
-            DELETE FROM wua_waterconnection_irrigation_shift_rel
+            DELETE FROM wua_waterconnection_irrigation_shift_relation
             WHERE waterconnection_id IN %s""", (tuple(wc_ids),))
         schedule_info = []
         for wc in list_of_wc:
@@ -197,7 +197,10 @@ class WuaWaterconnectionIrrigationSchedule(models.Model):
                                 ):
                                     wc.write({
                                         'irrigation_shift_ids':
-                                        [(4, irr_shift.id)]
+                                        [(0, 0, {
+                                            'waterconnection_id': wc.id,
+                                            'irrigation_shift_id': irr_shift.id
+                                        })]
                                     })
                             days = shift["Dias"]
                             days_scheduled = [

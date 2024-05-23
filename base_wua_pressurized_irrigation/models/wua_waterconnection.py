@@ -42,11 +42,10 @@ class WuaWaterconnection(models.Model):
         store=True,
         compute='_compute_average_consumption')
 
-    irrigation_shift_ids = fields.Many2many(
+    irrigation_shift_ids = fields.One2many(
         string='Irrigation Shifts',
-        comodel_name='wua.waterconnection.irrigation.shift',
-        relation='wua_waterconnection_irrigation_shift_rel',
-        column1='waterconnection_id', column2='irrigation_shift_id')
+        comodel_name='wua.waterconnection.irrigation.shift.relation',
+        inverse_name='waterconnection_id')
 
     irrigation_schedule_ids = fields.One2many(
         string='Irrigation Schedules',
@@ -416,15 +415,61 @@ class WuaWaterconnectionIrrigationShiftlink(models.Model):
         try:
             self.env.cr.savepoint()
             self.env.cr.execute("""
-                CREATE OR REPLACE VIEW wua_waterconnection_irrigation_shiftlink
-                AS (SELECT row_number() OVER() AS id, row.*
-                FROM (SELECT waterconnection.id
-                AS waterconnection_id, irrigation_shift.id
-                AS irrigation_shift_id, irrigation_shift.notes
-                FROM wua_waterconnection_irrigation_shift_rel rel
-                INNER JOIN wua_waterconnection waterconnection
-                ON rel.waterconnection_id = waterconnection.id INNER JOIN
-                wua_waterconnection_irrigation_shift irrigation_shift
-                ON rel.irrigation_shift_id = irrigation_shift.id) row)""")
+            CREATE OR REPLACE VIEW
+            wua_waterconnection_irrigation_shiftlink AS (
+                SELECT
+                    row_number() OVER() AS id,
+                    row.waterconnection_id,
+                    row.irrigation_shift_id,
+                    row.notes,
+                    row.name,
+                    row.description
+                FROM (
+                    SELECT
+                        waterconnection.id AS waterconnection_id,
+                        irrigation_shift.id AS irrigation_shift_id,
+                        irrigation_shift.notes, irrigation_shift.name,
+                        irrigation_shift.description
+                    FROM wua_waterconnection_irrigation_shift_relation rel
+                    INNER JOIN wua_waterconnection waterconnection
+                        ON rel.waterconnection_id = waterconnection.id
+                    INNER JOIN wua_waterconnection_irrigation_shift
+                    irrigation_shift
+                        ON rel.irrigation_shift_id = irrigation_shift.id
+                ) row
+            )
+        """)
         except Exception:
             self.env.cr.rollback()
+
+
+class WuaWaterconnectionIrrigationShiftRelation(models.Model):
+    _name = 'wua.waterconnection.irrigation.shift.relation'
+    _description = 'Water Connection - Irrigation Shift Relation'
+    _order = 'waterconnection_id'
+
+    waterconnection_id = fields.Many2one(
+        string='Waterconnection Code',
+        comodel_name='wua.waterconnection',
+        required=True,
+        index=True,
+        ondelete='cascade')
+
+    irrigation_shift_id = fields.Many2one(
+        string='Irrigation Shift',
+        comodel_name='wua.waterconnection.irrigation.shift',
+        required=True,
+        index=True,
+        ondelete='cascade')
+
+    name = fields.Char(
+        string='Name',
+        related='irrigation_shift_id.name')
+
+    description = fields.Char(
+        string='Description',
+        related='irrigation_shift_id.description')
+
+    notes = fields.Html(
+        string='Notes',
+        related='irrigation_shift_id.notes')
