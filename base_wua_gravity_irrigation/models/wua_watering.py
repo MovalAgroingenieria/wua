@@ -468,8 +468,8 @@ class WuaWatering(models.Model):
                 messages = []
                 notice_days = self.env['ir.values'].\
                     get_default('wua.irrigation.configuration',
-                                'notice_prior_irrigation_days')
-                if notice_days != 0:
+                                'notice_prior_irrigation_days') or 0
+                if notice_days and notice_days != 0:
                     for gravconsumption in record.gravconsumption_ids:
                         parcel = gravconsumption.parcel_id
                         if gravconsumption.watering_end_time:
