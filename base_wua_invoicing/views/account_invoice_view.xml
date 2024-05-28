@@ -243,6 +243,17 @@
         </field>
     </record>
 
+    <record id="wua_invoice_line_partner_view_pivot" model="ir.ui.view">
+    <field name="name">Invoice Lines of Partner (pivot view)</field>
+    <field name="model">account.invoice.line</field>
+    <field name="arch" type="xml">
+            <pivot string="Invoice Lines" display_quantity="true">
+                <field name="product_id"/>
+                <field name="price_subtotal" type="measure"/>
+            </pivot>
+    </field>
+    </record>
+
     <record id="wua_invoice_line_partner_view_search" model="ir.ui.view">
         <field name="name">Invoice Lines of Partner (search view)</field>
         <field name="model">account.invoice.line</field>

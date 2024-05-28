@@ -49,13 +49,15 @@ class ResPartner(models.Model):
             'base_wua_invoicing.wua_invoice_line_partner_view_tree').id
         search_view = self.env.ref(
             'base_wua_invoicing.wua_invoice_line_partner_view_search')
+        id_pivot_view = self.env.ref(
+            'base_wua_invoicing.wua_invoice_line_partner_view_pivot').id
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Invoice Lines'),
             'res_model': 'account.invoice.line',
             'view_type': 'form',
-            'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree')],
+            'view_mode': 'tree,pivot',
+            'views': [(id_tree_view, 'tree'), (id_pivot_view, 'pivot')],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
