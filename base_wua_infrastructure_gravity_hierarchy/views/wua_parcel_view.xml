@@ -42,11 +42,14 @@
                 <field name="path"/>
                 <field name="drain_path"/>
             </xpath>
-            <xpath expr="//filter[@name='irrigationworker']" position="after">
+            <xpath expr="//filter[@name='irrigationditch']" position="after">
+                <filter string="Drainage ditch" name="drainageditch" context="{'group_by':'drainageditch_id'}"/>
                 <filter string="Irrigation Full name" name="path" context="{'group_by':'path'}"/>
                 <filter string="Drainage full name" name="drain_path" context="{'group_by':'drain_path'}"/>
                 <filter string="Ditch level 1" name="ditchlevel1" context="{'group_by':'irrigationditch_01_id'}"/>
+                <filter string="Ditch level 2" name="ditchlevel2" context="{'group_by':'irrigationditch_02_id'}"/>
                 <filter string="Drainage ditch level 1" name="drainageditchlevel1" context="{'group_by':'drainageditch_01_id'}"/>
+                <filter string="Drainage ditch level 2" name="drainageditchlevel2" context="{'group_by':'drainageditch_02_id'}"/>
             </xpath>
 
         </field>
