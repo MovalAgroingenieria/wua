@@ -107,6 +107,12 @@ class WuaHydricmovement(models.Model):
         store=True,
         compute='_compute_of_active_agriculturalseason')
 
+    related_element_cancelled = fields.Boolean(
+        string='Cancelled Related Element',
+        store=True,
+        compute='_compute_related_element_cancelled',
+    )
+
     closed_quotaperiod = fields.Boolean(
         string='Closed Quota Period',
         store=True,
@@ -302,6 +308,22 @@ class WuaHydricmovement(models.Model):
                 agriculturalseason_id = \
                     record.quotaperiod_id.agriculturalseason_id
             record.agriculturalseason_id = agriculturalseason_id
+
+    @api.depends(
+        'irrigationreport_id', 'irrigationreport_id.cancelled',
+        'presconsumption_id', 'presconsumption_id.cancelled',
+        'gravconsumption_id', 'gravconsumption_id.cancelled')
+    def _compute_related_element_cancelled(self):
+        for record in self:
+            related_element_cancelled = False
+            if ((record.irrigationreport_id and
+                 record.irrigationreport_id.cancelled) or
+                (record.presconsumption_id and
+                 record.presconsumption_id.cancelled) or
+                (record.gravconsumption_id and
+                    record.gravconsumption_id.cancelled)):
+                related_element_cancelled = True
+            record.related_element_cancelled = related_element_cancelled
 
     @api.depends('agriculturalseason_id')
     def _compute_of_active_agriculturalseason(self):
