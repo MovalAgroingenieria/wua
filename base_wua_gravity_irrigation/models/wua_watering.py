@@ -473,10 +473,10 @@ class WuaWatering(models.Model):
                     for gravconsumption in record.gravconsumption_ids:
                         parcel = gravconsumption.parcel_id
                         if gravconsumption.watering_end_time:
-                            end_time = fields.Datetime.from_string(
-                                gravconsumption.watering_end_time)
+                            initial_time = fields.Datetime.from_string(
+                                record.initial_time)
                             start_time_threshold = \
-                                end_time - timedelta(days=notice_days)
+                                initial_time - timedelta(days=notice_days)
                             start_time_threshold_str = \
                                 start_time_threshold.strftime(
                                     '%Y-%m-%d %H:%M:%S')
@@ -497,13 +497,6 @@ class WuaWatering(models.Model):
                                     notice prior irrigation
                                     days threshold.""").format(parcel.name)
                                 messages.append(message)
-                        else:
-                            message = _("""
-                                Parcel {} has a irrigation
-                                previous to the notice prior
-                                irrigation days threshold.""")\
-                                .format(parcel.name)
-                            messages.append(message)
                     if messages:
                         record.notice_prior_irrigation = \
                             u'<span style="color: red;">{}</span>'.format(
