@@ -3671,3 +3671,89 @@ class WuaParcelConcessionlink(models.Model):
                 concession ON rel.concession_id = concession.id) row)""")
         except Exception:
             self.env.cr.rollback()
+
+
+class WuaGisParcelView(models.Model):
+    _name = 'wua.gis.parcel.view'
+    _auto = False
+
+    name = fields.Char(
+        string='Code',
+    )
+
+    gid = fields.Integer(
+        string="GID",
+    )
+
+    parcel_id = fields.Many2one(
+        string='Parcel',
+        comodel_name='wua.parcel',
+    )
+
+    with_mr_parcel = fields.Boolean(
+        string='With MR Parcel',
+    )
+
+    area_gis = fields.Float(
+        string='GIS Area',
+        digits=(32, 4),
+    )
+
+    geojson_data = fields.Text(
+        string='Geojson Data',
+    )
+
+    @api.model
+    def init(self):
+        try:
+            tools.drop_view_if_exists(self.env.cr, 'wua_gis_parcel_view')
+            self.env.cr.execute(
+                """
+                CREATE OR REPLACE VIEW wua_gis_parcel_view AS (
+                SELECT row_number() OVER() AS id, d.*
+                FROM (
+                    SELECT
+                        wgp1.name as name,
+                        wgp1.gid,
+                        wp1.id AS parcel_id,
+                        COALESCE(wp1.active, FALSE) AS with_mr_parcel,
+                        (postgis.ST_AREA(wgp1.geom) / 10000) /
+                        CASE
+                            WHEN (SELECT substring(value from '[0-9]+'
+                                )::INTEGER AS
+                                value FROM ir_values WHERE name LIKE
+                                'area_measurement_type' LIMIT 1) = 1
+                            THEN
+                                (SELECT substring(
+                                    value from'[0-9]+\\.[0-9]+')::FLOAT
+                                AS value FROM ir_values WHERE name LIKE
+                                'area_measurement_equivalence' LIMIT 1)
+                            ELSE 1
+                        END
+                        AS area_gis,
+                        postgis.ST_AsGeoJSON(wgp1.geom) AS geojson_data
+                    FROM wua_gis_parcel wgp1
+                    LEFT JOIN wua_parcel wp1 ON wp1.name = wgp1.name AND
+                        wp1.active
+                    ORDER BY wgp1.name
+                ) d
+                );
+                """)
+        except Exception as e:
+            self.env.cr.execute(
+                """
+                CREATE OR REPLACE VIEW wua_gis_parcel_view AS (
+                SELECT
+                    NULL::INTEGER as id,
+                    NULL::TEXT as name,
+                    NULL::INTEGER as gid,
+                    NULL::INTEGER as parcel_id,
+                    NULL::BOOLEAN as with_mr_parcel,
+                    NULL::DOUBLE PRECISION as area_gis,
+                    NULL::TEXT as geojson_data
+                WHERE FALSE
+                );
+                """)
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.warning('The table wua_gis_parcel does not exist or an '
+                            'error occurred: %s', e)

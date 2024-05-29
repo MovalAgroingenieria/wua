@@ -639,6 +639,47 @@
         </field>
     </record>
 
+    <record id="wua_technical_parcel_gis_view_tree" model="ir.ui.view" >
+        <field name="name">GIS Parcels (tree view)</field>
+        <field name="model">wua.gis.parcel.view</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="parcel_id"/>
+                <field name="area_gis"/>
+                <field name="geojson_data" invisible="1"/>
+                <field name="gid" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_gis_view_search" model="ir.ui.view">
+        <field name="name">GIS Parcels (search view)</field>
+        <field name="model">wua.gis.parcel.view</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="parcel_id"/>
+                <separator/>
+                <filter string="MR Parcel: Yes" name="mrparcelyes"
+                 domain="[('with_mr_parcel','=',True)]"/>
+                <filter string="MR Parcel: No" name="mrparcelno"
+                 domain="[('with_mr_parcel','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_gis_view_pivot" model="ir.ui.view" >
+        <field name="name">GIS Parcels (pivot view)</field>
+        <field name="model">wua.gis.parcel.view</field>
+        <field name="arch" type="xml">
+            <pivot string="GIS Parcels" display_quantity="true">
+                <field name="parcel_id"/>
+                <field name="area_gis" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_technical_parcel_subparcel_view_tree" model="ir.ui.view" >
         <field name="name">Subparcels (tree view)</field>
         <field name="model">wua.parcel.subparcel</field>
@@ -780,6 +821,14 @@
               parent="base_wua_census_landparcels_menu"
               action="wua_gisviewer_action"
               sequence="30"/>
+
+     <record id="wua_technical_parcel_gis_view_action" model="ir.actions.act_window">
+        <field name="name">GIS Parcel</field>
+        <field name="res_model">wua.gis.parcel.view</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_id" ref="wua_technical_parcel_gis_view_tree"/>
+        <field name="search_view_id" ref="wua_technical_parcel_gis_view_search"/>
+    </record>
 
     <record id="wua_technical_subparcels_action" model="ir.actions.act_window">
         <field name="name">Subparcels (low-level)</field>
@@ -954,6 +1003,13 @@
               parent="base_wua_technical_menu"
               action="wua_technical_regenerate_aerial_img_action"
               sequence="9"
+              groups="base.group_system"/>
+
+    <menuitem id="wua_technical_parcel_gis_view_menu"
+              name="GIS Parcels"
+              parent="base_wua_technical_menu"
+              action="wua_technical_parcel_gis_view_action"
+              sequence="100"
               groups="base.group_system"/>
 
 </odoo>
