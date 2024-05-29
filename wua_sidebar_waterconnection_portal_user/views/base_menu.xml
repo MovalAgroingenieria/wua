@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+   <record id="get_res_partner_waterconnections_action_server_action" model="ir.actions.server">
+        <field name="name">Get Partner Waterconnections</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+            action = env['res.partner'].get_res_partner_waterconnections_action_sidebar()
+        </field>
+    </record>
+
+    <menuitem id="menu_sidebar_waterconnections"
+        name="Waterconnections"
+        action="get_res_partner_waterconnections_action_server_action"
+        web_icon="wua_sidebar_waterconnection_portal_user,static/description/icon.png"
+        sequence="-35" groups="base_wua.group_wua_portal_user"/>
+
+</odoo>
