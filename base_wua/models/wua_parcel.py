@@ -10,6 +10,7 @@ import io
 import base64
 import logging
 import requests
+import re
 import json
 import zipfile
 from pyproj import Proj, transform
@@ -1979,6 +1980,42 @@ class WuaParcel(models.Model):
                         _logger = logging.getLogger(self.__class__.__name__)
                         _logger.exception('Aerial IMG Regeneration')
                         pass
+
+    @api.multi
+    def action_get_gis_data_from_cadastre(self):
+        espg_code = '25830'
+        if self.cadastral_reference and not self.with_gis_parcel:
+            wfs_url = 'https://ovc.catastro.meh.es/INSPIRE/wfsCP.aspx?' + \
+                'service=wfs&version=2&request=getfeature&STOREDQUERIE_ID=' + \
+                'GetParcel&refcat=%s&srsname=EPSG::%s' % (
+                    self.cadastral_reference, espg_code)
+            response = requests.get(wfs_url, verify=False)
+            if response.status_code == 200:
+                gml_content = response.content
+                epsg_regex = re.compile(
+                    r'http://www.opengis.net/def/crs/EPSG/0/(\d+)')
+                gml_content = epsg_regex.sub(r'EPSG:\1', gml_content)
+                tree = ElementTree.ElementTree(
+                    ElementTree.fromstring(gml_content))
+                root = tree.getroot()
+                ns = {
+                    'gml': 'http://www.opengis.net/gml/3.2',
+                    'cp': 'http://inspire.ec.europa.eu/schemas/cp/4.0'
+                }
+                for member in root.findall('.//cp:CadastralParcel', ns):
+                    for feature in member:
+                        geom = feature.find('.//gml:MultiSurface', ns)
+                        if geom is not None:
+                            geom_gml = ElementTree.tostring(
+                                geom, encoding='utf-8')
+                            # Prepare the SQL insert statement
+                            sql = """
+                                INSERT INTO wua_gis_parcel (name, geom)
+                                VALUES ('%s', postgis.ST_GeomFromGML('%s'))
+                            """ % (self.name, geom_gml)
+                            self.env.cr.execute(sql)
+                            self.env.cr.commit()
+                            self.env.invalidate_all()
 
     def check_gis_parcel_created(self):
         resp = False

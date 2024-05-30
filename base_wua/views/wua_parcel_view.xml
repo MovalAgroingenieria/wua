@@ -11,6 +11,11 @@
                             id="change_parcel_name"
                             type="action" string="Change Code"
                             groups="base_wua.group_wua_manager"/>
+                    <button name="action_get_gis_data_from_cadastre"
+                            string="Get Cadastre GIS"
+                            type="object"
+                            groups="base.user_root"
+                            attrs="{'invisible': ['|', ('with_gis_parcel', '=', True), ('cadastral_reference', '=', False)]}"/>
                     <field name="state"
                            widget="statusbar"
                            statusbar_visible="notbillable,billable"/>
