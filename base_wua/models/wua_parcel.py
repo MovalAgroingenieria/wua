@@ -3690,7 +3690,7 @@ class WuaGisParcelView(models.Model):
         comodel_name='wua.parcel',
     )
 
-    with_mr_parcel = fields.Boolean(
+    with_wua_parcel = fields.Boolean(
         string='With MR Parcel',
     )
 
@@ -3716,7 +3716,7 @@ class WuaGisParcelView(models.Model):
                         wgp1.name as name,
                         wgp1.gid,
                         wp1.id AS parcel_id,
-                        COALESCE(wp1.active, FALSE) AS with_mr_parcel,
+                        COALESCE(wp1.active, FALSE) AS with_wua_parcel,
                         (postgis.ST_AREA(wgp1.geom) / 10000) /
                         CASE
                             WHEN (SELECT substring(value from '[0-9]+'
@@ -3748,7 +3748,7 @@ class WuaGisParcelView(models.Model):
                     NULL::TEXT as name,
                     NULL::INTEGER as gid,
                     NULL::INTEGER as parcel_id,
-                    NULL::BOOLEAN as with_mr_parcel,
+                    NULL::BOOLEAN as with_wua_parcel,
                     NULL::DOUBLE PRECISION as area_gis,
                     NULL::TEXT as geojson_data
                 WHERE FALSE

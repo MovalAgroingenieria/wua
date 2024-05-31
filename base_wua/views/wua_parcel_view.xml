@@ -647,6 +647,7 @@
                 <field name="name"/>
                 <field name="parcel_id"/>
                 <field name="area_gis"/>
+                <field name="with_wua_parcel"/>
                 <field name="geojson_data" invisible="1"/>
                 <field name="gid" invisible="1"/>
             </tree>
@@ -661,10 +662,10 @@
                 <field name="name"/>
                 <field name="parcel_id"/>
                 <separator/>
-                <filter string="MR Parcel: Yes" name="mrparcelyes"
-                 domain="[('with_mr_parcel','=',True)]"/>
-                <filter string="MR Parcel: No" name="mrparcelno"
-                 domain="[('with_mr_parcel','=',False)]"/>
+                <filter string="WUA Parcel: Yes" name="wuaparcelyes"
+                 domain="[('with_wua_parcel','=',True)]"/>
+                <filter string="WUA Parcel: No" name="wuaparcelno"
+                 domain="[('with_wua_parcel','=',False)]"/>
             </search>
         </field>
     </record>
