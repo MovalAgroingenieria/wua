@@ -70,3 +70,7 @@ class ResNotificationset(models.Model):
                 'WHERE notificationset_id = ' + str(notificationset.id))
             self.env.cr.commit()
             self.env.invalidate_all()
+
+    # (from hook)
+    def _action_notif_generation(self, notification):
+        notification._create_letters()
