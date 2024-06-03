@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sale order -->
+    <template id="external_layout_header" inherit_id="base_wua_report.external_layout_header">
+        <xpath expr="//div[@name='part3']" position="inside">
+            <t t-if="docs and docs[0]._name == 'res.notification' and o.letter_id">
+                <div class="pull-right" style="width: 250px; margin-top: 4px;">
+                    <table style="border: 1px solid #7195f6; width: 100%; text-align: center; color: #7195f6">
+                        <tr>
+                            <td style="font-size: 16px; font-weight: bold;">
+                                <span t-field="o.partner_id.company_id"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 16px; margin-top: 10px;">
+                                <span t-field="o.creation_date"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 16px; font-weight: bold; margin-top: 10px;">N. Register</td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: 16px; margin-top: 10px;">
+                               <span t-field="o.letter_id.number"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

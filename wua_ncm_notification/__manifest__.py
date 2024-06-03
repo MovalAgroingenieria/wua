@@ -23,6 +23,7 @@
         "security/ir.model.access.csv",
         "security/security.xml",
         "reports/res_notification_report.xml",
+        "reports/wua_external_layout.xml",
         "data/res_notificationset_type_data.xml",
         "views/res_notificationset_type_view.xml",
         "views/res_notification_view.xml",
