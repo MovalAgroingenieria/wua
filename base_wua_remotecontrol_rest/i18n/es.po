@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-30 11:10+0000\n"
-"PO-Revision-Date: 2023-08-30 11:10+0000\n"
+"POT-Creation-Date: 2024-06-03 14:37+0000\n"
+"PO-Revision-Date: 2024-06-03 14:37+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,27 +19,27 @@ msgstr ""
 #: model:mail.template,body_html:base_wua_remotecontrol_rest.telecontrol_failed_email_template
 msgid "\n"
 "                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
-"                        <b><a href=\"https://crtollos.moval.es\">C.R. Margen Derecho C.J.T. Sector I \"Los Tollos\"</a></p></b>\n"
+"                        <b><a href=\"https://crporvenir.es\">Comunidad de Regantes El Porvenir</a></p></b>\n"
 "                        <br/>\n"
-"                        <span> - Inelcom error:<br/><br/>HTTPSConnectionPool(host='tollos-isrl.inelcom.com', port=25081): Max retries exceeded with url: /restws/webresources/sesiones (Caused by SSLError(SSLError(\"bad handshake: SysCallError(-1, 'Unexpected EOF')\",),))<br/><br/></span>\n"
+"                        <span> - Hidroweb error:<br/><br/>HTTPSConnectionPool(host='porvenir.icr-sa.com', port=443): Max retries exceeded with url: /api/v1/login (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x7fe1c735a590>: Failed to establish a new connection: [Errno 111] Connection refused',))</span>\n"
 "                    </p>\n"
 "                "
 msgstr "\n"
 "                    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
-"                        <b><a href=\"https://crtollos.moval.es\">C.R. Margen Derecho C.J.T. Sector I \"Los Tollos\"</a></p></b>\n"
+"                        <b><a href=\"https://crporvenir.es\">Comunidad de Regantes El Porvenir</a></p></b>\n"
 "                        <br/>\n"
-"                        <span> - Inelcom error:<br/><br/>HTTPSConnectionPool(host='tollos-isrl.inelcom.com', port=25081): Max retries exceeded with url: /restws/webresources/sesiones (Caused by SSLError(SSLError(\"bad handshake: SysCallError(-1, 'Unexpected EOF')\",),))<br/><br/></span>\n"
+"                        <span> - Hidroweb error:<br/><br/>HTTPSConnectionPool(host='porvenir.icr-sa.com', port=443): Max retries exceeded with url: /api/v1/login (Caused by NewConnectionError('<urllib3.connection.VerifiedHTTPSConnection object at 0x7fe1c735a590>: Failed to establish a new connection: [Errno 111] Connection refused',))</span>\n"
 "                    </p>\n"
 "                "
 
 #. module: base_wua_remotecontrol_rest
 #: model:mail.template,subject:base_wua_remotecontrol_rest.telecontrol_failed_email_template
 msgid "\n"
-"                    Waterconnection remote control in crtollos.com\n"
+"                    Waterconnection remote control in crporvenir.es\n"
 "                    has experienced some problem\n"
 "                "
 msgstr "\n"
-"                    Waterconnection irrigation_schedule in crtollos.com\n"
+"                    Waterconnection remote control in crporvenir.es\n"
 "                    has experienced some problem\n"
 "                "
 
@@ -57,6 +57,11 @@ msgstr "&nbsp;&nbsp;"
 #, python-format
 msgid "Capture Date"
 msgstr "Fecha información"
+
+#. module: base_wua_remotecontrol_rest
+#: selection:wua.irrigation.configuration,remotecontrol_rounding_reading_volume:0
+msgid "Ceiling"
+msgstr "Redondeo superior"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model,name:base_wua_remotecontrol_rest.model_wua_irrigation_configuration
@@ -86,7 +91,6 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_display_name
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_display_name
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_display_name
 msgid "Display Name"
@@ -247,17 +251,15 @@ msgid "Hydraulic Sector"
 msgstr "Sector hidráulico"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_id
+#: selection:wua.waterconnection,telecontrol_associated:0
+msgid "ICR Hidroweb"
+msgstr "ICR Hidroweb"
+
+#. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_id
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_id
 msgid "ID"
 msgstr "ID"
-
-#. module: base_wua_remotecontrol_rest
-#: selection:wua.pressuresensor,telecontrol_associated:0
-#: selection:wua.waterconnection,telecontrol_associated:0
-msgid "INELCOM"
-msgstr "INELCOM"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_remotecontrol_irrigation_event_enabled
@@ -320,11 +322,6 @@ msgid "In Remote control: Yes"
 msgstr "En telecontrol: Sí"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_partner_id
-msgid "Irrigation Partner"
-msgstr "Regante"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading_irrigationshed_id
 msgid "Irrigation Shed"
 msgstr "Caseta"
@@ -336,7 +333,6 @@ msgid "Last Capture Date"
 msgstr "Fecha información"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection___last_update
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_negative_reading___last_update
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol___last_update
 msgid "Last Modified on"
@@ -423,6 +419,11 @@ msgid "Reading"
 msgstr "Lectura"
 
 #. module: base_wua_remotecontrol_rest
+#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_irrigation_configuration_remotecontrol_rounding_reading_volume
+msgid "Reading Rounding Method"
+msgstr "Método de redondeo en lecturas"
+
+#. module: base_wua_remotecontrol_rest
 #: model:ir.ui.menu,name:base_wua_remotecontrol_rest.wua_technical_gis_remotecontrolmode_menu
 msgid "Remote C.: GIS Viewer"
 msgstr "Telecontrol: Visor GIS"
@@ -472,7 +473,7 @@ msgid "Remote Control: Error getting pressure measurements"
 msgstr "Remote Control: Error getting pressure measurements"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:56
+#: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:57
 #, python-format
 msgid "Remote Control: Error getting readings"
 msgstr "Remote Control: Error getting readings"
@@ -502,7 +503,7 @@ msgid "Remote Control: Getting pressure measurements"
 msgstr "Remote Control: Getting pressure measurements"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:49
+#: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:50
 #, python-format
 msgid "Remote Control: Getting readings"
 msgstr "Remote Control: Getting readings"
@@ -532,7 +533,7 @@ msgid "Remote Control: Saved measurements"
 msgstr "Remote Control: Saved measurements"
 
 #. module: base_wua_remotecontrol_rest
-#: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:144
+#: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:159
 #, python-format
 msgid "Remote Control: Saved readings"
 msgstr "Remote Control: Saved readings"
@@ -655,6 +656,11 @@ msgid "Restricted access to control remote menus"
 msgstr "Acceso restringido a los menús del telecontrol"
 
 #. module: base_wua_remotecontrol_rest
+#: selection:wua.irrigation.configuration,remotecontrol_rounding_reading_volume:0
+msgid "Rounding"
+msgstr "Redondeo"
+
+#. module: base_wua_remotecontrol_rest
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.view_partner_form
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_parcel_view_form
 msgid "Synchronize"
@@ -684,7 +690,7 @@ msgstr "Telecontrol Info"
 #: code:addons/base_wua_remotecontrol_rest/models/res_partner.py:406
 #: code:addons/base_wua_remotecontrol_rest/models/wua_parcel.py:417
 #: code:addons/base_wua_remotecontrol_rest/models/wua_pressuresensormeasurement.py:65
-#: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:88
+#: code:addons/base_wua_remotecontrol_rest/models/wua_reading.py:89
 #: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_event.py:89
 #: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_irrigation_schedule.py:72
 #: code:addons/base_wua_remotecontrol_rest/models/wua_waterconnection_telecontrol.py:150
@@ -714,6 +720,11 @@ msgstr "Total"
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_total_volume
 msgid "Total (m³)"
 msgstr "Total (m³)"
+
+#. module: base_wua_remotecontrol_rest
+#: selection:wua.irrigation.configuration,remotecontrol_rounding_reading_volume:0
+msgid "Truncate"
+msgstr "Truncado"
 
 #. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_pressuresensor_telecontrol_associated
@@ -838,11 +849,6 @@ msgid "Water Meter"
 msgstr "Contador"
 
 #. module: base_wua_remotecontrol_rest
-#: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_waterconnection_id
-msgid "Waterconnection"
-msgstr "Toma"
-
-#. module: base_wua_remotecontrol_rest
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_res_partner_waterconnection_last_waterflow
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_last_waterflow
 #: model:ir.model.fields,field_description:base_wua_remotecontrol_rest.field_wua_waterconnection_telecontrol_waterflow
@@ -883,6 +889,11 @@ msgstr "Estado Contador:"
 #: model:ir.ui.view,arch_db:base_wua_remotecontrol_rest.wua_waterconnection_irrigation_event_view_search
 msgid "Waterpipe"
 msgstr "Ramal"
+
+#. module: base_wua_remotecontrol_rest
+#: selection:wua.irrigation.configuration,remotecontrol_rounding_reading_volume:0
+msgid "Without Rounding"
+msgstr "Sin redondeo"
 
 #. module: base_wua_remotecontrol_rest
 #: code:addons/base_wua_remotecontrol_rest/models/res_partner.py:398

@@ -4,6 +4,7 @@
 
 import datetime
 import logging
+import math
 from odoo import models, fields, api, exceptions, _
 
 
@@ -90,6 +91,19 @@ class WuaReading(models.Model):
                                              'enabled.'))
         return resp
 
+    def round_reading_volume(self, reading_volume):
+        volume = float(reading_volume)
+        rounding_type = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration',
+            'remotecontrol_rounding_reading_volume')
+        if (rounding_type == '01_round'):
+            volume = round(volume, 0)
+        elif (rounding_type == '02_truncate'):
+            volume = int(volume)
+        elif (rounding_type == '03_ceiling'):
+            volume = math.ceil(volume)
+        return volume
+
     def refine_readings(self, readings):
         resp = []
         watermeters = self.env['wua.watermeter']
@@ -97,6 +111,7 @@ class WuaReading(models.Model):
             filtered_watermeter = watermeters.search(
                 [('name', '=', reading['watermeter'])])
             if filtered_watermeter:
+                reading_volume = self.round_reading_volume(reading['volume'])
                 watermeter = filtered_watermeter[0]
                 if (watermeter.state == 'active' and
                    watermeter.waterconnection_id):
@@ -106,7 +121,7 @@ class WuaReading(models.Model):
                         'waterconnection_id': watermeter.waterconnection_id.id,
                         'irrigationshed_id': watermeter.irrigationshed_id.id,
                         'hydraulicsector_id': watermeter.hydraulicsector_id.id,
-                        'volume': reading['volume'],
+                        'volume': reading_volume,
                         }
                     resp.append(refined_reading)
         return resp

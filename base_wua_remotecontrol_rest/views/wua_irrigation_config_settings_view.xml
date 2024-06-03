@@ -11,6 +11,9 @@
                    position="after">
                 <group name="remote_control" string="Remote Control">
                     <field name="enable_remotecontrol"/>
+                    <field name="remotecontrol_rounding_reading_volume"
+                        attrs="{'invisible':[('enable_remotecontrol','=',False)],
+                            'required': [('enable_remotecontrol', '=', True)]}"/>
                 </group>
             </xpath>
         </field>

@@ -14,6 +14,14 @@ class WuaIrrigationConfiguration(models.TransientModel):
         help='if it is marked, it is required set the next url ' +
              '(API REST URL)')
 
+    remotecontrol_rounding_reading_volume = fields.Selection([
+        ('00_without_rounding', 'Without Rounding'),
+        ('01_round', 'Rounding'),
+        ('02_truncate', 'Truncate'),
+        ('03_ceiling', 'Ceiling'),
+        ], string='Reading Rounding Method',
+    )
+
     @api.multi
     def set_default_values(self):
         super(WuaIrrigationConfiguration, self).set_default_values()
@@ -21,6 +29,9 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'enable_remotecontrol',
                            self.enable_remotecontrol)
+        values.set_default('wua.irrigation.configuration',
+                           'remotecontrol_rounding_reading_volume',
+                           self.remotecontrol_rounding_reading_volume)
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
