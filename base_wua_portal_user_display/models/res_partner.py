@@ -64,6 +64,8 @@ class ResPartner(models.Model):
             'base.config.settings', 'button_aggregate_quotas')
         show_button_tracking_emails = self.env['ir.values'].get_default(
             'base.config.settings', 'button_tracking_emails')
+        show_button_emails = self.env['ir.values'].get_default(
+            'base.config.settings', 'button_emails')
         show_button_gravity_consumptions = self.env['ir.values'].get_default(
             'base.config.settings', 'button_gravity_consumptions')
         show_button_hydric_movements = self.env['ir.values'].get_default(
@@ -181,6 +183,10 @@ class ResPartner(models.Model):
                     'mail_tracking.action_view_mail_tracking_email').id
                 for node in doc.xpath(
                         "//button[@name='%s']" % button_action_id):
+                    node.set('modifiers', '{"invisible": true}')
+            if not show_button_emails:
+                for node in doc.xpath(
+                        "//button[@name='action_see_partner_mail_messages']"):
                     node.set('modifiers', '{"invisible": true}')
             if not show_button_gravity_consumptions:
                 for node in doc.xpath(

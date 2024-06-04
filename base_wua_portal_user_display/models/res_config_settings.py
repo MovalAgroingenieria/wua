@@ -80,6 +80,10 @@ class BaseConfigSettings(models.TransientModel):
         string="Tracking emails",
         default=True)
 
+    button_emails = fields.Boolean(
+        string="Emails_",
+        default=True)
+
     button_gravity_consumptions = fields.Boolean(
         string="Gravity consumptions",
         default=True)
@@ -173,6 +177,8 @@ class BaseConfigSettings(models.TransientModel):
                            self.button_aggregate_quotas)
         values.set_default('base.config.settings', 'button_tracking_emails',
                            self.button_tracking_emails)
+        values.set_default('base.config.settings', 'button_emails',
+                           self.button_emails)
         values.set_default('base.config.settings',
                            'button_gravity_consumptions',
                            self.button_gravity_consumptions)
