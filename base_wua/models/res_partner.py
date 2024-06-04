@@ -584,6 +584,34 @@ class ResPartner(models.Model):
                                                  'already exists.'))
         return super(ResPartner, self).write(vals)
 
+    @api.multi
+    def action_see_partner_mail_messages(self):
+        self.ensure_one()
+        self.env.cr.execute("""
+            SELECT mail.id
+              FROM mail_mail_res_partner_rel rel
+        INNER JOIN mail_mail mail ON rel.mail_mail_id = mail.id
+        INNER JOIN mail_message message ON mail.mail_message_id = message.id
+             WHERE message.message_type = 'email'
+               AND rel.res_partner_id = '%s'
+                OR message.author_id = '%s';""" % (self.id, self.id))
+        mail_ids = self.env.cr.fetchall()
+        id_tree_view = self.env.ref('mail.view_mail_tree').id
+        id_form_view = self.env.ref('mail.view_mail_form').id
+        search_view = self.env.ref('mail.view_mail_search')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': _('Emails'),
+            'res_model': 'mail.mail',
+            'view_type': 'form',
+            'view_mode': 'tree',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'target': 'current',
+            'domain': [('id', 'in', mail_ids)],
+            }
+        return act_window
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
                         submenu=False):

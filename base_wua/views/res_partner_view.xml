@@ -59,6 +59,13 @@
                         icon="fa-map-marker"
                         groups="base_wua.group_wua_user,
                                 base_wua.group_wua_portal_user"/>
+                <button name="action_see_partner_mail_messages"
+                        attrs="{'invisible':[('is_wua_partner','=',False)]}"
+                        type="object"
+                        class="oe_stat_button"
+                        string="Emails_"
+                        icon="fa-envelope"
+                        groups="base_wua.group_wua_user, base_wua.group_wua_portal_user"/>
             </xpath>
             <xpath expr="//h1//field[@name='name']/.." position="after">
                 <group attrs="{'invisible':[('is_wua_partner','=',False)]}">
