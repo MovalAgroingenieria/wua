@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_intake_view_form" model="ir.ui.view">
+        <field name="name">WUA Intakes (form view)</field>
+        <field name="model">wua.intake</field>
+        <field name="inherit_id" ref="base_wua_infrastructure_primary.wua_intake_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_see_gis_viewer']" position="after">
+                <field name="number_of_analysis" invisible="1"/>
+                    <button name="action_see_analysis"
+                            type="object" class="oe_stat_button"
+                            string="Analyses"
+                            icon="fa-water-quality-tube-duotone"
+                            />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

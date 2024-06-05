@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="law_analysis_view_form" model="ir.ui.view">
+        <field name="name">WUA Laboratory Analysis for Waters (form view)</field>
+        <field name="model">law.analysis</field>
+        <field name="inherit_id" ref="law_water_quality.law_analysis_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='watertype_id']" position="before">
+                <field name="intake_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="law_analysis_view_tree" model="ir.ui.view">
+        <field name="name">WUA Laboratory Analysis for Waters (tree view)</field>
+        <field name="model">law.analysis</field>
+        <field name="inherit_id" ref="law_water_quality.law_analysis_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='watertype_id']" position="before">
+                <field name="intake_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="law_analysis_view_search" model="ir.ui.view">
+        <field name="name">WUA Laboratory Analysis for Waters (search view)</field>
+        <field name="model">law.analysis</field>
+        <field name="inherit_id" ref="law_water_quality.law_analysis_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='watertype_id']" position="before">
+                <field name="intake_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='watertype_id']" position="before">
+                <filter name="intake_id"
+                        string="Intake"
+                        context="{'group_by': 'intake_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
