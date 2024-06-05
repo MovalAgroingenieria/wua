@@ -65,7 +65,8 @@ class WuaReservoirreading(models.Model):
                         value = measurement_info[analog_measurement]['valor']
                         unit = measurement_info[analog_measurement]['unidad']
                         bar = self._transform_value_to_bar(value, unit)
-                        if (bar):
+                        # Can return 0 or False, if 0, need to be a reading
+                        if (bar is not False):
                             reservoireadings.append({
                                 'reservoir': reservoir.name,
                                 'value': bar,
@@ -99,7 +100,7 @@ class WuaReservoirreading(models.Model):
                             value = measurement['valor']
                             unit = measurement['unidad']
                             bar = self._transform_value_to_bar(value, unit)
-                            if (bar):
+                            if (bar is not False):
                                 reservoirreadings.append({
                                     'reservoir': reservoir_name,
                                     'value': bar,
@@ -172,7 +173,8 @@ class WuaReservoirreading(models.Model):
                         reservoirreadings = reservoirreadings + rrs_head
                         error_message = error_message + rrs_error_message
                 else:
-                    error_message = _(' It is not possible to get session id. ')
+                    error_message = _(
+                        ' It is not possible to get session id. ')
                 if error_message != '':
                     error_message = error_message[2:]
         return reservoirreadings, error_message, error_reservoirs
