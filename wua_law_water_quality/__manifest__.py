@@ -17,6 +17,7 @@
     "data": [
         "views/law_analysis_view.xml",
         "views/wua_intake_view.xml",
+        "reports/law_analysis_report.xml",
     ],
     "installable": True,
     "application": False,

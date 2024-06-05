@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="law_analysis_report_document_inherited"
+            inherit_id="law_water_quality.law_analysis_report_document">
+        <xpath expr="//tr[@name='water_type_id']" position="before">
+            <tr name="intake_id">
+                <td>
+                    <strong>
+                        <span> Intake:</span>
+                    </strong>
+                </td>
+                <td class="text-right">
+                    <span t-field="o.intake_id.name" />
+                </td>
+            </tr>
+        </xpath>
+    </template>
+
+</odoo>
