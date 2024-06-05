@@ -34,6 +34,7 @@
                             <newline/>
                             <field name="number_of_parcels"/>
                             <field name="total_affected_area_official"/>
+                            <field name="with_cultivation"/>
                         </group>
                     </group>
                     <group name="slave_data"
@@ -76,6 +77,14 @@
                             </page>
                             <page name="notes_page" string="Notes">
                                 <field name="notes"/>
+                            </page>
+                            <page name="subparcels_page" string="Subparcels">
+                                <field name="subparcel_ids">
+                                    <tree string="Subparcels" create="false" edit="false" delete="false">
+                                        <field name="subparcel_id"/>
+                                        <field name="cultivation_id"/>
+                                    </tree>
+                                </field>
                             </page>
                         </notebook>
                     </group>

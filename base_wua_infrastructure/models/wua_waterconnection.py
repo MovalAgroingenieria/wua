@@ -119,12 +119,30 @@ class WuaWaterconnection(models.Model):
         compute='_compute_several_waterpayers',
         search='_search_several_waterpayers')
 
+    subparcel_ids = fields.One2many(
+        string='Subparcels',
+        comodel_name='wua.waterconnection.subparcellink',
+        inverse_name='waterconnection_id')
+
+    with_cultivation = fields.Boolean(
+        string='With cultivation',
+        compute='_compute_with_cultivation',
+        search='_search_with_cultivation')
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_position',
          'CHECK (position > 0)',
          'The position must be a positive value.'),
         ]
+
+    @api.depends('subparcel_ids.cultivation_id')
+    def _compute_with_cultivation(self):
+        for record in self:
+            for subparcel in record.subparcel_ids:
+                if subparcel.cultivation_id and subparcel.cultivation_id != \
+                        self.env.ref('base_wua.cultivation_135'):
+                    record.with_cultivation = True
 
     @api.depends('irrigationpoint_ids')
     def _compute_number_of_parcels(self):
@@ -296,6 +314,21 @@ class WuaWaterconnection(models.Model):
                 record_ids.append(row.get('waterconnection_id'))
         return ([('id', 'in', record_ids)])
 
+    @api.model
+    def _search_with_cultivation(self, operator, value):
+        # Retrieve all records of the model
+        all_records = self.search([])
+
+        if operator == '=':
+            # Filter records where with_cultivation is True
+            return [('id', 'in', all_records.filtered(lambda r: r.with_cultivation).ids)]
+        elif operator == '!=':
+            # Filter records where with_cultivation is False
+            return [('id', 'in', all_records.filtered(lambda r: not r.with_cultivation).ids)]
+        else:
+            # For other operators, return an empty domain
+            return []
+
     @api.constrains('name')
     def _check_name(self):
         name_no_blanks = self.name.strip()
@@ -384,3 +417,61 @@ class WuaWaterconnection(models.Model):
     def _compute_with_pumping(self):
         for record in self:
             record.with_pumping = record.irrigationshed_id.with_pumping
+
+
+class WaterConnectionSubparcelRel(models.Model):
+    _name = 'wua.waterconnection.subparcel.rel'
+    _description = 'Water Connection Subparcel Relationship'
+
+    waterconnection_id = fields.Many2one('wua.waterconnection', string='Water Connection', required=True)
+    subparcel_id = fields.Many2one('wua.parcel.subparcel', string='Subparcel', required=True)
+
+    _sql_constraints = [
+        ('unique_waterconnection_subparcel_rel', 'unique(waterconnection_id, subparcel_id)',
+         'A water connection and subparcel combination must be unique!')
+    ]
+
+
+class WaterConnectionSubparcellink(models.Model):
+    _name = 'wua.waterconnection.subparcellink'
+    _auto = False
+    _description = 'Link of a water connection and subparcel'
+
+    waterconnection_id = fields.Many2one(
+        string='Water Connection',
+        comodel_name='wua.waterconnection',
+        required=True,
+        index=True,
+        ondelete='cascade')
+
+    subparcel_id = fields.Many2one(
+        string='Subparcel',
+        comodel_name='wua.parcel.subparcel',
+        required=True,
+        index=True,
+        ondelete='cascade')
+
+    cultivation_id = fields.Many2one(
+        string='Cultivation',
+        comodel_name='wua.cultivation',
+        related='subparcel_id.cultivation_id',
+        ondelete='cascade')
+
+    @api.model_cr
+    def init(self):
+        self.env.cr.execute("""SELECT EXISTS(
+            SELECT * FROM information_schema.tables
+            WHERE table_name='wua.waterconnection.subparcellink')""")
+        if self.env.cr.fetchone()[0]:
+            self.env['ir.model'].search([('model', '=', 'wua.waterconnection.subparcellink')]).unlink()
+        try:
+            self.env.cr.savepoint()
+            self.env.cr.execute("""
+                CREATE OR REPLACE VIEW wua_waterconnection_subparcellink AS (SELECT
+                row_number() OVER() AS id, row.* FROM (SELECT wc.id AS
+                waterconnection_id, subparcel.id AS subparcel_id
+                FROM wua_waterconnection_subparcel_rel rel INNER JOIN wua_waterconnection wc
+                ON rel.waterconnection_id = wc.id INNER JOIN wua_parcel_subparcel
+                subparcel ON rel.subparcel_id = subparcel.id) row)""")
+        except Exception:
+            self.env.cr.rollback()

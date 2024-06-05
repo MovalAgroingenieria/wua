@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-26 16:24+0000\n"
-"PO-Revision-Date: 2024-01-26 16:24+0000\n"
+"POT-Creation-Date: 2024-05-16 07:51+0000\n"
+"PO-Revision-Date: 2024-05-16 07:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -120,6 +120,11 @@ msgstr "<strong>Infraestructura&amp;nbsp;de&amp;nbsp;reg&amp;nbsp;a&amp;nbsp;pre
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
 msgid "<strong>Water&amp;nbsp;connection&amp;nbsp;points</strong>"
 msgstr "<strong>Tomas</strong>"
+
+#. module: base_wua_infrastructure
+#: sql_constraint:wua.waterconnection.subparcel.rel:0
+msgid "A water connection and subparcel combination must be unique!"
+msgstr "La combinació de una toma i una subparcel·la a de ser única"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_active
@@ -297,6 +302,7 @@ msgstr "Reg des del canal de la sèquia"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_uid
 msgid "Created by"
 msgstr "Creat per"
@@ -317,9 +323,15 @@ msgstr "Creat per"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_date
 msgid "Created on"
 msgstr "Creat el"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_cultivation_id
+msgid "Cultivation"
+msgstr "Cultiu"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_total_affected_area_official
@@ -380,6 +392,8 @@ msgstr "Dialog box to change the parcel name (code), with irrigation infrastruct
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_display_name
 msgid "Display Name"
 msgstr "Mostrar Nom"
@@ -426,7 +440,7 @@ msgid "Duplicated hydraulic order."
 msgstr "Nº ordre hidràulic duplicat"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:314
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:337
 #, python-format
 msgid "Duplicated position."
 msgstr "Posició duplicada."
@@ -455,10 +469,10 @@ msgstr "Punt de subministrament en blanc."
 
 #. module: base_wua_infrastructure
 #: code:addons/base_wua_infrastructure/models/wua_flowdivider.py:235
-#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:260
+#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:261
 #: code:addons/base_wua_infrastructure/models/wua_irrigationgate.py:175
 #: code:addons/base_wua_infrastructure/models/wua_irrigationshed.py:248
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:303
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:326
 #, python-format
 msgid "Empty Value."
 msgstr "Valor en blanc."
@@ -790,6 +804,8 @@ msgstr "Sectors hidràulics de la zona"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id_16158
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_id
 msgid "ID"
 msgstr "ID"
@@ -1073,6 +1089,8 @@ msgstr "És una parada"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone___last_update
 msgid "Last Modified on"
 msgstr "Última modificació el "
@@ -1092,6 +1110,7 @@ msgstr "Última modificació el "
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_uid
 msgid "Last Updated by"
@@ -1112,6 +1131,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_date
 msgid "Last Updated on"
@@ -1121,6 +1141,11 @@ msgstr "Última actualització el"
 #: selection:wua.flowdivider,flowstopper_direction:0
 msgid "Left"
 msgstr "Esquerra"
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection_subparcellink
+msgid "Link of a water connection and subparcel"
+msgstr "Unió toma i subparcel·la"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_parcel_rural_location_county
@@ -1323,7 +1348,7 @@ msgstr "Codi parcel·la"
 
 #. module: base_wua_infrastructure
 #: code:addons/base_wua_infrastructure/models/wua_hydraulicsector.py:204
-#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:400
+#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:404
 #: model:ir.actions.act_window,name:base_wua_infrastructure.employee_parcels_action
 #: model:ir.actions.server,name:base_wua_infrastructure.wua_hydraulicsector_parcels_action
 #: model:ir.actions.server,name:base_wua_infrastructure.wua_irrigationditch_parcels_action
@@ -1355,15 +1380,15 @@ msgstr "Parcel·les:"
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.res_partner_waterconnection_view_search
 msgid "Partner"
-msgstr "Soci"
+msgstr "Empresa"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Soci"
+msgstr "Partner of a WUA"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/res_partner.py:145
+#: code:addons/base_wua_infrastructure/models/res_partner.py:153
 #, python-format
 msgid "Partners"
 msgstr "Socis"
@@ -1494,6 +1519,12 @@ msgid "Subparc. / Irrig. Gates"
 msgstr "Subparcel·la / Tablachos"
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_subparcel_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_subparcel_id
+msgid "Subparcel"
+msgstr "Subparcel·la"
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_track_subparcel_irrigationgate_ids
 msgid "Subparcel Irrigation Gates"
 msgstr "Tablachos de la subparcel·la"
@@ -1502,6 +1533,12 @@ msgstr "Tablachos de la subparcel·la"
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel_subparcel
 msgid "Subparcel of a parcel"
 msgstr "Subparce·la d'una parcel·la"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_ids
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_form
+msgid "Subparcels"
+msgstr "Subparcel·les"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_supply_suspended
@@ -1568,14 +1605,14 @@ msgid "The irrigation coefficient must be a value zero or positive."
 msgstr "El coeficient de ponderació no pot ser un valor negatiu."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:278
-#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:293
+#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:279
+#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:294
 #, python-format
 msgid "The irrigation ditch code already exists."
 msgstr "El codi de sèquia ja existeix."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:265
+#: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:266
 #, python-format
 msgid "The irrigation ditch code must be a positive value."
 msgstr "El codi de sèquia ha de ser un valor positiu."
@@ -1633,7 +1670,7 @@ msgid "This irrigation gate is present in some parcels: It is not possible to ch
 msgstr "El tablacho està present en alguna parcel·la: No es pot canviar la sèquia."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:350
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:373
 #, python-format
 msgid "This water connection is present in some parcels: It is not possible to change the irrigation shed."
 msgstr "La presa està present en alguna parcel·la: No es pot canviar la caseta."
@@ -1690,6 +1727,8 @@ msgid "WC Image"
 msgstr "Imatge Presa"
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_waterconnection_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_waterconnection_id
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
 #: selection:wua.parcel.irrigationpoint,type:0
@@ -1701,6 +1740,11 @@ msgstr "Toma"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_waterconnection_id
 msgid "Water Connection Id."
 msgstr "Id. Presa"
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection_subparcel_rel
+msgid "Water Connection Subparcel Relationship"
+msgstr "Relació toma i subparcel·la"
 
 #. module: base_wua_infrastructure
 #: model:ir.actions.act_window,name:base_wua_infrastructure.wua_waterconnection_action
@@ -1765,7 +1809,7 @@ msgid "Water connection"
 msgstr "Toma"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/res_partner.py:161
+#: code:addons/base_wua_infrastructure/models/res_partner.py:169
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_waterconnection_id
 #, python-format
 msgid "Waterconnection"
@@ -1813,6 +1857,11 @@ msgstr "Amb reg suspès"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_with_watering_shift
 msgid "With Watering Shift"
 msgstr "Entandable"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_with_cultivation
+msgid "With cultivation"
+msgstr "Amb cultiu"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_with_flowdivider
@@ -1879,4 +1928,3 @@ msgstr "Zones"
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner_waterconnection
 msgid "res.partner.waterconnection"
 msgstr "res.partner.waterconnection"
-
