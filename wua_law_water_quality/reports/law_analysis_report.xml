@@ -3,6 +3,11 @@
 
     <template id="law_analysis_report_document_inherited"
             inherit_id="law_water_quality.law_analysis_report_document">
+
+        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
+            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        </xpath>
+
         <xpath expr="//tr[@name='water_type_id']" position="before">
             <tr name="intake_id">
                 <td>
