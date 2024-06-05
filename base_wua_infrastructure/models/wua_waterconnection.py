@@ -136,7 +136,7 @@ class WuaWaterconnection(models.Model):
          'The position must be a positive value.'),
         ]
 
-    @api.depends('subparcel_ids.cultivation_id')
+    @api.depends('subparcel_ids', 'subparcel_ids.cultivation_id')
     def _compute_with_cultivation(self):
         for record in self:
             for subparcel in record.subparcel_ids:
@@ -321,10 +321,16 @@ class WuaWaterconnection(models.Model):
 
         if operator == '=':
             # Filter records where with_cultivation is True
-            return [('id', 'in', all_records.filtered(lambda r: r.with_cultivation).ids)]
+            return [
+                ('id',
+                 'in',
+                 all_records.filtered(lambda r: r.with_cultivation).ids)]
         elif operator == '!=':
             # Filter records where with_cultivation is False
-            return [('id', 'in', all_records.filtered(lambda r: not r.with_cultivation).ids)]
+            return [
+                ('id',
+                 'in',
+                 all_records.filtered(lambda r: not r.with_cultivation).ids)]
         else:
             # For other operators, return an empty domain
             return []
@@ -423,11 +429,18 @@ class WaterConnectionSubparcelRel(models.Model):
     _name = 'wua.waterconnection.subparcel.rel'
     _description = 'Water Connection Subparcel Relationship'
 
-    waterconnection_id = fields.Many2one('wua.waterconnection', string='Water Connection', required=True)
-    subparcel_id = fields.Many2one('wua.parcel.subparcel', string='Subparcel', required=True)
+    waterconnection_id = fields.Many2one(
+        comodel_name='wua.waterconnection',
+        string='Water Connection',
+        required=True)
+    subparcel_id = fields.Many2one(
+        comodel_name='wua.parcel.subparcel',
+        string='Subparcel',
+        required=True)
 
     _sql_constraints = [
-        ('unique_waterconnection_subparcel_rel', 'unique(waterconnection_id, subparcel_id)',
+        ('unique_waterconnection_subparcel_rel',
+         'unique(waterconnection_id, subparcel_id)',
          'A water connection and subparcel combination must be unique!')
     ]
 
@@ -463,15 +476,20 @@ class WaterConnectionSubparcellink(models.Model):
             SELECT * FROM information_schema.tables
             WHERE table_name='wua.waterconnection.subparcellink')""")
         if self.env.cr.fetchone()[0]:
-            self.env['ir.model'].search([('model', '=', 'wua.waterconnection.subparcellink')]).unlink()
+            self.env['ir.model'].search([
+                ('model',
+                 '=',
+                 'wua.waterconnection.subparcellink')]).unlink()
         try:
             self.env.cr.savepoint()
             self.env.cr.execute("""
-                CREATE OR REPLACE VIEW wua_waterconnection_subparcellink AS (SELECT
-                row_number() OVER() AS id, row.* FROM (SELECT wc.id AS
+                CREATE OR REPLACE VIEW wua_waterconnection_subparcellink AS
+                (SELECT row_number() OVER() AS id, row.* FROM (SELECT wc.id AS
                 waterconnection_id, subparcel.id AS subparcel_id
-                FROM wua_waterconnection_subparcel_rel rel INNER JOIN wua_waterconnection wc
-                ON rel.waterconnection_id = wc.id INNER JOIN wua_parcel_subparcel
+                FROM wua_waterconnection_subparcel_rel rel
+                INNER JOIN wua_waterconnection wc
+                ON rel.waterconnection_id = wc.id
+                INNER JOIN wua_parcel_subparcel
                 subparcel ON rel.subparcel_id = subparcel.id) row)""")
         except Exception:
             self.env.cr.rollback()
