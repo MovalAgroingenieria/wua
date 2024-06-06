@@ -9,7 +9,7 @@ class LawAnalysis(models.Model):
     _inherit = 'law.analysis'
 
     intake_id = fields.Many2one(
-        'wua.intake',
+        comodel_name='wua.intake',
         index=True,
         ondelete='restrict',
         string='Intake',

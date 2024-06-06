@@ -9,8 +9,8 @@ class WuaIntake(models.Model):
     _inherit = 'wua.intake'
 
     analysis_ids = fields.One2many(
-        'law.analysis',
-        'intake_id',
+        comodel_name='law.analysis',
+        inverse_name='intake_id',
         string='Analysis',
     )
 
