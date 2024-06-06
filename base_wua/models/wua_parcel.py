@@ -3740,6 +3740,7 @@ class WuaGisParcelView(models.Model):
                 );
                 """)
         except Exception as e:
+            self.env.cr.rollback()
             self.env.cr.execute(
                 """
                 CREATE OR REPLACE VIEW wua_gis_parcel_view AS (
