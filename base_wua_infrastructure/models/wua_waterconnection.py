@@ -5,7 +5,7 @@
 from Crypto.Cipher import AES
 import datetime
 import pytz
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, exceptions, _, tools
 
 
 class WuaWaterconnection(models.Model):
@@ -318,19 +318,14 @@ class WuaWaterconnection(models.Model):
     def _search_with_cultivation(self, operator, value):
         # Retrieve all records of the model
         all_records = self.search([])
-
         if operator == '=':
             # Filter records where with_cultivation is True
-            return [
-                ('id',
-                 'in',
-                 all_records.filtered(lambda r: r.with_cultivation).ids)]
+            return [('id', 'in', all_records.filtered(
+                lambda r: r.with_cultivation).ids)]
         elif operator == '!=':
             # Filter records where with_cultivation is False
-            return [
-                ('id',
-                 'in',
-                 all_records.filtered(lambda r: not r.with_cultivation).ids)]
+            return [('id', 'in', all_records.filtered(
+                lambda r: not r.with_cultivation).ids)]
         else:
             # For other operators, return an empty domain
             return []
@@ -425,26 +420,6 @@ class WuaWaterconnection(models.Model):
             record.with_pumping = record.irrigationshed_id.with_pumping
 
 
-class WaterConnectionSubparcelRel(models.Model):
-    _name = 'wua.waterconnection.subparcel.rel'
-    _description = 'Water Connection Subparcel Relationship'
-
-    waterconnection_id = fields.Many2one(
-        comodel_name='wua.waterconnection',
-        string='Water Connection',
-        required=True)
-    subparcel_id = fields.Many2one(
-        comodel_name='wua.parcel.subparcel',
-        string='Subparcel',
-        required=True)
-
-    _sql_constraints = [
-        ('unique_waterconnection_subparcel_rel',
-         'unique(waterconnection_id, subparcel_id)',
-         'A water connection and subparcel combination must be unique!')
-    ]
-
-
 class WaterConnectionSubparcellink(models.Model):
     _name = 'wua.waterconnection.subparcellink'
     _auto = False
@@ -476,20 +451,18 @@ class WaterConnectionSubparcellink(models.Model):
             SELECT * FROM information_schema.tables
             WHERE table_name='wua.waterconnection.subparcellink')""")
         if self.env.cr.fetchone()[0]:
-            self.env['ir.model'].search([
-                ('model',
-                 '=',
-                 'wua.waterconnection.subparcellink')]).unlink()
+            tools.drop_view_if_exists(
+                self.env.cr, 'wua_waterconnection_subparcellink')
         try:
             self.env.cr.savepoint()
             self.env.cr.execute("""
                 CREATE OR REPLACE VIEW wua_waterconnection_subparcellink AS
-                (SELECT row_number() OVER() AS id, row.* FROM (SELECT wc.id AS
-                waterconnection_id, subparcel.id AS subparcel_id
-                FROM wua_waterconnection_subparcel_rel rel
-                INNER JOIN wua_waterconnection wc
-                ON rel.waterconnection_id = wc.id
-                INNER JOIN wua_parcel_subparcel
-                subparcel ON rel.subparcel_id = subparcel.id) row)""")
+                (SELECT
+                row_number() OVER() AS id, row.* FROM (
+                    SELECT wpi1.waterconnection_id AS
+                waterconnection_id, wps1.id AS subparcel_id
+                FROM wua_parcel_irrigationpointwc  wpi1 INNER JOIN
+                wua_parcel_subparcel wps1 ON wps1.parcel_id = wpi1.parcel_id
+                WHERE wpi1.active AND wps1.active) row)""")
         except Exception:
             self.env.cr.rollback()
