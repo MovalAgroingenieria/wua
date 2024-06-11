@@ -45,7 +45,7 @@ class WuaReading(models.Model):
             headers=request_headers,
             data=json.dumps({
                 'type': ['hydrants'],
-                'state': 'enabled'
+                'status': 'enabled'
                 }))
         if hydrants_req.status_code == 200:
             hydrants = json.loads(hydrants_req.text)
@@ -62,7 +62,7 @@ class WuaReading(models.Model):
             headers=request_headers,
             data=json.dumps({
                 'type': ['iris'],
-                'state': 'enabled'
+                'status': 'enabled'
                 }))
         if iris_req.status_code == 200:
             iris = json.loads(iris_req.text)
@@ -79,7 +79,7 @@ class WuaReading(models.Model):
             headers=request_headers,
             data=json.dumps({
                 'type': ['counters'],
-                'state': 'enabled'
+                'status': 'enabled'
                 }))
         if counters_req.status_code == 200:
             counters = json.loads(counters_req.text)
@@ -139,7 +139,8 @@ class WuaReading(models.Model):
                             'volume': volume,
                         })
             else:
-                error_message = _(' It is not possible to get installation identifier. ')
+                error_message = _(
+                    ' It is not possible to get installation identifier. ')
             self.close_connection(url_remotecontrol_rest, jsessionid)
         else:
             error_message = _(' It is not possible to get sessionid. ')
@@ -186,7 +187,8 @@ class WuaReading(models.Model):
                         # Merge Strings
                         others_readings_info[2] += error_watermeters
             except Exception as e:
-                others_readings_info[1] += ' - ' + 'Hidroconta error:\n\n' + str(e) + '\n\n'
+                others_readings_info[1] += \
+                    ' - ' + 'Hidroconta error:\n\n' + str(e) + '\n\n'
         return others_readings_info
 
     def open_connection_hidroconta(

@@ -54,7 +54,7 @@ class WuaReservoirreading(models.Model):
                         headers=request_headers,
                         data=json.dumps({
                             'type': ['analogInputs'],
-                            'state': 'enabled'
+                            'status': 'enabled'
                             }))
                     if analoginputs_req.status_code == 200:
                         analoginputs_reqs = json.loads(analoginputs_req.text)
@@ -74,7 +74,8 @@ class WuaReservoirreading(models.Model):
                                             'value': value,
                                             })
             else:
-                error_message = _(' It is not possible to get installation identifier. ')
+                error_message = _(
+                    ' It is not possible to get installation identifier. ')
             self.env['wua.reading'].close_connection(
                 url_remotecontrol_rest, jsessionid)
         else:
@@ -104,10 +105,11 @@ class WuaReservoirreading(models.Model):
                 url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
             try:
-                data = self.populate_data_for_import_reservoirreadings_hidroconta(
-                    url_remotecontrol_rest,
-                    url_remotecontrol_rest_username,
-                    url_remotecontrol_rest_password)
+                data = self.\
+                    populate_data_for_import_reservoirreadings_hidroconta(
+                        url_remotecontrol_rest,
+                        url_remotecontrol_rest_username,
+                        url_remotecontrol_rest_password)
                 if data:
                     reservoirreadings, error_message, error_reservoirs = \
                         self.import_reservoirreadings_hidroconta(

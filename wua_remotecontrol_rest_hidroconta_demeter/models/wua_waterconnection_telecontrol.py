@@ -69,7 +69,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
                         },
                     data=json.dumps({
                         'type': ['hydrants'],
-                        'state': 'enabled'
+                        'status': 'enabled'
                         }))
                 installation_identifier = self.env['ir.values'].get_default(
                     'wua.irrigation.configuration', 'installation_identifier')
@@ -81,11 +81,13 @@ class WuaWaterconnectionTelecontrol(models.Model):
                     for hydrant in hydrants:
                         installationId = int(hydrant['installationId'])
                         if installationId == installation_identifier:
-                            watermeter = \
-                                hydrant['counter']['code'].encode(
-                                    'utf-8', 'ignore')
-                            current_watermeter = model_wua_watermeter.search(
-                                [('name', '=', watermeter)])
+                            current_watermeter = False
+                            if ('counter' in hydrant and hydrant['counter']):
+                                watermeter = \
+                                    hydrant['counter']['code'].encode(
+                                        'utf-8', 'ignore')
+                                current_watermeter = model_wua_watermeter.\
+                                    search([('name', '=', watermeter)])
                             if current_watermeter:
                                 current_watermeter = current_watermeter[0]
                                 if current_watermeter.waterconnection_id:
@@ -138,7 +140,9 @@ class WuaWaterconnectionTelecontrol(models.Model):
                                             watermeter_error_msg,
                                     })
                 else:
-                    error_message = _(' Some error ocurred on hidrocontra servers (Installation id / Code not 200). ')
+                    error_message = _(
+                        ' Some error ocurred on hidrocontra servers '
+                        '(Installation id / Code not 200). ')
                 self.close_connection(url_remotecontrol_rest, jsessionid)
             else:
                 error_message = _(' It is not possible to get session id. ')

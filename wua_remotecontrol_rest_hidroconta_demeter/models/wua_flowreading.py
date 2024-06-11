@@ -103,7 +103,8 @@ class WuaFlowreading(models.Model):
                             'instant_flow': instant_flow,
                         })
             else:
-                error_message = _(' It is not possible to get installation identifier. ')
+                error_message = _(
+                    ' It is not possible to get installation identifier. ')
             self.close_connection(url_remotecontrol_rest, jsessionid)
         else:
             error_message = _(' It is not possible to get sessionid. ')
@@ -152,7 +153,8 @@ class WuaFlowreading(models.Model):
                         # Merge Strings
                         others_readings_info[2] += error_flowmeters
             except Exception as e:
-                others_readings_info[1] += ' - ' + 'Hidroconta error:\n\n' + str(e) + '\n\n'
+                others_readings_info[1] += \
+                    ' - ' + 'Hidroconta error:\n\n' + str(e) + '\n\n'
         return others_readings_info
 
     def open_connection_hidroconta(

@@ -53,7 +53,7 @@ class WuaPressuresensormeasurement(models.Model):
                     headers=request_headers,
                     data=json.dumps({
                         'type': ['analogInputs'],
-                        'state': 'enabled'
+                        'status': 'enabled'
                         }))
                 if analoginputs_req.status_code == 200:
                     analoginputs_reqs = json.loads(analoginputs_req.text)
