@@ -39,4 +39,9 @@ class WuaConcession(models.Model):
 
     notes = fields.Html(
         string='Notes')
+    
+    dotation = fields.Float(
+        string='Dotation (m3/ha)',
+        digits=(32, 4),
+        required=False)
 

@@ -228,3 +228,10 @@ class WuaCertificateSigpac(models.Model):
                 enclosure_included_in_certificate = True
             record.enclosure_included_in_certificate = \
                 enclosure_included_in_certificate
+
+class WuaCertificateType(models.Model):
+    _inherit = 'wua.certificate.type'
+    _description = 'Type of certificate'
+    
+    show_sigpac = fields.Boolean(string="Show SIGPAC information lines in"
+                                        " certificate")
