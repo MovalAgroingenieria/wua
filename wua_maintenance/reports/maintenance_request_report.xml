@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-
-
     <!-- Maintenance request report (droplist menu) -->
-    <report
-        id="maintenance_request_report"
+    <report id="maintenance_request_report"
         string="Maintenance Request Report"
         model="maintenance.request"
         report_type="qweb-pdf"
         file="wua_maintenance.maintenance_request_report_document"
-        name="wua_maintenance.maintenance_request_report_document"
-    />
+        name="wua_maintenance.maintenance_request_report_document"/>
 
     <!-- Maintenance Request report -->
     <template id="maintenance_request_report_document">
@@ -23,156 +19,296 @@
                         <!-- Vars -->
                         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
-                        <!-- Request data -->
+                        <!-- Title -->
+                        <div name="title" class="text-center">
+                            <h4><b>Maintenance request report</b></h4>
+                            <span>[<span t-field="o.name"></span>]</span>
+                        </div>
+
+                        <!-- Maintenance request data -->
                         <div name="maintenance_request_data">
                             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                                 <t t-if="report_style == 'light'">
                                     <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-file-text"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>
-                                                <span t-field="o.name"/>
-                                            </strong>
-                                            <br/>
-                                            <span t-field="o.sequence" style="font-size: 12px;"/>
-                                        </div>
+                                        <div style="float: left; display: inline;"><b>Request</b></div>
+                                        <div style="float: right;"><span t-field="o.sequence"/></div>
                                    </div>
                                 </t>
                                 <t t-else="">
                                     <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
                                         <div style="float: left; width: 32px;"><span class="fa fa-file-text"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>
-                                                <span t-field="o.name"/>
-                                            </strong>
-                                            <br/>
-                                            <span t-field="o.sequence" style="font-size: 12px;"/>
-                                        </div>
+                                        <div style="float: left; display: inline;"><b>Request</b></div>
+                                        <div style="float: right;"><span t-field="o.sequence"/></div>
                                     </div>
                                 </t>
                             </div>
                             <div class="row" style="margin-top: 4px;">
                                 <div class="col-xs-12" style="display: table;">
                                     <div style="width: 50%; display: table-cell;">
-                                        <t t-if="o.equipment_id or o.category_id or o.maintenance_kind_id">
-                                            <t t-if="o.equipment_id"><b>Equipment:</b>&amp;nbsp;<span t-field="o.equipment_id"/><br/></t>
-                                            <t t-if="o.category_id"><b>Category:</b>&amp;nbsp;<span t-field="o.category_id"/><br/></t>
-                                            <t t-if="o.maintenance_kind_id"><b>Maintenance Kind:</b>&amp;nbsp;<span t-field="o.maintenance_kind_id"/><br/></t>
-                                            <t t-if="o.maintenance_type"><b>Maintenance Type:</b>&amp;nbsp;<span t-field="o.maintenance_type"/><br/></t>
-                                        </t>
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                                <t t-if="o.equipment_id">
+                                                    <tr name="tr_equipment">
+                                                        <td><span><b>Equipment</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.equipment_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.category_id">
+                                                    <tr name="tr_category">
+                                                        <td><span><b>Category</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.category_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.employee_id">
+                                                    <tr name="tr_employee">
+                                                        <td><span><b>Created by</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.employee_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.request_date">
+                                                    <tr name="tr_request_date">
+                                                        <td><span><b>Request Date</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.request_date"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.schedule_date">
+                                                    <tr name="tr_schedule_date">
+                                                        <td><span><b>Scheduled Date</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.schedule_date"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.close_date">
+                                                    <tr name="tr_close_date">
+                                                        <td><span><b>Close Date</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.close_date"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <t t-if="report_style == 'light'">
-                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>
-                                                Personnel
-                                            </strong>
-                                        </div>
-                                   </div>
-                                </t>
-                                <t t-else="">
-                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>
-                                                Personnel
-                                            </strong>
-                                        </div>
-                                    </div>
-                                </t>
-                            </div>
-                             <div class="row" style="margin-top: 4px;">
-                                <div class="col-xs-12" style="display: table;">
-                                    <div style="width: 50%; display: table-cell;">
-                                        <t t-if="o.technician_user_id or o.maintenance_team_id">
-                                            <b>Created by:</b>&amp;nbsp;<span t-field="o.employee_id"/>
-                                            <br/>
-                                            <t t-if="o.technician_user_id"><b>Maintenance Responsible:</b>&amp;nbsp;<span t-field="o.technician_user_id"/><br/></t>
-                                            <t t-if="o.maintenance_team_id"><b>Maintenance Team:</b>&amp;nbsp;<span t-field="o.maintenance_team_id"/><br/></t>
-                                        </t>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <t t-if="report_style == 'light'">
-                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                                        <div style="float: left; width: 32px;"><span class="fa fa-calendar"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>
-                                                Dates
-                                            </strong>
-                                        </div>
-                                   </div>
-                                </t>
-                                <t t-else="">
-                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                        <div style="float: left; width: 32px;"><span class="fa fa-calendar"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>
-                                                Dates
-                                            </strong>
-                                        </div>
-                                    </div>
-                                </t>
-                            </div>
-                             <div class="row" style="margin-top: 4px;">
-                                <div class="col-xs-12" style="display: table;">
-                                    <div style="width: 50%; display: table-cell;">
-                                        <t t-if="o.request_date or o.schedule_date or o.priority">
-                                            <t t-if="o.request_date"><b>Request Date:</b>&amp;nbsp;<span t-field="o.request_date"/><br/></t>
-                                            <t t-if="o.request_date"><b>Close Date:</b>&amp;nbsp;<span t-field="o.close_date"/><br/></t>
-                                            <t t-if="o.schedule_date"><b>Scheduled Date:</b>&amp;nbsp;<span t-field="o.schedule_date"/><br/></t>
-                                            <t t-if="o.schedule_date"><b>Priority:</b>&amp;nbsp;<span t-if="o.priority == '0'">Very Low<br/></span>
-                                                                                                  <span t-if="o.priority == '1'">Low<br/></span>
-                                                                                                  <span t-if="o.priority == '2'">Normal<br/></span>
-                                                                                                  <span t-if="o.priority == '3'">High<br/></span>
-                                                                                                  <span t-if="o.priority == '4'">Very High<br/></span>
-                                            </t>
-                                        </t>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <t t-if="o.description">
-                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                        <t t-if="report_style == 'light'">
-                                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                                                <div style="float: left; width: 32px;"><span class="fa fa-pencil"/></div>
-                                                <div style="float: left; display: inline;">
-                                                    <strong>
-                                                        Notes
-                                                    </strong>
-                                                </div>
-                                            </div>
-                                        </t>
-                                        <t t-else="">
-                                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                                <div style="float: left; width: 32px;"><span class="fa fa-pencil"/></div>
-                                                <div style="float: left; display: inline;">
-                                                    <strong>
-                                                        Notes
-                                                    </strong>
-                                                </div>
-                                            </div>
-                                        </t>
-                                    </div>
-                                </t>
-                            </div>
-                            <div class="row" style="margin-top: 4px;">
-                                <div class="col-xs-12" style="display: table;">
-                                    <div style="width: 50%; display: table-cell;">
-                                        <t t-if="o.description">
-                                            <span t-field="o.description"/><br/>
-                                        </t>
+                                    <div style="display: table-cell; padding-left: 32px;">
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                                <t t-if="o.maintenance_type">
+                                                    <tr name="tr_maintenance_type">
+                                                        <td><span><b>Type</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.maintenance_type"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.maintenance_kind_id">
+                                                    <tr name="tr_maintenance_kind">
+                                                        <td><span><b>Kind</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.maintenance_kind_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.stage_id">
+                                                    <tr name="tr_stage">
+                                                        <td><span><b>Stage</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.stage_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.maintenance_team_id">
+                                                    <tr name="tr_maintenance_team">
+                                                        <td><span><b>Team</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.maintenance_team_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="o.technician_user_id">
+                                                    <tr name="tr_technician_user">
+                                                        <td><span><b>Manager</b></span></td>
+                                                        <td class="text-right">
+                                                            <span t-field="o.technician_user_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <tr name="tr_priority">
+                                                    <td><span><b>Priority</b></span></td>
+                                                    <td class="text-right">
+                                                        <t t-if="o.priority == '0'">
+                                                            <span class="fa fa-star-o"/>
+                                                            <span class="fa fa-star-o"/>
+                                                            <span class="fa fa-star-o"/>
+                                                        </t>
+                                                        <t t-if="o.priority == '1'">
+                                                            <span class="fa fa-star"/>
+                                                            <span class="fa fa-star-o"/>
+                                                            <span class="fa fa-star-o"/>
+                                                        </t>
+                                                        <t t-if="o.priority == '2'">
+                                                            <span class="fa fa-star"/>
+                                                            <span class="fa fa-star"/>
+                                                            <span class="fa fa-star-o"/>
+                                                        </t>
+                                                        <t t-if="o.priority == '4'">
+                                                            <span class="fa fa-star"/>
+                                                            <span class="fa fa-star"/>
+                                                            <span class="fa fa-star"/>
+                                                        </t>
+                                                        <!--
+                                                        <span>&amp;nbsp;(</span>
+                                                        <span t-field="o.priority"/>
+                                                        <span>)</span>
+                                                        -->
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Project and Timesheet data -->
+                        <t t-if="o.project_id or o.task_id or o.timesheet_ids">
+                            <div name="project_data" style="margin-top:20px;">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-clock-o"/></div>
+                                            <div style="float: left; display: inline;"><strong>Timesheet</strong></div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-clock-o"/></div>
+                                            <div style="float: left; display: inline;"><strong>Timesheet</strong></div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="row" style="margin-top: 4px;">
+                                    <div class="col-xs-12" style="display: table;">
+                                        <div style="width: 50%; display: table-cell;">
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <t t-if="o.task_id">
+                                                        <tr name="tr_task">
+                                                            <td><span><b>Task</b></span></td>
+                                                            <td class="text-right">
+                                                                <span t-field="o.task_id"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div style="display: table-cell; padding-left: 32px;">
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <t t-if="o.project_id">
+                                                        <tr name="tr_project">
+                                                            <td><span><b>Project</b></span></td>
+                                                            <td class="text-right">
+                                                                <span t-field="o.project_id"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                    <!--
+                                                    <t t-if="o.timesheet_total_hours">
+                                                        <tr name="tr_timesheet_total">
+                                                            <td><span><b>Timesheet Total Hours</b></span></td>
+                                                            <td class="text-right">
+                                                                <span t-field="o.timesheet_total_hours"
+                                                                    t-options="{'widget': 'duration', 'digital': True, 'unit': 'hour', 'round': 'minute'}"/>
+                                                            </td>
+                                                        </tr>
+                                                    </t>
+                                                    -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br/>
+                                <div t-if="o.timesheet_ids" name="timesheet_details" class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Manager</th>
+                                                    <th>Description</th>
+                                                    <th t-if="show_task"><t t-if="show_project">Project - </t>Task</th>
+                                                    <th class="text-right">Time</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="o.timesheet_ids" t-as="l">
+                                                    <tr>
+                                                        <td><span t-field="l.date"/></td>
+                                                        <td><span t-field="l.user_id.partner_id.name"/></td>
+                                                        <td><span t-field="l.name" t-options="{'widget': 'text'}"/></td>
+                                                        <td t-if="show_task or show_project">
+                                                            <t t-if="show_project"><span t-field="l.project_id.name"/></t>
+                                                            <t t-if="show_project and l.task_id"> - </t>
+                                                            <t t-if="l.task_id"><span t-field="l.task_id.name"/></t>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-field="l.unit_amount"
+                                                                t-options="{'widget': 'duration', 'digital': True, 'unit': 'hour', 'round': 'minute'}"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <tr>
+                                                    <td/><td/>
+                                                    <td t-if="show_task"/>
+                                                    <td class="text-right"><strong>Total</strong></td>
+                                                    <td class="text-right">
+                                                        <strong t-esc="sum(o.timesheet_ids.mapped('unit_amount'))"
+                                                                t-options="{'widget': 'duration', 'digital': True, 'unit': 'hour', 'round': 'minute'}"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+
+                        <!-- Notes / Description -->
+                        <t t-if="o.description">
+                            <div name="notes_data">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-pencil"/></div>
+                                            <div style="float: left; display: inline;"><strong>Notes</strong></div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-pencil"/></div>
+                                            <div style="float: left; display: inline;"><strong>Notes</strong></div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div style="margin-top: 4px;">
+                                    <span t-field="o.description"/>
+                                </div>
+                            </div>
+                        </t>
+
+                    </div> <!-- end page -->
                 </t>
             </t>
         </t>
