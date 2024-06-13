@@ -412,6 +412,12 @@ class WuaParcel(models.Model):
         compute='_compute_partner_id',
         track_visibility='onchange')
 
+    gis_parcel_ids = fields.One2many(
+        string='GIS Parcels',
+        comodel_name='wua.gis.parcel.view',
+        inverse_name='parcel_id',
+    )
+
     track_partnerlink_ids = fields.Char(
         string='Partners',
         size=SIZE_TRACK,
@@ -1189,130 +1195,70 @@ class WuaParcel(models.Model):
         self._compute_lease_dates_required()
 
     @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
-                        submenu=False):
-        res = super(WuaParcel, self).fields_view_get(view_id=view_id,
-                                                     view_type=view_type,
-                                                     toolbar=toolbar,
-                                                     submenu=submenu)
-        if view_type == 'form' or view_type == 'tree':
+    def fields_view_get(
+            self, view_id=None, view_type='form', toolbar=False,
+            submenu=False):
+        res = super(WuaParcel, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        if view_type in ['form', 'tree']:
             doc = etree.XML(res['arch'])
-            area_measurement_type = self.env['ir.values'].get_default(
+            config_model = self.env['ir.values']
+            area_measurement_type = config_model.get_default(
                 'wua.configuration', 'area_measurement_type')
-            # Show / Hide intersection info
-            intersection_management = self.env['ir.values'].get_default(
+            area_measurement_name = config_model.get_default(
+                'wua.configuration', 'area_measurement_name') or ''
+            intersection_management = config_model.get_default(
                 'wua.configuration', 'intersection_management')
-            area_measurement_name = ''
-            # Show / Hide lease info
-            leased_dates_required = self.env['ir.values'].get_default(
+            leased_dates_required = config_model.get_default(
                 'wua.configuration', 'leased_dates_required')
-            if (view_type == 'tree'):
-                if not leased_dates_required:
-                    for node in doc.xpath("//field[@name='leased_parcel']"):
+            if not leased_dates_required and view_type == 'tree':
+                for field_name in ['leased_parcel', 'leased_to']:
+                    for node in doc.xpath("//field[@name='%s']" % field_name):
                         node.set('invisible', '1')
                         node.set('modifiers', '{"tree_invisible": true}')
-                    for node in doc.xpath("//field[@name='leased_to']"):
-                        node.set('invisible', '1')
-                        node.set('modifiers', '{"tree_invisible": true}')
-            # Info of area uom
-            if area_measurement_type == 1:
-                area_measurement_name = self.env['ir.values'].get_default(
-                    'wua.configuration', 'area_measurement_name')
-                area_measurement_name = area_measurement_name.decode('utf_8')
-            else:
-                if view_type == 'form':
-                    # Add default hectareas to other fields
-                    for node in doc.xpath("//field[@name='area_gis']"):
-                        original_label = \
-                            self.sudo().get_value_from_translation(
-                                'base_wua',
-                                self.__class__.area_gis.string)
-                        node.set('string', original_label +
-                                 ' (' + _('hectares') + ')')
-                    for node in doc.xpath(
-                            "//field[@name='area_intersected_perimeter']"):
-                        original_label = \
-                            self.sudo().get_value_from_translation(
-                                'base_wua',
-                                self.__class__.
-                                area_intersected_perimeter.string)
-                        node.set('string', original_label +
-                                 ' (' + _('hectares') + ')')
-                    for node in doc.xpath(
-                            "//field[@name='area_intersected_perimeter_"
-                            "static']"):
-                        original_label = \
-                            self.sudo().get_value_from_translation(
-                                'base_wua',
-                                self.__class__.
-                                area_intersected_perimeter.string)
-                        node.set('string', original_label +
-                                 ' (' + _('hectares') + ')')
-                for node in doc.xpath("//field[@name='area_official']"):
-                    original_label = \
-                        self.sudo().get_value_from_translation(
-                            'base_wua',
-                            self.__class__.area_official.string)
-                    node.set('string', original_label +
-                             ' (' + _('hectares') + ')')
-            if area_measurement_name != '':
-                area_measurement_name = ' (' + \
-                    area_measurement_name.lower() + ')'
-                if view_type == 'form':
-                    for node in doc.xpath("//field[@name='area_gis']"):
-                        original_label = \
-                            self.sudo().get_value_from_translation(
-                                'base_wua',
-                                self.__class__.area_gis.string)
+            if view_type == 'form':
+                if area_measurement_type == 1:
+                    measurement_label = area_measurement_name.lower()
+                else:
+                    measurement_label = _('hectares')
+                for field_name in ['area_gis', 'area_intersected_perimeter',
+                                   'area_intersected_perimeter_static',
+                                   'area_official']:
+                    for node in doc.xpath("//field[@name='%s']" % field_name):
+                        original_label = self.sudo().\
+                            get_value_from_translation(
+                            'base_wua', getattr(self.__class__, field_name).
+                            string)
                         posBracket = original_label.find(' (')
                         if posBracket != -1:
                             original_label = original_label[:posBracket]
-                        node.set('string', original_label +
-                                 area_measurement_name)
-                    for node in doc.xpath("//field[@name='area_intersected_"
-                                          "perimeter']"):
-                        original_label = \
-                            self.sudo().get_value_from_translation(
-                                'base_wua',
-                                self.__class__.
-                                area_intersected_perimeter.string)
-                        posBracket = original_label.find(' (')
-                        if posBracket != -1:
-                            original_label = original_label[:posBracket]
-                        node.set('string', original_label +
-                                 area_measurement_name)
-                    for node in doc.xpath("//field[@name='area_intersected_"
-                                          "perimeter_static']"):
-                        original_label = \
-                            self.sudo().get_value_from_translation(
-                                'base_wua',
-                                self.__class__.
-                                area_intersected_perimeter.string)
-                        posBracket = original_label.find(' (')
-                        if posBracket != -1:
-                            original_label = original_label[:posBracket]
-                        node.set('string', original_label +
-                                 area_measurement_name)
-                    # Remove field of area_intersections when
-                    # intersection_management is not setted
-                    if (not intersection_management):
+                        node.set(
+                            'string', "%s (%s)" % (
+                                original_label, measurement_label))
+                if not intersection_management:
+                    for field_name in [
+                            'area_intersected_perimeter_static',
+                            'area_intersected_perimeter']:
                         for node in doc.xpath(
-                            "//field[@name='area_intersected_"
-                                "perimeter_static']"):
-                            node.getparent().remove(node)
-                        for node in doc.xpath(
-                            "//field[@name='area_intersected_"
-                                "perimeter']"):
-                            node.getparent().remove(node)
-                for node in doc.xpath("//field[@name='area_official']"):
-                    original_label = \
-                        self.sudo().get_value_from_translation(
-                            'base_wua',
-                            self.__class__.area_official.string)
-                    posBracket = original_label.find(' (')
-                    if posBracket != -1:
-                        original_label = original_label[:posBracket]
-                    node.set('string', original_label + area_measurement_name)
+                                "//field[@name='%s']" % field_name):
+                            node.set('invisible', '1')
+                            node.set('modifiers', '{"invisible": true}')
+                            # node.getparent().remove(node)
+            if area_measurement_name:
+                for field_name in ['area_gis', 'area_intersected_perimeter',
+                                   'area_intersected_perimeter_static',
+                                   'area_official']:
+                    for node in doc.xpath("//field[@name='%s']" % field_name):
+                        original_label = self.sudo().\
+                            get_value_from_translation(
+                                'base_wua',
+                                getattr(self.__class__, field_name).string)
+                        posBracket = original_label.find(' (')
+                        if posBracket != -1:
+                            original_label = original_label[:posBracket]
+                        node.set('string', "%s (%s)" % (
+                            original_label, area_measurement_name.lower()))
             res['arch'] = etree.tostring(doc)
         return res
 
