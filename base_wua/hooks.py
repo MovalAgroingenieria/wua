@@ -13,7 +13,8 @@ def pre_init_hook(cr, registry):
         AND EXISTS(SELECT * FROM information_schema.schemata  WHERE
                     schema_name='postgis')
         """)
-    if env.cr.fetchone()[0]:
+    result = env.cr.fetchone()[0]
+    if result and result != 'f':
         resp = True
     if (not resp):
         raise exceptions.ValidationError(_(
