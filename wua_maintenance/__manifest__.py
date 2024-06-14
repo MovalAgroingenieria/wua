@@ -12,6 +12,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
+        "hr_maintenance",
         "maintenance_plan",
         "maintenance_timesheet",
         "base_wua_infrastructure",
