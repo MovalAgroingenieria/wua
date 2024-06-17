@@ -19,7 +19,6 @@ def migrate(cr, registry):
         env.cr.commit()
     except Exception:
         env.cr.rollback()
-
     try:
         env.cr.savepoint()
         env.cr.execute("""

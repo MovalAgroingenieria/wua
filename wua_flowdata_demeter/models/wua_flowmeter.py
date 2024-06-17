@@ -185,10 +185,13 @@ class WuaFlowmeter(models.Model):
                 get_hydrants_from_hidroconta(url, jsessionid)
             for hydrant in hydrants:
                 installationId = int(counter['installationId'])
-                flowmeter_name = hydrant['counter']['code'].encode(
-                    'utf-8', 'ignore')
-                if (installationId == installation_identifier and
-                        flowmeter_name in fm_dict):
+                flowmeter_name = False
+                if ('counter' in hydrant and hydrant['counter']):
+                    flowmeter_name = \
+                        hydrant['counter']['code'].encode(
+                            'utf-8', 'ignore')
+                if (flowmeter_name and installationId ==
+                        installation_identifier and flowmeter_name in fm_dict):
                     flowmeter = fm_dict[flowmeter_name].name
                     flowmeter_id = fm_dict[flowmeter_name].id
                     # Only search some flowmeter
