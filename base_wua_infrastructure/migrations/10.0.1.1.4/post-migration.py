@@ -14,18 +14,21 @@ def migrate(cr, version):
         for irrigationpointwc in waterconnection.irrigationpointwc_ids:
             subparcels = irrigationpointwc.parcel_id.subparcel_ids
             for subparcel in subparcels:
-                existing_record = env[
-                    'wua.waterconnection.subparcel.rel'].search([
-                        ('waterconnection_id', '=', waterconnection.id),
-                        ('subparcel_id', '=', subparcel.id)
-                    ])
-                if existing_record:
-                    existing_record.write({
-                        'waterconnection_id': waterconnection.id,
-                        'subparcel_id': subparcel.id
-                    })
-                else:
-                    env['wua.waterconnection.subparcel.rel'].create({
-                        'waterconnection_id': waterconnection.id,
-                        'subparcel_id': subparcel.id
-                    })
+                try:
+                    existing_record = env[
+                        'wua.waterconnection.subparcel.rel'].search([
+                            ('waterconnection_id', '=', waterconnection.id),
+                            ('subparcel_id', '=', subparcel.id)
+                        ])
+                    if existing_record:
+                        existing_record.write({
+                            'waterconnection_id': waterconnection.id,
+                            'subparcel_id': subparcel.id
+                        })
+                    else:
+                        env['wua.waterconnection.subparcel.rel'].create({
+                            'waterconnection_id': waterconnection.id,
+                            'subparcel_id': subparcel.id
+                        })
+                except Exception:
+                    pass
