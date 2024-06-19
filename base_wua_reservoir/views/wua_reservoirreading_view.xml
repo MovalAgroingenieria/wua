@@ -72,17 +72,28 @@
         </field>
     </record>
 
+    <record id="wua_reservoirreading_view_pivot" model="ir.ui.view">
+        <field name="name">Reservoir Readings (pivot view)</field>
+        <field name="model">wua.reservoirreading</field>
+        <field name="arch" type="xml">
+            <pivot>
+            </pivot>
+        </field>
+    </record>
+
     <record id="wua_reservoirreading_action" model="ir.actions.act_window">
         <field name="name">Reservoir Readings</field>
         <field name="res_model">wua.reservoirreading</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,form,pivot</field>
         <field name="view_ids"
          eval="[(5, 0),
                 (0, 0, {'view_mode': 'tree',
                         'view_id': ref('wua_reservoirreading_view_tree')}),
                 (0, 0, {'view_mode': 'form',
-                        'view_id': ref('wua_reservoirreading_view_form')})]"/>
+                        'view_id': ref('wua_reservoirreading_view_form')}),
+                (0, 0, {'view_mode': 'pivot',
+                        'view_id': ref('wua_reservoirreading_view_pivot')})]"/>
         <field name="search_view_id" ref="wua_reservoirreading_view_search"/>
     </record>
 
