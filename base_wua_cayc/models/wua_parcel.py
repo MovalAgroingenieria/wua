@@ -525,6 +525,7 @@ class WuaParcelPartnerlink(models.Model):
         string='Intake',
         comodel_name='wua.intake',
         related='parcel_id.intake_id',
+        store=True,
     )
 
     intake_cayc = fields.Char(

@@ -73,6 +73,18 @@
         </field>
     </record>
 
+    <record id="wua_parcel_partnerlink_view_search" model="ir.ui.view" >
+        <field name="name">Partner Links (search view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='propietary']" position="after">
+                <filter string="Intake" name="intake"
+                        context="{'group_by':'intake_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="wua_edit_parcel_class_view_tree" model="ir.ui.view">
         <field name="name">Parcel Classes</field>
         <field name="model">wua.parcel.class</field>
