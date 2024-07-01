@@ -200,15 +200,17 @@ class WuaParcel(models.Model):
 
     @api.model
     def create(self, vals):
+        parcel_class_ids = None
         if 'parcel_class_ids' in vals:
+            parcel_class_ids = vals['parcel_class_ids']
             self.populate_area_official_of_parcel_class(
-                vals['parcel_class_ids'], vals['area_official'])
+                parcel_class_ids, vals['area_official'])
         if self.should_create_parcel_class_on_creation(vals):
             self.populate_parcel_class_for_creation(vals)
         new_parcel = super(WuaParcel, self).create(vals)
         correct_parcel_classes_area = self.is_parcel_classes_area_correct(
             new_parcel.id, vals['area_official'],
-            vals['parcel_class_ids'], vals)
+            parcel_class_ids, vals)
         if not correct_parcel_classes_area:
             raise exceptions.UserError(_('The sum of classes areas must '
                                          'be the parcel official area.'))
