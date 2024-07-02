@@ -73,6 +73,7 @@
         "reports/wua_partner_quota_individualinput_report.xml",
         "reports/wua_waterconnection_readings_report.xml",
         "reports/quota_report.xml",
+        "reports/report_invoice.xml",
     ],
     "external_dependencies": {
         "python": ["numpy", "bokeh"]},

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="report_invoice_inherited" inherit_id="base_wua_invoicing_pressurized_irrigation.report_invoice">
+            <xpath expr="//th[@name='total_invoice_th']" position="after">
+                <th name="category">Category</th>
+            </xpath>
+            <xpath expr="//td[@name='total_invoice_td']" position="after">
+                <td name="category">
+                    <t t-set="has_consumption" t-value="False"/>
+                    <t t-set="has_hydric_movement" t-value="False"/>
+                    <t t-set="category_display" t-value="''"/>
+                    <t t-foreach="invoice.invoice_line_ids" t-as="line">
+                        <t t-if="connection.id == line.waterconnection_id.id and line.product_id.categ_id.productcategory_code == 14">
+                            <t t-set="has_hydric_movement" t-value="True"/>
+                        </t>
+                        <t t-elif="connection.id == line.waterconnection_id.id and line.product_id.categ_id.productcategory_code == 7">
+                            <t t-set="has_consumption" t-value="True"/>
+                        </t>
+                    </t>
+                    <t t-if="has_hydric_movement">
+                        <t t-set="category_display" t-value="category_display + ' Hydric Movement'"/>
+                    </t>
+                    <t t-if="has_consumption">
+                        <t t-set="category_display" t-value="category_display + ' Consumption'"/>
+                    </t>
+                    <t t-if="category_display == ''">
+                        <t t-set="category_display" t-value="'Other'"/>
+                    </t>
+                    <span t-esc="category_display"/>
+                </td>
+            </xpath>
+        </template>
+    </data>
+</odoo>
