@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Add roject and Timesheet data -->
+    <template id="maintenance_request_report_document" inherit_id="wua_maintenance.maintenance_request_report_document">
+        <xpath expr="//div[@name='maintenance_request_data']" position="after">
+
+            <t t-if="o.project_id or o.task_id or o.timesheet_ids">
+                <div name="project_data" style="margin-top:20px;">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-clock-o"/></div>
+                                <div style="float: left; display: inline;"><strong>Timesheet</strong></div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-clock-o"/></div>
+                                <div style="float: left; display: inline;"><strong>Timesheet</strong></div>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="row" style="margin-top: 4px;">
+                        <div class="col-xs-12" style="display: table;">
+                            <div style="width: 50%; display: table-cell;">
+                                <table style="width: 100%;">
+                                    <tbody>
+                                        <t t-if="o.task_id">
+                                            <tr name="tr_task">
+                                                <td><span><b>Task</b></span></td>
+                                                <td class="text-right">
+                                                    <span t-field="o.task_id"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="display: table-cell; padding-left: 32px;">
+                                <table style="width: 100%;">
+                                    <tbody>
+                                        <t t-if="o.project_id">
+                                            <tr name="tr_project">
+                                                <td><span><b>Project</b></span></td>
+                                                <td class="text-right">
+                                                    <span t-field="o.project_id"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <!--
+                                        <t t-if="o.timesheet_total_hours">
+                                            <tr name="tr_timesheet_total">
+                                                <td><span><b>Timesheet Total Hours</b></span></td>
+                                                <td class="text-right">
+                                                    <span t-field="o.timesheet_total_hours"
+                                                        t-options="{'widget': 'duration', 'digital': True, 'unit': 'hour', 'round': 'minute'}"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div t-if="o.timesheet_ids" name="timesheet_details" class="row">
+                        <div class="col-md-12">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Manager</th>
+                                        <th>Description</th>
+                                        <th t-if="show_task"><t t-if="show_project">Project - </t>Task</th>
+                                        <th class="text-right">Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="o.timesheet_ids" t-as="l">
+                                        <tr>
+                                            <td><span t-field="l.date"/></td>
+                                            <td><span t-field="l.user_id.partner_id.name"/></td>
+                                            <td><span t-field="l.name" t-options="{'widget': 'text'}"/></td>
+                                            <td t-if="show_task or show_project">
+                                                <t t-if="show_project"><span t-field="l.project_id.name"/></t>
+                                                <t t-if="show_project and l.task_id"> - </t>
+                                                <t t-if="l.task_id"><span t-field="l.task_id.name"/></t>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="l.unit_amount"
+                                                    t-options="{'widget': 'duration', 'digital': True, 'unit': 'hour', 'round': 'minute'}"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr>
+                                        <td/><td/>
+                                        <td t-if="show_task"/>
+                                        <td class="text-right"><strong>Total</strong></td>
+                                        <td class="text-right">
+                                            <strong t-esc="sum(o.timesheet_ids.mapped('unit_amount'))"
+                                                    t-options="{'widget': 'duration', 'digital': True, 'unit': 'hour', 'round': 'minute'}"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+
+    </template>
+
+</odoo>

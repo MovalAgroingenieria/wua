@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-12 11:26+0000\n"
-"PO-Revision-Date: 2024-06-12 11:26+0000\n"
+"POT-Creation-Date: 2024-07-02 09:52+0000\n"
+"PO-Revision-Date: 2024-07-02 09:52+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,11 @@ msgstr ""
 #: model:ir.model.fields,help:wua_maintenance.field_maintenance_equipmenttag_color
 msgid "0:grey, 1:green, 2:yellow, 3:orange, 4:red, 5:purple, 6:blue, 7:cyan, 8:light-green, 9:magenta"
 msgstr "0:gris, 1:verde, 2:amarillo, 3:naranja, 4:rojo, 5:púrpura, 6:azul, 7:cian, 8:verde brillante, 9:magenta"
+
+#. module: wua_maintenance
+#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
+msgid "<b>Maintenance request report</b>"
+msgstr "<b>Solicitud mantenimiento</b>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
@@ -48,7 +53,7 @@ msgstr "<b>Solicitud</b>"
 msgid "<span class=\"o_stat_text\">Associated</span>\n"
 "                        <span class=\"o_stat_text\">Equipment</span>"
 msgstr "<span class=\"o_stat_text\">Elemento</span>\n"
-"                        <span class=\"o_stat_text\">asociado</span>"
+"                        <span class=\"o_stat_text\">Asociado</span>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.hr_equipment_view_form
@@ -56,11 +61,6 @@ msgid "<span class=\"o_stat_text\">Infrastructure</span>\n"
 "                        <span class=\"o_stat_text\">Item</span>"
 msgstr "<span class=\"o_stat_text\">Elemento de</span>\n"
 "                        <span class=\"o_stat_text\">Infraestructura</span>"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "<span>&amp;nbsp;(</span>"
-msgstr "<span>&amp;nbsp;(</span>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
@@ -89,11 +89,6 @@ msgstr "<span><b>Clase</b></span>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "<b>Maintenance request report</b>"
-msgstr "<b>Solicitud mantenimiento</b>"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
 msgid "<span><b>Manager</b></span>"
 msgstr "<span><b>Responsable</b></span>"
 
@@ -101,11 +96,6 @@ msgstr "<span><b>Responsable</b></span>"
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
 msgid "<span><b>Priority</b></span>"
 msgstr "<span><b>Prioridad</b></span>"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "<span><b>Project</b></span>"
-msgstr "<span><b>Proyecto</b></span>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
@@ -124,18 +114,8 @@ msgstr "<span><b>Etapa</b></span>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "<span><b>Task</b></span>"
-msgstr "<span><b>Tarea</b></span>"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
 msgid "<span><b>Team</b></span>"
 msgstr "<span><b>Equipo</b></span>"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "<span><b>Timesheet Total Hours</b></span>"
-msgstr "<span><b>Total parte de horas</b></span>"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
@@ -146,16 +126,6 @@ msgstr "<span><b>Tipo</b></span>"
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
 msgid "<strong>Notes</strong>"
 msgstr "<strong>Notas</strong>"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "<strong>Timesheet</strong>"
-msgstr "<strong>Parte&amp;nbsp;de&amp;nbsp;horas</strong>"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "<strong>Total</strong>"
-msgstr "<strong>Total</strong>"
 
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_airvalve
@@ -209,7 +179,7 @@ msgstr "Creado por"
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_create_date
 msgid "Created on"
-msgstr "Creado en"
+msgstr "Creado el"
 
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_drainageditch
@@ -222,25 +192,15 @@ msgid "DRAINAGE VALVE"
 msgstr "DESAGÜE"
 
 #. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "Date"
-msgstr "Fecha"
-
-#. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
 msgid "Department"
 msgstr "Departamento"
 
 #. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "Description"
-msgstr "Descripción"
-
-#. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_display_name
 #: model:ir.model.fields,field_description:wua_maintenance.field_wua_infrastructureitem_display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre mostrado"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
@@ -540,12 +500,12 @@ msgstr "Informe de petición de mantenimiento"
 #. module: wua_maintenance
 #: model:ir.model,name:wua_maintenance.model_maintenance_request
 msgid "Maintenance Requests"
-msgstr "Solicitudes de mantenimiento"
+msgstr "Peticiones de mantenimiento"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_config_settings_view_form
 msgid "Maintenance Requests Management"
-msgstr "Administración de solicitudes de mantenimiento"
+msgstr "Administración de peticiones de mantenimiento"
 
 #. module: wua_maintenance
 #: model:ir.actions.act_window,name:wua_maintenance.maintenance_dashboard_action
@@ -568,19 +528,14 @@ msgstr "Categoría de mantenimiento"
 #: sql_constraint:maintenance.equipment.category:0
 #, python-format
 msgid "Maintenance category already exists."
-msgstr "La categoría de mantenimiento ya existente."
+msgstr "Categoría de mantenimiento ya existente."
 
 #. module: wua_maintenance
 #: code:addons/wua_maintenance/models/maintenance_equipmenttag.py:20
 #: sql_constraint:maintenance.equipmenttag:0
 #, python-format
 msgid "Maintenance tag already exists."
-msgstr "La etiqueta de mantenimiento ya existente."
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "Manager"
-msgstr "Responsable"
+msgstr "Etiqueta de mantenimiento ya existente."
 
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipmenttag_notes
@@ -641,11 +596,6 @@ msgid "Primary infrastructure?"
 msgstr "Infraestructura primaria?"
 
 #. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "Project -"
-msgstr "Proyecto -"
-
-#. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_reservoir
 msgid "RESERVOIR"
 msgstr "BALSA"
@@ -688,22 +638,12 @@ msgstr "Secuencia para peticiones de mantenimiento"
 #. module: wua_maintenance
 #: model:ir.model.fields,field_description:wua_maintenance.field_maintenance_equipment_tag_html
 msgid "Tag HTML"
-msgstr "Etiqueta HTML"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "Task"
-msgstr "Tarea"
+msgstr "Tag HTML"
 
 #. module: wua_maintenance
 #: model:ir.ui.view,arch_db:wua_maintenance.maintenance_equipment_view_search_inherit_hr
 msgid "Technicians"
 msgstr "Técnicos"
-
-#. module: wua_maintenance
-#: model:ir.ui.view,arch_db:wua_maintenance.maintenance_request_report_document
-msgid "Time"
-msgstr "Tiempo"
 
 #. module: wua_maintenance
 #: model:maintenance.equipment.category,name:wua_maintenance.equipment_category_valve
