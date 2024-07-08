@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<!-- WUA Law Measuring Device -->
+
+    <!-- Definición de la vista formulario -->
+    <record id="wua_law_measuring_device_view_form" model="ir.ui.view">
+        <field name="name">Measuring Device (form view)</field>
+        <field name="model">law.measuring.device</field>
+        <field name="inherit_id" ref="law_water_quality.law_measuring_device_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <field name="gis_viewer_link" invisible="1"/>
+                <field name="with_gis_measuring_device" invisible="1"/>
+                <button name="action_see_gis_viewer" type="object"
+                    class="oe_stat_button" string="GIS Viewer" icon="fa-map-marker"
+                    attrs="{'invisible': ['|',('gis_viewer_link','=',False), ('with_gis_measuring_device','=',False)]}"/>
+            </xpath>
+            <xpath expr="//group[@name='slave_data']" position="after">
+                <templates>
+                    <t t-name="gisviewer">
+                         <field name="with_gis_measuring_device" invisible="1"/>
+                         <div id="gisviewer_measuring_device"
+                              attrs="{'invisible':
+                                      [('with_gis_measuring_device','=',False)]}">
+                             <field name="html_gisviewer_frame" widget="html"/>
+                         </div>
+                    </t>
+                </templates>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
