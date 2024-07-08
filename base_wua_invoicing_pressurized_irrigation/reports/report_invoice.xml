@@ -62,19 +62,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <t t-foreach="wizard.invoice_ids" t-as="invoice">
-                                    <t t-set="consumption" t-value="False"/>
-                                    <t t-set="other_names" t-value="[]"/>
+                                <t t-foreach="wizard.invoice_ids.filtered(lambda inv: connection.id in inv.invoice_line_ids.mapped('waterconnection_id.id'))" t-as="invoice">
                                     <t t-set="total_lines_quantity" t-value="0"/>
-                                    <t t-foreach="invoice.invoice_line_ids" t-as="line">
-                                        <t t-if="connection.id == line.waterconnection_id.id and line.categ_id.productcategory_code == 7">
-                                            <t t-set="uom_unit" t-value="line.uom_id.name" />
-                                            <t t-if="uom_unit == u'm\xb3'">
-                                                <t t-set="total_lines_quantity" t-value="total_lines_quantity + line.quantity"/>
-                                            </t>
-                                        </t>
-                                        <t t-elif="connection.id == line.waterconnection_id.id and line.categ_id.productcategory_code == 14">
-                                            <t t-set="uom_unit" t-value="line.uom_id.name" />
+                                    <t t-set="other_names" t-value="[]"/>
+                                    <t t-foreach="invoice.invoice_line_ids.filtered(lambda line: line.waterconnection_id.id == connection.id)" t-as="line">
+                                        <t t-if="line.categ_id.productcategory_code == 7 or line.categ_id.productcategory_code == 14">
+                                            <t t-set="uom_unit" t-value="line.uom_id.name"/>
                                             <t t-if="uom_unit == u'm\xb3'">
                                                 <t t-set="total_lines_quantity" t-value="total_lines_quantity + line.quantity"/>
                                             </t>
