@@ -17,6 +17,7 @@
     "data": [
         "security/ir.model.access.csv",
         "data/product_category_data.xml",
+        "data/wua_invoicing_config_settings_data.xml",
         "views/wua_waterconnection_view.xml",
         "views/wua_irrigation_config_settings_view.xml",
         "views/wua_invoiceset_view.xml",

@@ -387,9 +387,34 @@ class WuaInvoiceset(models.Model):
                 invoice_details_to_group_by_wc_same_payer
         return invoice_details_to_group
 
+    def _combine_if_same_invoice_data(self, grouped_by_wc, grouped_normal):
+        parameters_to_check = [
+            'account_id', 'customer_invoice_transmit_method_id',
+            'partner_code', 'partner_id', 'payment_mode_id', 'payment_term_id']
+        combined_dict = {}
+        for item_wc in grouped_by_wc:
+            key = tuple(
+                item_wc.get(param, False) for param in parameters_to_check)
+            if key in combined_dict:
+                combined_dict[key]['detail'] += item_wc.get('detail', [])
+            else:
+                combined_dict[key] = item_wc.copy()
+        for item_normal in grouped_normal:
+            key = tuple(
+                item_normal.get(param, False) for param in parameters_to_check)
+            if key in combined_dict:
+                combined_dict[key]['detail'] += item_normal.get('detail', [])
+            else:
+                combined_dict[key] = item_normal.copy()
+        combined_list = list(combined_dict.values())
+        return combined_list
+
     def group_invoice_details(self, invoice_details):
         invoice_details_to_group = self.get_invoice_details_to_group(
             invoice_details)
+        separate_wc_invoices = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'separate_wc_invoices')
         if invoice_details_to_group:
             invoice_details_not_grouped = \
                 [x for x in invoice_details
@@ -397,9 +422,17 @@ class WuaInvoiceset(models.Model):
             invoices_data_grouped_by_wc = self.group_invoice_details_by_wc(
                 invoice_details_to_group)
             if invoice_details_not_grouped:
-                return invoices_data_grouped_by_wc + \
-                    super(WuaInvoiceset, self).group_invoice_details(
-                        invoice_details_not_grouped)
+                # Get other details grouped
+                invoices_data_grouped = super(WuaInvoiceset, self).\
+                    group_invoice_details(invoice_details_not_grouped)
+                # Check if the invoices must separate WC info
+                # by checking if payment info is the same for WC and the other
+                # invoices
+                if (not (separate_wc_invoices)):
+                    return self._combine_if_same_invoice_data(
+                        invoices_data_grouped_by_wc, invoices_data_grouped)
+                else:
+                    return invoices_data_grouped_by_wc + invoices_data_grouped
             else:
                 return invoices_data_grouped_by_wc
         else:

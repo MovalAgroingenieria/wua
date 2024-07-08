@@ -14,6 +14,13 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If enabled, invoicing will be based only on water connections, '
              'parcels will be ignored')
 
+    separate_wc_invoices = fields.Boolean(
+        string='Separate Waterconnection invoices',
+        default=True,
+        required=True,
+        help='If marked, waterconnection lines will be separated on '
+             'different invoices')
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -21,3 +28,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'invoicing_based_on_wc',
                            self.invoicing_based_on_wc)
+        values.set_default('wua.invoicing.configuration',
+                           'separate_wc_invoices',
+                           self.separate_wc_invoices)
