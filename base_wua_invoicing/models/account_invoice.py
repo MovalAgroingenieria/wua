@@ -213,6 +213,18 @@ class AccountInvoiceLine(models.Model):
         store=True,
         index=True,
         compute='_compute_invoice_type')
+    
+    invoice_state = fields.Selection([
+        ('draft', 'Draft'),
+        ('proforma', 'Pro-forma'),
+        ('proforma2', 'Pro-forma'),
+        ('open', 'Open'),
+        ('paid', 'Paid'),
+        ('cancel', 'Cancelled')],
+        string='Invoice State',
+        store=True,
+        index=True,
+        compute='_compute_invoice_state')
 
     @api.depends('product_id')
     def _compute_categ_id(self):
@@ -242,6 +254,12 @@ class AccountInvoiceLine(models.Model):
     def _compute_invoice_type(self):
         for record in self:
             record.invoice_type = record.invoice_id.type
+            
+    @api.depends('invoice_id', 'invoice_id.state')
+    def _compute_invoice_state(self):
+        for record in self:
+            record.invoice_state = record.invoice_id.state
+
 
     # No summary for: quantity, price_unit
     @api.model
