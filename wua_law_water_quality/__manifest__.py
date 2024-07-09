@@ -15,6 +15,7 @@
         "law_water_quality",
     ],
     "data": [
+        "data/wua_law_measuring_device_config_settings_data.xml",
         "views/law_analysis_view.xml",
         "views/wua_intake_view.xml",
         "reports/law_analysis_report.xml",

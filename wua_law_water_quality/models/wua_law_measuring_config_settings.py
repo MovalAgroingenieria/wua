@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2024
+# 2024 - Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 from odoo import models, fields, api
@@ -15,11 +15,10 @@ class WuaLawMeasuringConfiguration(models.TransientModel):
         size=20,
         help='Name of measuring devices param in the GIS viewer url')
     
-    
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
         values.set_default('wua.law.measuring.configuration',
                            'url_gis_viewer_measuring_devices_param',
                            self.url_gis_viewer_measuring_devices_param)
-        self.assign_groups_id_to_menus()
+        return values
