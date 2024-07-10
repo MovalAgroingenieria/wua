@@ -8,7 +8,7 @@ import datetime
 import json
 import logging
 import pytz
-from odoo import models, fields, api, exceptions, _
+from odoo import models, fields, api, exceptions, _, tools
 
 
 class WuaParcel(models.Model):
@@ -775,3 +775,125 @@ class WuaParcelClass(models.Model):
                 'url': self.gis_viewer_link,
                 'target': 'new',
             }
+
+
+class WuaGisParcelClassView(models.Model):
+    _name = 'wua.gis.parcel.class.view'
+    _auto = False
+
+    name = fields.Char(
+        string='Code',
+    )
+
+    gid = fields.Integer(
+        string='GID',
+    )
+
+    parcel_id = fields.Many2one(
+        string='Parcel',
+        comodel_name='wua.parcel',
+    )
+
+    parcel_class_id = fields.Many2one(
+        string='Parcel Class',
+        comodel_name='wua.parcel.class',
+    )
+
+    with_wua_parcel_class = fields.Boolean(
+        string='With MR Class Parcel',
+    )
+
+    area_gis = fields.Float(
+        string='GIS Area',
+        digits=(32, 4),
+    )
+
+    area_official = fields.Float(
+        string='Class Official Area',
+        digits=(32, 4),
+        default=0,
+    )
+
+    parcel_class = fields.Selection([
+        ('RH', 'RH'),
+        ('ER', 'ER'),
+        ('BR', 'BR'),
+        ('NR', 'NR'),
+        ('NER', 'NER'),
+        ('NBR', 'NBR'),
+    ], string='Parcel Class',
+        default='RH',
+    )
+
+    class_sharer = fields.Char(
+        string='Class Sharer',
+    )
+
+    geojson_data = fields.Text(
+        string='Geojson Data',
+    )
+
+    @api.model
+    def init(self):
+        try:
+            tools.drop_view_if_exists(self.env.cr, 'wua_gis_parcel_class_view')
+            self.env.cr.execute(
+                """
+                CREATE OR REPLACE VIEW wua_gis_parcel_class_view AS (
+                SELECT row_number() OVER() AS id, d.*
+                FROM (
+                    SELECT
+                        wgpc1.name as name,
+                        wgpc1.gid,
+                        wpc1.id AS parcel_class_id,
+                        wp1.id AS parcel_id,
+                        wgpc1.participe AS class_sharer,
+                        wgpc1.clase0 AS parcel_class,
+                        COALESCE(wpc1.area_official, 0.0) AS area_official,
+                        COALESCE(wp1.active, FALSE) AS with_wua_parcel_class,
+                        (postgis.ST_AREA(wgpc1.geom) / 10000) /
+                        CASE
+                            WHEN (SELECT substring(value from '[0-9]+'
+                                )::INTEGER AS
+                                value FROM ir_values WHERE name LIKE
+                                'area_measurement_type' LIMIT 1) = 1
+                            THEN
+                                (SELECT substring(
+                                    value from'[0-9]+\\.[0-9]+')::FLOAT
+                                AS value FROM ir_values WHERE name LIKE
+                                'area_measurement_equivalence' LIMIT 1)
+                            ELSE 1
+                        END
+                        AS area_gis,
+                        postgis.ST_AsGeoJSON(wgpc1.geom) AS geojson_data
+                    FROM wua_gis_parcel_class wgpc1
+                    LEFT JOIN wua_parcel_class wpc1 ON wpc1.name = wgpc1.name
+                    LEFT JOIN wua_parcel wp1 ON wp1.id = wpc1.parcel_id AND
+                        wp1.active
+                    ORDER BY wgpc1.name
+                ) d
+                );
+                """)
+        except Exception as e:
+            self.env.cr.rollback()
+            self.env.cr.execute(
+                """
+                CREATE OR REPLACE VIEW wua_gis_parcel_class_view AS (
+                SELECT
+                    NULL::INTEGER as id,
+                    NULL::TEXT as name,
+                    NULL::INTEGER as gid,
+                    NULL::INTEGER as parcel_id,
+                    NULL::INTEGER as parcel_class_id,
+                    NULL::TEXT as parcel_class,
+                    NULL::TEXT as class_sharer,
+                    NULL::BOOLEAN as with_wua_parcel_class,
+                    NULL::DOUBLE PRECISION as area_gis,
+                    NULL::DOUBLE PRECISION as area_official,
+                    NULL::TEXT as geojson_data
+                WHERE FALSE
+                );
+                """)
+            _logger = logging.getLogger(self.__class__.__name__)
+            _logger.warning('The table wua_gis_parce_class does not exist or '
+                            'an error occurred: %s', e)

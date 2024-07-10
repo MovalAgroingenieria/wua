@@ -374,6 +374,59 @@
         </field>
     </record>
 
+    <record id="wua_technical_parcel_class_gis_view_tree" model="ir.ui.view" >
+        <field name="name">GIS Parcel Classes (tree view)</field>
+        <field name="model">wua.gis.parcel.class.view</field>
+        <field name="inherit_id" ref="base_wua_cayc.wua_technical_parcel_class_gis_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']"
+                   position="before">
+                <field name="wuabase_id"/>
+            </xpath>
+            <xpath expr="//field[@name='class_sharer']"
+                   position="after">
+                <field name="intake_id"/>
+                <field name="octroi_id"/>
+                <field name="octroi_gis" invisible="1"/>
+                <field name="waterchannel_id"/>
+                <field name="waterchannel_gis" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_class_gis_view_search" model="ir.ui.view">
+        <field name="name">GIS Parcel Classes (search view)</field>
+        <field name="model">wua.gis.parcel.class.view</field>
+        <field name="inherit_id" ref="base_wua_cayc.wua_technical_parcel_class_gis_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parcel_id']" position="before">
+                <field name="wuabase_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='parcel_id']" position="before">
+                <filter string="Primary Entity"
+                     name="wuabase_id"
+                     context="{'group_by':'wuabase_id'}"/>
+            </xpath>
+            <xpath expr="//filter[@name='class_sharer']" position="after">
+                <filter string="Intake"
+                     name="intake_id"
+                     context="{'group_by':'intake_id'}"/>
+                <filter string="Octroi"
+                     name="octroi_id"
+                     context="{'group_by':'octroi_id'}"/>
+                <filter string="Octroi (GIS)"
+                     name="octroi_gis"
+                     context="{'group_by':'octroi_gis'}"/>
+                <filter string="Waterchannel"
+                     name="waterchannel_id"
+                     context="{'group_by':'waterchannel_id'}"/>
+                <filter string="Waterchannel (GIS)"
+                     name="waterchannel_gis"
+                     context="{'group_by':'waterchannel_gis'}"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="wua_parcel_primary_action" model="ir.actions.act_window">
         <field name="name">Parcels Primary</field>
         <field name="res_model">wua.parcel</field>
