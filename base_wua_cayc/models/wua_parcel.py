@@ -258,7 +258,8 @@ class WuaParcel(models.Model):
     def _reset_cayc_data_parcel_local(self):
         self.env.cr.execute("""
             UPDATE wua_parcel SET intake_cayc = '',
-            area_official_cayc = 0, mapped_parcel = FALSE
+            area_official_cayc = 0, mapped_parcel = FALSE,
+            class_sharer = ''
             WHERE active IS TRUE;
         """)
 
@@ -292,16 +293,19 @@ class WuaParcel(models.Model):
         parcels = False
         self.env.cr.execute("""
             SELECT quote_literal(name) AS parcel,
-            quote_literal(COALESCE(intake, '')) AS intake, area_official FROM
+            quote_literal(COALESCE(intake, '')) AS intake, area_official,
+            quote_literal(COALESCE(class_sharer, '')) AS class_sharer FROM
             dblink('conn_to_cayc',
             'SELECT wp1.name, wi1.name AS intake,
-             wp1.area_official
+             wp1.area_official,
+             wp1.class_sharer
              FROM wua_parcel wp1
              LEFT JOIN wua_intake wi1
              ON wi1.id = wp1.intake_id
              WHERE wp1.active AND NOT
              wp1.is_primary AND wp1.wuabase_id = %s;') AS
-            t(name TEXT, intake TEXT, area_official NUMERIC);
+            t(name TEXT, intake TEXT, area_official NUMERIC,
+              class_sharer TEXT);
         """ % (wuabase_id))
         parcel_results = self.env.cr.dictfetchall()
         if (parcel_results and len(parcel_results) > 0):
@@ -338,9 +342,10 @@ class WuaParcel(models.Model):
         for parcel in parcels:
             self.env.cr.execute("""
                 UPDATE wua_parcel SET mapped_parcel = TRUE, intake_cayc = %s,
-                area_official_cayc = %s
+                area_official_cayc = %s, class_sharer = %s
                 WHERE name IN (%s);
-        """ % (parcel['intake'], parcel['area_official'], parcel['parcel']))
+        """ % (parcel['intake'], parcel['area_official'],
+               parcel['class_sharer'], parcel['parcel']))
 
     def _get_partner_of_mapped_parcels(self):
         partner_ids = False
@@ -413,6 +418,13 @@ class WuaParcel(models.Model):
                     parcel_class['notes'],
                     'True',
                     ))
+            self.env.cr.execute("""
+                INSERT INTO wua_parcel_class
+                    (name, parcel_id, parcel_class, area_official,
+                     class_sharer, resolution_year, notes, active)
+                VALUES
+                %s;
+            """ % (','.join(values_query)))
             self.env.cr.execute("""
                 INSERT INTO wua_parcel_class
                     (name, parcel_id, parcel_class, area_official,
