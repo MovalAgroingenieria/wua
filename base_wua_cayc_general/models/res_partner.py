@@ -114,6 +114,13 @@ class ResPartner(models.Model):
                     [('name', '=', code_to_search)])
             record.wuabase_id = wuabase_id
 
+    # Overwrite method to avoid errors on duplicated NIF
+    # It's a possibility that partnes are primary entities and secondary
+    # or there are secondary on multiple primary entities
+    def exists_vat(self, vat, excluded_id):
+        resp = False
+        return resp
+
     @api.depends('parcel_owner_number_votes', 'parcel_owner_area_hec_votes',
                  'is_primary', 'partner_type',
                  'concession_as_volume', 'concession_as_power',)
@@ -377,6 +384,9 @@ class ResPartner(models.Model):
         except Exception as e:
             self.env.cr.rollback()
             _logger.error("An error occurred: %s", e)
+            wuabase.message_post(
+                body="Error %s: " % e
+            )
         finally:
             # Always close db connection if entablished
             if (connected_to_db):
@@ -388,6 +398,11 @@ class ResPartner(models.Model):
     def refresh_partners(self):
         # Check parameters are filled
         wuabases = self.env['wua.wuabase'].search(
-            [('server_connected', '=', True)])
+            [('server_connected', '=', True)],
+            order="last_syncrhonization_date asc")
         for wb in wuabases:
             self.refresh_partners_of_wuabase(wb)
+            # For no retrying incorrect wuabases and correct ones get
+            # to syncrhonize
+            wb.last_syncrhonization_date = fields.Datetime.now()
+            self.env.cr.commit()

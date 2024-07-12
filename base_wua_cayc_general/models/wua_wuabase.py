@@ -6,7 +6,7 @@ from odoo import models, fields, api
 
 
 class WuaWuabase(models.Model):
-    _inherit = 'wua.mastertable'
+    _inherit = ['wua.mastertable', 'mail.thread']
     _name = 'wua.wuabase'
     _description = 'Entity (Primary Entity)'
     _order = 'name'
@@ -35,7 +35,7 @@ class WuaWuabase(models.Model):
         string='Parcels Mapped',
         comodel_name='wua.parcel',
         inverse_name='wuabase_id',
-        domain=[('mapped_parcel', '=', True)]
+        domain=[('mapped_parcel', '=', True)],
     )
 
     parcel_class_ids = fields.One2many(
@@ -75,6 +75,10 @@ class WuaWuabase(models.Model):
         store=True,
     )
 
+    last_syncrhonization_date = fields.Datetime(
+        string='Last Syncrhonization Date',
+    )
+
     @api.depends(
         'server_remote_ip', 'server_remote_port', 'server_remote_database',
         'server_remote_database_user', 'server_remote_database_password')
@@ -87,6 +91,13 @@ class WuaWuabase(models.Model):
                     record.server_remote_database_password):
                 server_connected = True
             record.server_connected = server_connected
+
+    @api.multi
+    def do_synchronization_from_wuabase(self):
+        model_partner = self.env['res.partner']
+        for record in self:
+            if record.server_connected:
+                model_partner.refresh_partners_of_wuabase(record)
 
     def name_get(self):
         result = []

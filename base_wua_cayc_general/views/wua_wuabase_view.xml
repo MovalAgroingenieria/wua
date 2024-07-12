@@ -6,9 +6,19 @@
         <field name="model">wua.wuabase</field>
         <field name="arch" type="xml">
             <form duplicate="0">
+                <header>
+                    <field name="id" invisible="1"/>
+                    <field name="server_connected" invisible="1"/>
+                    <button name="do_synchronization_from_wuabase"
+                        type="object" string="Synchronize"
+                        icon="fa-rss"
+                        attrs="{'invisible':
+                                ['|', ('server_connected','=',False),
+                                        ('id', '=', 0)]}"
+                        groups="base_wua.group_wua_manager"
+                        confirm="Syncrhonize Wuabase?"/>
+                </header>
                 <sheet>
-                    <div name="buttons" class="oe_button_box">
-                    </div>
                     <group name="master_data" col="9">
                         <group name="master_data_fields" colspan="6" col="4">
                             <group name="master_data_fields_left" colspan="2">
@@ -32,6 +42,12 @@
                         </notebook>
                     </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>
