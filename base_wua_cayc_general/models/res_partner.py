@@ -244,7 +244,7 @@ class ResPartner(models.Model):
                   'parameters.'))
 
     def _get_partner_codes_remote(self):
-        partner_codes = False
+        partner_codes = []
         self.env.cr.execute("""
             SELECT partner_code FROM dblink('conn_to_crbase',
             'SELECT partner_code FROM res_partner WHERE active AND
