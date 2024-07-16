@@ -387,7 +387,7 @@
             <tree class="o_base_wua_quota_management_quotaperiod_line_view_tree"
                   editable="bottom">
                 <field name="configured_line" invisible="1"/>
-                <field name="pos_str" string="Order"/>
+                <field name="pos_str" string="Order Quota"/>
                 <field name="superproduct_id" widget="many2one_unclickable"
                        options="{'no_quick_create':True,
                                  'no_create_edit':True}"
@@ -399,6 +399,7 @@
                                 'readonly':
                                 [('configured_line','=',True)]}"/>
                 <field name="provision"/>
+                <field name="provision_ls"/>
                 <field name="number_of_parcels"
                        string="Parcels"/>
                 <field name="area_total"/>
@@ -429,9 +430,10 @@
         <field name="model">wua.quotaperiod.line</field>
         <field name="arch" type="xml">
             <tree class="o_base_wua_quota_management_config_quotaperiod_line_view_tree">
-                <field name="pos_str" string="Order"/>
+                <field name="pos_str" string="Order Quota"/>
                 <field name="superproduct_id" widget="many2one_unclickable"/>
                 <field name="provision"/>
+                <field name="provision_ls"/>
                 <field name="number_of_parcels"
                        string="Currently selected parcels"/>
                 <button name="action_select_quotaperiod_line_parcels"

@@ -1275,6 +1275,13 @@ class WuaQuotaperiodLine(models.Model):
         required=True,
         default=0)
 
+    provision_ls = fields.Float(
+        string='Provision',
+        digits=(32, 4),
+        required=False,
+        default=0,
+    )
+
     number_of_parcels = fields.Integer(
         string='Number of parcels',
         store=True,
@@ -1317,7 +1324,33 @@ class WuaQuotaperiodLine(models.Model):
          'Incorrect Position Value.'),
         ('valid_provision', 'CHECK (provision >= 0)',
          'Incorrect Provision Value.'),
+        ('valid_provision_ls', 'CHECK (provision_ls >= 0)',
+         'Incorrect Provision Value.'),
         ]
+
+    @api.onchange(
+        'provision_ls', 'quotaperiod_id',
+        'quotaperiod_id.number_of_days')
+    def _onchange_provision_ls(self):
+        if self.provision_ls != self._origin.provision_ls:
+            if (self.provision_ls and self.quotaperiod_id and
+                    self.quotaperiod_id.number_of_days):
+                self.provision = self.provision_ls * 3.6 * 24 * \
+                    self.quotaperiod_id.number_of_days
+            else:
+                self.provision = 0
+
+    @api.onchange(
+        'provision', 'quotaperiod_id',
+        'quotaperiod_id.number_of_days')
+    def _onchange_provision(self):
+        if self.provision != self._origin.provision:
+            if (self.provision and self.quotaperiod_id and
+                    self.quotaperiod_id.number_of_days):
+                self.provision_ls = self.provision / (
+                    3.6 * 24 * self.quotaperiod_id.number_of_days)
+            else:
+                self.provision_ls = 0
 
     @api.multi
     def _compute_pos_str(self):
@@ -1406,6 +1439,8 @@ class WuaQuotaperiodLine(models.Model):
         if view_type == 'form' or view_type == 'tree':
             doc = etree.XML(res['arch'])
             area_measurement_name = _('ha')
+            show_provision_ls = self.env['ir.values'].get_default(
+                'wua.quotas.configuration', 'show_provision_ls')
             area_measurement_type = self.env['ir.values'].get_default(
                 'wua.configuration', 'area_measurement_type')
             if area_measurement_type == 1:
@@ -1414,6 +1449,8 @@ class WuaQuotaperiodLine(models.Model):
                 area_measurement_name = area_measurement_name.decode('utf_8')
             suffix_area = ' (' + area_measurement_name.lower() + ')'
             suffix_provision = ' (' + _('m³') + '/' + \
+                area_measurement_name.lower() + ')'
+            suffix_provision_ls = ' (' + _('l/s') + ' ' + \
                 area_measurement_name.lower() + ')'
             for node in doc.xpath("//field[@name='area_total']"):
                 original_label = \
@@ -1427,6 +1464,21 @@ class WuaQuotaperiodLine(models.Model):
                         'base_wua_quota_management',
                         self.__class__.provision.string)
                 node.set('string', original_label + suffix_provision)
+            for node in doc.xpath("//field[@name='provision_ls']"):
+                original_label = \
+                    self._get_value_from_translation(
+                        'base_wua_quota_management',
+                        self.__class__.provision_ls.string)
+                node.set('string', original_label + suffix_provision_ls)
+                if view_type == 'tree':
+                    if not show_provision_ls:
+                        node.set('invisible', '1')
+                        node.set('modifiers',
+                                 '{"tree_invisible": true}')
+                    else:
+                        node.set('invisible', '0')
+                        node.set('modifiers',
+                                 '{"required": true, "tree_invisible": false}')
             res['arch'] = etree.tostring(doc)
         return res
 

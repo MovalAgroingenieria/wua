@@ -56,6 +56,11 @@ class WuaQuotasConfiguration(models.TransientModel):
         required=True,
         help='Minimun balance threshold to communicate on excess mail')
 
+    show_provision_ls = fields.Boolean(
+        string="Show Provision (l/s U)",
+        default=False,
+    )
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -82,6 +87,9 @@ class WuaQuotasConfiguration(models.TransientModel):
         values.set_default('wua.quotas.configuration',
                            'min_balance_threshold',
                            self.min_balance_threshold)
+        values.set_default('wua.quotas.configuration',
+                           'show_provision_ls',
+                           self.show_provision_ls)
         # If not allowed change of states, all cessions must be validated
         if (not self.draft_cession_allow):
             cessions_draft = self.env['wua.cession'].search(
