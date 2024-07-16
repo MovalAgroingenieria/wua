@@ -61,6 +61,11 @@ class WuaQuotasConfiguration(models.TransientModel):
         default=False,
     )
 
+    show_wc_on_partner_quota_report = fields.Boolean(
+        string="Show Waterconnections On Partner Quota Report",
+        default=False,
+    )
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -90,6 +95,9 @@ class WuaQuotasConfiguration(models.TransientModel):
         values.set_default('wua.quotas.configuration',
                            'show_provision_ls',
                            self.show_provision_ls)
+        values.set_default('wua.quotas.configuration',
+                           'show_wc_on_partner_quota_report',
+                           self.show_wc_on_partner_quota_report)
         # If not allowed change of states, all cessions must be validated
         if (not self.draft_cession_allow):
             cessions_draft = self.env['wua.cession'].search(
