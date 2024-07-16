@@ -39,10 +39,14 @@ class WizardProvisionPartner(models.TransientModel):
         required=True,
         domain=_get_quotaperiod_domain)
 
-    superproduct_id = fields.Many2one(
-        string='Superproduct',
+    superproduct_ids = fields.Many2many(
+        string='Superproducts',
         comodel_name='wua.superproduct',
-        required=True,)
+        relation='wizard_provision_partner_superproduct_rel',
+        column1='wizard_provision_partner_id',
+        column2='superproduct_id',
+        required=False,
+    )
 
     agriculturalseason_description = fields.Char(
         string='Active agricultural season',
@@ -86,26 +90,48 @@ class WizardProvisionPartner(models.TransientModel):
     def assign_provision(self):
         self.ensure_one()
         quotaperiod = self.quotaperiod_id
-        superproduct = self.superproduct_id
         partner = self.partner_id
-        data_ok, error_message = self._check_data(
-            quotaperiod, superproduct, partner)
-        if not data_ok:
-            raise exceptions.ValidationError(error_message)
-        quota_model = self.env['wua.quota']
-        hydricmovement_model = self.env['wua.hydricmovement']
-        new_quota = quota_model.create({
-            'quotaperiod_id': quotaperiod.id,
-            'partner_id': partner.id,
-            'superproduct_id': superproduct.id,
-            'initial_value': 0,
-            })
-        hydricmovement_model.create({
-            'quota_id': new_quota.id,
-            'event_time': quotaperiod.initial_date,
-            'type': 'multiple_assign',
-            'volume': 0,
-            })
+        for superproduct in self.superproduct_ids:
+            data_ok, error_message = self._check_data(
+                quotaperiod, superproduct, partner)
+            if not data_ok:
+                raise exceptions.ValidationError(error_message)
+            quota_model = self.env['wua.quota']
+            hydricmovement_model = self.env['wua.hydricmovement']
+            new_quota = quota_model.create({
+                'quotaperiod_id': quotaperiod.id,
+                'partner_id': partner.id,
+                'superproduct_id': superproduct.id,
+                'initial_value': 0,
+                })
+            hydricmovement_model.create({
+                'quota_id': new_quota.id,
+                'event_time': quotaperiod.initial_date,
+                'type': 'multiple_assign',
+                'volume': 0,
+                })
+
+    @api.multi
+    def add_missing_superproducts(self):
+        self.ensure_one()
+        partner = self.partner_id
+        quotaperiod = self.quotaperiod_id
+        if not partner or not quotaperiod:
+            raise exceptions.ValidationError(
+                _('Partner or Quota Period is not selected.'))
+        all_superproduct_ids = self.env['wua.quotaperiod.line'].search([
+            ('quotaperiod_id', '=', quotaperiod.id)
+        ]).mapped('superproduct_id.id')
+        existing_superproduct_ids = self.env['wua.quota'].search([
+            ('partner_id', '=', partner.id),
+            ('quotaperiod_id', '=', quotaperiod.id)
+        ]).mapped('superproduct_id.id')
+        missing_superproduct_ids = list(set(all_superproduct_ids) - set(
+            existing_superproduct_ids))
+        self.superproduct_ids = [(6, 0, missing_superproduct_ids)]
+        return {
+            'type': 'ir.actions.do_nothing'
+        }
 
     def _check_data(self, quotaperiod, superproduct, partner):
         data_ok = True

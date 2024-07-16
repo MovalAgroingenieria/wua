@@ -44,20 +44,16 @@ class WizardProvisionParcel(models.TransientModel):
         required=True,
         domain=_get_quotaperiod_domain)
 
-    superproduct_id = fields.Many2one(
-        string='Superproduct',
-        comodel_name='wua.superproduct',
-        required=True)
+    provision_lines = fields.One2many(
+        comodel_name='wizard.provision.parcel.line',
+        inverse_name='wizard_id',
+        string='Provisions')
 
-    provision = fields.Float(
-        string='Provision',
-        digits=(32, 2),
-        required=True)
-
-    @api.onchange('quotaperiod_id', 'superproduct_id')
-    def _onchange_quotaperiod_superproduct(self):
-        self.provision = self.env['wua.quotaperiod'].get_provision(
-            self.quotaperiod_id, self.superproduct_id)
+    @api.onchange('quotaperiod_id')
+    def _onchange_quotaperiod(self):
+        for line in self.provision_lines:
+            line.provision = self.env['wua.quotaperiod'].get_provision(
+                self.quotaperiod_id, line.superproduct_id)
 
     @api.model
     def default_get(self, var_fields):
@@ -82,11 +78,19 @@ class WizardProvisionParcel(models.TransientModel):
                 area_measurement_name = area_measurement_name.decode('utf_8')
             suffix_provision = ' (' + _('m³') + '/' + \
                 area_measurement_name.lower() + ')'
-            for node in doc.xpath("//field[@name='provision']"):
+            for node in doc.xpath("//field[@name='provision_lines']"):
                 original_label = \
                     self._get_value_from_translation(
                         'base_wua_quota_management',
-                        self.__class__.provision.string)
+                        self.__class__.provision_lines.string)
+                node.set('string', original_label + suffix_provision)
+            for node in doc.xpath("//field[@name='provision_lines']/tree/"
+                                  "field[@name='provision']"):
+                original_label = \
+                    self._get_value_from_translation(
+                        'base_wua_quota_management',
+                        self.env['wizard.provision.parcel.line'].
+                        provision.string)
                 node.set('string', original_label + suffix_provision)
             res['arch'] = etree.tostring(doc)
         return res
@@ -95,89 +99,120 @@ class WizardProvisionParcel(models.TransientModel):
     def assign_provision(self):
         self.ensure_one()
         quotaperiod = self.quotaperiod_id
-        superproduct = self.superproduct_id
         parcel = self.parcel_id
-        provision = self.provision
-        data_ok, error_message = self._check_data(
-            quotaperiod, superproduct, parcel, provision)
-        if not data_ok:
-            raise exceptions.ValidationError(error_message)
-        quotaperiod_model = self.env['wua.quotaperiod']
-        quotaperiodline_model = self.env['wua.quotaperiod.line']
-        quotaperiodlineparcel_model = self.env['wua.quotaperiod.line.parcel']
-        quota_model = self.env['wua.quota']
-        hydricmovement_model = self.env['wua.hydricmovement']
-        # 1. Create a new record for the quotaperiod-line
-        quotaperiod_line = quotaperiodline_model.search(
-            [('quotaperiod_id', '=', quotaperiod.id),
-             ('superproduct_id', '=', superproduct.id)])[0]
-        quotaperiodlineparcel_model.create({
-            'quotaperiodline_id': quotaperiod_line.id,
-            'parcel_id': parcel.id,
-            'cadastral_reference': parcel.cadastral_reference,
-            'is_billable_water': parcel.is_billable_water,
-            'is_billable_expenses': parcel.is_billable_expenses,
-            'leased_parcel': parcel.leased_parcel,
-            'area_official': parcel.area_official,
-            'partner_id': parcel.partner_id.id,
-            'hydraulic_infrastructure_type':
-                parcel.hydraulic_infrastructure_type,
-            'pressurized_irrigation_right':
-                parcel.pressurized_irrigation_right,
-            'gravityfed_irrigation_right': parcel.gravityfed_irrigation_right,
-            'hydraulicsector_id': parcel.hydraulicsector_id.id,
-            'irrigationditch_id': parcel.irrigationditch_id.id,
-            'with_watering_shift': parcel.with_watering_shift,
-            'with_irrigation_worker': parcel.with_irrigation_worker,
-            'employee_id': parcel.employee_id.id})
-        # 2. Add quota/s and hydric movement/s
-        for partnerlink in (parcel.partnerlink_ids or []):
-            partner = partnerlink.partner_id
-            area = partnerlink.area_official_water_costs_net
-            volume = area * provision
-            # If the partner has a quota for the quota period and the
-            # superproduct, then find the initial hydric-movement and add
-            # the new volume to the hydric-movement and the quota.
-            quota_to_update = quota_model.search(
-                [('partner_id', '=', partner.id),
-                 ('quotaperiod_id', '=', quotaperiod.id),
-                 ('superproduct_id', '=', superproduct.id)])
-            if quota_to_update:
-                quota_to_update = quota_to_update[0]
-                initial_hydricmovement = \
-                    quota_to_update.hydricmovement_ids.filtered(
-                        lambda x: x.type == 'multiple_assign')
-                if initial_hydricmovement:
-                    initial_hydricmovement = initial_hydricmovement[0]
-                    initial_hydricmovement.volume = \
-                        initial_hydricmovement.volume + volume
+        for line in self.provision_lines:
+            superproduct = line.superproduct_id
+            provision = line.provision
+            data_ok, error_message = self._check_data(
+                quotaperiod, superproduct, parcel, provision)
+            if not data_ok:
+                raise exceptions.ValidationError(error_message)
+            quotaperiod_model = self.env['wua.quotaperiod']
+            quotaperiodline_model = self.env['wua.quotaperiod.line']
+            quotaperiodlineparcel_model = self.env[
+                'wua.quotaperiod.line.parcel']
+            quota_model = self.env['wua.quota']
+            hydricmovement_model = self.env['wua.hydricmovement']
+            # 1. Create a new record for the quotaperiod-line
+            quotaperiod_line = quotaperiodline_model.search(
+                [('quotaperiod_id', '=', quotaperiod.id),
+                 ('superproduct_id', '=', superproduct.id)])[0]
+            quotaperiodlineparcel_model.create({
+                'quotaperiodline_id': quotaperiod_line.id,
+                'parcel_id': parcel.id,
+                'cadastral_reference': parcel.cadastral_reference,
+                'is_billable_water': parcel.is_billable_water,
+                'is_billable_expenses': parcel.is_billable_expenses,
+                'leased_parcel': parcel.leased_parcel,
+                'area_official': parcel.area_official,
+                'partner_id': parcel.partner_id.id,
+                'hydraulic_infrastructure_type':
+                    parcel.hydraulic_infrastructure_type,
+                'pressurized_irrigation_right':
+                    parcel.pressurized_irrigation_right,
+                'gravityfed_irrigation_right': parcel.
+                    gravityfed_irrigation_right,
+                'hydraulicsector_id': parcel.hydraulicsector_id.id,
+                'irrigationditch_id': parcel.irrigationditch_id.id,
+                'with_watering_shift': parcel.with_watering_shift,
+                'with_irrigation_worker': parcel.with_irrigation_worker,
+                'employee_id': parcel.employee_id.id})
+            # 2. Add quota/s and hydric movement/s
+            for partnerlink in (parcel.partnerlink_ids or []):
+                partner = partnerlink.partner_id
+                area = partnerlink.area_official_water_costs_net
+                volume = area * provision
+                # If the partner has a quota for the quota period and the
+                # superproduct, then find the initial hydric-movement and add
+                # the new volume to the hydric-movement and the quota.
+                quota_to_update = quota_model.search(
+                    [('partner_id', '=', partner.id),
+                     ('quotaperiod_id', '=', quotaperiod.id),
+                     ('superproduct_id', '=', superproduct.id)])
+                if quota_to_update:
+                    quota_to_update = quota_to_update[0]
+                    initial_hydricmovement = \
+                        quota_to_update.hydricmovement_ids.filtered(
+                            lambda x: x.type == 'multiple_assign')
+                    if initial_hydricmovement:
+                        initial_hydricmovement = initial_hydricmovement[0]
+                        initial_hydricmovement.volume = \
+                            initial_hydricmovement.volume + volume
+                    else:
+                        hydricmovement_model.create({
+                            'quota_id': quota_to_update.id,
+                            'event_time':
+                                quota_to_update.quotaperiod_id.initial_date,
+                            'type': 'multiple_assign',
+                            'volume': volume,
+                            })
                 else:
+                    new_quota = quota_model.create({
+                        'quotaperiod_id': quotaperiod.id,
+                        'partner_id': partner.id,
+                        'superproduct_id': superproduct.id,
+                        'initial_value': volume,
+                        })
                     hydricmovement_model.create({
-                        'quota_id': quota_to_update.id,
-                        'event_time':
-                            quota_to_update.quotaperiod_id.initial_date,
+                        'quota_id': new_quota.id,
+                        'event_time': quotaperiod.initial_date,
                         'type': 'multiple_assign',
                         'volume': volume,
                         })
-            else:
-                new_quota = quota_model.create({
-                    'quotaperiod_id': quotaperiod.id,
-                    'partner_id': partner.id,
-                    'superproduct_id': superproduct.id,
-                    'initial_value': volume,
-                    })
-                hydricmovement_model.create({
-                    'quota_id': new_quota.id,
-                    'event_time': quotaperiod.initial_date,
-                    'type': 'multiple_assign',
-                    'volume': volume,
-                    })
-        # 3. Populate "mapped_to_current_quotaperiod", if necessary.
-        if not parcel.mapped_to_current_quotaperiod:
-            current_quotaperiod = \
-                quotaperiod_model.get_current_generated_quotaperiod()
-            if quotaperiod == current_quotaperiod:
-                parcel.mapped_to_current_quotaperiod = True
+            # 3. Populate "mapped_to_current_quotaperiod", if necessary.
+            if not parcel.mapped_to_current_quotaperiod:
+                current_quotaperiod = \
+                    quotaperiod_model.get_current_generated_quotaperiod()
+                if quotaperiod == current_quotaperiod:
+                    parcel.mapped_to_current_quotaperiod = True
+
+    @api.multi
+    def add_missing_provisions(self):
+        self.ensure_one()
+        quotaperiod = self.quotaperiod_id
+        parcel = self.parcel_id
+        if not quotaperiod:
+            raise exceptions.ValidationError(
+                _('Quota Period is not selected.'))
+        all_superproduct_ids = self.env['wua.quotaperiod.line'].search([
+            ('quotaperiod_id', '=', quotaperiod.id)
+        ]).mapped('superproduct_id.id')
+        existing_superproduct_ids = self.env['wua.quotaperiod.line.parcel'].\
+            search([
+                ('parcel_id', '=', parcel.id),
+                ('quotaperiod_id', '=', quotaperiod.id)
+            ]).mapped('superproduct_id.id')
+        missing_superproduct_ids = list(
+            set(all_superproduct_ids) - set(existing_superproduct_ids))
+        for superproduct_id in missing_superproduct_ids:
+            self.provision_lines.create({
+                'wizard_id': self.id,
+                'superproduct_id': superproduct_id,
+                'provision': 0.0,
+            })
+        return {
+            'type': 'ir.actions.do_nothing'
+        }
 
     def _get_current_parcel_data(self):
         agriculturalseason_description = ''
@@ -234,3 +269,26 @@ class WizardProvisionParcel(models.TransientModel):
         if filtered_translations:
             resp = filtered_translations[0].value
         return resp
+
+
+class WizardProvisionParcelLine(models.TransientModel):
+    _name = 'wizard.provision.parcel.line'
+    _description = 'Provision line associated with a superproduct'
+
+    wizard_id = fields.Many2one(
+        string='Wizard',
+        comodel_name='wizard.provision.parcel',
+        required=True,
+    )
+
+    superproduct_id = fields.Many2one(
+        string='Superproduct',
+        comodel_name='wua.superproduct',
+        required=True,
+    )
+
+    provision = fields.Float(
+        string='Provision',
+        digits=(32, 2),
+        required=True,
+    )

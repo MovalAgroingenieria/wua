@@ -23,9 +23,12 @@
                     <field name="quotaperiod_id"
                            options="{'no_quick_create': True,
                                      'no_create_edit': True}"/>
-                    <field name="superproduct_id"
+
+                    <field name="superproduct_ids"
                            options="{'no_quick_create': True,
-                                     'no_create_edit': True}"/>
+                                     'no_create_edit': True}"
+                                    widget="many2many_tags"/>
+
                 </group>
                 <br/><br/>
                 <div>WARNING: A provision will only be created for a partner if that partner does not have a quota yet.
@@ -34,6 +37,10 @@
                     <button name="assign_provision"
                             type="object"
                             string="Apply"
+                            class="btn-primary"/>
+                    <button name="add_missing_superproducts"
+                            type="object"
+                            string="Add Missing Superproducts"
                             class="btn-primary"/>
                     <button string="Cancel"
                             class="btn-default"
