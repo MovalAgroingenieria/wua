@@ -30,7 +30,8 @@ class WuaFlowmeter(models.Model):
         url, username, password = self._connection_params_seinon()
 
         # Get flowmeter specific params (from pumpgroups)
-        instantaneous_flow_deviceid = instantaneous_flow_measurementid = False
+        instantaneous_flow_deviceid = instantaneous_flow_measurementid = \
+            instantaneous_flow_conversion_factor = False
         if (flowmeter.connected_to_intake and
                 len(flowmeter.intake_id.pumpgroup_ids) == 1):
             pumpgroup = flowmeter.intake_id.pumpgroup_ids[0]
@@ -40,6 +41,11 @@ class WuaFlowmeter(models.Model):
                     pumpgroup.instantaneous_flow_deviceid
                 instantaneous_flow_measurementid = \
                     pumpgroup.instantaneous_flow_measurementid
+            if pumpgroup.instantaneous_flow_conversion_factor:
+                instantaneous_flow_conversion_factor = \
+                    pumpgroup.instantaneous_flow_conversion_factor
+            else:
+                instantaneous_flow_conversion_factor = 1
 
         if (not url or not username or not password or not
                 instantaneous_flow_deviceid or not
@@ -86,6 +92,7 @@ class WuaFlowmeter(models.Model):
             elif moment:
                 flow = float(flow)              # L/h
                 flow = flow / self.FACTOR_FLOW  # L/s
+                flow = flow * instantaneous_flow_conversion_factor
                 flow = round(flow / conversion_factor, 4)
                 moment = datetime.strptime(
                     moment, '%d/%m/%Y %H:%M:%S')
@@ -135,7 +142,8 @@ class WuaFlowmeter(models.Model):
         for flowmeter in flowmeters:
             conversion_factor = flowmeter.conversion_factor
             instantaneous_flow_deviceid = \
-                instantaneous_flow_measurementid = False
+                instantaneous_flow_measurementid = \
+                instantaneous_flow_conversion_factor = False
             if (flowmeter.connected_to_intake and
                     len(flowmeter.intake_id.pumpgroup_ids) == 1):
                 pumpgroup = flowmeter.intake_id.pumpgroup_ids[0]
@@ -145,6 +153,11 @@ class WuaFlowmeter(models.Model):
                         pumpgroup.instantaneous_flow_deviceid
                     instantaneous_flow_measurementid = \
                         pumpgroup.instantaneous_flow_measurementid
+                if pumpgroup.instantaneous_flow_conversion_factor:
+                    instantaneous_flow_conversion_factor = \
+                        pumpgroup.instantaneous_flow_conversion_factor
+                else:
+                    instantaneous_flow_conversion_factor = 1
 
             if (not url or not username or not password or not
                     instantaneous_flow_deviceid or not
@@ -187,6 +200,7 @@ class WuaFlowmeter(models.Model):
                 elif moment:
                     flow = float(flow)              # L/h
                     flow = flow / self.FACTOR_FLOW  # L/s
+                    flow = flow * instantaneous_flow_conversion_factor
                     flow = round(flow / conversion_factor, 4)
                     moment = datetime.strptime(
                         moment, '%d/%m/%Y %H:%M:%S')
