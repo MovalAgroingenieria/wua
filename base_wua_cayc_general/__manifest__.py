@@ -34,6 +34,9 @@
         "views/wua_octroi_view.xml",
         "views/wua_waterchannel_view.xml",
     ],
+    'qweb': [
+        'static/src/xml/base.xml',
+    ],
     "installable": True,
     "application": False,
 }
