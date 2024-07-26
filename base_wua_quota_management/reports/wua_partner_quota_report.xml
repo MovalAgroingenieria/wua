@@ -192,14 +192,18 @@
                                         </div>
                                     </t>
                                 </div>
-                                <!-- Get quota periods -->
+                                <!-- Get waterconnections -->
                                 <t t-if="o.waterconnectionlink_ids and len(o.waterconnectionlink_ids) > 0">
                                     <table class="table table-striped" style="width:100%;">
                                         <thead>
-                                            <th name="th_waterconnection">Waterconnection</th>
+                                            <th name="th_waterconnection">
+                                                <span>Waterconnection</span>
+                                            </th>
                                             <th name="th_last_reading_time" class="text-center">Last Reading Time
                                             </th>
                                             <th name="th_last_reading_volume" class="text-right">Last Reading Volume (m<sup>3</sup>)
+                                            </th>
+                                            <th name="th_volume_real" class="text-right">Consumption (m³)
                                             </th>
                                         </thead>
                                         <tbody>
@@ -207,12 +211,19 @@
                                                 <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
                                                     <td name="td_waterconnection">
                                                         <span t-field="wc.waterconnection_id.name" />
+                                                        <span>(</span>
+                                                        <span t-field="wc.waterconnection_id.total_affected_area_official" />
+                                                        <span t-esc="measurement_unit"/>
+                                                        <span>)</span>
                                                     </td>
                                                     <td name="td_last_reading_time" class="text-center">
                                                         <span t-field="wc.last_reading_time"/>
                                                     </td>
                                                     <td name="td_last_reading_volume" class="text-right">
                                                         <span t-field="wc.last_reading_value"/>
+                                                    </td>
+                                                    <td name="td_last_reading_volume" class="text-right">
+                                                        <span t-field="wc.volume_real"/>
                                                     </td>
                                                 </tr>
                                             </t>

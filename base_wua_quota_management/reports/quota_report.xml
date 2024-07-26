@@ -21,7 +21,12 @@
                     <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
                     <t t-set="printing_date" t-value="o.env['wua.parcel'].transform_date_to_locale(
                         datetime.datetime.now().date().strftime('%Y-%m-%d'), lang=o.partner_id.lang)"/>
-
+                    <t t-if="o.partner_id.partnerlink_ids">
+                        <t t-set="measurement_unit" t-value="o.partner_id.partnerlink_ids[0].parcel_id._compute_area_measurement_name()" />
+                    </t>
+                    <t t-else="">
+                        <t t-set="measurement_unit" t-value="'ha'" />
+                    </t>
                     <div class="page">
 
                         <!-- Report title -->
@@ -169,6 +174,75 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Waterconnection data -->
+                        <t t-if="o.env['ir.values'].get_default('wua.quotas.configuration', 'show_wc_on_partner_quota_report')">
+                            <div name="wua_waterconnection_data" style="margin-top: 20px;">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;">
+                                                <span class="fa fa-moval-infra" />
+                                            </div>
+                                            <div style="float: left; display: inline;">
+                                                <strong>Waterconnections</strong>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;">
+                                                <span class="fa fa-moval-infra" />
+                                            </div>
+                                            <div style="float: left; display: inline;">
+                                                <strong>Waterconnections</strong>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <!-- Get waterconnections -->
+                                <t t-if="o.partner_id.waterconnectionlink_ids and len(o.partner_id.waterconnectionlink_ids) > 0">
+                                    <table class="table table-striped" style="width:100%;">
+                                        <thead>
+                                            <th name="th_waterconnection">
+                                                <span>Waterconnection</span>
+                                            </th>
+                                            <th name="th_last_reading_time" class="text-center">Last Reading Time
+                                            </th>
+                                            <th name="th_last_reading_volume" class="text-right">Last Reading Volume (m<sup>3</sup>)
+                                            </th>
+                                            <th name="th_volume_real" class="text-right">Consumption (m³)
+                                            </th>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="o.partner_id.waterconnectionlink_ids" t-as="wc">
+                                                <tr style="page-break-before: always; page-break-after: auto; page-break-inside: avoid;">
+                                                    <td name="td_waterconnection">
+                                                        <span t-field="wc.waterconnection_id.name" />
+                                                        <span>(</span>
+                                                        <span t-field="wc.waterconnection_id.total_affected_area_official" />
+                                                        <span t-esc="measurement_unit"/>
+                                                        <span>)</span>
+                                                    </td>
+                                                    <td name="td_last_reading_time" class="text-center">
+                                                        <span t-field="wc.last_reading_time"/>
+                                                    </td>
+                                                    <td name="td_last_reading_volume" class="text-right">
+                                                        <span t-field="wc.last_reading_value"/>
+                                                    </td>
+                                                    <td name="td_last_reading_volume" class="text-right">
+                                                        <span t-field="wc.volume_real"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </t>
+                                <t t-else="">
+                                    <div class="text-center">(There are no waterconnections for this partner)</div>
+                                </t>
+                            </div>
+                        </t>
 
                         <!-- Hydric movements data -->
                         <div name="wua_hydricmovements_data">
