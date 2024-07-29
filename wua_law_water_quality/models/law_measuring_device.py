@@ -2,15 +2,13 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
-import pytz
-from Crypto.Cipher import AES
-from odoo import models, api, fields, _
+from odoo import models, api, fields
+
 
 class LawMeasuringDevice(models.Model):
     _inherit = 'law.measuring.device'
     _description = 'Law Measuring Device'
-    
+
     gis_viewer_link = fields.Char(
         string='GIS Viewer',
         compute='_compute_gis_viewer_link',)
@@ -21,7 +19,7 @@ class LawMeasuringDevice(models.Model):
     html_gisviewer_frame = fields.Text(
         string='GIS Viewer',
         compute='_compute_html_gisviewer_frame',)
-    
+
     @api.multi
     def _compute_gis_viewer_link(self):
         url = self.env['ir.values'].get_default(
@@ -41,37 +39,25 @@ class LawMeasuringDevice(models.Model):
                     if url_for_record.find('?') != -1:
                         sep_char = '&'
                     url_for_record = url_for_record + sep_char + \
-                                     measuring_device_param + '=' + \
-                                     str(record.name)
+                        measuring_device_param + '=' + str(record.name)
             if url_for_record and username and password:
-                credentials = username + "-" + password
-                credentials = credentials.ljust(32)
-                current_datetime = pytz.utc.localize(datetime.datetime.now())
-                current_datetime = current_datetime.astimezone(
-                    pytz.timezone('Europe/Madrid'))
-                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
-                minimum = int(current_datetime[14:])
-                if minimum < 30:
-                    minimum = '00'
-                else:
-                    minimum = '30'
-                iv = current_datetime[:14] + minimum
-                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
-                cipher_text = aes_encryptor.encrypt(credentials)
-                cipher_text = cipher_text.encode('base64')
-                sep_char = '?'
-                if url_for_record.find('?') != -1:
-                    sep_char = '&'
-                url_for_record = url_for_record + sep_char + \
-                                 "arg=" + cipher_text
+                cipher_text = self.env['wua.parcel']._get_viewer_credentials(
+                    username, password)
+                if (cipher_text):
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        "arg=" + cipher_text
             if not url_for_record:
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
-    
+
     @api.multi
     def _compute_html_gisviewer_frame(self):
         for record in self:
-            if record.with_gis_measuring_device and record.gis_viewer_link != '':
+            if (record.with_gis_measuring_device and
+                    record.gis_viewer_link != ''):
                 url = record.gis_viewer_link + '&mode=min'
                 url = url.replace('http://', 'https://')
                 record.html_gisviewer_frame = \
@@ -84,7 +70,6 @@ class LawMeasuringDevice(models.Model):
                     '></iframe></p>'
             else:
                 record.html_gisviewer_frame = ''
-
 
     @api.multi
     def action_see_gis_viewer(self):

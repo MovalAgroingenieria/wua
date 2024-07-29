@@ -13,6 +13,7 @@ import requests
 import re
 import json
 import zipfile
+from odoo.http import request
 from pyproj import Proj, transform
 from PIL import Image, ImageDraw, ImageFont
 from lxml import etree
@@ -611,26 +612,13 @@ class WuaParcel(models.Model):
                         parcel_param + u'=' + record.name
             if (url_for_record and username and password and (not
                self.env.user.has_group('base_wua.group_wua_portal_user'))):
-                credentials = username + "-" + password
-                credentials = credentials.ljust(32)
-                current_datetime = pytz.utc.localize(datetime.datetime.now())
-                current_datetime = current_datetime.astimezone(
-                    pytz.timezone('Europe/Madrid'))
-                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
-                minimum = int(current_datetime[14:])
-                if minimum < 30:
-                    minimum = '00'
-                else:
-                    minimum = '30'
-                iv = current_datetime[:14] + minimum
-                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
-                cipher_text = aes_encryptor.encrypt(credentials)
-                cipher_text = cipher_text.encode('base64')
-                sep_char = '?'
-                if url_for_record.find('?') != -1:
-                    sep_char = '&'
-                url_for_record = url_for_record + sep_char + \
-                    "arg=" + cipher_text
+                cipher_text = self._get_viewer_credentials(username, password)
+                if (cipher_text):
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        "arg=" + cipher_text
             if not url_for_record:
                 url_for_record = ''
             record.gis_viewer_link = url_for_record
@@ -1525,27 +1513,9 @@ class WuaParcel(models.Model):
             'wua.configuration', 'url_gis_viewer_parcel_param')
         if (url and parcel_param):
             parcels_str = ','.join(self.mapped(lambda x: x.name))
-            credentials = ''
-            if (username and password and not self.env.user.has_group(
-                    'base_wua.group_wua_portal_user')):
-                credentials = username + "-" + password
-                credentials = credentials.ljust(32)
-                current_datetime = pytz.utc.localize(datetime.datetime.now())
-                current_datetime = current_datetime.astimezone(
-                    pytz.timezone('Europe/Madrid'))
-                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
-                minimum = int(current_datetime[14:])
-                if minimum < 30:
-                    minimum = '00'
-                else:
-                    minimum = '30'
-                iv = current_datetime[:14] + minimum
-                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
-                cipher_text = aes_encryptor.encrypt(credentials)
-                cipher_text = cipher_text.encode('base64')
-                credentials = cipher_text
-            if (credentials):
-                url = url + '?arg=' + credentials + '&' + parcel_param + \
+            cipher_text = self._get_viewer_credentials(username, password)
+            if (cipher_text):
+                url = url + '?arg=' + cipher_text + '&' + parcel_param + \
                     '=' + parcels_str
             else:
                 url = url + '?' + parcel_param + '=' + parcels_str
@@ -2737,6 +2707,29 @@ class WuaParcel(models.Model):
             # _logger.info('recalculate_partners (finish): ' + str(end_time))
             # _logger.info('Time (seconds)               : %.6f' % interval)
 
+    def _get_viewer_credentials(self, username, password):
+        credentials = False
+        if (not self.env.user.has_group('base_wua.group_wua_portal_user')):
+            credentials = username + '-' + password + '-' + \
+                request.session.session_token
+            # Pad the credentials to AES block size
+            padding = AES.block_size - len(credentials) % AES.block_size
+            credentials = credentials + chr(padding) * padding
+            current_datetime = pytz.utc.localize(datetime.datetime.now())
+            current_datetime = current_datetime.astimezone(
+                pytz.timezone('Europe/Madrid'))
+            current_datetime = str(current_datetime)[:16].replace(' ', 'T')
+            minimum = int(current_datetime[14:])
+            if minimum < 30:
+                minimum = '00'
+            else:
+                minimum = '30'
+            iv = current_datetime[:14] + minimum
+            aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
+            cipher_text = aes_encryptor.encrypt(credentials)
+            credentials = cipher_text.encode('base64')
+        return credentials
+
     @api.model
     def run_gisviewer_url(self):
         url = self.env['ir.values'].get_default(
@@ -2746,22 +2739,8 @@ class WuaParcel(models.Model):
         password = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_password')
         if url and username and password:
-            if (not self.env.user.has_group('base_wua.group_wua_portal_user')):
-                credentials = username + "-" + password
-                credentials = credentials.ljust(32)
-                current_datetime = pytz.utc.localize(datetime.datetime.now())
-                current_datetime = current_datetime.astimezone(
-                    pytz.timezone('Europe/Madrid'))
-                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
-                minimum = int(current_datetime[14:])
-                if minimum < 30:
-                    minimum = '00'
-                else:
-                    minimum = '30'
-                iv = current_datetime[:14] + minimum
-                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
-                cipher_text = aes_encryptor.encrypt(credentials)
-                cipher_text = cipher_text.encode('base64')
+            cipher_text = self._get_viewer_credentials(username, password)
+            if (cipher_text):
                 url = url + '?' + 'arg=' + cipher_text
             return {
                 'type': 'ir.actions.act_url',

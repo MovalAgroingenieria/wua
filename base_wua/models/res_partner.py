@@ -5,9 +5,7 @@
 from math import ceil, floor
 from sys import maxint
 from lxml import etree
-from Crypto.Cipher import AES
 import datetime
-import pytz
 from odoo.modules import get_module_resource
 from odoo import models, fields, api, exceptions, _, tools
 
@@ -341,26 +339,14 @@ class ResPartner(models.Model):
                         partner_param + '=' + str(record.partner_code)
             if (url_for_record and username and password and (not
                self.env.user.has_group('base_wua.group_wua_portal_user'))):
-                credentials = username + "-" + password
-                credentials = credentials.ljust(32)
-                current_datetime = pytz.utc.localize(datetime.datetime.now())
-                current_datetime = current_datetime.astimezone(
-                    pytz.timezone('Europe/Madrid'))
-                current_datetime = str(current_datetime)[:16].replace(' ', 'T')
-                minimum = int(current_datetime[14:])
-                if minimum < 30:
-                    minimum = '00'
-                else:
-                    minimum = '30'
-                iv = current_datetime[:14] + minimum
-                aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
-                cipher_text = aes_encryptor.encrypt(credentials)
-                cipher_text = cipher_text.encode('base64')
-                sep_char = '?'
-                if url_for_record.find('?') != -1:
-                    sep_char = '&'
-                url_for_record = url_for_record + sep_char + \
-                    "arg=" + cipher_text
+                cipher_text = self.env['wua.parcel']._get_viewer_credentials(
+                    username, password)
+                if (cipher_text):
+                    sep_char = '?'
+                    if url_for_record.find('?') != -1:
+                        sep_char = '&'
+                    url_for_record = url_for_record + sep_char + \
+                        "arg=" + cipher_text
             if not url_for_record:
                 url_for_record = ''
             record.gis_viewer_link = url_for_record

@@ -3,9 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import logging
-from Crypto.Cipher import AES
-import datetime
-import pytz
 from odoo import models, fields, api, exceptions, _
 
 
@@ -56,23 +53,11 @@ class WuaIrrigationshed(models.Model):
         password = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_password')
         if url and username and password:
-            credentials = username + "-" + password
-            credentials = credentials.ljust(32)
-            current_datetime = pytz.utc.localize(datetime.datetime.now())
-            current_datetime = current_datetime.astimezone(
-                pytz.timezone('Europe/Madrid'))
-            current_datetime = str(current_datetime)[:16].replace(' ', 'T')
-            minimum = int(current_datetime[14:])
-            if minimum < 30:
-                minimum = '00'
-            else:
-                minimum = '30'
-            iv = current_datetime[:14] + minimum
-            aes_encryptor = AES.new('z%C*F-JaNdRgUkXp', AES.MODE_CBC, iv)
-            cipher_text = aes_encryptor.encrypt(credentials)
-            cipher_text = cipher_text.encode('base64')
-            url = url + '?' + 'arg=' + cipher_text + '&mode=min&modo_opera' +\
-                'tivo=8&infoCr=1'
+            cipher_text = self.env['wua.parcel']._get_viewer_credentials(
+                username, password)
+            if (cipher_text):
+                url = url + '?' + 'arg=' + cipher_text + \
+                    '&mode=min&modo_operativo=8&infoCr=1'
             return {
                 'type': 'ir.actions.act_url',
                 'url': url,
