@@ -2711,9 +2711,9 @@ class WuaParcel(models.Model):
         credentials = False
         if (not self.env.user.has_group('base_wua.group_wua_portal_user')):
             credentials = username + '-' + password + '-' + \
-                request.session.session_token
+                str(request.session.sid)
             # Pad the credentials to AES block size
-            padding = AES.block_size - len(credentials) % AES.block_size
+            padding = 16 - len(credentials) % 16
             credentials = credentials + chr(padding) * padding
             current_datetime = pytz.utc.localize(datetime.datetime.now())
             current_datetime = current_datetime.astimezone(
