@@ -45,3 +45,6 @@ class WuaConcession(models.Model):
         digits=(32, 4),
         required=False)
 
+    included_in_certificate = fields.Boolean(
+        string='Mark to include in certificate',
+        default=False,)

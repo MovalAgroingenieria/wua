@@ -178,8 +178,8 @@
                         </tr>
                     </thead>
                     <tbody name="concessions_table_body">
-                        <t-foreach t-foreach="o.certificateparcel_ids" t-as="p">
-                            <tr t-foreach="p.parcel_id.concession_ids" t-as="c">
+                        <t-foreach t-foreach="certificateparcel_ids" t-as="p">
+                            <tr t-foreach="p.parcel_id.concession_ids.filtered(lambda x: x.included_in_certificate)" t-as="c">
                                 <tr>
                                     <td name="td_parcel_id" align="left"><span t-field="p.parcel_id"/></td>
                                     <td name="td_cadastral_reference" align="center"><span t-field="p.cadastral_reference"/></td>
