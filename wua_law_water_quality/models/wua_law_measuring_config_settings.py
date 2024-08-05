@@ -9,12 +9,12 @@ class WuaLawMeasuringConfiguration(models.TransientModel):
     _inherit = 'res.config.settings'
     _name = 'wua.law.measuring.configuration'
     _description = 'Configuration of wua_law_water_quality module'
-    
+
     url_gis_viewer_measuring_devices_param = fields.Char(
         string='Param for measuring devices',
         size=20,
         help='Name of measuring devices param in the GIS viewer url')
-    
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
