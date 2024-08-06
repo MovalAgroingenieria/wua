@@ -464,7 +464,7 @@ class WuaGisParcelClassView(models.Model):
                         wgpc1.participe AS class_sharer,
                         wgpc1.fielato AS octroi_gis,
                         wgpc1.cauce AS waterchannel_gis,
-                        wgpc1.clase0 AS parcel_class,
+                        wgpc1.clases_che AS parcel_class,
                         COALESCE(wpc1.area_official, 0.0) AS area_official,
                         COALESCE(wp1.active, FALSE) AS with_wua_parcel_class,
                         (postgis.ST_AREA(wgpc1.geom) / 10000) /
