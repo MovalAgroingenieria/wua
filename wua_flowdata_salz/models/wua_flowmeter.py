@@ -85,8 +85,8 @@ class WuaFlowmeter(models.Model):
                             message_03 = _('Flow')
                             message = '<center>' + message_01 + \
                                 '</center><br>' + message_02 + ': ' + \
-                                '<b>' + time_str + '</b><br>' + \
-                                message_03 + ': ' + '<b>' + flow_str + \
+                                '<b>' + time + '</b><br>' + \
+                                message_03 + ': ' + '<b>' + str(flow) + \
                                 ' l/s' + '<b>'
             act_window = {
                 'type': 'ir.actions.act_window.message',
@@ -121,7 +121,10 @@ class WuaFlowmeter(models.Model):
                             "%Y-%m-%d %H:%M:%S")
                         time = datetime.datetime.strptime(
                             time.split('.')[0], "%Y-%m-%dT%H:%M:%S")
-                        local_timezone = pytz.timezone(self.env.user.tz)
+                        if self.env.user.tz:
+                            local_timezone = pytz.timezone(self.env.user.tz)
+                        else:
+                            local_timezone = pytz.timezone('Europe/Madrid')
                         offset = local_timezone.utcoffset(time)
                         time = time - offset
                         if date_last_flowdata < time:
