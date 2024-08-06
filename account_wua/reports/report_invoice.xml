@@ -378,14 +378,14 @@
                                     <t t-set="products" t-value="products + [l.product_id,]"/>
                                 </t>
                             </t>
-                            <div class="col-xs-7" name="product_resume_table">
+                            <div class="col-xs-8" name="product_resume_table">
                                 <table class="table table-condensed">
-                                    <caption>SUMMARY BY PRODUCT</caption>
+                                    <caption name="product_summary_title">SUMMARY BY PRODUCT</caption>
                                     <thead>
                                         <tr>
-                                            <th>Product</th>
-                                            <th class="text-right">Total quantity</th>
-                                            <th class="text-right">Total amount</th>
+                                            <th name="product_th">Product</th>
+                                            <th name="total_qty_th" class="text-right">Total quantity</th>
+                                            <th name="total_amnt_th" class="text-right">Total amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -408,11 +408,11 @@
                                                     </t>
                                                 </t>
                                             </td>
-                                            <td class="text-right">
+                                            <td name="total_qty_td" class="text-right">
                                                 <span name="span_product_total_qty" t-esc="product_total_qty" t-options='{"widget": "float", "precision": 4}'/>
                                                 <span t-esc="uom_id"/>
                                             </td>
-                                            <td class="text-right">
+                                            <td name="total_amnt_td" class="text-right">
                                                 <span t-esc="product_total_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                             </td>
                                         </tr>
