@@ -593,8 +593,8 @@ class WuaIrrigationReport(models.Model):
     @api.model
     def read_group(self, domain, fields, groupby,
                    offset=0, limit=None, orderby=False, lazy=True):
-        fields_to_remove = ['irrigationreport_number', 'report_initial_volume',
-                            'report_end_volume']
+        fields_to_remove = ['irrigationreport_number', 'initial_volume',
+                            'end_volume']
         for field_to_remove in fields_to_remove:
             if field_to_remove in fields:
                 fields.remove(field_to_remove)

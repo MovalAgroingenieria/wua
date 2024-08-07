@@ -15,6 +15,8 @@
                     attrs="{'invisible':[('is_field_irrigationreport','=', False)]}"/>
                 <field name="irrigationshed_id"
                     attrs="{'invisible':[('irrigationshed_id', '=', False)]}"/>
+                <field name="waterconnection_with_watermeter"
+                    invisible="1"/>
                 <field name="flowdivider_id"
                     attrs="{'invisible':['|', ('flowdivider_id', '=', False), ('is_field_irrigationreport','=', False)]}"/>
                 <field name="irrigationgate_id"
@@ -26,6 +28,12 @@
                         <field name="irrigationreport_img" widget="image" class="oe_img_259_160"/>
                     </group>
                 </page>
+            </xpath>
+            <xpath expr="//field[@name='initial_volume']" position="attributes">
+                <attribute name="attrs">{'invisible': [('waterconnection_with_watermeter', '=', False)]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='end_volume']" position="attributes">
+                <attribute name="attrs">{'invisible': [('waterconnection_with_watermeter', '=', False)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='report_initial_time']" position="after">
                 <div style="color: red;" attrs="{'invisible': [('with_end_time','=',True)]}" colspan="2">
