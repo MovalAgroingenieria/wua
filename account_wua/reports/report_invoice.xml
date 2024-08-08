@@ -350,9 +350,11 @@
                                         <span t-field="l.uom_id" groups="product.group_uom"/>
                                     </td>
                                     <td name="price" class="text-right">
-                                        <span t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
-                                        <span>/</span>
-                                        <span t-field="l.uom_id" groups="product.group_uom"/>
+                                        <span name="price_unit_span" t-field="l.price_unit" t-options='{"widget": "monetary", "display_currency": l.currency_id}'/>
+                                        <t t-if="l.uom_id">
+                                            <span>/</span>
+                                            <span t-field="l.uom_id" groups="product.group_uom"/>
+                                        </t>
                                     </td>
                                     <td t-if="display_discount" name="discount" class="text-right">
                                         <span t-field="l.discount"/>
