@@ -21,7 +21,7 @@ class WuaIrrigationReport(models.Model):
         string="Irrigationshed",
         index=True,
         comodel_name="wua.irrigationshed",
-        readonly=True,
+        domain="[('can_register_irrigationreport', '=', True)]",
         ondelete="restrict")
 
     irrigationgate_id = fields.Many2one(
