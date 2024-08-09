@@ -16,6 +16,8 @@
     ],
     "data": [
         "data/cim_link_type_data.xml",
+        "report/cim_complaints_communication_report.xml",
+        "report/cim_complaints_tracking_code_report.xml",
     ],
     "installable": True,
     "post_init_hook": "post_init_hook",

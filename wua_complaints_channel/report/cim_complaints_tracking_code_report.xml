@@ -11,99 +11,51 @@
         <field name="paperformat_id" ref="base_wua_report.paperformat_wua_reports"/>
     </record>
 
-<!--
-    <template id="main_employee_attendance" inherit_id="attendance_leaves_report.main_employee_attendance">
+     <!-- Header and footer modifications -->
+     <template id="report_cim_complaint_tracking_code_external_layout_wua_modifications" inherit_id="cim_complaints_channel.report_cim_complaint_tracking_code_external_layout">
 
-        <xpath expr="//t[@t-call='report.external_layout']" position="attributes">
-            <attribute name="t-call">base_wua_report.wua_external_layout</attribute>
+        <xpath expr="//t[@t-call='cim_complaints_channel.report_cim_complaint_tracking_code_external_layout_header']" position="attributes">
+            <attribute name="t-call">base_wua_report.external_layout_header</attribute>
         </xpath>
 
-        <xpath expr="//div[@name='report_employee_data']" position="before">
+        <xpath expr="//t[@name='raw_tracking_code_content']" position="after">
+            <t t-call="base_wua_report.external_layout_footer"/>
+        </xpath>
+
+    </template>
+
+    <template id="report_cim_complaint_tracking_code_document_wua_modifications" inherit_id="cim_complaints_channel.report_cim_complaint_tracking_code_document">
+
+        <xpath expr="//div[@name='section_presentation']" position="before">
             <t t-set="report_style" t-value="request.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
             <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                 <t t-if="report_style == 'light'">
                     <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                       <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
-                       <div style="float: left; display: inline;"><strong>Employee&amp;nbsp;and&amp;nbsp;date&amp;nbsp;range</strong></div>
+                        <div style="float: left; width: 32px;"><span class="fa fa-location-arrow"/></div>
+                        <div style="float: left; display: inline;">
+                            <strong>Tracking</strong>
+                        </div>
                     </div>
                 </t>
                 <t t-else="">
                     <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-user"/></div>
-                        <div style="float: left; display: inline;"><strong>Employee&amp;nbsp;and&amp;nbsp;date&amp;nbsp;range</strong></div>
+                        <div style="float: left; width: 32px;"><span class="fa fa-location-arrow"/></div>
+                        <div style="float: left; display: inline;">
+                            <strong>Tracking</strong>
+                        </div>
                     </div>
                 </t>
             </div>
         </xpath>
 
-        <xpath expr="//div[@name='attendance_title']" position="replace">
-            <div name="attendance_title" class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                <t t-if="report_style == 'light'">
-                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                       <div style="float: left; width: 32px;"><span class="fa fa-moval-user-check"/></div>
-                       <div style="float: left; display: inline;"><strong>Attendances</strong></div>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-moval-user-check"/></div>
-                        <div style="float: left; display: inline;"><strong>Attendances</strong></div>
-                    </div>
-                </t>
-            </div>
+        <xpath expr="//div[@name='div_complaint_data_issue_title']" position="replace">
+            <div name="div_complaint_data_issue_title" class="col-xs-2"><strong>Issue:</strong></div>
         </xpath>
 
-        <xpath expr="//div[@name='leave_title']" position="replace">
-            <div name="leave_title" class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                <t t-if="report_style == 'light'">
-                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                       <div style="float: left; width: 32px;"><span class="fa fa-moval-sun"/></div>
-                       <div style="float: left; display: inline;"><strong>Leaves</strong></div>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-moval-sun"/></div>
-                        <div style="float: left; display: inline;"><strong>Leaves</strong></div>
-                    </div>
-                </t>
-            </div>
+        <xpath expr="//div[@name='div_complaint_data_date_title']" position="replace">
+            <div name="div_complaint_data_date_title" class="col-xs-2" style="margin-top:10px"><strong>Date:</strong></div>
         </xpath>
 
-        <xpath expr="//div[@name='public_holidays_title']" position="replace">
-            <div name="public_holidays_title" class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                <t t-if="report_style == 'light'">
-                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                       <div style="float: left; width: 32px;"><span class="fa fa-calendar"/></div>
-                       <div style="float: left; display: inline;"><strong>Public&amp;nbsp;holidays</strong></div>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-calendar"/></div>
-                        <div style="float: left; display: inline;"><strong>Public&amp;nbsp;holidays</strong></div>
-                    </div>
-                </t>
-            </div>
-        </xpath>
-
-        <xpath expr="//div[@name='conformity_title']" position="replace">
-            <div name="conformity_title" class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                <t t-if="report_style == 'light'">
-                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                       <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
-                       <div style="float: left; display: inline;"><strong>Conformity</strong></div>
-                    </div>
-                </t>
-                <t t-else="">
-                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                        <div style="float: left; width: 32px;"><span class="fa fa-check-square-o"/></div>
-                        <div style="float: left; display: inline;"><strong>Conformity</strong></div>
-                    </div>
-                </t>
-            </div>
-        </xpath>
-
-    </template> -->
+    </template>
 
 </odoo>
