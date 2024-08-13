@@ -4,6 +4,6 @@
 
 from . import law_analysis
 from . import wua_intake
-from . import wua_law_measuring_config_settings
+from . import law_measuring_config_settings
 from . import law_measuring_device
 from . import wua_parcel

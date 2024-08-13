@@ -19,7 +19,7 @@ class WuaParcel(models.Model):
         return resp
 
     def create_law_gis_measuring_device_table(self):
-        # Check if wua gis table already exists
+        # Check if law gis table already exists
         gis_measuring_device_table_created = (
             self.check_gis_measuring_device_created())
         # Check if extension postgis and schema postgis are created

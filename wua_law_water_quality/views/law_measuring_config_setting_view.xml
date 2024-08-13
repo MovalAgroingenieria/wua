@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="law_measuring_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">law.measuring.configuration</field>
+        <field name='inherit_id' ref='law_water_quality.law_measuring_config_settings_view_form'/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="after">
+                <group string="GIS Settings" name="gis_settings_group">
+                    <field name="url_gis_viewer_measuring_devices_param"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

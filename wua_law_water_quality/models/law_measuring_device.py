@@ -29,7 +29,7 @@ class LawMeasuringDevice(models.Model):
         password = self.env['ir.values'].get_default(
             'wua.configuration', 'url_gis_viewer_password')
         measuring_device_param = self.env['ir.values'].get_default(
-            'wua.law.measuring.configuration',
+            'law.measuring.configuration',
             'url_gis_viewer_measuring_devices_param')
         for record in self:
             url_for_record = url
