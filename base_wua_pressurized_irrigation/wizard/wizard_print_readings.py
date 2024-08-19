@@ -8,9 +8,9 @@ class WizardPrintReadings(models.TransientModel):
     _name = 'wizard.print.readings'
     _description = 'Dialog box to print readings'
 
-    def _default_waterconnection_id(self):
-        waterconnection_id = self.env.context['active_id']
-        return waterconnection_id
+    def _default_waterconnection_ids(self):
+        active_ids = self.env.context.get('active_ids')
+        return [(6, 0, active_ids)] if active_ids else []
 
     def _default_initial_date(self):
         active_agriculturalseason = self.env['wua.agriculturalseason'].search(
@@ -18,10 +18,10 @@ class WizardPrintReadings(models.TransientModel):
         initial_date = active_agriculturalseason.initial_date
         return initial_date
 
-    waterconnection_id = fields.Many2one(
-        string="Waterconnection",
+    waterconnection_ids = fields.Many2many(
+        string="Water Connections",
         comodel_name='wua.waterconnection',
-        default=_default_waterconnection_id)
+        default=_default_waterconnection_ids)
 
     initial_date = fields.Datetime(
         string='Initial Date',
@@ -46,41 +46,54 @@ class WizardPrintReadings(models.TransientModel):
 
     @api.multi
     def _compute_num_readings_to_print(self):
-        if self.initial_date and self.end_date:
-            if self.initial_date > self.end_date:
-                raise exceptions.UserError(
-                    _('Incorrect dates, the initial date is before the end '
-                      'date.'))
-            waterconnection_id = self.env.context['active_id']
-            num_readings_to_print = len(self.env['wua.reading'].search([
-                ('reading_time', '>=', self.initial_date),
-                ('reading_time', '<=', self.end_date),
-                ('waterconnection_id', '=', waterconnection_id)]))
-            for record in self:
+        for record in self:
+            if record.initial_date and record.end_date:
+                if record.initial_date > record.end_date:
+                    raise exceptions.UserError(
+                        _('Incorrect dates, the initial date cannot be '
+                          'after the end date.'))
+                num_readings_to_print = 0
+                if record.waterconnection_ids:
+                    num_readings_to_print = len(
+                        self.env['wua.reading'].search([
+                            ('reading_time', '>=', record.initial_date),
+                            ('reading_time', '<=', record.end_date),
+                            ('waterconnection_id', 'in',
+                             record.waterconnection_ids.ids)
+                        ]))
                 record.num_readings_to_print = num_readings_to_print
 
     @api.multi
     def _compute_reading_ids(self):
-        if self.initial_date and self.end_date and self.waterconnection_id:
-            reading_ids = self.env['wua.reading'].search([
-                ('reading_time', '>=', self.initial_date),
-                ('reading_time', '<=', self.end_date),
-                ('waterconnection_id', '=', self.waterconnection_id.id)]).ids
-            for record in self:
-                record.reading_ids = reading_ids
+        for record in self:
+            if (record.initial_date and record.end_date and
+                    record.waterconnection_ids):
+                reading_ids = self.env['wua.reading'].search([
+                    ('reading_time', '>=', record.initial_date),
+                    ('reading_time', '<=', record.end_date),
+                    ('waterconnection_id', 'in',
+                     record.waterconnection_ids.ids)
+                ]).ids
+                record.reading_ids = [(6, 0, reading_ids)]
 
-    @api.onchange('initial_date', 'end_date')
+    @api.onchange('initial_date', 'end_date', 'waterconnection_ids')
     def _calculate_readings_to_print(self):
-        if self.initial_date and self.end_date:
-            if self.initial_date > self.end_date:
-                raise exceptions.UserError(
-                    _('Incorrect dates, the initial date is before the end '
-                      'date.'))
-            waterconnection_id = self.env.context['active_id']
-            self.num_readings_to_print = len(self.env['wua.reading'].search([
-                ('reading_time', '>=', self.initial_date),
-                ('reading_time', '<=', self.end_date),
-                ('waterconnection_id', '=', waterconnection_id)]))
+        for record in self:
+            if record.initial_date and record.end_date:
+                if record.initial_date > record.end_date:
+                    raise exceptions.UserError(
+                        _('Incorrect dates, the initial date cannot be '
+                          'after the end date.'))
+                num_readings_to_print = 0
+                if record.waterconnection_ids:
+                    num_readings_to_print = len(
+                        self.env['wua.reading'].search([
+                            ('reading_time', '>=', record.initial_date),
+                            ('reading_time', '<=', record.end_date),
+                            ('waterconnection_id', 'in',
+                             record.waterconnection_ids.ids)
+                        ]))
+                record.num_readings_to_print = num_readings_to_print
 
     @api.multi
     def print_selected_period(self):

@@ -5,7 +5,7 @@
         <xpath expr="//div[@name='readings_data']" position="after">
 
             <!-- Hydric movements -->
-            <div name="hydric_movements_data" style="margin-top:20px;">
+            <div name="hydric_movements_data" style="margin-top:20px; page-break-inside: avoid;">
                 <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                     <t t-if="report_style == 'light'">
                         <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
@@ -25,9 +25,11 @@
                     </t>
                 </div>
                 <t t-set="hydrimovs_grouped_by_consumption" t-value="[]"/>
-                <t t-foreach="o.reading_ids" t-as="r">
-                    <t t-set="hydrimovs_grouped_by_consumption"
-                        t-value="hydrimovs_grouped_by_consumption + [[r.presconsumption_id.display_name, r.presconsumption_id.hydricmovement_ids]]"/>
+                <t t-foreach="filtered_readings" t-as="r">
+                    <t t-if="r.presconsumption_id">
+                        <t t-set="hydrimovs_grouped_by_consumption"
+                            t-value="hydrimovs_grouped_by_consumption + [[r.presconsumption_id.display_name, r.presconsumption_id.hydricmovement_ids]]"/>
+                    </t>
                 </t>
                 <table class="table" style="width:100%;">
                     <thead>

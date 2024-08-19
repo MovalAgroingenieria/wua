@@ -13,7 +13,7 @@
                     });
                 </script>
                 <group name="body">
-                    <field name="waterconnection_id" invisible="1"/>
+                    <field name="waterconnection_ids" invisible="1"/>
                     <field name="initial_date"/>
                     <field name="end_date"/>
                     <field name="num_readings_to_print"/>
@@ -36,6 +36,7 @@
         res_model="wizard.print.readings"
         src_model="wua.waterconnection"
         view_mode="form"
+        key2="client_action_multi"
         target="new"
         groups="base_wua.group_wua_manager"/>
 

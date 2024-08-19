@@ -13,6 +13,7 @@
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="base_wua_report.wua_external_layout">
+                <t t-set="counter" t-value="0"/>
                     <div class="page">
 
                         <!-- Vars -->
@@ -42,219 +43,453 @@
                         </div>
 
                         <!-- Waterconnection data -->
-                        <div name="waterconnection_data" style="margin-top:20px;">
-                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <t t-if="report_style == 'light'">
-                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
-                                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>Waterconnection</strong>
+                        <t t-foreach="o.waterconnection_ids" t-as="waterconnection">
+                            <t t-if="counter > 0">
+                                <div style="page-break-before: always;">
+                                                            <div style="page-break-inside: avoid;">
+                                <div name="waterconnection_data" style="margin-top:20px; page-break-inside: avoid;">
+                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                        <t t-if="report_style == 'light'">
+                                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
+                                                <div style="float: left; display: inline;">
+                                                    <strong>Waterconnection</strong>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
+                                                <div style="float: left; display: inline;">
+                                                    <strong>Waterconnection</strong>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="row" style="margin-top: 4px;">
+                                        <div class="col-xs-12" style="display: table;">
+                                            <div style="display: table-cell;">
+                                                <table name="waterconnection_main" class="table-condensed" style="width:90%;">
+                                                    <tbody>
+                                                        <tr name="tr_waterconnection">
+                                                            <td><span><b>Waterconnection</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.name">
+                                                                    <span t-field="waterconnection.name"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_irrigationshed_id">
+                                                            <td><span><b>Irrigation shed</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.irrigationshed_id">
+                                                                    <span t-field="waterconnection.irrigationshed_id"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_position">
+                                                            <td><span><b>Position</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.position">
+                                                                    <span t-field="waterconnection.position"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_watermeter_id">
+                                                            <td><span><b>Watermeter</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.watermeter_id">
+                                                                    <span t-field="waterconnection.watermeter_id"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div style="display: table-cell; padding-left: 40px;">
+                                                <table name="waterconnection_secondary" class="table-condensed" style="width:90%;">
+                                                    <tbody>
+                                                        <tr name="tr_hydraulicsector_id">
+                                                            <td><span><b>Hydraulic sector</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.hydraulicsector_id">
+                                                                    <span t-field="waterconnection.hydraulicsector_id"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_num_parcels">
+                                                            <td><span><b>Num. of parcels</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.number_of_parcels">
+                                                                    <span t-field="waterconnection.number_of_parcels"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_affected_area">
+                                                            <td><span><b>Parcels area</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.total_affected_area_official">
+                                                                    <span t-field="waterconnection.total_affected_area_official"/>
+                                                                    <span t-esc="area_measurement_name"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_average_consumption">
+                                                            <td><span><b>Average consumption</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.average_consumption">
+                                                                    <span t-field="waterconnection.average_consumption"/>
+                                                                    <span>m³</span>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                    </div>
-                                </t>
-                                <t t-else="">
-                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
-                                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>Waterconnection</strong>
-                                        </div>
-                                    </div>
-                                </t>
-                            </div>
-                            <div class="row" style="margin-top: 4px;">
-                                <div class="col-xs-12" style="display: table;">
-                                    <div style="display: table-cell;">
-                                        <table name="waterconnection_main" class="table-condensed" style="width:90%;">
-                                            <tbody>
-                                                <tr name="tr_waterconnection">
-                                                    <td><span><b>Waterconnection</b></span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.waterconnection_id.name">
-                                                            <span t-field="o.waterconnection_id.name"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                                <tr name="tr_irrigationshed_id">
-                                                    <td><span><b>Irrigation shed</b></span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.waterconnection_id.irrigationshed_id">
-                                                            <span t-field="o.waterconnection_id.irrigationshed_id"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                                <tr name="tr_position">
-                                                    <td><span><b>Position</b></span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.waterconnection_id.position">
-                                                            <span t-field="o.waterconnection_id.position"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                                <tr name="tr_watermeter_id">
-                                                    <td><span><b>Watermeter</b></span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.waterconnection_id.watermeter_id">
-                                                            <span t-field="o.waterconnection_id.watermeter_id"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div style="display: table-cell; padding-left: 40px;">
-                                        <table name="waterconnection_secondary" class="table-condensed" style="width:90%;">
-                                            <tbody>
-                                                <tr name="tr_hydraulicsector_id">
-                                                    <td><span><b>Hydraulic sector</b></span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.waterconnection_id.hydraulicsector_id">
-                                                            <span t-field="o.waterconnection_id.hydraulicsector_id"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                                <tr name="tr_num_parcels">
-                                                    <td><span><b>Num. of parcels</b></span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.waterconnection_id.number_of_parcels">
-                                                            <span t-field="o.waterconnection_id.number_of_parcels"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                                <tr name="tr_affected_area">
-                                                    <td><span><b>Parcels area</b></span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.waterconnection_id.total_affected_area_official">
-                                                            <span t-field="o.waterconnection_id.total_affected_area_official"/>
-                                                            <span t-esc="area_measurement_name"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                                <tr name="tr_average_consumption">
-                                                    <td><span><b>Average consumption</b></span></td>
-                                                    <td class="text-right">
-                                                        <t t-if="o.waterconnection_id.average_consumption">
-                                                            <span t-field="o.waterconnection_id.average_consumption"/>
-                                                            <span>m³</span>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Parcels data -->
-                        <div name="irrigationpoint_ids" style="margin-top: 20px;">
-                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <t t-if="report_style == 'light'">
-                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
-                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                                        <div style="float: left; display: inline;"><strong>Details&amp;nbsp;supplied&amp;nbsp;plots</strong></div>
+                                <!-- Parcels data -->
+                                <div name="irrigationpoint_ids" style="margin-top: 20px; page-break-inside: avoid;">
+                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                        <t t-if="report_style == 'light'">
+                                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                                <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                                <div style="float: left; display: inline;"><strong>Details&amp;nbsp;supplied&amp;nbsp;plots</strong></div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                                <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                                <div style="float: left; display: inline;"><strong>Details&amp;nbsp;supplied&amp;nbsp;plots</strong></div>
+                                            </div>
+                                        </t>
                                     </div>
-                                </t>
-                                <t t-else="">
-                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
-                                        <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
-                                        <div style="float: left; display: inline;"><strong>Details&amp;nbsp;supplied&amp;nbsp;plots</strong></div>
-                                    </div>
-                                </t>
-                            </div>
-                            <t t-if="o.waterconnection_id.irrigationpoint_ids">
-                                <table class="table table-striped" style="margin-top: 2px;">
-                                    <thead>
-                                        <tr>
-                                            <th name="th_parcel_id" class="text-center">Parcel code</th>
-                                            <th name="th_partner_id">Irrigation partner</th>
-                                            <th name="th_area" class="text-right">Area (<t t-esc="area_measurement_name"/>)</th>
-                                            <th name="th_rural_location">Location</th>
-                                            <th name="th_cadastral_ref" class="text-center">Cadastral reference</th>
-                                            <th name="th_cadastral_pol" class="text-center">Polygon</th>
-                                            <th name="th_cadastral_par" class="text-center">Parcel</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr t-foreach="o.waterconnection_id.irrigationpoint_ids" t-as="p" style="page-break-inside: avoid;">
-                                            <td name="td_parcel_id" class="text-center"><span t-field="p.parcel_id"/></td>
-                                            <td name="td_partner_id"><span t-field="p.partner_id"/></td>
-                                            <td name="td_area" class="text-right"><span t-field="p.parcel_area_official"/></td>
-                                            <td name="td_rural_location"><span t-field="p.parcel_rural_location_county"/></td>
-                                            <td name="td_cadastral_ref" class="text-center"><span t-field="p.parcel_cadastral_reference"/></td>
-                                            <td name="td_cadastral_pol" class="text-center"><span t-field="p.parcel_cadastral_polygon"/></td>
-                                            <td name="td_cadastral_par" class="text-center"><span t-field="p.parcel_cadastral_parcel"/></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </t>
-                        </div>
-
-                        <!-- Readings -->
-                        <div name="readings_data" style="margin-top:20px;">
-                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
-                                <t t-if="report_style == 'light'">
-                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
-                                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>Readings</strong>
-                                        </div>
-                                    </div>
-                                </t>
-                                <t t-else="">
-                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
-                                        <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
-                                        <div style="float: left; display: inline;">
-                                            <strong>Readings</strong>
-                                        </div>
-                                    </div>
-                                </t>
-                            </div>
-                            <table class="table table-striped" style="width:100%;">
-                                <thead>
-                                    <th name="th_readingtime">Time</th>
-                                    <th name="th_volume" class="text-right">Value (m³)</th>
-                                    <th name="th_pc_volume_real" class="text-right">Cons. Real (m³)</th>
-                                    <th name="th_init_reading" class="text-center">Init. Reading</th>
-                                    <th name="th_validated" class="text-center">Validated</th>
-                                    <th name="th_presconsumption">Consumption</th>
-                                </thead>
-                                <tbody>
-                                    <t t-foreach="o.reading_ids" t-as="wr">
-                                        <tr>
-                                            <td name="td_readingtime"><span t-field="wr.reading_time" t-options="{'format': 'dd/MM/YYYY'}"/></td>
-                                            <td name="td_volume" class="text-right">
-                                                <t t-set="volume" t-value="o.env['wua.parcel'].transform_float_to_locale(wr.volume, 2)"/>
-                                                <span t-esc="volume"/>
-                                            </td>
-                                            <td name="td_pc_volume_real" class="text-right">
-                                                <t t-set="volume_real" t-value="o.env['wua.parcel'].transform_float_to_locale(wr.presconsumption_volume_real, 2)"/>
-                                                <span t-esc="volume_real"/>
-                                            </td>
-                                            <td name="td_init_reading" class="text-center">
-                                                <t t-if="wr.initialization_reading">
-                                                    <span class="fa fa-check"/>
-                                                 </t>
-                                            </td>
-                                            <td name="td_validated" class="text-center">
-                                                <t t-if="wr.validated">
-                                                    <span class="fa fa-check"/>
-                                                 </t>
-                                             </td>
-                                             <td name="td_presconsumption">
-                                                 <t t-if="wr.presconsumption_id">
-                                                     <t t-set="presconsumption_id" t-value="wr.presconsumption_id.display_name[:-9]"/>
-                                                 </t>
-                                                 <t t-else="">
-                                                     <t t-set="presconsumption_id" t-value="str('')"/>
-                                                 </t>
-                                                 <span t-esc="presconsumption_id"/>
-                                             </td>
-                                        </tr>
+                                    <t t-if="waterconnection.irrigationpoint_ids">
+                                        <table class="table table-striped" style="margin-top: 2px;">
+                                            <thead>
+                                                <tr>
+                                                    <th name="th_parcel_id" class="text-center">Parcel code</th>
+                                                    <th name="th_partner_id">Irrigation partner</th>
+                                                    <th name="th_area" class="text-right">Area (<t t-esc="area_measurement_name"/>)</th>
+                                                    <th name="th_rural_location">Location</th>
+                                                    <th name="th_cadastral_ref" class="text-center">Cadastral reference</th>
+                                                    <th name="th_cadastral_pol" class="text-center">Polygon</th>
+                                                    <th name="th_cadastral_par" class="text-center">Parcel</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr t-foreach="waterconnection.irrigationpoint_ids" t-as="p" style="page-break-inside: avoid;">
+                                                    <td name="td_parcel_id" class="text-center"><span t-field="p.parcel_id"/></td>
+                                                    <td name="td_partner_id"><span t-field="p.partner_id"/></td>
+                                                    <td name="td_area" class="text-right"><span t-field="p.parcel_area_official"/></td>
+                                                    <td name="td_rural_location"><span t-field="p.parcel_rural_location_county"/></td>
+                                                    <td name="td_cadastral_ref" class="text-center"><span t-field="p.parcel_cadastral_reference"/></td>
+                                                    <td name="td_cadastral_pol" class="text-center"><span t-field="p.parcel_cadastral_polygon"/></td>
+                                                    <td name="td_cadastral_par" class="text-center"><span t-field="p.parcel_cadastral_parcel"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </t>
-                                </tbody>
-                            </table>
-                        </div>
+                                </div>
 
+                                <!-- Readings -->
+                                <div name="readings_data" style="margin-top:20px; page-break-inside: avoid;">
+                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                        <t t-if="report_style == 'light'">
+                                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
+                                                <div style="float: left; display: inline;">
+                                                    <strong>Readings</strong>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
+                                                <div style="float: left; display: inline;">
+                                                    <strong>Readings</strong>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <table class="table table-striped" style="width:100%;">
+                                        <thead>
+                                            <th name="th_readingtime">Time</th>
+                                            <th name="th_volume" class="text-right">Value (m³)</th>
+                                            <th name="th_pc_volume_real" class="text-right">Cons. Real (m³)</th>
+                                            <th name="th_init_reading" class="text-center">Init. Reading</th>
+                                            <th name="th_validated" class="text-center">Validated</th>
+                                            <th name="th_presconsumption">Consumption</th>
+                                        </thead>
+                                        <tbody>
+                                            <t t-set="filtered_readings" t-value="o.reading_ids.filtered(lambda r: r.waterconnection_id == waterconnection)"/>
+                                            <t t-if="filtered_readings">
+                                                <t t-foreach="filtered_readings" t-as="wr">
+                                                    <tr>
+                                                        <td name="td_readingtime">
+                                                            <span t-field="wr.reading_time" t-options="{'format': 'dd/MM/YYYY'}"/>
+                                                        </td>
+                                                        <td name="td_volume" class="text-right">
+                                                            <t t-set="volume" t-value="o.env['wua.parcel'].transform_float_to_locale(wr.volume, 2)"/>
+                                                            <span t-esc="volume"/>
+                                                        </td>
+                                                        <td name="td_pc_volume_real" class="text-right">
+                                                            <t t-set="volume_real" t-value="o.env['wua.parcel'].transform_float_to_locale(wr.presconsumption_volume_real, 2)"/>
+                                                            <span t-esc="volume_real"/>
+                                                        </td>
+                                                        <td name="td_init_reading" class="text-center">
+                                                            <t t-if="wr.initialization_reading">
+                                                                <span class="fa fa-check"/>
+                                                            </t>
+                                                        </td>
+                                                        <td name="td_validated" class="text-center">
+                                                            <t t-if="wr.validated">
+                                                                <span class="fa fa-check"/>
+                                                            </t>
+                                                        </td>
+                                                        <td name="td_presconsumption">
+                                                            <t t-if="wr.presconsumption_id">
+                                                                <t t-set="presconsumption_id" t-value="wr.presconsumption_id.display_name[:-9]"/>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <t t-set="presconsumption_id" t-value="str('')"/>
+                                                            </t>
+                                                            <span t-esc="presconsumption_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                                        <div style="page-break-inside: avoid;">
+                                <div name="waterconnection_data" style="margin-top:20px; page-break-inside: avoid;">
+                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                        <t t-if="report_style == 'light'">
+                                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
+                                                <div style="float: left; display: inline;">
+                                                    <strong>Waterconnection</strong>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-moval-water-counter"/></div>
+                                                <div style="float: left; display: inline;">
+                                                    <strong>Waterconnection</strong>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <div class="row" style="margin-top: 4px;">
+                                        <div class="col-xs-12" style="display: table;">
+                                            <div style="display: table-cell;">
+                                                <table name="waterconnection_main" class="table-condensed" style="width:90%;">
+                                                    <tbody>
+                                                        <tr name="tr_waterconnection">
+                                                            <td><span><b>Waterconnection</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.name">
+                                                                    <span t-field="waterconnection.name"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_irrigationshed_id">
+                                                            <td><span><b>Irrigation shed</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.irrigationshed_id">
+                                                                    <span t-field="waterconnection.irrigationshed_id"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_position">
+                                                            <td><span><b>Position</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.position">
+                                                                    <span t-field="waterconnection.position"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_watermeter_id">
+                                                            <td><span><b>Watermeter</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.watermeter_id">
+                                                                    <span t-field="waterconnection.watermeter_id"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div style="display: table-cell; padding-left: 40px;">
+                                                <table name="waterconnection_secondary" class="table-condensed" style="width:90%;">
+                                                    <tbody>
+                                                        <tr name="tr_hydraulicsector_id">
+                                                            <td><span><b>Hydraulic sector</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.hydraulicsector_id">
+                                                                    <span t-field="waterconnection.hydraulicsector_id"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_num_parcels">
+                                                            <td><span><b>Num. of parcels</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.number_of_parcels">
+                                                                    <span t-field="waterconnection.number_of_parcels"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_affected_area">
+                                                            <td><span><b>Parcels area</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.total_affected_area_official">
+                                                                    <span t-field="waterconnection.total_affected_area_official"/>
+                                                                    <span t-esc="area_measurement_name"/>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                        <tr name="tr_average_consumption">
+                                                            <td><span><b>Average consumption</b></span></td>
+                                                            <td class="text-right">
+                                                                <t t-if="waterconnection.average_consumption">
+                                                                    <span t-field="waterconnection.average_consumption"/>
+                                                                    <span>m³</span>
+                                                                </t>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Parcels data -->
+                                <div name="irrigationpoint_ids" style="margin-top: 20px; page-break-inside: avoid;">
+                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                        <t t-if="report_style == 'light'">
+                                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                                <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                                <div style="float: left; display: inline;"><strong>Details&amp;nbsp;supplied&amp;nbsp;plots</strong></div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                                <div style="float: left; width: 32px;"><span class="fa fa-moval-parcel"/></div>
+                                                <div style="float: left; display: inline;"><strong>Details&amp;nbsp;supplied&amp;nbsp;plots</strong></div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <t t-if="waterconnection.irrigationpoint_ids">
+                                        <table class="table table-striped" style="margin-top: 2px;">
+                                            <thead>
+                                                <tr>
+                                                    <th name="th_parcel_id" class="text-center">Parcel code</th>
+                                                    <th name="th_partner_id">Irrigation partner</th>
+                                                    <th name="th_area" class="text-right">Area (<t t-esc="area_measurement_name"/>)</th>
+                                                    <th name="th_rural_location">Location</th>
+                                                    <th name="th_cadastral_ref" class="text-center">Cadastral reference</th>
+                                                    <th name="th_cadastral_pol" class="text-center">Polygon</th>
+                                                    <th name="th_cadastral_par" class="text-center">Parcel</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr t-foreach="waterconnection.irrigationpoint_ids" t-as="p" style="page-break-inside: avoid;">
+                                                    <td name="td_parcel_id" class="text-center"><span t-field="p.parcel_id"/></td>
+                                                    <td name="td_partner_id"><span t-field="p.partner_id"/></td>
+                                                    <td name="td_area" class="text-right"><span t-field="p.parcel_area_official"/></td>
+                                                    <td name="td_rural_location"><span t-field="p.parcel_rural_location_county"/></td>
+                                                    <td name="td_cadastral_ref" class="text-center"><span t-field="p.parcel_cadastral_reference"/></td>
+                                                    <td name="td_cadastral_pol" class="text-center"><span t-field="p.parcel_cadastral_polygon"/></td>
+                                                    <td name="td_cadastral_par" class="text-center"><span t-field="p.parcel_cadastral_parcel"/></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </t>
+                                </div>
+
+                                <!-- Readings -->
+                                <div name="readings_data" style="margin-top:20px; page-break-inside: avoid;">
+                                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                        <t t-if="report_style == 'light'">
+                                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px; margin-bottom:4px;">
+                                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
+                                                <div style="float: left; display: inline;">
+                                                    <strong>Readings</strong>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px; margin-bottom:4px;">
+                                                <div style="float: left; width: 32px; font-size: 1.2em;"><span class="fa fa-list"/></div>
+                                                <div style="float: left; display: inline;">
+                                                    <strong>Readings</strong>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                    <table class="table table-striped" style="width:100%;">
+                                        <thead>
+                                            <th name="th_readingtime">Time</th>
+                                            <th name="th_volume" class="text-right">Value (m³)</th>
+                                            <th name="th_pc_volume_real" class="text-right">Cons. Real (m³)</th>
+                                            <th name="th_init_reading" class="text-center">Init. Reading</th>
+                                            <th name="th_validated" class="text-center">Validated</th>
+                                            <th name="th_presconsumption">Consumption</th>
+                                        </thead>
+                                        <tbody>
+                                            <t t-set="filtered_readings" t-value="o.reading_ids.filtered(lambda r: r.waterconnection_id == waterconnection)"/>
+                                            <t t-if="filtered_readings">
+                                                <t t-foreach="filtered_readings" t-as="wr">
+                                                    <tr>
+                                                        <td name="td_readingtime">
+                                                            <span t-field="wr.reading_time" t-options="{'format': 'dd/MM/YYYY'}"/>
+                                                        </td>
+                                                        <td name="td_volume" class="text-right">
+                                                            <t t-set="volume" t-value="o.env['wua.parcel'].transform_float_to_locale(wr.volume, 2)"/>
+                                                            <span t-esc="volume"/>
+                                                        </td>
+                                                        <td name="td_pc_volume_real" class="text-right">
+                                                            <t t-set="volume_real" t-value="o.env['wua.parcel'].transform_float_to_locale(wr.presconsumption_volume_real, 2)"/>
+                                                            <span t-esc="volume_real"/>
+                                                        </td>
+                                                        <td name="td_init_reading" class="text-center">
+                                                            <t t-if="wr.initialization_reading">
+                                                                <span class="fa fa-check"/>
+                                                            </t>
+                                                        </td>
+                                                        <td name="td_validated" class="text-center">
+                                                            <t t-if="wr.validated">
+                                                                <span class="fa fa-check"/>
+                                                            </t>
+                                                        </td>
+                                                        <td name="td_presconsumption">
+                                                            <t t-if="wr.presconsumption_id">
+                                                                <t t-set="presconsumption_id" t-value="wr.presconsumption_id.display_name[:-9]"/>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <t t-set="presconsumption_id" t-value="str('')"/>
+                                                            </t>
+                                                            <span t-esc="presconsumption_id"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            </t>
+                            <t t-set="counter" t-value="counter + 1"/>
+                        </t>
                     </div><!--end page -->
                 </t>
             </t>
