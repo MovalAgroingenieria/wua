@@ -422,13 +422,6 @@ class WuaParcel(models.Model):
                 VALUES
                 %s;
             """ % (','.join(values_query)))
-            self.env.cr.execute("""
-                INSERT INTO wua_parcel_class
-                    (name, parcel_id, parcel_class, area_official,
-                     class_sharer, resolution_year, notes, active)
-                VALUES
-                %s;
-            """ % (','.join(values_query)))
             # After Insert the parcel classes update the area_official
             # after commit
 
