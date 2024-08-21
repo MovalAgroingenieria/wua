@@ -511,5 +511,5 @@ class WuaGisParcelClassView(models.Model):
                 );
                 """)
             _logger = logging.getLogger(self.__class__.__name__)
-            _logger.warning('The table wua_gis_parce_class does not exist or '
+            _logger.warning('The table wua_gis_parcel_class does not exist or '
                             'an error occurred: %s', e)

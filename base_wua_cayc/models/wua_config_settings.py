@@ -39,6 +39,10 @@ class WuaConfiguration(models.TransientModel):
         size=254,
     )
 
+    with_own_gis_parcel = fields.Boolean(
+        string='With own GIS parcel',
+    )
+
     @api.multi
     def set_default_values(self):
         super(WuaConfiguration, self).set_default_values()
@@ -59,3 +63,6 @@ class WuaConfiguration(models.TransientModel):
         values.set_default(
             'wua.configuration', 'cayc_remote_database_password',
             self.cayc_remote_database_password)
+        values.set_default(
+            'wua.configuration', 'with_own_gis_parcel',
+            self.with_own_gis_parcel)
