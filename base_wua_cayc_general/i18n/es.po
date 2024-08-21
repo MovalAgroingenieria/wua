@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-12 08:35+0000\n"
-"PO-Revision-Date: 2024-07-12 08:35+0000\n"
+"POT-Creation-Date: 2024-08-20 10:12+0000\n"
+"PO-Revision-Date: 2024-08-20 10:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -53,25 +53,25 @@ msgstr "<strong attrs=\"{'invisible': [('is_primary', '=', False)]}\">( Socio CA
 "                    <strong attrs=\"{'invisible': [('is_primary', '=', True)]}\">( Socio Padrón CHE )</strong>"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_parcel.py:84
+#: code:addons/base_wua_cayc_general/models/wua_parcel.py:81
 #, python-format
 msgid "A CHE parcel cannot have a non CHE partner."
 msgstr "Una parcela padrón che no puede tener un socio CAYC asignado."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_parcel.py:65
+#: code:addons/base_wua_cayc_general/models/wua_parcel.py:62
 #, python-format
 msgid "A che parcel must have at least one class associated."
 msgstr "Una parcela padrón CHE debe tener al menos una clase asociada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_parcel.py:62
+#: code:addons/base_wua_cayc_general/models/wua_parcel.py:59
 #, python-format
 msgid "A primary parcel cannot have a class associated."
 msgstr "Un perímetro de entidad no puede tener una clase asociada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_parcel.py:78
+#: code:addons/base_wua_cayc_general/models/wua_parcel.py:75
 #, python-format
 msgid "A primary parcel cannot have a non primary partner."
 msgstr "Un perímetro de entidad no puede tener un socio padrón CHE asignado."
@@ -263,9 +263,11 @@ msgid "Parcel Classes"
 msgstr "Clases"
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/res_partner.py:433
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_ids
+#, python-format
 msgid "Parcels"
 msgstr "Parcelas"
 
@@ -331,6 +333,11 @@ msgid "Primary Entity"
 msgstr "Entidad primaria"
 
 #. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_form
+msgid "Secondary parcels"
+msgstr "Parcelas secundarias"
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_server_remote_database
 msgid "Server Remote Database"
 msgstr "Base de datos"
@@ -388,13 +395,13 @@ msgid "The secondary partner code must not end at 0."
 msgstr "El código de un socio padrón CHE no puede acabar en 0."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_parcel.py:216
+#: code:addons/base_wua_cayc_general/models/wua_parcel.py:213
 #, python-format
 msgid "The sum of classes areas must be the parcel official area."
 msgstr "La suma del área de las clases debe ser igual al área oficial."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_parcel.py:198
+#: code:addons/base_wua_cayc_general/models/wua_parcel.py:195
 #, python-format
 msgid "The sum of parcel class areas must be the parcel official area."
 msgstr "La suma del área de las clases debe ser igual al área oficial."
@@ -448,4 +455,3 @@ msgstr "wua.gis.parcel.class.view"
 #: model:ir.model,name:base_wua_cayc_general.model_wua_parcel_class
 msgid "wua.parcel.class"
 msgstr "wua.parcel.class"
-

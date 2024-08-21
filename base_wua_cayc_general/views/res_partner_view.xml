@@ -72,6 +72,16 @@
                 <field name="concession_as_volume" style="width:120px" attrs="{'invisible': [('partner_type', 'not in', ['02_IND', '03_WSP'])]}"/>
                 <field name="concession_as_power" style="width:120px" attrs="{'invisible': [('partner_type', 'not in', ['04_HEL'])]}"/>
             </xpath>
+            <xpath expr="//button[@name='toggle_active']" position="after">
+                <button name="action_see_secondary_parcels"
+                        string="Secondary parcels"
+                        attrs="{'invisible':[('is_primary','=',False)]}"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-moval-parcel"
+                        groups="base_wua.group_wua_user,
+                                base_wua.group_wua_portal_user"/>
+            </xpath>
             <!-- Hide fields, buttons and pages on primary partners -->
             <xpath expr="//field[@name='gender']"  position="attributes">
                 <attribute name="attrs">{'invisible': [('is_primary', '=', True)]}</attribute>

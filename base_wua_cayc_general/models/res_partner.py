@@ -406,3 +406,43 @@ class ResPartner(models.Model):
             # to syncrhonize
             wb.last_syncrhonization_date = fields.Datetime.now()
             self.env.cr.commit()
+
+    @api.multi
+    def action_see_secondary_parcels(self):
+        self.ensure_one()
+
+        # Definir el dominio para filtrar los registros en wua.parcel
+        condition = [
+            ('is_primary', '=', False),
+            ('wuabase_id', '=', self.wuabase_id.id)
+        ]
+
+        # Obtener las vistas que se usarán
+        id_form_view = self.env.ref(
+            'base_wua_cayc_general.wua_parcel_view_form').id
+        id_tree_view = self.env.ref(
+            'base_wua_cayc_general.wua_parcel_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_cayc_general.wua_parcel_view_search')
+
+        parcel_label = self.sudo().env['wua.parcel'].get_value_from_translation(
+            'base_wua_cayc_general',
+            'Parcels'
+        )
+        if not parcel_label:
+            parcel_label = _('Parcels')
+
+        # Definir la acción para mostrar la vista de wua.parcel
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': parcel_label,
+            'res_model': 'wua.parcel',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            'context': {'from_shortcut': 1},
+        }
+        return act_window
