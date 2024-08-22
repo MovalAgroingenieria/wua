@@ -43,9 +43,7 @@
                         <!-- Title -->
                         <div name="title" class="text-center">
                             <h4><strong>PURCHASE AGREEMENT</strong></h4>
-                            <t t-if="o.state == '01_draft'">
-                                <span class="text-muted">[ <span t-field="o.state"/> ]</span>
-                            </t>
+                            <span class="text-muted">[ <span t-field="o.stage_id"/> ]</span>
                         </div>
 
                         <!-- Seller and buyer data -->
@@ -171,6 +169,10 @@
                                     <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">&amp;nbsp;</div>
                                 </t>
                             </div>
+                            <!-- Top comment -->
+                            <t t-if="o.env['wua.parcel'].is_html_field_filled(o.file_top_comment)">
+                                <div t-field="o.file_top_comment"/>
+                            </t>
                             <div t-field="o.template_start_rendered"/>
                         </div>
 
@@ -238,6 +240,11 @@
                             </div>
                             <div t-field="o.template_end_rendered"/>
                         </div>
+
+                        <!-- Bottom comment -->
+                        <t t-if="o.env['wua.parcel'].is_html_field_filled(o.file_bottom_comment)">
+                            <div t-field="o.file_bottom_comment"/>
+                        </t>
 
                         <!-- Conformity -->
                         <div name="conformity" style="margin-top: 32px; page-break-inside: avoid;">

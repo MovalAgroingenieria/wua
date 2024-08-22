@@ -15,49 +15,75 @@
             </xpath>
             <xpath expr="//field[@name='category_id']" position="replace">
                 <field name="category_id"
-                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"/>
+                       attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)]}"/>
                 <field name="category_report_id" domain="category_report_id_domain"
-                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"/>
+                       attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)]}"/>
                 <field name="leased_from"
-                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                       attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)],
                                'invisible':[('category_is_lease', '=', False)],
                                'required':[('category_is_lease', '=', True)]}"/>
                 <field name="leased_to"
-                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                       attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)],
                                'invisible':[('category_is_lease', '=', False)],
                                'required':[('category_is_lease', '=', True)]}"/>
             </xpath>
             <xpath expr="//field[@name='partnerlink_ids']" position="replace">
                 <field name="partnerlink_ids"
                        context="{'tree_view_ref': 'crm_filemgmt.res_file_partnerlink_view_tree'}"
-                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                       attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)],
                                'invisible':['|','|',('category_is_lease', '=', True),
                                                     ('category_is_trading', '=', True),
                                                     ('category_is_complaint', '=', True)]}"/>
                 <field name="partnerlink_lease_ids"
                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_lease'}"
-                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                       attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)],
                                'invisible':[('category_is_lease', '=', False)]}"/>
                 <field name="partnerlink_trading_ids"
                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_trading'}"
-                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                       attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)],
                                'invisible':[('category_is_trading', '=', False)]}"/>
                 <field name="partnerlink_complaint_ids"
                        context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_partnerlink_view_tree_complaint'}"
-                       attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)],
+                       attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)],
                                'invisible':[('category_is_complaint', '=', False)]}"/>
             </xpath>
-            <xpath expr="//page[@name='attachments']" position="before">
+            <xpath expr="//page[@name='file_comments']" position="before">
                 <page name="parcellink_page" string="Parcel Links">
                     <header>
                         <button name="action_get_partner_parcels" type="object" class="btn btn-link"
-                            attrs="{'invisible': ['|',('state','=','03_closed'),('is_blocked','=',True)]}"
+                            attrs="{'invisible': ['|',('is_closing_stage','=', True),('is_blocked','=',True)]}"
                             string="Get parcels" icon="fa-moval-parcel" style="margin-top:2px; margin-bottom:2px;"
                             groups="crm_filemgmt.group_file_manager"/>
                     </header>
                     <field name="parcellink_ids"
                            context="{'tree_view_ref': 'wua_crm_filemgmt.res_file_parcellink_view_tree'}"
-                           attrs="{'readonly':['|',('state','=','03_closed'),('is_blocked','=',True)]}"/>
+                           attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)]}"/>
+                </page>
+            </xpath>
+            <xpath expr="//page[@name='attachments']" position="before">
+                <page name="start_template_page" string="Template start">
+                    <header>
+                        <div class="text-right oe_edit_only">
+                            <button name="action_get_start_template" type="object" class="btn btn-link"
+                                attrs="{'invisible': ['|',('is_closing_stage','=', True),('is_blocked','=',True)]}"
+                                string="Refresh" icon="fa-retweet" style="margin-top:2px; margin-bottom:2px;"
+                                help="Copy start template from selected report."
+                                groups="crm_filemgmt.group_file_manager"/>
+                        </div>
+                    </header>
+                    <field name="template_start" attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)]}"/>
+                </page>
+                 <page name="end_template_page" string="Template end">
+                    <header>
+                        <div class="text-right oe_edit_only">
+                            <button name="action_get_end_template" type="object" class="btn btn-link"
+                                attrs="{'invisible': ['|',('is_closing_stage','=', True),('is_blocked','=',True)]}"
+                                string="Refresh" icon="fa-retweet" style="margin-top:2px; margin-bottom:2px;"
+                                help="Copy end template from selected report."
+                                groups="crm_filemgmt.group_file_manager"/>
+                        </div>
+                    </header>
+                    <field name="template_end" attrs="{'readonly':['|',('is_closing_stage','=', True),('is_blocked','=',True)]}"/>
                 </page>
             </xpath>
         </field>
@@ -153,6 +179,7 @@
                 <field name="parcel_gis_viewer_link" invisible="1"/>
                 <field name="parcel_cadastral_reference_link" invisible="1"/>
                 <field name="parcel_id"/>
+                <field name="parcel_is_archived"/>
                 <field name="parcel_area_official"/>
                 <button name="action_see_gis_viewer"
                         type="object" class="oe_stat_button"

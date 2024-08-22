@@ -71,6 +71,12 @@ class ResFile(models.Model):
         readonly=True,
         compute="_compute_category_report_id_domain")
 
+    template_start = fields.Html(
+        string='Template start')
+
+    template_end = fields.Html(
+        string='Template end')
+
     template_start_rendered = fields.Html(
         string='Template start rendered',
         compute='_compute_template_start_rendered')
@@ -146,18 +152,24 @@ class ResFile(models.Model):
             else:
                 record.category_report_id_domain = False
 
-    @api.depends('category_report_id',
-                 'category_report_id.report_template_start')
+    @api.onchange('category_report_id',
+                  'category_report_id.report_template_start')
+    def _compute_template_start(self):
+        for record in self:
+            if (record.category_report_id and
+                    record.category_report_id.report_template_start):
+                record.template_start = \
+                    record.category_report_id.report_template_start
+
+    @api.depends('template_start')
     def _compute_template_start_rendered(self):
         for record in self:
             template_start_rendered = ''
-            if (record.category_report_id and
-                    record.category_report_id.report_template_start):
+            if record.template_start:
                 try:
-                    template_start = Template(
-                        self.category_report_id.report_template_start)
-                    template_start_rendered = \
-                        template_start.render(record=record)
+                    template_start = Template(record.template_start)
+                    template_start_rendered = template_start.render(
+                        record=record)
                 except TemplateError as e:
                     template_start_rendered = \
                         '<p style="text-align:center;color:red;">' + \
@@ -166,16 +178,22 @@ class ResFile(models.Model):
                         '<p><br>' + e.message + '</p>'
             record.template_start_rendered = template_start_rendered
 
-    @api.depends('category_report_id',
-                 'category_report_id.report_template_end')
+    @api.onchange('category_report_id',
+                  'category_report_id.report_template_end')
+    def _compute_template_end(self):
+        for record in self:
+            if (record.category_report_id and
+                    record.category_report_id.report_template_end):
+                record.template_end = \
+                    record.category_report_id.report_template_end
+
+    @api.depends('template_end')
     def _compute_template_end_rendered(self):
         for record in self:
             template_end_rendered = ''
-            if (record.category_report_id and
-                    record.category_report_id.report_template_end):
+            if record.template_end:
                 try:
-                    template_end = Template(
-                        self.category_report_id.report_template_end)
+                    template_end = Template(record.template_end)
                     template_end_rendered = template_end.render(record=record)
                 except TemplateError as e:
                     template_end_rendered = \
@@ -236,6 +254,28 @@ class ResFile(models.Model):
             report_name = self.category_report_id.iractreportxml_id.report_name
         return self.env['report'].with_context(
             {'lang': self.partner_id.lang}).get_action(self, report_name)
+
+    @api.multi
+    def action_get_start_template(self):
+        for record in self:
+            if (not record.category_report_id or
+                    not record.category_report_id.report_template_start):
+                raise exceptions.UserError(_(
+                    'No report or start template has been selected.'))
+            else:
+                record.template_start = \
+                    record.category_report_id.report_template_start
+
+    @api.multi
+    def action_get_end_template(self):
+        for record in self:
+            if (not record.category_report_id or
+                    not record.category_report_id.report_template_end):
+                raise exceptions.UserError(_(
+                    'No report or end template has been selected.'))
+            else:
+                record.template_end = \
+                    record.category_report_id.report_template_end
 
     @api.constrains('parcellink_ids')
     def _check_parcellink_ids(self):
@@ -447,6 +487,10 @@ class ResFileParcellink(models.Model):
         string='Category is trading',
         related='file_id.category_is_trading')
 
+    parcel_is_archived = fields.Boolean(
+        string='Archived',
+        compute='_compute_parcel_is_archived')
+
     @api.multi
     def _compute_parcel_gis_viewer_link(self):
         for record in self:
@@ -507,3 +551,11 @@ class ResFileParcellink(models.Model):
         for record in self:
             if record.parcel_id:
                 record.parcel_partner_id = record.parcel_id.partner_id
+
+    @api.depends('parcel_id')
+    def _compute_parcel_is_archived(self):
+        for record in self:
+            is_archived = True
+            if record.parcel_id.active:
+                is_archived = False
+            record.parcel_is_archived = is_archived

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-02 11:33+0000\n"
-"PO-Revision-Date: 2024-05-02 11:33+0000\n"
+"POT-Creation-Date: 2024-08-22 10:47+0000\n"
+"PO-Revision-Date: 2024-08-22 10:47+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -329,21 +329,26 @@ msgid "<strong>Whereas</strong>"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:296
+#: code:addons/wua_crm_filemgmt/models/res_file.py:336
 #, python-format
 msgid "A complainant and a denounced are required for this type of file."
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:264
+#: code:addons/wua_crm_filemgmt/models/res_file.py:304
 #, python-format
 msgid "A lessor and a tenant are required for this type of file."
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:280
+#: code:addons/wua_crm_filemgmt/models/res_file.py:320
 #, python-format
 msgid "A seller and a buyer are required for this type of file."
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_parcel_is_archived
+msgid "Archived"
 msgstr ""
 
 #. module: wua_crm_filemgmt
@@ -467,6 +472,16 @@ msgid "Complaint standard"
 msgstr ""
 
 #. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.res_file_view_form
+msgid "Copy end template from selected report."
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.res_file_view_form
+msgid "Copy start template from selected report."
+msgstr ""
+
+#. module: wua_crm_filemgmt
 #: model:ir.actions.act_window,name:wua_crm_filemgmt.action_add_parcels_to_file
 #: model:ir.actions.act_window,name:wua_crm_filemgmt.action_add_partners_to_file
 msgid "Create File"
@@ -518,13 +533,13 @@ msgid "Display Name"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:184
+#: code:addons/wua_crm_filemgmt/models/res_file.py:202
 #, python-format
 msgid "ERROR IN END TEMPLATE"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:165
+#: code:addons/wua_crm_filemgmt/models/res_file.py:177
 #, python-format
 msgid "ERROR IN START TEMPLATE"
 msgstr ""
@@ -612,7 +627,7 @@ msgid "ID"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:213
+#: code:addons/wua_crm_filemgmt/models/res_file.py:231
 #, python-format
 msgid "If a file already has parcels, this operation is not possible."
 msgstr ""
@@ -704,9 +719,21 @@ msgid "NIF:&amp;nbsp;"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:210
+#: code:addons/wua_crm_filemgmt/models/res_file.py:228
 #, python-format
 msgid "No main partner has been selected for this file."
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: code:addons/wua_crm_filemgmt/models/res_file.py:274
+#, python-format
+msgid "No report or end template has been selected."
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: code:addons/wua_crm_filemgmt/models/res_file.py:263
+#, python-format
+msgid "No report or start template has been selected."
 msgstr ""
 
 #. module: wua_crm_filemgmt
@@ -767,7 +794,7 @@ msgid "Parcel Links"
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:198
+#: code:addons/wua_crm_filemgmt/models/res_file.py:216
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_parcellink_ids
 #, python-format
 msgid "Parcels"
@@ -783,6 +810,11 @@ msgstr ""
 #. module: wua_crm_filemgmt
 #: model:ir.actions.server,name:wua_crm_filemgmt.res_file_print_selected_report
 msgid "Print report"
+msgstr ""
+
+#. module: wua_crm_filemgmt
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.res_file_view_form
+msgid "Refresh"
 msgstr ""
 
 #. module: wua_crm_filemgmt
@@ -826,7 +858,9 @@ msgstr ""
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_report_template_end
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_template_end
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.res_file_category_report_view_form
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.res_file_view_form
 msgid "Template end"
 msgstr ""
 
@@ -837,7 +871,9 @@ msgstr ""
 
 #. module: wua_crm_filemgmt
 #: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_category_report_report_template_start
+#: model:ir.model.fields,field_description:wua_crm_filemgmt.field_res_file_template_start
 #: model:ir.ui.view,arch_db:wua_crm_filemgmt.res_file_category_report_view_form
+#: model:ir.ui.view,arch_db:wua_crm_filemgmt.res_file_view_form
 msgid "Template start"
 msgstr ""
 
@@ -857,7 +893,7 @@ msgid "The rustic properties described in the section <b>Involved parcels</b> ar
 msgstr ""
 
 #. module: wua_crm_filemgmt
-#: code:addons/wua_crm_filemgmt/models/res_file.py:249
+#: code:addons/wua_crm_filemgmt/models/res_file.py:289
 #, python-format
 msgid "There are repeated parcels."
 msgstr ""

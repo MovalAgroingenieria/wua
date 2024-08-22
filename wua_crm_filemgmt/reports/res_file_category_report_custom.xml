@@ -20,6 +20,11 @@
                         <!-- Vars -->
                         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
 
+                        <!-- Top comment -->
+                        <t t-if="o.env['wua.parcel'].is_html_field_filled(o.file_top_comment)">
+                            <div t-field="o.file_top_comment"/>
+                        </t>
+
                         <!-- Template start -->
                         <div name="template_start_rendered">
                             <div t-field="o.template_start_rendered"/>
@@ -29,6 +34,11 @@
                         <div name="template_end_rendered">
                             <div t-field="o.template_end_rendered"/>
                         </div>
+
+                        <!-- Bottom comment -->
+                        <t t-if="o.env['wua.parcel'].is_html_field_filled(o.file_bottom_comment)">
+                            <div t-field="o.file_bottom_comment"/>
+                        </t>
 
                     </div> <!-- end page -->
                 </t>
