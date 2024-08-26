@@ -226,16 +226,16 @@ class WuaMassiveAssignments(models.Model):
                     'event_time': record.event_time,
                     'volume': provision,
                     'reason': record.reason,
-                    'massive_controlled_assignment_id': record.id
+                    'massive_controlled_assignment_id': record.id,
                     })
-            record.write({'state': '01_executed', })
+            record.write({'state': '01_executed'})
 
     @api.multi
     def cancel_massive_controlled_assignment(self):
         for record in self:
             record.individualinput_ids.with_context(
                 deleting_from_massive_controlled_assignment=True).unlink()
-            record.write({'state': '00_draft', })
+            record.write({'state': '00_draft'})
 
     @api.multi
     def name_get(self):
@@ -285,7 +285,7 @@ class WuaMassiveAssignments(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.individualinput_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True}
+                            'compressed_quotaperiod': True},
                 }
             return act_window
 
@@ -351,7 +351,7 @@ class WuaMassiveAssignments(models.Model):
                 'domain': {'quotaperiod_id':
                            [('agriculturalseason_id', '=',
                              self.agriculturalseason_id.id),
-                            ('state', '=', 'generated')]}
+                            ('state', '=', 'generated')]},
                 }
 
     @api.onchange('quotaperiod_id')
@@ -364,7 +364,7 @@ class WuaMassiveAssignments(models.Model):
             if valid_superproduct_ids:
                 return {
                     'domain': {'superproduct_id':
-                               [('id', 'in', valid_superproduct_ids)]}
+                               [('id', 'in', valid_superproduct_ids)]},
                     }
 
     @api.onchange('superproduct_id')
@@ -379,7 +379,7 @@ class WuaMassiveAssignments(models.Model):
     def _onchange_provision(self):
         parcels = self.env['wua.massive.assignments.parcel'].search(
             [('massive_controlled_assignment_id', '=', self._origin.id)])
-        vals = {'provision': self.provision, }
+        vals = {'provision': self.provision}
         for parcel in parcels:
             parcel.write(vals)
 
@@ -456,12 +456,12 @@ class WuaMassiveAssignments(models.Model):
 
     def populate_parcels_select(self):
         parcels = self.env['wua.parcel'].search(
-            [('active', '=', True),
-             ('mapped_to_current_quotaperiod', '=', True)])
+            [('active', '=', True)])
         if len(parcels) > 0:
             user_id = self.env.user.id
             massive_controlled_assignment_id = self.id
             provision = self.provision
+            quotaperiod_id = self.quotaperiod_id.id
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -473,11 +473,17 @@ class WuaMassiveAssignments(models.Model):
                     %s, %s, now(), now(), %s, TRUE, p.id, p.partner_id,
                   p.area_official, %s
                   FROM wua_parcel p
-                  WHERE p.active AND p.mapped_to_current_quotaperiod
-                        AND p.partner_id IS NOT NULL;""",
+                  WHERE p.active AND p.id IN (
+                    SELECT DISTINCT qplp.parcel_id
+                    FROM wua_quotaperiod_line_parcel qplp
+                    INNER JOIN wua_quotaperiod_line qpl
+                    ON qplp.quotaperiodline_id = qpl.id
+                    INNER JOIN wua_quotaperiod qp
+                    ON qpl.quotaperiod_id = qp.id
+                    WHERE qp.id= %s) AND p.partner_id IS NOT NULL;""",
                                     (user_id, user_id,
                                      massive_controlled_assignment_id,
-                                     provision))
+                                     provision, quotaperiod_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
             except Exception:
@@ -544,7 +550,8 @@ class WuaMassiveAssignmentsParcel(models.Model):
     concession_ids = fields.Many2many(
         string='Concessions',
         comodel_name='wua.concession',
-        related='parcel_id.concession_ids',)
+        related='parcel_id.concession_ids',
+    )
 
     area_official = fields.Float(
         string='Official Area',
@@ -569,12 +576,12 @@ class WuaMassiveAssignmentsParcel(models.Model):
 
     @api.multi
     def add_to_massive_assignment(self):
-        vals = {'selected': True, }
+        vals = {'selected': True}
         self.write(vals)
 
     @api.multi
     def remove_from_massive_assignment(self):
-        vals = {'selected': False, }
+        vals = {'selected': False}
         self.write(vals)
 
     @api.depends('area_official', 'provision')

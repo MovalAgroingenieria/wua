@@ -2049,7 +2049,8 @@ class WuaParcelIrrigationpoint(models.Model):
         index=True,
         ondelete='restrict',
         store=True,
-        compute='_compute_partner_id',)
+        compute='_compute_partner_id',
+    )
 
     @api.depends('waterconnection_id', 'waterconnection_id.irrigationshed_id')
     def _compute_irrigationshed_id(self):
