@@ -232,7 +232,9 @@ class WuaWaterconnection(models.Model):
             last_reading_consumption = 0
             watermeter = self.env['wua.watermeter'].browse(watermeter_id)
             if watermeter.last_reading_time:
-                last_reading_time = watermeter.last_reading_time
+                last_reading_time = str(
+                    fields.Datetime.from_string(watermeter.last_reading_time) +
+                    datetime.timedelta(seconds=1))
             if watermeter.last_reading_value:
                 last_reading_value = watermeter.last_reading_value
             if watermeter.last_reading_consumption:
