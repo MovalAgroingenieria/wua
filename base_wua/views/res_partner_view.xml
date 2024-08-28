@@ -273,7 +273,20 @@
         <field name="view_id" ref="view_partner_tree"/>
         <field name="domain">[("is_wua_partner","=",True)]</field>
         <field name="search_view_id" ref="view_partner_search"/>
-        <field name="context">{'wua':'1','default_is_wua_partner':True}</field>
+        <field name="context">{'wua':'1',
+                               'default_is_wua_partner':True}</field>
+    </record>
+
+    <record id="res_partner_wua_portal_user_action" model="ir.actions.act_window">
+        <field name="name">Partners (WUA Portal User)</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[("is_wua_partner","=",True)]</field>
+        <field name="view_id" ref="base.res_partner_kanban_view"/>
+        <field name="search_view_id" ref="view_partner_search"/>
+        <field name="context">{'wua':'1',
+                               'default_is_wua_partner':True}</field>
     </record>
 
     <record id="wua_generate_partner_parcel_shp" model="ir.actions.server">
@@ -359,7 +372,15 @@
               name="Partners"
               parent="base_wua_census_partners_menu"
               action="res_partner_action"
-              sequence="1"/>
+              sequence="1"
+              groups="group_wua_user"/>
+
+    <menuitem id="res_partner_wua_portal_user_menu"
+              name="Partners (WUA Portal User)"
+              parent="base_wua_census_partners_menu"
+              action="res_partner_wua_portal_user_action"
+              sequence="1"
+              groups="group_wua_portal_user"/>
 
     <menuitem id="res_partnertag_menu"
               name="Partner Tags"
