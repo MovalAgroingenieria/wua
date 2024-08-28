@@ -1627,10 +1627,11 @@ class WuaParcel(models.Model):
                                          'files of SHP.'))
 
     @api.multi
-    def action_regenerate_aerial_img(self):
+    def action_regenerate_aerial_img(self, limit=0):
         parcels = self.env['wua.parcel'].search(
             [('with_gis_parcel', '=', True)],
-            order='aerial_img_last_import_date')
+            order='aerial_img_last_import_date',
+            limit=limit)
         for parcel in parcels:
             parcel.regenerate_aerial_img()
             # Added to make sure some parcels are stored
