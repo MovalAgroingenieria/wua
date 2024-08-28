@@ -1259,7 +1259,7 @@ class WuaInvoiceset(models.Model):
                 if partner.id != partner_shipping_id:
                     invoice_vals.update({'partner_shipping_id':
                                          partner_shipping_id})
-                invoice = self.env['account.invoice'].create(invoice_vals)
+                self.env['account.invoice'].create(invoice_vals)
                 number_of_invoices = number_of_invoices + 1
         return number_of_invoices
 
@@ -1543,7 +1543,8 @@ class WuaInvoicesetLine(models.Model):
         comodel_name='product.product',
         required=True,
         index=True,
-        ondelete='restrict')
+        ondelete='restrict',
+        domain=[('invoiceset_selectable', '=', True)])
 
     categ_id = fields.Many2one(
         string='Internal Category',

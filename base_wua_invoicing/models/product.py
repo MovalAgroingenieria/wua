@@ -126,10 +126,15 @@ class ProductTemplate(models.Model):
         store=True,
         compute='_compute_is_wua_product')
 
+    invoiceset_selectable = fields.Boolean(
+        string='Invoiceset selectable',
+        default=True,
+        store=True)
+
     productcategory_code = fields.Integer(
         string='Code',
         index=True,
-        comute='_compute_productcategory_code',
+        compute='_compute_productcategory_code',
         store=True,)
 
     parcel_area_to_be_invoiced = fields.Selection([
@@ -236,6 +241,11 @@ class ProductProduct(models.Model):
     _inherit = 'product.product'
     _description = 'Entity (WUA Product)'
 
+    invoiceset_selectable = fields.Boolean(
+        string='Invoiceset selectable',
+        compute='_compute_invoiceset_selectable',
+        store='True')
+
     @api.multi
     def action_see_invoice_lines(self):
         self.ensure_one()
@@ -256,3 +266,12 @@ class ProductProduct(models.Model):
             'target': 'current',
             }
         return act_window
+
+    @api.depends('product_tmpl_id.invoiceset_selectable')
+    def _compute_invoiceset_selectable(self):
+        for record in self:
+            record.invoiceset_selectable = False
+            if record.product_tmpl_id:
+                record.invoiceset_selectable = \
+                    record.product_tmpl_id.invoiceset_selectable
+
