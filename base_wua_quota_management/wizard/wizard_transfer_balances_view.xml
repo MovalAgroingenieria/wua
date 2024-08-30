@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_wizard_transfer_balances_form" model="ir.ui.view">
+        <field name="name">wizard.transfer.balances.form</field>
+        <field name="model">wizard.transfer.balances</field>
+        <field name="arch" type="xml">
+            <form string="Transfer Balances" version="7.0">
+                <group>
+                    <field name="src_quotaperiod_id"/>
+                    <field name="dst_quotaperiod_id"/>
+                    <field name="transfer_positive"/>
+                    <field name="transfer_negative"/>
+                </group>
+                <footer>
+                    <button string="Transfer"
+                            type="object"
+                            name="action_transfer_balances"
+                            class="btn-primary"
+                            icon="fa-check-square-o"/>
+                    <button string="Cancel"
+                            class="btn-secondary"
+                            special="cancel"
+                            icon="fa-ban"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_wizard_transfer_balances" model="ir.actions.act_window">
+        <field name="name">Transfer Balances</field>
+        <field name="res_model">wizard.transfer.balances</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_wizard_transfer_balances_form"/>
+    </record>
+</odoo>

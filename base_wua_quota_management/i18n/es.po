@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-26 07:04+0000\n"
-"PO-Revision-Date: 2024-07-26 07:04+0000\n"
+"POT-Creation-Date: 2024-08-30 08:26+0000\n"
+"PO-Revision-Date: 2024-08-30 08:26+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -521,7 +521,7 @@ msgstr "<strong>Socio</strong>"
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_partner_quota_report_document
 msgid "<strong>Period </strong>"
-msgstr "<strong>Periodo </strong>"
+msgstr "<strong>Período </strong>"
 
 #. module: base_wua_quota_management
 #: model:ir.ui.view,arch_db:base_wua_quota_management.quota_report_document
@@ -670,7 +670,7 @@ msgid "Add to quota period"
 msgstr "Añadir al período de cupo"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:739
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:744
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_res_partner_partner_aggregatequotas
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_res_users_partner_aggregatequotas
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quotaperiod_quotaperiod_aggregatequotas
@@ -784,11 +784,6 @@ msgstr "Pulse sobre 'Aceptar' para confirmar la realización de esta operación.
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "Are you sure you want to revert the balances given for the next quota period?"
 msgstr "¿Está seguro/a de querer revertir a este período de cupo los saldos anteriormente traspasados al siguiente período?"
-
-#. module: base_wua_quota_management
-#: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
-msgid "Are you sure you want to transfer the positive balances to the next quota period?"
-msgstr "¿Está seguro/a de querer traspasar los saldos positivos de este período de cupo al siguiente?"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_parcel_area_to_be_invoiced
@@ -921,13 +916,13 @@ msgid "Base price to compute the customer price. Sometimes called the catalog pr
 msgstr "Precio base para calcular el precio de los clientes. A veces llamado precio de catalogo."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:555
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:572
 #, python-format
 msgid "Benefactor partner"
 msgstr "Socio cedente"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:605
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:624
 #, python-format
 msgid "Beneficiary partner"
 msgstr "Socio beneficiario"
@@ -987,6 +982,7 @@ msgid "Can be Sold"
 msgstr "Puede ser vendido"
 
 #. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.view_wizard_transfer_balances_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_generate_quotaperiods_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_massive_cancelnegativebalances_view_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wizard_massive_compensatorytransfers_view_form
@@ -1378,11 +1374,13 @@ msgstr "Crear períodos"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_line_create_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_line_create_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_create_date
 msgid "Created on"
 msgstr "Creado el"
 
@@ -1554,6 +1552,11 @@ msgid "Destination Quota"
 msgstr "Cupo de destino"
 
 #. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_dst_quotaperiod_id
+msgid "Destination Quota Period"
+msgstr "Período de cupo de destino"
+
+#. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_compensatorytransfers_destination_superproduct_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_compensatorytransfers_destination_superproduct_id
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_compensatorytransfers_view_search
@@ -1610,6 +1613,7 @@ msgstr "Cuadro de diálogo para generar perídos de cupo"
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_partner_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_recalculate_quotas_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_set_activeagriculturalseason_display_name
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_generalinput_display_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_display_name
@@ -1766,13 +1770,13 @@ msgstr "Error al actualizar la base de datos (campo \"of_active_agriculturalseas
 #: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:485
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:473
 #: code:addons/base_wua_quota_management/models/wua_massive_compensatorytransfers.py:521
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:844
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:864
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1047
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1075
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1105
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1201
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1557
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:849
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:869
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1052
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1080
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1110
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1265
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1621
 #, python-format
 msgid "Error when updating records."
 msgstr "Error al actualizar la base de datos."
@@ -2025,7 +2029,7 @@ msgid "Granted Cession"
 msgstr "Cesión concedida"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:604
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:623
 #, python-format
 msgid "Granted cession"
 msgstr "Cesión concedida"
@@ -2038,7 +2042,7 @@ msgid "Graph"
 msgstr "Gráfico"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:574
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:593
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_gravconsumption_id
 #: selection:wua.hydricmovement,type:0
 #, python-format
@@ -2093,7 +2097,7 @@ msgid "Hydric Inputs"
 msgstr "Insumos hídricos"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:407
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:424
 #: model:ir.model,name:base_wua_quota_management.model_wua_hydricmovement
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_name
 #, python-format
@@ -2136,6 +2140,7 @@ msgstr "Consumos hídricos"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_line_id
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_quota_aggregatevalue_id
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_partner_quota_individualinput_report_document
 msgid "ID"
@@ -2433,7 +2438,7 @@ msgid "Inputs:"
 msgstr "Insumos:"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:581
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:600
 #, python-format
 msgid "Intake"
 msgstr "Captación"
@@ -2489,7 +2494,7 @@ msgid "Irrigation Partner"
 msgstr "Regante"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:580
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:599
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_irrigationreport_id
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_form
 #: selection:wua.hydricmovement,type:0
@@ -2582,7 +2587,7 @@ msgid "It is not possible to delete this individual input, because the quota has
 msgstr "No es posible suprimir esta asignación individual, ya que su cupo ya tiene consumos hídricos posteriores."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:476
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:493
 #, python-format
 msgid "It is not possible to directly delete a hydric movement."
 msgstr "No está permitido borrar directamente un consumo hídrico."
@@ -2594,20 +2599,13 @@ msgid "It is not possible to directly delete a quota."
 msgstr "No está permitido borrar directamente un cupo."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:654
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:673
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:676
 #, python-format
 msgid "It is not possible to do this operation: the next quota period is closed, it is not generated or does not exist (the current quota period is the last one)."
 msgstr "No es posible mover los saldos: en esta campaña no hay ningún período posterior, o bien ese período de cupo está cerrado o no está en el estado generado."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:661
-#, python-format
-msgid "It is not possible to move any quotas: there are no positive balances or quotas do not exist in the destination quota period."
-msgstr "No es posible mover los saldos: no hay saldos positivos que traspasar, o bien no hay cupos en el período destinatario."
-
-#. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:680
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:685
 #, python-format
 msgid "It is not possible to move any quotas: there are no transferred balances or the balances are not correctly balanced."
 msgstr "No es posible mover los saldos: no hay saldos traspasados, o bien los saldos no están correctamente balanceados."
@@ -2628,6 +2626,7 @@ msgstr "No es posible suprimir la categoría 'SIN VARIACIÓN'."
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_partner___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_recalculate_quotas___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_set_activeagriculturalseason___last_update
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_generalinput___last_update
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement___last_update
@@ -2666,11 +2665,13 @@ msgstr "Valor última lectura (m<sup>3</sup>)"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_line_write_uid
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_line_write_date
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
 
@@ -2777,7 +2778,7 @@ msgid "Massive Transfer"
 msgstr "Transferencia masiva"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:690
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:695
 #, python-format
 msgid "Massive assignment of individual inputs"
 msgstr "Alta masiva de asignaciones individuales"
@@ -2788,13 +2789,13 @@ msgid "Massive assignment of individual inputs for the current quota period"
 msgstr "Alta masiva de asignaciones individuales para el período de cupo actual"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:716
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:721
 #, python-format
 msgid "Massive cancellation of negative balances"
 msgstr "Cancelación masiva de saldos negativos"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:703
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:708
 #, python-format
 msgid "Massive compensatory tranfers"
 msgstr "Compensación global de saldos"
@@ -2864,7 +2865,7 @@ msgid "Movements"
 msgstr "Movimientos"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:531
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:548
 #: selection:wua.hydricmovement,type:0
 #, python-format
 msgid "Multiple Assignment"
@@ -2899,7 +2900,7 @@ msgid "Negative Individual Assignment"
 msgstr "Asignación individual negativa"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:597
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:616
 #, python-format
 msgid "Negative Individual-Input"
 msgstr "Asignación individual negativa"
@@ -2914,6 +2915,32 @@ msgstr "Asignaciones negativas"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quota_view_search
 msgid "Negative Quotas"
 msgstr "Cupos negativos"
+
+#. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:578
+#, python-format
+msgid "Negative balance to next quota period"
+msgstr "Traspaso de saldo negativo al siguiente período"
+
+#. module: base_wua_quota_management
+#: selection:wua.hydricmovement,type:0
+msgid "Negative input from previous quota"
+msgstr "Traspaso de saldo negativo al cupo siguiente"
+
+#. module: base_wua_quota_management
+#: selection:wua.hydricmovement,type:0
+msgid "Negative output to next quota"
+msgstr "Traspaso de saldo negativo desde el cupo anterior"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_neg_output_next_quota_id
+msgid "Negative quota to transfer"
+msgstr "Cuota negativa a transferir"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_neg_input_prev_quota_id
+msgid "Negative source Quota"
+msgstr "Cuota origen negativa"
 
 #. module: base_wua_quota_management
 #: selection:wua.quotaperiod.line.parcel,hydraulic_infrastructure_type:0
@@ -3126,7 +3153,7 @@ msgid "Parameters"
 msgstr "Parámetros"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:575
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:594
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_provision_parcel_parcel_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_parcel_parcel_id
 #: model:ir.ui.view,arch_db:base_wua_quota_management.technical_wua_quotaperiod_line_parcel_view_search
@@ -3168,7 +3195,7 @@ msgstr "Parcela presente en el período de cupo vigente"
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:300
 #: code:addons/base_wua_quota_management/models/wua_quota.py:834
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1501
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1565
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_assignment_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_assignments_selected_assignment_parcel_ids
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_assignments_view_form
@@ -3257,7 +3284,7 @@ msgstr "Socio"
 #: code:addons/base_wua_quota_management/wizard/wizard_provision_partner.py:121
 #, python-format
 msgid "Partner or Quota Period is not selected."
-msgstr "Socio o periodo de cupo no está seleccionado."
+msgstr "Socio o período de cupo no está seleccionado."
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_massive_cancel_balances.py:299
@@ -3289,7 +3316,7 @@ msgid "Position"
 msgstr "Posición"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:547
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:564
 #, python-format
 msgid "Positive Individual-Input"
 msgstr "Asignación individual positiva"
@@ -3306,7 +3333,7 @@ msgid "Positive Quotas"
 msgstr "Cupos positivos"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:609
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:628
 #, python-format
 msgid "Positive balance to next quota period"
 msgstr "Traspaso de saldo positivo al siguiente período"
@@ -3317,7 +3344,7 @@ msgid "Press \"Apply\" to do a global recalculation of the generated quota perio
 msgstr "Pulse \"Aplicar\" para ejecutar un recálculo global de períodos de cupo (generados) de la siguiente campaña:"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:568
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:587
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_presconsumption_id
 #: selection:wua.hydricmovement,type:0
 #, python-format
@@ -3514,7 +3541,7 @@ msgid "Quota Operations"
 msgstr "Operaciones de cupos"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:532
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:549
 #: model:ir.model,name:base_wua_quota_management.model_wua_quotaperiod
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_cancelnegativebalances_quotaperiod_name
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_compensatorytransfers_quotaperiod_name
@@ -3675,7 +3702,7 @@ msgstr "Período de cupo #9, fecha inicial"
 #: code:addons/base_wua_quota_management/wizard/wizard_provision_parcel.py:196
 #, python-format
 msgid "Quota Period is not selected."
-msgstr "Periodo de cupo no etá seleccionado."
+msgstr "Período de cupo no etá seleccionado."
 
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_agriculturalseason.py:153
@@ -3726,7 +3753,7 @@ msgstr "Período de cupo no cerrado"
 #: code:addons/base_wua_quota_management/models/res_partner.py:55
 #: code:addons/base_wua_quota_management/models/wua_agriculturalseason.py:180
 #: code:addons/base_wua_quota_management/models/wua_cession.py:765
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:488
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:505
 #: code:addons/base_wua_quota_management/models/wua_individualinput.py:570
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:437
 #: code:addons/base_wua_quota_management/models/wua_superproduct.py:292
@@ -3765,10 +3792,10 @@ msgid "Re-Invoice Expenses"
 msgstr "Gastos de Re-factura"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:546
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:552
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:596
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:602
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:563
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:569
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:615
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:621
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_cancelnegativebalances_reason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_compensatorytransfers_reason
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_individualinputs_reason
@@ -3800,7 +3827,7 @@ msgid "Received Cession"
 msgstr "Cesión recibida"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:554
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:571
 #, python-format
 msgid "Received cession"
 msgstr "Cesión recibida"
@@ -4031,11 +4058,22 @@ msgid "Source Quota"
 msgstr "Cupo de origen"
 
 #. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_src_quotaperiod_id
+msgid "Source Quota Period"
+msgstr "Período origen"
+
+#. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_massive_compensatorytransfers_source_superproduct_id
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_compensatorytransfers_source_superproduct_id
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_massive_compensatorytransfers_view_search
 msgid "Source Superproduct"
 msgstr "Cupo origen"
+
+#. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/wizard/wizard_transfer_balances.py:43
+#, python-format
+msgid "Source and Destination Quota Periods must be different."
+msgstr "Los períodos de destino y origen deben ser distintos."
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,help:base_wua_quota_management.field_wua_superproduct_sale_ok
@@ -4155,7 +4193,7 @@ msgid "Superproducts"
 msgstr "Supraproductos"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:559
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:576
 #, python-format
 msgid "Surplus balance from previous quota period"
 msgstr "Recepción de saldo sobrante del período anterior"
@@ -4291,7 +4329,7 @@ msgid "The reduction factor must be greater than 0 and less than or equal to 1."
 msgstr "The reduction factor must be greater than 0 and less than or equal to 1."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:405
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:422
 #, python-format
 msgid "The reference of hydric movement does not exist"
 msgstr "La referencia asociada al movimiento hídrico no existe"
@@ -4417,7 +4455,7 @@ msgid "This partner has no aggregated quotas."
 msgstr "Este socio no tiene cupos agregados."
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:729
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:734
 #, python-format
 msgid "This period has no aggregated quotas."
 msgstr "Este período no tiene cupos agregados."
@@ -4491,9 +4529,26 @@ msgid "Tracking"
 msgstr "Seguimiento"
 
 #. module: base_wua_quota_management
+#: model:ir.ui.view,arch_db:base_wua_quota_management.view_wizard_transfer_balances_form
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_quotaperiod_view_form
 msgid "Transfer"
 msgstr "Transferir"
+
+#. module: base_wua_quota_management
+#: model:ir.actions.act_window,name:base_wua_quota_management.action_wizard_transfer_balances
+#: model:ir.ui.view,arch_db:base_wua_quota_management.view_wizard_transfer_balances_form
+msgid "Transfer Balances"
+msgstr "Transferir balances"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_transfer_negative
+msgid "Transfer Negative Balances"
+msgstr "Transferir balances negativos"
+
+#. module: base_wua_quota_management
+#: model:ir.model.fields,field_description:base_wua_quota_management.field_wizard_transfer_balances_transfer_positive
+msgid "Transfer Positive Balances"
+msgstr "Transferir balances positivos"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_cession_partner_id
@@ -4508,7 +4563,7 @@ msgid "Transferor Quota"
 msgstr "Cupo cedente"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:408
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:425
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_hydricmovement_type
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_massive_cancel_balances_cancel_type
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
@@ -4565,6 +4620,12 @@ msgstr "Type: (-) Traspaso de saldo al cupo siguiente"
 #: model:ir.ui.view,arch_db:base_wua_quota_management.wua_hydricmovement_view_search
 msgid "Type: (-) Pressurized Consumption"
 msgstr "Type: (-) Consumo a presión"
+
+#. module: base_wua_quota_management
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:630
+#, python-format
+msgid "Underplus balance from previous quota period"
+msgstr "Recepción de saldo negativo del período anterior"
 
 #. module: base_wua_quota_management
 #: model:ir.model.fields,field_description:base_wua_quota_management.field_wua_superproduct_uom_id
@@ -4768,7 +4829,7 @@ msgid "Water Right: Pressurized Irrigation"
 msgstr "Derecho de riego: Riego a presión"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:569
+#: code:addons/base_wua_quota_management/models/wua_hydricmovement.py:588
 #, python-format
 msgid "Water connection"
 msgstr "Toma"
@@ -4841,6 +4902,11 @@ msgid "Wizard"
 msgstr "Asistente"
 
 #. module: base_wua_quota_management
+#: model:ir.model,name:base_wua_quota_management.model_wizard_transfer_balances
+msgid "Wizard to Transfer Balances between Quota Periods"
+msgstr "Diálogo para transferir balances entre períodos de cupo"
+
+#. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:417
 #, python-format
 msgid "You can only delete a quota period if it is in draft or configured state."
@@ -4876,7 +4942,7 @@ msgstr "días"
 #. module: base_wua_quota_management
 #: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:394
 #: code:addons/base_wua_quota_management/models/wua_massive_assignment.py:594
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1441
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1505
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:69
 #: code:addons/base_wua_quota_management/wizard/wizard_massive_individualinputs.py:104
 #: code:addons/base_wua_quota_management/wizard/wizard_provision_parcel.py:72
@@ -4885,7 +4951,7 @@ msgid "ha"
 msgstr "ha"
 
 #. module: base_wua_quota_management
-#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1453
+#: code:addons/base_wua_quota_management/models/wua_quotaperiod.py:1517
 #, python-format
 msgid "l/s"
 msgstr "l/s"
@@ -4921,4 +4987,3 @@ msgstr "no se ha seleccionado ninguna parcela o no hay pagadores de agua."
 #: model:ir.model,name:base_wua_quota_management.model_wua_quota_aggregatevalue
 msgid "wua.quota.aggregatevalue"
 msgstr "wua.quota.aggregatevalue"
-

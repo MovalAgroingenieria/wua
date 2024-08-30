@@ -262,8 +262,8 @@ class WuaQuotaperiod(models.Model):
             balances_to_next_quotaperiod = False
             self.env.cr.execute("""
                 SELECT COUNT(*) FROM wua_hydricmovement
-                WHERE quotaperiod_id=""" + str(record.id) + """ AND
-                type='output_next_quota'""")
+                WHERE quotaperiod_id = """ + str(record.id) + """ AND
+                type IN ('output_next_quota', 'neg_input_prev_quota')""")
             query_results = self.env.cr.dictfetchall()
             if query_results and query_results[0].get('count') is not None:
                 number_of_hydricmovements_output_next_quota = \
@@ -280,7 +280,7 @@ class WuaQuotaperiod(models.Model):
             self.env.cr.execute("""
                 SELECT COUNT(*) FROM wua_hydricmovement
                 WHERE quotaperiod_id=""" + str(record.id) + """ AND
-                type='input_prev_quota'""")
+                type IN ('input_prev_quota', 'neg_output_next_quota')""")
             query_results = self.env.cr.dictfetchall()
             if query_results and query_results[0].get('count') is not None:
                 number_of_hydricmovements_input_prev_quota = \
@@ -647,21 +647,24 @@ class WuaQuotaperiod(models.Model):
     @api.multi
     def action_transfer_balances(self):
         self.ensure_one()
+
+        # Get the current quota period
         quotaperiod = self
-        next_quotaperiod = self._get_next_quotaperiod_open_generated(
-            quotaperiod)
-        if not next_quotaperiod:
-            raise exceptions.UserError(_(
-                'It is not possible to do this operation: '
-                'the next quota period is closed, it is not generated or '
-                'does not exist (the current quota period is the last one).'))
-        number_of_moved_quotas = self._transfer_positive_balances(
-            quotaperiod, next_quotaperiod)
-        if number_of_moved_quotas == 0:
-            raise exceptions.UserError(_(
-                'It is not possible to move any quotas: there are no '
-                'positive balances or quotas do not exist in the '
-                'destination quota period.'))
+
+        # Get the next quota period, checking if it's open and generated
+        next_quotaperiod = self._get_next_quotaperiod_open_generated(quotaperiod)
+
+        # Return an action to open the wizard
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'wizard.transfer.balances',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+            'context': {
+                'default_src_quotaperiod_id': quotaperiod.id,
+            },
+        }
 
     @api.multi
     def action_revert_balances(self):
@@ -675,7 +678,9 @@ class WuaQuotaperiod(models.Model):
                 'the next quota period is closed, it is not generated or '
                 'does not exist (the current quota period is the last one).'))
         number_of_moved_quotas = self._revert_positive_balances(
+            next_quotaperiod, quotaperiod) + self._revert_negative_balances(
             next_quotaperiod, quotaperiod)
+
         if number_of_moved_quotas == 0:
             raise exceptions.UserError(_(
                 'It is not possible to move any quotas: there are no '
@@ -1155,6 +1160,43 @@ class WuaQuotaperiod(models.Model):
                 resp = resp + 1
         return resp
 
+    def _transfer_negative_balances(self, src_quotaperiod, dst_quotaperiod):
+        resp = 0
+        src_quotas = self.env['wua.quota'].search(
+            [('quotaperiod_id', '=', src_quotaperiod.id),
+             ('balance', '<', 0)])
+        for src_quota in (src_quotas or []):
+            partner = src_quota.partner_id
+            superproduct = src_quota.superproduct_id
+            filtered_dst_quotas = self.env['wua.quota'].search(
+                [('quotaperiod_id', '=', dst_quotaperiod.id),
+                 ('superproduct_id', '=', superproduct.id),
+                 ('partner_id', '=', partner.id)])
+            if filtered_dst_quotas:
+                dst_quota = filtered_dst_quotas[0]
+                hydricmovement_model = self.env['wua.hydricmovement']
+                event_time_for_output_next_quota = \
+                    src_quotaperiod.end_date + ' 00:00:00'
+                event_time_for_input_prev_quota = \
+                    dst_quotaperiod.initial_date + ' 00:00:00'
+                volume = -src_quota.balance
+                hydricmovement_model.create({
+                    'quota_id': src_quota.id,
+                    'event_time': event_time_for_output_next_quota,
+                    'type': 'neg_output_next_quota',
+                    'volume': volume,
+                    'neg_output_next_quota_id': dst_quota.id,
+                })
+                hydricmovement_model.create({
+                    'quota_id': dst_quota.id,
+                    'event_time': event_time_for_input_prev_quota,
+                    'type': 'neg_input_prev_quota',
+                    'volume': volume,
+                    'neg_input_prev_quota_id': src_quota.id,
+                })
+                resp = resp + 1
+        return resp
+
     def _revert_positive_balances(self, src_quotaperiod, dst_quotaperiod):
         resp = 0
         hydricmovements_to_delete_in_dst_quotaperiod = \
@@ -1165,6 +1207,28 @@ class WuaQuotaperiod(models.Model):
             self.env['wua.hydricmovement'].search(
                 [('quotaperiod_id', '=', src_quotaperiod.id),
                  ('type', '=', 'input_prev_quota')])
+        if (hydricmovements_to_delete_in_dst_quotaperiod and
+           hydricmovements_to_delete_in_src_quotaperiod):
+            len_dst = len(hydricmovements_to_delete_in_dst_quotaperiod)
+            len_src = len(hydricmovements_to_delete_in_src_quotaperiod)
+            if len_dst == len_src:
+                resp = len_dst
+                hydricmovements_to_delete_in_src_quotaperiod.with_context(
+                    force_unlink=True).sudo().unlink()
+                hydricmovements_to_delete_in_dst_quotaperiod.with_context(
+                    force_unlink=True).sudo().unlink()
+        return resp
+
+    def _revert_negative_balances(self, src_quotaperiod, dst_quotaperiod):
+        resp = 0
+        hydricmovements_to_delete_in_dst_quotaperiod = \
+            self.env['wua.hydricmovement'].search(
+                [('quotaperiod_id', '=', dst_quotaperiod.id),
+                 ('type', '=', 'neg_input_prev_quota')])
+        hydricmovements_to_delete_in_src_quotaperiod = \
+            self.env['wua.hydricmovement'].search(
+                [('quotaperiod_id', '=', src_quotaperiod.id),
+                 ('type', '=', 'neg_output_next_quota')])
         if (hydricmovements_to_delete_in_dst_quotaperiod and
            hydricmovements_to_delete_in_src_quotaperiod):
             len_dst = len(hydricmovements_to_delete_in_dst_quotaperiod)

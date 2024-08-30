@@ -20,9 +20,12 @@ class WuaHydricmovement(models.Model):
     MAX_SIZE_MOVEMENT_DESCRIPTION = 115
     OUTPUT_TYPES = {'pres_consumption', 'grav_consumption',
                     'irrig_report', 'neg_indiv_assign',
-                    'granted_cession', 'output_next_quota'}
+                    'granted_cession', 'output_next_quota',
+                    'neg_output_next_quota'}
     INPUT_TYPES = {'multiple_assign', 'pos_indiv_assign',
-                   'received_cession', 'input_prev_quota'}
+                   'received_cession', 'input_prev_quota',
+                   'neg_input_prev_quota'
+                   }
 
     event_time = fields.Datetime(
         string='Time',
@@ -128,7 +131,9 @@ class WuaHydricmovement(models.Model):
         ('neg_indiv_assign', 'Negative Individual Assignment'),
         ('granted_cession', 'Granted Cession'),
         ('input_prev_quota', 'Input from previous quota'),
-        ('output_next_quota', 'Output to next quota')],
+        ('output_next_quota', 'Output to next quota'),
+        ('neg_input_prev_quota', 'Negative input from previous quota'),
+        ('neg_output_next_quota', 'Negative output to next quota')],
         string='Type',
         required=True,
         readonly=True,)
@@ -218,6 +223,18 @@ class WuaHydricmovement(models.Model):
 
     input_prev_quota_id = fields.Many2one(
         string='Source Quota',
+        comodel_name='wua.quota',
+        readonly=True,
+        ondelete='cascade')
+
+    neg_output_next_quota_id = fields.Many2one(
+        string='Negative quota to transfer',
+        comodel_name='wua.quota',
+        readonly=True,
+        ondelete='cascade')
+
+    neg_input_prev_quota_id = fields.Many2one(
+        string='Negative source Quota',
         comodel_name='wua.quota',
         readonly=True,
         ondelete='cascade')
@@ -557,6 +574,8 @@ class WuaHydricmovement(models.Model):
                 str(transferor.partner_code) + ']' + suffix
         if type == 'input_prev_quota':
             resp = _('Surplus balance from previous quota period') + '. '
+        if type == 'neg_input_prev_quota':
+            resp = _('Negative balance to next quota period') + '. '
         return resp
 
     def _get_description_for_output_types(self, hydricmovement):
@@ -607,6 +626,8 @@ class WuaHydricmovement(models.Model):
                 str(receiver.partner_code) + ']' + suffix
         if type == 'output_next_quota':
             resp = _('Positive balance to next quota period') + '. '
+        if type == 'neg_output_next_quota':
+            resp = _('Underplus balance from previous quota period') + '. '
         return resp
 
     # Hook for new hydric-movement types in other modules (it is called
@@ -637,7 +658,11 @@ class WuaHydricmovement(models.Model):
                         (hydricmovement.type == 'output_next_quota' and
                          (not hydricmovement.output_next_quota_id)) or
                         (hydricmovement.type == 'input_prev_quota' and
-                         (not hydricmovement.input_prev_quota_id)))
+                         (not hydricmovement.input_prev_quota_id)) or
+                        (hydricmovement.type == 'neg_output_next_quota' and
+                         (not hydricmovement.neg_output_next_quota_id)) or
+                        (hydricmovement.type == 'neg_input_prev_quota' and
+                         (not hydricmovement.neg_input_prev_quota_id)))
         else:
             resp = self._test_reference_id_for_new_types(hydricmovement)
         return resp
