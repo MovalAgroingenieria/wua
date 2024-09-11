@@ -343,3 +343,11 @@ class WuaAgriculturalseason(models.Model):
                         'partner_id': cropplan_data['partner_id'],
                         'enrolledsubparcel_ids': enrolledsubparcels_data})
             return True
+
+    @api.model
+    def create(self, vals):
+        if 'enrollment_initial_date' not in vals:
+            vals['enrollment_initial_date'] = vals['initial_date']
+        if 'enrollment_end_date' not in vals:
+            vals['enrollment_end_date'] = vals['end_date']
+        return super(WuaAgriculturalseason, self).create(vals)
