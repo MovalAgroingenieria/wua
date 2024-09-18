@@ -34,7 +34,7 @@ class AccountPaymentOrder(models.Model):
         # @INFO: Is the wua associate number
         #        The format depends on each wua
         if partner_id.partner_code:
-            # Format 5 numbers padded with zeros 
+            # Format 5 numbers padded with zeros
             # and padded to 12 with white spaces
             fixed_number = str(partner_id.partner_code).zfill(5).ljust(12)
         else:
@@ -75,6 +75,7 @@ class AccountPaymentOrder(models.Model):
                     products.append(iline.product_id)
 
         # Construct product lines
+        # @INFO [2024.09.18]: Quantity is rounded to 4 decimal places
         product_lines = []
         if products:
             for product in products:
@@ -85,7 +86,7 @@ class AccountPaymentOrder(models.Model):
                         product_total_qty = product_total_qty + iline.quantity
                 product_total_qty = \
                     self.env['wua.parcel'].transform_float_to_locale(
-                         product_total_qty, 2)
+                        product_total_qty, 4)
                 product_price = \
                     self.env['wua.parcel'].transform_float_to_locale(
                         product.lst_price, 2)
