@@ -1398,7 +1398,7 @@ class WuaParcel(models.Model):
                     SET with_gis_drainagevalve = TRUE,
                         gis_viewer_x = postgis.ST_X(wgi1.geom),
                         gis_viewer_y = postgis.ST_Y(wgi1.geom)
-                    FROM public.wua_gis_draiangevalve wgi1 WHERE
+                    FROM public.wua_gis_drainagevalve wgi1 WHERE
                         wi1.name = wgi1.name;
                 """)
                 self.env.cr.commit()
