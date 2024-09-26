@@ -1273,8 +1273,9 @@ class WuaParcel(models.Model):
     def _get_sms_subject_for_leases_notify(self, lang, parcel):
         # Default label for translations
         default_lease_of_parcel_label = _('Lease of parcel')
-        lease_of_parcel_label = self.get_value_from_translation(
-            'base_wua', 'Lease of parcel', parcel.owner_id.lang)
+        lease_of_parcel_label = self.with_context(
+            {'lang': lang}).get_value_from_translation(
+            'base_wua', 'Lease of parcel')
         if (not lease_of_parcel_label):
             lease_of_parcel_label = default_lease_of_parcel_label
         sms_subject = lease_of_parcel_label + ' ' + parcel.name
@@ -1287,25 +1288,30 @@ class WuaParcel(models.Model):
             ', please, contact the community to regularize your '
             'situation')
         # Get labels with owner lang and send SMS
-        the_lease_parcel_label = self.get_value_from_translation(
+        the_lease_parcel_label = self.with_context(
+            {'lang': lang}).get_value_from_translation(
             'base_wua', 'The lease of the parcel',
-            lang)
+            )
         if not the_lease_parcel_label:
             the_lease_parcel_label = default_the_lease_parcel_label
-        will_end_label = self.get_value_from_translation(
+        will_end_label = self.with_context(
+            {'lang': lang}).get_value_from_translation(
             'base_wua', 'will end on',
-            lang)
+            )
         if not will_end_label:
             will_end_label = default_will_end_label
-        please_contact_label = self.get_value_from_translation(
+        please_contact_label = self.with_context(
+            {'lang': lang}).get_value_from_translation(
             'base_wua',
             ', please, contact the community to regularize your '
             'situation',
-            lang)
+            )
         if not please_contact_label:
             please_contact_label = default_please_contact_label
+        leased_to = fields.Date.from_string(
+            parcel.leased_to).strftime('%d/%m/%Y')
         sms_message = the_lease_parcel_label + ' ' + parcel.name + \
-            ' ' + will_end_label + ' ' + parcel.leased_to + \
+            ' ' + will_end_label + ' ' + leased_to + \
             please_contact_label
         return sms_message
 
@@ -1322,7 +1328,7 @@ class WuaParcel(models.Model):
                 # OWNER:
                 # SMS Subject
                 sms_subject = self._get_sms_subject_for_leases_notify(
-                    parcel.owner_id.lang, parcel
+                    parcel.owner_id.lang, parcel,
                 )
                 # SMS message
                 sms_message = self._get_sms_message_for_leases_notify(
@@ -1333,15 +1339,15 @@ class WuaParcel(models.Model):
                 })
                 sms_wizard.send_sms_action({
                     'mode': 'partner',
-                    'active_ids': [parcel.owner_id.id]
+                    'active_ids': [parcel.owner_id.id],
                 })
                 # LEASER
                 sms_subject = self._get_sms_subject_for_leases_notify(
-                    parcel.leaser_id.lang, parcel
+                    parcel.leaser_id.lang, parcel,
                 )
                 # SMS message
                 sms_message = self._get_sms_message_for_leases_notify(
-                    parcel.leaser_id.lang, parcel
+                    parcel.leaser_id.lang, parcel,
                 )
                 sms_wizard = self.env['wausms.wizard'].create({
                     'subject': sms_subject,
