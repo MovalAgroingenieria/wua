@@ -23,19 +23,10 @@ class WuaAgriculturalseason(models.Model):
             record.number_of_measurements = \
                 len(record.pumpgroupmeasurement_ids)
 
-    @api.multi
-    def write(self, vals):
-        if len(self) == 1:
-            resp = super(WuaAgriculturalseason, self).write(vals)
-            if 'active_agriculturalseason' in vals:
-                self._update_active_flag_in_slave_models(
-                    self.id, vals['active_agriculturalseason'])
-        else:
-            resp = super(WuaAgriculturalseason, self).write(vals)
-        return resp
-
     def _update_active_flag_in_slave_models(self, agriculturalseason_id,
                                             active_agriculturalseason):
+        super(WuaAgriculturalseason, self)._update_active_flag_in_slave_models(
+            agriculturalseason_id, active_agriculturalseason)
         if agriculturalseason_id:
             try:
                 self.env.cr.savepoint()
