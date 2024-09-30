@@ -346,7 +346,7 @@ class WuaInvoiceset(models.Model):
                             'amount_tax': amounts['amount_tax'],
                             'amount_total': amounts['amount_total'],
                             'number_of_invoices': number_of_invoices,
-                            'state': 'generated'
+                            'state': 'generated',
                             })
                         # Hook: run after the calculation
                         self.after_calculate_invoiceset(record)

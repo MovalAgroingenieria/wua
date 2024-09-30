@@ -135,7 +135,8 @@ class ProductTemplate(models.Model):
         string='Code',
         index=True,
         compute='_compute_productcategory_code',
-        store=True,)
+        store=True,
+    )
 
     parcel_area_to_be_invoiced = fields.Selection([
         ('area_official', 'Area Official')],
@@ -274,4 +275,3 @@ class ProductProduct(models.Model):
             if record.product_tmpl_id:
                 record.invoiceset_selectable = \
                     record.product_tmpl_id.invoiceset_selectable
-

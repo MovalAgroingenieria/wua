@@ -11,12 +11,14 @@ class WuaInvoicesetLineParcel(models.Model):
     area_irrigation = fields.Float(
         string='Irrigation Area',
         digits=(32, 4),
-        index=True,)
+        index=True,
+    )
 
     area_drainage = fields.Float(
         string='Drainage Area',
         digits=(32, 4),
-        index=True,)
+        index=True,
+    )
 
 
 class WuaInvoicesetLine(models.Model):

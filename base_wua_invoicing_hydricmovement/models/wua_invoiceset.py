@@ -189,7 +189,7 @@ class WuaInvoiceset(models.Model):
                 self.env['wua.hydricmovement'].browse(hydricmovement_ids)
             hydricmovements.write({
                 'invoiced_hydricmovement': False,
-                'invoiceset_id': None
+                'invoiceset_id': None,
             })
         if quota_pres_consumption_ids:
             quota_pres_consumption_ids = list(set(quota_pres_consumption_ids))
@@ -242,7 +242,7 @@ class WuaInvoiceset(models.Model):
                             hydricmovement_ids)
                     hydricmovements.write({
                         'invoiced_hydricmovement': True,
-                        'invoiceset_id': invoiceset.id
+                        'invoiceset_id': invoiceset.id,
                         })
                 # Removed lines not selected
                 unselected_hydricmovements = \
@@ -311,10 +311,9 @@ class WuaInvoicesetLine(models.Model):
                     """, (user_id, user_id, invoicesetline_id,
                           "TRUE" if invoicing_hydricmovement_selected_default
                           else "FALSE",
-                          superproduct_id
+                          superproduct_id,
                           ))
                 else:
-                    print(id)
                     self.env.cr.execute("""
                     INSERT INTO wua_invoiceset_line_hydricmovement (id,
                     create_uid, write_uid, create_date, write_date,
@@ -339,7 +338,7 @@ class WuaInvoicesetLine(models.Model):
                     """, (user_id, user_id, invoicesetline_id,
                           "TRUE" if invoicing_hydricmovement_selected_default
                           else "FALSE",
-                          superproduct_id
+                          superproduct_id,
                           ))
                 self.env.cr.commit()
                 self.env.invalidate_all()
@@ -384,7 +383,7 @@ class WuaInvoicesetLine(models.Model):
                     hydricmovement_ids)
                 hydricmovements.write({
                     'invoiceset_id': None,
-                    'invoiced_hydricmovement': False
+                    'invoiced_hydricmovement': False,
                 })
         return super(WuaInvoicesetLine, self).unlink()
 
@@ -483,7 +482,8 @@ class WuaInvoicesetLineHydricmovement(models.Model):
 
     description = fields.Char(
         string='Description',
-        index=True,)
+        index=True,
+    )
 
     type = fields.Selection([
         ('multiple_assign', 'Multiple Assignment'),
@@ -498,7 +498,8 @@ class WuaInvoicesetLineHydricmovement(models.Model):
         ('output_next_quota', 'Output to next quota')],
         string='Type',
         required=True,
-        readonly=True,)
+        readonly=True,
+    )
 
     number_of_invoices = fields.Integer(
         string='Billings',
@@ -506,10 +507,10 @@ class WuaInvoicesetLineHydricmovement(models.Model):
 
     @api.multi
     def add_to_invoiceset(self):
-        vals = {'selected': True, }
+        vals = {'selected': True}
         self.write(vals)
 
     @api.multi
     def remove_from_invoiceset(self):
-        vals = {'selected': False, }
+        vals = {'selected': False}
         self.write(vals)

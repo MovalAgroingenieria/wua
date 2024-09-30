@@ -18,16 +18,17 @@ class WuaWateringrequest(models.Model):
         for record in self:
             html_quota_balance = ''
             if record.partner_id:
-                active_agriculturalseason = \
-                    self.env['wua.agriculturalseason'].\
-                    get_active_agriculturalseason()
-                if (active_agriculturalseason and
-                   active_agriculturalseason == record.agriculturalseason_id):
+                active_agriculturalseason = self.agriculturalseason_id
+                if (not active_agriculturalseason):
+                    active_agriculturalseason = \
+                        self.env['wua.agriculturalseason'].\
+                        get_active_agriculturalseason()
+                if (active_agriculturalseason):
                     html_quota_balance = self._get_html_quota_balance(
                         record.partner_id)
             record.html_quota_balance = html_quota_balance
 
-    @api.onchange('partner_id')
+    @api.onchange('partner_id', 'agriculturalseason_id')
     def _onchange_partner_id(self):
         self.html_quota_balance = \
             self._get_html_quota_balance(self.partner_id)
@@ -73,8 +74,10 @@ class WuaWateringrequest(models.Model):
     # else the current quota period is the period of the current date.
     def _get_current_quotaperiod(self):
         resp = None
-        active_agriculturalseason = \
-            self.env['wua.agriculturalseason'].get_active_agriculturalseason()
+        active_agriculturalseason = self.agriculturalseason_id
+        if (not active_agriculturalseason):
+            active_agriculturalseason = self.env[
+                'wua.agriculturalseason'].get_active_agriculturalseason()
         if active_agriculturalseason:
             quotaperiods = self.env['wua.quotaperiod'].search(
                 [('agriculturalseason_id', '=', active_agriculturalseason.id),
