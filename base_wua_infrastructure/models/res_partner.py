@@ -67,9 +67,9 @@ class ResPartner(models.Model):
         id_tree_view = \
             self.env.ref('base_wua_infrastructure.'
                          'res_partner_waterconnection_view_tree').id
-        id_search_view = \
+        search_view = \
             self.env.ref('base_wua_infrastructure.'
-                         'res_partner_waterconnection_view_search').id
+                         'res_partner_waterconnection_view_search')
         id_kanban_view = \
             self.env.ref('base_wua_infrastructure.'
                          'res_partner_waterconnection_view_kanban').id
@@ -84,8 +84,8 @@ class ResPartner(models.Model):
             'res_model': 'res.partner.waterconnection',
             'view_type': 'form',
             'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_search_view, 'search'),
-                      (id_kanban_view, 'kanban')],
+            'views': [(id_tree_view, 'tree'), (id_kanban_view, 'kanban')],
+            'search_view_id': (search_view.id, search_view.name),
             'target': 'current',
             'context': context,
             'domain': condition,
