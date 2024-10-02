@@ -6,14 +6,59 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-28 10:37+0000\n"
-"PO-Revision-Date: 2024-08-28 10:37+0000\n"
+"POT-Creation-Date: 2024-10-02 13:30+0000\n"
+"PO-Revision-Date: 2024-10-02 13:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua
+#: model:mail.template,body_html:base_wua.mail_template_data_new_portal_user
+msgid "\n"
+"                <p>Dear ${object.user_id.name or ''},</p>\n"
+"\n"
+"                <p>We have granted access to ${object.wizard_id.portal_id.name} in ${user.company_id.name}.</p>\n"
+"\n"
+"                <p>Your account information is:</p>\n"
+"                <ul>\n"
+"                <li>User: ${object.user_id.login or ''}</li>\n"
+"                <li>Database: ${'dbname' in ctx and ctx['dbname'] or ''}</li>\n"
+"                <li>Portal: <a href=\"${'portal_url' in ctx and ctx['portal_url'] or ''}\" data-original-title=\"\" title=\"\">link</a></li>\n"
+"                </ul>\n"
+"                <br>\n"
+"\n"
+"                <p><b>You can set or change your password at the following link</b></p>\n"
+"                <a href=\"${object.user_id.signup_url}\"\n"
+"                    style=\"color:#378167;padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#378167; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #378167; border: 1px solid #378167; border-radius:3px\">\n"
+"                    Set password\n"
+"                </a>\n"
+"                <br>\n"
+"                <br>\n"
+"\n"
+"                <p>${object.wizard_id.welcome_message or ''}</p>\n"
+"                <br>\n"
+"\n"
+"                <p>Once the password has been set, you will be able to log in to the e-Office at the <a href=\"${'portal_url' in ctx and ctx['portal_url'] or ''}\" data-original-title=\"\" title=\"\">following address</a>.</p>\n"
+"\n"
+"                <p>To log in, click on <b>Login</b> and enter your user account ${object.user_id.login or ''}&nbsp;and password.</p>\n"
+"\n"
+"                <p>Once logged in, you will be able to consult the information on your membership card, parcels, invoices, viewer, etc.</p>\n"
+"\n"
+"                <p>You can consult in more detail the use of the user portal by accessing the following <a href=\"https://wiki.moval.es/Odoo_funcional/administracion_sitio_web/Usuario_de_portal_comunero\">link</a>.&nbsp;</p>\n"
+"                <br>\n"
+"\n"
+"                <p>If you need any further clarification, you can contact the company's office ${user.company_id.name}.</p>\n"
+"                <br>\n"
+"                <br>\n"
+"\n"
+"                <p>Yours sincerely,</p>\n"
+"                <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+msgstr ""
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
@@ -50,8 +95,7 @@ msgid "(image of"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1286
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1286
+#: code:addons/base_wua/models/wua_parcel.py:1287
 #, python-format
 msgid ", please, contact the community to regularize your situation"
 msgstr ""
@@ -509,96 +553,6 @@ msgid "A value between 0 and 360 degrees. 0: North, 90: East, 180: Suth, 270: We
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_001
-msgid "ACELGA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_002
-msgid "ADORMIDERA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_003
-msgid "AGUACATE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_004
-msgid "AJO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_005
-msgid "ALBARICOQUERO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_006
-msgid "ALCACHOFA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_007
-msgid "ALCAPARRA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_008
-msgid "ALFALFA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_009
-msgid "ALGARROBO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_010
-msgid "ALGODÓN"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_011
-msgid "ALMENDRO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_012
-msgid "ALTRAMUZ"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_013
-msgid "APIO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_014
-msgid "AROMÁTICAS LEÑOSAS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_015
-msgid "ARROZ"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_016
-msgid "AVELLANO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_017
-msgid "AVENA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_018
-msgid "AZAFRÁN"
-msgstr ""
-
-#. module: base_wua
 #: sql_constraint:res.partner.bank:0
 msgid "Account Number must be unique (NOT)"
 msgstr ""
@@ -669,6 +623,11 @@ msgid "Allowed remote IP for public HTTP-GET of SHP Parcels"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_011
+msgid "Almond"
+msgstr ""
+
+#. module: base_wua
 #: model:mail.template,subject:base_wua.lease_ended_or_near_report_email_template
 msgid "Analysis of terminated or close to expiration leases"
 msgstr ""
@@ -679,15 +638,24 @@ msgid "Annual Volume (m³)"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_087
+msgid "Apple"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wizard_change_parcel_name_view_form
 #: model:ir.ui.view,arch_db:base_wua.wua_config_settings_view_form
 msgid "Apply"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_005
+msgid "Apricot"
+msgstr ""
+
+#. module: base_wua
 #. openerp-web
 #: code:addons/base_wua/static/src/js/list_view.js:19
-#: code:addons/moval_addons/wua/base_wua/static/src/js/list_view.js:19
 #, python-format
 msgid "Archive"
 msgstr ""
@@ -776,8 +744,13 @@ msgid "Area, as payer (hectares)"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.irrigationsystem,name:base_wua.irrigationsystem_02
-msgid "Aspersión"
+#: model:wua.cultivation,name:base_wua.cultivation_006
+msgid "Artichoke"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_053
+msgid "Asparagus"
 msgstr ""
 
 #. module: base_wua
@@ -786,13 +759,8 @@ msgid "Aver. Elevation"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_019
-msgid "BARBECHO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_020
-msgid "BATATA"
+#: model:wua.cultivation,name:base_wua.cultivation_003
+msgid "Avocado"
 msgstr ""
 
 #. module: base_wua
@@ -802,33 +770,8 @@ msgid "BBOX of aerial image"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_021
-msgid "BERENJENA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_022
-msgid "BERZA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_023
-msgid "BONIATO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_024
-msgid "BORRAJA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_025
-msgid "BRÓCOLI"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.subparceltype,name:base_wua.subparceltype_06
-msgid "Balsa"
+#: model:wua.cultivation,name:base_wua.cultivation_125
+msgid "Banana"
 msgstr ""
 
 #. module: base_wua
@@ -854,6 +797,26 @@ msgstr ""
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.wua_technical_bankingmandate_action
 msgid "Banking Mandates (low-level)"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_034
+msgid "Barley of 2 races"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_035
+msgid "Barley of 6 races"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_132
+msgid "Beet table"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_059
+msgid "Big strawberry"
 msgstr ""
 
 #. module: base_wua
@@ -886,6 +849,16 @@ msgid "Book"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_024
+msgid "Borage"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_025
+msgid "Broccoli"
+msgstr ""
+
+#. module: base_wua
 #: selection:wua.configuration,polling_system_type:0
 msgid "By different area intervals"
 msgstr ""
@@ -896,118 +869,18 @@ msgid "By identical area intervals"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_026
-msgid "CACAHUETE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_027
-msgid "CALABACÍN"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_028
-msgid "CALABAZA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_031
-msgid "CAQUI"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_032
-msgid "CARDO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_033
-msgid "CASTAÑO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_029
-msgid "CAÑA DE AZUCAR"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_034
-msgid "CEBADA DE 2 CARRERAS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_035
-msgid "CEBADA DE 6 CARRERAS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_036
-msgid "CEBOLLA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_037
-msgid "CENTENO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_038
-msgid "CEREZO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_039
-msgid "CHAMPIÑÓN"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_040
-msgid "CHIRIMOYO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_041
-msgid "CHOPO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_042
-msgid "CHUFA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_043
-msgid "CHUMBERA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_044
-msgid "CIRUELO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_046
-msgid "CLAVEL"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_047
-msgid "COLES Y BERZAS FORRAJERAS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_048
-msgid "COLIFLOR"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_049
-msgid "COLZA"
-msgstr ""
-
-#. module: base_wua
 #: selection:wua.parcel,title_deed_register_code_type:0
 msgid "CRU"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_022
+msgid "Cabbage"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_133
+msgid "Cabbage head"
 msgstr ""
 
 #. module: base_wua
@@ -1086,6 +959,41 @@ msgid "Cancel"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_089
+msgid "Cantaloupe"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_007
+msgid "Caper"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_046
+msgid "Carnation"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_009
+msgid "Carob tree"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_151
+msgid "Carrot"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_048
+msgid "Cauliflower"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_013
+msgid "Celery"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.ui.menu,name:base_wua.base_wua_census_menu
 msgid "Census"
 msgstr ""
@@ -1102,9 +1010,54 @@ msgid "Change Code"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_001
+msgid "Chard"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_038
+msgid "Cherry"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_033
+msgid "Chestnut"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_060
+msgid "Chickpeas"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_052
+msgid "Chicory"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_040
+msgid "Chirimoyo"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_041
+msgid "Chop"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_043
+msgid "Chumbera"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_title_deed_city
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
 msgid "City"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_141
+msgid "Clover"
 msgstr ""
 
 #. module: base_wua
@@ -1113,6 +1066,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua.field_wua_gis_parcel_view_name
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_name
 msgid "Code"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_047
+msgid "Coles and fodder cabbages"
 msgstr ""
 
 #. module: base_wua
@@ -1182,13 +1140,33 @@ msgstr ""
 
 #. module: base_wua
 #: model:wua.productionmethod,name:base_wua.productionmethod_01
-msgid "Convencional"
+msgid "Conventional"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_082
+msgid "Corn"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_083
+msgid "Corn candy"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_084
+msgid "Corn fodder"
 msgstr ""
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
 msgid "Costs (%)"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_010
+msgid "Cotton"
 msgstr ""
 
 #. module: base_wua
@@ -1274,6 +1252,11 @@ msgid "Criteria"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_119
+msgid "Cucumber"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_subparcel_is_cultivable
 #: model:ir.model.fields,field_description:base_wua.field_wua_subparceltype_is_cultivable
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_subparcel_view_search
@@ -1319,16 +1302,6 @@ msgid "Cultivations"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_030
-msgid "CÁÑAMO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_045
-msgid "CÍTRICOS HÍBRIDOS"
-msgstr ""
-
-#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_title_deed_date
 msgid "Date"
 msgstr ""
@@ -1363,6 +1336,11 @@ msgid "Date of last import aerial image"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_114
+msgid "Date palm"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_days_until_lease_ends
 msgid "Days until lease ends"
 msgstr ""
@@ -1370,7 +1348,6 @@ msgstr ""
 #. module: base_wua
 #. openerp-web
 #: code:addons/base_wua/static/src/js/list_view.js:21
-#: code:addons/moval_addons/wua/base_wua/static/src/js/list_view.js:21
 #, python-format
 msgid "Delete"
 msgstr ""
@@ -1434,8 +1411,23 @@ msgid "Dotation (m3/ha)"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_050
-msgid "ENDIVIA"
+#: model:wua.irrigationsystem,name:base_wua.irrigationsystem_01
+msgid "Drip irrigation"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_066
+msgid "Dry bean"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_073
+msgid "Dry haricot"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_064
+msgid "Dry pea"
 msgstr ""
 
 #. module: base_wua
@@ -1449,38 +1441,17 @@ msgid "EPSG Code for the viewer layers"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_051
-msgid "ERIAL"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_052
-msgid "ESCAROLA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_054
-msgid "ESPELTA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_055
-msgid "ESPINACA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_053
-msgid "ESPÁRRAGO"
-msgstr ""
-
-#. module: base_wua
 #: model:wua.productionmethod,name:base_wua.productionmethod_02
-msgid "Ecológica"
+msgid "Ecological"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_021
+msgid "Eggplant"
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/res_partner.py:590
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:590
 #, python-format
 msgid "Emails"
 msgstr ""
@@ -1503,57 +1474,48 @@ msgstr ""
 #. module: base_wua
 #: code:addons/base_wua/models/wua_region.py:139
 #: code:addons/base_wua/models/wua_region.py:225
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:139
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:225
 #, python-format
 msgid "Empty Cadastral Code."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1112
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1112
 #, python-format
 msgid "Empty Cadastral Parcel."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1096
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1096
 #, python-format
 msgid "Empty Cadastral Polygon."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_region.py:55
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:55
 #, python-format
 msgid "Empty Code."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_region.py:219
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:219
 #, python-format
 msgid "Empty County Name."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_region.py:49
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:49
 #, python-format
 msgid "Empty Region Name."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_region.py:133
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:133
 #, python-format
 msgid "Empty State Name."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_mastertable.py:54
-#: code:addons/moval_addons/wua/base_wua/models/wua_mastertable.py:54
 #, python-format
 msgid "Empty Value."
 msgstr ""
@@ -1561,20 +1523,18 @@ msgstr ""
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1066
 #: code:addons/base_wua/wizard/wizard_change_parcel_name.py:38
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1066
-#: code:addons/moval_addons/wua/base_wua/wizard/wizard_change_parcel_name.py:38
 #, python-format
 msgid "Empty parcel code."
 msgstr ""
 
 #. module: base_wua
-#: model:wua.subparceltype,name:base_wua.subparceltype_01
-msgid "En cultivo"
+#: model:ir.model.fields,help:base_wua.field_wua_configuration_intersection_management
+msgid "Enable the management of parcel area intersections"
 msgstr ""
 
 #. module: base_wua
-#: model:ir.model.fields,help:base_wua.field_wua_configuration_intersection_management
-msgid "Enable the management of parcel area intersections"
+#: model:wua.cultivation,name:base_wua.cultivation_050
+msgid "Endive"
 msgstr ""
 
 #. module: base_wua
@@ -1591,6 +1551,11 @@ msgstr ""
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wua_parcel
 msgid "Entity (parcel)"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_051
+msgid "Erial"
 msgstr ""
 
 #. module: base_wua
@@ -1654,29 +1619,13 @@ msgstr ""
 #. module: base_wua
 #. openerp-web
 #: code:addons/base_wua/static/src/js/list_view.js:18
-#: code:addons/moval_addons/wua/base_wua/static/src/js/list_view.js:18
 #, python-format
 msgid "Export"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_056
-msgid "FLORES Y ORNAMENTALES"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_057
-msgid "FRAMBUESO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_058
-msgid "FRESA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_059
-msgid "FRESÓN"
+#: model:wua.cultivation,name:base_wua.cultivation_019
+msgid "Fallow"
 msgstr ""
 
 #. module: base_wua
@@ -1694,8 +1643,18 @@ msgid "Farm Property"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.subparceltype,name:base_wua.subparceltype_01
+msgid "Farming"
+msgstr ""
+
+#. module: base_wua
 #: selection:res.partner,gender:0
 msgid "Female"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_068
+msgid "Fig tree"
 msgstr ""
 
 #. module: base_wua
@@ -1714,6 +1673,21 @@ msgid "Flow (L/s)"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_056
+msgid "Flowers and ornamentals"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_131
+msgid "Fodder beet"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_063
+msgid "Fodder pea"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_configuration_ip_remote_address_for_shp
 msgid "For public creation of SHP Parcels based on HTTP-GET requests, restriction to clientes from a IP address"
 msgstr ""
@@ -1725,18 +1699,8 @@ msgid "From"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_060
-msgid "GARBANZOS"
-msgstr ""
-
-#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_gis_parcel_view_gid
 msgid "GID"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_061
-msgid "GIRASOL"
 msgstr ""
 
 #. module: base_wua
@@ -1816,28 +1780,8 @@ msgid "GIS Viewer WMS URL"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_062
-msgid "GRANADO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_063
-msgid "GUISANTE FORRAJERO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_064
-msgid "GUISANTE SECO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_065
-msgid "GUISANTE VERDE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.subparceltype,name:base_wua.subparceltype_02
-msgid "Ganadero"
+#: model:wua.cultivation,name:base_wua.cultivation_004
+msgid "Garlic"
 msgstr ""
 
 #. module: base_wua
@@ -1878,13 +1822,33 @@ msgid "Global Vote Calculation"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.irrigationsystem,name:base_wua.irrigationsystem_01
-msgid "Goteo"
+#: model:wua.cultivation,name:base_wua.cultivation_126
+msgid "Grapefruit"
 msgstr ""
 
 #. module: base_wua
 #: model:wua.irrigationsystem,name:base_wua.irrigationsystem_03
-msgid "Gravedad"
+msgid "Gravity irrigation"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_067
+msgid "Green bean"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_074
+msgid "Green haricot"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_065
+msgid "Green pea"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_072
+msgid "Greenhouse"
 msgstr ""
 
 #. module: base_wua
@@ -1897,33 +1861,38 @@ msgid "Group By"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_066
-msgid "HABA SECA"
+#: model:wua.cultivation,name:base_wua.cultivation_143
+msgid "Hard wheat"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_067
-msgid "HABA VERDE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_068
-msgid "HIGUERA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_069
-msgid "HORTALIZAS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_070
-msgid "HUERTOS FAMILIARES"
+#: model:wua.cultivation,name:base_wua.cultivation_016
+msgid "Hazel"
 msgstr ""
 
 #. module: base_wua
 #: selection:wua.configuration,area_measurement_type:0
 msgid "Hectare"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_030
+msgid "Hemp"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_070
+msgid "Homegardens"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_081
+msgid "Hop"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_045
+msgid "Hybrid citrus"
 msgstr ""
 
 #. module: base_wua
@@ -1955,16 +1924,6 @@ msgstr ""
 #. module: base_wua
 #: selection:wua.parcel,title_deed_register_code_type:0
 msgid "IDUFIR"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_071
-msgid "IMPRODUCTIVO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_072
-msgid "INVERNADERO"
 msgstr ""
 
 #. module: base_wua
@@ -2051,7 +2010,7 @@ msgstr ""
 
 #. module: base_wua
 #: model:wua.productionmethod,name:base_wua.productionmethod_03
-msgid "Integrada"
+msgid "Integrated"
 msgstr ""
 
 #. module: base_wua
@@ -2110,6 +2069,11 @@ msgid "Irrigation partner"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.irrigationsystem,name:base_wua.irrigationsystem_02
+msgid "Irrigation sprinkler"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_is_lessee
 #: model:ir.model.fields,field_description:base_wua.field_res_users_is_lessee
 msgid "Is Lessee"
@@ -2133,55 +2097,24 @@ msgid "Is a company (marked)"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1626
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1626
+#: code:addons/base_wua/models/wua_parcel.py:1632
 #, python-format
 msgid "It is not possible to create the files of SHP."
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_073
-msgid "JUDÍA SECA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_074
-msgid "JUDÍA VERDE"
+#: model:wua.cultivation,name:base_wua.cultivation_031
+msgid "Khaki"
 msgstr ""
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_075
-msgid "KIWI"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_076
-msgid "LECHUGA"
+msgid "Kiwi"
 msgstr ""
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.view_partner_form
 msgid "LEGAL REPRESENTATIVE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_077
-msgid "LENTEJAS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_078
-msgid "LIMONERO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_079
-msgid "LINO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_080
-msgid "LOMBARDA"
 msgstr ""
 
 #. module: base_wua
@@ -2293,7 +2226,6 @@ msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1275
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1275
 #, python-format
 msgid "Lease of parcel"
 msgstr ""
@@ -2326,10 +2258,24 @@ msgid "Leaser"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_127
+msgid "Leek"
+msgstr ""
+
+#. module: base_wua
 #: code:addons/base_wua/models/res_partner.py:194
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:194
 #, python-format
 msgid "Legal Rep."
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_078
+msgid "Lemon"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_077
+msgid "Lentils"
 msgstr ""
 
 #. module: base_wua
@@ -2346,8 +2292,28 @@ msgid "Lessor"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_076
+msgid "Lettuce"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_129
+msgid "Licorice"
+msgstr ""
+
+#. module: base_wua
 #: selection:wua.configuration,reports_style:0
 msgid "Light"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_079
+msgid "Linen"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.subparceltype,name:base_wua.subparceltype_02
+msgid "Livestock"
 msgstr ""
 
 #. module: base_wua
@@ -2362,68 +2328,18 @@ msgid "Location"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_081
-msgid "LÚPULO"
+#: model:wua.cultivation,name:base_wua.cultivation_080
+msgid "Lombarda"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_085
-msgid "MANDARINO"
+#: model:wua.cultivation,name:base_wua.cultivation_008
+msgid "Lucerne"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_086
-msgid "MANGO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_087
-msgid "MANZANO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_082
-msgid "MAÍZ"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_083
-msgid "MAÍZ DULCE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_084
-msgid "MAÍZ FORRAJERO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_088
-msgid "MELOCOTONERO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_089
-msgid "MELÓN"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_090
-msgid "MEMBRILERO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_091
-msgid "MIJO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_092
-msgid "MORAL"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_093
-msgid "MORERA"
+#: model:wua.cultivation,name:base_wua.cultivation_012
+msgid "Lupine"
 msgstr ""
 
 #. module: base_wua
@@ -2447,6 +2363,16 @@ msgid "Manager"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_085
+msgid "Mandarin"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_086
+msgid "Mango"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_included_in_certificate
 msgid "Mark to include in certificate"
 msgstr ""
@@ -2467,38 +2393,28 @@ msgid "Measurement unit for area"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_099
+msgid "Medlar"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_elev_min
 msgid "Min. Elevation"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_094
-msgid "NABO"
+#: model:wua.cultivation,name:base_wua.cultivation_092
+msgid "Moral"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_095
-msgid "NABO FORRAJERO"
+#: model:wua.cultivation,name:base_wua.cultivation_093
+msgid "Mulberry"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_096
-msgid "NARANJO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_097
-msgid "NARANJO AMARGO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_098
-msgid "NECTARINOS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_100
-msgid "NOGAL FRUTO"
+#: model:wua.cultivation,name:base_wua.cultivation_039
+msgid "Mushroom"
 msgstr ""
 
 #. module: base_wua
@@ -2533,6 +2449,11 @@ msgid "Name of the Table used for the calculus of the intersected area of parcel
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_098
+msgid "Nectarines"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partnerlink_area_official_net
 msgid "Net Official Area"
 msgstr ""
@@ -2549,14 +2470,12 @@ msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/controllers/partner.py:58
-#: code:addons/moval_addons/wua/base_wua/controllers/partner.py:58
 #, python-format
 msgid "No SHP: The user must be a portal user, or it is not possible to obtain SHP outside of the main program."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1678
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1678
+#: code:addons/base_wua/models/wua_parcel.py:1685
 #, python-format
 msgid "No parcel with gis relation."
 msgstr ""
@@ -2615,7 +2534,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_notes
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivationplan_notes
 #: model:ir.model.fields,field_description:base_wua.field_wua_farmproperty_notes
-#: model:ir.model.fields,field_description:base_wua.field_wua_hydraulicsector_notes
 #: model:ir.model.fields,field_description:base_wua.field_wua_irrigationsystem_notes
 #: model:ir.model.fields,field_description:base_wua.field_wua_mastertable_notes
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_concessionlink_notes
@@ -2675,73 +2593,8 @@ msgid "Nº days end lease notice"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_099
-msgid "NÍSPERO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_101
-msgid "OLIVAR DE ACEITUNA DE MESA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_102
-msgid "OLIVAR DE ACEITUNA PARA ACEITE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_103
-msgid "OTRAS HORTALIZAS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_104
-msgid "OTRAS LEGUMINOSAS GRANO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_105
-msgid "OTRAS OLEAGINOSAS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_106
-msgid "OTRAS PLANTAS DE ESCARDA FORRAJERA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_107
-msgid "OTROS CEREALES GRANO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_109
-msgid "OTROS CULTIVOS INDUSTRIALES"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_110
-msgid "OTROS CULTIVOS LEÑOSOS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_108
-msgid "OTROS CÍTRICOS"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_111
-msgid "OTROS FORRAJES (CEREAL INV,SORGO,TRÉBOL)"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_112
-msgid "OTROS FRUTALES"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_113
-msgid "OTROS TUBERCULOS PARA CONSUMO"
+#: model:wua.cultivation,name:base_wua.cultivation_017
+msgid "Oats"
 msgstr ""
 
 #. module: base_wua
@@ -2769,36 +2622,57 @@ msgid "Official area"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_102
+msgid "Olive grove for oil"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_101
+msgid "Olives olive table"
+msgstr ""
+
+#. module: base_wua
 #: selection:wua.configuration,polling_system_type:0
 msgid "One land parcel is one vote"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_036
+msgid "Onion"
+msgstr ""
+
+#. module: base_wua
 #: code:addons/base_wua/models/res_partner.py:477
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:477
 #, python-format
 msgid "Only one legal representative is allowed."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3263
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:3263
+#: code:addons/base_wua/models/wua_parcel.py:3270
 #, python-format
 msgid "Only one usufructuary per parcel."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3256
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:3256
+#: code:addons/base_wua/models/wua_parcel.py:3263
 #, python-format
 msgid "Only owners can be usufructuaries."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/wizard/wizard_change_parcel_name.py:28
-#: code:addons/moval_addons/wua/base_wua/wizard/wizard_change_parcel_name.py:28
 #, python-format
 msgid "Operation not allowed for multiple records."
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_096
+msgid "Orange"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_097
+msgid "Orange  bitter"
 msgstr ""
 
 #. module: base_wua
@@ -2824,6 +2698,61 @@ msgstr ""
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partnerlink_area_official_other_costs_net_hec
 msgid "Other Costs: Hectares"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_108
+msgid "Other citrus"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_111
+msgid "Other forages"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_112
+msgid "Other fruit"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_107
+msgid "Other grain cereals"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_104
+msgid "Other grain legumes"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_109
+msgid "Other industrial crops"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_105
+msgid "Other oilseeds"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_106
+msgid "Other plants of fodder weeding"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_113
+msgid "Other tubers for consumption"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_103
+msgid "Other vegetables"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_110
+msgid "Other woody crops"
 msgstr ""
 
 #. module: base_wua
@@ -2856,78 +2785,13 @@ msgid "Ownership (%)"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_114
-msgid "PALMERA DATILERA"
+#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_title_deed_page
+msgid "Page"
 msgstr ""
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_115
-msgid "PAPAYA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_116
-msgid "PASTIZALES"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_117
-msgid "PATATA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_118
-msgid "PAWLONIA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_119
-msgid "PEPINO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_120
-msgid "PERAL"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_121
-msgid "PIMIENTO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_122
-msgid "PIMIENTO PARA PIMENTÓN"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_124
-msgid "PISTACHO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_123
-msgid "PIÑA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_125
-msgid "PLATANERA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_126
-msgid "POMELO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_127
-msgid "PUERRO"
-msgstr ""
-
-#. module: base_wua
-#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_title_deed_page
-msgid "Page"
+msgid "Papaya"
 msgstr ""
 
 #. module: base_wua
@@ -2990,7 +2854,6 @@ msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1075
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1075
 #, python-format
 msgid "Parcel does not have any concession, add one or mark it as not required."
 msgstr ""
@@ -3004,11 +2867,7 @@ msgstr ""
 #: code:addons/base_wua/controllers/partner.py:43
 #: code:addons/base_wua/controllers/partner.py:75
 #: code:addons/base_wua/models/res_partner.py:682
-#: code:addons/base_wua/models/wua_parcel.py:1716
-#: code:addons/moval_addons/wua/base_wua/controllers/partner.py:43
-#: code:addons/moval_addons/wua/base_wua/controllers/partner.py:75
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:682
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1716
+#: code:addons/base_wua/models/wua_parcel.py:1723
 #: model:ir.actions.act_window,name:base_wua.res_partner_partnerlink_action
 #: model:ir.actions.act_window,name:base_wua.wua_parcel_action
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_parcel_ids
@@ -3114,10 +2973,8 @@ msgid "Partners (WUA Portal User)"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1436
-#: code:addons/base_wua/models/wua_parcel.py:2173
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1436
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:2173
+#: code:addons/base_wua/models/wua_parcel.py:1442
+#: code:addons/base_wua/models/wua_parcel.py:2180
 #, python-format
 msgid "Partners: the sum of all percentages must be 100, or there are repeated partners."
 msgstr ""
@@ -3133,6 +2990,11 @@ msgid "Password for authentication"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_116
+msgid "Pastures"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_path_frompgtoshp
 msgid "Path of frompgtoshp"
 msgstr ""
@@ -3143,10 +3005,40 @@ msgid "Path of program \"frompgtoshp\" (generate SHP from PostgreSql database)"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_118
+msgid "Pawlonia"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_partnerlink_view_search
 #: selection:wua.parcel.partnerlink,profile:0
 msgid "Payer"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_088
+msgid "Peach"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_026
+msgid "Peanut"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_120
+msgid "Pear"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_121
+msgid "Pepper"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_122
+msgid "Pepper for paprika"
 msgstr ""
 
 #. module: base_wua
@@ -3172,8 +3064,23 @@ msgid "Phone(s)"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_123
+msgid "Pineapple"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_124
+msgid "Pistachio"
+msgstr ""
+
+#. module: base_wua
 #: model:wua.irrigationsystem,name:base_wua.irrigationsystem_04
 msgid "Pivot"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_044
+msgid "Plum"
 msgstr ""
 
 #. module: base_wua
@@ -3187,22 +3094,40 @@ msgid "Polygon"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_062
+msgid "Pomegranate"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_002
+msgid "Poppy"
+msgstr ""
+
+#. module: base_wua
+#: model:ir.model,name:base_wua.model_portal_wizard_user
+msgid "Portal User Config"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_wua_portal_user_can_edit
 msgid "Portal User can edit"
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/hooks.py:20
-#: code:addons/moval_addons/wua/base_wua/hooks.py:20
 #, python-format
 msgid "PostGIS not installed. Please contact your administrator to install it before proceeding."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_config_settings.py:317
-#: code:addons/moval_addons/wua/base_wua/models/wua_config_settings.py:317
 #, python-format
 msgid "Postgis Extension not created"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_117
+msgid "Potato"
 msgstr ""
 
 #. module: base_wua
@@ -3249,9 +3174,13 @@ msgid "Propietary / Lessor"
 msgstr ""
 
 #. module: base_wua
-#: model:ir.actions.act_window,help:base_wua.res_partner_action
-#: model:ir.actions.act_window,help:base_wua.res_partner_wua_portal_user_action
-msgid "Pulse aquí para añadir un nuevo documento"
+#: model:wua.cultivation,name:base_wua.cultivation_028
+msgid "Pumpkin"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_090
+msgid "Quince"
 msgstr ""
 
 #. module: base_wua
@@ -3260,28 +3189,23 @@ msgid "Quotas"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_129
-msgid "REGALIZ"
+#: model:wua.cultivation,name:base_wua.cultivation_128
+msgid "Radish"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_130
-msgid "REMOLACHA AZUCARERA"
+#: model:wua.cultivation,name:base_wua.cultivation_147
+msgid "Raisin"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_131
-msgid "REMOLACHA FORRAJERA"
+#: model:wua.cultivation,name:base_wua.cultivation_049
+msgid "Rape"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_132
-msgid "REMOLACHA MESA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_133
-msgid "REPOLLO"
+#: model:wua.cultivation,name:base_wua.cultivation_057
+msgid "Raspberry"
 msgstr ""
 
 #. module: base_wua
@@ -3307,7 +3231,7 @@ msgstr ""
 
 #. module: base_wua
 #: model:wua.subparceltype,name:base_wua.subparceltype_05
-msgid "Recreativo"
+msgid "Recreational"
 msgstr ""
 
 #. module: base_wua
@@ -3369,6 +3293,11 @@ msgid "Reports configuration"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_015
+msgid "Rice"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_polling_system_rounding_type
 msgid "Rounding Type"
 msgstr ""
@@ -3407,19 +3336,13 @@ msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1086
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1086
 #, python-format
 msgid "Rustic Parcel: Cadastral Sector not valid."
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_128
-msgid "RÁBANO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_134
-msgid "SANDÍA"
+#: model:wua.cultivation,name:base_wua.cultivation_037
+msgid "Rye"
 msgstr ""
 
 #. module: base_wua
@@ -3428,18 +3351,8 @@ msgid "SHP Attachments"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_135
-msgid "SIN CULTIVO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_136
-msgid "SOJA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_137
-msgid "SORGO"
+#: model:wua.cultivation,name:base_wua.cultivation_018
+msgid "Saffron"
 msgstr ""
 
 #. module: base_wua
@@ -3466,7 +3379,6 @@ msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1132
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1132
 #, python-format
 msgid "Sector, polygon or parcel is empty."
 msgstr ""
@@ -3482,6 +3394,11 @@ msgid "Show partner notes"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_142
+msgid "Soft and semi-hard wheat"
+msgstr ""
+
+#. module: base_wua
 #: selection:wua.configuration,reports_style:0
 msgid "Solid"
 msgstr ""
@@ -3489,6 +3406,31 @@ msgstr ""
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_concessions_required
 msgid "Some Concession required"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_091
+msgid "Son"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_137
+msgid "Sorghum"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_136
+msgid "Soy"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_054
+msgid "Spelled"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_055
+msgid "Spinach"
 msgstr ""
 
 #. module: base_wua
@@ -3507,6 +3449,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua.field_wua_region_state_ids
 #: model:ir.ui.menu,name:base_wua.wua_state_menu
 msgid "States"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_058
+msgid "Strawberry"
 msgstr ""
 
 #. module: base_wua
@@ -3590,13 +3537,28 @@ msgid "Subparcels (low-level)"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_130
+msgid "Sugar beet"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_029
+msgid "Sugar cane"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_061
+msgid "Sunflower"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_surface
 msgid "Surface (ha)"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_138
-msgid "TABACO"
+#: model:wua.cultivation,name:base_wua.cultivation_020
+msgid "Sweet potato"
 msgstr ""
 
 #. module: base_wua
@@ -3611,33 +3573,8 @@ msgid "TIN (legal rep.)"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_139
-msgid "TOMATE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_140
-msgid "TOMATE INDUSTRIA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_142
-msgid "TRIGO BLANDO Y SEMIDURO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_143
-msgid "TRIGO DURO"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_144
-msgid "TRITICALE"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_141
-msgid "TRÉBOL"
+#: model:wua.cultivation,name:base_wua.cultivation_145
+msgid "Table grapes"
 msgstr ""
 
 #. module: base_wua
@@ -3661,17 +3598,14 @@ msgid "Tenant"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1674
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1674
+#: code:addons/base_wua/models/wua_parcel.py:1681
 #, python-format
 msgid "The \"URL GIS Viewer WFS\" parameter is not populated."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:857
-#: code:addons/base_wua/models/wua_parcel.py:1801
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:857
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1801
+#: code:addons/base_wua/models/wua_parcel.py:1808
 #, python-format
 msgid "The \"URL GIS Viewer WMS\" parameter or \"URL GIS Viewer WFS\" are not populated."
 msgstr ""
@@ -3679,15 +3613,12 @@ msgstr ""
 #. module: base_wua
 #: code:addons/base_wua/models/res_partner.py:534
 #: code:addons/base_wua/models/res_partner.py:569
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:534
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:569
 #, python-format
 msgid "The VAT code (TIN) already exists."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/res_partner.py:464
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:464
 #, python-format
 msgid "The VAT number [%s] for partner [%s] is invalid."
 msgstr ""
@@ -3715,21 +3646,18 @@ msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1118
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1118
 #, python-format
 msgid "The cadastral parcel must be a positive value."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1102
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1102
 #, python-format
 msgid "The cadastral polygon must be a positive value."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1165
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1165
 #, python-format
 msgid "The cadastral reference already exists."
 msgstr ""
@@ -3738,9 +3666,6 @@ msgstr ""
 #: code:addons/base_wua/models/wua_region.py:61
 #: code:addons/base_wua/models/wua_region.py:145
 #: code:addons/base_wua/models/wua_region.py:231
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:61
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:145
-#: code:addons/moval_addons/wua/base_wua/models/wua_region.py:231
 #, python-format
 msgid "The code must be a positive value."
 msgstr ""
@@ -3751,8 +3676,7 @@ msgid "The code of the link-to-partners, subparcels and other dependent entities
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1606
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1606
+#: code:addons/base_wua/models/wua_parcel.py:1612
 #, python-format
 msgid "The database has no GIS layers, or the \"Path of frompgtoshp\" parameter is not populated."
 msgstr ""
@@ -3764,7 +3688,6 @@ msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_mastertable.py:63
-#: code:addons/moval_addons/wua/base_wua/models/wua_mastertable.py:63
 #, python-format
 msgid "The field must be a positive value."
 msgstr ""
@@ -3780,15 +3703,13 @@ msgid "The gis area must be a value zero or positive."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1284
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1284
+#: code:addons/base_wua/models/wua_parcel.py:1285
 #, python-format
 msgid "The lease of the parcel"
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1127
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1127
 #, python-format
 msgid "The length of the cadastral reference is not correct."
 msgstr ""
@@ -3831,15 +3752,12 @@ msgstr ""
 #. module: base_wua
 #: code:addons/base_wua/models/res_partner.py:529
 #: code:addons/base_wua/models/res_partner.py:551
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:529
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:551
 #, python-format
 msgid "The partner code already exists."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/res_partner.py:443
-#: code:addons/moval_addons/wua/base_wua/models/res_partner.py:443
 #, python-format
 msgid "The partner code must be a positive value."
 msgstr ""
@@ -3855,17 +3773,14 @@ msgid "The second initial code for partners must be a value zero or positive."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1425
-#: code:addons/base_wua/models/wua_parcel.py:2161
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1425
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:2161
+#: code:addons/base_wua/models/wua_parcel.py:1431
+#: code:addons/base_wua/models/wua_parcel.py:2168
 #, python-format
 msgid "The sum of subparcel areas must be the parcel official area."
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_config_settings.py:325
-#: code:addons/moval_addons/wua/base_wua/models/wua_config_settings.py:325
 #, python-format
 msgid "The table does not exists"
 msgstr ""
@@ -3901,8 +3816,18 @@ msgid "They will be printed in the information section of the reports."
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_032
+msgid "Thistle"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_region_state_county_cadastral_code
 msgid "Three digits of the official cadastral code."
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_042
+msgid "Tigernut"
 msgstr ""
 
 #. module: base_wua
@@ -3919,6 +3844,21 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "To"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_138
+msgid "Tobacco"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_139
+msgid "Tomato"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_140
+msgid "Tomato industry"
 msgstr ""
 
 #. module: base_wua
@@ -3944,25 +3884,36 @@ msgid "Totals"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_144
+msgid "Triticale"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_094
+msgid "Turnip"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_095
+msgid "Turnip fodder"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,help:base_wua.field_wua_region_state_cadastral_code
 #: model:ir.model.fields,help:base_wua.field_wua_region_state_county_cadastral_state_code
 msgid "Two digits of the official cadastral code."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1443
-#: code:addons/base_wua/models/wua_parcel.py:2178
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1443
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:2178
+#: code:addons/base_wua/models/wua_parcel.py:1449
+#: code:addons/base_wua/models/wua_parcel.py:2185
 #, python-format
 msgid "Two or more lessees is not allowed."
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1448
-#: code:addons/base_wua/models/wua_parcel.py:2182
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1448
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:2182
+#: code:addons/base_wua/models/wua_parcel.py:1454
+#: code:addons/base_wua/models/wua_parcel.py:2189
 #, python-format
 msgid "Two or more partners as manager are not allowed, or there is no manager."
 msgstr ""
@@ -3980,36 +3931,25 @@ msgid "Type of polling system in conventions"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_145
-msgid "UVA DE MESA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_146
-msgid "UVA DE VINIFICACIÓN"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_147
-msgid "UVA PASA"
-msgstr ""
-
-#. module: base_wua
 #. openerp-web
 #: code:addons/base_wua/static/src/js/list_view.js:20
-#: code:addons/moval_addons/wua/base_wua/static/src/js/list_view.js:20
 #, python-format
 msgid "Unarchive"
 msgstr ""
 
 #. module: base_wua
-#: selection:wua.parcel,parcel_type:0
-msgid "Urban Parcel"
+#: model:wua.cultivation,name:base_wua.cultivation_071
+msgid "Unproductive"
 msgstr ""
 
 #. module: base_wua
 #: model:wua.subparceltype,name:base_wua.subparceltype_04
-msgid "Urbano"
+msgid "Urban"
+msgstr ""
+
+#. module: base_wua
+#: selection:wua.parcel,parcel_type:0
+msgid "Urban Parcel"
 msgstr ""
 
 #. module: base_wua
@@ -4038,20 +3978,8 @@ msgid "Usufructuary"
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_148
-msgid "VEZA"
-msgstr ""
-
-#. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_149
-msgid "VIVEROS"
-msgstr ""
-
-#. module: base_wua
 #: code:addons/base_wua/models/wua_mastertable.py:56
 #: code:addons/base_wua/models/wua_mastertable.py:73
-#: code:addons/moval_addons/wua/base_wua/models/wua_mastertable.py:56
-#: code:addons/moval_addons/wua/base_wua/models/wua_mastertable.py:73
 #, python-format
 msgid "Value too long."
 msgstr ""
@@ -4071,8 +3999,23 @@ msgid "Variety"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_069
+msgid "Vegetables"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_148
+msgid "Veza"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.actions.server,name:base_wua.wua_see_gis_viewer_multiple
 msgid "View on GIS"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_149
+msgid "Vivarium"
 msgstr ""
 
 #. module: base_wua
@@ -4135,8 +4078,12 @@ msgid "WUA Users"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_100
+msgid "Walnut"
+msgstr ""
+
+#. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1164
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1164
 #, python-format
 msgid "Warning"
 msgstr ""
@@ -4192,6 +4139,21 @@ msgid "Water Reservoirs for WUA"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.subparceltype,name:base_wua.subparceltype_06
+msgid "Water reservoir"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_134
+msgid "Watermelon"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_146
+msgid "Wine grape"
+msgstr ""
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_gis_parcel_view_with_wua_parcel
 msgid "With MR Parcel"
 msgstr ""
@@ -4223,6 +4185,16 @@ msgstr ""
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_with_waterreservoir
 msgid "With water reservoir"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_135
+msgid "Without cultivation"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_014
+msgid "Woody aromatics"
 msgstr ""
 
 #. module: base_wua
@@ -4266,36 +4238,47 @@ msgid "Y coordinate"
 msgstr ""
 
 #. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_023
+msgid "Yam"
+msgstr ""
+
+#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_150
-msgid "YEROS"
+msgid "Yeros"
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_mastertable.py:94
-#: code:addons/moval_addons/wua/base_wua/models/wua_mastertable.py:94
 #, python-format
 msgid "You cannot delete a readonly record (Created by module)."
 msgstr ""
 
 #. module: base_wua
-#: model:wua.cultivation,name:base_wua.cultivation_151
-msgid "ZANAHORIA"
+#: code:addons/base_wua/wizard/portal_wizard.py:22
+#, python-format
+msgid "You must have an email address in your User Preferences to send emails."
+msgstr ""
+
+#. module: base_wua
+#: model:mail.template,subject:base_wua.mail_template_data_new_portal_user
+msgid "Your Odoo account at ${user.company_id.name}"
+msgstr ""
+
+#. module: base_wua
+#: model:wua.cultivation,name:base_wua.cultivation_027
+msgid "Zucchini"
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1261
 #: code:addons/base_wua/models/wua_parcel.py:1270
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1261
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1270
 #, python-format
 msgid "ha"
 msgstr ""
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1212
-#: code:addons/base_wua/models/wua_parcel.py:3022
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1212
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:3022
+#: code:addons/base_wua/models/wua_parcel.py:3029
 #, python-format
 msgid "hectares"
 msgstr ""
@@ -4311,8 +4294,7 @@ msgid "ir.attachment"
 msgstr ""
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1285
-#: code:addons/moval_addons/wua/base_wua/models/wua_parcel.py:1285
+#: code:addons/base_wua/models/wua_parcel.py:1286
 #, python-format
 msgid "will end on"
 msgstr ""

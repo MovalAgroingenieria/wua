@@ -84,6 +84,63 @@
             <field name="lang">es_ES</field>
         </record>
 
+    </data>
+
+    <!-- Chnage to noupdate when updated -->
+    <data noupdate="0">
+
+        <!-- Mail for new portal user -->
+       <record id="mail_template_data_new_portal_user" model="mail.template">
+            <field name="name">Portal: New portal user</field>
+            <field name="model_id" ref="portal.model_portal_wizard_user"/>
+            <field name="email_from">${(user.company_id.email) |safe}</field>
+            <field name="email_to">${object.partner_id.email}</field>
+            <field name="subject">Your Odoo account at ${user.company_id.name}</field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="user_signature" eval="True"/>
+            <field name="body_html"><![CDATA[
+                <p>Dear ${object.user_id.name or ''},</p>
+
+                <p>We have granted access to ${object.wizard_id.portal_id.name} in ${user.company_id.name}.</p>
+
+                <p>Your account information is:</p>
+                <ul>
+                <li>User: ${object.user_id.login or ''}</li>
+                <li>Database: ${'dbname' in ctx and ctx['dbname'] or ''}</li>
+                <li>Portal: <a href="${'portal_url' in ctx and ctx['portal_url'] or ''}" data-original-title="" title="">link</a></li>
+                </ul>
+                <br>
+
+                <p><b>You can set or change your password at the following link</b></p>
+                <a href="${object.user_id.signup_url}"
+                    style="color:#378167;padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#378167; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #378167; border: 1px solid #378167; border-radius:3px">
+                    Set password
+                </a>
+                <br>
+                <br>
+
+                <p>${object.wizard_id.welcome_message or ''}</p>
+                <br>
+
+                <p>Once the password has been set, you will be able to log in to the e-Office at the <a href="${'portal_url' in ctx and ctx['portal_url'] or ''}" data-original-title="" title="">following address</a>.</p>
+
+                <p>To log in, click on <b>Login</b> and enter your user account ${object.user_id.login or ''}&nbsp;and password.</p>
+
+                <p>Once logged in, you will be able to consult the information on your membership card, parcels, invoices, viewer, etc.</p>
+
+                <p>You can consult in more detail the use of the user portal by accessing the following <a href="https://wiki.moval.es/Odoo_funcional/administracion_sitio_web/Usuario_de_portal_comunero">link</a>.&nbsp;</p>
+                <br>
+
+                <p>If you need any further clarification, you can contact the company's office ${user.company_id.name}.</p>
+                <br>
+                <br>
+
+                <p>Yours sincerely,</p>
+                <p>${user.company_id.name}</p>
+
+            ]]></field>
+        </record>
 
     </data>
 
