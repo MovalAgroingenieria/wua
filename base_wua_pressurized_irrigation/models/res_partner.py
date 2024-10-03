@@ -58,6 +58,8 @@ class ResPartnerWaterconnection(models.Model):
                      wpi1.active,
                     ww1.last_reading_time, ww1.last_reading_value,
                     wpc1.volume_real
+                    ORDER BY wpp1.partner_id, wpi1.waterconnection_id,
+                    ww1.last_reading_time
                 ) a )
                 """)
         except Exception:

@@ -577,13 +577,15 @@ class ResPartnerWaterconnection(models.Model):
                     AND wpc1.reading_end_time = ww1.last_reading_time
                     WHERE wpi1.type='WC' AND
                     ww1.watermeter_id IS NOT NULL
-                    GROUP BY  wpp1.partner_id, wpi1.waterconnection_id,
+                    GROUP BY wpp1.partner_id, wpi1.waterconnection_id,
                     wpi1.active,
                     ww1.last_reading_time, ww1.last_reading_value,
                     wpc1.volume_real,
                     ww1.last_data_time, ww1.last_waterflow,
                     ww1.last_valve_open, ww1.last_valve_scheduled,
                     ww1.last_total_volume
+                    ORDER BY wpp1.partner_id, wpi1.waterconnection_id,
+                    ww1.last_reading_time
                 ) a )
                 """)
         except Exception:

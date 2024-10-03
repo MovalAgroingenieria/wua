@@ -139,6 +139,7 @@ class ResPartnerWaterconnection(models.Model):
                     wpi1.parcel_id WHERE wpi1.type='WC'
                     GROUP BY  wpp1.partner_id, wpi1.waterconnection_id,
                     wpi1.active
+                    ORDER BY wpp1.partner_id, wpi1.waterconnection_id
                 ) a )
                 """)
         except Exception:
