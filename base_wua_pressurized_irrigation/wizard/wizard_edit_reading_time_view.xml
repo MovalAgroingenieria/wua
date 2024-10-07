@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_edit_reading_time_view_form" model="ir.ui.view">
+        <field name="name">Wizard to edit readings time</field>
+        <field name="model">wizard.edit.reading.time</field>
+        <field name="arch" type="xml">
+            <form string="Edit reading time">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '450px'});
+                        $('.modal-dialog').css({'height': '420px'});
+                    });
+                </script>
+                <group name="body">
+                    <field name="reading_ids" invisible="1"/>
+                    <field name="new_reading_time"/>
+                    <div colspan="2" class="o_field_widget o_readonly_modifier" name="warning_message">
+                        <p>Be careful, validated reading or readings that are not the last one are not gonna be modified</p>
+                    </div>
+                    <field colspan="2" style="color: red;" name='incorrect_reading_msg' nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="edit_reading_time"
+                            type="object"
+                            string="Modify Reading Time"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_edit_readings"
+        name="Edit Reading Time"
+        res_model="wizard.edit.reading.time"
+        src_model="wua.reading"
+        view_mode="form"
+        key2="client_action_multi"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+
+</odoo>

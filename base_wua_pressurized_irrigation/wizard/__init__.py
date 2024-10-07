@@ -3,3 +3,4 @@
 
 from . import wizard_remove_readings
 from . import wizard_print_readings
+from . import wizard_edit_reading_time

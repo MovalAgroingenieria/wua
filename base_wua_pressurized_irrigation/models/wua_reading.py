@@ -80,7 +80,9 @@ class WuaReading(models.Model):
 
     is_last_reading = fields.Boolean(
         string='Last Reading',
-        compute='_compute_is_last_reading')
+        compute='_compute_is_last_reading',
+        search='_search_is_last_reading',
+    )
 
     presconsumption_volume = fields.Float(
         string='Gross Value (m³)',
@@ -150,10 +152,12 @@ class WuaReading(models.Model):
     @api.multi
     def _compute_is_last_reading(self):
         for record in self:
-            if record.reading_time == record.watermeter_id.last_reading_time:
-                record.is_last_reading = True
-            else:
-                record.is_last_reading = False
+            is_last_reading = False
+            if (record.watermeter_id and
+                    record.watermeter_id.last_reading_time):
+                is_last_reading = record.reading_time == \
+                    record.watermeter_id.last_reading_time
+            record.is_last_reading = is_last_reading
 
     @api.depends('presconsumption_id', 'presconsumption_id.volume')
     def _compute_presconsumption_volume(self):
@@ -181,6 +185,26 @@ class WuaReading(models.Model):
                 presconsumption_volume_real = \
                     record.presconsumption_id.volume_real
             record.presconsumption_volume_real = presconsumption_volume_real
+
+    def _search_is_last_reading(self, operator, value):
+        domain = [('id', '=', 0)]
+        sql_query = """
+            SELECT wr1.id
+            FROM wua_reading wr1
+            INNER JOIN wua_watermeter ww1 ON wr1.watermeter_id = ww1.id
+            WHERE wr1.reading_time = ww1.last_reading_time
+        """
+        self.env.cr.execute(sql_query)
+        result = [rec[0] for rec in self.env.cr.fetchall()]
+        if operator == '=' and value:
+            domain = [('id', 'in', result)]
+        elif operator == '=' and not value:
+            domain = [('id', 'not in', result)]
+        elif operator == '!=' and value:
+            domain = [('id', 'not in', result)]
+        elif operator == '!=' and not value:
+            domain = [('id', 'in', result)]
+        return domain
 
     @api.model
     def read_group(self, domain, fields, groupby,
@@ -265,7 +289,7 @@ class WuaReading(models.Model):
             if 'volume' in vals:
                 if self.presconsumption_id:
                     self.presconsumption_id.write({
-                        'end_volume': vals['volume']
+                        'end_volume': vals['volume'],
                     })
                     self.presconsumption_id.update_volume_perunitareas()
                 self.watermeter_id.last_reading_value = vals['volume']
