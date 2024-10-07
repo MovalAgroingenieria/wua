@@ -97,6 +97,11 @@ class WuaReadingperiod(models.Model):
         index=True,
         compute='_compute_number_of_negative_readings')
 
+    deviation_threshold = fields.Float(
+        string='Deviation Threshold Percentage',
+        default=0,
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Reading Period.'),
