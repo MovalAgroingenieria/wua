@@ -475,7 +475,7 @@ class WuaQuotaperiod(models.Model):
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
                             'search_default_active_agriculturalseason': True,
-                            'search_default_not_closed_quotaperiod': True}
+                            'search_default_not_closed_quotaperiod': True},
                 }
             return act_window
 
@@ -535,7 +535,7 @@ class WuaQuotaperiod(models.Model):
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
                             'search_default_active_agriculturalseason': True,
-                            'search_default_not_closed_quotaperiod': True}
+                            'search_default_not_closed_quotaperiod': True},
                 }
             return act_window
 
@@ -647,13 +647,8 @@ class WuaQuotaperiod(models.Model):
     @api.multi
     def action_transfer_balances(self):
         self.ensure_one()
-
         # Get the current quota period
         quotaperiod = self
-
-        # Get the next quota period, checking if it's open and generated
-        next_quotaperiod = self._get_next_quotaperiod_open_generated(quotaperiod)
-
         # Return an action to open the wizard
         return {
             'type': 'ir.actions.act_window',

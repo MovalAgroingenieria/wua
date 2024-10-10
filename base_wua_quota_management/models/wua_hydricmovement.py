@@ -207,36 +207,42 @@ class WuaHydricmovement(models.Model):
         string='Cession',
         comodel_name='wua.cession',
         readonly=True,
+        index=True,
         ondelete='cascade')
 
     source_cession_id = fields.Many2one(
         string='Source Cession',
         comodel_name='wua.cession',
         readonly=True,
+        index=True,
         ondelete='cascade')
 
     output_next_quota_id = fields.Many2one(
         string='Quota to transfer',
         comodel_name='wua.quota',
         readonly=True,
+        index=True,
         ondelete='cascade')
 
     input_prev_quota_id = fields.Many2one(
         string='Source Quota',
         comodel_name='wua.quota',
         readonly=True,
+        index=True,
         ondelete='cascade')
 
     neg_output_next_quota_id = fields.Many2one(
         string='Negative quota to transfer',
         comodel_name='wua.quota',
         readonly=True,
+        index=True,
         ondelete='cascade')
 
     neg_input_prev_quota_id = fields.Many2one(
         string='Negative source Quota',
         comodel_name='wua.quota',
         readonly=True,
+        index=True,
         ondelete='cascade')
 
     category_id = fields.Many2one(

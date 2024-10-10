@@ -14,10 +14,16 @@ class WuaQuotaperiod(models.Model):
         if resp:
             try:
                 self.env.cr.savepoint()
-                self.env.cr.execute("""
+                self.env.cr.execute(
+                    """
                     UPDATE wua_quota
                     SET invoiced = FALSE
-                    WHERE invoiced is NULL""")
+                    WHERE invoiced is NULL
+                    AND superproduct_id = %s
+                    AND quotaperiod_id = %s""",
+                    (quotaperiodline.superproduct_id.id,
+                     quotaperiodline.quotaperiod_id.id),
+                )
             except Exception:
                 self.env.cr.rollback()
                 raise exceptions.UserError(_('Error when '
