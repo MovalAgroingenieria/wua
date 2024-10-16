@@ -2,11 +2,32 @@
 # Copyright 2023 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+import io
+import base64
+import logging
+from xml.etree import ElementTree
+from owslib.wms import WebMapService
+from owslib.wfs import WebFeatureService
+from odoo import models, fields, api, _, exceptions
 
 
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
+
+    _aerial_img_sigpac_layers = [
+        'pnoa',
+        'sigpac_name',
+        'parcel',
+        'sigpac',
+        'n_arrow',
+    ]
+    _aerial_img_sigpac_layers_styles = [
+        'default',
+        'default',
+        'default',
+        'default',
+        'default',
+    ]
 
     sigpaclink_ids = fields.One2many(
         string='SIGPAC links',
@@ -24,6 +45,20 @@ class WuaParcel(models.Model):
     aerial_img_nonpersistent = fields.Binary(
         string='Aerial image, non-persistent',
         compute='_compute_aerial_img_nonpersistent')
+
+    aerial_img_sigpac = fields.Binary(
+        string='Aerial image SIGPAC',
+        attachment=True,
+    )
+
+    aerial_img_sigpac_scale = fields.Integer(
+        string='Scale',
+        readonly=True)
+
+    aerial_img_sigpac_nonpersistent = fields.Binary(
+        string='Aerial image SIGPAC, non-persistent',
+        compute='_compute_aerial_img_sigpac_nonpersistent',
+    )
 
     @api.multi
     def _compute_number_of_sigpaclinks(self):
@@ -56,6 +91,186 @@ class WuaParcel(models.Model):
             record.aerial_img_nonpersistent = aerial_img_nonpersistent
 
     @api.multi
+    def _compute_aerial_img_sigpac_nonpersistent(self):
+        for record in self:
+            aerial_img_sigpac_nonpersistent = None
+            if record.aerial_img_sigpac:
+                aerial_img_sigpac_nonpersistent = record.aerial_img_sigpac
+            else:
+                try:
+                    record.regenerate_aerial_img_sigpac()
+                    aerial_img_sigpac_nonpersistent = record.aerial_img_sigpac
+                except Exception:
+                    aerial_img_sigpac_nonpersistent = None
+            record.aerial_img_sigpac_nonpersistent = \
+                aerial_img_sigpac_nonpersistent
+
+    def _get_aerial_image_sigpac_layers(self, parcel):
+        return self._aerial_img_sigpac_layers
+
+    def _get_aerial_image_sigpac_layers_styles(self, parcel):
+        return self._aerial_img_sigpac_layers_styles
+
+    def get_sld_sigpac_body(self):
+        body = ''
+        body = body + '<?xml version="1.0" encoding="UTF-8"?>' + \
+            '<StyledLayerDescriptor version="1.0.0" ' + \
+            'xmlns="http://www.opengis.net/sld" xmlns:ogc="' + \
+            'http://www.opengis.net/ogc" xmlns:xlink="' + \
+            'http://www.w3.org/1999/xlink" xmlns:xsi="' + \
+            'http://www.w3.org/2001/XMLSchema-instance"' + \
+            'xsi:schemaLocation="http://www.opengis.net/sld ' + \
+            'http://schemas.opengis.net/sld/1.0.0/StyledLaye' + \
+            'rDescriptor.xsd">' + \
+            '<NamedLayer><Name>parcel</Name>' + \
+            '<UserStyle><Title>xxx</Title><FeatureTypeStyle>' + \
+            '<Rule><Filter><PropertyIsLike ' + \
+            'wildCard="*" singleChar="." escape="!"><Property' + \
+            'Name>name</PropertyName><Literal>' + self.name + \
+            '</Literal></PropertyIsLike></Filter>' + \
+            '<PolygonSymbolizer>' + \
+            '<Stroke>' + \
+            '<CssParameter name="stroke">#ffffff</CssParameter>' + \
+            '<CssParameter name="stroke-width">3</CssParameter>' + \
+            '<CssParameter name="stroke-linecap">round</CssParameter>' + \
+            '</Stroke>' + \
+            '<Fill>' + \
+            '<CssParameter name="fill">#02f2ff</CssParameter>' + \
+            '<CssParameter name="fill-opacity">0.6</CssParameter>' + \
+            '</Fill>' + \
+            '</PolygonSymbolizer>' + \
+            '<TextSymbolizer>' + \
+            '<Label>' + \
+            '<ogc:PropertyName>' + \
+            'name' + \
+            '</ogc:PropertyName>' + \
+            '</Label>' + \
+            '<Font>' + \
+            '<CssParameter name="font-family">Arial</CssParameter>' + \
+            '<CssParameter name="font-size">14</CssParameter>' + \
+            '<CssParameter name="font-style">normal</CssParameter>' + \
+            '<CssParameter name="font-weight">bold</CssParameter>' + \
+            '</Font>' + \
+            '<Halo>' + \
+            '<Radius>3</Radius>' + \
+            '<Fill>' + \
+            '<CssParameter name="fill">#00ff00</CssParameter>' + \
+            '</Fill>' + \
+            '</Halo>' + \
+            '<Fill>' + \
+            '<CssParameter name="fill">#000000</CssParameter>' + \
+            '</Fill>' + \
+            '</TextSymbolizer>' + \
+            '</Rule></FeatureTypeStyle>' + \
+            '</UserStyle></NamedLayer>' + \
+            '<NamedLayer><Name>sigpac</Name>' + \
+            '<UserStyle><Title>xxx2</Title><FeatureTypeStyle>' + \
+            '<Rule>' + \
+            '<PolygonSymbolizer>' + \
+            '<Stroke>' + \
+            '<CssParameter name="stroke">#c006c9</CssParameter>' + \
+            '<CssParameter name="stroke-width">1</CssParameter>' + \
+            '<CssParameter name="stroke-linecap">round</CssParameter>' + \
+            '</Stroke>' + \
+            '</PolygonSymbolizer>' + \
+            '</Rule></FeatureTypeStyle>' + \
+            '</UserStyle></NamedLayer>' + \
+            '</StyledLayerDescriptor>'
+        return body
+
+    @api.multi
+    def regenerate_aerial_img_sigpac(self):
+        url_gis_viewer_wms = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wms')
+        url_gis_viewer_wfs = self.env['ir.values'].get_default(
+            'wua.configuration', 'url_gis_viewer_wfs')
+        if (not url_gis_viewer_wms or not url_gis_viewer_wfs):
+            raise exceptions.UserError(_('The "URL GIS Viewer WMS" parameter '
+                                         'or "URL GIS Viewer WFS" are not '
+                                         'populated.'))
+        else:
+            mapserver_dpi = 90
+            wms = WebMapService(
+                url=url_gis_viewer_wms, version='1.1.1',
+                timeout=self.OWS_SERVICES_TIMEOUT)
+            wfs = WebFeatureService(
+                url=url_gis_viewer_wfs, version='1.1.0',
+                timeout=self.OWS_SERVICES_TIMEOUT)
+            for record in self:
+                if record.with_gis_parcel:
+                    sld_sigpac_body = record.get_sld_sigpac_body()
+                    try:
+                        response = record._get_wfs_response(wfs, record)
+                        parsed_response = ElementTree.fromstring(
+                            response.getvalue())
+                        ns = parsed_response[0].tag.split('}')[0] + '}'
+                        parcel_member = parsed_response.find(ns +
+                                                             'boundedBy')
+                        parcel_envelop = parcel_member[0]
+                        crs = parcel_envelop.attrib['srsName']
+                        lowerCorner = [float(n) for n in (parcel_envelop.find(
+                            ns + 'lowerCorner').text).split(' ')]
+                        upperCorner = [float(n) for n in (parcel_envelop.find(
+                            ns + 'upperCorner').text).split(' ')]
+                        width = int(upperCorner[0] - lowerCorner[0])
+                        height = int(upperCorner[1] - lowerCorner[1])
+                        max_width = record._aerial_image_width
+                        max_height = record._aerial_image_height
+                        if (width > max_width or height > max_height):
+                            increment = (int(self.getClosestMul(
+                                max_width, max(height, width))))
+                            incrementX = (increment - width)/2
+                            incrementY = (increment - height)/2
+                            lowerCorner[0] = int(lowerCorner[0] - incrementX)
+                            upperCorner[0] = int(round(
+                                upperCorner[0] + incrementX))
+                            lowerCorner[1] = int(
+                                round(lowerCorner[1] - incrementY))
+                            upperCorner[1] = int(upperCorner[1] + incrementY)
+                        elif (width < max_width or height < max_height):
+                            increment = int(self.getClosestDiv(
+                                max_width, max(height, width)))
+                            incrementX = (increment - width)/2
+                            incrementY = (increment - height)/2
+                            lowerCorner[0] = int(lowerCorner[0] - incrementX)
+                            upperCorner[0] = int(round(
+                                upperCorner[0] + incrementX))
+                            lowerCorner[1] = int(
+                                round(lowerCorner[1] - incrementY))
+                            upperCorner[1] = int(upperCorner[1] + incrementY)
+                        width = max_width
+                        height = max_height
+                        bbox = ((int(lowerCorner[0])), (int(lowerCorner[1])),
+                                (int(upperCorner[0])), (int(upperCorner[1])))
+                        img = wms.getmap(
+                            layers=record._get_aerial_image_sigpac_layers(
+                                record),
+                            styles=record.
+                            _get_aerial_image_sigpac_layers_styles(
+                                record),
+                            srs=crs, bbox=bbox, size=(width, height),
+                            format=self._aerial_img_format, transparent=True,
+                            SLD_BODY=sld_sigpac_body)
+                        image = io.BytesIO(img.read())
+                        base64_img = base64.b64encode(image.getvalue())
+                        # GET SCALE:
+                        # With BBOX get meters in the real world
+                        width_in_real_meters = bbox[2] - bbox[0]
+                        # With pixels Width and dpi get the size of the image
+                        width_in_image_meters = (width / mapserver_dpi) * \
+                            0.0254
+                        aerial_img_scale = width_in_real_meters /\
+                            width_in_image_meters
+                        record.write({
+                            'aerial_img_sigpac': base64_img,
+                            'aerial_img_sigpac_scale': aerial_img_scale,
+                        })
+                    except Exception:
+                        _logger = logging.getLogger(self.__class__.__name__)
+                        _logger.exception('SIGPAC Aerial IMG')
+                        pass
+
+    @api.multi
     def action_get_enclosures(self):
         self.ensure_one()
         id_form_view = self.env.ref(
@@ -72,6 +287,16 @@ class WuaParcel(models.Model):
             'res_id': self.id,
             }
         return act_window
+
+    @api.multi
+    def action_regenerate_aerial_img_sigpac(self, limit=0):
+        parcels = self.env['wua.parcel'].search(
+            [('with_gis_parcel', '=', True)],
+            order='aerial_img_last_import_date',
+            limit=limit)
+        for parcel in parcels:
+            parcel.regenerate_aerial_img_sigpac()
+            self.env.cr.commit()
 
 
 class WuaParcelSigpaclink(models.Model):

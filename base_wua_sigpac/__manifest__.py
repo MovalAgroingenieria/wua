@@ -23,6 +23,7 @@
         "views/wua_config_settings_view.xml",
         "views/wua_sigpac_view.xml",
         "views/wua_parcel_view.xml",
+        "reports/wua_parcel_sigpac_report.xml",
     ],
     "installable": True,
     "pre_init_hook": "pre_init_hook",

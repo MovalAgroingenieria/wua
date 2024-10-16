@@ -21,6 +21,9 @@
                     </div>
                 </button>
             </xpath>
+            <xpath expr="//group[@name='aerial_img_group']" position="inside">
+                <field name="aerial_img_sigpac" widget="image" class="oe_img_259_160"/>
+            </xpath>
         </field>
     </record>
 
@@ -341,10 +344,37 @@
         <field name="code">action = env["wua.parcel.sigpaclink"].action_refresh_sigpac_intersections()</field>
     </record>
 
+
+    <record id="wua_regenerate_aerial_img_sigpac_individual" model="ir.actions.server">
+        <field name="name">Generate Aerial Image SIGPAC</field>
+        <field name="model_id" ref="base_wua_sigpac.model_wua_parcel"/>
+        <field name="code">
+            action =  env['wua.parcel'].browse(context['active_ids']).regenerate_aerial_img_sigpac()
+        </field>
+    </record>
+
+    <record id="wua_action_regenerate_aerial_img_sigpac_individual" model="ir.values">
+        <field name="name">Generate Aerial Image SIGPAC</field>
+        <field name="model">wua.parcel</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_regenerate_aerial_img_sigpac_individual'))"/>
+    </record>
+
+    <record id="wua_technical_regenerate_aerial_img_sigpac_action" model="ir.actions.server">
+        <field name="name">Generate Aerial Images SIGPAC</field>
+        <field name="model_id" ref="base_wua_sigpac.model_wua_parcel"/>
+        <field name="code">action = env["wua.parcel"].action_regenerate_aerial_img_sigpac()</field>
+    </record>
     <menuitem id="wua_technical_refresh_sigpac_intersections"
               name="Refresh SIGPAC in parcels"
               parent="base_wua.base_wua_technical_menu"
               action="wua_technical_refresh_sigpac_intersections_action"
               sequence="10"/>
-
+    <menuitem id="wua_technical_regenerate_aerial_img_sigpac"
+              name="Aerial Image SIGPAC Regeneration"
+              parent="base_wua.base_wua_technical_menu"
+              action="wua_technical_regenerate_aerial_img_sigpac_action"
+              sequence="11"
+              groups="base.group_system"/>
 </odoo>
