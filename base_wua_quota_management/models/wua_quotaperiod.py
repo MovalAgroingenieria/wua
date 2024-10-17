@@ -596,6 +596,8 @@ class WuaQuotaperiod(models.Model):
         self._delete_individualinputs_cessions(quotaperiod)
         self._delete_other_entities(quotaperiod)
         self._delete_quotas_hydricmovements(quotaperiod)
+        if (self.quota_general_ids):
+            self.quota_general_ids.unlink()
         self._delete_parcel_assignments(quotaperiod)
         if reset_mapped_to_current_quotaperiod:
             self._reset_mapped_to_current_quotaperiod()
