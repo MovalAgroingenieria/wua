@@ -402,10 +402,12 @@ class WuaParcel(models.Model):
                 DELETE FROM wua_parcel_class WHERE parcel_id = %s;
             """ % parcel_id)
             values_query = []
+            parcel_params = []
             for parcel_class in classes_data:
                 values_query.append('''
-                    (\'%s\', %s, \'%s\', %s, \'%s\', %s, \'%s\', %s)
-                ''' % (
+                        (%s, %s, %s, %s, %s, %s, %s, %s)
+                    ''')
+                parcel_params.extend([
                     parcel_class['class_name'],
                     parcel_id,
                     parcel_class['parcel_class'],
@@ -414,14 +416,14 @@ class WuaParcel(models.Model):
                     parcel_class['resolution_year'],
                     parcel_class['notes'],
                     'True',
-                    ))
+                ])
             self.env.cr.execute("""
                 INSERT INTO wua_parcel_class
                     (name, parcel_id, parcel_class, area_official,
                      class_sharer, resolution_year, notes, active)
                 VALUES
                 %s;
-            """ % (','.join(values_query)))
+            """ % (','.join(values_query)), parcel_params)
             # After Insert the parcel classes update the area_official
             # after commit
 
