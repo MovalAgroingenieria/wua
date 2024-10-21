@@ -69,9 +69,10 @@ class WuaWaterpipeflowreading(models.Model):
                     'telecontrol_failed_email_template').id
                 mail_template = self.env['mail.template'].browse(
                     telecontrol_failed_template_id)
-                mail_template.subject = 'Waterpipe Flow Reading remote' +\
-                    ' control in %s has experienced some problem' %\
-                    (domain or self.pool.db_name)
+                mail_template.subject = '''
+                    Waterpipe Flow Reading remote
+                    control in %s has experienced some problem
+                ''' % (domain or self.pool.db_name)
                 mail_template.body_html = '''
                     <p style="margin: 0px; padding: 0px; font-size: 13px;">
                         <b><a href="%s">%s</a></p></b>
