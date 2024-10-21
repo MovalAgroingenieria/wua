@@ -123,7 +123,7 @@ class WuaWaterpipeflowreading(models.Model):
                         if (flowmeter in fm_dict):
                             flowmeter = fm_dict[flowmeter].name
                         volume = counter['counterGlobalValue'] / 1000
-                        instant_flow = counter['flow']
+                        instant_flow = 0.0
                         # Flow on l/s?
                         if (flow_in_liters):
                             instant_flow = instant_flow * 3.6
@@ -138,7 +138,8 @@ class WuaWaterpipeflowreading(models.Model):
                         url_remotecontrol_rest, jsessionid)
                 for hydrant in hydrants:
                     installationId = int(hydrant['installationId'])
-                    if installationId == installation_identifier:
+                    if (installationId == installation_identifier and
+                            hydrant['counter']):
                         flowmeter = \
                             hydrant['counter']['code'].encode(
                                 'utf-8', 'ignore')
