@@ -13,6 +13,12 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_infrastructure_primary",
+        "wua_attendance_leaves_report",
+        "hr_attendance_staff_manager",
+        "hr_attendance_report_theoretical_time",
+        "hr_attendance_selfedit",
+        "hr_attendance_autoclose",
+        "hr_timesheet_attendance",
     ],
     "data": [
         "security/ir.model.access.csv",
