@@ -26,6 +26,7 @@
         "account_analytic_default",
         "account_payment_return",
         "account_invoice_analytic_search",
+        "account_financial_report_qweb_add_filters",
     ],
     "data": [
         "security/security.xml",
