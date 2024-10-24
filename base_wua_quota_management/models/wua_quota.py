@@ -310,8 +310,19 @@ class WuaQuota(models.Model):
     def _compute_average_daily_consumption(self):
         for record in self:
             average_daily_consumption = 0
+            accumulated_consumption = 0
             quotaperiod = record.quotaperiod_id
-            accumulated_consumption = record.accumulated_consumption
+            query = """
+                SELECT SUM(hm.volume) AS total_volume
+                FROM wua_hydricmovement AS hm
+                WHERE hm.quota_id = %s
+                AND hm.type IN (
+                'pres_consumption', 'grav_consumption', 'irrig_report');
+            """
+            self.env.cr.execute(query, (record.id,))
+            query_results = self.env.cr.dictfetchall()
+            if query_results:
+                accumulated_consumption = query_results[0].get('total_volume')
             if (accumulated_consumption > 0 and
                quotaperiod.state == 'generated' and
                quotaperiod.number_of_days_elapsed > 0):
@@ -1303,8 +1314,22 @@ class WuaQuotaAggregatevalue(models.Model):
     def _compute_average_daily_consumption(self):
         for record in self:
             average_daily_consumption = 0
+            accumulated_consumption = 0
             quotaperiod = record.quotaperiod_id
-            accumulated_consumption = record.accumulated_consumption
+            query = """
+                SELECT SUM(hm.volume) AS total_volume
+                FROM wua_hydricmovement AS hm
+                WHERE hm.quotaperiod_id = %s
+                AND hm.partner_id = %s
+                AND hm.type
+                IN ('pres_consumption', 'grav_consumption', 'irrig_report');
+            """
+            self.env.cr.execute(query,
+                                (record.quotaperiod_id.id,
+                                 record.partner_id.id))
+            query_results = self.env.cr.dictfetchall()
+            if query_results:
+                accumulated_consumption = query_results[0].get('total_volume')
             if (accumulated_consumption > 0 and
                quotaperiod.state == 'generated' and
                quotaperiod.number_of_days_elapsed > 0):
