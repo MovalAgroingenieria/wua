@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-30 09:26+0000\n"
-"PO-Revision-Date: 2021-04-30 09:26+0000\n"
+"POT-Creation-Date: 2024-10-22 10:58+0000\n"
+"PO-Revision-Date: 2024-10-22 10:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,6 +31,11 @@ msgid "<span><b>LAST READING</b></span>"
 msgstr "<span><b>ÚLTIMA LECTURA</b></span>"
 
 #. module: base_wua_reservoir
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_active
+msgid "Active"
+msgstr "Activo"
+
+#. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_age
 msgid "Age"
 msgstr "Edad"
@@ -46,10 +51,15 @@ msgid "Agricultural season"
 msgstr "Campaña"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:137
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:170
 #, python-format
 msgid "All coefficients for measuring in height are zero for the reservoir %s."
 msgstr "Todos los coeficientes para medir en altura son cero para la balsa %s."
+
+#. module: base_wua_reservoir
+#: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoir_view_form
+msgid "Are you sure you want to toggle visibility?"
+msgstr "¿Está seguro de que quiere modificar la visibilidad?"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_water_sheet_area_nme
@@ -125,7 +135,7 @@ msgid "Crest level (m)"
 msgstr "Cota de coronación (m)"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:484
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:500
 #, python-format
 msgid "Date"
 msgstr "Fecha"
@@ -164,7 +174,12 @@ msgstr "Cota del nivel máximo normal."
 #. module: base_wua_reservoir
 #: model:ir.model,name:base_wua_reservoir.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Elemento (campaña)"
+msgstr "Elemento (Campaña)"
+
+#. module: base_wua_reservoir
+#: model:ir.model,name:base_wua_reservoir.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Entidad (parcela)"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_excavated_terrain
@@ -260,6 +275,11 @@ msgid "ID"
 msgstr "ID"
 
 #. module: base_wua_reservoir
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_active
+msgid "If the active field is set to False, it will allow you to hide the register without removing it. For see archived register, go to \"Search-Filters\" in tree view"
+msgstr "Si el campo activo está como falso, ello le permitirá ocultar el registro sin borrarlo. Para ver los registros archivados, ir a \"Buscar-Filtros\" en la vista árbol"
+
+#. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_implementation_year
 msgid "Implementation year"
 msgstr "Año de ejecución"
@@ -281,7 +301,7 @@ msgid "Interior slope."
 msgstr "Talud interior."
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:244
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:283
 #, python-format
 msgid "It is not possible to record a reading prior to the last reading."
 msgstr "No se puede registrar una lectura anterior a la última lectura."
@@ -295,7 +315,7 @@ msgstr "Última variación (m³)"
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir___last_update
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading___last_update
 msgid "Last Modified on"
-msgstr "Última modificación el"
+msgstr "Última modificación en"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_is_last_reading
@@ -306,6 +326,16 @@ msgstr "Última lectura"
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_last_reading_time
 msgid "Last Reading Time"
 msgstr "Última lectura (tiempo)"
+
+#. module: base_wua_reservoir
+#: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoirreading_view_search
+msgid "Last Reading: No"
+msgstr "Última lectura: No"
+
+#. module: base_wua_reservoir
+#: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoirreading_view_search
+msgid "Last Reading: Yes"
+msgstr "Última lectura: Sí"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_write_uid
@@ -408,9 +438,9 @@ msgid "Param for water reservoir"
 msgstr "Parám. para balsas"
 
 #. module: base_wua_reservoir
-#: model:ir.model,name:base_wua_reservoir.model_wua_parcel
-msgid "Parcels (integrated GIS)"
-msgstr "Parcelas (integradas GIS)"
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_previous_reading_id
+msgid "Previous reading"
+msgstr "Lectura previa"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_name
@@ -423,7 +453,7 @@ msgid "Readings"
 msgstr "Lecturas"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:483
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:499
 #, python-format
 msgid "Readings of the active agricultural season"
 msgstr "Lecturas de la campaña activa"
@@ -441,7 +471,7 @@ msgid "Reservoir Reading"
 msgstr "Lectura de balsa"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:442
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:457
 #: model:ir.actions.act_window,name:base_wua_reservoir.wua_reservoirreading_action
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_agriculturalseason_reservoirreading_ids
 #: model:ir.ui.menu,name:base_wua_reservoir.wua_reservoirreading_menu
@@ -643,8 +673,8 @@ msgid "The volume entered must be zero or positive."
 msgstr "El volumen medido debe de ser cero o un valor positivo."
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:186
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:189
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:225
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:228
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr "No pueden existir lecturas intermedias sin eliminar."

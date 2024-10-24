@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-30 09:25+0000\n"
-"PO-Revision-Date: 2021-04-30 09:25+0000\n"
+"POT-Creation-Date: 2024-10-22 11:03+0000\n"
+"PO-Revision-Date: 2024-10-22 11:03+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,6 +31,11 @@ msgid "<span><b>LAST READING</b></span>"
 msgstr "<span><b>ÚLTIMA LECTURA</b></span>"
 
 #. module: base_wua_reservoir
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_active
+msgid "Active"
+msgstr "Actiu"
+
+#. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_age
 msgid "Age"
 msgstr "Edat"
@@ -46,10 +51,15 @@ msgid "Agricultural season"
 msgstr "Campanya"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:137
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:170
 #, python-format
 msgid "All coefficients for measuring in height are zero for the reservoir %s."
 msgstr "Tots els coeficients per mesurar l'alçada són nuls per a la bassa %s."
+
+#. module: base_wua_reservoir
+#: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoir_view_form
+msgid "Are you sure you want to toggle visibility?"
+msgstr "Esteu segur que voleu modificar la visibilitat?"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_water_sheet_area_nme
@@ -125,7 +135,7 @@ msgid "Crest level (m)"
 msgstr "Cota de coronació (m)"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:484
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:500
 #, python-format
 msgid "Date"
 msgstr "Data"
@@ -164,7 +174,12 @@ msgstr "Cota de el nivell màxim normal."
 #. module: base_wua_reservoir
 #: model:ir.model,name:base_wua_reservoir.model_wua_agriculturalseason
 msgid "Entity (agricultural season)"
-msgstr "Element (campaña)"
+msgstr "Element (campanya)"
+
+#. module: base_wua_reservoir
+#: model:ir.model,name:base_wua_reservoir.model_wua_parcel
+msgid "Entity (parcel)"
+msgstr "Element (parcel·la)"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_excavated_terrain
@@ -260,6 +275,11 @@ msgid "ID"
 msgstr "ID"
 
 #. module: base_wua_reservoir
+#: model:ir.model.fields,help:base_wua_reservoir.field_wua_reservoir_active
+msgid "If the active field is set to False, it will allow you to hide the register without removing it. For see archived register, go to \"Search-Filters\" in tree view"
+msgstr "Si el camp actiu està com a fals, això li permetrà ocultar el registre sense esborrar-ho. Per veure registres arxivats, anar a \"Buscar-Filtres\" en la vista arbre"
+
+#. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_implementation_year
 msgid "Implementation year"
 msgstr "Any d'execució"
@@ -281,7 +301,7 @@ msgid "Interior slope."
 msgstr "Talús interior."
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:244
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:283
 #, python-format
 msgid "It is not possible to record a reading prior to the last reading."
 msgstr "No es pot registrar una lectura anterior a l'última lectura."
@@ -300,12 +320,22 @@ msgstr "Última modificació el "
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_is_last_reading
 msgid "Last Reading"
-msgstr "Darrera lectura"
+msgstr "Última lectura"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_last_reading_time
 msgid "Last Reading Time"
 msgstr "Data última lectura"
+
+#. module: base_wua_reservoir
+#: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoirreading_view_search
+msgid "Last Reading: No"
+msgstr "Última lectura: No"
+
+#. module: base_wua_reservoir
+#: model:ir.ui.view,arch_db:base_wua_reservoir.wua_reservoirreading_view_search
+msgid "Last Reading: Yes"
+msgstr "Última lectura: Sì"
 
 #. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoir_write_uid
@@ -408,6 +438,11 @@ msgid "Param for water reservoir"
 msgstr "Param. per basses"
 
 #. module: base_wua_reservoir
+#: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_previous_reading_id
+msgid "Previous reading"
+msgstr "Lectura previa"
+
+#. module: base_wua_reservoir
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_reservoirreading_name
 msgid "Reading"
 msgstr "Lectura"
@@ -418,7 +453,7 @@ msgid "Readings"
 msgstr "Lectures"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:483
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:499
 #, python-format
 msgid "Readings of the active agricultural season"
 msgstr "Lectures de la campanya activa"
@@ -436,7 +471,7 @@ msgid "Reservoir Reading"
 msgstr "Lectura de bassa"
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoir.py:442
+#: code:addons/base_wua_reservoir/models/wua_reservoir.py:457
 #: model:ir.actions.act_window,name:base_wua_reservoir.wua_reservoirreading_action
 #: model:ir.model.fields,field_description:base_wua_reservoir.field_wua_agriculturalseason_reservoirreading_ids
 #: model:ir.ui.menu,name:base_wua_reservoir.wua_reservoirreading_menu
@@ -638,8 +673,8 @@ msgid "The volume entered must be zero or positive."
 msgstr "El volum mesurat deu ser zero o un valor positiu."
 
 #. module: base_wua_reservoir
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:186
-#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:189
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:225
+#: code:addons/base_wua_reservoir/models/wua_reservoirreading.py:228
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr "No poden existir lectures intermèdies sense eliminar."

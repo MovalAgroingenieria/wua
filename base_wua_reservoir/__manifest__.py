@@ -5,7 +5,7 @@
 {
     "name": "Water Users Association: Water Reservoir Management",
     "summary": "Base module for the management of Water Reservoirs in WUA's",
-    "version": '10.0.1.1.1',
+    "version": '10.0.1.1.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",

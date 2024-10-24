@@ -27,6 +27,15 @@ class WuaReservoirReading(models.Model):
         index=True,
         ondelete='restrict')
 
+    previous_reading_id = fields.Many2one(
+        string='Previous reading',
+        comodel_name='wua.reservoirreading',
+        index=True,
+        compute='_compute_previous_reading_id',
+        store=True,
+        ondelete='restrict',
+    )
+
     reading_time = fields.Datetime(
         string='Time',
         required=True,
@@ -69,12 +78,15 @@ class WuaReservoirReading(models.Model):
 
     is_last_reading = fields.Boolean(
         string='Last Reading',
-        compute='_compute_is_last_reading')
+        compute='_compute_is_last_reading',
+        search='_search_is_last_reading')
 
     differential_volume = fields.Float(
         string='Variation (m³)',
         digits=(32, 4),
-        compute='_compute_differential_volume')
+        compute='_compute_differential_volume',
+        store=True,
+    )
 
     notes = fields.Html(
         string='Notes')
@@ -93,6 +105,26 @@ class WuaReservoirReading(models.Model):
          'CHECK (height >= 0)',
          'The height must be zero or positive.'),
         ]
+
+    @api.model
+    def _search_is_last_reading(self, operator, value):
+        query = """
+            SELECT id
+            FROM wua_reservoirreading r
+            WHERE reading_time = (
+                SELECT MAX(reading_time)
+                FROM wua_reservoirreading
+                WHERE reservoir_id = r.reservoir_id
+            )
+            ORDER BY reservoir_id;
+        """
+        self._cr.execute(query)
+        result_ids = [row[0] for row in self._cr.fetchall()]
+
+        if value and operator in ['=', '!=']:
+            domain_operator = 'in' if operator == '=' else 'not in'
+            return [('id', domain_operator, result_ids)]
+        return [('id', 'not in', result_ids)]
 
     @api.depends('reading_time')
     def _compute_agriculturalseason_id(self):
@@ -143,22 +175,28 @@ class WuaReservoirReading(models.Model):
                 volume = record.volume_entered
             record.volume = volume
 
-    @api.multi
+    @api.depends('reading_time')
+    def _compute_previous_reading_id(self):
+        for record in self:
+            previous_reading_id = None
+            domain = [('reservoir_id', '=', record.reservoir_id.id),
+                      ('reading_time', '<=', record.reading_time)]
+            if record.id:
+                domain.append(('id', '!=', record.id))
+            two_last_readings = self.env['wua.reservoirreading'].search(
+                domain,
+                limit=2, order='reading_time desc')
+            if two_last_readings:
+                previous_reading_id = two_last_readings[0].id
+            record.previous_reading_id = previous_reading_id
+
+    @api.depends('previous_reading_id', 'previous_reading_id.volume', 'volume')
     def _compute_differential_volume(self):
         for record in self:
             differential_volume = 0
-            two_last_readings = self.env['wua.reservoirreading'].search(
-                [('reservoir_id', '=', record.reservoir_id.id),
-                 ('reading_time', '<=', record.reading_time)],
-                limit=2, order='reading_time desc')
-            if two_last_readings:
-                last_reading = two_last_readings[0]
-                if len(two_last_readings) == 2:
-                    prelast_reading = two_last_readings[1]
-                    differential_volume = \
-                        last_reading.volume - prelast_reading.volume
-                else:
-                    differential_volume = last_reading.volume
+            if record.previous_reading_id:
+                differential_volume = \
+                    record.volume - record.previous_reading_id.volume
             record.differential_volume = differential_volume
 
     @api.multi

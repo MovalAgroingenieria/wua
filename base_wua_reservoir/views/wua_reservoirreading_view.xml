@@ -67,6 +67,11 @@
                         context="{'group_by':'reservoir_id'}"/>
                     <filter string="Agricultural season" name="grouped_agriculturalseason"
                         context="{'group_by':'agriculturalseason_id'}"/>
+                    <separator id="is_last_reading_separator"/>
+                    <filter string="Last Reading: Yes" name="islastreadingyes"
+                    domain="[('is_last_reading','=',True)]"/>
+                    <filter string="Last Reading: No" name="islastreadingno"
+                    domain="[('is_last_reading','=',False)]"/>
                 </group>
             </search>
         </field>
@@ -95,6 +100,7 @@
                 (0, 0, {'view_mode': 'pivot',
                         'view_id': ref('wua_reservoirreading_view_pivot')})]"/>
         <field name="search_view_id" ref="wua_reservoirreading_view_search"/>
+        <field name="context" eval="{'search_default_islastreadingyes': 1}"/>
     </record>
 
     <menuitem id="wua_reservoirreading_menu"
