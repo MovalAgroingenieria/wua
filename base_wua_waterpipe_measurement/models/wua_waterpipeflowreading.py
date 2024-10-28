@@ -77,6 +77,27 @@ class WuaWaterpipeflowreading(models.Model):
         default=True,
         required=True)
 
+    waterpipeconsumption_volume = fields.Float(
+        string='Gross Value (m³)',
+        digits=(32, 4),
+        default=0,
+        store=True,
+        compute='_compute_waterpipeconsumption_volume')
+
+    waterpipeconsumption_adjustement_volume = fields.Float(
+        string='Adjust. Value (m³)',
+        digits=(32, 4),
+        default=0,
+        store=True,
+        compute='_compute_waterpipeconsumption_adjustement_volume')
+
+    waterpipeconsumption_volume_real = fields.Float(
+        string='Real Value (m³)',
+        digits=(32, 4),
+        default=0,
+        store=True,
+        compute='_compute_waterpipeconsumption_volume_real')
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
@@ -330,3 +351,34 @@ class WuaWaterpipeflowreading(models.Model):
                 is_negative = True
                 negative_volume = current_volume - previous_volume
         return is_negative, negative_volume
+
+    @api.depends('waterpipeconsumption_id', 'waterpipeconsumption_id.volume')
+    def _compute_waterpipeconsumption_volume(self):
+        for record in self:
+            waterpipeconsumption_volume = 0
+            if record.waterpipeconsumption_id:
+                waterpipeconsumption_volume = \
+                    record.waterpipeconsumption_id.volume
+            record.waterpipeconsumption_volume = waterpipeconsumption_volume
+
+    @api.depends('waterpipeconsumption_id',
+                 'waterpipeconsumption_id.adjustement_volume')
+    def _compute_waterpipeconsumption_adjustement_volume(self):
+        for record in self:
+            waterpipeconsumption_adjustement_volume = 0
+            if record.waterpipeconsumption_id:
+                waterpipeconsumption_adjustement_volume = \
+                    record.waterpipeconsumption_id.adjustement_volume
+            record.waterpipeconsumption_adjustement_volume = \
+                waterpipeconsumption_adjustement_volume
+
+    @api.depends('waterpipeconsumption_id',
+                 'waterpipeconsumption_id.volume_real')
+    def _compute_waterpipeconsumption_volume_real(self):
+        for record in self:
+            waterpipeconsumption_volume_real = 0
+            if record.waterpipeconsumption_id:
+                waterpipeconsumption_volume_real = \
+                    record.waterpipeconsumption_id.volume_real
+            record.waterpipeconsumption_volume_real = \
+                waterpipeconsumption_volume_real

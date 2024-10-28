@@ -6,14 +6,39 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-18 09:32+0000\n"
-"PO-Revision-Date: 2022-11-18 09:32+0000\n"
+"POT-Creation-Date: 2024-10-28 08:21+0000\n"
+"PO-Revision-Date: 2024-10-28 08:21+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_irrigation_measurement
+#: model:mail.template,body_html:base_wua_irrigation_measurement.email_template_negative_flowreading
+msgid "\n"
+"                \n"
+"                <p>Se ha creado una lectura de caudalímetro negativa con los siguientes detalles:</p>\n"
+"                <ul>\n"
+"                    <li>Identificador del elemento: ${object.name}</li>\n"
+"                    <li>Volumen: ${object.volume} m³</li>\n"
+"                    <li>Diferencia con respecto al último consumo: ${object.consumption_volume} m³</li>\n"
+"                </ul>\n"
+"                <p>Por favor, revise el registro y tome las medidas necesarias.</p>\n"
+"                \n"
+"            "
+msgstr "\n"
+"                \n"
+"                <p>Se ha creado una lectura de caudalímetro negativa con los siguientes detalles:</p>\n"
+"                <ul>\n"
+"                    <li>Identificador del elemento: ${object.name}</li>\n"
+"                    <li>Volumen: ${object.volume} m³</li>\n"
+"                    <li>Diferencia con respecto al último consumo: ${object.consumption_volume} m³</li>\n"
+"                </ul>\n"
+"                <p>Por favor, revise el registro y tome las medidas necesarias.</p>\n"
+"                \n"
+"            "
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intake_view_form
@@ -32,9 +57,15 @@ msgid "<span class=\"o_stat_text\">Intake Reads.</span>"
 msgstr "<span class=\"o_stat_text\">Lect. captación</span>"
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_intakeconsumption_adjustement_volume
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_adjustement_volume
 msgid "Adjust. Value (m³)"
 msgstr "Regularización (m³)"
+
+#. module: base_wua_irrigation_measurement
+#: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_pivot
+msgid "Agregated Values"
+msgstr "Valores agregados"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_agriculturalseason_id
@@ -85,7 +116,7 @@ msgstr "Consumo bruto (m³)"
 #. module: base_wua_irrigation_measurement
 #: code:addons/base_wua_irrigation_measurement/models/wua_agriculturalseason.py:58
 #: code:addons/base_wua_irrigation_measurement/models/wua_flowmeter.py:71
-#: code:addons/base_wua_irrigation_measurement/models/wua_intake.py:84
+#: code:addons/base_wua_irrigation_measurement/models/wua_intake.py:83
 #, python-format
 msgid "Consumptions"
 msgstr "Consumos"
@@ -95,6 +126,7 @@ msgstr "Consumos"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_create_uid
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_create_uid
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_create_uid
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_create_uid
 msgid "Created by"
 msgstr "Creado por"
 
@@ -103,6 +135,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_create_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_create_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_create_date
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_create_date
 msgid "Created on"
 msgstr "Creado en"
 
@@ -153,6 +186,7 @@ msgstr "Ventana para borrar lecturas de captación"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_display_name
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_display_name
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_display_name
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
 
@@ -209,6 +243,11 @@ msgid "Entity (negative flow reading)"
 msgstr "Elemento (lectura de caudalímetro negativa)"
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.actions.server,name:base_wua_irrigation_measurement.action_send_email_on_negative_flowreading
+msgid "Enviar correo electrónico en lectura de caudalímetro negativa"
+msgstr "Enviar correo electrónico en lectura de caudalímetro negativa"
+
+#. module: base_wua_irrigation_measurement
 #: sql_constraint:wua.negative.flowreading:0
 msgid "Existing Negative Flow-Reading."
 msgstr "Lectura negativa de caudalímetro preexistente."
@@ -230,12 +269,14 @@ msgstr "Lec. final, m³"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_instant_flow
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_instant_flow
 msgid "Flow (m³/h)"
 msgstr "Caudal (m³/h)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_flowmeter_id
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_flowmeter_id
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_flowmeter_id
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_search
 msgid "Flow Meter"
 msgstr "Caudalímetro"
@@ -254,6 +295,7 @@ msgstr "Lecturas de captación"
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_name
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_name
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_name
 msgid "Flow-Meter Reading"
 msgstr "Lectura de captación"
 
@@ -269,7 +311,7 @@ msgid "Flowmeter Readings"
 msgstr "Lecturas de captación"
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:157
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:173
 #, python-format
 msgid "Flowmeter not associated with any intake."
 msgstr "Caudalímetro no asociado con ninguna toma."
@@ -295,6 +337,7 @@ msgid "General Infrastructure"
 msgstr "Infraestructura general"
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_intakeconsumption_volume
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_volume
 msgid "Gross Value (m³)"
 msgstr "Volumen bruto (m³)"
@@ -311,6 +354,7 @@ msgstr "Agrupar por"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_id
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_id
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_id
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_id
 msgid "ID"
 msgstr "ID"
 
@@ -348,6 +392,7 @@ msgstr "Lectura de inicialización"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_intake_id
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_intake_id
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_intake_id
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_intake_id
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_flowreading_view_search
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_intakeconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_irrigation_measurement.wua_negative_flowreading_view_search
@@ -391,8 +436,9 @@ msgstr "Último caudal instantáneo (m³/h)"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading___last_update
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm___last_update
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption___last_update
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading___last_update
 msgid "Last Modified on"
-msgstr "Last Modified on"
+msgstr "Última modificación en"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_is_last_reading
@@ -425,6 +471,7 @@ msgstr "Último valor de lectura (m³)"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_write_uid
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_write_uid
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_write_uid
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
@@ -433,8 +480,14 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_write_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_write_date
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_write_date
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
+
+#. module: base_wua_irrigation_measurement
+#: model:mail.template,subject:base_wua_irrigation_measurement.email_template_negative_flowreading
+msgid "Lectura de caudalímetro negativa creada - ${object.name}"
+msgstr "Lectura de caudalímetro negativa creada - ${object.name}"
 
 #. module: base_wua_irrigation_measurement
 #: selection:wua.in.fm,flowmeter_type:0
@@ -552,6 +605,7 @@ msgid "Readings to delete"
 msgstr "Lecturas para borrar"
 
 #. module: base_wua_irrigation_measurement
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_intakeconsumption_volume_real
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_intakeconsumption_volume_real
 msgid "Real Value (m³)"
 msgstr "Volumen real (m³)"
@@ -562,32 +616,33 @@ msgid "The reading end time can't be lower than the reading start time."
 msgstr "El tiempo de lectura no puede ser menor que el inicial."
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:173
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:195
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:189
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:211
 #, python-format
 msgid "The reading time is minor than the time of the previous reading."
 msgstr "El tiempo de lectura es anterior a la lectura previa."
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:259
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:275
 #, python-format
 msgid "There are different flow meters."
 msgstr "Hay caudalímetros diferentes."
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:261
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:277
 #, python-format
 msgid "There can be no final readings without eliminating."
 msgstr "No puede haber lecturas finales sin eliminar."
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:275
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:291
 #, python-format
 msgid "There can be no intermediate readings without eliminating."
 msgstr "No puede haber lecturas intermedias sin eliminar."
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_reading_time
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_reading_time
 msgid "Time"
 msgstr "Instante"
 
@@ -609,8 +664,8 @@ msgstr "Total"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_agriculturalseason_total_volume
-msgid "Total volume"
-msgstr "Volumem total"
+msgid "Total Volume (m³)"
+msgstr "Volumen total (m³)"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_in_fm_flowmeter_type
@@ -680,6 +735,8 @@ msgstr "Validada: Sí"
 
 #. module: base_wua_irrigation_measurement
 #: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_flowreading_volume
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_consumption_volume
+#: model:ir.model.fields,field_description:base_wua_irrigation_measurement.field_wua_negative_flowreading_volume
 msgid "Value (m³)"
 msgstr "Valor (m³)"
 
@@ -710,9 +767,8 @@ msgid "Woltmann"
 msgstr "Woltmann"
 
 #. module: base_wua_irrigation_measurement
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:304
-#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:313
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:320
+#: code:addons/base_wua_irrigation_measurement/models/wua_flowreading.py:329
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tiene suficientes permisos para ejecutar esta acción."
-

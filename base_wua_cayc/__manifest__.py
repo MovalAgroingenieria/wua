@@ -12,6 +12,7 @@
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
+        "website",
         "base_wua_infrastructure_primary",
         "wua_attendance_leaves_report",
         "hr_attendance_staff_manager",

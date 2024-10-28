@@ -77,6 +77,27 @@ class WuaFlowreading(models.Model):
         default=True,
         required=True)
 
+    intakeconsumption_volume = fields.Float(
+        string='Gross Value (m³)',
+        digits=(32, 4),
+        default=0,
+        store=True,
+        compute='_compute_intakeconsumption_volume')
+
+    intakeconsumption_adjustement_volume = fields.Float(
+        string='Adjust. Value (m³)',
+        digits=(32, 4),
+        default=0,
+        store=True,
+        compute='_compute_intakeconsumption_adjustement_volume')
+
+    intakeconsumption_volume_real = fields.Float(
+        string='Real Value (m³)',
+        digits=(32, 4),
+        default=0,
+        store=True,
+        compute='_compute_intakeconsumption_volume_real')
+
     _sql_constraints = [
         ('unique_name',
          'UNIQUE (name)',
@@ -328,3 +349,32 @@ class WuaFlowreading(models.Model):
                 is_negative = True
                 negative_volume = current_volume - previous_volume
         return is_negative, negative_volume
+
+    @api.depends('intakeconsumption_id', 'intakeconsumption_id.volume')
+    def _compute_intakeconsumption_volume(self):
+        for record in self:
+            intakeconsumption_volume = 0
+            if record.intakeconsumption_id:
+                intakeconsumption_volume = record.intakeconsumption_id.volume
+            record.intakeconsumption_volume = intakeconsumption_volume
+
+    @api.depends('intakeconsumption_id',
+                 'intakeconsumption_id.adjustement_volume')
+    def _compute_intakeconsumption_adjustement_volume(self):
+        for record in self:
+            intakeconsumption_adjustement_volume = 0
+            if record.intakeconsumption_id:
+                intakeconsumption_adjustement_volume = \
+                    record.intakeconsumption_id.adjustement_volume
+            record.intakeconsumption_adjustement_volume = \
+                intakeconsumption_adjustement_volume
+
+    @api.depends('intakeconsumption_id', 'intakeconsumption_id.volume_real')
+    def _compute_intakeconsumption_volume_real(self):
+        for record in self:
+            intakeconsumption_volume_real = 0
+            if record.intakeconsumption_id:
+                intakeconsumption_volume_real = \
+                    record.intakeconsumption_id.volume_real
+            record.intakeconsumption_volume_real = \
+                intakeconsumption_volume_real
