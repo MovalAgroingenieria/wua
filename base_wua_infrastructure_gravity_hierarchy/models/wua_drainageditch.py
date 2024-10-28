@@ -374,6 +374,7 @@ class WuaDrainageditch(models.Model):
     @api.depends('total_affected_area_official')
     def _compute_total_affected_area_official_hec(self):
         factor = 1
+        area_measurement_equivalence = 0
         area_measurement_type = self.env['ir.values'].get_default(
             'wua.configuration', 'area_measurement_type')
         if area_measurement_type == 1:
@@ -381,9 +382,9 @@ class WuaDrainageditch(models.Model):
                 'wua.configuration', 'area_measurement_equivalence')
         if area_measurement_equivalence > 0:
             factor = area_measurement_equivalence
-            for record in self:
-                record.total_affected_area_official_hec = \
-                    factor * record.total_affected_area_official
+        for record in self:
+            record.total_affected_area_official_hec = \
+                factor * record.total_affected_area_official
 
     @api.multi
     def _compute_gis_viewer_link(self):
