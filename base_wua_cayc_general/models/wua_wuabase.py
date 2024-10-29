@@ -102,6 +102,9 @@ class WuaWuabase(models.Model):
     def name_get(self):
         result = []
         for record in self:
-            display_name = u'[' + record.name + u'] ' + record.description
+            description = u''
+            if (record.description):
+                description = record.description
+            display_name = u'[' + record.name + u'] ' + description
             result.append((record.id, display_name))
         return result
