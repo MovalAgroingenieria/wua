@@ -3118,6 +3118,12 @@ class WuaParcelPartnerlink(models.Model):
         index=True,
         ondelete='restrict')
 
+    farmproperty_id = fields.Many2one(
+        string='Farm Property',
+        comodel_name='wua.farmproperty',
+        store=True,
+        related='parcel_id.farmproperty_id')
+    
     irrigation_partner = fields.Boolean(
         string='Main',
         default=False,
