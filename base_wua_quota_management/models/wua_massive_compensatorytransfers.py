@@ -111,7 +111,8 @@ class WuaMassiveCompensatorytransfers(models.Model):
         comodel_name='wua.superproduct',
         required=True,
         domain="[('is_flowstopper', '=', True),"
-               "('irrigationditch_id', '=', irrigationditch_direct_id)]",)
+               "('irrigationditch_id', '=', irrigationditch_direct_id)]",
+    )
 
     superproduct_id_domain = fields.Char(
         compute="_compute_superproduct_id_domain",
@@ -122,7 +123,8 @@ class WuaMassiveCompensatorytransfers(models.Model):
     destination_superproduct_id = fields.Many2one(
         string='Destination Superproduct',
         comodel_name='wua.superproduct',
-        required=True,)
+        required=True,
+    )
 
     category_id = fields.Many2one(
         string='Categ.',
@@ -320,7 +322,7 @@ class WuaMassiveCompensatorytransfers(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.individualinput_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True}
+                            'compressed_quotaperiod': True},
                 }
             return act_window
 
@@ -391,7 +393,7 @@ class WuaMassiveCompensatorytransfers(models.Model):
                 'domain': {'quotaperiod_id':
                            [('agriculturalseason_id', '=',
                              self.agriculturalseason_id.id),
-                            ('state', '=', 'generated')]}
+                            ('state', '=', 'generated')]},
                 }
 
     @api.onchange('quotaperiod_id')
@@ -404,7 +406,7 @@ class WuaMassiveCompensatorytransfers(models.Model):
             if valid_superproduct_ids:
                 return {
                     'domain': {'superproduct_id':
-                               [('id', 'in', valid_superproduct_ids)]}
+                               [('id', 'in', valid_superproduct_ids)]},
                     }
 
     @api.constrains('quotaperiod_id')
@@ -560,10 +562,10 @@ class WuaMassiveCompensatorytransfersPartner(models.Model):
 
     @api.multi
     def add_to_massive_compensatorytransfers(self):
-        vals = {'selected': True, }
+        vals = {'selected': True}
         self.write(vals)
 
     @api.multi
     def remove_from_massive_compensatorytransfers(self):
-        vals = {'selected': False, }
+        vals = {'selected': False}
         self.write(vals)

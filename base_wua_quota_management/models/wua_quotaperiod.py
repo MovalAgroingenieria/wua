@@ -445,7 +445,7 @@ class WuaQuotaperiod(models.Model):
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
                             'search_default_active_agriculturalseason': True,
-                            'search_default_not_closed_quotaperiod': True}
+                            'search_default_not_closed_quotaperiod': True},
                 }
             return act_window
 
@@ -505,7 +505,7 @@ class WuaQuotaperiod(models.Model):
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
                             'search_default_active_agriculturalseason': True,
-                            'search_default_not_closed_quotaperiod': True}
+                            'search_default_not_closed_quotaperiod': True},
                 }
             return act_window
 
@@ -693,7 +693,7 @@ class WuaQuotaperiod(models.Model):
             'res_model': 'wizard.massive.individualinputs',
             'src_model': 'wua.quotaperiod',
             'view_mode': 'form',
-            'target': 'new'
+            'target': 'new',
             }
         return act_window
 
@@ -706,7 +706,7 @@ class WuaQuotaperiod(models.Model):
             'res_model': 'wizard.massive.compensatorytransfers',
             'src_model': 'wua.quotaperiod',
             'view_mode': 'form',
-            'target': 'new'
+            'target': 'new',
             }
         return act_window
 
@@ -719,7 +719,7 @@ class WuaQuotaperiod(models.Model):
             'res_model': 'wizard.massive.cancelnegativebalances',
             'src_model': 'wua.quotaperiod',
             'view_mode': 'form',
-            'target': 'new'
+            'target': 'new',
             }
         return act_window
 

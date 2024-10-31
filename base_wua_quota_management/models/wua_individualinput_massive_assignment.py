@@ -155,7 +155,7 @@ class WuaIndividualinputMassiveAssignment(models.Model):
     assignment_line_ids = fields.One2many(
         string='Lines',
         comodel_name='wua.individualinput.massive.assignment.line',
-        inverse_name='assignment_id'
+        inverse_name='assignment_id',
     )
 
     individualinput_ids = fields.One2many(
@@ -284,7 +284,7 @@ class WuaIndividualinputMassiveAssignment(models.Model):
                 'domain': {'quotaperiod_id':
                            [('agriculturalseason_id', '=',
                              self.agriculturalseason_id.id),
-                            ('state', '=', 'generated')]}
+                            ('state', '=', 'generated')]},
                 }
 
     @api.onchange('quotaperiod_id')
@@ -297,7 +297,7 @@ class WuaIndividualinputMassiveAssignment(models.Model):
             if valid_superproduct_ids:
                 return {
                     'domain': {'superproduct_id':
-                               [('id', 'in', valid_superproduct_ids)]}
+                               [('id', 'in', valid_superproduct_ids)]},
                     }
 
     @api.onchange('superproduct_id')
@@ -356,7 +356,10 @@ class WuaIndividualinputMassiveAssignment(models.Model):
     def name_get(self):
         result = []
         default_locale = locale.setlocale(locale.LC_TIME)
-        is_english = self.env.context['lang'] == 'en_US'
+        if (self.env.context and 'lang' in self.env.context):
+            is_english = self.env.context['lang'] == 'en_US'
+        else:
+            is_english = False
         for record in self:
             superproduct_name = record.superproduct_id.name
             reason = record.reason
@@ -397,7 +400,7 @@ class WuaIndividualinputMassiveAssignment(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.individualinput_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True}
+                            'compressed_quotaperiod': True},
                 }
             return act_window
 
@@ -418,13 +421,15 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
         size=MAX_SIZE_NAME,
         store=True,
         index=True,
-        compute='_compute_name',)
+        compute='_compute_name',
+    )
 
     volume = fields.Float(
         string='Volume (m³)',
         digits=(32, 2),
         default=0,
-        required=True,)
+        required=True,
+    )
 
     effective_volume = fields.Float(
         string='Effective Volume (m³)',
@@ -435,19 +440,22 @@ class WuaIndividualinputMassiveAssignmentLine(models.Model):
     assignment_id = fields.Many2one(
         string="Massive Assignment",
         comodel_name='wua.individualinput.massive.assignment',
-        ondelete='cascade',)
+        ondelete='cascade',
+    )
 
     partner_id = fields.Many2one(
         string='Partner WUA',
         comodel_name='res.partner',
         required=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     category_id = fields.Many2one(
         string='Categ.',
         comodel_name='wua.individualinput.category',
         related='assignment_id.category_id',
-        store=True,)
+        store=True,
+    )
 
     reason = fields.Char(
         string='Reason',

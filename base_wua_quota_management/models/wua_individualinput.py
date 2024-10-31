@@ -219,25 +219,29 @@ class WuaIndividualinput(models.Model):
         string='Assignment',
         comodel_name='wua.individualinput.massive.assignment',
         readonly=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     massive_cancel_balance_id = fields.Many2one(
         string='Cancel Balance',
         comodel_name='wua.massive.cancel.balances',
         readonly=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     massive_compensatorytransfer_id = fields.Many2one(
         string='Compensatory Transfer',
         comodel_name='wua.massive.compensatorytransfers',
         readonly=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     massive_controlled_assignment_id = fields.Many2one(
         string='Massive Assignment',
         comodel_name='wua.massive.assignments',
         readonly=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     notes = fields.Html(string='Notes')
 
@@ -399,7 +403,7 @@ class WuaIndividualinput(models.Model):
                 'domain': {'quotaperiod_id':
                            [('agriculturalseason_id', '=',
                              self.agriculturalseason_id.id),
-                            ('state', '=', 'generated')]}
+                            ('state', '=', 'generated')]},
                 }
 
     @api.onchange('quotaperiod_id')
@@ -412,7 +416,7 @@ class WuaIndividualinput(models.Model):
             if valid_superproduct_ids:
                 return {
                     'domain': {'superproduct_id':
-                               [('id', 'in', valid_superproduct_ids)]}
+                               [('id', 'in', valid_superproduct_ids)]},
                     }
 
     @api.onchange('superproduct_id')
@@ -573,7 +577,7 @@ class WuaIndividualinput(models.Model):
             'view_type': 'form',
             'views': [(id_form_view, 'form')],
             'target': 'current',
-            'flags': {'mode': 'readonly'}
+            'flags': {'mode': 'readonly'},
             }
         return act_window
 

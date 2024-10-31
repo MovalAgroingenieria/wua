@@ -126,7 +126,8 @@ class WuaMassiveCancelBalances(models.Model):
         string='Reason',
         default='',
         size=MAX_SIZE_REASON,
-        required=True,)
+        required=True,
+    )
 
     event_time = fields.Datetime(
         string='Date and Time',
@@ -221,7 +222,7 @@ class WuaMassiveCancelBalances(models.Model):
                     'event_time': record.event_time,
                     'volume': -cancel_quota.balance,
                     'reason': record.reason,
-                    'massive_cancel_balance_id': record.id
+                    'massive_cancel_balance_id': record.id,
                     })
             record.write({
                 'state': '01_executed',
@@ -284,7 +285,7 @@ class WuaMassiveCancelBalances(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.individualinput_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True}
+                            'compressed_quotaperiod': True},
                 }
             return act_window
 
@@ -342,7 +343,7 @@ class WuaMassiveCancelBalances(models.Model):
                 'domain': {'quotaperiod_id':
                            [('agriculturalseason_id', '=',
                              self.agriculturalseason_id.id),
-                            ('state', '=', 'generated')]}
+                            ('state', '=', 'generated')]},
                 }
 
     @api.onchange('quotaperiod_id')
@@ -355,7 +356,7 @@ class WuaMassiveCancelBalances(models.Model):
             if valid_superproduct_ids:
                 return {
                     'domain': {'superproduct_id':
-                               [('id', 'in', valid_superproduct_ids)]}
+                               [('id', 'in', valid_superproduct_ids)]},
                     }
 
     @api.onchange('superproduct_id')
@@ -508,10 +509,10 @@ class WuaMassiveCancelBalancesPartner(models.Model):
 
     @api.multi
     def add_to_massive_cancel(self):
-        vals = {'selected': True, }
+        vals = {'selected': True}
         self.write(vals)
 
     @api.multi
     def remove_from_massive_cancel(self):
-        vals = {'selected': False, }
+        vals = {'selected': False}
         self.write(vals)
