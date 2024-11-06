@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_wizard_copy_hydric_balance_form" model="ir.ui.view">
+        <field name="name">wizard.copy.hydric.balance.form</field>
+        <field name="model">wizard.copy.hydric.balance</field>
+        <field name="arch" type="xml">
+            <form string="Copy Hydric Balance">
+                <group>
+                    <field name="new_initial_date"/>
+                    <field name="new_end_date"/>
+                </group>
+                <footer>
+                    <button string="Copy" type="object" name="action_copy_hydric_balance" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <act_window id="action_copy_balance"
+        name="Copy Request"
+        res_model="wizard.copy.hydric.balance"
+        src_model="wua.hydric.balance"
+        key2="client_action_multi"
+        view_mode="form"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+</odoo>

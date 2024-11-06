@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+<template id="wua_hydric_balance_report">
+    <t t-call="base_wua_report.wua_external_layout">
+        <t t-foreach="docs" t-as="o">
+            <div class="page">
+                <div name="title" class="text-center">
+                    <h4 style="margin-top:0px; padding-top:0px;">
+                        <strong>Hydric balance report</strong>
+                    </h4>
+                    <div>
+                        <span>[</span>
+                        <span t-field="o.initial_date" t-options="{'format': 'dd/MM/YYYY'}"/>
+                        <span class="fa fa-arrows-h"/>
+                        <span t-field="o.end_date" t-options="{'format': 'dd/MM/YYYY'}"/>
+                        <span>]</span>
+                    </div>
+                </div>
+                <div class="row h4 mt28 mb4" style="padding-bottom: 0px;">
+                    <t t-if="report_style == 'light'">
+                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                            <div style="float: left; display: inline;"><strong> Hydric Balance: </strong><span t-field="o.description"/></div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                            <div style="float: left; display: inline;"><strong> Hydric Balance: </strong><span t-field="o.description"/></div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" style="margin-top: 4px;">
+                    <div class="col-xs-12" style="display: table;">
+                        <div style="display: table-cell;">
+                            <table name="balance_table" class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr name="tr_initial_date">
+                                        <td><span>Initial Date:</span></td>
+                                        <td class="text-right"><span t-field="o.initial_date"/></td>
+                                    </tr>
+                                    <tr name="tr_end_date">
+                                        <td><span>End Date:</span></td>
+                                        <td class="text-right"><span t-field="o.end_date"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="display: table-cell; padding-left: 40px;">
+                            <table name="invoicing" class="table-condensed" style="width:90%;">
+                                <tbody>
+                                    <tr name="tr_total_input">
+                                        <td><span>Total input volume:</span></td>
+                                        <td class="text-right"><span t-field="o.total_input_volume"/></td>
+                                    </tr>
+                                    <tr name="tr_total_output">
+                                        <td><span>Total output volume:</span></td>
+                                        <td class="text-right"><span t-field="o.total_output_volume"/></td>
+                                    </tr>
+                                    <tr name="tr_total_variation">
+                                        <td><span>Total variation volume:</span></td>
+                                        <td class="text-right"><span t-field="o.total_variation_volume"/></td>
+                                    </tr>
+                                    <tr name="tr_estimated_loss">
+                                        <td><span>Estimated loss:</span></td>
+                                        <td class="text-right"><span t-field="o.estimated_loss"/></td>
+                                    </tr>
+                                    <tr name="tr_estimated_loss">
+                                        <td><span>Difference volume:</span></td>
+                                        <td class="text-right"><span t-field="o.difference_volume"/></td>
+                                    </tr>
+                                    <tr name="tr_loss_percentage">
+                                        <td><span>Total loss percentage:</span></td>
+                                        <td class="text-right"><span t-field="o.total_loss_percentage"/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Inputs -->
+                <div name="inputs_data" style="margin-top:20px;">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                <t t-if="o.hydric_balance_input_ids and len(o.hydric_balance_input_ids) > 1">
+                                    <div style="float: left; display: inline;"><strong>Inputs</strong></div>
+                                </t>
+                                <t t-else="">
+                                    <div style="float: left; display: inline;"><strong>Inputs</strong></div>
+                                </t>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                <t t-if="o.hydric_balance_input_ids and len(o.hydric_balance_input_ids) > 1">
+                                    <div style="float: left; display: inline;"><strong>Inputs</strong></div>
+                                </t>
+                                <t t-else="">
+                                    <div style="float: left; display: inline;"><strong>Inputs</strong></div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                    <div style="margin-top: 4px;">
+                        <t t-if="o.hydric_balance_input_ids and len(o.hydric_balance_input_ids) > 0">
+                            <table class="table table-striped" style="width:100%;">
+                                <thead>
+                                    <th name="th_type">Type</th>
+                                    <th name="th_flowmeter" class="text-right">Flowmeter</th>
+                                    <th name="th_input_volume" class="text-right">Volume (m³)</th>
+                                </thead>
+                                <tbody>
+                                    <t t-set="total_input_volume" t-value="0"/>
+                                    <t t-if="o.hydric_balance_input_ids">
+                                        <t t-foreach="o.hydric_balance_result_ids" t-as="i" style="page-break-inside: avoid;">
+                                            <t t-if="i.result_type == '01_input' and i.volume != 0">
+                                                <tr>
+                                                    <td name="td_type">
+                                                        <span t-field="i.input_type"/>
+                                                    </td>
+                                                    <td name="td_area" class="text-right">
+                                                        <span t-field="i.flowmeter_id"/>
+                                                    </td>
+                                                    <td name="td_input_volume" class="text-right">
+                                                        <span t-field="i.volume"/>
+                                                    </td>
+                                                </tr>
+                                                <t t-set="total_input_volume" t-value="total_input_volume + i.volume"/>
+                                            </t>
+                                        </t>
+                                        <tr>
+                                            <td colspan="2" class="text-right">
+                                                <strong>Total Volume</strong>
+                                            </td>
+                                            <td name="td_total_volume" class="text-right">
+                                                <strong><span t-esc="total_input_volume" t-options="{'widget': 'float', 'precision': 4}"/></strong>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <div class="text-center">
+                                (There is no inputs associated with this balance)
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <!-- Outputs -->
+                <div name="outputs_data" style="margin-top:20px;">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                <t t-if="o.hydric_balance_output_ids and len(o.hydric_balance_output_ids) > 1">
+                                    <div style="float: left; display: inline;"><strong>Outputs</strong></div>
+                                </t>
+                                <t t-else="">
+                                    <div style="float: left; display: inline;"><strong>Outputs</strong></div>
+                                </t>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                <t t-if="o.hydric_balance_output_ids and len(o.hydric_balance_output_ids) > 1">
+                                    <div style="float: left; display: inline;"><strong>Outputs</strong></div>
+                                </t>
+                                <t t-else="">
+                                    <div style="float: left; display: inline;"><strong>Outputs</strong></div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                    <div style="margin-top: 4px;">
+                        <t t-if="o.hydric_balance_output_ids and len(o.hydric_balance_output_ids) > 0">
+                            <table class="table table-striped" style="width:100%;">
+                                <thead>
+                                    <th name="th_type">Type</th>
+                                    <th name="th_waterconnection" class="text-right">Waterconnection</th>
+                                    <th name="th_irrigationditch" class="text-right">Irrigationditch</th>
+                                    <th name="th_intake" class="text-right">Intake</th>
+                                    <th name="th_flowmeter" class="text-right">Flowmeter</th>
+                                    <th name="th_intake" class="text-right">Volume (m³)</th>
+                                </thead>
+                                <tbody>
+                                    <t t-if="o.hydric_balance_output_ids">
+                                        <t t-set="total_output_volume" t-value="0"/>
+                                        <t t-foreach="o.hydric_balance_result_ids" t-as="i" style="page-break-inside: avoid;">
+                                            <t t-if="i.result_type == '02_output' and i.volume != 0">
+                                                <tr>
+                                                    <td name="td_type">
+                                                        <span t-field="i.output_type"/>
+                                                    </td>
+                                                    <td name="td_waterconnection" class="text-right">
+                                                        <t t-if="i.waterconnection_id">
+                                                            <span t-field="i.waterconnection_id"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span/>
+                                                        </t>
+                                                    </td>
+                                                    <td name="td_irrigationditch" class="text-right">
+                                                        <t t-if="i.irrigationditch_id">
+                                                            <span t-field="i.irrigationditch_id"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span/>
+                                                        </t>
+                                                    </td>
+                                                    <td name="td_intake" class="text-right">
+                                                        <t t-if="i.intake_id">
+                                                            <span t-field="i.intake_id"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span/>
+                                                        </t>
+                                                    </td>
+                                                    <td name="td_output_flowmeter" class="text-right">
+                                                        <t t-if="i.flowmeter_id">
+                                                            <span t-field="i.flowmeter_id"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span/>
+                                                        </t>
+                                                    </td>
+                                                    <td name="td_output_volume" class="text-right">
+                                                        <t t-if="i.volume">
+                                                            <span t-field="i.volume"/>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span/>
+                                                        </t>
+                                                    </td>
+                                                    <t t-set="total_output_volume" t-value="total_output_volume + i.volume"/>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                        <tr>
+                                            <td colspan="5" class="text-right">
+                                                <strong>Total Volume</strong>
+                                            </td>
+                                            <td name="td_total_output_volume" class="text-right">
+                                                <strong><span t-esc="total_output_volume" t-options="{'widget': 'float', 'precision': 4}"/></strong>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <div class="text-center">
+                                (There is no outputs associated with this balance)
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <!-- Variation -->
+                <div name="variation_data" style="margin-top:20px;">
+                    <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                        <t t-if="report_style == 'light'">
+                            <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                <t t-if="o.hydric_balance_variation_ids and len(o.hydric_balance_variation_ids) > 1">
+                                    <div style="float: left; display: inline;"><strong>Variations</strong></div>
+                                </t>
+                                <t t-else="">
+                                    <div style="float: left; display: inline;"><strong>Variations</strong></div>
+                                </t>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                <div style="float: left; width: 32px;"><span class="fa fa-moval-subparcel"/></div>
+                                <t t-if="o.hydric_balance_variation_ids and len(o.hydric_balance_variation_ids) > 1">
+                                    <div style="float: left; display: inline;"><strong>Variations</strong></div>
+                                </t>
+                                <t t-else="">
+                                    <div style="float: left; display: inline;"><strong>Variations</strong></div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                    <div style="margin-top: 4px;">
+                        <t t-if="o.hydric_balance_variation_ids and len(o.hydric_balance_variation_ids) > 0">
+                            <table class="table table-striped" style="width:100%;">
+                                <thead>
+                                    <th name="th_type">Type</th>
+                                    <th name="th_reservoir" class="text-right">Reservoir</th>
+                                    <th name="th_variation_volume" class="text-right">Volume (m³)</th>
+                                </thead>
+                                <tbody>
+                                    <t t-set="total_variation_volume" t-value="0"/>
+                                    <t t-if="o.hydric_balance_variation_ids">
+                                        <t t-foreach="o.hydric_balance_result_ids" t-as="r" style="page-break-inside: avoid;">
+                                            <t t-if="r.result_type == '03_variation' and r.volume != 0">
+                                                <tr>
+                                                    <td name="td_type">
+                                                        <span t-field="r.variation_type"/>
+                                                    </td>
+                                                    <td name="td_area" class="text-right">
+                                                        <span t-field="r.reservoir_id"/>
+                                                    </td>
+                                                    <td name="td_variation_volume" class="text-right">
+                                                        <span t-field="r.volume"/>
+                                                    </td>
+                                                    <t t-set="total_variation_volume" t-value="total_variation_volume + r.volume"/>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                        <tr>
+                                            <td colspan="2" class="text-right">
+                                                <strong>Total Volume</strong>
+                                            </td>
+                                            <td name="td_total_variation_volume" class="text-right">
+                                                <strong><span t-esc="total_variation_volume" t-options="{'widget': 'float', 'precision': 4}"/></strong>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <div class="text-center">
+                                (There is no variations associated with this balance)
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t>
+</template>
+
+    <report id="report_hydric_balance_print" model="wua.hydric.balance"
+        string="Hydric balance report" report_type="qweb-pdf"
+        name="base_wua_hydric_balance.wua_hydric_balance_report"
+        file="base_wua_hydric_balance.wua_hydric_balance_report"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+</odoo>

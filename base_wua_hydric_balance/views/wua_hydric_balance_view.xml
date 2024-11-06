@@ -1,0 +1,451 @@
+<odoo>
+
+    <record id="view_wua_hydric_balance_tree" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.tree</field>
+        <field name="model">wua.hydric.balance</field>
+        <field name="arch" type="xml">
+            <tree string="Hydric Balance">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="total_input_volume"/>
+                <field name="total_output_volume"/>
+                <field name="total_variation_volume"/>
+                <field name="loss_percentage"/>
+                <field name="difference_volume"/>
+                <field name="balance_state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_wua_hydric_balance_form" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.form</field>
+        <field name="model">wua.hydric.balance</field>
+        <field name="arch" type="xml">
+            <form string="Hydric Balance">
+                <header>
+                    <button name="calculate_hydric_balance"
+                        type="object"
+                        string="Calculate"
+                        icon="fa-gear"
+                        style="width: 105px;"
+                        groups="base_wua.group_wua_manager"
+                        attrs="{'invisible':
+                               ['|',
+                                ('balance_configured', '=', False),
+                                ('balance_state', '=', '02_computed')]}"/>
+                    <button name="action_reset_to_draft"
+                        type="object"
+                        string="Reset to Draft"
+                        icon="fa-undo"
+                        style="width: 150px;"
+                        groups="base_wua.group_wua_manager"
+                        attrs="{'invisible': [('balance_state','=', '01_draft')]}"/>
+                    <button name="%(action_copy_balance)d"
+                        type="action"
+                        string="Copy Hydric Balance"
+                        icon="fa-copy"
+                        style="width: 150px;"
+                        groups="base_wua.group_wua_manager"/>
+                    <field name="balance_state"
+                           widget="statusbar"
+                           statusbar_visible="01_draft,02_computed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_see_hydric_balance_results"
+                                type="object" class="oe_stat_button"
+                                icon="fa-list-ol"
+                                attrs="{'invisible': [('balance_state','!=', '02_computed')]}">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_text">Results</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" attrs="{'readonly': [('balance_state','!=','01_draft')]}"/>
+                            <field name="initial_date" attrs="{'readonly': ['|', ('balance_configured','=','True'), ('balance_state','!=','01_draft')]}"/>
+                            <field name="end_date" attrs="{'readonly': ['|', ('balance_configured','=','True'), ('balance_state','!=','01_draft')]}"/>
+                            <field name="loss_percentage" attrs="{'readonly': [('balance_state','!=','01_draft')]}"/>
+                            <field name="description" attrs="{'readonly': [('balance_state','!=','01_draft')]}"/>
+                            <field name="balance_configured" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="total_input_volume" attrs="{'invisible': [('balance_state','!=', '02_computed')]}"/>
+                            <field name="total_output_volume" attrs="{'invisible': [('balance_state','!=', '02_computed')]}"/>
+                            <field name="total_variation_volume" attrs="{'invisible': [('balance_state','!=', '02_computed')]}"/>
+                            <field name="estimated_loss" attrs="{'invisible': [('balance_state','!=', '02_computed')]}"/>
+                            <field name="difference_volume" attrs="{'invisible': [('balance_state','!=', '02_computed')]}"/>
+                            <field name="total_loss_percentage" attrs="{'invisible': [('balance_state','!=', '02_computed')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Input elements">
+                            <field name="hydric_balance_input_ids" attrs="{'readonly': [('balance_state','!=','01_draft')]}">
+                                <tree string="Input elements" editable="bottom">
+                                    <field name="input_type"/>
+                                    <field name="input_configured" invisible="1"/>
+                                    <button type="object"
+                                            icon="fa-check-circle"
+                                            attrs="{'invisible': [('input_configured','=',False)],
+                                                    'readonly': [('input_configured','=',True)]}"/>
+                                    <button name="action_select_input_line"
+                                            type="object"
+                                            string="Select"/>
+                                </tree>
+                            </field>
+                            <div class="oe_form_text">
+                                <p><strong>Notes on Input Elements:</strong></p>
+                                <p>Here you can select collection or branch consumption, make sure that the readings are validated and are not initialization readings, as well as that the start and end date intersect with the period selected in the balance.</p>
+                                <p>Please note that:</p>
+                                <p>- Flowmeter consumptions, only validated consumptions that come from waterpipeconsumptions and intakeconsumptions are shown.</p>
+                            </div>
+                        </page>
+                        <page string="Output elements">
+                            <field name="hydric_balance_output_ids" attrs="{'readonly': [('balance_state','!=','01_draft')]}">
+                                <tree string="Output elements" editable="bottom">
+                                    <field name="output_type"/>
+                                    <field name="output_configured" invisible="1"/>
+                                    <button type="object"
+                                            icon="fa-check-circle"
+                                            attrs="{'invisible': [('output_configured','=',False)],
+                                                    'readonly': [('output_configured','=',True)]}"/>
+                                    <button name="action_select_output_line"
+                                            type="object"
+                                            string="Select"/>
+                                </tree>
+                            </field>
+                            <div class="oe_form_text">
+                                <p><strong>Notes on Output Elements:</strong></p>
+                                <p>Here you can select pressure consumption, gravity consumption, irrigation reports and flowmeters, make sure that the readings are validated and are not initialization readings, as well as that the start and end date intersect with the period selected in the balance.</p>
+                                <p>Please note that:</p>
+                                <p>- Pressure consumptions, only validated and uncanceled consumptions are shown.</p>
+                                <p>- Consumption by gravity, only consumption in the executed state is shown.</p>
+                                <p>- Irrigation reports only validated and uncanceled reports are shown.</p>
+                                <p>- Flowmeters only show validated consumption.</p>
+                            </div>
+                        </page>
+                        <page string="Variation elements">
+                            <field name="hydric_balance_variation_ids" attrs="{'readonly': [('balance_state','!=','01_draft')]}">
+                                <tree string="Variation elements" editable="bottom">
+                                    <field name="variation_type"/>
+                                    <field name="variation_configured" invisible="1"/>
+                                    <button type="object"
+                                            icon="fa-check-circle"
+                                            attrs="{'invisible': [('variation_configured','=',False)],
+                                                    'readonly': [('variation_configured','=',True)]}"/>
+                                    <button name="action_select_variation_line"
+                                            type="object"
+                                            string="Select"/>
+                                </tree>
+                            </field>
+                            <div class="oe_form_text">
+                                <p><strong>Notes on Variation Elements:</strong></p>
+                                <p>Here you can select pond readings, make sure the start and end date intersect with the selected period in the balance sheet.</p>
+                            </div>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_wua_hydric_balance_search" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.search</field>
+        <field name="model">wua.hydric.balance</field>
+        <field name="arch" type="xml">
+            <search string="Hydric Balance Search">
+                <field name="description" string="Description"/>
+                <filter string="Draft" name="draft_filter" domain="[('balance_state', '=', '01_draft')]"/>
+                <filter string="Computed" name="computed_filter" domain="[('balance_state', '=', '02_computed')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Balance state" name="group_by_balance_state" context="{'group_by': 'balance_state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_input_line_view_tree" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.input.line.tree</field>
+        <field name="model">wua.hydric.balance.input.line</field>
+        <field name="arch" type="xml">
+            <tree string="Hydric Balance Input Lines" create="false" edit="false" delete="false">
+                <field name="input_line_selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                    icon="fa-check-circle"
+                    attrs="{'invisible': [('input_line_selected','=',False)],
+                            'readonly': [('input_line_selected','=',True)]}"/>
+                <field name="initial_time"/>
+                <field name="end_time"/>
+                <field name="volume"/>
+                <field name="intake_id"/>
+                <field name="intakeconsumption_id"/>
+                <field name="waterpipe_id"/>
+                <field name="waterpipeconsumption_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_input_line_view_search" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.input.line.search</field>
+        <field name="model">wua.hydric.balance.input.line</field>
+        <field name="arch" type="xml">
+            <search string="Hydric Balance Input Line Search">
+                <field name="waterpipe_id"/>
+                <field name="intake_id"/>
+                <filter string="Selected" name="selected_filter" domain="[('selected', '=', True)]"/>
+                <filter string="Not selected" name="not_selected_filter" domain="[('selected', '=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Intake" name="group_by_intake" context="{'group_by': 'intake_id'}"/>
+                    <filter string="Water Pipe" name="group_by_waterpipe" context="{'group_by': 'waterpipe_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_output_line_view_tree" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.output.line.tree</field>
+        <field name="model">wua.hydric.balance.output.line</field>
+        <field name="arch" type="xml">
+            <tree string="Hydric Balance Output Lines" create="false" edit="false" delete="false">
+                <field name="output_line_selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                    icon="fa-check-circle"
+                    attrs="{'invisible': [('output_line_selected','=',False)],
+                            'readonly': [('output_line_selected','=',True)]}"/>
+                <field name="initial_time"/>
+                <field name="end_time"/>
+                <field name="volume"/>
+                <field name="waterconnection_id"/>
+                <field name="presconsumption_id"/>
+                <field name="irrigationreport_id"/>
+                <field name="gravconsumption_id"/>
+                <field name="intake_id"/>
+                <field name="intakeconsumption_id"/>
+                <field name="waterpipe_id"/>
+                <field name="waterpipeconsumption_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_output_line_view_search" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.output.line.search</field>
+        <field name="model">wua.hydric.balance.output.line</field>
+        <field name="arch" type="xml">
+            <search string="Hydric Balance Output Line Search">
+                <field name="waterpipe_id"/>
+                <field name="intake_id"/>
+                <field name="waterconnection_id"/>
+                <field name="irrigationditch_id"/>
+                <field name="flowmeter_id"/>
+                <field name="hydraulicsector_id"/>
+                <filter string="Selected" name="selected_filter" domain="[('output_line_selected', '=', True)]"/>
+                <filter string="Not selected" name="not_selected_filter" domain="[('output_line_selected', '=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Intake" name="group_by_intake_id" context="{'group_by': 'intake_id'}"/>
+                    <filter string="Waterpipe" name="group_by_waterpipe_id" context="{'group_by': 'waterpipe_id'}"/>
+                    <filter string="Waterconnection" name="group_by_waterconnection_id" context="{'group_by': 'waterconnection_id'}"/>
+                    <filter string="Irrigation Ditch" name="group_by_irrigationditch_id" context="{'group_by': 'irrigationditch_id'}"/>
+                    <filter string="Flowmeter" name="group_by_flowmeter_id" context="{'group_by': 'flowmeter_id'}"/>
+                    <filter string="Hydraulicsector" name="group_by_flowmeter_id" context="{'group_by': 'hydraulicsector_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_variation_line_view_tree" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.variation.line.tree</field>
+        <field name="model">wua.hydric.balance.variation.line</field>
+        <field name="arch" type="xml">
+            <tree string="Hydric Balance Variation Lines" create="false" edit="false" delete="false">
+                <field name="variation_line_selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                    icon="fa-check-circle"
+                    attrs="{'invisible': [('variation_line_selected','=',False)],
+                            'readonly': [('variation_line_selected','=',True)]}"/>
+                <field name="variation_time"/>
+                <field name="variation_volume"/>
+                <field name="volume"/>
+                <field name="reservoirreading_id"/>
+                <field name="reservoir_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_variation_line_view_search" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.variation.line.search</field>
+        <field name="model">wua.hydric.balance.variation.line</field>
+        <field name="arch" type="xml">
+            <search string="Hydric Balance Variation Line Search">
+                <filter string="Selected" name="selected_filter" domain="[('variation_line_selected', '=', True)]"/>
+                <filter string="Not selected" name="not_selected_filter" domain="[('variation_line_selected', '=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Reservoir" name="group_by_reservoir_id" context="{'group_by': 'reservoir_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_result_view_tree" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.result.tree</field>
+        <field name="model">wua.hydric.balance.result</field>
+        <field name="arch" type="xml">
+            <tree string="Hydric Balance Results" create="false" edit="false" delete="false">
+                <field name="element_name"/>
+                <field name="result_type"/>
+                <field name="volume"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_result_view_search" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.result.search</field>
+        <field name="model">wua.hydric.balance.result</field>
+        <field name="arch" type="xml">
+            <search string="Hydric Balance Result Search">
+                <field name="element_name"/>
+                <filter string="Input" name="input_filter" domain="[('result_type', '=', '01_input')]"/>
+                <filter string="Output" name="output_filter" domain="[('result_type', '=', '02_output')]"/>
+                <filter string="Variation" name="variation_filter" domain="[('result_type', '=', '03_variation')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Result Type" name="group_by_result_type" context="{'group_by': 'result_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_hydric_balance_result_view_pivot" model="ir.ui.view">
+        <field name="name">wua.hydric.balance.result.pivot</field>
+        <field name="model">wua.hydric.balance.result</field>
+        <field name="arch" type="xml">
+            <pivot string="Hydric Balance Results Pivot">
+                <field name="element_name" type="row"/>
+                <field name="result_type" type="col"/>
+                <field name="volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="action_add_to_input" model="ir.actions.server">
+        <field name="name">Add to Input</field>
+        <field name="model_id" ref="model_wua_hydric_balance_input_line"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.hydric.balance.input.line'].browse(context['active_ids']).add_to_input()
+        </field>
+    </record>
+
+    <record id="action_add_input_to_values" model="ir.values">
+        <field name="name">Add to Input</field>
+        <field name="model">wua.hydric.balance.input.line</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_add_to_input'))"/>
+    </record>
+
+    <record id="action_remove_from_input" model="ir.actions.server">
+        <field name="name">Remove from Input</field>
+        <field name="model_id" ref="model_wua_hydric_balance_input_line"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.hydric.balance.input.line'].browse(context['active_ids']).remove_from_input()
+        </field>
+    </record>
+
+    <record id="action_remove_input_from_values" model="ir.values">
+        <field name="name">Remove from Input</field>
+        <field name="model">wua.hydric.balance.input.line</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_remove_from_input'))"/>
+    </record>
+
+    <record id="action_add_to_output" model="ir.actions.server">
+        <field name="name">Add to Output</field>
+        <field name="model_id" ref="model_wua_hydric_balance_output_line"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.hydric.balance.output.line'].browse(context['active_ids']).add_to_output()
+        </field>
+    </record>
+
+    <record id="action_remove_from_output" model="ir.actions.server">
+        <field name="name">Remove from Output</field>
+        <field name="model_id" ref="model_wua_hydric_balance_output_line"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.hydric.balance.output.line'].browse(context['active_ids']).remove_from_output()
+        </field>
+    </record>
+
+    <record id="action_add_to_variation" model="ir.actions.server">
+        <field name="name">Add to Variation</field>
+        <field name="model_id" ref="model_wua_hydric_balance_variation_line"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.hydric.balance.variation.line'].browse(context['active_ids']).add_to_variation()
+        </field>
+    </record>
+
+    <record id="action_remove_from_variation" model="ir.actions.server">
+        <field name="name">Remove from Variation</field>
+        <field name="model_id" ref="model_wua_hydric_balance_variation_line"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.hydric.balance.variation.line'].browse(context['active_ids']).remove_from_variation()
+        </field>
+    </record>
+
+    <record id="action_add_output_to_values" model="ir.values">
+        <field name="name">Add to Output</field>
+        <field name="model">wua.hydric.balance.output.line</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_add_to_output'))"/>
+    </record>
+
+    <record id="action_remove_output_from_values" model="ir.values">
+        <field name="name">Remove from Output</field>
+        <field name="model">wua.hydric.balance.output.line</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_remove_from_output'))"/>
+    </record>
+
+    <record id="action_add_variation_to_values" model="ir.values">
+        <field name="name">Add to Variation</field>
+        <field name="model">wua.hydric.balance.variation.line</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_add_to_variation'))"/>
+    </record>
+
+    <record id="action_remove_variation_from_values" model="ir.values">
+        <field name="name">Remove from Variation</field>
+        <field name="model">wua.hydric.balance.variation.line</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('action_remove_from_variation'))"/>
+    </record>
+
+    <record id="action_wua_hydric_balance" model="ir.actions.act_window">
+        <field name="name">Balances Hídricos</field>
+        <field name="res_model">wua.hydric.balance</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_wua_hydric_balance_tree"/>
+    </record>
+
+    <menuitem id="menu_wua_hydric_balance" name="Balances" parent="hydric_balance_menu" action="action_wua_hydric_balance"/>
+</odoo>
