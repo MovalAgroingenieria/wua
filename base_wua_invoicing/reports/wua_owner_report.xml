@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="wua_owner_report_document" inherit_id="base_wua.wua_owner_report_document">
+        <xpath expr="//th[@name='th_area']" position="after">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <t t-set="measurement_unit_invoice" t-value="o.env['ir.values'].get_default('wua.invoicing.configuration', 'invoicing_area_measurement_name')"/>
+                <th name="th_area" class="text-right">Total Area (<t t-esc="measurement_unit_invoice"/>)</th>
+            </t>
+            <t t-else="">
+            </t>
+        </xpath>
+        <xpath expr="//td[@name='td_area']" position="after">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <t t-set="area_equivalence" t-value="o.env['ir.values'].get_default('wua.invoicing.configuration', 'invoicing_area_measurement_equivalence')"/>
+                <td name="td_area_equivalent" class="text-right">
+                    <span t-esc="o.env['wua.parcel'].transform_float_to_locale(p.area_official * float(area_equivalence), 4)"/>
+                </td>
+            </t>
+            <t t-else="">
+            </t>
+        </xpath>
+        <xpath expr="//th[@name='th_owned_area']" position="after">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <t t-set="measurement_unit_invoice" t-value="o.env['ir.values'].get_default('wua.invoicing.configuration', 'invoicing_area_measurement_name')"/>
+                <th name="th_owned_area_invoice_value" class="text-right">Owned Area (<t t-esc="measurement_unit_invoice"/>)</th>
+            </t>
+            <t t-else="">
+            </t>
+        </xpath>
+        <xpath expr="//td[@name='td_owned_percentage']" position="after">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <t t-set="area_equivalence" t-value="o.env['ir.values'].get_default('wua.invoicing.configuration', 'invoicing_area_measurement_equivalence')"/>
+                <td name="td_area_equivalent" class="text-right">
+                    <span t-esc="o.env['wua.parcel'].transform_float_to_locale(p.ownership_percentage * p.area_official / 100 * float(area_equivalence), 4)"/>
+                </td>
+            </t>
+            <t t-else="">
+            </t>
+        </xpath>
+        <xpath expr="//tr[@name='total_owned_area']/td[3]" position="attributes">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <attribute name="colspan">2</attribute>
+            </t>
+            <t t-else="">
+                <attribute name="colspan">1</attribute>
+            </t>
+        </xpath>
+        <xpath expr="//tr[@name='total_owned_area']/td[3]" position="after">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <t t-set="area_equivalence" t-value="o.env['ir.values'].get_default('wua.invoicing.configuration', 'invoicing_area_measurement_equivalence')"/>
+                <t t-set="total_owned_area_invoice_value"
+                    t-value="o.env['wua.parcel'].transform_float_to_locale(total_owned_area * area_equivalence, 4)"/>
+                <td class="text-right">
+                    <span t-esc="total_owned_area_invoice_value"/>
+                </td>
+            </t>
+            <t t-else="">
+            </t>
+        </xpath>
+    </template>
+</odoo>

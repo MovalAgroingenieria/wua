@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="wua_tenant_report_document" inherit_id="base_wua.wua_tenant_report_document">
+        <xpath expr="//th[@name='th_area']" position="after">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <t t-set="measurement_unit_invoice" t-value="o.env['ir.values'].get_default('wua.invoicing.configuration', 'invoicing_area_measurement_name')"/>
+                <th name="th_area" class="text-right">Area (<t t-esc="measurement_unit_invoice"/>)</th>
+            </t>
+            <t t-else="">
+            </t>
+        </xpath>
+        <xpath expr="//td[@name='td_area']" position="after">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <t t-set="area_equivalence" t-value="o.env['ir.values'].get_default('wua.invoicing.configuration', 'invoicing_area_measurement_equivalence')"/>
+                <td name="td_area_equivalent" class="text-right">
+                    <span t-esc="o.env['wua.parcel'].transform_float_to_locale(p.area_official * float(area_equivalence), 4)"/>
+                </td>
+            </t>
+            <t t-else="">
+            </t>
+        </xpath>
+        <xpath expr="//tr[@name='total_leased_area']/td[4]" position="replace">
+            <t t-if="o.env['ir.values'].get_default('wua.invoicing.configuration', 'alter_invoicing_behavior')">
+                <t t-set="area_equivalence" t-value="o.env['ir.values'].get_default('wua.invoicing.configuration', 'invoicing_area_measurement_equivalence')"/>
+                <t t-set="total_leased_area_invoice_value"
+                    t-value="o.env['wua.parcel'].transform_float_to_locale(total_leased_area * area_equivalence, 4)"/>
+                <td class="text-right">
+                    <span t-esc="total_leased_area_invoice_value"/>
+                </td>
+                <td></td>
+            </t>
+            <t t-else="">
+                <td></td>
+            </t>
+        </xpath>
+    </template>
+</odoo>
