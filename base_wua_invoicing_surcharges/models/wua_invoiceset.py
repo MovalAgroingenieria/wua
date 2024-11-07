@@ -18,22 +18,25 @@ class WuaInvoiceset(models.Model):
         invoice_fixed_ids = []
         invoice_total_variable_ids = []
         for record in self:
-            for line in record.line_ids:
-                if line.categ_id.productcategory_code == 16:
-                    for l_invoice_variable in \
-                            line.line_invoice_with_variable_surcharge_ids:
-                        invoice_variable_ids.append(
-                            l_invoice_variable.invoice_id.id)
-                elif line.categ_id.productcategory_code == 17:
-                    for l_invoice_fixed in \
-                            line.line_invoice_with_fixed_surcharge_ids:
-                        invoice_fixed_ids.append(l_invoice_fixed.invoice_id.id)
-                elif line.categ_id.productcategory_code == 18:
-                    for l_invoice_total_variable in \
-                            line.\
-                            line_invoice_with_total_variable_surcharge_ids:
-                        invoice_total_variable_ids.append(
-                            l_invoice_total_variable.invoice_id.id)
+            # Only discount if the lot is generated
+            if (record.state == 'generated'):
+                for line in record.line_ids:
+                    if line.categ_id.productcategory_code == 16:
+                        for l_invoice_variable in \
+                                line.line_invoice_with_variable_surcharge_ids:
+                            invoice_variable_ids.append(
+                                l_invoice_variable.invoice_id.id)
+                    elif line.categ_id.productcategory_code == 17:
+                        for l_invoice_fixed in \
+                                line.line_invoice_with_fixed_surcharge_ids:
+                            invoice_fixed_ids.append(
+                                l_invoice_fixed.invoice_id.id)
+                    elif line.categ_id.productcategory_code == 18:
+                        for l_invoice_total_variable in \
+                                line.\
+                                line_invoice_with_total_variable_surcharge_ids:
+                            invoice_total_variable_ids.append(
+                                l_invoice_total_variable.invoice_id.id)
         res = super(WuaInvoiceset, self).unlink()
         if invoice_variable_ids:
             invoice_ids = list(set(invoice_variable_ids))
@@ -53,6 +56,8 @@ class WuaInvoiceset(models.Model):
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
                 invoice.number_of_total_variable_surcharges -= 1
+        else:
+            res = super(WuaInvoiceset, self).unlink()
         return res
 
     def select_invoice_items_other_types(self, productcategory_code,
@@ -226,10 +231,11 @@ class WuaInvoiceset(models.Model):
                          self).add_to_invoice_data_line_ref_to_other_types(
                              categ_code, invoice_data_line, data)
         if categ_code == 16:
-            data['invoice_with_fixed_surcharge_id'] = invoice_data_line['key1']
+            data['invoice_with_variable_surcharge_id'] = \
+                invoice_data_line['key1']
             data['partner_id'] = invoice_data_line['key2']
         if categ_code == 17:
-            data['invoice_with_variable_surcharge_id'] = \
+            data['invoice_with_fixed_surcharge_id'] = \
                 invoice_data_line['key1']
             data['partner_id'] = invoice_data_line['key2']
         if categ_code == 18:

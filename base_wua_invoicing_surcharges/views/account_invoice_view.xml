@@ -14,4 +14,17 @@
         </field>
     </record>
 
+    <record id="invoice_tree" model="ir.ui.view">
+        <field name="name">Invoices (tree view)</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="base_wua_invoicing.invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoiceset_id']" position="after">
+                <field name="number_of_variable_surcharges" invisible="1"/>
+                <field name="number_of_fixed_surcharges" invisible="1"/>
+                <field name="number_of_total_variable_surcharges" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
