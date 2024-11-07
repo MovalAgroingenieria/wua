@@ -16,7 +16,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
 
     separate_wc_invoices = fields.Boolean(
         string='Separate Waterconnection invoices',
-        default=True,
         required=True,
         help='If marked, waterconnection lines will be separated on '
              'different invoices')
