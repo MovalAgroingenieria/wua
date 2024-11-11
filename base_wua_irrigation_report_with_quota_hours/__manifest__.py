@@ -14,7 +14,7 @@
     "license": "AGPL-3",
     "depends": [
         "base_wua_irrigation_report",
-        "base_wua_quota_management", ],
+        "base_wua_quota_management_hours", ],
     "data": [
         ],
     "installable": True,
