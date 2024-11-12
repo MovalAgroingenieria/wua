@@ -10,6 +10,80 @@ from odoo.exceptions import ValidationError
 class WuaInvoiceset(models.Model):
     _inherit = 'wua.invoiceset'
 
+    def _update_hmovement_invoice_status(self, hydricmovement_ids):
+        if (hydricmovement_ids):
+            try:
+                hydricmovement_ids = tuple(hydricmovement_ids)
+                # hmov invoiced if some invoice_line
+                query_update_invoiced = """
+                    UPDATE wua_hydricmovement wh1
+                    SET invoiced_hydricmovement = CASE
+                        WHEN EXISTS (
+                            SELECT 1 FROM account_invoice_line ail
+                            WHERE ail.hydricmovement_id = wh1.id
+                        ) THEN TRUE
+                        ELSE FALSE
+                    END
+                    WHERE wh1.id IN %s
+                """
+                self.env.cr.execute(
+                    query_update_invoiced, (hydricmovement_ids,))
+                # hmov invoiceset_id = the last invoice
+                query_update_invoiceset_id = """
+                    UPDATE wua_hydricmovement wh1
+                    SET invoiceset_id = a.max_invoiceset_id
+                    FROM (
+                        SELECT ail.hydricmovement_id AS hydricmovement_id,
+                            MAX(ail.invoiceset_id) AS max_invoiceset_id
+                        FROM account_invoice_line ail
+                        WHERE ail.hydricmovement_id IN %s
+                        GROUP BY ail.hydricmovement_id
+                    ) AS a
+                    WHERE wh1.id = a.hydricmovement_id
+                """
+                self.env.cr.execute(
+                    query_update_invoiceset_id, (hydricmovement_ids,))
+                # presconsumption invoiced if some invoiced_hydricmovement
+                query_update_presconsumption = """
+                    UPDATE wua_presconsumption wp1
+                    SET invoiced_consumption_quota =
+                        a.has_invoiced_hydricmovement
+                    FROM (
+                        SELECT
+                            wh1.presconsumption_id,
+                            CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END AS
+                                has_invoiced_hydricmovement
+                        FROM wua_hydricmovement wh1
+                        WHERE wh1.id IN %s AND wh1.invoiced_hydricmovement
+                        GROUP BY wh1.presconsumption_id
+                    ) AS a
+                    WHERE wp1.id = a.presconsumption_id
+                """
+                self.env.cr.execute(
+                    query_update_presconsumption, (hydricmovement_ids,))
+                # irrigationreport invoiced if some = the last invoice
+                query_update_irrigationreport = """
+                    UPDATE wua_irrigationreport wi1
+                    SET invoiced_irrigationreport_quota =
+                        a.has_invoiced_hydricmovement
+                    FROM (
+                        SELECT
+                            wh1.irrigationreport_id,
+                            CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END AS
+                                has_invoiced_hydricmovement
+                        FROM wua_hydricmovement wh1
+                        WHERE wh1.id IN %s AND wh1.invoiced_hydricmovement
+                        GROUP BY wh1.irrigationreport_id
+                    ) AS a
+                    WHERE wi1.id = a.irrigationreport_id
+                """
+                self.env.cr.execute(
+                    query_update_irrigationreport, (hydricmovement_ids,))
+            except Exception as e:
+                raise ValidationError(_(
+                    'Error when updating hydric movement '
+                    'invoice info: {}'.format(e)))
+
     # If a invoice set is deleted, it is necessary to make the hydricmovement
     # selectable again by setting it as not invoiced and remove the invoceset
     # associated. The pres_consumptions marked as invoiced by quota have to
@@ -33,24 +107,31 @@ class WuaInvoiceset(models.Model):
                     quota_irrigationreport_ids.append(
                         hydricmovement.irrigationreport_id.id)
         res = super(WuaInvoiceset, self).unlink()
-        if hydricmovement_ids:
-            hydricmovements = self.env['wua.hydricmovement'].browse(
-                hydricmovement_ids)
-            vals = {
-                'invoiceset_id': None,
-                'invoiced_hydricmovement': False,
-                }
-            hydricmovements.write(vals)
-        if quota_pres_consumption_ids:
-            quota_pres_consumptions = self.env['wua.presconsumption'].browse(
-                quota_pres_consumption_ids)
-            quota_pres_consumptions.write(
-                {'invoiced_consumption_quota': False})
-        if quota_irrigationreport_ids:
-            quota_irrigationreports = self.env['wua.irrigationreport'].browse(
-                quota_irrigationreport_ids)
-            quota_irrigationreports.write(
-                {'invoiced_irrigationreport_quota': False})
+        allowed_multiple_invoicing_of_hydricmovement = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration',
+                'allowed_multiple_invoicing_of_hydricmovement')
+        if (allowed_multiple_invoicing_of_hydricmovement):
+            self._update_hmovement_invoice_status(hydricmovement_ids)
+        else:
+            if hydricmovement_ids:
+                hydricmovements = self.env['wua.hydricmovement'].browse(
+                    hydricmovement_ids)
+                vals = {
+                    'invoiceset_id': None,
+                    'invoiced_hydricmovement': False,
+                    }
+                hydricmovements.write(vals)
+            if quota_pres_consumption_ids:
+                quota_pres_consumptions = self.env['wua.presconsumption'].\
+                    browse(quota_pres_consumption_ids)
+                quota_pres_consumptions.write(
+                    {'invoiced_consumption_quota': False})
+            if quota_irrigationreport_ids:
+                quota_irrigationreports = self.env['wua.irrigationreport'].\
+                    browse(quota_irrigationreport_ids)
+                quota_irrigationreports.write(
+                    {'invoiced_irrigationreport_quota': False})
         return res
 
     def select_invoice_items_other_types(self, productcategory_code,
@@ -183,25 +264,35 @@ class WuaInvoiceset(models.Model):
                         quota_irrigationreport_ids.append(
                             line_hydricmovement.hydricmovement_id.
                             irrigationreport_id.id)
-        if hydricmovement_ids:
-            hydricmovement_ids = list(set(hydricmovement_ids))
-            hydricmovements = \
-                self.env['wua.hydricmovement'].browse(hydricmovement_ids)
-            hydricmovements.write({
-                'invoiced_hydricmovement': False,
-                'invoiceset_id': None,
-            })
-        if quota_pres_consumption_ids:
-            quota_pres_consumption_ids = list(set(quota_pres_consumption_ids))
-            quota_pres_consumption = self.env['wua.presconsumption'].browse(
-                quota_pres_consumption_ids)
-            quota_pres_consumption.write({'invoiced_consumption_quota': False})
-        if quota_irrigationreport_ids:
-            quota_irrigationreport_ids = list(set(quota_irrigationreport_ids))
-            quota_irrigationreport = self.env['wua.irrigationreport'].\
-                browse(quota_irrigationreport_ids)
-            quota_irrigationreport.write(
-                {'invoiced_irrigationreport_quota': False})
+        allowed_multiple_invoicing_of_hydricmovement = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration',
+                'allowed_multiple_invoicing_of_hydricmovement')
+        if (allowed_multiple_invoicing_of_hydricmovement):
+            self._update_hmovement_invoice_status(hydricmovement_ids)
+        else:
+            if hydricmovement_ids:
+                hydricmovement_ids = list(set(hydricmovement_ids))
+                hydricmovements = \
+                    self.env['wua.hydricmovement'].browse(hydricmovement_ids)
+                hydricmovements.write({
+                    'invoiced_hydricmovement': False,
+                    'invoiceset_id': None,
+                })
+            if quota_pres_consumption_ids:
+                quota_pres_consumption_ids = list(
+                    set(quota_pres_consumption_ids))
+                quota_pres_consumption = self.env['wua.presconsumption'].\
+                    browse(quota_pres_consumption_ids)
+                quota_pres_consumption.write(
+                    {'invoiced_consumption_quota': False})
+            if quota_irrigationreport_ids:
+                quota_irrigationreport_ids = list(
+                    set(quota_irrigationreport_ids))
+                quota_irrigationreport = self.env['wua.irrigationreport'].\
+                    browse(quota_irrigationreport_ids)
+                quota_irrigationreport.write(
+                    {'invoiced_irrigationreport_quota': False})
 
     def after_calculate_invoiceset(self, invoiceset):
         super(WuaInvoiceset, self).after_calculate_invoiceset(invoiceset)
@@ -378,13 +469,20 @@ class WuaInvoicesetLine(models.Model):
             for line_hydricmovement in record.line_hydricmovement_ids:
                 hydricmovement_ids.append(
                     line_hydricmovement.hydricmovement_id.id)
-            if hydricmovement_ids:
-                hydricmovements = self.env['wua.hydricmovement'].browse(
-                    hydricmovement_ids)
-                hydricmovements.write({
-                    'invoiceset_id': None,
-                    'invoiced_hydricmovement': False,
-                })
+            allowed_multiple_invoicing_of_hydricmovement = \
+                self.env['ir.values'].get_default(
+                    'wua.invoicing.configuration',
+                    'allowed_multiple_invoicing_of_hydricmovement')
+            if (allowed_multiple_invoicing_of_hydricmovement):
+                self._update_hmovement_invoice_status(hydricmovement_ids)
+            else:
+                if hydricmovement_ids:
+                    hydricmovements = self.env['wua.hydricmovement'].browse(
+                        hydricmovement_ids)
+                    hydricmovements.write({
+                        'invoiceset_id': None,
+                        'invoiced_hydricmovement': False,
+                    })
         return super(WuaInvoicesetLine, self).unlink()
 
     @api.multi
