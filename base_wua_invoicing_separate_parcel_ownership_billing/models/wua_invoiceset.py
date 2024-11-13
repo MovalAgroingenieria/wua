@@ -64,4 +64,12 @@ class WuaInvoiceset(models.Model):
             is_watercosts = True
         if (invoice_detail['categ_code'] == 4):
             is_ownership = True
+        if (invoice_detail['categ_code'] == 3 and
+                self.env['product.product'].browse(
+                    invoice_detail['product_id']
+                ).product_tmpl_id.allow_ownerhsip_percentage and
+            self.env['wua.parcel'].browse(
+                parcel_id).use_ownership_percentage_on_invoicing):
+                is_ownership = True
+            
         return parcel_id, is_watercosts, is_ownership

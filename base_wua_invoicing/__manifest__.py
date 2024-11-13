@@ -26,7 +26,6 @@
         "account_analytic_default",
         "account_payment_return",
         "account_invoice_analytic_search",
-        "account_financial_report_qweb_add_filters",
     ],
     "data": [
         "security/security.xml",
@@ -35,10 +34,6 @@
         "data/wua_invoicing_config_settings_data.xml",
         "reports/report_credit_control_summary.xml",
         "reports/report_invoice.xml",
-        "reports/wua_lessor_report.xml",
-        "reports/wua_owner_report.xml",
-        "reports/wua_partner_report.xml",
-        "reports/wua_tenant_report.xml",
         "views/resources.xml",
         "views/product_views.xml",
         "views/wua_invoiceset_view.xml",

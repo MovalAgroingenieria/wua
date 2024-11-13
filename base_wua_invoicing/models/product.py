@@ -154,6 +154,11 @@ class ProductTemplate(models.Model):
         default='none',
         store=True,
         compute='_compute_linkable_unit_type')
+    
+    allow_ownerhsip_percentage = fields.Boolean(
+        string='Allow Ownerhsip Percentage',
+        default=False,
+        store=True)
 
     @api.depends('categ_id')
     def _compute_is_wua_product(self):

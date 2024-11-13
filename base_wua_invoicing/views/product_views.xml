@@ -169,6 +169,8 @@
                 </button>
             </xpath>
             <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="allow_ownerhsip_percentage" attrs="{
+                'invisible': [('productcategory_code','not in', [3])]}"/>
                 <field name="invoiceset_selectable"/>
                 <field name="is_wua_product" readonly="1"/>
                 <field name="productcategory_code" invisible="1"/>
