@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_invoice_lines">
+        <t t-call="base_wua_report.wua_external_layout">
+            <t t-foreach="docs" t-as="wizard">
+                <div class="page">
+                    <div name="title" class="text-center">
+                        <h4 style="margin-top:0px; padding-top:0px;">
+                            <strong>Waterconnection invoice lines report</strong>
+                        </h4>
+                        <div>
+                            <span>[</span>
+                            <span t-field="wizard.initial_date" t-options="{'format': 'dd/MM/YYYY'}"/>
+                            <span class="fa fa-arrows-h"/>
+                            <span t-field="wizard.end_date" t-options="{'format': 'dd/MM/YYYY'}"/>
+                            <span>]</span>
+                        </div>
+                    </div>
+                    <t t-set="is_first" t-value="True"/>
+
+                    <t t-foreach="wizard.waterconnection_ids" t-as="connection">
+                        <div t-att-style="not is_first and 'page-break-before: always;' or ''">
+                        <t t-set="is_first" t-value="False"/>
+                            <div name="waterconnection_data" style="padding-bottom: 4px; page-break-inside: avoid;">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 0px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                                            <div style="float: left; display: inline;"><strong>Waterconnection: </strong><span t-field="connection.name"/></div>
+                                            <div style="float: right; display: inline;"><strong>Hydraulic sector: </strong><span t-field="connection.hydraulicsector_id"/></div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                                            <div style="float: left; display: inline;"><strong>Waterconnection: </strong><span t-field="connection.name"/></div>
+                                            <div style="float: right; display: inline;"><strong>Hydraulic sector: </strong><span t-field="connection.hydraulicsector_id"/></div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-dollar"/></div>
+                                            <div style="float: left; display: inline;"><strong>Invoice Lines</strong></div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-dollar"/></div>
+                                            <div style="float: left; display: inline;"><strong>Invoice Lines</strong></div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th name="invoice_number">Invoice Number</th>
+                                            <th name="invoice_date">Invoice Date</th>
+                                            <th name="invoiceset">Invoice Set</th>
+                                            <th name="line_product">Product</th>
+                                            <th name="quantity">Quantity</th>
+                                            <th name="total_lines_quantity_th">Price</th>
+                                            <th name="tax">Tax</th>
+                                            <th name="total_lines_quantity_th">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="total_quantity" t-value="0"/>
+                                        <t t-set="total_amount" t-value="0"/>
+                                        <t t-foreach="wizard.invoice_line_ids.filtered(lambda line: line.waterconnection_id.id == connection.id)" t-as="line">
+                                            <t t-set="line_tax_amount" t-value="sum(line.price_subtotal * tax.amount / 100 for tax in line.invoice_line_tax_ids)"/>
+                                            <t t-set="line_total" t-value="line.price_subtotal + line_tax_amount"/>
+
+                                            <t t-set="total_quantity" t-value="total_quantity + line.quantity"/>
+                                            <t t-set="total_amount" t-value="total_amount + line_total"/>
+                                            <tr>
+                                                <td name="invoice_id"><span t-field="line.invoice_id"/></td>
+                                                <td name="line_date"><span t-field="line.date_invoice"/></td>
+                                                <td name="lineset"><span t-field="line.invoiceset_id"/></td>
+                                                <td name="line_product"><span t-field="line.product_id"/></td>
+                                                <td name="line_quantity"><span t-field="line.quantity"/></td>
+                                                <td name="line_price"><span t-field="line.price_unit"/></td>
+                                                <td name="line_price"><t t-foreach="line.invoice_line_tax_ids" t-as="tax"><span t-field="tax.name"/></t></td>
+                                                <td name="line_total"><span t-esc="line_total"/></td>
+                                            </tr>
+                                        </t>
+                                        <tr>
+                                            <td colspan="3"/>
+                                            <td><strong>Total</strong></td>
+                                            <td><span t-esc="total_quantity"/></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><span t-esc="total_amount"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </t>
+    </template>
+    <report id="report_invoice_lines_print" model="wizard.print.invoice.lines"
+        string="Informe de Lineas Factura Toma" report_type="qweb-pdf"
+        name="base_wua_invoicing_pressurized_irrigation.report_invoice_lines"
+        file="base_wua_invoicing_pressurized_irrigation.report_invoice_lines"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+</odoo>

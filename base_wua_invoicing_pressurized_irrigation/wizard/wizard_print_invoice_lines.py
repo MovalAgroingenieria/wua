@@ -6,9 +6,9 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime
 
 
-class WizardPrintInvoices(models.TransientModel):
-    _name = 'wizard.print.invoices'
-    _description = 'Dialog box to print invoices'
+class WizardPrintInvoiceLines(models.TransientModel):
+    _name = 'wizard.print.invoice.lines'
+    _description = 'Dialog box to print invoice lines'
 
     def _default_waterconnection_ids(self):
         active_ids = self.env.context.get('active_ids')
@@ -73,14 +73,6 @@ class WizardPrintInvoices(models.TransientModel):
                     invoice_ids.append(line.invoice_id.id)
             record.invoice_ids = [(6, 0, invoice_ids)]
 
-    def print_selected_invoice_period(self):
-        if self.initial_date > self.end_date:
-            raise exceptions.UserError(
-                _('Incorrect dates, the initial date is after the end date.'))
-
-        return self.env['report'].get_action(
-            self, 'base_wua_invoicing_pressurized_irrigation.report_invoice')
-
     def print_selected_invoice_lines_period(self):
         if self.initial_date > self.end_date:
             raise exceptions.UserError(
@@ -95,4 +87,4 @@ class WizardPrintInvoices(models.TransientModel):
         if 'waterconnection_ids' not in vals:
             raise exceptions.UserError(
                 _('You must select at least one water connection.'))
-        return super(WizardPrintInvoices, self).create(vals)
+        return super(WizardPrintInvoiceLines, self).create(vals)

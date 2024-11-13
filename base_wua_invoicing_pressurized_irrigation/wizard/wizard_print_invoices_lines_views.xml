@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_wizard_print_invoices_form" model="ir.ui.view">
-        <field name="name">wizard.print.invoices.form</field>
-        <field name="model">wizard.print.invoices</field>
+    <record id="view_wizard_print_invoices_lines_form" model="ir.ui.view">
+        <field name="name">wizard.print.invoice.lines.form</field>
+        <field name="model">wizard.print.invoice.lines</field>
         <field name="arch" type="xml">
-            <form string="Print Invoices">
+            <form string="Print Invoice Lines">
                 <group>
                     <field name="waterconnection_ids" widget="many2many_tags" invisible="1"/>
                     <field name="initial_date"/>
@@ -31,24 +31,24 @@
                     </field>
                 </group>
                 <footer>
-                    <button string="Print" type="object" name="print_selected_invoice_period" class="btn-primary"/>
+                    <button string="Print" type="object" name="print_selected_invoice_lines_period" class="btn-primary"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
 
-    <record id="action_wizard_print_invoices" model="ir.actions.act_window">
-        <field name="name">Print Invoices</field>
-        <field name="res_model">wizard.print.invoices</field>
+    <record id="action_wizard_print_invoices_lines" model="ir.actions.act_window">
+        <field name="name">Print Invoices Lines</field>
+        <field name="res_model">wizard.print.invoice.lines</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="view_id" ref="view_wizard_print_invoices_form"/>
+        <field name="view_id" ref="view_wizard_print_invoices_lines_form"/>
     </record>
 
-    <act_window id="action_wizard_print_invoices"
-        name="Print invoices"
-        res_model="wizard.print.invoices"
+    <act_window id="action_wizard_print_invoices_lines"
+        name="Print invoices Lines"
+        res_model="wizard.print.invoice.lines"
         src_model="wua.waterconnection"
         target="new"
         key2="client_action_multi"
