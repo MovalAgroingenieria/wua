@@ -92,6 +92,7 @@
         "reports/wua_tenant_report.xml",
         "reports/wua_lessor_report.xml",
         "reports/wua_owner_report.xml",
+        "reports/wua_payer_report.xml",
     ],
     "installable": True,
     "application": True,

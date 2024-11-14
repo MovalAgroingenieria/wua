@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-29 11:01+0000\n"
-"PO-Revision-Date: 2024-10-29 11:01+0000\n"
+"POT-Creation-Date: 2024-11-14 08:43+0000\n"
+"PO-Revision-Date: 2024-11-14 08:43+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,95 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua
+#: model:mail.template,body_html:base_wua.mail_template_data_new_portal_user
+msgid "\n"
+"                <p>Dear ${object.user_id.name or ''},</p>\n"
+"\n"
+"                <p>We have granted access to ${object.wizard_id.portal_id.name} in ${user.company_id.name}.</p>\n"
+"\n"
+"                <p>Your account information is:</p>\n"
+"                <ul>\n"
+"                <li>User: ${object.user_id.login or ''}</li>\n"
+"                <li>Database: ${'dbname' in ctx and ctx['dbname'] or ''}</li>\n"
+"                <li>Portal: <a href=\"${'portal_url' in ctx and ctx['portal_url'] or ''}\" data-original-title=\"\" title=\"\">link</a></li>\n"
+"                </ul>\n"
+"                <br>\n"
+"\n"
+"                <p><b>You can set or change your password at the following link</b></p>\n"
+"                <a href=\"${object.user_id.signup_url}\"\n"
+"                    style=\"color:#378167;padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#378167; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #378167; border: 1px solid #378167; border-radius:3px\">\n"
+"                    Set password\n"
+"                </a>\n"
+"                <br>\n"
+"                <br>\n"
+"\n"
+"                <p>${object.wizard_id.welcome_message or ''}</p>\n"
+"                <br>\n"
+"\n"
+"                <p>Once the password has been set, you will be able to log in to the e-Office at the <a href=\"${'portal_url' in ctx and ctx['portal_url'] or ''}\" data-original-title=\"\" title=\"\">following address</a>.</p>\n"
+"\n"
+"                <p>To log in, click on <b>Login</b> and enter your user account ${object.user_id.login or ''}&nbsp;and password.</p>\n"
+"\n"
+"                <p>Once logged in, you will be able to consult the information on your membership card, parcels, invoices, viewer, etc.</p>\n"
+"\n"
+"                <p>You can consult in more detail the use of the user portal by accessing the following <a href=\"https://wiki.moval.es/Odoo_funcional/administracion_sitio_web/Usuario_de_portal_comunero\">link</a>.&nbsp;</p>\n"
+"                <br>\n"
+"\n"
+"                <p>If you need any further clarification, you can contact the company's office ${user.company_id.name}.</p>\n"
+"                <br>\n"
+"                <br>\n"
+"\n"
+"                <p>Yours sincerely,</p>\n"
+"                <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+msgstr "\n"
+"                <p>Dear ${object.user_id.name or ''},</p>\n"
+"\n"
+"                <p>We have granted access to ${object.wizard_id.portal_id.name} in ${user.company_id.name}.</p>\n"
+"\n"
+"                <p>Your account information is:</p>\n"
+"                <ul>\n"
+"                <li>User: ${object.user_id.login or ''}</li>\n"
+"                <li>Database: ${'dbname' in ctx and ctx['dbname'] or ''}</li>\n"
+"                <li>Portal: <a href=\"${'portal_url' in ctx and ctx['portal_url'] or ''}\" data-original-title=\"\" title=\"\">link</a></li>\n"
+"                </ul>\n"
+"                <br>\n"
+"\n"
+"                <p><b>You can set or change your password at the following link</b></p>\n"
+"                <a href=\"${object.user_id.signup_url}\"\n"
+"                    style=\"color:#378167;padding: 5px 10px; font-size: 12px; line-height: 18px; color: #FFFFFF; border-color:#378167; text-decoration: none; display: inline-block; margin-bottom: 0px; font-weight: 400; text-align: center; vertical-align: middle; cursor: pointer; white-space: nowrap; background-image: none; background-color: #378167; border: 1px solid #378167; border-radius:3px\">\n"
+"                    Set password\n"
+"                </a>\n"
+"                <br>\n"
+"                <br>\n"
+"\n"
+"                <p>${object.wizard_id.welcome_message or ''}</p>\n"
+"                <br>\n"
+"\n"
+"                <p>Once the password has been set, you will be able to log in to the e-Office at the <a href=\"${'portal_url' in ctx and ctx['portal_url'] or ''}\" data-original-title=\"\" title=\"\">following address</a>.</p>\n"
+"\n"
+"                <p>To log in, click on <b>Login</b> and enter your user account ${object.user_id.login or ''}&nbsp;and password.</p>\n"
+"\n"
+"                <p>Once logged in, you will be able to consult the information on your membership card, parcels, invoices, viewer, etc.</p>\n"
+"\n"
+"                <p>You can consult in more detail the use of the user portal by accessing the following <a href=\"https://wiki.moval.es/Odoo_funcional/administracion_sitio_web/Usuario_de_portal_comunero\">link</a>.&nbsp;</p>\n"
+"                <br>\n"
+"\n"
+"                <p>If you need any further clarification, you can contact the company's office ${user.company_id.name}.</p>\n"
+"                <br>\n"
+"                <br>\n"
+"\n"
+"                <p>Yours sincerely,</p>\n"
+"                <p>${user.company_id.name}</p>\n"
+"\n"
+"            "
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "&amp;nbsp;"
 msgstr "&amp;nbsp;"
@@ -27,6 +113,7 @@ msgstr "&amp;nbsp;"
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "(NIF:&amp;nbsp;"
 msgstr "(NIF:&amp;nbsp;"
@@ -45,6 +132,7 @@ msgstr "(No hi ha cap subparcel·la associada a aquesta parcel·la)"
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "(image of"
 msgstr "(imatge de"
@@ -74,6 +162,11 @@ msgstr "<b>Àrea total arrendada:</b>"
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 msgid "<b>Total owned area:</b>&amp;ensp;"
 msgstr "<b>Superfície total propietat:</b>&amp;ensp;"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "<b>Total payed area:</b>&amp;ensp;"
+msgstr "<b>Superfície total pagada:</b>&amp;ensp;"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
@@ -171,6 +264,7 @@ msgstr "<span class=\"o_stat_text\">Subparcel·les</span>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 msgid "<span>&amp;nbsp;/&amp;nbsp;</span>"
 msgstr "<span>&amp;nbsp;/&amp;nbsp;</span>"
 
@@ -183,6 +277,7 @@ msgstr "<span>(*) Es tria com a propietari el que té més percentatge de propie
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>-&amp;nbsp;</span>"
 msgstr "<span>-&amp;nbsp;</span>"
@@ -303,6 +398,11 @@ msgid "<span>Number of parcels:</span>"
 msgstr "<span>Nombre de parcel·les:</span>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "<span>Number of payed parcels:</span>"
+msgstr "<span>Nombre de parcel·les pagades:</span>"
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 msgid "<span>Number of rented parcels:</span>"
 msgstr "<span>Nombre de parcel·les arrendades:</span>"
@@ -311,6 +411,7 @@ msgstr "<span>Nombre de parcel·les arrendades:</span>"
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>Number of votes:</span>"
 msgstr "<span>Nombre de vots:</span>"
@@ -329,6 +430,7 @@ msgstr "<span>Telèfon:</span>"
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>Printing date:</span>"
 msgstr "<span>Data impressió:</span>"
@@ -354,6 +456,11 @@ msgid "<span>This partner has no owned parcels.</span>"
 msgstr "<span>Aquest soci no té parcel·les propietat.</span>"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "<span>This partner has no payed parcels.</span>"
+msgstr "<span>Aquest soci no té parcel·les pagades.</span>"
+
+#. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 msgid "<span>This partner has no rented parcels.</span>"
 msgstr "<span>Aquest soci no té parcel·les arrendades.</span>"
@@ -372,6 +479,11 @@ msgstr "<span>Àrea total arrendada:</span>"
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 msgid "<span>Total owned area:</span>"
 msgstr "<span>Superfície total propietat:</span>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "<span>Total payed area:</span>"
+msgstr "<span>Superfície total pagada:</span>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
@@ -397,6 +509,7 @@ msgstr "<span>Amb vots:</span>"
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<span>Wua partner code:</span>"
 msgstr "<span>Codi de soci:</span>"
@@ -432,6 +545,7 @@ msgstr "<strong>Àrees&amp;nbsp;i&amp;nbsp;atributs&amp;nbsp;físics</strong>"
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<strong>Cadastral reference</strong>"
 msgstr "<strong>Referència cadastral</strong>"
@@ -486,6 +600,7 @@ msgstr "<strong>Propietari</strong>"
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "<strong>Parcel</strong>"
 msgstr "<strong>Parce·la</strong>"
@@ -505,6 +620,21 @@ msgstr "<strong>Soci</strong>"
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_report_document
 msgid "<strong>Partners</strong>"
 msgstr "<strong>Socis</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "<strong>Payed area</strong>"
+msgstr "<strong>Superfície pagada</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "<strong>Payed&amp;nbsp;parcels</strong>"
+msgstr "<strong>Parcel·les&amp;nbsp;pagades</strong>"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "<strong>Payer</strong>"
+msgstr "<strong>Pagador</strong>"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
@@ -587,6 +717,7 @@ msgstr "Imatge aèria: Sí"
 #: model:ir.ui.view,arch_db:base_wua.wua_lessor_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "Aerial image not found"
 msgstr "No s'ha trobat la imatge aèria"
@@ -1360,8 +1491,8 @@ msgstr "Descripció"
 
 #. module: base_wua
 #: model:ir.model,name:base_wua.model_wizard_change_parcel_name
-msgid "Dialog box to change the parcel name (code), with irrigation infrastructure"
-msgstr "Dialog box to change the parcel name (code), with irrigation infrastructure"
+msgid "Dialog box to change the parcel name (code)"
+msgstr "Dialog box to change the parcel name (code)"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_display_name
@@ -1849,7 +1980,7 @@ msgstr "Invernadero"
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_search
 #: model:ir.ui.view,arch_db:base_wua.wua_technical_concessionlinks_view_search
 msgid "Group By"
-msgstr "Agrupa Per"
+msgstr "Agrupar per"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_143
@@ -2807,6 +2938,7 @@ msgstr "Paràmetres"
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_subparcel_view_search
 #: model:ir.ui.view,arch_db:base_wua.wua_partner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 #: model:ir.ui.view,arch_db:base_wua.wua_technical_concessionlinks_view_search
 #: model:ir.ui.view,arch_db:base_wua.wua_tenant_report_document
 msgid "Parcel"
@@ -2999,6 +3131,16 @@ msgstr "Ruta del programa \"frompgtoshp\" (generar SHP a partir de la base de da
 #: model:wua.cultivation,name:base_wua.cultivation_118
 msgid "Pawlonia"
 msgstr "Paulonia"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "Payed Area ("
+msgstr "Superfície pagada ("
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
+msgid "Payed percentage"
+msgstr "% pagat"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
@@ -3860,6 +4002,7 @@ msgstr "Àrea total"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wua_owner_report_document
+#: model:ir.ui.view,arch_db:base_wua.wua_payer_report_document
 msgid "Total Area ("
 msgstr "Àrea total ("
 
@@ -4214,6 +4357,11 @@ msgid "Wua partner report (consent)"
 msgstr "Informe de soci (consentiment)"
 
 #. module: base_wua
+#: model:ir.actions.report.xml,name:base_wua.wua_payer_report
+msgid "Wua payer report"
+msgstr "Informe de pagador"
+
+#. module: base_wua
 #: model:ir.actions.report.xml,name:base_wua.wua_tenant_report
 msgid "Wua tenant report"
 msgstr "Informe d'arrendatari"
@@ -4243,6 +4391,17 @@ msgstr "Yeros"
 #, python-format
 msgid "You cannot delete a readonly record (Created by module)."
 msgstr "No es pot suprimir un registre de només lectura (Creat per mòdul)."
+
+#. module: base_wua
+#: code:addons/base_wua/wizard/portal_wizard.py:22
+#, python-format
+msgid "You must have an email address in your User Preferences to send emails."
+msgstr "You must have an email address in your User Preferences to send emails."
+
+#. module: base_wua
+#: model:mail.template,subject:base_wua.mail_template_data_new_portal_user
+msgid "Your Odoo account at ${user.company_id.name}"
+msgstr "Your Odoo account at ${user.company_id.name}"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_027

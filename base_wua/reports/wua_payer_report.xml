@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wua owner report (droplist menu) -->
+    <report id="wua_payer_report" string="Wua payer report" model="res.partner" report_type="qweb-pdf" file="base_wua.wua_payer_report_document" name="base_wua.wua_payer_report_document" paperformat="base_wua_report.paperformat_wua_reports"/>
+
+    <!-- Wua owner report -->
+    <template id="wua_payer_report_document">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="base_wua_report.wua_external_layout">
+                    <div class="page">
+
+                        <!-- Vars -->
+                        <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
+                        <t t-set="measurement_unit" t-value="str(' ')"/>
+                        <t t-set="printing_date" t-value="str(' ')"/>
+                        <t t-set="total_payed_area" t-value="0"/>
+                        <t t-set="payed_parcel_ids" t-value="[]"/>
+                        <t t-set="number_rented_parcels" t-value="0"/>
+                        <t t-if="o.partnerlink_ids">
+                            <t t-set="measurement_unit" t-value="o.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
+                            <t t-set="printing_date" t-value="o.env['wua.parcel'].transform_date_to_locale(
+                                o.partnerlink_ids[0].parcel_id.date_now.split()[0], lang=o.lang)"/>
+                            <t t-foreach="o.partnerlink_ids" t-as="p">
+                                <t t-if="p.profile == 'P'">
+                                    <t t-set="total_payed_area" t-value="total_payed_area + (p.other_costs_percentage * p.area_official / 100)"/>
+                                    <t t-set="payed_parcel_ids" t-value="payed_parcel_ids + [p.id]"/>
+                                </t>
+                            </t>
+                            <t t-set="number_payed_parcels" t-value="len(payed_parcel_ids)"/>
+                        </t>
+
+                        <!-- Get partlinks record and order by propietary -->
+                        <t t-set="payed_parcels" t-value="o.env['wua.parcel.partnerlink'].search(
+                            [('id', 'in', payed_parcel_ids)], order='propietary_partner_id, parcel_id')"/>
+
+                        <!-- Partner data -->
+                        <div name="wua_partner_data">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;">
+                                            <span class="fa fa-user"/>
+                                        </div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Payer</strong>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;">
+                                            <span class="fa fa-user"/>
+                                        </div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Payer</strong>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="row" style="margin-top: 4px;">
+                                <div class="col-xs-12" style="display: table;">
+                                    <div style="width: 50%; display: table-cell;">
+                                        <t t-if="o.name">
+                                            <strong>
+                                                <span t-field="o.name"/>
+                                            </strong>
+                                            <t t-if="o.vat">
+                                                <span>(NIF:&amp;nbsp;<span t-field="o.vat"/>
+)</span>
+                                            </t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.street_type_show or o.street or o.street_num or o.street2">
+                                            <t t-if="o.street_type_show">
+                                                <span t-field="o.street_type_show"/>
+                                            </t>
+                                            <t t-if="o.street">
+                                                <span t-field="o.street"/>
+                                            </t>
+                                            <t t-if="o.street_num">
+                                                <span t-field="o.street_num"/>
+                                            </t>
+                                            <t t-if="o.street2">
+                                                <span t-field="o.street2"/>
+                                            </t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.city or o.zip">
+                                            <t t-if="o.city">
+                                                <span t-field="o.city"/>
+                                            </t>
+                                            <t t-if="o.zip">
+                                                <span>-&amp;nbsp;</span>
+                                                <span t-field="o.zip"/>
+                                            </t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.state_id or o.country_id">
+                                            <t t-if="o.state_id">
+                                                <span t-field="o.state_id"/>
+                                            </t>
+                                            <t t-if="o.country_id">
+                                                <span>-&amp;nbsp;</span>
+                                                <span t-field="o.country_id"></span>
+                                            </t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.phones or o.phone or o.mobile">
+                                            <t t-if="o.phones">
+                                                <span t-field="o.phones"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-if="o.phone">
+                                                    <span t-field="o.phone"/>
+                                                </t>
+                                                <t t-if="o.mobile">
+                                                    <span t-field="o.mobile"/>
+                                                </t>
+                                            </t>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.email">
+                                            <span t-field="o.email"/>
+                                            <br/>
+                                        </t>
+                                        <t t-if="o.bank_ids">
+                                            <t t-foreach="o.bank_ids" t-as="bank_acc">
+                                                <t t-if="bank_acc.acc_number">
+                                                    <t t-set="hidden_acc_number" t-value="bank_acc.acc_number[:24] + ' XXXX'"/>
+                                                    <span t-esc="hidden_acc_number"/>
+                                                </t>
+                                                <t t-if="bank_acc.bank_name">
+                                                    <span>-</span>
+                                                    <span t-field="bank_acc.bank_name"></span>
+                                                </t>
+                                                <br/>
+                                            </t>
+                                        </t>
+                                    </div>
+                                    <div style="display: table-cell; padding-left: 32px;">
+                                        <div>&amp;nbsp;</div>
+                                        <table style="width: 100%;">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <span>Wua partner code:</span>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.partner_code"/>
+                                                    </td>
+                                                </tr>
+                                                <tr name="tr_number_of_votes">
+                                                    <td>
+                                                        <span>Number of votes:</span>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <span t-field="o.number_of_votes"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>Number of payed parcels:</span>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <span t-esc="number_payed_parcels"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>Total payed area:</span>
+                                                    </td>
+                                                    <td class="text-right" style="padding: 0 0 0 28px;">
+                                                        <span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_payed_area, 4)"/>
+                                                        <span t-esc="measurement_unit"/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span>Printing date:</span>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <strong>
+                                                            <span t-esc="printing_date"/>
+                                                        </strong>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payed parcels data -->
+                        <div name="wua_payed_parcels" style="margin-top: 20px;">
+                            <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                <t t-if="report_style == 'light'">
+                                    <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;">
+                                            <span class="fa fa-moval-parcel"/>
+                                        </div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Payed&amp;nbsp;parcels</strong>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                        <div style="float: left; width: 32px;">
+                                            <span class="fa fa-moval-parcel"/>
+                                        </div>
+                                        <div style="float: left; display: inline;">
+                                            <strong>Payed&amp;nbsp;parcels</strong>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <t t-if="payed_parcels">
+                                <table class="table table-striped" style="margin-top: 2px;">
+                                    <thead>
+                                        <tr>
+                                            <th name="th_parcel" class="text-center">Parcel</th>
+                                            <th name="th_area" class="text-right">Total Area (<t t-esc="measurement_unit"/>)</th>
+                                            <th name="th_payed_area" class="text-right">Payed Area (<t t-esc="measurement_unit"/>)</th>
+                                            <th name="th_payed_percentage" class="text-right">Payed percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="payed_parcels" t-as="p" style="page-break-inside: avoid;">
+                                            <t t-set="row_style" t-value="'color:black'"/>
+                                            <td name="td_parcel" class="text-center">
+                                                <span t-att-style="row_style" t-field="p.parcel_id"/>
+                                            </td>
+                                            <td name="td_area" class="text-right">
+                                                <span t-att-style="row_style" t-field="p.area_official"/>
+                                            </td>
+                                            <td name="td_payed_percentage" class="text-right">
+                                                <span t-att-style="row_style" t-esc="o.env['wua.parcel'].transform_float_to_locale(p.other_costs_percentage * p.area_official / 100, 4)"/>
+                                            </td>
+                                            <td name="td_payed_percentage" class="text-right">
+                                                <span t-att-style="row_style" t-field="p.other_costs_percentage"/>
+                                            </td>
+                                        </tr>
+                                        <tr name="total_payed_area">
+                                            <td></td>
+                                            <td></td>
+                                            <td class="text-right">
+                                                <b>Total payed area:</b>&amp;ensp;<span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_payed_area, 4)"/>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <t t-else="">
+                                <span>This partner has no payed parcels.</span>
+                            </t>
+                        </div>
+
+                        <!-- Force new page -->
+                        <p style="page-break-after:always;"/>
+
+                        <!-- Parcels aerial images  -->
+
+                        <div name="wua_parcel_aerial_images">
+                            <t t-if="payed_parcels">
+                                <t t-foreach="payed_parcels" t-as="p">
+                                    <t t-set="row_style" t-value="'color:black'"/>
+                                    <div style="width: 48%; float: left; display: table; border: 1px solid black; margin: 1.5% 0.5%; page-break-inside: avoid;">
+                                        <div name="parcel_data" style="border-bottom: 1px solid black; padding: 2%;">
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <tr t-att-style="row_style">
+                                                        <td>
+                                                            <strong>Parcel</strong>
+                                                            <t t-if="p.parcel_id.aerial_img_date">
+                                                                <span>(image of <span t-field="p.parcel_id.aerial_img_date" t-options="{'format': 'MMMM YYYY'}"></span>)
+                                                                </span>
+                                                            </t>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-field="p.parcel_id"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr t-att-style="row_style">
+                                                        <td>
+                                                            <strong>Cadastral reference</strong>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-field="p.cadastral_reference"/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr t-att-style="row_style">
+                                                        <td>
+                                                            <strong>Payed area</strong>
+                                                        </td>
+                                                        <td class="text-right">
+                                                            <span t-esc="o.env['wua.parcel'].transform_float_to_locale(p.other_costs_percentage * p.area_official / 100, 4)"/>
+                                                            <span>&amp;nbsp;/&amp;nbsp;</span>
+                                                            <span t-esc="o.env['wua.parcel'].transform_float_to_locale(p.area_official,4)"/>
+                                                            <span t-esc="measurement_unit"/>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div name="parcel_aerial_image" class="text-center">
+                                            <t t-if="p.parcel_id.aerial_img">
+                                                <img t-attf-src="data:image/png;base64, #{p.parcel_id.aerial_img}" style="max-width: 408px; max-height: 408px;"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="text-center text-muted" style="width: 408px; height: 408px; padding-top: 40%;">
+                                                    Aerial image not found
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                        </div>
+                    </div>                    <!-- end page -->
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
