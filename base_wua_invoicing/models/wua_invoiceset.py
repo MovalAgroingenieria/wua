@@ -662,9 +662,10 @@ class WuaInvoiceset(models.Model):
         default_parcel_label = _('Parcel')
         default_cost_label = _('cost:')
         for parcel in parcels:
-            if (self.env['product.product'].browse(
+            owner_percentage = (self.env['product.product'].browse(
                     product_id).product_tmpl_id.allow_ownerhsip_percentage and
-                    parcel.use_ownership_percentage_on_invoicing):
+                                parcel.use_ownership_percentage_on_invoicing)
+            if (owner_percentage):
                 partnerlinks_of_parcel = partnerlinks.filtered(
                     lambda x: x.parcel_id.id == parcel.id and
                               x.ownership_percentage > 0.0)
@@ -695,7 +696,10 @@ class WuaInvoiceset(models.Model):
                         invoicing_area_official_str = \
                             ('%.4f' % invoicing_area_official).\
                             replace('.', ',')
-                    percentage = partnerlink.other_costs_percentage
+                    if (owner_percentage):
+                        percentage = partnerlink.ownership_percentage
+                    else:
+                        percentage = partnerlink.other_costs_percentage
                     percentage_str = '%.2f' % percentage
                     # Set quantity according to Invoicing Area setting
                     if alter_invoicing_behavior:
