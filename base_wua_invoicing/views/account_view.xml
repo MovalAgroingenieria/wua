@@ -56,4 +56,22 @@
         </field>
     </record>
 
+    <record id="action_invoice_cancel_draft" model="ir.actions.server">
+        <field name="name">Restablecer Facturas a Borrador</field>
+        <field name="model_id" ref="account.model_account_invoice"/>
+        <field name="binding_model_id" ref="account.model_account_invoice"/>
+        <field name="state">code</field>
+            <field name="code">
+            if context.get('active_ids'):
+            invoices = env['account.invoice'].browse(context['active_ids'])
+            invoices.action_cancel_and_draft_custom()
+            </field>
+    </record>
+
+    <record id="action_invoice_cancel_draft_menu" model="ir.values">
+    <field name="name">Open Invoices To Draft</field>
+    <field name="model">account.invoice</field>
+    <field name="key2">client_action_multi</field>
+    <field name="value" eval="'ir.actions.server,' + str(ref('action_invoice_cancel_draft'))"/>
+    </record>
 </odoo>

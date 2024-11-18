@@ -3,8 +3,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 from functools import partial
 from datetime import datetime
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.tools.misc import formatLang
+from odoo.exceptions import UserError
 
 
 class AccountInvoice(models.Model):
@@ -135,6 +136,21 @@ class AccountInvoice(models.Model):
         ) for r in res]
         return res
 
+    @api.multi
+    def action_cancel_and_draft_custom(self):
+        invoices_closed = self.filtered(lambda x: x.state != 'open')
+        if invoices_closed:
+            invoice_ids = ', '.join(
+                [str(invoice.number) for invoice in invoices_closed])
+            raise UserError(_(
+                """The following invoice IDs
+                are closed and cannot be processed: %s""")
+                % invoice_ids)
+        else:
+            for record in self:
+                record.action_invoice_cancel()
+                record.action_invoice_draft()
+
 
 class AccountInvoiceLine(models.Model):
     _inherit = 'account.invoice.line'
@@ -213,7 +229,7 @@ class AccountInvoiceLine(models.Model):
         store=True,
         index=True,
         compute='_compute_invoice_type')
-    
+
     invoice_state = fields.Selection([
         ('draft', 'Draft'),
         ('proforma', 'Pro-forma'),
@@ -254,7 +270,7 @@ class AccountInvoiceLine(models.Model):
     def _compute_invoice_type(self):
         for record in self:
             record.invoice_type = record.invoice_id.type
-            
+
     @api.depends('invoice_id', 'invoice_id.state')
     def _compute_invoice_state(self):
         for record in self:
