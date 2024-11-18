@@ -38,6 +38,20 @@
                                         </div>
                                     </t>
                                 </div>
+                                <div class="row" style="margin-top: 4px;">
+                                    <div class="col-xs-12" style="display: table;">
+                                        <div style="width: 50%; display: table-cell;">
+                                            <t t-if="connection.description">
+                                                <strong>Description: </strong><span t-field="connection.description"/>
+                                            </t>
+                                        </div>
+                                        <div style="display: table-cell; padding-left: 32px;">
+                                            <t t-if="connection.partner_id">
+                                                <strong>Partners: </strong><span t-esc="', '.join(set([point.partner_id.name for point in connection.irrigationpoint_ids if point.partner_id]))"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
                                     <t t-if="report_style == 'light'">
                                         <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
@@ -60,9 +74,10 @@
                                             <th name="invoiceset">Invoice Set</th>
                                             <th name="line_product">Product</th>
                                             <th name="quantity">Quantity</th>
-                                            <th name="total_lines_quantity_th">Price</th>
+                                            <th name="total_linesprice_th">Price</th>
+                                            <th name="subtotal_line">Subtotal</th>
                                             <th name="tax">Tax</th>
-                                            <th name="total_lines_quantity_th">Amount</th>
+                                            <th name="total_lines_amount_th">Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -81,14 +96,16 @@
                                                 <td name="line_product"><span t-field="line.product_id"/></td>
                                                 <td name="line_quantity"><span t-field="line.quantity"/></td>
                                                 <td name="line_price"><span t-field="line.price_unit"/></td>
-                                                <td name="line_price"><t t-foreach="line.invoice_line_tax_ids" t-as="tax"><span t-field="tax.name"/></t></td>
-                                                <td name="line_total"><span t-esc="line_total"/></td>
+                                                <td name="line_subtotal"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line.quantity * line.price_unit, 2)"/></td>
+                                                <td name="line_tax"><t t-foreach="line.invoice_line_tax_ids" t-as="tax"><span t-field="tax.name"/></t></td>
+                                                <td name="line_total"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line_total, 2)"/></td>
                                             </tr>
                                         </t>
                                         <tr>
                                             <td colspan="3"/>
                                             <td><strong>Total</strong></td>
                                             <td><span t-esc="total_quantity"/></td>
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td><span t-esc="total_amount"/></td>
