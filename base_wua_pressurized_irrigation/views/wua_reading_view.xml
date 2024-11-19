@@ -21,19 +21,21 @@
                     </div>
                     <group name="master_data">
                         <group name="master_data_left">
+                            <field name="watermeter_id"
+                                   attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="volume"
                                    attrs="{'readonly':
                                            [('id', '>', 0),
                                             ('is_last_reading', '!=', True)]}"/>
                             <field name="reading_time"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
-                            <field name="watermeter_id"
-                                   attrs="{'readonly': [('id', '>', 0)]}"/>
                             <field name="initialization_reading"
                                    attrs="{'readonly': [('id', '>', 0)]}"/>
                         </group>
                         <group name="master_data_right">
                             <field name="waterconnection_id"/>
+                            <field name="last_reading_time"/>
+                            <field name="last_reading_value"/>
                             <field name="irrigationshed_id"/>
                             <field name="hydraulicsector_id"/>
                             <field name="presconsumption_id"/>

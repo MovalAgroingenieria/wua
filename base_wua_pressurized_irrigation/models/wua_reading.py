@@ -112,12 +112,43 @@ class WuaReading(models.Model):
         default=True,
         required=True)
 
+    last_reading_value = fields.Float(
+        string='Last Reading Value (m³)',
+        digits=(32, 4),
+        default=0,
+        compute='_compute_last_reading_value',
+    )
+
+    last_reading_time = fields.Datetime(
+        string='Last Reading (time)',
+        compute='_compute_last_reading_time',
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
          'Existing Reading.'),
         ('non_negative_volume', 'CHECK (volume >= 0)',
          'The reading volume must be a non-negative value.'),
         ]
+
+    @api.multi
+    @api.depends('waterconnection_id', 'waterconnection_id.last_reading_value')
+    def _compute_last_reading_value(self):
+        for record in self:
+            last_reading_value = 0
+            if record.waterconnection_id:
+                last_reading_value = \
+                    record.waterconnection_id.last_reading_value
+            record.last_reading_value = last_reading_value
+
+    @api.multi
+    @api.depends('waterconnection_id', 'waterconnection_id.last_reading_time')
+    def _compute_last_reading_time(self):
+        for record in self:
+            last_reading_time = None
+            if record.waterconnection_id:
+                last_reading_time = record.waterconnection_id.last_reading_time
+            record.last_reading_time = last_reading_time
 
     @api.depends('watermeter_id')
     def _compute_hydraulic_infrastructure_data(self):
