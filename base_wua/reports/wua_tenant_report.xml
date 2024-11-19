@@ -185,7 +185,7 @@
                                                 <span t-att-style="row_style" t-field="p.parcel_id"/>
                                             </td>
                                             <td name="td_propietary">
-                                                <t t-set="propietary_code" t-value="str(p.propietary_partner_id.partner_code)"/>
+                                                <t t-set="propietary_code" t-value="str(p.sudo().propietary_partner_id.partner_code)"/>
                                                 <span t-att-style="row_style" t-field="p.propietary_partner_id"/>
                                                 <span t-att-style="row_style">[<span t-esc="propietary_code"/>]</span>
                                             </td>
