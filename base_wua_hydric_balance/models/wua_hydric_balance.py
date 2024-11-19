@@ -299,9 +299,7 @@ class WuaHydricBalance(models.Model):
                         '{}'.format(element_name_field): data['field_id'],
                         'result_type': '01_input',
                         'input_type': input_element.input_type,
-                        'volume': (data['volume'] -
-                                   data['volume'] * self.loss_percentage *
-                                   0.01),
+                        'volume': (data['volume']),
                         'initial_volume': 0.0,
                         'end_volume': data['volume'],
                     })
