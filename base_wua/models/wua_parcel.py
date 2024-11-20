@@ -3123,7 +3123,7 @@ class WuaParcelPartnerlink(models.Model):
         comodel_name='wua.farmproperty',
         store=True,
         related='parcel_id.farmproperty_id')
-    
+
     irrigation_partner = fields.Boolean(
         string='Main',
         default=False,
@@ -3550,6 +3550,36 @@ class WuaParcelPartnerlink(models.Model):
                              '{"readonly": true, "tree_invisible": true}')
             res['arch'] = etree.tostring(doc)
         return res
+
+    @api.multi
+    def action_generate_parcel_partnerlink_shp(self):
+        result = \
+            self.mapped(
+                lambda x: x.parcel_id).generate_parcel_shp()
+        # get base url
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        attachment_obj = self.sudo().env['ir.attachment']
+        # Removed older shp
+        attachment_obj.search([('name', '=',
+                                'parcels_shp_download')]).unlink()
+        # create attachment, add timestamp or something here?
+        parcel_label = _('Parcels')
+        current_date = datetime.datetime.now()
+        filename = parcel_label + '_' + current_date.strftime('%Y-%m-%d') + \
+            '.zip'
+        attachment_id = attachment_obj.create(
+            {'name': 'parcels_shp_download',
+             'datas_fname': filename,
+             'datas': result, 'res_model': 'wua.parcel'})
+        # prepare download url
+        download_url = '/web/content/' + str(attachment_id.id) + \
+            '?download=true'
+        # download, should remove after?
+        return {
+            'type': 'ir.actions.act_url',
+            'url': str(base_url) + str(download_url),
+            'target': 'new',
+        }
 
     def get_value_from_translation(self, module, src):
         resp = src
