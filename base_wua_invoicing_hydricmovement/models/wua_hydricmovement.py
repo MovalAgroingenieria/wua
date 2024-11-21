@@ -31,6 +31,8 @@ class WuaHydricmovement(models.Model):
     def _compute_number_of_invoices(self):
         for record in self:
             number_of_invoices = 0
-            if record.invoiceline_ids:
-                number_of_invoices = len(record.invoiceline_ids)
+            invoiceline_ids = record.invoiceline_ids.with_context(
+                force_company=False)
+            if invoiceline_ids:
+                number_of_invoices = len(invoiceline_ids)
             record.number_of_invoices = number_of_invoices
