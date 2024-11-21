@@ -103,7 +103,10 @@
                         <span t-field="o.assembly_id.rendered_final_paragraph"></span>
                     </div>
                 </t>
-
+                <div style="font-size: 0.3em" class="text-center">
+                    <div style="font-size: 0.3px; margin-bottom: 2px;">&amp;nbsp;</div>
+                    <img style="width: 115px; margin-left: 8px; margin-top: 8px;" t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' % (o._get_or_generate_attendance_link(), 3, 4, 0, 1)"/>
+                </div>
                 <!-- Force new page -->
                 <p style="page-break-after:always;"/>
 

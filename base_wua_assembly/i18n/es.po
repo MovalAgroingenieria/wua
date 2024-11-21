@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-22 07:17+0000\n"
-"PO-Revision-Date: 2024-05-22 07:17+0000\n"
+"POT-Creation-Date: 2024-11-21 19:42+0000\n"
+"PO-Revision-Date: 2024-11-21 19:42+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -349,6 +349,7 @@ msgid "A partner cannot give their votes if they have already received votes fro
 msgstr "Un socio no puede ceder sus votos si ya ha recibido votos de otros socios."
 
 #. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_qr_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_form
 msgid "ATTENDANCE NOTES"
 msgstr "NOTAS ASISTENCIA"
@@ -563,6 +564,7 @@ msgid "Attendance of a partner to an assembly"
 msgstr "Asistencia de un socio a una asamblea"
 
 #. module: base_wua_assembly
+#: model:ir.actions.act_window,name:base_wua_assembly.wua_raw_attendances_action_qr
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_attendance_ids
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_tree
 msgid "Attendances"
@@ -601,6 +603,7 @@ msgstr "Firma del asistente"
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_attendance_with_delegationvote_document
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_attendance_with_signature_document
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_ballotpaper_view_tree
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_qr_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_tree
 msgid "Attendee TIN"
@@ -623,6 +626,7 @@ msgid "Ballot Papers"
 msgstr "Papeletas de votación"
 
 #. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_qr_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_form
 msgid "C O N F I R M"
 msgstr "C O N F I R M A R"
@@ -741,7 +745,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_delegationvote_create_date
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_representation_create_date
 msgid "Created on"
-msgstr "Creado el"
+msgstr "Creado en"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_current_year
@@ -785,6 +789,7 @@ msgstr "Dirección (valores por defecto)"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.report_wua_assembly_attendance_with_delegationvote_document
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_qr_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_form
 msgid "Delegated Votes"
 msgstr "Votos delegados"
@@ -882,6 +887,7 @@ msgstr "ERROR EN LA PLANTILLA"
 
 #. module: base_wua_assembly
 #: model:ir.actions.server,name:base_wua_assembly.wua_attendance_activate_notes
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_qr_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_form
 msgid "Enter notes"
 msgstr "Añadir notas"
@@ -1237,12 +1243,14 @@ msgstr "Opciones (sólo lectura)"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_votes_owned
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_qr_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_raw_view_tree
 msgid "Own Votes"
 msgstr "Votos en propiedad"
 
 #. module: base_wua_assembly
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_qr_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_form
 msgid "PARTNERS WHO GIVE THEIR VOTE"
 msgstr "SOCIOS QUE DELEGAN SUS VOTOS"
@@ -1273,7 +1281,7 @@ msgstr "Asistente"
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_calls_particular_view_tree
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_particular_view_tree
 msgid "Partner"
-msgstr "Empresa"
+msgstr "Contacto"
 
 #. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_particular_view_form
@@ -1376,6 +1384,12 @@ msgid "Publication Text"
 msgstr "Citación"
 
 #. module: base_wua_assembly
+#: code:addons/base_wua_assembly/models/wua_attendance.py:454
+#, python-format
+msgid "QR code link for attendance %s"
+msgstr "Link del código QR asistencia %s"
+
+#. module: base_wua_assembly
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_raw_view_tree
 msgid "Real Partner"
 msgstr "Socio"
@@ -1457,6 +1471,7 @@ msgstr "Representaciones"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_attendance_represented_partner
+#: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_qr_view_form
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_attendance_particular_view_form
 msgid "Represented Partner"
 msgstr "Socio representado"
@@ -1524,7 +1539,7 @@ msgstr "Iniciar"
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_delegationvote_particular_view_tree
 #: model:ir.ui.view,arch_db:base_wua_assembly.wua_representation_particular_view_tree
 msgid "State"
-msgstr "estado"
+msgstr "Estado"
 
 #. module: base_wua_assembly
 #: model:ir.model.fields,field_description:base_wua_assembly.field_wua_assembly_color

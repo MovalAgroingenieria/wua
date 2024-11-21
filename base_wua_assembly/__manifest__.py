@@ -14,6 +14,7 @@
     "depends": [
         "base_wua",
         "html_text",
+        "link_tracker",
         "web_widget_digitized_signature",
         "web_tree_image",
     ],

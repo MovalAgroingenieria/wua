@@ -439,3 +439,21 @@ class WuaAttendance(models.Model):
             attendance = self.browse(attendance_id)
             if attendance:
                 attendance.write({'with_attendance_notes': True, })
+
+    def _get_or_generate_attendance_link(self):
+        base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+        assembly_id = str(self.assembly_id.id)
+        participant_id = str(self.participant_id.id)
+        url_raw = base_url + '/web/login?redirect=/attendance?' + \
+            'assembly_id=' + assembly_id + '&' + \
+            'participant_id=' + participant_id
+        link = self.env['link.tracker'].search([('url', '=', url_raw)])
+        if link:
+            url = link.short_url
+        else:
+            link_title = _("QR code link for attendance %s") % self.name
+            url = self.env['link.tracker'].sudo().create({
+                "title": link_title,
+                "url": url_raw
+            }).short_url
+        return url
