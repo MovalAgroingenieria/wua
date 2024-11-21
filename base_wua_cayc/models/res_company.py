@@ -138,7 +138,8 @@ class Company(models.Model):
         ('151', '[151] CTAT. REGANTS APARCEROS DE MONTAGUT'),
         ('152', '[152] AGRÍCOLA LAS MERCEDES, S. A.'),
         ('153', '[153] EL ESPARTAL DE RÁFALES, S. L.'),
-        ('154', '[154] CONSTRUCCIONES ELECTROMECÁNICAS SABERO SL')
+        ('154', '[154] CONSTRUCCIONES ELECTROMECÁNICAS SABERO SL'),
+        ('155', '[155] COMUNIDAD DE REGANTES DE LA TUBERÍA LATERAL 25'),
     ], string='Wua Code',
         required=True,
         default='000',
