@@ -445,7 +445,7 @@ class WuaAttendance(models.Model):
         assembly_id = str(self.assembly_id.id)
         participant_id = str(self.participant_id.id)
         url_raw = base_url + '/web/login?redirect=/attendance?' + \
-            'assembly_id=' + assembly_id + '&' + \
+            'assembly_id=' + assembly_id + '%26' + \
             'participant_id=' + participant_id
         link = self.env['link.tracker'].search([('url', '=', url_raw)])
         if link:
