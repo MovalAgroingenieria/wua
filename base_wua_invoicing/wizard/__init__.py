@@ -1,0 +1,1 @@
+from . import wizard_print_partner_invoice_lines

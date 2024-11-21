@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wizard_print_partner_invoices_lines_form" model="ir.ui.view">
+        <field name="name">wizard.print.partner.invoice.lines.form</field>
+        <field name="model">wizard.print.partner.invoice.lines</field>
+        <field name="arch" type="xml">
+            <form string="Print Invoice Lines">
+                <group>
+                    <field name="partner_ids" widget="many2many_tags" invisible="1"/>
+                    <field name="initial_date"/>
+                    <field name="end_date"/>
+                </group>
+                <group>
+                    <field name="invoice_line_ids" nolabel="1" invisible="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="quantity"/>
+                            <field name="price_unit"/>
+                            <field name="price_subtotal"/>
+                        </tree>
+                    </field>
+                </group>
+                <group>
+                    <field name="invoice_ids" readonly="1" nolabel="1" invisible="1">
+                        <tree>
+                            <field name="state" invisible="1"/>
+                            <field name="number"/>
+                            <field name="date_invoice"/>
+                            <field name="amount_total"/>
+                        </tree>
+                    </field>
+                </group>
+                <footer>
+                    <button string="Print" type="object" name="print_selected_partner_invoice_lines" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_wizard_print_partner_invoices_lines" model="ir.actions.act_window">
+        <field name="name">Print Partner Invoices Lines</field>
+        <field name="res_model">wizard.print.partner.invoice.lines</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="view_wizard_print_partner_invoices_lines_form"/>
+    </record>
+
+    <act_window id="action_wizard_print_partner_invoices_lines"
+        name="Print Partner invoices Lines"
+        res_model="wizard.print.partner.invoice.lines"
+        src_model="res.partner"
+        target="new"
+        key2="client_action_multi"
+        view_mode="form" view_type="form"
+        groups="base_wua.group_wua_manager"/>
+</odoo>

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_partner_invoice_lines">
+        <t t-call="base_wua_report.wua_external_layout">
+            <t t-foreach="docs" t-as="wizard">
+                <div class="page">
+                    <div name="title" class="text-center">
+                        <h4 style="margin-top:0px; padding-top:0px;">
+                            <strong>Partner invoice lines report</strong>
+                        </h4>
+                        <div>
+                            <span>[</span>
+                            <span t-field="wizard.initial_date" t-options="{'format': 'dd/MM/YYYY'}"/>
+                            <span class="fa fa-arrows-h"/>
+                            <span t-field="wizard.end_date" t-options="{'format': 'dd/MM/YYYY'}"/>
+                            <span>]</span>
+                        </div>
+                    </div>
+                    <t t-set="is_first" t-value="True"/>
+
+                    <t t-foreach="wizard.partner_ids" t-as="partner">
+                        <div t-att-style="not is_first and 'page-break-before: always;' or ''">
+                        <t t-set="is_first" t-value="False"/>
+                            <div name="partner_data" style="padding-bottom: 4px; page-break-inside: avoid;">
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 0px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                                            <div style="float: left; display: inline;"><strong>Partner: </strong><span t-field="partner.name"/></div>                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-moval-infra"/></div>
+                                            <div style="float: left; display: inline;"><strong>Partner: </strong><span t-field="partner.name"/></div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="row" style="margin-top: 4px;">
+                                    <div class="col-xs-12" style="display: table;">
+                                        <div style="width: 50%; display: table-cell;">
+                                            <t t-if="partner.name">
+                                                <strong><span t-field="partner.name"/></strong>
+                                                <t t-if="partner.vat"><span>(NIF:&amp;nbsp;<span t-field="partner.vat"/>)</span></t>
+                                            <br/>
+                                            </t>
+                                            <t t-if="partner.street_type_show or partner.street or partner.street_num or partner.street2">
+                                                <t t-if="partner.street_type_show"><span t-field="partner.street_type_show"/></t>
+                                                <t t-if="partner.street"><span t-field="partner.street"/></t>
+                                                <t t-if="partner.street_num"><span t-field="partner.street_num"/></t>
+                                                <t t-if="partner.street2"><span t-field="partner.street2"/></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="partner.city or partner.zip">
+                                                <t t-if="partner.city"><span t-field="partner.city"/></t>
+                                                <t t-if="partner.zip"><span>-&amp;nbsp;</span><span t-field="partner.zip"/></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="partner.state_id or partner.country_id">
+                                                <t t-if="partner.state_id"><span t-field="partner.state_id"/></t>
+                                                <t t-if="partner.country_id"><span>-&amp;nbsp;</span><span t-field="partner.country_id"></span></t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="partner.phones or partner.phone or partner.mobile">
+                                                <t t-if="partner.phones"><span t-field="partner.phones"/></t>
+                                                <t t-else="">
+                                                    <t t-if="partner.phone"><span t-field="partner.phone"/></t>
+                                                    <t t-if="partner.mobile"><span t-field="partner.mobile"/></t>
+                                                </t>
+                                                <br/>
+                                            </t>
+                                            <t t-if="partner.email"><span t-field="partner.email"/><br/></t>
+                                            <t t-if="partner.bank_ids">
+                                                <t t-foreach="partner.bank_ids" t-as="bank_acc">
+                                                    <t t-if="bank_acc.acc_number">
+                                                        <t t-set="hidden_acc_number" t-value="bank_acc.acc_number[:24] + ' XXXX'"/>
+                                                        <span t-esc="hidden_acc_number"/>
+                                                    </t>
+                                                    <t t-if="bank_acc.bank_name">
+                                                        <span>-</span>
+                                                        <span t-field="bank_acc.bank_name"></span>
+                                                    </t>
+                                                    <br/>
+                                                </t>
+                                            </t>
+                                        </div>
+                                        <div style="display: table-cell; padding-left: 32px;">
+                                            <div>&amp;nbsp;</div>
+                                            <table style="width: 100%;">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><span>Wua partner code:</span></td>
+                                                        <td class="text-right"><span t-field="partner.partner_code"/></td>
+                                                    </tr>
+                                                    <tr name="tr_number_of_votes">
+                                                        <td><span>Number of votes:</span></td>
+                                                        <td class="text-right"><span t-field="partner.number_of_votes"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span>Number of parcels:</span></td>
+                                                        <td class="text-right"><span t-field="partner.parcel_number"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><span>Total area:</span></td>
+                                                        <td class="text-right" style="padding: 0 0 0 28px;">
+                                                            <span t-field="partner.parcel_total_area"/>
+                                                            <t t-if="partner.partnerlink_ids">
+                                                                <t t-set="measurement_unit" t-value="partner.partnerlink_ids[0].parcel_id._compute_area_measurement_name()"/>
+                                                                <span><t t-esc="measurement_unit"/></span>
+                                                            </t>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <t t-set="printing_date" t-value="partner.env['wua.parcel'].transform_date_to_locale(
+                                                            datetime.datetime.now().date().strftime('%Y-%m-%d'), lang=partner.lang)"/>
+                                                        <td><span>Printing date:</span></td>
+                                                        <td class="text-right">
+                                                            <strong><span t-esc="printing_date"/></strong>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row h4 mt28 mb4" style="padding-bottom: 4px;">
+                                    <t t-if="report_style == 'light'">
+                                        <div class="col-xs-12 theme-report-color" style="border-bottom: 1px solid; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-dollar"/></div>
+                                            <div style="float: left; display: inline;"><strong>Invoice Lines</strong></div>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="col-xs-12 bg-theme-report-color" style="color: white; padding: 1px 16px;">
+                                            <div style="float: left; width: 32px;"><span class="fa fa-dollar"/></div>
+                                            <div style="float: left; display: inline;"><strong>Invoice Lines</strong></div>
+                                        </div>
+                                    </t>
+                                </div>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th name="invoice_number">Invoice Number</th>
+                                            <th name="invoice_date">Invoice Date</th>
+                                            <th name="invoiceset">Invoice Set</th>
+                                            <th name="line_product">Product</th>
+                                            <th name="quantity">Quantity</th>
+                                            <th name="total_linesprice_th">Price</th>
+                                            <th name="subtotal_line">Subtotal</th>
+                                            <th name="tax">Tax</th>
+                                            <th name="total_lines_amount_th">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="total_quantity" t-value="0"/>
+                                        <t t-set="total_amount" t-value="0"/>
+                                        <t t-set="subtotal_amount" t-value="0"/>
+                                        <t t-foreach="wizard.invoice_line_ids.filtered(lambda line: line.partner_id.id == partner.id)" t-as="line">
+                                            <t t-set="line_tax_amount" t-value="sum(line.price_subtotal * tax.amount / 100 for tax in line.invoice_line_tax_ids)"/>
+                                            <t t-set="line_total" t-value="line.price_subtotal + line_tax_amount"/>
+
+                                            <t t-set="total_quantity" t-value="total_quantity + line.quantity"/>
+                                            <t t-set="subtotal_amount" t-value="subtotal_amount + line.price_subtotal"/>
+                                            <t t-set="total_amount" t-value="total_amount + line_total"/>
+                                            <tr>
+                                                <td name="invoice_id"><span t-field="line.invoice_id"/></td>
+                                                <td name="line_date"><span t-field="line.date_invoice"/></td>
+                                                <td name="lineset"><span t-field="line.invoiceset_id"/></td>
+                                                <td name="line_product"><span t-field="line.product_id"/></td>
+                                                <td name="line_quantity"><span t-field="line.quantity"/></td>
+                                                <td name="line_price"><span t-field="line.price_unit"/></td>
+                                                <td name="line_subtotal"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line.quantity * line.price_unit, 2)"/></td>
+                                                <td name="line_tax"><t t-foreach="line.invoice_line_tax_ids" t-as="tax"><span t-field="tax.name"/></t></td>
+                                                <td name="line_total"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line_total, 2)"/></td>
+                                            </tr>
+                                        </t>
+                                        <tr>
+                                            <td colspan="5"/>
+                                            <td><strong>Total</strong></td>
+                                            <td><span t-esc="subtotal_amount"/></td>
+                                            <td/>
+                                            <td><span t-esc="total_amount"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <t t-set="products" t-value="[]"/>
+                                <t t-foreach="wizard.invoice_line_ids.filtered(lambda line: line.partner_id.id == partner.id)" t-as="l">
+                                    <t t-if="l.product_id not in products">
+                                        <t t-set="products" t-value="products + [l.product_id,]"/>
+                                    </t>
+                                </t>
+                                <div class="col-xs-8" name="product_resume_table" style="page-break-inside: avoid;">
+                                    <table class="table table-condensed">
+                                        <caption name="product_summary_title">SUMMARY BY PRODUCT</caption>
+                                        <thead>
+                                            <tr>
+                                                <th name="product_th">Product</th>
+                                                <th name="total_qty_th" class="text-right">Quantity</th>
+                                                <th name="subtotal_amnt_th" class="text-right">Subtotal</th>
+                                                <th name="total_amnt_th" class="text-right">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr t-foreach="products" t-as="p">
+                                                <t t-set="product_total_qty" t-value="0.0"/>
+                                                <t t-set="product_subtotal_amount" t-value="0.0"/>
+                                                <t t-set="product_total_amount" t-value="0.0"/>
+                                                <t t-set="uom_id" t-value="empty"/>
+                                                <t t-foreach="wizard.invoice_line_ids.filtered(lambda line: line.partner_id.id == partner.id)" t-as="l">
+                                                    <t t-if="l.product_id.id == p.id">
+                                                        <t t-set="product_tax_amount" t-value="sum(l.price_subtotal * tax.amount / 100 for tax in l.invoice_line_tax_ids)"/>
+                                                        <t t-set="product_total_qty" t-value="product_total_qty + l.quantity"/>
+                                                        <t t-set="product_subtotal_amount" t-value="product_subtotal_amount + l.price_subtotal"/>
+                                                        <t t-set="product_total_amount" t-value="product_total_amount + l.price_subtotal + product_tax_amount"/>
+                                                        <t t-set="uom_id" t-value="l.sudo().uom_id.name"/>
+                                                    </t>
+                                                </t>
+                                                <td>
+                                                    <span t-field="p.sudo().name"/>
+                                                    <t t-if="p.sudo().attribute_value_ids">
+                                                        <t t-foreach="p.sudo().attribute_value_ids" t-as="a">
+                                                            <span t-field="a.name"/>
+                                                        </t>
+                                                    </t>
+                                                </td>
+                                                <td name="total_qty_td" class="text-right">
+                                                    <span name="span_product_total_qty" t-esc="product_total_qty" t-options='{"widget": "float", "precision": 4}'/>
+                                                    <span t-esc="uom_id"/>
+                                                </td>
+                                                <td name="subtotal_amnt_td" class="text-right">
+                                                    <span t-esc="product_subtotal_amount" t-options='{"widget": "monetary", "display_currency": partner.currency_id}'/>
+                                                </td>
+                                                <td name="total_amnt_td" class="text-right">
+                                                    <span t-esc="product_total_amount" t-options='{"widget": "monetary", "display_currency": partner.currency_id}'/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </t>
+    </template>
+    <report id="report_partner_invoice_lines_print" model="wizard.print.partner.invoice.lines"
+        string="Report Partner Invoice Lines" report_type="qweb-pdf"
+        name="base_wua_invoicing.report_partner_invoice_lines"
+        file="base_wua_invoicing.report_partner_invoice_lines"
+        paperformat="base_wua_report.paperformat_wua_reports"/>
+</odoo>
