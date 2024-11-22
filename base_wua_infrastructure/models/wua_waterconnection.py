@@ -6,6 +6,7 @@ from odoo import models, fields, api, exceptions, _, tools
 
 
 class WuaWaterconnection(models.Model):
+    _inherit = 'mail.thread'
     _name = 'wua.waterconnection'
     _description = 'Entity (water connection)'
     _order = 'irrigationshed_id, position'
@@ -34,7 +35,15 @@ class WuaWaterconnection(models.Model):
 
     description = fields.Char(
         string='Description',
-        size=MAX_SIZE_DESCRIPTION)
+        size=MAX_SIZE_DESCRIPTION,
+        track_visibility='onchange',
+    )
+
+    track_irrigationpoint_ids = fields.Char(
+        string='Irrigationpoints',
+        store=True,
+        track_visibility='onchange',
+    )
 
     notes = fields.Html(string='Notes')
 
@@ -270,6 +279,24 @@ class WuaWaterconnection(models.Model):
             if record.number_of_waterpayers > 1:
                 several_waterpayers = True
             record.several_waterpayers = several_waterpayers
+
+    def write_track_irrigationpoint_ids(self, wcs):
+        for wc in wcs:
+            track_irrigationpoint_ids = ''
+            partner_parcels = {}
+            for ip in wc.irrigationpoint_ids:
+                if ip.partner_id and ip.parcel_id:
+                    partner_name = ip.partner_id.name
+                    parcel_name = ip.parcel_id.name
+
+                    if partner_name not in partner_parcels:
+                        partner_parcels[partner_name] = set()
+                    partner_parcels[partner_name].add(parcel_name)
+            track_irrigationpoint_ids = ', '.join(
+                "{}[{}]".format(partner, ', '.join(sorted(parcels)))
+                for partner, parcels in partner_parcels.items()
+            )
+            wc.track_irrigationpoint_ids = track_irrigationpoint_ids
 
     @api.model
     def _search_several_waterpayers(self, operator, value):

@@ -229,6 +229,9 @@ class WuaParcel(models.Model):
                     'waterconnection_id': (irrigationpointwc.
                                            waterconnection_id.id),
                     })
+                irrigationpointwc.waterconnection_id \
+                    .write_track_irrigationpoint_ids(
+                        irrigationpointwc.waterconnection_id)
         return new_parcel
 
     @api.multi
@@ -273,6 +276,9 @@ class WuaParcel(models.Model):
                 [('parcel_id', '=', self.id),
                  ('waterconnection_id', 'in', waterconnections_to_del)])
             irrigation_points_to_del.unlink()
+            self.env['wua.waterconnection'].write_track_irrigationpoint_ids(
+                self.env['wua.waterconnection'].browse(waterconnections_to_del)
+            )
         if len(waterconnections_to_add) > 0:
             for waterconnection_id in waterconnections_to_add:
                 irrigation_points.create({
@@ -280,6 +286,9 @@ class WuaParcel(models.Model):
                     'type': 'WC',
                     'waterconnection_id': waterconnection_id,
                     })
+            self.env['wua.waterconnection'].write_track_irrigationpoint_ids(
+                self.env['wua.waterconnection'].browse(waterconnections_to_add)
+            )
         return True
 
     def populate_irrigationgates_to_del(self, vals):

@@ -6,6 +6,7 @@ from odoo import models, fields, api, _
 
 
 class WuaWatermeter(models.Model):
+    _inherit = 'mail.thread'
     _name = 'wua.watermeter'
     _description = 'Entity (water meter)'
     _order = 'name'
@@ -31,24 +32,32 @@ class WuaWatermeter(models.Model):
         ('discarted', 'Discarted')],
         string='State',
         required=True,
-        default='active')
+        default='active',
+        track_visibility='onchange',
+    )
 
     nominal_diameter = fields.Integer(
         string='Nominal Diameter',
         required=True,
-        default=0)
+        default=0,
+        track_visibility='onchange',
+    )
 
     nominal_water_flow = fields.Float(
         string='Water Flow (m³/hour)',
         digits=(32, 2),
         required=True,
-        default=0)
+        default=0,
+        track_visibility='onchange',
+    )
 
     pressure = fields.Float(
         string='Pressure (bar)',
         digits=(32, 2),
         required=True,
-        default=0)
+        default=0,
+        track_visibility='onchange',
+    )
 
     type = fields.Selection([
         ('undefined', 'Undefined'),
@@ -58,7 +67,9 @@ class WuaWatermeter(models.Model):
         ('ultrasonic', 'Ultrasonic')],
         string='Type',
         required=True,
-        default=_default_type)
+        default=_default_type,
+        track_visibility='onchange',
+    )
 
     last_reading_time = fields.Datetime(
         string='Last Reading Time')
@@ -103,7 +114,9 @@ class WuaWatermeter(models.Model):
     serial_number = fields.Char(
         size=40,
         string="Serial Number",
-        index=True)
+        index=True,
+        track_visibility='onchange',
+    )
 
     presconsumption_ids = fields.One2many(
         string='Consumptions',
@@ -118,15 +131,21 @@ class WuaWatermeter(models.Model):
 
     watermeter_brand = fields.Char(
         string="Brand",
-        help="The brand of watermter.")
+        help="The brand of watermter.",
+        track_visibility='onchange',
+    )
 
     watermeter_model = fields.Char(
         string="Model",
-        help="The model of watermter.")
+        help="The model of watermter.",
+        track_visibility='onchange',
+    )
 
     installation_date = fields.Date(
         string="Installation date",
-        help="The date the watermeter was installed.")
+        help="The date the watermeter was installed.",
+        track_visibility='onchange',
+    )
 
     active = fields.Boolean(
         default=True,
