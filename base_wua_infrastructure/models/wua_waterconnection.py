@@ -288,12 +288,13 @@ class WuaWaterconnection(models.Model):
                 if ip.partner_id and ip.parcel_id:
                     partner_name = ip.partner_id.name
                     parcel_name = ip.parcel_id.name
-
                     if partner_name not in partner_parcels:
                         partner_parcels[partner_name] = set()
                     partner_parcels[partner_name].add(parcel_name)
-            track_irrigationpoint_ids = ', '.join(
-                "{}[{}]".format(partner, ', '.join(sorted(parcels)))
+            track_irrigationpoint_ids = u', '.join(
+                u"{}[{}]".format(
+                    unicode(partner),
+                    u', '.join(sorted(unicode(parcel) for parcel in parcels)))
                 for partner, parcels in partner_parcels.items()
             )
             wc.track_irrigationpoint_ids = track_irrigationpoint_ids
