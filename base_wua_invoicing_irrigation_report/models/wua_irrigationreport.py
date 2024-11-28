@@ -21,6 +21,7 @@ class WuaIrrigationReport(models.Model):
         string='Water Type',
         comodel_name='product.product',
         default=_default_product_id,
+        store=True,
         required=True,
         index=True,
         domain=[('categ_id.productcategory_code', '=', 11)],
@@ -40,7 +41,8 @@ class WuaIrrigationReport(models.Model):
     price_unit = fields.Float(
         string='Price (m³)',
         digits=(32, 4),
-        compute='_compute_price_unit')
+        readonly=True,
+    )
 
     number_of_invoicing_processes = fields.Integer(
         string='Invoicing Processes',
@@ -74,11 +76,6 @@ class WuaIrrigationReport(models.Model):
                 for invoiceline in record.invoiceline_ids:
                     sum_price_subtotal += invoiceline.price_subtotal
             record.sum_price_subtotal = sum_price_subtotal
-
-    @api.depends('product_id')
-    def _compute_price_unit(self):
-        for record in self:
-            record.price_unit = record.product_id.lst_price
 
     @api.depends('invoiceline_ids')
     def _compute_number_of_invoicing_processes(self):
@@ -128,3 +125,17 @@ class WuaIrrigationReport(models.Model):
     @api.onchange('intake_id')
     def _compute_product_id(self):
         self.product_id = self.intake_id.product_id
+
+    @api.model
+    def create(self, vals):
+        record = super(WuaIrrigationReport, self).create(vals)
+        if record.product_id:
+            record.price_unit = record.product_id.lst_price
+        return record
+
+    def write(self, vals):
+        if 'product_id' in vals:
+            product = self.env['product.product'].browse(
+                vals['product_id'])
+            vals['price_unit'] = product.lst_price
+        return super(WuaIrrigationReport, self).write(vals)

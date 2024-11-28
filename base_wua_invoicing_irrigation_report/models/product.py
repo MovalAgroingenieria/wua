@@ -2,7 +2,7 @@
 # Copyright 2019 Moval
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class ProductCategory(models.Model):
@@ -25,3 +25,24 @@ class ProductTemplate(models.Model):
 
     linkable_unit_type = fields.Selection(selection_add=[
         ('irrigationreport', 'Irrigation Report')])
+
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    irrigationreport_ids = fields.One2many(
+        string='Irrigation Reports',
+        comodel_name='wua.irrigationreport',
+        inverse_name='product_id'
+    )
+
+    @api.multi
+    def write(self, vals):
+        if 'lst_price' in vals:
+            new_price = vals['lst_price']
+            for product in self:
+                active_reports = product.irrigationreport_ids.filtered(
+                    lambda report: report.of_active_agriculturalseason
+                )
+                active_reports.write({'price_unit': new_price})
+        return super(ProductProduct, self).write(vals)

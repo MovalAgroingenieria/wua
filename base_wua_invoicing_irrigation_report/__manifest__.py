@@ -6,7 +6,7 @@
     "name": "Irrigation Reports Invoicing for Water Users Associations",
     "summary": "Invoicing based on water consumption by irrigation reports",
     "description": "",
-    "version": "10.0.1.1.0",
+    "version": "10.0.1.1.1",
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
