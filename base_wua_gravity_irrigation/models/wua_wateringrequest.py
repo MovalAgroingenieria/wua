@@ -309,7 +309,7 @@ class WuaWateringrequest(models.Model):
                         if subparcel_data.parcel_id.allow_multiple_waterings:
                             parcels_multiplewaterings_new.append({
                                 'parcel_id': subparcel_data.parcel_id.id,
-                                'last_number': 0
+                                'last_number': 0,
                                 })
                 if len(parcels_multiplewaterings_new) > 0:
                     # Get a list of dictionaries for parcels with multiple
@@ -339,7 +339,7 @@ class WuaWateringrequest(models.Model):
                                     parcels_multiplewaterings_preexist.append({
                                         'parcel_id': parcel_id.id,
                                         'last_number':
-                                            gravconsumption_data.number
+                                            gravconsumption_data.number,
                                         })
                     # Update, if necessary, each item of
                     # parcels_multiplewaterings_new. The last_number will be

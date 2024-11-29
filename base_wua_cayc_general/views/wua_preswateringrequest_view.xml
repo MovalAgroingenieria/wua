@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="base_wua_pressurized_irrigation_request.wua_preswateringrequest_menu" model="ir.ui.menu">
+        <field name="sequence">3</field>
+    </record>
+
+    <record id="wua_preswateringrequest_view_form" model="ir.ui.view">
+        <field name="name">Pres Watering Requests (form view)</field>
+        <field name="model">wua.preswateringrequest</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='nominal_flow']" position="after">
+                <field name="maximum_nominal_flow"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

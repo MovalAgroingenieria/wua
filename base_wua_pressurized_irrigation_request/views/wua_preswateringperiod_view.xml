@@ -1,0 +1,153 @@
+<odoo>
+    <record id="wua_preswateringperiod_view_form" model="ir.ui.view">
+        <field name="name">Pres Watering Period (form view)</field>
+        <field name="model">wua.preswateringperiod</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                    <button name="open_period"
+                            type="object" string="Open Period"
+                            states="02_closed"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="close_period"
+                            type="object" string="Close Period"
+                            states="01_open"
+                            groups="base_wua.group_wua_manager"/>
+                    <field name="state"
+                        widget="statusbar"
+                        statusbar_visible="01_open,02_closed"/>
+                </header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <button name="action_see_preswateringrequests"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-file-infra"
+                                groups="base_wua.group_wua_user"
+                                attrs="{'invisible':[('number_of_requests','=', 0)]}">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_requests" groups="base_wua.group_wua_user"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        Watering Requests
+                                    </span>
+                                </div>
+                        </button>
+                    </div>
+                    <field name="id" invisible="1"/>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="initial_date"/>
+                            <field name="description"/>
+                            <field name="agriculturalseason_id"
+                                options="{'no_quick_create': True,
+                                            'no_create_edit': True}"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="end_date"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_preswateringperiod_view_tree" model="ir.ui.view">
+        <field name="name">Pres Watering Periods (tree view)</field>
+        <field name="model">wua.preswateringperiod</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="initial_date"/>
+                <field name="end_date"/>
+                <field name="description"/>
+                <field name="agriculturalseason_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_preswateringperiod_view_search" model="ir.ui.view">
+        <field name="name">Pres Watering Periods (search view)</field>
+        <field name="model">wua.preswateringperiod</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="description"/>
+                <field name="agriculturalseason_id"/>
+                <filter string="Open" name="state_open" domain="[('state', '=', '01_open')]"/>
+                <filter string="Closed" name="state_closed" domain="[('state', '=', '02_closed')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season" name="group_by_agricultural_season"
+                            context="{'group_by': 'agriculturalseason_id'}"/>
+                    <filter string="Initial Date" name="group_by_initial_date"
+                            context="{'group_by': 'initial_date'}"/>
+                    <filter string="State" name="group_by_state"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_preswateringperiod_action" model="ir.actions.act_window">
+        <field name="name">Pres Watering Periods</field>
+        <field name="res_model">wua.preswateringperiod</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_preswateringperiod_view_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new pres watering period.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="wua_preswateringperiod_menu"
+          name="Pres Watering Periods"
+          parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+          action="wua_preswateringperiod_action"
+          sequence="20"/>
+
+
+    <record id="wua_set_preswateringperiod_as_open" model="ir.actions.server">
+        <field name="name">Open period</field>
+        <field name="model_id" ref="model_wua_preswateringperiod"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.preswateringperiod'].set_as_open(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_preswateringperiod_as_open" model="ir.values">
+        <field name="name">Open period</field>
+        <field name="model">wua.preswateringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_preswateringperiod_as_open'))"/>
+    </record>
+
+    <record id="wua_set_preswateringperiod_as_close" model="ir.actions.server">
+        <field name="name">Close period</field>
+        <field name="model_id" ref="model_wua_preswateringperiod"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.preswateringperiod'].set_as_close(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_preswateringperiod_as_close" model="ir.values">
+        <field name="name">Close period</field>
+        <field name="model">wua.preswateringperiod</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_preswateringperiod_as_close'))"/>
+    </record>
+</odoo>

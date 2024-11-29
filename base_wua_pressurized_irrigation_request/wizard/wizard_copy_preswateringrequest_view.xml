@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wizard_copy_preswateringrequests_view_form" model="ir.ui.view">
+        <field name="name">Wizard to Copy Pressurized Watering Requests</field>
+        <field name="model">wizard.copy.preswateringrequests</field>
+        <field name="arch" type="xml">
+            <form string="Copy Pressurized Watering Requests">
+                <group>
+                    <field name="preswateringperiod_id" required="1"/>
+                    <field name="initial_date" required="1"/>
+                    <field name="end_date" required="1"/>
+                    <field name="interval_days" required="1" style="width:150px"/>
+                </group>
+                <footer>
+                    <button name="copy_requests"
+                            type="object"
+                            string="Copy"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_copy_preswateringrequests"
+        name="Copy Pressurized Watering Requests"
+        res_model="wizard.copy.preswateringrequests"
+        src_model="wua.preswateringrequest"
+        key2="client_action_multi"
+        view_mode="form"
+        target="new"
+        groups="base_wua.group_wua_manager"/>
+</odoo>

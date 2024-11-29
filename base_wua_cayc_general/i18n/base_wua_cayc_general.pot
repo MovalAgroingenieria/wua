@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-20 10:13+0000\n"
-"PO-Revision-Date: 2024-08-20 10:13+0000\n"
+"POT-Creation-Date: 2024-11-20 12:29+0000\n"
+"PO-Revision-Date: 2024-11-20 12:29+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -99,6 +99,12 @@ msgid "Connected"
 msgstr ""
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_waterconnection.py:47
+#, python-format
+msgid "Consumption Requests"
+msgstr ""
+
+#. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/res_partner.py:243
 #, python-format
 msgid "Could not connect to Server DB check connection parameters."
@@ -107,6 +113,7 @@ msgstr ""
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_create_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_create_uid
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_create_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_create_uid
 msgid "Created by"
 msgstr ""
@@ -114,6 +121,7 @@ msgstr ""
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_create_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_create_date
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_create_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_create_date
 msgid "Created on"
 msgstr ""
@@ -121,6 +129,7 @@ msgstr ""
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_display_name
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_display_name
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_display_name
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_display_name
 msgid "Display Name"
 msgstr ""
@@ -146,8 +155,23 @@ msgid "Entity (parcel)"
 msgstr ""
 
 #. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_waterconnection
+msgid "Entity (water connection)"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_watermeter
+msgid "Entity (water meter)"
+msgstr ""
+
+#. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_waterchannel
 msgid "Entity (waterchannel)"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_module_view_search
+msgid "Group By"
 msgstr ""
 
 #. module: base_wua_cayc_general
@@ -158,8 +182,15 @@ msgstr ""
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_id
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_id
 msgid "ID"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_name
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_module_view_tree
+msgid "Identifier"
 msgstr ""
 
 #. module: base_wua_cayc_general
@@ -182,6 +213,11 @@ msgid "Intakes"
 msgstr ""
 
 #. module: base_wua_cayc_general
+#: model:res.groups,name:base_wua_cayc_general.group_make_invisible
+msgid "Invisible"
+msgstr ""
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_parcel_is_primary
 msgid "Is primary"
 msgstr ""
@@ -195,6 +231,7 @@ msgstr ""
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi___last_update
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel___last_update
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module___last_update
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase___last_update
 msgid "Last Modified on"
 msgstr ""
@@ -207,6 +244,7 @@ msgstr ""
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_write_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_write_uid
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_write_uid
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_write_uid
 msgid "Last Updated by"
 msgstr ""
@@ -214,14 +252,33 @@ msgstr ""
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_write_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_write_date
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_write_date
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_write_date
 msgid "Last Updated on"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_presresconsumption_maximum_nominal_flow
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterconnection_maximum_nominal_flow
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_maximum_nominal_flow
+msgid "Maximum nominal flow (m³/h)"
 msgstr ""
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/res_partner.py:228
 #, python-format
 msgid "Missing some Server connect parameter."
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_module_flow
+msgid "Module Flow (m³/h)"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_watermeter_module_ids
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_view_form
+msgid "Modules"
 msgstr ""
 
 #. module: base_wua_cayc_general
@@ -312,6 +369,11 @@ msgid "Partners Primary"
 msgstr ""
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_position
+msgid "Position"
+msgstr ""
+
+#. module: base_wua_cayc_general
 #: model:ir.actions.act_window,name:base_wua_cayc_general.wua_wuabase_action
 #: model:ir.ui.menu,name:base_wua_cayc_general.wua_wuabase_menu
 msgid "Primary Entities"
@@ -329,6 +391,11 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_parcel_view_search
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_technical_parcel_class_gis_view_search
 msgid "Primary Entity"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_presresconsumption
+msgid "Request Consumption"
 msgstr ""
 
 #. module: base_wua_cayc_general
@@ -388,6 +455,24 @@ msgid "The concession as volume must be a value zero or positive."
 msgstr ""
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_watermeter.py:71
+#, python-format
+msgid "The module value must be a multiple of 5."
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:66
+#, python-format
+msgid "The nominal flow cannot be greater than the maximum_nominal_flow."
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:54
+#, python-format
+msgid "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
+msgstr ""
+
+#. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/res_partner.py:74
 #, python-format
 msgid "The secondary partner code must not end at 0."
@@ -408,6 +493,11 @@ msgstr ""
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_partner_ids
 msgid "WUA Partners"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_module_view_search
+msgid "Water Meter"
 msgstr ""
 
 #. module: base_wua_cayc_general
@@ -446,6 +536,22 @@ msgid "Waterchannels"
 msgstr ""
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_watermeter_id
+msgid "Watermeter"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.actions.act_window,name:base_wua_cayc_general.wua_technical_watermeter_module_action
+#: model:ir.ui.menu,name:base_wua_cayc_general.wua_technical_watermeter_module_menu
+msgid "Watermeter Modules"
+msgstr ""
+
+#. module: base_wua_cayc_general
+#: sql_constraint:wua.watermeter.module:0
+msgid "Watermeter position already exists."
+msgstr ""
+
+#. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_gis_parcel_class_view
 msgid "wua.gis.parcel.class.view"
 msgstr ""
@@ -454,3 +560,9 @@ msgstr ""
 #: model:ir.model,name:base_wua_cayc_general.model_wua_parcel_class
 msgid "wua.parcel.class"
 msgstr ""
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_watermeter_module
+msgid "wua.watermeter.module"
+msgstr ""
+

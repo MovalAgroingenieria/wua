@@ -662,23 +662,22 @@ class WuaInvoiceset(models.Model):
         default_parcel_label = _('Parcel')
         default_cost_label = _('cost:')
         for parcel in parcels:
-            owner_percentage = (self.env['product.product'].browse(
+            owner_percentage = (
+                self.env['product.product'].browse(
                     product_id).product_tmpl_id.allow_ownerhsip_percentage and
-                                parcel.use_ownership_percentage_on_invoicing)
-            if (owner_percentage):
-                partnerlinks_of_parcel = partnerlinks.filtered(
-                    lambda x: x.parcel_id.id == parcel.id and
-                              x.ownership_percentage > 0.0)
-            else:
-                partnerlinks_of_parcel = partnerlinks.filtered(
-                    lambda x: x.parcel_id.id == parcel.id and
-                    x.other_costs_percentage > 0)
-            # Conditional irrigationditc content
-            irrigationditch_content = ''
+                parcel.use_ownership_percentage_on_invoicing)
             # Conditional Owners content
             owners_of_parcel = partnerlinks.filtered(
                 lambda x: x.parcel_id.id == parcel.id and
                 x.ownership_percentage > 0.0)
+            if (owner_percentage):
+                partnerlinks_of_parcel = parcel.partnerlink_ids.filtered(
+                    lambda x: x.ownership_percentage > 0.0)
+            else:
+                partnerlinks_of_parcel = parcel.partnerlink_ids.filtered(
+                    lambda x: x.other_costs_percentage > 0.0)
+            # Conditional irrigationditc content
+            irrigationditch_content = ''
             if len(partnerlinks_of_parcel) > 0:
                 for partnerlink in partnerlinks_of_parcel:
                     partner_id = partnerlink.partner_id.id

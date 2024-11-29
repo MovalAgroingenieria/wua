@@ -1,0 +1,120 @@
+<odoo>
+    <record id="wua_presresconsumption_view_form" model="ir.ui.view">
+        <field name="name">wua.presresconsumption.form</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <form string="Presurized Watering Request" duplicate="0" create="0" edit="0" delete="0">
+                <header>
+                    <field name="state"
+                    widget="statusbar"
+                    statusbar_visible="01_proposed"/>
+                </header>
+                <group>
+                    <group>
+                        <field name="preswateringrequest_id"/>
+                        <field name="preswateringperiod_id"/>
+                        <field name="partner_id"/>
+                        <field name="hydraulicsector_id"/>
+                        <field name="waterpipe_id"/>
+                        <field name="irrigationshed_id"/>
+                        <field name="waterconnection_id"/>
+                    </group>
+                    <group>
+                        <field name="total_affected_area_official_hec"/>
+                        <field name="nominal_flow"/>
+                        <field name="watering_duration"/>
+                        <field name="watering_volume"/>
+                        <field name="initial_hour" widget="float_time"/>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_presresconsumption_view_tree" model="ir.ui.view">
+        <field name="name">wua.presresconsumption.tree</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <tree string="Presurized Watering Requests" create="0" delete="0" duplicate="0">
+                <field name="preswateringrequest_id"/>
+                <field name="preswateringperiod_id"/>
+                <field name="waterconnection_id"/>
+                <field name="total_affected_area_official_hec"/>
+                <field name="nominal_flow"/>
+                <field name="watering_duration"/>
+                <field name="watering_volume"/>
+                <field name="initial_hour" widget="float_time"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_presresconsumption_view_search" model="ir.ui.view">
+        <field name="name">wua.presresconsumption.search</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <search string="Search Presurized Watering Requests">
+                <field name="preswateringrequest_id"/>
+                <field name="waterconnection_id"/>
+                <filter string="Created by Farmer" name="is_portal_user"
+                        domain="[('is_portal_user', '=', True)]"/>
+                <filter string="Proposed" name="proposed"
+                        domain="[('state', '=', '01_proposed')]"/>
+                <group expand="0" string="Group By...">
+                    <filter string="Water Connection"
+                            name="group_by_waterconnection"
+                            context="{'group_by': 'waterconnection_id'}"/>
+                    <filter string="Campaign"
+                            name="group_by_agriculturalseason"
+                            context="{'group_by': 'agriculturalseason_id'}"/>
+                    <filter string="Period"
+                            name="group_by_preswateringperiod"
+                            context="{'group_by': 'preswateringperiod_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_presresconsumption_view_pivot" model="ir.ui.view">
+        <field name="name">wua.presresconsumption.pivot</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values">
+                <field name="total_affected_area_official_hec" type="measure"/>
+                <field name="watering_duration" type="measure"/>
+                <field name="watering_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_presresconsumption_view_calendar" model="ir.ui.view">
+        <field name="name">Pres Watering Requests (calendar view)</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <calendar create="0" edit="0" string="Presresconsumption"
+                        color="partner_id"
+                        date_start="request_time"
+                        date_delay="watering_duration"
+                        mode="month"
+                        quick_add="False">
+                    <field name="calendar_display_name"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="wua_presresconsumption_action" model="ir.actions.act_window">
+        <field name="name">Consumption Requests</field>
+        <field name="res_model">wua.presresconsumption</field>
+        <field name="view_mode">tree,pivot,calendar,form</field>
+        <field name="view_id" ref="wua_presresconsumption_view_tree"/>
+        <field name="target">current</field>
+        <field name="context">{'search_default_group_by_agriculturalseason': 1,
+                               'search_default_group_by_preswateringperiod': 1}</field>
+    </record>
+
+    <menuitem id="wua_presresconsumption_menu"
+              name="Consumption Requests"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="wua_presresconsumption_action"
+              sequence="22"/>
+</odoo>
