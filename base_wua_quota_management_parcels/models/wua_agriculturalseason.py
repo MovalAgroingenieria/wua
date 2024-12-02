@@ -61,6 +61,6 @@ class WuaAgriculturalseason(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.hydricmovementparcel_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True}
+                            'compressed_quotaperiod': True},
                 }
             return act_window

@@ -15,7 +15,7 @@ class ResPartner(models.Model):
         'name', 'lastname', 'lastname2', 'email', 'phone', 'mobile',
         'street', 'street2', 'city', 'zip', 'state_id', 'country_id', 'title',
         'is_company', 'type', 'website', 'vat', 'lang', 'tz', 'is_wua_partner',
-        'comment', 'street_num'
+        'comment', 'street_num',
     ]
 
     is_primary = fields.Boolean(
@@ -40,6 +40,35 @@ class ResPartner(models.Model):
         ('04_HEL', 'Hydroelectric Producer'),
     ], string='Partner Type',
         index=True,
+    )
+
+    octroi_id = fields.Many2one(
+        string='Octroi',
+        comodel_name='wua.octroi',
+        index=True,
+        ondelete='restrict',
+    )
+
+    zone_id = fields.Many2one(
+        string='Zone',
+        comodel_name='wua.zone',
+        index=True,
+        ondelete='restrict',
+    )
+
+    is_independent = fields.Boolean(
+        string='Independent Partner',
+        default=True,
+    )
+
+    parent_partner_id = fields.Many2one(
+        string='Parent Partner',
+        comodel_name='res.partner',
+        index=True,
+        ondelete='set null',
+        domain="[('is_independent', '=', True),"
+               "('is_primary', '=', True),"
+               "('partner_type', '=', '01_WUA')]",
     )
 
     concession_as_volume = fields.Float(
@@ -123,11 +152,11 @@ class ResPartner(models.Model):
 
     @api.depends('parcel_owner_number_votes', 'parcel_owner_area_hec_votes',
                  'is_primary', 'partner_type',
-                 'concession_as_volume', 'concession_as_power',)
+                 'concession_as_volume', 'concession_as_power')
     def _compute_number_of_votes(self):
         if len(self) != 1:
             return
-        if not self.is_primary:
+        if not self.is_primary or not self.is_independent:
             self.number_of_votes = 0
         elif self.partner_type != '01_WUA':
             polling_system_type = self.env['ir.values'].get_default(
@@ -206,6 +235,8 @@ class ResPartner(models.Model):
             else:
                 hide_fields = [
                     'partner_type',
+                    'octroi_id',
+                    'zone_id',
                 ]
             for field in hide_fields:
                 for node in doc.xpath("//field[@name='%s']" % field):
@@ -410,29 +441,23 @@ class ResPartner(models.Model):
     @api.multi
     def action_see_secondary_parcels(self):
         self.ensure_one()
-
-        # Definir el dominio para filtrar los registros en wua.parcel
         condition = [
             ('is_primary', '=', False),
             ('wuabase_id', '=', self.wuabase_id.id)
         ]
-
-        # Obtener las vistas que se usarán
         id_form_view = self.env.ref(
             'base_wua_cayc_general.wua_parcel_view_form').id
         id_tree_view = self.env.ref(
             'base_wua_cayc_general.wua_parcel_view_tree').id
         search_view = self.env.ref(
             'base_wua_cayc_general.wua_parcel_view_search')
-
-        parcel_label = self.sudo().env['wua.parcel'].get_value_from_translation(
-            'base_wua_cayc_general',
-            'Parcels'
+        parcel_label = self.sudo().env['wua.parcel'].\
+            get_value_from_translation(
+                'base_wua_cayc_general',
+                'Parcels',
         )
         if not parcel_label:
             parcel_label = _('Parcels')
-
-        # Definir la acción para mostrar la vista de wua.parcel
         act_window = {
             'type': 'ir.actions.act_window',
             'name': parcel_label,

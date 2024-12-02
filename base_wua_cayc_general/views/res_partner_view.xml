@@ -68,6 +68,12 @@
                     <strong attrs="{'invisible': [('is_primary', '=', True)]}">( CHE PARTNER )</strong>
                 </div>
             </xpath>
+            <xpath expr="//field[@name='website']" position="after">
+                <field name="octroi_id"  attrs="{'invisible': [('is_primary', '=', False)]}"/>
+                <field name="zone_id"  attrs="{'invisible': [('is_primary', '=', False)]}"/>
+                <field name="is_independent"  attrs="{'invisible': [('is_primary', '=', False)]}"/>
+                <field name="parent_partner_id"  attrs="{'invisible': ['|', ('is_primary', '=', False), ('is_independent', '=', True)]}"/>
+            </xpath>
             <xpath expr="//field[@name='number_of_votes']" position="after">
                 <field name="concession_as_volume" style="width:120px" attrs="{'invisible': [('partner_type', 'not in', ['02_IND', '03_WSP'])]}"/>
                 <field name="concession_as_power" style="width:120px" attrs="{'invisible': [('partner_type', 'not in', ['04_HEL'])]}"/>
@@ -114,6 +120,8 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='vat']" position="before">
                 <field name="partner_type"/>
+                <field name="octroi_id"/>
+                <field name="zone_id"/>
             </xpath>
         </field>
     </record>
@@ -133,6 +141,24 @@
                 <filter string="Partner Type"
                      name="partner_type"
                      context="{'group_by':'partner_type'}"/>
+                <filter string="Octroi"
+                     name="octroi_id"
+                     context="{'group_by':'octroi_id'}"/>
+                <filter string="Zone"
+                    name="zone_id"
+                    context="{'group_by':'zone_id'}"/>
+                <filter string="Parent Partner"
+                    name="parent_partner_id"
+                    context="{'group_by':'parent_partner_id'}"/>
+            </xpath>
+            <xpath expr="//filter[@name='partnermappedno']" position="after">
+                <separator/>
+                <filter string="Is Independent: Yes"
+                    name="isindependentyes"
+                    domain="[('is_independent','=', True)]"/>
+                <filter string="Is Independent: No"
+                    name="isindependentno"
+                    domain="[('is_independent','=', False)]"/>
             </xpath>
             <xpath expr="//filter[@name='partnermappedyes']" position="attributes">
                 <attribute name="invisible">1</attribute>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-20 12:30+0000\n"
-"PO-Revision-Date: 2024-11-20 12:30+0000\n"
+"POT-Creation-Date: 2024-12-02 10:55+0000\n"
+"PO-Revision-Date: 2024-12-02 10:55+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -77,7 +77,7 @@ msgid "A primary parcel cannot have a non primary partner."
 msgstr "Un perímetro de entidad no puede tener un socio padrón CHE asignado."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:92
+#: code:addons/base_wua_cayc_general/models/res_partner.py:121
 #, python-format
 msgid "A primary partner must have a valid partner type ."
 msgstr "Un socio CAYC debe tener un tipo de socio válido."
@@ -106,7 +106,7 @@ msgid "Consumption Requests"
 msgstr "Consumos concedidos"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:243
+#: code:addons/base_wua_cayc_general/models/res_partner.py:274
 #, python-format
 msgid "Could not connect to Server DB check connection parameters."
 msgstr "No se pudo conectar con el servidor de la base de datos, revise los parámetros de conexión."
@@ -195,6 +195,12 @@ msgid "Identifier"
 msgstr "Identificador"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_is_independent
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_users_is_independent
+msgid "Independent Partner"
+msgstr "Independiente"
+
+#. module: base_wua_cayc_general
 #: selection:res.partner,partner_type:0
 msgid "Industry"
 msgstr "Industria"
@@ -217,6 +223,16 @@ msgstr "Captaciones"
 #: model:res.groups,name:base_wua_cayc_general.group_make_invisible
 msgid "Invisible"
 msgstr "Invisible"
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_search
+msgid "Is Independent: No"
+msgstr "Es Independiente: No"
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_search
+msgid "Is Independent: Yes"
+msgstr "Es Independiente: Si"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_parcel_is_primary
@@ -266,7 +282,7 @@ msgid "Maximum nominal flow (m³/h)"
 msgstr "Caudal máximo (m³/h)"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:228
+#: code:addons/base_wua_cayc_general/models/res_partner.py:259
 #, python-format
 msgid "Missing some Server connect parameter."
 msgstr "Falta algún parámetro de conexión con el servidor."
@@ -290,11 +306,14 @@ msgid "Notes"
 msgstr "Notas"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_octroi_id
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_users_octroi_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_gis_parcel_class_view_octroi_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_intake_octroi_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_name
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_parcel_class_octroi_id
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_parcel_octroi_id
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_search
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_intake_view_search
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_parcel_class_view_search
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_parcel_view_search
@@ -320,7 +339,7 @@ msgid "Parcel Classes"
 msgstr "Clases"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:433
+#: code:addons/base_wua_cayc_general/models/res_partner.py:460
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_ids
@@ -343,6 +362,13 @@ msgstr "Parcelas Vinculadas"
 #: model:ir.actions.act_window,name:base_wua_cayc_general.wua_parcel_primary_action
 msgid "Parcels Primary"
 msgstr "Perímetros de Tomas-CCRR"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_parent_partner_id
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_users_parent_partner_id
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_search
+msgid "Parent Partner"
+msgstr "Comunidad Relacionada"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_partner_type
@@ -440,7 +466,7 @@ msgid "Syncrhonize Wuabase?"
 msgstr "¿Sincronizar Entidad Primaria?"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:85
+#: code:addons/base_wua_cayc_general/models/res_partner.py:114
 #, python-format
 msgid "The Primary Entity code does not exists."
 msgstr "El código de la entidad primaria no existe."
@@ -474,7 +500,7 @@ msgid "The nominal flow of %s is not a combination of the watermeter modules (%s
 msgstr "El caudal de %s no es una combinación de los módulos del contador (%s -> %s)."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:74
+#: code:addons/base_wua_cayc_general/models/res_partner.py:103
 #, python-format
 msgid "The secondary partner code must not end at 0."
 msgstr "El código de un socio padrón CHE no puede acabar en 0."
@@ -551,6 +577,13 @@ msgstr "Módulos de contador"
 #: sql_constraint:wua.watermeter.module:0
 msgid "Watermeter position already exists."
 msgstr "Posición dentro del contador ya existente."
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_zone_id
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_users_zone_id
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_search
+msgid "Zone"
+msgstr "Zona"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_gis_parcel_class_view

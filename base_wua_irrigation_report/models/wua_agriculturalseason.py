@@ -146,6 +146,6 @@ class WuaAgriculturalseason(models.Model):
                 'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
                 'search_view_id': (search_view.id, search_view.name),
                 'target': 'current',
-                'domain': [('id', 'in', self.irrigationreport_ids.ids)]
+                'domain': [('id', 'in', self.irrigationreport_ids.ids)],
                 }
             return act_window

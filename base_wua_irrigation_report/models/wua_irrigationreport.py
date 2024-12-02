@@ -114,13 +114,15 @@ class WuaIrrigationReport(models.Model):
         string='Flow (m³/h)',
         digits=(32, 4),
         default=_default_volume_time_equivalence,
-        required=True,)
+        required=True,
+    )
 
     volume_time_equivalence_ls = fields.Float(
         string='Flow (l/s)',
         digits=(32, 4),
         default=_default_volume_time_equivalence_ls,
-        required=True,)
+        required=True,
+    )
 
     volume = fields.Float(
         string='Gross Value (m³)',
@@ -172,7 +174,8 @@ class WuaIrrigationReport(models.Model):
         comodel_name='wua.parcel',
         index=True,
         ondelete='restrict',
-        domain="[('partner_id', '=', partner_id)]",)
+        domain="[('partner_id', '=', partner_id)]",
+    )
 
     with_irrigation_worker = fields.Boolean(
         string="With Irrig. Worker",

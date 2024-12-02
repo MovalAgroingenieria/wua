@@ -158,7 +158,7 @@ class WuaAgriculturalseason(models.Model):
                 'search_view_id': (search_view.id, search_view.name),
                 'target': 'current',
                 'domain': [('id', 'in', self.quotaperiod_ids.ids)],
-                'context': {'compressed_agriculturalseason': True}
+                'context': {'compressed_agriculturalseason': True},
                 }
             return act_window
 
@@ -186,7 +186,7 @@ class WuaAgriculturalseason(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.quota_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True}
+                            'compressed_quotaperiod': True},
                 }
             return act_window
 
@@ -214,7 +214,7 @@ class WuaAgriculturalseason(models.Model):
                 'target': 'current',
                 'domain': [('id', 'in', self.hydricmovement_ids.ids)],
                 'context': {'compressed_agriculturalseason': True,
-                            'compressed_quotaperiod': True}
+                            'compressed_quotaperiod': True},
                 }
             return act_window
 
@@ -227,7 +227,7 @@ class WuaAgriculturalseason(models.Model):
             'res_model': 'wizard.generate.quotaperiods',
             'src_model': 'wua.agriculturalseason',
             'view_mode': 'form',
-            'target': 'new'
+            'target': 'new',
             }
         return act_window
 
