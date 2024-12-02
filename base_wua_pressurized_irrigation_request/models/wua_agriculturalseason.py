@@ -17,6 +17,7 @@ class WuaAgriculturalseason(models.Model):
     number_of_preswateringperiods = fields.Integer(
         string='Number of preswateringperiods',
         compute='_compute_number_of_preswateringperiods',
+        compute_sudo=True,
     )
 
     @api.multi

@@ -71,6 +71,7 @@ class WuaPreswateringperiod(models.Model):
     number_of_requests = fields.Integer(
         string='Number of Requests',
         compute='_compute_number_of_requests',
+        compute_sudo=True,
         store=True,
     )
 
