@@ -53,7 +53,7 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
     
     add_qr_code_in_attendance = fields.Boolean(
         string='Add qr code in attendance',
-        default=True,)
+        default=False,)
 
     @api.onchange('assembly_state_id')
     def _onchange_assembly_state_id(self):
