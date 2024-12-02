@@ -50,6 +50,10 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
         string='Allow notes with the partner signature',
         default=True,
         required=True,)
+    
+    add_qr_code_in_attendance = fields.Boolean(
+        string='Add qr code in attendance',
+        default=True,)
 
     @api.onchange('assembly_state_id')
     def _onchange_assembly_state_id(self):
@@ -89,3 +93,6 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
         values.set_default('wua.assembly.configuration',
                            'allow_notes_in_signature',
                            self.allow_notes_in_signature)
+        values.set_default('wua.assembly.configuration',
+                           'add_qr_code_in_attendance',
+                           self.add_qr_code_in_attendance)

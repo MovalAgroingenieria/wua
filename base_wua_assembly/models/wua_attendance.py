@@ -140,7 +140,11 @@ class WuaAttendance(models.Model):
     param_allow_notes_in_signature = fields.Boolean(
         string='Allow notes with the partner signature',
         compute='_compute_param_allow_notes_in_signature')
-
+    
+    param_add_qr_code_in_attendance = fields.Boolean(
+        string='Add QR code in attendance',
+        compute='_compute_param_add_qr_code_in_attendance')
+    
     with_attendance_notes = fields.Boolean(
         string='There are notes (y/n)',
         default=False,
@@ -322,6 +326,21 @@ class WuaAttendance(models.Model):
         for record in self:
             record.param_allow_notes_in_signature = \
                 param_allow_notes_in_signature
+
+    @api.multi
+    def _compute_param_add_qr_code_in_attendance(self):
+        param_add_qr_code_in_attendance = True
+        value_of_param_add_qr_code_in_attendance = \
+            self.env['ir.values'].get_default(
+                'wua.assembly.configuration', 'add_qr_code_in_attendance')
+        if value_of_param_add_qr_code_in_attendance is None:
+            value_of_param_add_qr_code_in_attendance = True
+        if not value_of_param_add_qr_code_in_attendance:
+            param_add_qr_code_in_attendance = False
+        for record in self:
+            record.param_add_qr_code_in_attendance = \
+                param_add_qr_code_in_attendance
+
 
     @api.multi
     def _compute_compressed_assignors(self):
