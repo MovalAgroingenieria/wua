@@ -443,7 +443,7 @@ class ResPartner(models.Model):
         self.ensure_one()
         condition = [
             ('is_primary', '=', False),
-            ('wuabase_id', '=', self.wuabase_id.id)
+            ('wuabase_id', '=', self.wuabase_id.id),
         ]
         id_form_view = self.env.ref(
             'base_wua_cayc_general.wua_parcel_view_form').id
