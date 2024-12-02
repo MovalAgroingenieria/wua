@@ -13,6 +13,22 @@ class WuaPreswateringrequest(models.Model):
 
     MAX_SIZE_PARTNER_CODE = 6
 
+    def _default_partner_id(self):
+        resp = None
+        partners = self.env['res.partner']
+        user = self.env.user
+        if not user.has_group('base_wua.group_wua_user'):
+            partner = partners.browse(user.partner_id.id)
+            if partner.is_wua_partner:
+                resp = partner.id
+            else:
+                parent_partner = False
+                if partner.parent_id:
+                    parent_partner = partner.parent_id
+                if parent_partner and parent_partner.is_wua_partner:
+                    resp = parent_partner.id
+        return resp
+
     name = fields.Char(
         string='Code',
         compute='_compute_name',
@@ -43,6 +59,7 @@ class WuaPreswateringrequest(models.Model):
         required=True,
         ondelete='restrict',
         index=True,
+        default=_default_partner_id,
     )
 
     initial_date = fields.Date(

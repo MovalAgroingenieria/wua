@@ -87,6 +87,7 @@ class WuaPresresconsumption(models.Model):
         self.initial_hour = initial_hour
 
     @api.multi
+    @api.onchange('waterconnection_id')
     def _compute_maximum_nominal_flow(self):
         for record in self:
             maximum_nominal_flow = 0

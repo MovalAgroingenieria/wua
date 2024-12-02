@@ -31,12 +31,12 @@
                         </div>
                     </div>
                     <group>
-                        <field name="preswateringperiod_id" required="1" options="{'no_create': True}" attrs="{'readonly':[('state','=','02_validated')]}" domain="[('state', '=', '01_open')]"/>
                         <field name="partner_id"
                             options="{'no_quick_create':True,
                                              'no_create_edit':True}"
                             domain="[('is_wua_partner', '=', True)]"
                             attrs="{'readonly': ['|', '|', '&amp;', ('is_open', '=', False), ('id', '>', 0), ('is_portal_user', '=', True), ('state', '=', '02_validated')]}"/>
+                        <field name="preswateringperiod_id" required="1" options="{'no_create': True}" attrs="{'readonly':[('state','=','02_validated')]}" domain="[('state', '=', '01_open')]"/>
                         <field name="initial_date" required="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
                         <field name="user_id" required="1" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
                         <field name="is_portal_user" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
