@@ -412,6 +412,7 @@ class ResPartner(models.Model):
                     parcel.write({
                         'partnerlink_ids': partnerlinks_of_parcel,
                     })
+            wuabase.last_syncrhonization_date = fields.Datetime.now()
         except Exception as e:
             self.env.cr.rollback()
             _logger.error("An error occurred: %s", e)
@@ -435,7 +436,6 @@ class ResPartner(models.Model):
             self.refresh_partners_of_wuabase(wb)
             # For no retrying incorrect wuabases and correct ones get
             # to syncrhonize
-            wb.last_syncrhonization_date = fields.Datetime.now()
             self.env.cr.commit()
 
     @api.multi
