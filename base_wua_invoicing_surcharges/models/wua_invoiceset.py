@@ -56,8 +56,6 @@ class WuaInvoiceset(models.Model):
                 self.env['account.invoice'].browse(invoice_ids)
             for invoice in invoices:
                 invoice.number_of_total_variable_surcharges -= 1
-        else:
-            res = super(WuaInvoiceset, self).unlink()
         return res
 
     def select_invoice_items_other_types(self, productcategory_code,
