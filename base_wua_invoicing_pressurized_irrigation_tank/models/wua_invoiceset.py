@@ -2,7 +2,9 @@
 # 2021 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import pytz
 import datetime
+from datetime import datetime
 from odoo import models, fields, api, exceptions, _
 
 
@@ -49,17 +51,31 @@ class WuaInvoiceset(models.Model):
             return super(
                 WuaInvoiceset, self).calculate_invoice_details_others_categ(
                     product_id, categ_code, item_ids, partnerlinks)
+        inv_set_tank_consumption = self.line_ids.line_tankconsumption_ids[:-1]
+        tank_consumption = inv_set_tank_consumption.tankconsumption_id
+        tz = tank_consumption.partner_id.tz
+        if (not tz):
+            tz = 'Europe/Madrid'
+        userTz = pytz.timezone(tz)
+        utcTz = pytz.timezone('UTC')
         invoice_details_categ15 = []
         tankconsumptions = self.env['wua.tankconsumption'].browse(item_ids)
         for tankconsumption in tankconsumptions:
             partner_id = tankconsumption.partner_id.id
             key1 = tankconsumption.tank_id
             quantity = tankconsumption.volume_real
-            end_time = datetime.datetime.strptime(
-                tankconsumption.end_time,'%Y-%m-%d %H:%M:%S').strftime(
-                    '%d/%m/%Y %H:%M:%S')
+            # end_time = datetime.datetime.strptime(
+            #     tankconsumption.end_time,'%Y-%m-%d %H:%M:%S').strftime(
+            #         '%d/%m/%Y %H:%M:%S')
+            end_date_time = datetime.strptime(
+                tankconsumption.end_time, "%Y-%m-%d %H:%M:%S")
+            end_date_es_str = str(utcTz.localize(
+                end_date_time).astimezone(userTz)).split('+')[0]
+            end_time_es = datetime.strptime(
+                end_date_es_str, '%Y-%m-%d %H:%M:%S').strftime(
+                '%d/%m/%Y %H:%M:%S')
             description = _('Tank consumption') + ' ' + \
-                tankconsumption.tank_id.name + ' ' + end_time
+                tankconsumption.tank_id.name + ' ' + end_time_es
             result = {
                 'partner_id': partner_id,
                 'product_id': product_id,
