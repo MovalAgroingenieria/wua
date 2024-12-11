@@ -64,9 +64,6 @@ class WuaInvoiceset(models.Model):
             partner_id = tankconsumption.partner_id.id
             key1 = tankconsumption.tank_id
             quantity = tankconsumption.volume_real
-            # end_time = datetime.datetime.strptime(
-            #     tankconsumption.end_time,'%Y-%m-%d %H:%M:%S').strftime(
-            #         '%d/%m/%Y %H:%M:%S')
             end_date_time = datetime.strptime(
                 tankconsumption.end_time, "%Y-%m-%d %H:%M:%S")
             end_date_es_str = str(utcTz.localize(
