@@ -593,6 +593,13 @@ class WuaHydricmovement(models.Model):
             resp = _('Pressurized Consumption') + '. ' + \
                 _('Water connection') + ': ' + \
                 waterconnection_name
+            watermeter_description = self.env['ir.values'].get_default(
+                'wua.quotas.configuration',
+                'add_watermeter_hydricmovement_description')
+            if watermeter_description:
+                watermeter_name = \
+                    hydricmovement.presconsumption_id.watermeter_id.name
+                resp += '. ' + _('Watermeter') + ': ' + watermeter_name
         if type == 'grav_consumption':
             parcel_name = \
                 hydricmovement.gravconsumption_id.parcel_id.name

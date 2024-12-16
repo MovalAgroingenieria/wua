@@ -37,6 +37,11 @@ class WuaQuotasConfiguration(models.TransientModel):
         default=False,
         help='If it is checked, it shows partner aggregated quotas.')
 
+    add_watermeter_hydricmovement_description = fields.Boolean(
+        string='Show watermeter',
+        default=False,
+        help='If checked, shows watermeter on hydric movement description.')
+
     show_warning_onchange_waterpayer = fields.Boolean(
         string='Show warning on change water payer',
         default=True,
@@ -80,6 +85,9 @@ class WuaQuotasConfiguration(models.TransientModel):
         values.set_default('wua.quotas.configuration',
                            'show_aggregated_quotas',
                            self.show_aggregated_quotas)
+        values.set_default('wua.quotas.configuration',
+                           'add_watermeter_hydricmovement_description',
+                           self.add_watermeter_hydricmovement_description)
         values.set_default('wua.quotas.configuration',
                            'days_cession_notice',
                            self.days_cession_notice)
