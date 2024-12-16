@@ -158,6 +158,14 @@ class WuaWatermeter(models.Model):
         digits=(32, 2),
     )
 
+    zone_id = fields.Many2one(
+        string='Zone',
+        comodel_name='wua.zone',
+        index=True,
+        store=True,
+        compute='_compute_zone_id',
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)', 'Existing Name.'),
         ('valid_nominal_diameter',
@@ -170,6 +178,14 @@ class WuaWatermeter(models.Model):
          'CHECK (pressure >= 0)',
          'The pressure can not be a negative value.'),
         ]
+
+    @api.depends('waterconnection_id', 'waterconnection_id.zone_id')
+    def _compute_zone_id(self):
+        for record in self:
+            zone_id = None
+            if record.waterconnection_id:
+                zone_id = record.waterconnection_id.zone_id
+            record.zone_id = zone_id
 
     @api.depends('waterconnection_ids')
     def _compute_waterconnection_id(self):

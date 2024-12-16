@@ -156,6 +156,13 @@
                 <filter string="Without water meter" name="withoutwatermeter"
                  domain="[('with_watermeter','=',False)]"/>
             </xpath>
+            <xpath expr="//search" position="inside">
+                <field name="zone_id" string="Zone"/>
+                <group expand="1" string="Group By">
+                    <filter string="Zone" name="zone" context="{'group_by':'zone_id'}"/>
+                </group>
+            </xpath>
+
             <!-- Al cambiar a many2many ya no se puede filtrar por este campo
             <xpath expr="//filter[@name='irrigation_shed']" position="after">
 

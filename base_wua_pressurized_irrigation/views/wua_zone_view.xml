@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wua_zone_view_form_inherit" model="ir.ui.view">
+        <field name="name">Wua Zone (Form View)</field>
+        <field name="model">wua.zone</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_zone_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_get_hydraulicsectors']" position="after">
+                <field name="waterconnection_ids" invisible="1"/>
+                <field name="irrigationshed_ids" invisible="1"/>
+                <field name="watermeter_ids" invisible="1"/>
+                <field name="parcel_ids" invisible="1"/>
+                <button name="action_get_waterconnections"
+                        type="object" class="oe_stat_button"
+                        icon="fa-moval-water-counter"
+                        attrs="{'invisible': [('waterconnection_ids','=',[])]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Waterconnections</span>
+                    </div>
+                </button>
+                <button name="action_get_watermeters"
+                        type="object" class="oe_stat_button"
+                        icon="fa-moval-infra"
+                        attrs="{'invisible': [('watermeter_ids','=',[])]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Watermeters</span>
+                    </div>
+                </button>
+                <button name="action_get_irrigationsheds"
+                        type="object" class="oe_stat_button"
+                        icon="fa-moval-infra"
+                        attrs="{'invisible': [('irrigationshed_ids','=',[])]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Irrigationsheds</span>
+                    </div>
+                </button>
+                <button name="action_get_parcels"
+                        type="object" class="oe_stat_button"
+                        icon="fa-moval-parcel"
+                        attrs="{'invisible': [('parcel_ids','=',[])]}">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Parcels</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

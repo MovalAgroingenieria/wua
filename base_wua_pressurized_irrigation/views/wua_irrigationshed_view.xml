@@ -1,0 +1,37 @@
+<odoo>
+    <record id="wua_irrigationshed_tree_view" model="ir.ui.view">
+        <field name="name">wua.irrigationshed.tree.inherit</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="inside">
+                <field name="zone_id" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_form_view" model="ir.ui.view">
+        <field name="name">wua.irrigationshed.form.inherit</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='hydraulicsector_id']" position="after">
+                <field name="zone_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_irrigationshed_search_view" model="ir.ui.view">
+        <field name="name">wua.irrigationshed.search.inherit</field>
+        <field name="model">wua.irrigationshed</field>
+        <field name="inherit_id" ref="base_wua_infrastructure.wua_irrigationshed_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="zone_id" string="Zone"/>
+                <group expand="1" string="Group By">
+                    <filter string="Zone" name="zone" context="{'group_by':'zone_id'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

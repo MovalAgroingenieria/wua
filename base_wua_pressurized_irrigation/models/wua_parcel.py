@@ -8,6 +8,29 @@ from odoo import models, fields, api
 class WuaParcel(models.Model):
     _inherit = 'wua.parcel'
 
+    zone_id = fields.Many2one(
+        string='Zone',
+        comodel_name='wua.zone',
+        index=True,
+        store=True,
+        compute='_compute_zone_id',
+    )
+
+    @api.depends('irrigationpoint_ids', 'irrigationpoint_ids.type',
+                 'irrigationpoint_ids.waterconnection_id',
+                 'irrigationpoint_ids.waterconnection_id.zone_id')
+    def _compute_zone_id(self):
+        for record in self:
+            irrigation_points = record.irrigationpoint_ids
+            zone_id = None
+            if len(irrigation_points) > 0:
+                for irrigation_point in irrigation_points:
+                    if irrigation_point.type == 'WC':
+                        zone_id = irrigation_point.\
+                            waterconnection_id.zone_id
+                        break
+            record.zone_id = zone_id
+
     def check_gis_pressuresensor_created(self):
         resp = False
         self.env.cr.execute("""

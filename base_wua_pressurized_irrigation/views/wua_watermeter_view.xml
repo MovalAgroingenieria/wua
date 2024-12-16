@@ -42,6 +42,7 @@
                             <field name="waterconnection_id"/>
                             <field name="irrigationshed_id"/>
                             <field name="hydraulicsector_id"/>
+                            <field name="zone_id"/>
                             <field name="last_reading_time"
                                    attrs="{'readonly': [('id','>',0)]}"/>
                             <field name="last_reading_value"
@@ -126,6 +127,7 @@
                 <field name="hydraulicsector_id"/>
                 <field name="serial_number"/>
                 <field name="watermeter_brand"/>
+                <field name="zone_id"/>
                 <filter string="Multi-stream" name="multistream"
                  domain="[('type','=','multistream')]"/>
                 <filter string="Woltmann" name="woltmann"
@@ -153,6 +155,9 @@
                     <filter string="Water Connection"
                      name="waterconnection"
                      context="{'group_by':'waterconnection_id'}"/>
+                    <filter string="Zone"
+                            name="zone"
+                            context="{'group_by':'zone_id'}"/>
                 </group>
             </search>
         </field>

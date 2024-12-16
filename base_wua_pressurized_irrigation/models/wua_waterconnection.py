@@ -93,6 +93,22 @@ class WuaWaterconnection(models.Model):
         group_operator=False,
     )
 
+    zone_id = fields.Many2one(
+        string='Zone',
+        comodel_name='wua.zone',
+        index=True,
+        store=True,
+        compute='_compute_zone_id',
+    )
+
+    @api.depends('irrigationshed_id', 'irrigationshed_id.zone_id')
+    def _compute_zone_id(self):
+        for record in self:
+            zone_id = None
+            if record.irrigationshed_id:
+                zone_id = record.irrigationshed_id.zone_id
+            record.zone_id = zone_id
+
     @api.depends('watermeter_id')
     def _compute_with_watermeter(self):
         for record in self:

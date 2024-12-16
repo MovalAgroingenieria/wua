@@ -2,6 +2,7 @@
 # Copyright 2018 Eduardo Iniesta - <einiesta@moval.es>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from . import wua_zone
 from . import wua_watermeter
 from . import wua_waterconnection
 from . import wua_wc_wm
@@ -18,3 +19,4 @@ from . import wua_negative_reading
 from . import wua_waterconnection_irrigation_schedule
 from . import wua_waterconnection_irrigation_event
 from . import wua_waterconnection_irrigation_shift
+from . import wua_irrigationshed
