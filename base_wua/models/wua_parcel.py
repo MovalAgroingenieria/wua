@@ -2788,6 +2788,20 @@ class WuaParcel(models.Model):
         return formated_date_str
 
     @api.model
+    def transform_datetime_to_locale(self, datetime, lang=False):
+        if (not lang):
+            lang = 'es_ES'
+            if ('lang' in self.env.context and self.env.context['lang']):
+                lang = self.env.context['lang']
+        lang_model = self.env['res.lang'].search([('code', '=', lang)])
+        date_parsed = datetime.datetime.strptime(datetime, '%Y-%m-%d %H:%M:%S')
+        formated_date_str = str(date_parsed)
+        if (lang_model):
+            date_format = lang_model.date_format + ' ' + lang_model.time_format
+            formated_date_str = date_parsed.strftime(date_format)
+        return formated_date_str
+
+    @api.model
     def is_html_field_filled(self, html_field):
         filled = False
         if html_field and tools.html2plaintext(html_field).strip():
