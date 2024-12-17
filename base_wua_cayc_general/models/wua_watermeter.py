@@ -10,7 +10,7 @@ class WuaWatermeter(models.Model):
     _inherit = 'wua.watermeter'
 
     maximum_nominal_flow = fields.Float(
-        string='Maximum nominal flow (m³/h)',
+        string='Maximum nominal flow (l/s)',
         compute='_compute_maximum_nominal_flow',
         digits=(32, 4),
     )
@@ -52,7 +52,7 @@ class WuaWatermeterModule(models.Model):
     )
 
     module_flow = fields.Float(
-        string='Module Flow (m³/h)',
+        string='Module Flow (l/s)',
         digits=(32, 4),
         required=True,
     )

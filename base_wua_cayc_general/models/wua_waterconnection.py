@@ -9,7 +9,7 @@ class WuaWaterconnection(models.Model):
     _inherit = 'wua.waterconnection'
 
     maximum_nominal_flow = fields.Float(
-        string='Maximum nominal flow (m³/h)',
+        string='Maximum nominal flow (l/s)',
         digits=(32, 4),
         compute='_compute_maximum_nominal_flow',
     )

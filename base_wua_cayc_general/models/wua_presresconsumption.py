@@ -4,6 +4,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from datetime import timedelta
 
 
 class WuaPresresconsumption(models.Model):
@@ -17,7 +18,7 @@ class WuaPresresconsumption(models.Model):
     )
 
     maximum_nominal_flow = fields.Float(
-        string='Maximum nominal flow (m³/h)',
+        string='Maximum nominal flow (l/s)',
         compute='_compute_maximum_nominal_flow',
         digits=(32, 4),
     )
@@ -25,7 +26,7 @@ class WuaPresresconsumption(models.Model):
     def is_close(self, a, b, rel_tol=1e-09, abs_tol=0.0):
         return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
-    @api.constrains('nominal_flow', 'waterconnection_id')
+    @api.constrains('nominal_flow_ls', 'waterconnection_id')
     def _check_nominal_flow_like_some_flow(self):
         # The nominal flow must be a combination of some of the modules
         # setted on the waterconnection
@@ -46,7 +47,7 @@ class WuaPresresconsumption(models.Model):
                 # Check if some combination eqquals the nominal_flow
                 for combination in possible_combinations:
                     if (self.is_close(
-                            record.nominal_flow, sum(combination))):
+                            record.nominal_flow_ls, sum(combination))):
                         some_combination = True
                         break
                 if (not some_combination):
@@ -54,14 +55,14 @@ class WuaPresresconsumption(models.Model):
                         _('The nominal flow of %s is not a combination of '
                           'the watermeter modules (%s -> %s).') % (
                             record.waterconnection_id.name,
-                            str(int(record.nominal_flow)),
+                            str(int(record.nominal_flow_ls)),
                             ', '.join([str(int(x)) for x in module_flows])))
 
-    @api.constrains('maximum_nominal_flow', 'nominal_flow')
+    @api.constrains('maximum_nominal_flow', 'nominal_flow_ls')
     def _check_nominal_flow(self):
         for record in self:
-            if (record.nominal_flow and record.maximum_nominal_flow and
-                    (record.nominal_flow > record.maximum_nominal_flow)):
+            if (record.nominal_flow_ls and record.maximum_nominal_flow and
+                    (record.nominal_flow_ls > record.maximum_nominal_flow)):
                 raise ValidationError(
                     _('The nominal flow cannot be greater than the '
                       'maximum_nominal_flow.'))
@@ -82,8 +83,8 @@ class WuaPresresconsumption(models.Model):
         nominal_flow = 0
         if (self.waterconnection_id and self.waterconnection_id.watermeter_id):
             nominal_flow = \
-                self.waterconnection_id.watermeter_id.nominal_water_flow
-        self.nominal_flow = nominal_flow
+                self.waterconnection_id.watermeter_id.nominal_water_flow / 3.6
+        self.nominal_flow_ls = nominal_flow
         self.initial_hour = initial_hour
 
     @api.multi
@@ -96,3 +97,22 @@ class WuaPresresconsumption(models.Model):
                 maximum_nominal_flow = record.waterconnection_id.\
                     maximum_nominal_flow
             record.maximum_nominal_flow = maximum_nominal_flow
+
+    @api.depends('request_time', 'preswateringrequest_id.parent_partner_id')
+    def _compute_modification_deadline(self):
+        lock_modification_hours = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'lock_modification_hours')
+        independent_lock_modification_hours = self.env['ir.values'].sudo().\
+            get_default('wua.irrigation.configuration',
+                        'independent_lock_modification_hours')
+        for record in self:
+            modification_deadline = None
+            if (record.request_time and record.preswateringrequest_id):
+                lock_hours = lock_modification_hours
+                if (record.preswateringrequest_id.parent_partner_id):
+                    lock_hours = independent_lock_modification_hours
+                modification_deadline = fields.Datetime.from_string(
+                    record.request_time) - timedelta(
+                    hours=int(lock_hours))
+            record.modification_deadline = modification_deadline

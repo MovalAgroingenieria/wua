@@ -9,5 +9,7 @@ from . import wua_octroi
 from . import wua_waterchannel
 from . import wua_intake
 from . import wua_presresconsumption
+from . import wua_preswateringrequest
+from . import wua_irrigation_configuration
 from . import wua_waterconnection
 from . import wua_watermeter
