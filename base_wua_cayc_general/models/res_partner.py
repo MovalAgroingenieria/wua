@@ -484,7 +484,7 @@ class ResPartner(models.Model):
     def action_see_parcel_classes(self):
         self.ensure_one()
         condition = [
-            ('parcel_id.partnerlink_ids.partner_id', '=', self.id),
+            ('wuabase_id', '=', self.wuabase_id.id),
         ]
         id_form_view = self.env.ref(
             'base_wua_cayc_general.wua_parcel_class_view_form').id
