@@ -2,6 +2,7 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
 
@@ -123,6 +124,7 @@ class WuaPreswateringrequest(models.Model):
         required=True,
         default='01_draft',
         index=True,
+        track_visibility='onchange',
     )
 
     currency_id = fields.Many2one(
@@ -137,9 +139,28 @@ class WuaPreswateringrequest(models.Model):
         help='Overdue amount this customer owes you.',
     )
 
+    modification_deadline = fields.Char(
+        string='Modification Deadline',
+        compute='_compute_modification_deadline_data',
+    )
+
+    modification_deadline_message = fields.Char(
+        string='Modification Deadline Message',
+        compute='_compute_modification_deadline_data',
+        store=False,
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE(name)', 'The request code must be unique.'),
     ]
+
+    @api.constrains('initial_date')
+    def _check_initial_date_earlier_than_today(self):
+        for record in self:
+            if record.initial_date < fields.Date.today():
+                raise exceptions.ValidationError(_(
+                    'The start date of the watering request must not be'
+                    'earlier than the current date.'))
 
     @api.constrains('initial_date', 'preswateringperiod_id')
     def _check_initial_date_within_period(self):
@@ -227,6 +248,22 @@ class WuaPreswateringrequest(models.Model):
             record.number_of_presresconsumptions = \
                 number_of_presresconsumptions
 
+    @api.multi
+    def _compute_modification_deadline_data(self):
+        for record in self:
+            modification_deadline_message = ''
+            modification_deadline = None
+            if record.presresconsumption_ids:
+                modification_deadline_message = record.\
+                    presresconsumption_ids[0].modification_deadline_message
+                modification_deadline = record.\
+                    presresconsumption_ids[0].modification_deadline
+            # Write?
+            record.modification_deadline_message = \
+                modification_deadline_message
+            record.modification_deadline = \
+                modification_deadline
+
     @api.model
     def create(self, vals):
         if (not self.env.user.has_group('base_wua.group_wua_user') and
@@ -245,6 +282,60 @@ class WuaPreswateringrequest(models.Model):
                 raise exceptions.UserError(_(
                     'You do not have permission to edit data.'))
         return super(WuaPreswateringrequest, self).write(vals)
+
+    @api.model
+    def fields_view_get(
+        self, view_id=None, view_type='form', toolbar=False,
+            submenu=False):
+        res = super(WuaPreswateringrequest, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        use_flow_ls = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'preswateringrequest_flow_liters_per_second')
+        if view_type in ['form']:
+            fields = res.get('fields', {})
+            presresconsumption_ids = fields.get('presresconsumption_ids', {})
+            views = presresconsumption_ids.get('views', {})
+            tree_data = views.get('tree', None)
+            if tree_data is not None:
+                doc = etree.XML(tree_data['arch'])
+                for node in doc.xpath("//field[@name='nominal_flow']"):
+                    node.set('invisible', '1' if use_flow_ls else '0')
+                    node.set(
+                        'modifiers', '{"tree_invisible": true, '
+                        '"invisible": true}' if use_flow_ls else
+                        '{"tree_invisible": false, "invisible": false}')
+                for node in doc.xpath("//field[@name='nominal_flow_ls']"):
+                    node.set('invisible', '0' if use_flow_ls else '1')
+                    node.set(
+                        'modifiers', '{"tree_invisible": false, "invisible": '
+                        'false}' if use_flow_ls else '{"tree_invisible": '
+                        'true, "invisible": true}')
+                tree_data['arch'] = etree.tostring(doc, encoding='unicode')
+                res['fields']['presresconsumption_ids']['views']['tree'] = \
+                    tree_data
+        return res
+
+    @api.multi
+    def action_get_waterconnections(self):
+        self.ensure_one()
+        if self.partner_id and self.partner_id.waterconnectionlink_ids:
+            presresconsumptions = []
+            waterconnections = self.partner_id.waterconnectionlink_ids.mapped(
+                lambda x: x.waterconnection_id)
+            for wc in waterconnections:
+                presresconsumptions.append((0, 0, {
+                    'waterconnection_id': wc.id,
+                    # TODO: Needed with 0,0?
+                    'preswateringrequest_id': self.id,
+                    'nominal_flow': 0,
+                    'nominal_flow_ls': 0,
+                    'initial_hour': 0,
+                }))
+            self.presresconsumption_ids = presresconsumptions
+            for pres in self.presresconsumption_ids:
+                pres._onchange_waterconnection_id()
 
     def change_state_draft(self):
         for record in self:

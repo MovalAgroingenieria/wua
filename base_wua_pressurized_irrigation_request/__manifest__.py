@@ -19,9 +19,12 @@
     ],
     "data": [
         "data/wua_irrigation_config_settings_data.xml",
+        "data/wua_preswatering_weekly_mail.xml",
+        "data/wua_preswateringperiod_send_notifications_cron.xml",
         "security/ir.model.access.csv",
         "security/security.xml",
         "views/resources.xml",
+        "reports/wua_preswateringrequest_report.xml",
         "wizard/wizard_copy_preswateringrequest_view.xml",
         "wizard/wizard_generate_preswateringperiods_view.xml",
         "views/wua_agriculturalseason_view.xml",

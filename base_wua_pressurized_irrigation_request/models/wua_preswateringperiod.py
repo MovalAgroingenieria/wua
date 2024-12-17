@@ -2,7 +2,7 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-import datetime
+import pytz
 from odoo import models, fields, api, exceptions, _
 
 
@@ -100,11 +100,16 @@ class WuaPreswateringperiod(models.Model):
     @api.multi
     def name_get(self):
         result = []
+        parcel_model = self.env['wua.parcel']
+        # Context may not exists?
+        lang = getattr(self.env, 'context', {}).get('lang', 'es_ES')
         for record in self:
-            initial_date_str = datetime.datetime.strptime(
-                record.initial_date, '%Y-%m-%d').strftime('%x')
-            end_date_str = datetime.datetime.strptime(
-                record.end_date, '%Y-%m-%d').strftime('%x')
+            initial_date_str = parcel_model.transform_date_to_locale(
+                record.initial_date, lang,
+            )
+            end_date_str = parcel_model.transform_date_to_locale(
+                record.end_date, lang,
+            )
             name = initial_date_str + ' - ' + end_date_str
             result.append((record.id, name))
         return result
@@ -224,6 +229,48 @@ class WuaPreswateringperiod(models.Model):
                 'state': '02_closed',
                 }
             record.write(vals)
+
+    def action_send_partner_notifications(self):
+        partner_consumptions = {}
+        for request in self.preswateringrequest_ids:
+            for consumption in request.presresconsumption_ids:
+                partner_id = request.partner_id.id
+                if partner_id not in partner_consumptions:
+                    partner_consumptions[partner_id] = []
+                timezone = request.partner_id.tz or 'Europe/Madrid'
+                request_time = consumption.request_time
+                utc_time = fields.Datetime.from_string(request_time)
+                user_tz = pytz.timezone(timezone)
+                localized_request_time = pytz.utc.localize(utc_time).\
+                    astimezone(user_tz)
+                formatted_request_time = localized_request_time.strftime(
+                    '%d/%m/%Y')
+                partner_consumptions[partner_id].append({
+                    'date': formatted_request_time,
+                    'water_connection': consumption.waterconnection_id.name,
+                    'nominal_flow': consumption.nominal_flow,
+                    'watering_duration': consumption.watering_duration,
+                    'watering_volume': consumption.watering_volume,
+                })
+        mail_template = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_preswatering_weekly_email_template')
+        for partner_id, consumptions in partner_consumptions.items():
+            partner = self.env['res.partner'].browse(partner_id)
+            if partner.email:
+                mail_template.with_context({
+                    'data': {'consumptions': consumptions},
+                }).send_mail(partner.id, force_send=True)
+
+    @api.model
+    def send_partner_notifications_cron_action(self):
+        today = fields.Date.today()
+        periods = self.env['wua.preswateringperiod'].search([
+            ('initial_date', '<=', today),
+            ('end_date', '>=', today),
+        ])
+        for period in periods:
+            period.action_send_partner_notifications()
 
     @api.multi
     def action_see_preswateringrequests(self):

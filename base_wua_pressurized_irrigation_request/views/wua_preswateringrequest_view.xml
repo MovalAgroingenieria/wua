@@ -24,10 +24,15 @@
                         statusbar_visible="01_draft,02_validated"/>
                 </header>
                 <sheet>
-                    <div name="hascreditoverdue" style="display: inline-block;" attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
+                    <div groups="base_wua.group_wua_manager" name="hascreditoverdue" style="display: inline-block;" attrs="{'invisible':[('credit_overdue','&lt;=',0.0)]}">
                         <div class="panel-body" style="background:#ffe6e6;border-radius:4px; font-weight: bold; color:red;
                             border-color:red;border-width:1px; border-style:solid;padding: 10px 200px">
                            <span class="blink_text">( CREDIT OVERDUE )</span>
+                        </div>
+                    </div>
+                    <div name="modification_message_container" attrs="{'invisible': [('modification_deadline_message', '=', False)]}" style="display: inline-block; margin-top: 10px;">
+                        <div class="panel-body" style="background:#e6f7ff; border-radius:4px; font-weight: bold; color:#007bff; border-color:#007bff; border-width:1px; border-style:solid; padding: 10px 20px;">
+                            <field name="modification_deadline_message" nolabel="1"/>
                         </div>
                     </div>
                     <group>
@@ -42,13 +47,18 @@
                         <field name="is_portal_user" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
                     </group>
                     <notebook>
-                        <page string="Consumption Requests">
+                        <page string="Consumption Details">
+                            <header attrs="{'invisible':[('state','=','02_validated')]}">
+                                <button name="action_get_waterconnections" type="object" class="btn btn-link"
+                                    string="Bring Waterconnections" icon="fa-arrow-down" style="margin-top:2px; margin-bottom:2px;"/>
+                            </header>
                             <field name="presresconsumption_ids" attrs="{'readonly':[('state','=','02_validated')]}">
                                 <tree editable="bottom">
                                     <field name="waterconnection_id_domain" invisible="1"/>
                                     <field name="waterconnection_id" domain='waterconnection_id_domain'/>
                                     <field name="total_affected_area_official_hec"/>
                                     <field name="nominal_flow"/>
+                                    <field name="nominal_flow_ls"/>
                                     <field name="watering_duration"/>
                                     <field name="watering_volume"/>
                                     <field name="initial_hour" widget="float_time"/>
@@ -61,11 +71,17 @@
                         <page string="Notes">
                             <span><strong>Community notes:</strong></span><br/>
                             <field name="notes"/>
-                            <span><strong>  User notes:</strong></span><br/>
+                            <span name="span_notes_user"><strong>  User notes:</strong></span><br/>
                             <field name="notes_user"/>
                         </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"
+                           widget="mail_followers" groups="base.group_user"/>
+                    <field name="message_ids"
+                           widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>
@@ -119,10 +135,11 @@
         <field name="name">Pres Watering Requests (calendar view)</field>
         <field name="model">wua.preswateringrequest</field>
         <field name="arch" type="xml">
-            <calendar string="Preswatering Request" color="partner_id"
+            <calendar string="Preswatering Request"
+                        color="partner_id"
                         date_start="initial_date"
                         mode="month"
-                        quick_add="False">
+                        quick_add="false">
                 <field name="partner_id"/>
             </calendar>
         </field>

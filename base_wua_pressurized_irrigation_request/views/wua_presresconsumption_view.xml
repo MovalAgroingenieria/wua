@@ -20,8 +20,10 @@
                         <field name="waterconnection_id"/>
                     </group>
                     <group>
+                        <field name="request_time"/>
                         <field name="total_affected_area_official_hec"/>
                         <field name="nominal_flow"/>
+                        <field name="nominal_flow_ls"/>
                         <field name="watering_duration"/>
                         <field name="watering_volume"/>
                         <field name="initial_hour" widget="float_time"/>
@@ -42,9 +44,11 @@
                 <field name="waterconnection_id"/>
                 <field name="total_affected_area_official_hec"/>
                 <field name="nominal_flow"/>
+                <field name="nominal_flow_ls"/>
                 <field name="watering_duration"/>
                 <field name="watering_volume"/>
                 <field name="initial_hour" widget="float_time"/>
+                <field name="request_time" invisible="1"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -97,7 +101,7 @@
                         date_start="request_time"
                         date_delay="watering_duration"
                         mode="month"
-                        quick_add="False">
+                        quick_add="false">
                     <field name="calendar_display_name"/>
             </calendar>
         </field>

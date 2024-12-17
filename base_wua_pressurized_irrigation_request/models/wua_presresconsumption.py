@@ -4,8 +4,9 @@
 
 import json
 import pytz
+from lxml import etree
 from datetime import timedelta, datetime
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class WuaPresresconsumption(models.Model):
@@ -96,6 +97,12 @@ class WuaPresresconsumption(models.Model):
         required=True,
     )
 
+    nominal_flow_ls = fields.Float(
+        string='Nominal Flow (l/s)',
+        digits=(32, 4),
+        default=0.0,
+    )
+
     watering_volume = fields.Float(
         string='Requested Volume',
         compute='_compute_watering_volume',
@@ -139,6 +146,19 @@ class WuaPresresconsumption(models.Model):
         string='Request Time',
         compute='_compute_request_time',
         store=True,
+    )
+
+    modification_deadline = fields.Datetime(
+        string="Modification Deadline",
+        compute="_compute_modification_deadline",
+        store=True,
+        help="The deadline before which modifications are allowed for this"
+             "request.",
+    )
+
+    modification_deadline_message = fields.Text(
+        string="Modification Message",
+        compute="_compute_modification_deadline_message",
     )
 
     portal_can_modify = fields.Boolean(
@@ -218,11 +238,10 @@ class WuaPresresconsumption(models.Model):
     def _compute_calendar_display_name(self):
         for record in self:
             calendar_display_name = u''
-            if (record.partner_id and record.waterconnection_id and
-                    record.watering_volume):
+            if (record.partner_id and record.waterconnection_id):
                 calendar_display_name = record.partner_id.name + u' - ' + \
                     record.waterconnection_id.name + u' - ' + \
-                    str(record.watering_volume) + u' m³'
+                    str((record.watering_volume or 0.0)) + u' m³'
             record.calendar_display_name = calendar_display_name
 
     @api.depends('preswateringrequest_id')
@@ -319,8 +338,7 @@ class WuaPresresconsumption(models.Model):
             user_tz = 'Europe/Madrid'
             if (self.env.user and self.env.user.tz):
                 user_tz = self.env.user.tz
-            if (record.preswateringrequest_id.initial_date and
-                    record.initial_hour):
+            if (record.preswateringrequest_id.initial_date):
                 initial_date = fields.Date.from_string(
                     record.preswateringrequest_id.initial_date)
                 hours = int(record.initial_hour)
@@ -333,18 +351,54 @@ class WuaPresresconsumption(models.Model):
                 request_time = local_datetime.astimezone(pytz.utc)
             record.request_time = request_time
 
-    @api.multi
-    def _compute_portal_can_modify(self):
+    @api.depends('request_time')
+    def _compute_modification_deadline(self):
         lock_modification_hours = self.env['ir.values'].sudo().get_default(
             'wua.irrigation.configuration',
             'lock_modification_hours')
         for record in self:
-            deadline = record.request_time - timedelta(
-                hours=int(lock_modification_hours))
-            record.portal_can_modify = fields.Datetime.now() <= deadline
+            modification_deadline = None
+            if (record.request_time):
+                modification_deadline = fields.Datetime.from_string(
+                    record.request_time) - \
+                    timedelta(hours=int(lock_modification_hours))
+            record.modification_deadline = modification_deadline
+
+    @api.depends('modification_deadline')
+    def _compute_modification_deadline_message(self):
+        for record in self:
+            modification_deadline_message = ''
+            if record.modification_deadline:
+                deadline = fields.Datetime.from_string(
+                    record.modification_deadline)
+                user_tz = 'Europe/Madrid'
+                if (self.env.user and self.env.user.tz):
+                    user_tz = self.env.user.tz
+                user_timezone = pytz.timezone(user_tz)
+                local_deadline = pytz.utc.localize(deadline)
+                localize_deadline = local_deadline.astimezone(user_timezone)
+                formatted_deadline = localize_deadline.strftime(
+                    '%d/%m/%Y %H:%M')
+                modification_deadline_message = _(
+                    'Modifications allowed until {}').format(
+                    formatted_deadline)
+            record.modification_deadline_message = \
+                modification_deadline_message
+
+    @api.multi
+    def _compute_portal_can_modify(self):
+        now = fields.Datetime.now()
+        for record in self:
+            portal_can_modify = False
+            if (record.modification_deadline):
+                portal_can_modify = record.modification_deadline > now
+            record.portal_can_modify = portal_can_modify
 
     @api.model
     def create(self, vals):
+        use_flow_ls = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'preswateringrequest_flow_liters_per_second')
         if 'preswateringrequest_id' in vals:
             preswateringrequest_id = vals['preswateringrequest_id']
             if preswateringrequest_id:
@@ -354,7 +408,22 @@ class WuaPresresconsumption(models.Model):
                 if preswateringrequest:
                     vals['preswateringperiod_id'] = \
                         preswateringrequest.preswateringperiod_id.id
+        if use_flow_ls and 'nominal_flow_ls' in vals:
+            vals['nominal_flow'] = vals['nominal_flow_ls'] * 3.6
+        elif not use_flow_ls and 'nominal_flow' in vals:
+            vals['nominal_flow_ls'] = vals['nominal_flow'] / 3.6
         return super(WuaPresresconsumption, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        use_flow_ls = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'preswateringrequest_flow_liters_per_second')
+        if use_flow_ls and 'nominal_flow_ls' in vals:
+            vals['nominal_flow'] = vals['nominal_flow_ls'] * 3.6
+        elif not use_flow_ls and 'nominal_flow' in vals:
+            vals['nominal_flow_ls'] = vals['nominal_flow'] / 3.6
+        return super(WuaPresresconsumption, self).write(vals)
 
     @api.model
     def _get_waterconnection_id_domain(self):
@@ -370,6 +439,33 @@ class WuaPresresconsumption(models.Model):
             """, (self.partner_id.id,))
             result = self.env.cr.fetchall()
         return [('id', 'in', result)]
+
+    @api.model
+    def fields_view_get(
+        self, view_id=None, view_type='form', toolbar=False,
+            submenu=False):
+        res = super(WuaPresresconsumption, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        use_flow_ls = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'preswateringrequest_flow_liters_per_second')
+        doc = etree.XML(res['arch'])
+        if view_type in ['form', 'tree']:
+            for node in doc.xpath("//field[@name='nominal_flow']"):
+                node.set('invisible', '1' if use_flow_ls else '0')
+                node.set('modifiers', '{"tree_invisible": true, '
+                                      '"invisible": true}' if
+                         use_flow_ls else '{"tree_invisible": false, '
+                                          ' "invisible": false}')
+            for node in doc.xpath("//field[@name='nominal_flow_ls']"):
+                node.set('invisible', '0' if use_flow_ls else '1')
+                node.set('modifiers', '{"tree_invisible": false, '
+                                      ' "invisible": false}' if
+                         use_flow_ls else '{"tree_invisible": true, '
+                                      '"invisible": true}')
+        res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res
 
     @api.multi
     @api.depends('partner_id', 'waterconnection_id')
