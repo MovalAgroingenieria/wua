@@ -92,6 +92,14 @@ class ResPartner(models.Model):
          'The concession as power must be a value zero or positive.'),
     ]
 
+    @api.constrains('partner_type', 'is_independent')
+    def _check_independent_wua(self):
+        for record in self:
+            if record.partner_type == '01_WUA' and not record.is_independent:
+                raise exceptions.ValidationError(
+                    _('A Water User Association partner must be independent.')
+                )
+
     @api.constrains('partner_code')
     def _check_partner_code(self):
         super(ResPartner, self)._check_partner_code()
@@ -462,6 +470,39 @@ class ResPartner(models.Model):
             'type': 'ir.actions.act_window',
             'name': parcel_label,
             'res_model': 'wua.parcel',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'search_view_id': (search_view.id, search_view.name),
+            'domain': condition,
+            'target': 'current',
+            'context': {'from_shortcut': 1},
+        }
+        return act_window
+
+    @api.multi
+    def action_see_parcel_classes(self):
+        self.ensure_one()
+        condition = [
+            ('parcel_id.partnerlink_ids.partner_id', '=', self.id),
+        ]
+        id_form_view = self.env.ref(
+            'base_wua_cayc_general.wua_parcel_class_view_form').id
+        id_tree_view = self.env.ref(
+            'base_wua_cayc_general.wua_parcel_class_view_tree').id
+        search_view = self.env.ref(
+            'base_wua_cayc_general.wua_parcel_class_view_search')
+        parcel_class_label = self.sudo().env['wua.parcel'].\
+            get_value_from_translation(
+                'base_wua_cayc_general',
+                'Parcel Classes',
+        )
+        if not parcel_class_label:
+            parcel_class_label = _('Parcel Classes')
+        act_window = {
+            'type': 'ir.actions.act_window',
+            'name': parcel_class_label,
+            'res_model': 'wua.parcel.class',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-02 10:54+0000\n"
-"PO-Revision-Date: 2024-12-02 10:54+0000\n"
+"POT-Creation-Date: 2024-12-17 12:58+0000\n"
+"PO-Revision-Date: 2024-12-17 12:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,7 +23,7 @@ msgstr "<span>CHE</span>"
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_parcel_report_document
 msgid "<span>Parcel CHE: </span>"
-msgstr "<span>Parcel·la Padró CHE: </span>"
+msgstr "<span>Parcel·la CHE: </span>"
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_parcel_report_document
@@ -50,19 +50,25 @@ msgstr "<span>CAYC</span>"
 msgid "<strong attrs=\"{'invisible': [('is_primary', '=', False)]}\">( PRIMARY PARTNER )</strong>\n"
 "                    <strong attrs=\"{'invisible': [('is_primary', '=', True)]}\">( CHE PARTNER )</strong>"
 msgstr "<strong attrs=\"{'invisible': [('is_primary', '=', False)]}\">( SOCI CAYC )</strong>\n"
-"                    <strong attrs=\"{'invisible': [('is_primary', '=', True)]}\">( SOCI PADRÓ CHE )</strong>"
+"                    <strong attrs=\"{'invisible': [('is_primary', '=', True)]}\">( SOCI CHE )</strong>"
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/wua_parcel.py:81
 #, python-format
 msgid "A CHE parcel cannot have a non CHE partner."
-msgstr "Una parcel·la padró che no pot tenir un soci CAYC assignat."
+msgstr "Una parcel·la che no pot tenir un soci CAYC assignat."
+
+#. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/res_partner.py:100
+#, python-format
+msgid "A Water User Association partner must be independent."
+msgstr "Una comunitat de regants ha de ser independent."
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/wua_parcel.py:62
 #, python-format
 msgid "A che parcel must have at least one class associated."
-msgstr "Una parcel·la padró che ha de tenir almenys una classe assignada."
+msgstr "Una parcel·la che ha de tenir almenys una classe assignada."
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/wua_parcel.py:59
@@ -74,13 +80,18 @@ msgstr "Una parcel·la primària no pot tenir una classe associada."
 #: code:addons/base_wua_cayc_general/models/wua_parcel.py:75
 #, python-format
 msgid "A primary parcel cannot have a non primary partner."
-msgstr "Una parcel·la primària no pot tenir un soci padró che assignat."
+msgstr "Una parcel·la primària no pot tenir un soci che assignat."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:121
+#: code:addons/base_wua_cayc_general/models/res_partner.py:129
 #, python-format
 msgid "A primary partner must have a valid partner type ."
 msgstr "Un soci primari ha de tenir un tipus de soci vàlid."
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_form
+msgid "Class Parcels"
+msgstr "Classes"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_concession_as_power
@@ -106,7 +117,7 @@ msgid "Consumption Requests"
 msgstr "Consumption Requests"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:274
+#: code:addons/base_wua_cayc_general/models/res_partner.py:282
 #, python-format
 msgid "Could not connect to Server DB check connection parameters."
 msgstr "No s'ha pogut connectar a la base de dades del servidor, comproveu els paràmetres de connexió."
@@ -282,7 +293,7 @@ msgid "Maximum nominal flow (m³/h)"
 msgstr "Maximum nominal flow (m³/h)"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:259
+#: code:addons/base_wua_cayc_general/models/res_partner.py:267
 #, python-format
 msgid "Missing some Server connect parameter."
 msgstr "Falta algun paràmetre de connexió del servidor."
@@ -334,12 +345,14 @@ msgid "Octrois"
 msgstr "Fielats"
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/res_partner.py:501
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_class_ids
+#, python-format
 msgid "Parcel Classes"
 msgstr "Classes"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:460
+#: code:addons/base_wua_cayc_general/models/res_partner.py:468
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_ids
@@ -351,7 +364,7 @@ msgstr "Parcel·les"
 #: model:ir.actions.act_window,name:base_wua_cayc_general.wua_parcel_che_action
 #: model:ir.ui.menu,name:base_wua_cayc_general.wua_parcel_che_menu
 msgid "Parcels CHE"
-msgstr "Parcel·les Padró CHE"
+msgstr "Parcel·les CHE"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_mapped_ids
@@ -388,7 +401,7 @@ msgstr "Soci"
 #: model:ir.actions.act_window,name:base_wua_cayc_general.res_partner_che_action
 #: model:ir.ui.menu,name:base_wua_cayc_general.res_partner_che_menu
 msgid "Partners CHE"
-msgstr "Socis Padró CHE"
+msgstr "Socis CHE"
 
 #. module: base_wua_cayc_general
 #: model:ir.actions.act_window,name:base_wua_cayc_general.res_partner_primary_action
@@ -466,7 +479,7 @@ msgid "Syncrhonize Wuabase?"
 msgstr "Sincronitzar entitat primària?"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:114
+#: code:addons/base_wua_cayc_general/models/res_partner.py:122
 #, python-format
 msgid "The Primary Entity code does not exists."
 msgstr "El codi de l'entitat principal no existeix."
@@ -500,7 +513,7 @@ msgid "The nominal flow of %s is not a combination of the watermeter modules (%s
 msgstr "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:103
+#: code:addons/base_wua_cayc_general/models/res_partner.py:111
 #, python-format
 msgid "The secondary partner code must not end at 0."
 msgstr "El codi d'un soci CHE no pot acabar a 0."

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-02 10:55+0000\n"
-"PO-Revision-Date: 2024-12-02 10:55+0000\n"
+"POT-Creation-Date: 2024-12-17 12:58+0000\n"
+"PO-Revision-Date: 2024-12-17 12:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -59,6 +59,12 @@ msgid "A CHE parcel cannot have a non CHE partner."
 msgstr "Una parcela padrón che no puede tener un socio CAYC asignado."
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/res_partner.py:100
+#, python-format
+msgid "A Water User Association partner must be independent."
+msgstr "Una comunidad de regantes debe ser independiente."
+
+#. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/wua_parcel.py:62
 #, python-format
 msgid "A che parcel must have at least one class associated."
@@ -77,10 +83,15 @@ msgid "A primary parcel cannot have a non primary partner."
 msgstr "Un perímetro de entidad no puede tener un socio padrón CHE asignado."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:121
+#: code:addons/base_wua_cayc_general/models/res_partner.py:129
 #, python-format
 msgid "A primary partner must have a valid partner type ."
 msgstr "Un socio CAYC debe tener un tipo de socio válido."
+
+#. module: base_wua_cayc_general
+#: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_form
+msgid "Class Parcels"
+msgstr "Clases"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_concession_as_power
@@ -106,7 +117,7 @@ msgid "Consumption Requests"
 msgstr "Consumos concedidos"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:274
+#: code:addons/base_wua_cayc_general/models/res_partner.py:282
 #, python-format
 msgid "Could not connect to Server DB check connection parameters."
 msgstr "No se pudo conectar con el servidor de la base de datos, revise los parámetros de conexión."
@@ -282,7 +293,7 @@ msgid "Maximum nominal flow (m³/h)"
 msgstr "Caudal máximo (m³/h)"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:259
+#: code:addons/base_wua_cayc_general/models/res_partner.py:267
 #, python-format
 msgid "Missing some Server connect parameter."
 msgstr "Falta algún parámetro de conexión con el servidor."
@@ -334,12 +345,14 @@ msgid "Octrois"
 msgstr "Fielatos"
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/res_partner.py:501
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_class_ids
+#, python-format
 msgid "Parcel Classes"
 msgstr "Clases"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:460
+#: code:addons/base_wua_cayc_general/models/res_partner.py:468
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_octroi_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterchannel_parcel_ids
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_parcel_ids
@@ -466,7 +479,7 @@ msgid "Syncrhonize Wuabase?"
 msgstr "¿Sincronizar Entidad Primaria?"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:114
+#: code:addons/base_wua_cayc_general/models/res_partner.py:122
 #, python-format
 msgid "The Primary Entity code does not exists."
 msgstr "El código de la entidad primaria no existe."
@@ -500,7 +513,7 @@ msgid "The nominal flow of %s is not a combination of the watermeter modules (%s
 msgstr "El caudal de %s no es una combinación de los módulos del contador (%s -> %s)."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/res_partner.py:103
+#: code:addons/base_wua_cayc_general/models/res_partner.py:111
 #, python-format
 msgid "The secondary partner code must not end at 0."
 msgstr "El código de un socio padrón CHE no puede acabar en 0."
