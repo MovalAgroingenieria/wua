@@ -35,16 +35,31 @@
                             <field name="modification_deadline_message" nolabel="1"/>
                         </div>
                     </div>
-                    <group>
-                        <field name="partner_id"
-                            options="{'no_quick_create':True,
-                                             'no_create_edit':True}"
-                            domain="[('is_wua_partner', '=', True)]"
-                            attrs="{'readonly': ['|', '|', '&amp;', ('is_open', '=', False), ('id', '>', 0), ('is_portal_user', '=', True), ('state', '=', '02_validated')]}"/>
-                        <field name="preswateringperiod_id" required="1" options="{'no_create': True}" attrs="{'readonly':[('state','=','02_validated')]}" domain="[('state', '=', '01_open')]"/>
-                        <field name="initial_date" required="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
-                        <field name="user_id" required="1" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
-                        <field name="is_portal_user" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="partner_id"
+                                options="{'no_quick_create':True,
+                                                'no_create_edit':True}"
+                                domain="[('is_wua_partner', '=', True)]"
+                                attrs="{'readonly': ['|', '|', '&amp;', ('is_open', '=', False), ('id', '>', 0), ('is_portal_user', '=', True), ('state', '=', '02_validated')]}"/>
+                            <field name="preswateringperiod_id" required="1" options="{'no_create': True}" attrs="{'readonly':[('state','=','02_validated')]}" domain="[('state', '=', '01_open')]"/>
+                            <field name="initial_date" required="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
+                            <field name="user_id" required="1" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
+                            <field name="is_portal_user" readonly="1" attrs="{'readonly':[('state','=','02_validated')]}"/>
+                            <field name="from_recurrence" invisible="1"/>
+                            <field name="recurrence_alredy_created" invisible="1"/>
+                            <field name="is_recurrence" attrs="{'readonly':['|', ('state','=','02_validated'), ('recurrence_alredy_created','=',True)],
+                                                                'invisible':[('from_recurrence','=',True)]}"/>
+                            <field name="recurrence_end_date" attrs="{'readonly':['|', ('state','=','02_validated'), ('recurrence_alredy_created','=',True)],
+                                                                      'invisible':[('is_recurrence','=',False)],
+                                                                      'required':[('is_recurrence','=',True)]}"/>
+                            <field name="recurrence_interval" attrs="{'readonly':['|', ('state','=','02_validated'), ('recurrence_alredy_created','=',True)],
+                                                                      'invisible':[('is_recurrence','=',False)],
+                                                                      'required':[('is_recurrence','=',True)]}"/>
+
+                        </group>
+                        <group name="master_data_right">
+                        </group>
                     </group>
                     <notebook>
                         <page string="Consumption Details">

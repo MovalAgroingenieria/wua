@@ -24,6 +24,18 @@
         </field>
     </record>
 
+    <record id="wua_watermeter_view_tree" model="ir.ui.view">
+        <field name="name">Water Meters (tree view)</field>
+        <field name="model">wua.watermeter</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation.wua_watermeter_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="nominal_water_flow" position="after">
+                <field name="maximum_nominal_flow"/>
+            </field>
+        </field>
+    </record>
+
     <record id="wua_watermeter_module_view_tree" model="ir.ui.view">
       <field name="name">Watermeter Modules (tree view)</field>
       <field name="model">wua.watermeter.module</field>

@@ -2,8 +2,10 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+import datetime
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
+from datetime import timedelta
 
 
 class WuaPreswateringrequest(models.Model):
@@ -139,7 +141,7 @@ class WuaPreswateringrequest(models.Model):
         help='Overdue amount this customer owes you.',
     )
 
-    modification_deadline = fields.Char(
+    modification_deadline = fields.Datetime(
         string='Modification Deadline',
         compute='_compute_modification_deadline_data',
     )
@@ -150,14 +152,44 @@ class WuaPreswateringrequest(models.Model):
         store=False,
     )
 
+    is_recurrence = fields.Boolean(
+        string='Recurrence',
+        default=False,
+    )
+
+    recurrence_interval = fields.Integer(
+        string='Recurrence Interval (days)',
+        default=1,
+    )
+
+    recurrence_end_date = fields.Date(
+        string='Recurrence End Date',
+    )
+
+    recurrence_alredy_created = fields.Boolean(
+        string='Recurrence Alredy Created',
+        default=False,
+    )
+
+    from_recurrence = fields.Boolean(
+        string='From Recurrence',
+        default=False,
+    )
+
     _sql_constraints = [
         ('unique_name', 'UNIQUE(name)', 'The request code must be unique.'),
     ]
 
-    @api.constrains('initial_date')
+    @api.constrains('initial_date', 'partner_id')
     def _check_initial_date_earlier_than_today(self):
+        lock_modification_hours = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'lock_modification_hours')
         for record in self:
-            if record.initial_date < fields.Date.today():
+            initial_datetime = fields.Datetime.from_string(record.initial_date)
+            if (fields.Datetime.from_string(fields.Datetime.now()) >=
+                    initial_datetime - timedelta(
+                        hours=lock_modification_hours)):
                 raise exceptions.ValidationError(_(
                     'The start date of the watering request must not be'
                     'earlier than the current date.'))
@@ -173,6 +205,24 @@ class WuaPreswateringrequest(models.Model):
                         'The start date of the watering request (%s) must be '
                         'within the period (%s - %s).') % (
                             record.initial_date,
+                            period.initial_date,
+                            period.end_date,
+                        ),
+                    )
+
+    @api.constrains('recurrence_end_date', 'preswateringperiod_id',
+                    'is_recurrence')
+    def _check_recurrence_end_date_within_period(self):
+        for record in self:
+            if record.recurrence_end_date and \
+                    record.preswateringperiod_id and record.is_recurrence:
+                period = record.preswateringperiod_id
+                if not (period.initial_date <= record.recurrence_end_date <=
+                        period.end_date):
+                    raise exceptions.ValidationError(_(
+                        'The end date of the recurrence (%s) must be within '
+                        'the period (%s - %s).') % (
+                            record.recurrence_end_date,
                             period.initial_date,
                             period.end_date,
                         ),
@@ -263,6 +313,49 @@ class WuaPreswateringrequest(models.Model):
                 modification_deadline_message
             record.modification_deadline = \
                 modification_deadline
+
+    def _copy_single_request(self, request, copy_date):
+        copy_date_str = copy_date.strftime('%Y-%m-%d')
+        new_request_vals = {
+            'preswateringperiod_id': request.preswateringperiod_id.id,
+            'initial_date': copy_date_str,
+            'partner_id': request.partner_id.id,
+            'from_recurrence': True,
+            'user_id': request.user_id.id,
+        }
+        if request.presresconsumption_ids:
+            presresconsumption_vals = []
+            for presresconsumption in request.presresconsumption_ids:
+                presresconsumption_vals.append((0, 0, {
+                    'waterconnection_id':
+                        presresconsumption.waterconnection_id.id,
+                    'watering_duration':
+                        presresconsumption.watering_duration,
+                    'nominal_flow':
+                        presresconsumption.nominal_flow,
+                    'initial_hour':
+                        presresconsumption.initial_hour,
+                }))
+            new_request_vals['presresconsumption_ids'] = \
+                presresconsumption_vals
+        self.env['wua.preswateringrequest'].create(new_request_vals)
+
+    @api.multi
+    def generate_recurrences_preswateringrequests(self):
+        preswaternigrequests = self.env['wua.preswateringrequest'].search([
+            ('is_recurrence', '=', True),
+            ('recurrence_alredy_created', '=', False),
+        ])
+        for record in preswaternigrequests:
+            current_date = datetime.datetime.strptime(
+                str(record.initial_date), '%Y-%m-%d')
+            current_date += timedelta(days=record.recurrence_interval)
+            end_date = datetime.datetime.strptime(
+                str(record.recurrence_end_date), '%Y-%m-%d')
+            while current_date <= end_date:
+                self._copy_single_request(record, current_date)
+                current_date += timedelta(days=record.recurrence_interval)
+            record.recurrence_alredy_created = True
 
     @api.model
     def create(self, vals):

@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import pytz
+from datetime import timedelta
 from odoo import models, fields, api, exceptions, _
 
 
@@ -230,9 +231,9 @@ class WuaPreswateringperiod(models.Model):
                 }
             record.write(vals)
 
-    def action_send_partner_notifications(self):
+    def send_partner_notifications(self, preswateringrequests):
         partner_consumptions = {}
-        for request in self.preswateringrequest_ids:
+        for request in preswateringrequests:
             for consumption in request.presresconsumption_ids:
                 partner_id = request.partner_id.id
                 if partner_id not in partner_consumptions:
@@ -262,15 +263,20 @@ class WuaPreswateringperiod(models.Model):
                     'data': {'consumptions': consumptions},
                 }).send_mail(partner.id, force_send=True)
 
+    def action_send_partner_notifications(self):
+        self.send_partner_notifications(self.preswateringrequest_ids)
+
     @api.model
-    def send_partner_notifications_cron_action(self):
+    def send_partner_notifications_cron_action(self, days_advance=7):
         today = fields.Date.today()
-        periods = self.env['wua.preswateringperiod'].search([
-            ('initial_date', '<=', today),
-            ('end_date', '>=', today),
+        today_date = fields.Date.from_string(fields.Date.today())
+        end_date = today_date + timedelta(days=days_advance)
+        end_str = fields.Date.to_string(end_date)
+        preswateringrequests = self.env['wua.preswateringrequest'].search([
+            ('initial_date', '>=', today),
+            ('initial_date', '<=', end_str),
         ])
-        for period in periods:
-            period.action_send_partner_notifications()
+        self.send_partner_notifications(preswateringrequests)
 
     @api.multi
     def action_see_preswateringrequests(self):

@@ -14,9 +14,9 @@
         "base_wua_report",
     ],
     "data": [
+        "security/ir.model.access.csv",
         "report/template_employee_attendance_views.xml",
     ],
     "installable": True,
     "application": False,
 }
-

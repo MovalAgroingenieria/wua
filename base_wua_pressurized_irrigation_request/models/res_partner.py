@@ -70,13 +70,17 @@ class ResPartner(models.Model):
         search_view = self.env.ref(
             'base_wua_pressurized_irrigation_request.'
             'wua_preswateringrequest_partner_view_search')
+        calendar_view = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_preswateringrequest_view_calendar')
         act_window = {
             'type': 'ir.actions.act_window',
             'name': _('Preswatering Requests'),
             'res_model': 'wua.preswateringrequest',
             'view_type': 'form',
             'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree'), (id_form_view, 'form')],
+            'views': [(id_tree_view, 'tree'), (id_form_view, 'form'),
+                      (calendar_view.id, 'calendar')],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',
@@ -93,6 +97,9 @@ class ResPartner(models.Model):
                                     'wua_presresconsumption_view_tree').id
         search_view = self.env.ref('base_wua_pressurized_irrigation_request.'
                                    'wua_presresconsumption_view_search')
+        calendar_view = self.env.ref(
+            'base_wua_pressurized_irrigation_request.'
+            'wua_presresconsumption_view_calendar')
         context = {
             'create': False,
             'edit': False,
@@ -109,7 +116,7 @@ class ResPartner(models.Model):
             'res_model': 'wua.presresconsumption',
             'view_type': 'form',
             'view_mode': 'tree',
-            'views': [(id_tree_view, 'tree')],
+            'views': [(id_tree_view, 'tree'), (calendar_view.id, 'calendar')],
             'search_view_id': (search_view.id, search_view.name),
             'domain': condition,
             'target': 'current',

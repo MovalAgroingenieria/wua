@@ -82,7 +82,6 @@ class WizardCopyPreswateringrequests(models.TransientModel):
             'initial_date': copy_date_str,
             'partner_id': request.partner_id.id,
         }
-
         if request.presresconsumption_ids:
             presresconsumption_vals = []
             for presresconsumption in request.presresconsumption_ids:
@@ -95,8 +94,8 @@ class WizardCopyPreswateringrequests(models.TransientModel):
                         presresconsumption.nominal_flow,
                     'initial_hour':
                         presresconsumption.initial_hour,
+                    'from_recurrence': True,
                 }))
             new_request_vals['presresconsumption_ids'] = \
                 presresconsumption_vals
-
         self.env['wua.preswateringrequest'].create(new_request_vals)
