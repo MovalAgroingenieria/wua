@@ -51,6 +51,7 @@
         "base_report_rml_footer_html",
         "account_payment_partner_extended",
         "generic_excel_reports",
+        "user_info_help_entries",
     ],
     "data": [
         "security/security.xml",
