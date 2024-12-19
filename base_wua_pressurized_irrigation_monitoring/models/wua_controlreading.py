@@ -72,7 +72,9 @@ class WuaControlreading(models.Model):
 
     is_last_reading = fields.Boolean(
         string='Last Reading',
-        compute='_compute_is_last_reading')
+        compute='_compute_is_last_reading',
+        search='_search_is_last_reading',
+        )
 
     controlpresconsumption_volume = fields.Float(
         string='Gross Value (m3)',
@@ -181,6 +183,26 @@ class WuaControlreading(models.Model):
                     record.controlpresconsumption_id.volume_real
             record.controlpresconsumption_volume_real = \
                 controlpresconsumption_volume_real
+
+    def _search_is_last_reading(self, operator, value):
+        domain = [('id', '=', 0)]
+        sql_query = """
+            SELECT wr1.id
+            FROM wua_controlreading wr1
+            INNER JOIN wua_watermeter ww1 ON wr1.watermeter_id = ww1.id
+            WHERE wr1.reading_time = ww1.last_controlreading_time
+        """
+        self.env.cr.execute(sql_query)
+        result = [rec[0] for rec in self.env.cr.fetchall()]
+        if operator == '=' and value:
+            domain = [('id', 'in', result)]
+        elif operator == '=' and not value:
+            domain = [('id', 'not in', result)]
+        elif operator == '!=' and value:
+            domain = [('id', 'not in', result)]
+        elif operator == '!=' and not value:
+            domain = [('id', 'in', result)]
+        return domain
 
     @api.model
     def read_group(self, domain, fields, groupby,
