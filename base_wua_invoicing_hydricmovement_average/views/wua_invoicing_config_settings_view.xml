@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoicing_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Parameters</field>
+        <field name="model">wua.invoicing.configuration</field>
+        <field name="inherit_id"
+               ref="base_wua_invoicing_hydricmovement.wua_invoicing_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoicing_hydricmovement_selected_default']"
+                   position="after">
+                     <field name="invoicing_of_hydricmovements_cancelled"
+                         widget="checkbox"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

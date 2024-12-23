@@ -474,7 +474,8 @@ class WuaInvoicesetLine(models.Model):
                     'wua.invoicing.configuration',
                     'allowed_multiple_invoicing_of_hydricmovement')
             if (allowed_multiple_invoicing_of_hydricmovement):
-                self._update_hmovement_invoice_status(hydricmovement_ids)
+                self.env['wua.invoiceset']._update_hmovement_invoice_status(
+                    hydricmovement_ids)
             else:
                 if hydricmovement_ids:
                     hydricmovements = self.env['wua.hydricmovement'].browse(
