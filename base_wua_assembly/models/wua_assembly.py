@@ -1010,8 +1010,15 @@ class WuaAssembly(models.Model):
     @api.multi
     def action_go_to_state_03_in_progress(self):
         self.ensure_one()
-        self.generate_attendances(final_list=True)
-        self.state = '03_in_progress'
+        delegationvote_draft = self.env['wua.delegationvote'].search(
+            [('state', '=', '01_draft')])
+        representation_draft = self.env['wua.representation'].search(
+            [('state', '=', '01_draft')])
+        if delegationvote_draft or representation_draft:
+           raise exceptions.UserError(_('There are still delegations of vote or representations in draft state.'))
+        else:
+            self.generate_attendances(final_list=True)
+            self.state = '03_in_progress'
 
     @api.multi
     def action_return_to_state_02_called(self):
