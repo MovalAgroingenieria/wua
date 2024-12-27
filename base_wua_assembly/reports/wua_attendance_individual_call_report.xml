@@ -28,10 +28,14 @@
                 <div name="wua_partner_data">
                     <div class="row" style="margin-top: 24px;">
                         <div class="col-xs-12" style="display: table;">
-                            <div style="width: 50%; display: table-cell;">
+                            <div t-if="o.param_add_qr_code_in_attendance" style="font-size: 0.3em" class="text-center col-2">
+                                <div style="font-size: 0.3px; margin-bottom: 2px;">&amp;nbsp;</div>
+                                <img style="width: 115px; margin-left: 8px; margin-top: 8px;" t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' % (o._get_or_generate_attendance_link(), 3, 4, 0, 1)"/>
+                            </div>
+                            <div style="width: 50%; display: table-cell;" class="col-5">
                                 <table name="partner_vote_data" style="width:90%;"/>
                             </div>
-                            <div style="display: table-cell; padding-left: 96px;">
+                            <div style="display: table-cell; padding-left: 96px;" class="col-5">
                                 <t t-if="o.partner_id.name">
                                     <strong><span t-field="o.partner_id.name"/></strong>
                                     <br/>
@@ -103,10 +107,6 @@
                         <span t-field="o.assembly_id.rendered_final_paragraph"></span>
                     </div>
                 </t>
-                <div t-if="o.param_add_qr_code_in_attendance" style="font-size: 0.3em" class="text-center">
-                    <div style="font-size: 0.3px; margin-bottom: 2px;">&amp;nbsp;</div>
-                    <img style="width: 115px; margin-left: 8px; margin-top: 8px;" t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' % (o._get_or_generate_attendance_link(), 3, 4, 0, 1)"/>
-                </div>
                 <!-- Force new page -->
                 <p style="page-break-after:always;"/>
 

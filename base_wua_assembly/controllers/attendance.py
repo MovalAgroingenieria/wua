@@ -15,17 +15,20 @@ class AttendanceController(http.Controller):
         current_user = request.env.user
         assembly_id = int(kwargs.get('assembly_id'))
         participant_id = int(kwargs.get('participant_id'))
-        if current_user:
+        if current_user and current_user.has_group(
+                'base_wua_assembly.group_wua_assembly_manager'):
+        # if current_user:
             attendance = request.env['wua.attendance'].search([
                 ('participant_id', '=', participant_id),
                 ('assembly_id', '=', assembly_id)
             ])
-            if attendance:
+            # if attendance:
+            if attendance and attendance.votes_total > 0:
                 return request.redirect(
                     '/web#id=%s&view_type=form&action=base_wua_assembly.'
                     'wua_raw_attendances_action_qr&model=wua.attendance'
                     '&active_id=%s' % (attendance.id, assembly_id))
             else:
-                return "Attendance record not found."
+                return "Attendance record not found or without votes."
         else:
-            return "User not authenticated."
+            return "User not authenticated or has not access."
