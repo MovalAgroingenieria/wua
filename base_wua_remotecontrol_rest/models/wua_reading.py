@@ -126,16 +126,17 @@ class WuaReading(models.Model):
                     resp.append(refined_reading)
         return resp
 
-    def _get_reading_time_from_remotecontrol(self, reading):
-        return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    def _get_reading_time_from_remotecontrol(self, reading, now):
+        return now
 
     def save_readings(self, readings, update_log=True):
         number_of_readings = len(readings)
         number_of_negative_readings = 0
+        now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         if number_of_readings > 0:
             for reading in readings:
                 reading_time = self._get_reading_time_from_remotecontrol(
-                    reading)
+                    reading, now)
                 is_negative, negative_volume = \
                     self.is_negative_reading(reading)
                 if is_negative:
@@ -156,7 +157,7 @@ class WuaReading(models.Model):
                         'initialization_reading': False,
                         'from_import': False,
                         'validated': False,
-                        })
+                    })
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info(_('Remote Control: Saved readings') + '... ' +
