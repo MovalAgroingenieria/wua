@@ -25,40 +25,63 @@ class WuaInvoiceset(models.Model):
         return hydricmovement_average_ids
 
     def get_hydricmovement_average_description(
-            self, partner_id, type, agriculturalseason_ids):
+            self, partner_id, type, superproduct_id, agriculturalseasons):
         description = ''
         partner_id = self.env['res.partner'].browse(partner_id)
+        lang = partner_id.lang or 'es_ES'
+        superproduct = self.env['wua.superproduct'].browse(superproduct_id)
+        parcel_model = self.env['wua.parcel'].with_context({'lang': lang})
         default_average_label = _('Average of')
         average_label = \
             self.get_value_from_translation(
                 'base_wua_invoicing_hydricmovement_average',
                 'Average of',
-                partner_id.lang)
+                lang)
         if not average_label:
             average_label = default_average_label
+        default_of_label = _('of')
+        of_label = \
+            self.get_value_from_translation(
+                'base_wua_invoicing_hydricmovement_average',
+                'of',
+                lang)
+        if not of_label:
+            of_label = default_of_label
         hmov_model = self.env[
             'wua.hydricmovement'].sudo()
-        if type and agriculturalseason_ids:
-            agriculturalseasons = self.env['wua.agriculturalseason'].search(
-                [('id', 'in', list(agriculturalseason_ids))],
+        if type and superproduct and agriculturalseasons:
+            agseasons = self.env['wua.agriculturalseason'].search(
+                [('id', 'in', list(agriculturalseasons.keys()))],
                 order='initial_date asc')
             type_name = hmov_model._fields['type'].\
                 convert_to_export(type, self)
+            agseasons_values = []
+            for agseason in agseasons:
+                agseason_values = agseason.description
+                agseason_values += u': ' + \
+                    parcel_model.transform_float_to_locale(
+                        agriculturalseasons[agseason.id], 2) + u' m³'
+                agseasons_values.append(agseason_values)
             description = average_label + u' ' + \
-                type_name + u' (' + ', '.join(
-                    agriculturalseasons.mapped('description')) + u')'
+                type_name + u' ' + of_label + u' ' + superproduct.with_context(
+                    {'lang': lang}).name + \
+                u' (' + ', '.join(agseasons_values) + u')'
         return description
 
     def get_average_of_hmovements(self, hydricmovement_averages):
         grouped_hydricmovement_averages = defaultdict(
-            lambda: {'volume_sum': 0, 'agriculturalseason_ids': set()})
+            lambda: {'agseason_volumes': defaultdict(float)},
+        )
         for hydricmovement_average in hydricmovement_averages:
-            key = (hydricmovement_average.partner_id.id,
-                   hydricmovement_average.type)
-            grouped_hydricmovement_averages[key]['volume_sum'] += \
-                hydricmovement_average['volume']
-            grouped_hydricmovement_averages[key]['agriculturalseason_ids'].add(
-                hydricmovement_average['agriculturalseason_id'].id)
+            key = (
+                hydricmovement_average.partner_id.id,
+                hydricmovement_average.type,
+                hydricmovement_average.superproduct_id.id,
+            )
+            agseason_id = hydricmovement_average['agriculturalseason_id'].id
+            volume = hydricmovement_average['volume']
+            grouped_hydricmovement_averages[key]['agseason_volumes'][
+                agseason_id] += volume
         return grouped_hydricmovement_averages
 
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
@@ -74,20 +97,21 @@ class WuaInvoiceset(models.Model):
                 'invoicing_of_negative_hydricmovements_as_negative_values')
         hydricmovement_averages = self.env[
             'wua.invoiceset.line.hydricmovement.average'].browse(item_ids)
-        for (partner_id, type), hydricmovement_average in self.\
-                get_average_of_hmovements(hydricmovement_averages).items():
-            agriculturalseason_ids = hydricmovement_average[
-                'agriculturalseason_ids']
-            agriculturalseason_count = len(agriculturalseason_ids)
+        for (partner_id, type, superproduct_id), hydricmovement_average in \
+                self.get_average_of_hmovements(
+                    hydricmovement_averages).items():
+            agriculturalseasons = hydricmovement_average[
+                'agseason_volumes']
+            agriculturalseason_count = len(agriculturalseasons)
             product_id = product_id
-            quantity = hydricmovement_average['volume_sum'] / \
+            quantity = sum(agriculturalseasons.values()) / \
                 agriculturalseason_count if agriculturalseason_count > 0 else 0
             # Check if quantity should be negative
             if ((type in ['granted_cession', 'neg_indiv_assign']) and
                invoicing_of_negative_hydricmovements_as_negative_values):
                 quantity = -quantity
             description = self.get_hydricmovement_average_description(
-                partner_id, type, agriculturalseason_ids)
+                partner_id, type, superproduct_id, agriculturalseasons)
             result = {
                 'partner_id': partner_id,
                 'product_id': product_id,
@@ -141,15 +165,18 @@ class WuaInvoicesetLine(models.Model):
                     INSERT INTO wua_invoiceset_line_hydricmovement_average
                         (id, create_uid, write_uid, create_date, write_date,
                         invoicesetline_id, selected, agriculturalseason_id,
+                        superproduct_id,
                         partner_id, volume, type)
                     SELECT
                         nextval('wua_invoiceset_line_hydricmovement_id_seq'),
                         %s, %s, now(), now(), %s, %s,
-                        agriculturalseason_id, partner_id, SUM(volume), type
+                        agriculturalseason_id, superproduct_id,
+                        partner_id, SUM(volume), type
                     FROM
                         wua_hydricmovement
                     GROUP BY
-                        partner_id, agriculturalseason_id, type
+                        partner_id, agriculturalseason_id, type,
+                        superproduct_id
                     """ + where_clause,
                     (user_id, user_id, invoicesetline_id,
                      "TRUE" if invoicing_hydricmovement_selected_default
@@ -216,6 +243,7 @@ class WuaInvoicesetLineHydricmovementAverage(models.Model):
         comodel_name='wua.invoiceset.line',
         required=True,
         ondelete='cascade',
+        index=True,
     )
 
     selected = fields.Boolean(
@@ -226,6 +254,12 @@ class WuaInvoicesetLineHydricmovementAverage(models.Model):
     partner_id = fields.Many2one(
         string='Partner',
         comodel_name='res.partner',
+        ondelete='restrict',
+    )
+
+    superproduct_id = fields.Many2one(
+        string='Superproduct',
+        comodel_name='wua.superproduct',
         ondelete='restrict',
     )
 
