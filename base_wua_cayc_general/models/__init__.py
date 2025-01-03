@@ -13,3 +13,4 @@ from . import wua_preswateringrequest
 from . import wua_irrigation_configuration
 from . import wua_waterconnection
 from . import wua_watermeter
+from . import wua_quotaperiod

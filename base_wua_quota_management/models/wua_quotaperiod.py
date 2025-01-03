@@ -1572,11 +1572,17 @@ class WuaQuotaperiodLine(models.Model):
             }
         return act_window
 
+    # For being inherited
+    def _get_where_clause(self):
+        where_clause = 'WHERE active=TRUE'
+        return where_clause
+
     def _populate_items_select(self, selected=True):
         parcels = self.env['wua.parcel'].search([])
         if len(parcels) > 0:
             user_id = self.env.user.id
             quotaperiodline_id = self.id
+            where_clause = self._get_where_clause()
             selected_val = 'TRUE'
             if not selected:
                 selected_val = 'FALSE'
@@ -1602,8 +1608,9 @@ class WuaQuotaperiodLine(models.Model):
                     pressurized_irrigation_right, gravityfed_irrigation_right,
                     hydraulicsector_id, irrigationditch_id,
                     with_watering_shift, with_irrigation_worker, employee_id
-                    FROM wua_parcel WHERE active=TRUE
-                    """, (user_id, user_id, quotaperiodline_id, selected_val))
+                    FROM wua_parcel
+                    """ + where_clause, (
+                    user_id, user_id, quotaperiodline_id, selected_val))
                 self.env.cr.execute("""
                     INSERT INTO wua_quotaperiod_line_parcel_parceltag_rel
                     (quotaperiod_line_parcel_id, parceltag_id)
