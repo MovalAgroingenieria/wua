@@ -427,47 +427,29 @@ class MaintenanceEquipment(models.Model):
         current_equipment = self
 
         category_mapping = {
-            'wua_maintenance.equipment_category_intake':
-                ('wua.intake', _('Intake')),
-            'wua_maintenance.equipment_category_reservoir':
-                ('wua.reservoir', _('Reservoir')),
-            'wua_maintenance.equipment_category_pumpgroup':
-                ('wua.pumpgroup', _('pumpgroup')),
-            'wua_maintenance.equipment_category_photovoltaicplant':
-                ('wua.photovoltaicplant', _('photovoltaicplant')),
-            'wua_maintenance.equipment_category_flowmeter':
-                ('wua.flowmeter', _('flowmeter')),
-            'wua_maintenance.equipment_category_pump':
-                ('wua.pumpunit', _('pump')),
-            'wua_maintenance.equipment_category_waterpipe':
-                ('wua.waterpipe', _('waterpipe')),
-            'wua_maintenance.equipment_category_irrigationshed':
-                ('wua.irrigationshed', _('irrigationshed')),
-            'wua_maintenance.equipment_category_waterconnection':
-                ('wua.waterconnection', _('waterconnection')),
-            'wua_maintenance.equipment_category_watermeter':
-                ('wua.watermeter', _('watermeter')),
-            'wua_maintenance.equipment_category_pressuresensor':
-                ('wua.pressuresensor', _('pressuresensor')),
-            'wua_maintenance.equipment_category_irrigationditch':
-                ('wua.irrigationditch', _('irrigationditch')),
-            'wua_maintenance.equipment_category_drainageditch':
-                ('wua.drainageditch', _('drainageditch')),
-            'wua_maintenance.equipment_category_flowdivider':
-                ('wua.flowdivider', _('flowdivider')),
-            'wua_maintenance.equipment_category_irrigationgate':
-                ('wua.irrigationgate', _('irrigationgate')),
-            'wua_maintenance.equipment_category_airvalve':
-                ('wua.airvalve', _('airvalve')),
-            'wua_maintenance.equipment_category_valve':
-                ('wua.valve', _('valve')),
-            'wua_maintenance.equipment_category_drainagevalve':
-                ('wua.drainagevalve', _('drainagevalve')),
-            'wua_maintenance.equipment_category_filteringstation':
-                ('wua.filteringstation', _('filteringstation'))
+            1: ('wua.intake', _('Intake')),
+            2: ('wua.reservoir', _('Reservoir')),
+            3: ('wua.pumpgroup', _('Pumpgroup')),
+            4: ('wua.photovoltaicplant', _('Photovoltaic Plant')),
+            5: ('wua.flowmeter', _('Flowmeter')),
+            6: ('wua.pumpunit', _('Pump')),
+            7: ('wua.waterpipe', _('Waterpipe')),
+            8: ('wua.irrigationshed', _('Irrigationshed')),
+            9: ('wua.waterconnection', _('Waterconnection')),
+            10: ('wua.watermeter', _('Watermeter')),
+            11: ('wua.pressuresensor', _('Pressuresensor')),
+            12: ('wua.irrigationditch', _('Irrigation Ditch')),
+            13: ('wua.drainageditch', _('Drainage Ditch')),
+            14: ('wua.flowdivider', _('Flowdivider')),
+            15: ('wua.irrigationgate', _('Irrigation Gate')),
+            16: ('wua.airvalve', _('Airvalve')),
+            17: ('wua.drainagevalve', _('Drainage Valve')),
+            18: ('wua.valve', _('Valve')),
+            19: ('wua.filteringstation', _('Filtering Station'))
         }
 
-        res_model, name = category_mapping.get(current_equipment.category_id, (None, None))
+        res_model, name = category_mapping.get(
+            current_equipment.category_id.id, (None, None))
 
         if not res_model:
             raise exceptions.UserError(_('Equipment No-WUA.'))

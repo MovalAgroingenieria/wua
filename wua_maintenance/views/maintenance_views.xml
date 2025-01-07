@@ -442,7 +442,7 @@
             </xpath>
             <xpath expr="//group[1]" position="replace">
                 <filter string="Technicians" domain="[]" context="{'group_by': 'technician_user_id'}" />
-                <filter string="Category" domain="[]" context="{'group_by': 'category_id'}" />
+                <filter string="Category" name="group_by_category_id" context="{'group_by': 'category_id'}" />
                 <filter string="Owner" domain="[]" context="{'group_by': 'owner_user_id'}" />
                 <filter string="Vendor" domain="[]" context="{'group_by': 'partner_id'}" />
                 <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}" />
@@ -450,7 +450,8 @@
                 <filter string='Infrastructure Type' domain="[]" context="{'group_by' : 'infrastructure_type'}" />
             </xpath>
             <xpath expr="//search" position="inside">
-                <field name="tag_ids" placeholder="Equipment Tag" />
+                <field name="tag_ids" placeholder="Equipment Tag"/>
+                <field name="category_id"/>
             </xpath>
         </field>
     </record>
@@ -499,10 +500,9 @@
 
     <record id="maintenance.hr_equipment_action" model="ir.actions.act_window">
         <field name="view_mode">tree,kanban,form</field>
-        <field name="view_id" ref="maintenance.hr_equipment_view_tree" />
-        <field name="context">{
-                'group_by': ['category_id'],
-            }</field>
+        <field name="view_id" ref="wua_maintenance.hr_equipment_view_tree" />
+        <field name="search_view_id" ref="wua_maintenance.maintenance_equipment_view_search_inherit_hr" />
+        <field name="context">{'search_default_group_by_category_id': 1}</field>
     </record>
 
     <!-- Sequence config -->
