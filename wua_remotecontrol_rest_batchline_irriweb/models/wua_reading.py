@@ -4,7 +4,8 @@
 
 import requests
 import json
-from odoo import models, _, api, exceptions
+import base64
+from odoo import models, _, api, exceptions, fields
 
 
 class WuaReading(models.Model):
@@ -25,7 +26,8 @@ class WuaReading(models.Model):
         return {
             'type': 'ir.actions.act_url',
             'url': url_remotecontrol_application,
-            'target': 'new', }
+            'target': 'new',
+        }
 
     def get_token(self, url_remotecontrol_rest,
                   url_remotecontrol_rest_username,
@@ -49,12 +51,44 @@ class WuaReading(models.Model):
             resp = outputrest['access_token']
         return resp, error_message
 
-    # Implemented hook
-    def populate_data_for_import_readings_batchline(
-        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
-            url_remotecontrol_rest_password):
-        resp = True
-        return resp
+    def fetch_hidrantes_batchline(
+            self, url_remotecontrol_rest, token):
+        remotecontrol = self.env.ref(
+            'base_wua_remotecontrol_rest.'
+            'wua_remotecontrol_logger')
+        url_get_readings = url_remotecontrol_rest + '/api/hidrantes'
+        headers_data = {
+            'authorization': 'bearer ' + token,
+            'content-type': 'application/json',
+        }
+        resprest = requests.get(url_get_readings, headers=headers_data)
+        if resprest.status_code == 200:
+            json_filename = "{}.json".format(fields.Datetime.now())
+            json_data = resprest.text
+            encoded_data = base64.b64encode(
+                json_data.encode('utf-8')).decode('utf-8')
+            attachment = self.env['ir.attachment'].sudo().create({
+                'name': json_filename,
+                'type': 'binary',
+                'datas': encoded_data,
+                'datas_fname': json_filename,
+                'res_model': 'wua.remotecontrol',
+                'res_id': remotecontrol.id,
+            })
+            remotecontrol.message_post(body=_(
+                'Successfully retrieved readings from /api/hidrantes. '
+                'Status code: %s') % (resprest.status_code),
+                attachment_ids=[attachment.id])
+            self.env.cr.commit()
+            return resprest.text, ''
+        else:
+            error_message = _('It is not possible to get the readings.')
+            remotecontrol.message_post(
+                body=_('Failed to retrieve readings from /api/hidrantes. '
+                       'Status code: %s, Response body: %s') % (
+                    resprest.status_code, resprest.text))
+            self.env.cr.commit()
+            return '', error_message
 
     # Implemented hook
     def import_readings_batchline(
@@ -69,14 +103,10 @@ class WuaReading(models.Model):
             url_remotecontrol_rest_username,
             url_remotecontrol_rest_password)
         if token:
-            url_get_readings = url_remotecontrol_rest + '/api/hidrantes'
-            headers_data = {
-                'authorization': 'bearer ' + token,
-                'content-type': 'application/json',
-            }
-            resprest = requests.get(url_get_readings, headers=headers_data)
-            if resprest.status_code == 200:
-                outputrest = json.loads(resprest.text)
+            readings_text, error_message = self.fetch_hidrantes_batchline(
+                url_remotecontrol_rest, token)
+            if readings_text:
+                outputrest = json.loads(readings_text)
                 for watermeter_info in outputrest:
                     watermeter = watermeter_info['Id']
                     volume = watermeter_info['Volumen']
@@ -84,9 +114,14 @@ class WuaReading(models.Model):
                         'watermeter': watermeter,
                         'volume': volume,
                     })
-            else:
-                error_message = _(' It is not possible to get the readings. ')
         return [readings, error_message, error_watermeters]
+
+    # Implemented hook
+    def populate_data_for_import_readings_batchline(
+        self, url_remotecontrol_rest, url_remotecontrol_rest_username,
+            url_remotecontrol_rest_password):
+        resp = True
+        return resp
 
     # Hook that will be implemeneted on every telecontrol
     def do_import_reading_of_telecontrol(self):
@@ -108,6 +143,7 @@ class WuaReading(models.Model):
                 url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
             try:
+                # This always True, why use it?
                 data = self.populate_data_for_import_readings_batchline(
                     url_remotecontrol_rest,
                     url_remotecontrol_rest_username,

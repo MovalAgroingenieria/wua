@@ -17,7 +17,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
         ('00', 'Cut Blocked'),
         ('01', 'Blocked'),
         ('02', 'Cut'),
-        ('03', 'Enabled')
+        ('03', 'Enabled'),
     ], string='Valve State')
 
     FACTOR_CONVERSION_M3H_LS = 3.6
@@ -77,7 +77,7 @@ class WuaWaterconnectionTelecontrol(models.Model):
             1: '00',
             2: '01',
             3: '02',
-            4: '03'
+            4: '03',
         }
         return mapping.get(value, False)
 

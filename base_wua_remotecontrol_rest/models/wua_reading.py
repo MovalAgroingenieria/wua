@@ -32,58 +32,76 @@ class WuaReading(models.Model):
         resp = [None, 0, '', None, 0]
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        remotecontrol = self.env.ref(
+            'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
         if (enable_remotecontrol):
             # GET READINGS OF ALL POSSIBLE TELECONTROLS AND THEN
             # UPDATE IT
-            readings, error_message, error_watermeters = \
-                self.do_import_reading_of_telecontrol()
-            readings = self.refine_readings(readings)
-            if readings:
-                resp[0] = readings
-                resp[1] = len(readings)
-                resp[2] = error_message
-                resp[3] = error_watermeters
-                if save_data:
-                    number_of_negative_readings = \
-                        self.save_readings(readings)
-                    resp[4] = number_of_negative_readings
-                prefix_message_01 = _('Remote Control: '
-                                      'Getting readings')
-                suffix_message_01 = str(resp[1])
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info(prefix_message_01 + '... ' +
-                             suffix_message_01)
-            if error_message:
-                prefix_message_02 = _('Remote Control: '
-                                      'Error getting readings')
-                suffix_message_02 = resp[2]
-                company_name = self.env.user.company_id.name
-                website_url = self.env['ir.config_parameter'].get_param(
-                    "web.base.url")
-                domain = self.env['ir.config_parameter'].get_param(
-                    "mail.catchall.domain")
-                _logger = logging.getLogger(
-                    self.__class__.__name__)
-                _logger.info(prefix_message_02 + '... ' +
-                             suffix_message_02)
-                telecontrol_failed_template_id = self.env.ref(
-                    'base_wua_remotecontrol_rest.'
-                    'telecontrol_failed_email_template').id
-                mail_template = self.env['mail.template'].browse(
-                    telecontrol_failed_template_id)
-                mail_template.subject = '''
-                    Reading remote control in %s has
-                    experienced some problem
-                ''' % (domain or self.pool.db_name)
-                mail_template.body_html = '''
-                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                        <b><a href="%s">%s</a></p></b>
-                        <br/>
-                        <span>%s</span>
-                    </p>
-                ''' % (website_url, company_name, resp[2].replace(
-                    '\n', '<br/>'))
-                mail_template.send_mail(self.id, force_send=True)
+            try:
+                readings, error_message, error_watermeters = \
+                    self.do_import_reading_of_telecontrol()
+                readings = self.refine_readings(readings)
+                if readings:
+                    resp[0] = readings
+                    resp[1] = len(readings)
+                    resp[2] = error_message
+                    resp[3] = error_watermeters
+                    if save_data:
+                        number_of_negative_readings = \
+                            self.save_readings(readings)
+                        resp[4] = number_of_negative_readings
+                    prefix_message_01 = _('Remote Control: '
+                                          'Getting readings')
+                    suffix_message_01 = str(resp[1])
+                    _logger = logging.getLogger(self.__class__.__name__)
+                    _logger.info(prefix_message_01 + '... ' +
+                                 suffix_message_01)
+                if error_message:
+                    prefix_message_02 = _('Remote Control: '
+                                          'Error getting readings')
+                    suffix_message_02 = resp[2]
+                    company_name = self.env.user.company_id.name
+                    website_url = self.env['ir.config_parameter'].get_param(
+                        "web.base.url")
+                    domain = self.env['ir.config_parameter'].get_param(
+                        "mail.catchall.domain")
+                    _logger = logging.getLogger(
+                        self.__class__.__name__)
+                    _logger.info(prefix_message_02 + '... ' +
+                                 suffix_message_02)
+                    remotecontrol.message_post(
+                        body="Error %s: " % suffix_message_02,
+                    )
+                    telecontrol_failed_template_id = self.env.ref(
+                        'base_wua_remotecontrol_rest.'
+                        'telecontrol_failed_email_template').id
+                    mail_template = self.env['mail.template'].browse(
+                        telecontrol_failed_template_id)
+                    mail_template.subject = '''
+                        Reading remote control in %s has
+                        experienced some problem
+                    ''' % (domain or self.pool.db_name)
+                    mail_template.body_html = '''
+                        <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                            <b><a href="%s">%s</a></p></b>
+                            <br/>
+                            <span>%s</span>
+                        </p>
+                    ''' % (website_url, company_name, resp[2].replace(
+                        '\n', '<br/>'))
+                    mail_template.send_mail(self.id, force_send=True)
+            except Exception as e:
+                with self.pool.cursor() as new_cr:
+                    new_env = api.Environment(
+                        new_cr, self.env.uid, self.env.context)
+                    new_remotecontrol = self.with_env(new_env).env.ref(
+                        'base_wua_remotecontrol_rest.wua_remotecontrol_logger',
+                    )
+                    new_remotecontrol.message_post(
+                        body="Error %s: " % e,
+                    )
+                    new_cr.commit()
+                raise e
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
@@ -162,4 +180,10 @@ class WuaReading(models.Model):
                 _logger = logging.getLogger(self.__class__.__name__)
                 _logger.info(_('Remote Control: Saved readings') + '... ' +
                              str(number_of_readings))
+            remotecontrol = self.env.ref(
+                'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
+            remotecontrol.message_post(
+                body="Readings from remote control: %s\n"
+                     "Negative readings: %s" % (
+                         number_of_readings, number_of_negative_readings))
         return number_of_negative_readings

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_remotecontrol_view_form" model="ir.ui.view">
+        <field name="name">Remote Controls (form view)</field>
+        <field name="model">wua.remotecontrol</field>
+        <field name="arch" type="xml">
+            <form create="0" delete="0" duplicate="0">
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <field name="active" invisible="1"/>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="name" readonly="1"/>
+                            <field name="description"/>
+                        </group>
+                        <group name="master_data_right">
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_remotecontrol_view_tree" model="ir.ui.view">
+        <field name="name">Remote Controls (tree view)</field>
+        <field name="model">wua.remotecontrol</field>
+        <field name="arch" type="xml">
+            <tree create="0" delete="0" duplicate="0"
+             class="o_base_wua_remotecontrol_view_tree">
+                <field name="name"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_remotecontrol_view_search" model="ir.ui.view">
+        <field name="name">Remote Controls (search view)</field>
+        <field name="model">wua.remotecontrol</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="description"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_technical_remotecontrol_action" model="ir.actions.act_window">
+        <field name="name">Remote Controls</field>
+        <field name="res_model">wua.remotecontrol</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="wua_remotecontrol_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_remotecontrol_view_search"/>
+    </record>
+
+    <menuitem id="wua_technical_remotecontrol_menu"
+              name="Remote Controls"
+              parent="wua_structure_irrigation.base_wua_irrigation_technical_menu"
+              action="wua_technical_remotecontrol_action"
+              sequence="0"/>
+
+</odoo>

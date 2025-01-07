@@ -413,39 +413,58 @@ class WuaControlreading(models.Model):
         resp = [None, 0, '', None, 0]
         enable_remotecontrol = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'enable_remotecontrol')
+        remotecontrol = self.env.ref(
+            'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
         if (enable_remotecontrol):
-            readings, error_message, error_watermeters = \
-                wua_reading_model.do_import_reading_of_telecontrol()
-            readings = self.refine_controlreadings(readings)
-            if readings:
-                resp[0] = readings
-                resp[1] = len(readings)
-                resp[2] = error_message
-                resp[3] = error_watermeters
-                if save_data:
-                    number_of_negative_readings, controlperiod_ids = \
-                        self.save_controlreadings(readings)
-                    resp[4] = number_of_negative_readings
-                prefix_message_01 = _('Remote Control: '
-                                      'Getting readings')
-                suffix_message_01 = str(resp[1])
-                _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info(prefix_message_01 + '... ' + suffix_message_01)
-                if error_message:
-                    prefix_message_02 = _('Remote Control: '
-                                          'Error getting readings')
-                    suffix_message_02 = error_message
-                    _logger = logging.getLogger(
-                        self.__class__.__name__)
-                    _logger.info(prefix_message_02 + '... ' +
-                                 suffix_message_02)
-                if controlperiod_ids:
-                    controlperiods = \
-                        self.env['wua.controlperiod'].browse(
-                            controlperiod_ids)
-                    for controlperiod in (controlperiods or []):
-                        if controlperiod.state == 'calculated':
-                            controlperiod.calculate_controlperiod()
+            try:
+                readings, error_message, error_watermeters = \
+                    wua_reading_model.do_import_reading_of_telecontrol()
+                readings = self.refine_controlreadings(readings)
+                if readings:
+                    resp[0] = readings
+                    resp[1] = len(readings)
+                    resp[2] = error_message
+                    resp[3] = error_watermeters
+                    if save_data:
+                        number_of_negative_readings, controlperiod_ids = \
+                            self.save_controlreadings(readings)
+                        resp[4] = number_of_negative_readings
+                    prefix_message_01 = _('Remote Control: '
+                                          'Getting readings')
+                    suffix_message_01 = str(resp[1])
+                    _logger = logging.getLogger(self.__class__.__name__)
+                    _logger.info(prefix_message_01 + '... ' +
+                                 suffix_message_01)
+                    if error_message:
+                        prefix_message_02 = _('Remote Control: '
+                                              'Error getting readings')
+                        suffix_message_02 = error_message
+                        _logger = logging.getLogger(
+                            self.__class__.__name__)
+                        _logger.info(prefix_message_02 + '... ' +
+                                     suffix_message_02)
+                        remotecontrol.message_post(
+                            body="Error %s: " % suffix_message_02,
+                        )
+                    if controlperiod_ids:
+                        controlperiods = \
+                            self.env['wua.controlperiod'].browse(
+                                controlperiod_ids)
+                        for controlperiod in (controlperiods or []):
+                            if controlperiod.state == 'calculated':
+                                controlperiod.calculate_controlperiod()
+            except Exception as e:
+                with self.pool.cursor() as new_cr:
+                    new_env = api.Environment(
+                        new_cr, self.env.uid, self.env.context)
+                    new_remotecontrol = self.with_env(new_env).env.ref(
+                        'base_wua_remotecontrol_rest.wua_remotecontrol_logger',
+                    )
+                    new_remotecontrol.message_post(
+                        body="Error %s: " % e,
+                    )
+                    new_cr.commit()
+                raise e
         else:
             if show_message:
                 raise exceptions.UserError(_('The communication with '
@@ -483,7 +502,7 @@ class WuaControlreading(models.Model):
                 '%Y-%m-%d %H:%M:%S')
             controlperiod_model = self.env['wua.controlperiod']
             for reading in readings:
-                previous_reading = self.env['wua.controlreading'].search(
+                previous_reading = self.env['wua.controlreading'].search_count(
                     [('watermeter_id', '=', reading['watermeter_id'])])
                 if not previous_reading:
                     self.create({
@@ -520,8 +539,15 @@ class WuaControlreading(models.Model):
                             controlperiod_ids.append(controlperiod.id)
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)
-                _logger.info(_('Remote Control: Saved readings') + '... ' +
+                _logger.info(_('Remote Control: Saved Controlreadings') +
+                             '... ' +
                              str(number_of_readings))
+            remotecontrol = self.env.ref(
+                'base_wua_remotecontrol_rest.wua_remotecontrol_logger')
+            remotecontrol.message_post(
+                body="Controlreadings from remote control: %s\n"
+                     "Negative controlreadings: %s" % (
+                         number_of_readings, number_of_negative_readings))
         if controlperiod_ids:
             controlperiod_ids = list(set(controlperiod_ids))
         return number_of_negative_readings, controlperiod_ids
