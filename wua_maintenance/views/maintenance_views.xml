@@ -10,7 +10,7 @@
                 <attribute name="duplicate">0</attribute>
             </xpath>
             <xpath expr="//div[@name='button_box']/button[1]" position="before">
-                <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" confirm="Are you sure you want to toggle visibility?" groups="base_wua.group_wua_user">
+                <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive" confirm="Are you sure you want to toggle visibility?" groups="base_maintenance_config.group_maintenance_manager">
                     <field name="active" widget="boolean_button" options='{"terminology": "archive"}' />
                 </button>
             </xpath>
@@ -442,7 +442,7 @@
             </xpath>
             <xpath expr="//group[1]" position="replace">
                 <filter string="Technicians" domain="[]" context="{'group_by': 'technician_user_id'}" />
-                <filter string="Category" name="group_by_category_id" context="{'group_by': 'category_id'}" />
+                <filter string="Category" domain="[]" name="group_by_category_id" context="{'group_by': 'category_id'}" />
                 <filter string="Owner" domain="[]" context="{'group_by': 'owner_user_id'}" />
                 <filter string="Vendor" domain="[]" context="{'group_by': 'partner_id'}" />
                 <filter string="Employee" domain="[]" context="{'group_by': 'employee_id'}" />
@@ -502,7 +502,7 @@
         <field name="view_mode">tree,kanban,form</field>
         <field name="view_id" ref="wua_maintenance.hr_equipment_view_tree" />
         <field name="search_view_id" ref="wua_maintenance.maintenance_equipment_view_search_inherit_hr" />
-        <field name="context">{'search_default_group_by_category_id': 1}</field>
+        <field name="context">{}</field>
     </record>
 
     <!-- Sequence config -->

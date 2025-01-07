@@ -410,6 +410,15 @@ class MaintenanceEquipment(models.Model):
                 filteringstation_id = record.filteringstation_ids[0]
             record.filteringstation_id = filteringstation_id
 
+    @api.depends('tag_ids')
+    def _compute_tag_html(self):
+        for record in self:
+            tags = None
+            if record.tag_ids:
+                tags = record.tag_ids.mapped('name')
+                tags = ', '.join(tags)
+            record.tag_html = tags
+
     @api.multi
     def name_get(self):
         result = []
