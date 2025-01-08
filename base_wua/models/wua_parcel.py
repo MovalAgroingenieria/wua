@@ -1428,8 +1428,10 @@ class WuaParcel(models.Model):
             correct_subparcels_area = self.is_subparcels_area_correct(
                 new_parcel.id, vals['area_official'], vals['subparcel_ids'])
             if not correct_subparcels_area:
-                raise exceptions.UserError(_('The sum of subparcel areas must '
-                                             'be the parcel official area.'))
+                raise exceptions.UserError(
+                    _('The sum of subparcel areas must be the parcel official '
+                      'area for parcel: %s.') % new_parcel.name,
+                )
         if 'partnerlink_ids' in vals and new_parcel.number_of_partnerlinks > 0:
             correct_partnerlinks_percentage = \
                 self.are_partnerlinks_percentages_correct(
@@ -2165,9 +2167,10 @@ class WuaParcel(models.Model):
         correct_subparcels_area = self.is_subparcels_area_correct(
             self.id, area_official, subparcel_ids)
         if not correct_subparcels_area:
-            raise exceptions.UserError(_('The sum of subparcel areas '
-                                         'must be the parcel official '
-                                         'area.'))
+            raise exceptions.UserError(
+                _('The sum of subparcel areas must be the parcel official '
+                  'area for parcel: %s.') % self.name,
+            )
         self.populate_partnerlinkcode_pos(self.name, vals, self.id,
                                           area_official)
         if 'partnerlink_ids' in vals:

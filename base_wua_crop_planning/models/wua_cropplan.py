@@ -1158,7 +1158,7 @@ class WuaEnrolledsubparcel(models.Model):
                     vals['cultivation_id'] = None
                     vals['cultivationvariety_id'] = None
                     vals['second_cultivation_id'] = None
-                    vals['second_cultivationvariey_id'] = None
+                    vals['second_cultivationvariety_id'] = None
                     vals['irrigationsystem_id'] = None
                     vals['productionmethod_id'] = None
         new_enrolledsubparcel = super(WuaEnrolledsubparcel, self).create(vals)
@@ -1174,7 +1174,7 @@ class WuaEnrolledsubparcel(models.Model):
                     vals['cultivation_id'] = None
                     vals['cultivationvariety_id'] = None
                     vals['second_cultivation_id'] = None
-                    vals['second_cultivationvariey_id'] = None
+                    vals['second_cultivationvariety_id'] = None
                     vals['irrigationsystem_id'] = None
                     vals['productionmethod_id'] = None
         super(WuaEnrolledsubparcel, self).write(vals)
