@@ -121,9 +121,8 @@ class WuaWaterconnectionIrrigationSchedule(models.Model):
                         <br/>
                         <span>%s</span>
                     </p>
-                ''' % (website_url, company_name, error_message.replace('\n',
-                                                                        '<br/>'
-                                                                        ))
+                ''' % (website_url, company_name, error_message.replace(
+                       '\n', '<br/>'))
                 mail_template.send_mail(self.id, force_send=True)
         else:
             if show_message:
@@ -199,8 +198,9 @@ class WuaWaterconnectionIrrigationSchedule(models.Model):
                                         'irrigation_shift_ids':
                                         [(0, 0, {
                                             'waterconnection_id': wc.id,
-                                            'irrigation_shift_id': irr_shift.id
-                                        })]
+                                            'irrigation_shift_id':
+                                                irr_shift.id,
+                                        })],
                                     })
                             days = shift["Dias"]
                             days_scheduled = [

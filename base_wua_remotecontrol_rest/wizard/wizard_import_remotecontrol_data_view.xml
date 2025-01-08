@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wizard_import_remotecontrol_data_view_form" model="ir.ui.view">
+        <field name="name">Wizard to Import Remote Control Data</field>
+        <field name="model">wizard.import.remotecontrol.data</field>
+        <field name="arch" type="xml">
+            <form string="Import Remote Data">
+                <script>
+                    $(document).ready(function(){
+                        $('.modal-dialog').css({'width': '450px'});
+                        $('.modal-dialog').css({'height': '420px'});
+                    });
+                </script>
+                <group>
+                    <field name="remotecontrol_type"/>
+                    <field name="element_to_import"/>
+                    <field name="json_file_name" invisible="1"/>
+                    <field name="json_file" filename="json_file_name"/>
+                    <field name="date"/>
+                </group>
+                <footer>
+                    <button name="import_remote_data"
+                            type="object"
+                            string="Import Data"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            class="btn-default"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_import_remotecontrol_data" model="ir.actions.act_window">
+        <field name="name">Import Remotecontrol Data</field>
+        <field name="res_model">wizard.import.remotecontrol.data</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

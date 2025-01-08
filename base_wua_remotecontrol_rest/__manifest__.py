@@ -18,6 +18,7 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "wizard/wizard_import_remotecontrol_data_view.xml",
         "data/wua_waterconnection_telecontrol_cron.xml",
         "data/wua_remotecontrol_data.xml",
         "data/wua_irrigation_config_settings_data.xml",

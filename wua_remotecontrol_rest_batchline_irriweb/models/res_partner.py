@@ -11,7 +11,7 @@ from odoo import models, _, fields, api, exceptions
 class ResPartner(models.Model):
     _inherit = 'res.partner'
     _remotecontrol_partner_fields_batchline = [
-        'partner_code', 'firstname', 'lastname', 'lastname2', 'vat', 'email'
+        'partner_code', 'firstname', 'lastname', 'lastname2', 'vat', 'email',
     ]
 
     def get_token(self, url_remotecontrol_rest,
@@ -117,7 +117,7 @@ class ResPartner(models.Model):
 
     def send_partner_on_creation_telecontrol(self, new_partner, vals):
         super(ResPartner, self).send_partner_on_creation_telecontrol(
-            new_partner, vals
+            new_partner, vals,
         )
         self.send_partner_on_creation('batchline', new_partner, vals)
 
@@ -355,17 +355,17 @@ class ResPartnerWaterconnection(models.Model):
 
     html_readings_url = fields.Text(
         string='IrriWEB Readings',
-        compute='_compute_html_readings_url'
+        compute='_compute_html_readings_url',
         )
 
     html_consumptions_url = fields.Text(
         string='IrriWEB Consumptions',
-        compute='_compute_html_consumptions_url'
+        compute='_compute_html_consumptions_url',
         )
 
     html_scheduling_url = fields.Text(
         string='IrriWEB Scheduling',
-        compute='_compute_html_scheduling_url'
+        compute='_compute_html_scheduling_url',
         )
 
     @api.multi

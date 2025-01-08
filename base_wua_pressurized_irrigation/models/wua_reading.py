@@ -438,15 +438,16 @@ class WuaReading(models.Model):
         watermeter.write(vals_watermeter)
         return resp
 
-    def is_negative_reading(self, reading):
+    def is_negative_reading(self, reading, reading_time=False):
         is_negative = False
         negative_volume = 0
         current_volume = reading['volume']
-        current_reading_time = datetime.datetime.now().strftime(
-            '%Y-%m-%d %H:%M:%S')
+        if (not reading_time):
+            reading_time = datetime.datetime.now().strftime(
+                '%Y-%m-%d %H:%M:%S')
         previous_reading = self.env['wua.reading'].search(
             [('watermeter_id', '=', reading['watermeter_id']),
-             ('reading_time', '<', current_reading_time)],
+             ('reading_time', '<', reading_time)],
             limit=1, order='reading_time desc')
         if previous_reading:
             previous_volume = previous_reading[0].volume

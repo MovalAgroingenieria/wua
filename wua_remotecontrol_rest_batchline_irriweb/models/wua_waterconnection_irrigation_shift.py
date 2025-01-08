@@ -2,7 +2,7 @@
 # 2024 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+from odoo import models, fields
 
 
 class WuaWaterconnectionIrrigationShift(models.Model):
@@ -33,9 +33,9 @@ class WuaWaterconnectionIrrigationShift(models.Model):
                     intervals = shift["Intervalos"]
                     for interval in range(1, intervals + 1):
                         start_hour = shift["Intervalo" + str(interval) +
-                                            "Inicio"]
+                                           "Inicio"]
                         duration = shift["Intervalo" + str(interval) +
-                                            "Duracion"]
+                                         "Duracion"]
                         end_hour = \
                             self._get_float_hour_from_str(start_hour) +\
                             (duration/60)
@@ -45,7 +45,7 @@ class WuaWaterconnectionIrrigationShift(models.Model):
                         'name': name,
                         'description': description,
                         'batchline_id': shift["Id"],
-                        'batchline_name': group["Descripcion"]
+                        'batchline_name': group["Descripcion"],
                         }
                     if not existing_record:
                         self.create(values)

@@ -10,4 +10,14 @@ class WuaNegativeReading(models.Model):
 
     from_remotecontrol = fields.Boolean(
         string='From remotecontrol',
-        default=False,)
+        default=False,
+    )
+
+    remotecontrol_origin = fields.Selection(
+        selection=[
+            ('unknown', 'Unknown'),
+        ],
+        string='Remote Control Origin',
+        default='unknown',
+        required=False,
+    )

@@ -14,28 +14,29 @@ class WuaWaterconnection(models.Model):
     _in_create = False
 
     telecontrol_associated = fields.Selection(
-        selection_add=[('batchline', 'Batchline')],)
+        selection_add=[('batchline', 'Batchline')],
+    )
 
     html_readings_frame = fields.Text(
         string='IrriWEB Readings',
-        compute='_compute_html_readings_frame'
+        compute='_compute_html_readings_frame',
         )
 
     html_consumptions_frame = fields.Text(
         string='IrriWEB Consumptions',
-        compute='_compute_html_consumptions_frame'
+        compute='_compute_html_consumptions_frame',
         )
 
     html_scheduling_frame = fields.Text(
         string='IrriWEB Scheduling',
-        compute='_compute_html_scheduling_frame'
+        compute='_compute_html_scheduling_frame',
         )
 
     last_valve_state = fields.Selection([
         ('00', 'Cut Blocked'),
         ('01', 'Blocked'),
         ('02', 'Cut'),
-        ('03', 'Enabled')
+        ('03', 'Enabled'),
     ], string='Last Valve State')
 
     @api.multi
@@ -146,7 +147,7 @@ class WuaWaterconnection(models.Model):
             'res_model': 'wizard.scheduling.waterconnection',
             'src_model': 'wua.waterconnection',
             'view_mode': 'form',
-            'target': 'new'
+            'target': 'new',
             }
         return act_window
 

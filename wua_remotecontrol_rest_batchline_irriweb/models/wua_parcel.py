@@ -128,7 +128,7 @@ class WuaParcel(models.Model):
 
     def send_parcel_on_creation_telecontrol(self, new_parcel, vals):
         super(WuaParcel, self).send_parcel_on_creation_telecontrol(
-            new_parcel, vals
+            new_parcel, vals,
         )
         self.send_parcel_on_creation('batchline', new_parcel, vals)
 

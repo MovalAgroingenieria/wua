@@ -6,6 +6,7 @@ import datetime
 import logging
 import math
 from odoo import models, fields, api, exceptions, _
+from odoo.tools.misc import profile
 
 
 class WuaReading(models.Model):
@@ -16,6 +17,15 @@ class WuaReading(models.Model):
         string='Manual Introduction',
         default=True,
         required=True)
+
+    remotecontrol_origin = fields.Selection(
+        selection=[
+            ('unknown', 'Unknown'),
+        ],
+        string='Remote Control Origin',
+        default='unknown',
+        required=False,
+    )
 
     # Hook that will be implemeneted on every telecontrol, appending the info
     def do_import_reading_of_telecontrol(self):
@@ -140,6 +150,8 @@ class WuaReading(models.Model):
                         'irrigationshed_id': watermeter.irrigationshed_id.id,
                         'hydraulicsector_id': watermeter.hydraulicsector_id.id,
                         'volume': reading_volume,
+                        'remotecontrol_origin':
+                            reading.get('remotecontrol_origin', 'unknown'),
                         }
                     resp.append(refined_reading)
         return resp
@@ -156,7 +168,7 @@ class WuaReading(models.Model):
                 reading_time = self._get_reading_time_from_remotecontrol(
                     reading, now)
                 is_negative, negative_volume = \
-                    self.is_negative_reading(reading)
+                    self.is_negative_reading(reading, reading_time)
                 if is_negative:
                     self.env['wua.negative.reading'].create({
                         'watermeter_id': reading['watermeter_id'],
@@ -164,6 +176,8 @@ class WuaReading(models.Model):
                         'volume': reading['volume'],
                         'presconsumption_volume': negative_volume,
                         'from_remotecontrol': True,
+                        'remotecontrol_origin':
+                            reading['remotecontrol_origin'],
                         })
                     number_of_negative_readings = \
                         number_of_negative_readings + 1
@@ -175,6 +189,8 @@ class WuaReading(models.Model):
                         'initialization_reading': False,
                         'from_import': False,
                         'validated': False,
+                        'remotecontrol_origin':
+                            reading['remotecontrol_origin'],
                     })
             if update_log:
                 _logger = logging.getLogger(self.__class__.__name__)

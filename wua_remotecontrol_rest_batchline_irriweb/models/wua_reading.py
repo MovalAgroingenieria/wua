@@ -11,6 +11,12 @@ from odoo import models, _, api, exceptions, fields
 class WuaReading(models.Model):
     _inherit = 'wua.reading'
 
+    remotecontrol_origin = fields.Selection(
+        selection_add=[
+            ('batchline', 'Batchline'),
+        ],
+    )
+
     @api.model
     def run_remotecontrol_application_url_batchline(self):
         enable_remotecontrol = self.env['ir.values'].get_default(
@@ -90,6 +96,29 @@ class WuaReading(models.Model):
             self.env.cr.commit()
             return '', error_message
 
+    def _get_readings_info_batchline_from_json(self, outputrest):
+        readings = []
+        for watermeter_info in outputrest:
+            watermeter = watermeter_info['Id']
+            volume = watermeter_info['Volumen']
+            readings.append({
+                'watermeter': watermeter,
+                'volume': volume,
+                'remotecontrol_origin': 'batchline',
+            })
+        return readings
+
+    # Ovwerwrite hook for Wizard imports with a settet datetime
+    def _get_reading_time_from_remotecontrol(self, reading, now):
+        batchline_reading_date = self.env.context.get(
+            'batchline_reading_date', False)
+        if (batchline_reading_date and
+                reading.get('remotecontrol_origin', '') == 'batchline'):
+            return batchline_reading_date
+        else:
+            return super(WuaReading, self).\
+                _get_reading_time_from_remotecontrol(reading, now)
+
     # Implemented hook
     def import_readings_batchline(
         self, url_remotecontrol_rest, url_remotecontrol_rest_username,
@@ -107,13 +136,8 @@ class WuaReading(models.Model):
                 url_remotecontrol_rest, token)
             if readings_text:
                 outputrest = json.loads(readings_text)
-                for watermeter_info in outputrest:
-                    watermeter = watermeter_info['Id']
-                    volume = watermeter_info['Volumen']
-                    readings.append({
-                        'watermeter': watermeter,
-                        'volume': volume,
-                    })
+                readings = self._get_readings_info_batchline_from_json(
+                    outputrest)
         return [readings, error_message, error_watermeters]
 
     # Implemented hook
@@ -143,7 +167,7 @@ class WuaReading(models.Model):
                 url_remotecontrol_rest_username and
                 url_remotecontrol_rest_password):
             try:
-                # This always True, why use it?
+                # TODO: This always True, why use it? should be removed?
                 data = self.populate_data_for_import_readings_batchline(
                     url_remotecontrol_rest,
                     url_remotecontrol_rest_username,
