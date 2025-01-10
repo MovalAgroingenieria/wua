@@ -586,7 +586,8 @@ class WuaInvoicesetLine(models.Model):
                     SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
                     invoiced_consumption=TRUE
                     WHERE product_id=""" + str(product_id) + """ and
-                    invoiceset_id is null AND validated""")
+                    invoiceset_id is null AND validated AND
+                    NOT invoiced_consumption""")
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True
