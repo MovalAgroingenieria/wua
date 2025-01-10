@@ -1857,7 +1857,7 @@ class WuaInvoicesetLine(models.Model):
                     %s, now(), now(), %s, TRUE, id, irrigationshed_id,
                     hydraulicsector_id, position, number_of_parcels,
                     total_affected_area_official
-                    FROM wua_waterconnection
+                    FROM wua_waterconnection WHERE active
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
