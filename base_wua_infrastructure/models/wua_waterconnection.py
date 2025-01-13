@@ -431,6 +431,76 @@ class WuaWaterconnection(models.Model):
     def _compute_with_pumping(self):
         for record in self:
             record.with_pumping = record.irrigationshed_id.with_pumping
+    
+    
+    @api.multi
+    def action_open_mail_wizard(self):
+        """
+        Abre el wizard que permite introducir el texto común y, posteriormente, enviar los correos.
+        """
+        return {
+            'name': 'Send Mails',
+            'type': 'ir.actions.act_window',
+            'res_model': 'wua.waterconnection.mail.wizard',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'target': 'new',
+            'context': {
+                'active_model': 'wua.waterconnection',
+                'active_ids': self.ids,
+            }
+        }
+    # def action_waterconection_notice_send(self):
+    #     self.ensure_one()
+    #     template = self.env.ref(
+    #         'marquina_addon.email_template_waterconnection_notice')
+    #     compose_form = self.env.ref(
+    #         "mail.email_compose_message_wizard_form",
+    #         False,
+    #     )
+    #     ctx = dict(
+    #         default_model="wua.waterconnection",
+    #         default_res_id=self.id,
+    #         default_use_template=False,
+    #         default_template_id=template and template.id or False,
+    #         default_composition_mode="comment",
+    #         user_id=self.env.user.id,
+    #         from_report=True,
+    #     )
+    #     return {
+    #         "name": _("Compose Email"),
+    #         "type": "ir.actions.act_window",
+    #         "view_type": "form",
+    #         "view_mode": "form",
+    #         "res_model": "mail.compose.message",
+    #         "views": [(compose_form.id, "form")],
+    #         "view_id": compose_form.id,
+    #         "target": "new",
+    #         "context": ctx,
+    #     }
+    #
+    # #quiero un metodo, que envie un mensaje de información de la toma al partner que indique yo, con el mensaje que yo quiera
+    # def send_message(self, partner_id, message):
+    #     for record in self:
+    #         possible_partners = []
+    #         for irrigationpoint in record.irrigationpoint_ids:
+    #             parcel = irrigationpoint.parcel_id
+    #             for partnerlink in parcel.partnerlink_ids:
+    #                 if partnerlink.water_costs_percentage > 0:
+    #                     possible_partners.append(partnerlink.partner_id.id)
+    #         if possible_partners:
+    #             possible_partners = list(set(possible_partners))
+    #             if len(possible_partners) == 1:
+    #                 partner_id = possible_partners[0]
+    #     self.env['mail.message'].create({
+    #        'model': 'res.partner',
+    #        'res_id': partner_id,
+    #        'body': message,
+    #        'message_type': 'comment',
+    #        'subtype_id': self.env.ref('mail.mt_comment').id,
+    #     })
+    #     return True
+    
 
 
 class WaterConnectionSubparcellink(models.Model):

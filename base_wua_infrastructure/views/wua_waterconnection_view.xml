@@ -17,6 +17,10 @@
                                  widget="boolean_button"
                                  options='{"terminology": "archive"}'/>
                         </button>
+                        <button name="action_open_mail_wizard"
+                                string="Send Mails"
+                                type="object"
+                                class="oe_highlight"/>
                     </div>
                     <group name="master_data" col="9">
                         <group name="master_data_image" colspan="3">
@@ -222,5 +226,14 @@
               action="wua_waterconnection_action"
               sequence="3"
               groups="base_wua.group_wua_user"/>
+
+    <act_window id="action_mail_wizard_waterconnection"
+        context="{'mode': 'waterconnection'}"
+        name="Send mail"
+        res_model="wua.waterconnection.mail.wizard"
+        src_model="wua.waterconnection"
+        key2="client_action_multi"
+        view_mode="form"
+        target="new"/>
 
 </odoo>

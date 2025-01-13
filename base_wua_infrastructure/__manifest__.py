@@ -40,6 +40,8 @@
         "views/wua_zone_view.xml",
         "reports/wua_partner_infrastructure_report.xml",
         "reports/wua_parcel_report.xml",
+        "data/notice_mail.xml",
+        "wizard/waterconnection_mail_wizard.xml",
     ],
     "post_init_hook": "post_init_hook",
     "installable": True,

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_wua_waterconnection_mail_wizard_form" model="ir.ui.view">
+        <field name="name">wua.waterconnection.mail.wizard.form</field>
+        <field name="model">wua.waterconnection.mail.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Send Mails">
+                <sheet>
+                    <group>
+                        <field name="shared_text"/>
+                    </group>
+                    <footer>
+                        <button string="Cancell" class="btn-secondary" special="cancel"/>
+                        <button string="Send Mails"
+                                type="object"
+                                name="action_send_mails"
+                                class="oe_highlight"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
