@@ -15,6 +15,7 @@
                         <t t-set="report_style" t-value="o.env['ir.values'].get_default('wua.configuration', 'reports_style')"/>
                         <t t-set="measurement_unit" t-value="str(' ')"/>
                         <t t-set="printing_date" t-value="str(' ')"/>
+                        <t t-set="total_area" t-value="0"/>
                         <t t-set="total_owned_area" t-value="0"/>
                         <t t-set="owned_parcel_ids" t-value="[]"/>
                         <t t-set="number_rented_parcels" t-value="0"/>
@@ -229,6 +230,7 @@
                                     </thead>
                                     <tbody>
                                         <tr t-foreach="owned_parcels" t-as="p" style="page-break-inside: avoid;">
+                                            <t t-set="total_area" t-value="total_area + p.area_official"/>
                                             <t t-set="row_style" t-value="'color:black'"/>
                                             <td name="td_parcel" class="text-center">
                                                 <span t-att-style="row_style" t-field="p.parcel_id"/>
@@ -245,7 +247,9 @@
                                         </tr>
                                         <tr name="total_owned_area">
                                             <td></td>
-                                            <td></td>
+                                            <td class="text-right">
+                                                <b>Total area:</b>&amp;ensp;<span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_area, 4)"/>
+                                            </td>
                                             <td class="text-right">
                                                 <b>Total owned area:</b>&amp;ensp;<span t-esc="o.env['wua.parcel'].transform_float_to_locale(total_owned_area, 4)"/>
                                             </td>
