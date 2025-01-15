@@ -20,7 +20,31 @@ class WuaPresresconsumption(models.Model):
     maximum_nominal_flow = fields.Float(
         string='Maximum nominal flow (l/s)',
         compute='_compute_maximum_nominal_flow',
-        digits=(32, 4),
+        digits=(32, 0),
+    )
+
+    nominal_flow = fields.Float(
+        digits=(32, 0),
+    )
+
+    nominal_flow_ls = fields.Float(
+        digits=(32, 0),
+    )
+
+    nominal_flow_granted = fields.Float(
+        digits=(32, 0),
+    )
+
+    nominal_flow_ls_granted = fields.Float(
+        digits=(32, 0),
+    )
+
+    nominal_flow_issued = fields.Float(
+        digits=(32, 0),
+    )
+
+    nominal_flow_ls_issued = fields.Float(
+        digits=(32, 0),
     )
 
     def is_close(self, a, b, rel_tol=1e-09, abs_tol=0.0):

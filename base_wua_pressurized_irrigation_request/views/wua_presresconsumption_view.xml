@@ -7,7 +7,7 @@
                 <header>
                     <field name="state"
                     widget="statusbar"
-                    statusbar_visible="01_proposed"/>
+                    statusbar_visible="01_proposed,02_granted,03_issued"/>
                 </header>
                 <group>
                     <group>
@@ -24,8 +24,14 @@
                         <field name="total_affected_area_official_hec"/>
                         <field name="nominal_flow"/>
                         <field name="nominal_flow_ls"/>
+                        <field name="nominal_flow_granted"/>
+                        <field name="nominal_flow_ls_granted"/>
+                        <field name="nominal_flow_issued"/>
+                        <field name="nominal_flow_ls_issued"/>
                         <field name="watering_duration"/>
                         <field name="watering_volume"/>
+                        <field name="watering_volume_granted"/>
+                        <field name="watering_volume_issued"/>
                         <field name="initial_hour" widget="float_time"/>
                     </group>
                 </group>
@@ -38,17 +44,24 @@
         <field name="model">wua.presresconsumption</field>
         <field name="arch" type="xml">
             <tree string="Presurized Watering Requests" create="0" delete="0" duplicate="0">
-                <field name="preswateringrequest_id"/>
+                <field name="request_time"/>
+                <field name="preswateringrequest_id" invisible="1"/>
                 <field name="partner_id"/>
                 <field name="preswateringperiod_id"/>
                 <field name="waterconnection_id"/>
                 <field name="total_affected_area_official_hec"/>
                 <field name="nominal_flow"/>
                 <field name="nominal_flow_ls"/>
+                <field name="nominal_flow_granted"/>
+                <field name="nominal_flow_ls_granted"/>
+                <field name="nominal_flow_issued"/>
+                <field name="nominal_flow_ls_issued"/>
                 <field name="watering_duration"/>
-                <field name="watering_volume"/>
+                <field name="watering_volume" invisible="1"/>
+                <field name="watering_volume_granted" invisible="1"/>
+                <field name="watering_volume_issued" invisible="1"/>
                 <field name="initial_hour" widget="float_time"/>
-                <field name="request_time" invisible="1"/>
+                <field name="preswatering_id"/>
                 <field name="state"/>
             </tree>
         </field>
@@ -59,22 +72,43 @@
         <field name="model">wua.presresconsumption</field>
         <field name="arch" type="xml">
             <search string="Search Presurized Watering Requests">
+                <field name="partner_id"/>
                 <field name="preswateringrequest_id"/>
                 <field name="waterconnection_id"/>
                 <filter string="Created by Farmer" name="is_portal_user"
                         domain="[('is_portal_user', '=', True)]"/>
+                <separator/>
                 <filter string="Proposed" name="proposed"
                         domain="[('state', '=', '01_proposed')]"/>
+                <filter string="Granted" name="granted"
+                        domain="[('state', '=', '02_granted')]"/>
+                <filter string="Issued" name="issued"
+                        domain="[('state', '=', '03_issued')]"/>
+                <separator/>
+                <filter string="Rejected" name="rejected"
+                        domain="[('rejected', '=', '99_rejected')]"/>
                 <group expand="0" string="Group By...">
+                    <filter string="State"
+                            name="group_by_state"
+                            context="{'group_by': 'state'}"/>
                     <filter string="Water Connection"
                             name="group_by_waterconnection"
                             context="{'group_by': 'waterconnection_id'}"/>
                     <filter string="Campaign"
                             name="group_by_agriculturalseason"
                             context="{'group_by': 'agriculturalseason_id'}"/>
+                    <filter string="Request"
+                            name="group_by_preswateringrequest"
+                            context="{'group_by': 'preswateringrequest_id'}"/>
                     <filter string="Period"
                             name="group_by_preswateringperiod"
                             context="{'group_by': 'preswateringperiod_id'}"/>
+                    <filter string="Partner WUA"
+                            name="group_by_partner"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter string="Preswatering"
+                            name="group_by_preswatering"
+                            context="{'group_by': 'preswatering_id'}"/>
                 </group>
             </search>
         </field>
@@ -122,4 +156,41 @@
               parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
               action="wua_presresconsumption_action"
               sequence="22"/>
+
+    <record id="wua_set_presresconsumption_as_selected" model="ir.actions.server">
+        <field name="name">Select for calculation</field>
+        <field name="model_id" ref="model_wua_presresconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.presresconsumption'].set_as_selected(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_presresconsumption_as_selected" model="ir.values">
+        <field name="name">Set presresconsumption as selected</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_presresconsumption_as_selected'))"/>
+    </record>
+
+    <record id="wua_set_presresconsumption_as_unselected" model="ir.actions.server">
+        <field name="name">Unselect for calculation</field>
+        <field name="model_id" ref="model_wua_presresconsumption"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.presresconsumption'].set_as_unselected(context['active_ids'])
+        </field>
+    </record>
+
+    <record id="wua_action_set_presresconsumption_as_unselected" model="ir.values">
+        <field name="name">Set presresconsumption as unselected</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_set_presresconsumption_as_unselected'))"/>
+    </record>
+
 </odoo>

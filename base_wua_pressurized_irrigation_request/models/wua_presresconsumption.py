@@ -6,7 +6,7 @@ import json
 import pytz
 from lxml import etree
 from datetime import timedelta, datetime
-from odoo import models, fields, api, _
+from odoo import models, fields, api, _, exceptions
 
 
 class WuaPresresconsumption(models.Model):
@@ -32,24 +32,27 @@ class WuaPresresconsumption(models.Model):
     irrigationshed_id = fields.Many2one(
         string='Irrigation Shed',
         comodel_name='wua.irrigationshed',
-        ondelete='restrict',
         compute='_compute_irrigationshed_id',
+        store=True,
+        ondelete='restrict',
         index=True,
     )
 
     hydraulicsector_id = fields.Many2one(
         string='Hydraulic Sector',
         comodel_name='wua.hydraulicsector',
-        store=True,
         compute='_compute_hydraulicsector_id',
+        store=True,
         ondelete='restrict',
+        index=True,
     )
 
     waterpipe_id = fields.Many2one(
         string='Water Pipe',
         comodel_name='wua.waterpipe',
-        ondelete='restrict',
         compute='_compute_waterpipe_id',
+        store=True,
+        ondelete='restrict',
         index=True,
     )
 
@@ -77,10 +80,19 @@ class WuaPresresconsumption(models.Model):
         index=True,
     )
 
+    preswatering_id = fields.Many2one(
+        string='Preswatering',
+        comodel_name='wua.preswatering',
+        ondelete='set null',
+        index=True,
+    )
+
     state = fields.Selection(
         string='Consumption State',
         selection=[
             ('01_proposed', 'Proposed'),
+            ('02_granted', 'Granted'),
+            ('03_issued', 'Issued'),
         ],
         default='01_proposed',
         index=True,
@@ -92,20 +104,58 @@ class WuaPresresconsumption(models.Model):
     )
 
     nominal_flow = fields.Float(
-        string='Nominal Flow (m³/h)',
+        string='Nominal Flow Requested (m³/h)',
         digits=(32, 4),
         required=True,
     )
 
     nominal_flow_ls = fields.Float(
-        string='Nominal Flow (l/s)',
+        string='Nominal Flow Requested (l/s)',
         digits=(32, 4),
         default=0.0,
+    )
+
+    nominal_flow_granted = fields.Float(
+        string='Nominal Flow Granted (m³/h)',
+        digits=(32, 4),
+        readonly=True,
+    )
+
+    nominal_flow_ls_granted = fields.Float(
+        string='Nominal Flow Granted (l/s)',
+        digits=(32, 4),
+        readonly=True,
+    )
+
+    nominal_flow_issued = fields.Float(
+        string='Nominal Flow Issued (m³/h)',
+        digits=(32, 4),
+        readonly=True,
+    )
+
+    nominal_flow_ls_issued = fields.Float(
+        string='Nominal Flow Issued (l/s)',
+        digits=(32, 4),
+        readonly=True,
     )
 
     watering_volume = fields.Float(
         string='Requested Volume',
         compute='_compute_watering_volume',
+        store=True,
+        digits=(32, 4),
+    )
+
+    watering_volume_granted = fields.Float(
+        string='Granted Volume',
+        compute='_compute_watering_volume_granted',
+        store=True,
+        digits=(32, 4),
+    )
+
+    watering_volume_issued = fields.Float(
+        string='Issued Volume',
+        compute='_compute_watering_volume_issued',
         store=True,
         digits=(32, 4),
     )
@@ -133,6 +183,16 @@ class WuaPresresconsumption(models.Model):
         string='Created by Irrigator',
         compute='_compute_data_from_wateringrequest',
         store=True,
+    )
+
+    rejected = fields.Boolean(
+        string='Rejected',
+        default=False,
+    )
+
+    selected = fields.Boolean(
+        string='Selected',
+        default=True,
     )
 
     partner_id = fields.Many2one(
@@ -306,6 +366,24 @@ class WuaPresresconsumption(models.Model):
                     record.nominal_flow
             record.watering_volume = watering_volume
 
+    @api.depends('watering_duration', 'nominal_flow_granted')
+    def _compute_watering_volume_granted(self):
+        for record in self:
+            watering_volume_granted = 0
+            if (record.watering_duration and record.nominal_flow_granted):
+                watering_volume_granted = record.watering_duration * \
+                    record.nominal_flow_granted
+            record.watering_volume_granted = watering_volume_granted
+
+    @api.depends('watering_duration', 'nominal_flow_issued')
+    def _compute_watering_volume_issued(self):
+        for record in self:
+            watering_volume_issued = 0
+            if (record.watering_duration and record.nominal_flow_issued):
+                watering_volume_issued = record.watering_duration * \
+                    record.nominal_flow_issued
+            record.watering_volume_issued = watering_volume_issued
+
     @api.depends('waterconnection_id')
     def _compute_total_affected_area(self):
         for record in self:
@@ -394,6 +472,30 @@ class WuaPresresconsumption(models.Model):
                 portal_can_modify = record.modification_deadline > now
             record.portal_can_modify = portal_can_modify
 
+    @api.multi
+    def set_as_selected(self, active_presresconsumptions):
+        if self.env.user.has_group('base_wua.group_wua_manager'):
+            presresconsumptions = self.env['wua.presresconsumption'].browse(
+                active_presresconsumptions)
+            for record in presresconsumptions:
+                if record.state == '01_proposed':
+                    vals = {
+                        'selected': True,
+                        }
+                    record.write(vals)
+
+    @api.multi
+    def set_as_unselected(self, active_presresconsumptions):
+        if self.env.user.has_group('base_wua.group_wua_manager'):
+            presresconsumptions = self.env['wua.presresconsumption'].browse(
+                active_presresconsumptions)
+            for record in presresconsumptions:
+                if record.state == '01_proposed':
+                    vals = {
+                        'selected': False,
+                        }
+                    record.write(vals)
+
     @api.model
     def create(self, vals):
         use_flow_ls = self.env['ir.values'].sudo().get_default(
@@ -408,10 +510,16 @@ class WuaPresresconsumption(models.Model):
                 if preswateringrequest:
                     vals['preswateringperiod_id'] = \
                         preswateringrequest.preswateringperiod_id.id
-        if use_flow_ls and 'nominal_flow_ls' in vals:
-            vals['nominal_flow'] = vals['nominal_flow_ls'] * 3.6
-        elif not use_flow_ls and 'nominal_flow' in vals:
-            vals['nominal_flow_ls'] = vals['nominal_flow'] / 3.6
+        flow_field_pairs = {
+            'nominal_flow': 'nominal_flow_ls',
+            'nominal_flow_granted': 'nominal_flow_ls_granted',
+            'nominal_flow_issued': 'nominal_flow_ls_issued',
+        }
+        for m3h_field, ls_field in flow_field_pairs.items():
+            if use_flow_ls and ls_field in vals:
+                vals[m3h_field] = vals[ls_field] * 3.6
+            elif not use_flow_ls and m3h_field in vals:
+                vals[ls_field] = vals[m3h_field] / 3.6
         return super(WuaPresresconsumption, self).create(vals)
 
     @api.multi
@@ -419,11 +527,28 @@ class WuaPresresconsumption(models.Model):
         use_flow_ls = self.env['ir.values'].sudo().get_default(
             'wua.irrigation.configuration',
             'preswateringrequest_flow_liters_per_second')
-        if use_flow_ls and 'nominal_flow_ls' in vals:
-            vals['nominal_flow'] = vals['nominal_flow_ls'] * 3.6
-        elif not use_flow_ls and 'nominal_flow' in vals:
-            vals['nominal_flow_ls'] = vals['nominal_flow'] / 3.6
+        flow_field_pairs = {
+            'nominal_flow': 'nominal_flow_ls',
+            'nominal_flow_granted': 'nominal_flow_ls_granted',
+            'nominal_flow_issued': 'nominal_flow_ls_issued',
+        }
+        for m3h_field, ls_field in flow_field_pairs.items():
+            if use_flow_ls and ls_field in vals:
+                vals[m3h_field] = vals[ls_field] * 3.6
+            elif not use_flow_ls and m3h_field in vals:
+                vals[ls_field] = vals[m3h_field] / 3.6
         return super(WuaPresresconsumption, self).write(vals)
+
+    @api.multi
+    def unlink(self):
+        for record in self:
+            if (not self._context.get('force_remove') and
+                    (record.state == '02_granted' or
+                        record.state == '03_issued')):
+                raise exceptions.UserError(_(
+                    'You cannot delete a presresconsumption in a granted or '
+                    'issued state. First you must delete the watering.'))
+        return super(WuaPresresconsumption, self).unlink()
 
     @api.model
     def _get_waterconnection_id_domain(self):
@@ -442,29 +567,51 @@ class WuaPresresconsumption(models.Model):
 
     @api.model
     def fields_view_get(
-        self, view_id=None, view_type='form', toolbar=False,
+            self, view_id=None, view_type='form', toolbar=False,
             submenu=False):
         res = super(WuaPresresconsumption, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar,
-            submenu=submenu)
+            submenu=submenu,
+        )
         use_flow_ls = self.env['ir.values'].sudo().get_default(
             'wua.irrigation.configuration',
-            'preswateringrequest_flow_liters_per_second')
+            'preswateringrequest_flow_liters_per_second',
+        )
         doc = etree.XML(res['arch'])
+        field_visibility = {
+            'nominal_flow': not use_flow_ls,
+            'nominal_flow_ls': use_flow_ls,
+            'nominal_flow_granted': not use_flow_ls,
+            'nominal_flow_ls_granted': use_flow_ls,
+            'nominal_flow_issued': not use_flow_ls,
+            'nominal_flow_ls_issued': use_flow_ls,
+        }
         if view_type in ['form', 'tree']:
-            for node in doc.xpath("//field[@name='nominal_flow']"):
-                node.set('invisible', '1' if use_flow_ls else '0')
-                node.set('modifiers', '{"tree_invisible": true, '
-                                      '"invisible": true}' if
-                         use_flow_ls else '{"tree_invisible": false, '
-                                          ' "invisible": false}')
-            for node in doc.xpath("//field[@name='nominal_flow_ls']"):
-                node.set('invisible', '0' if use_flow_ls else '1')
-                node.set('modifiers', '{"tree_invisible": false, '
-                                      ' "invisible": false}' if
-                         use_flow_ls else '{"tree_invisible": true, '
-                                      '"invisible": true}')
+            for field, visible in field_visibility.items():
+                for node in doc.xpath("//field[@name='%s']" % field):
+                    node.set('invisible', '0' if visible else '1')
+                    node.set(
+                        'modifiers',
+                        ('{"tree_invisible": false, "invisible": false}'
+                         if visible
+                         else '{"tree_invisible": true, "invisible": true}'),
+                    )
         res['arch'] = etree.tostring(doc, encoding='unicode')
+        # Now check the toolbar for avoiding select or unselect on not
+        # preswatering view
+        from_preswatering = self.env.context.get('from_preswatering', False)
+        if toolbar and not from_preswatering:
+            actions = res.get('toolbar', {}).get('action', [])
+            filtered_actions = [
+                action for action in actions
+                if action.get('xml_id') not in [
+                    'base_wua_pressurized_irrigation_request.'
+                    'wua_set_presresconsumption_as_selected',
+                    'base_wua_pressurized_irrigation_request.'
+                    'wua_set_presresconsumption_as_unselected',
+                ]
+            ]
+            res['toolbar']['action'] = filtered_actions
         return res
 
     @api.multi

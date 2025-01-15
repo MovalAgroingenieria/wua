@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-18 13:04+0000\n"
-"PO-Revision-Date: 2024-12-18 13:04+0000\n"
+"POT-Creation-Date: 2025-01-15 14:33+0000\n"
+"PO-Revision-Date: 2025-01-15 14:33+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -65,6 +65,13 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringperiod_view_form
 msgid "<span class=\"o_stat_text\">\n"
 "                                        Watering Requests\n"
+"                                    </span>"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
+msgid "<span class=\"o_stat_text\">\n"
+"                                        consumptions\n"
 "                                    </span>"
 msgstr ""
 
@@ -170,14 +177,17 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_pivot
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_pivot
 msgid "Agregated Values"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_agriculturalseason_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_agriculturalseason_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_agriculturalseason_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_agriculturalseason_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringperiod_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_partner_view_search
 msgid "Agricultural Season"
@@ -189,8 +199,24 @@ msgid "Apply"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
+msgid "Are you sure you want to do this operation?"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form
 msgid "Bring Waterconnections"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
+msgid "Calculate"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_search
+#: selection:wua.preswatering,state:0
+msgid "Calculated"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -206,6 +232,7 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wizard_copy_preswateringrequests_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wizard_generate_preswateringperiods_view_form
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
 msgid "Cancel"
 msgstr ""
 
@@ -251,7 +278,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_irrigation_configuration
-msgid "Configuration of irrigation with type of water"
+msgid "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -302,6 +329,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_copy_preswateringrequests_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_create_uid
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_create_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_create_uid
 msgid "Created by"
@@ -324,11 +352,13 @@ msgid "Created by the partner"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_to_select_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
 msgid "Created by the partner: No"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_to_select_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
 msgid "Created by the partner: Yes"
 msgstr ""
@@ -337,6 +367,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_copy_preswateringrequests_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_create_date
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_create_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_create_date
 msgid "Created on"
@@ -368,6 +399,7 @@ msgid "Default Request Initial Hour"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_description
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_description
 msgid "Description"
 msgstr ""
@@ -381,12 +413,15 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_copy_preswateringrequests_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_display_name
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_display_name
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_display_name
 msgid "Display Name"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_search
+#: selection:wua.preswatering,state:0
 #: selection:wua.preswateringrequest,state:0
 msgid "Draft"
 msgstr ""
@@ -409,6 +444,11 @@ msgid "Entity (agricultural season)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_preswatering
+msgid "Entity (preswatering)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_waterconnection
 msgid "Entity (water connection)"
 msgstr ""
@@ -416,6 +456,11 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_request
 #: sql_constraint:wua.preswateringperiod:0
 msgid "Existing Preswatering Period."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: sql_constraint:wua.preswatering:0
+msgid "Existing Preswatering."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -439,6 +484,19 @@ msgid "Generate periods of current agricultural season"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
+#: selection:wua.presresconsumption,state:0
+msgid "Granted"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_watering_volume_granted
+msgid "Granted Volume"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_to_select_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringperiod_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
@@ -452,6 +510,7 @@ msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_hydraulicsector_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_to_select_view_search
 msgid "Hydraulic Sector"
 msgstr ""
 
@@ -459,6 +518,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_copy_preswateringrequests_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_id
 msgid "ID"
@@ -485,6 +545,16 @@ msgid "Initial Date"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_initial_time
+msgid "Initial Time"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_initialized
+msgid "Initialized"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_interval
 msgid "Interval (days)"
 msgstr ""
@@ -505,15 +575,37 @@ msgid "Irrigation Shed"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_to_select_view_search
+msgid "Irrigationshed"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_partner_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_partner_id
 msgid "Irrigator"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
+msgid "Issue Presres."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
+#: selection:wua.presresconsumption,state:0
+msgid "Issued"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_watering_volume_issued
+msgid "Issued Volume"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_copy_preswateringrequests___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption___last_update
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod___last_update
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest___last_update
 msgid "Last Modified on"
@@ -523,6 +615,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_copy_preswateringrequests_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_write_uid
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_write_uid
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_write_uid
 msgid "Last Updated by"
@@ -532,6 +625,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_copy_preswateringrequests_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wizard_generate_preswateringperiods_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_write_date
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_write_date
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_write_date
 msgid "Last Updated on"
@@ -559,26 +653,62 @@ msgid "Modification Message"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:382
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:460
 #, python-format
 msgid "Modifications allowed until {}"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_nominal_flow_ls
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
 msgid "Nominal Flow (l/s)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
-#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_nominal_flow
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
 msgid "Nominal Flow (m³/h)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_nominal_flow_ls_granted
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_nominal_flow_ls_granted
+msgid "Nominal Flow Granted (l/s)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_nominal_flow_granted
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_nominal_flow_granted
+msgid "Nominal Flow Granted (m³/h)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_nominal_flow_ls_issued
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_nominal_flow_ls_issued
+msgid "Nominal Flow Issued (l/s)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_nominal_flow_issued
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_nominal_flow_issued
+msgid "Nominal Flow Issued (m³/h)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_nominal_flow_ls
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_nominal_flow_ls_requested
+msgid "Nominal Flow Requested (l/s)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_nominal_flow
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_nominal_flow_requested
+msgid "Nominal Flow Requested (m³/h)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_notes
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringperiod_notes
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_notes
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringperiod_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form
 msgid "Notes"
@@ -607,6 +737,11 @@ msgid "Number of consumptions"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_number_of_presresconsumptions
+msgid "Number of presresconsumptions"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_agriculturalseason_number_of_preswateringperiods
 msgid "Number of preswateringperiods"
 msgstr ""
@@ -618,6 +753,8 @@ msgid "Number of preswateringrequests"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_is_open
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringperiod_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_partner_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
@@ -649,6 +786,16 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,help:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_credit_overdue
 msgid "Overdue amount this customer owes you."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_to_select_view_search
+msgid "Partner"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
+msgid "Partner WUA"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -708,8 +855,24 @@ msgid "PresWatering Requests"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_presresconsumption_ids
+msgid "Presres Consumptions"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_calendar
 msgid "Presresconsumption"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:426
+#, python-format
+msgid "Presresconsumptions"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_presresconsumptions_issued
+msgid "Presresconsumptions Issued"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -723,7 +886,21 @@ msgid "Presurized Watering Requests"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_preswatering_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_name
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
+msgid "Preswatering"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_preswatering_end_time
+msgid "Preswatering End Time"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_preswateringperiod
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_preswateringperiod_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_search
 msgid "Preswatering Period"
 msgstr ""
 
@@ -746,6 +923,37 @@ msgstr ""
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_irrigation_config_settings_view_form
 #, python-format
 msgid "Preswatering Requests"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_preswatering_initial_time
+msgid "Preswatering Start Time"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_preswatering_duration
+msgid "Preswatering Time (min)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_preswatering_volume_granted
+msgid "Preswatering Vol. Granted (m³)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_preswatering_volume_issued
+msgid "Preswatering Vol. Issued (m³)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_preswatering_volume
+msgid "Preswatering Vol. Requested (m³)"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_request.wua_preswatering_action
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_request.wua_preswatering_menu
+msgid "Preswaterings"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -775,7 +983,15 @@ msgid "Recurrence Interval (days)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_rejected
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
+msgid "Rejected"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_preswateringrequest_id
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_to_select_view_search
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
 msgid "Request"
 msgstr ""
 
@@ -787,6 +1003,11 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_request_time
 msgid "Request Time"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_state
+msgid "Request state"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -802,6 +1023,27 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
 msgid "Search Presurized Watering Requests"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
+msgid "Select"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_request.wua_set_presresconsumption_as_selected
+msgid "Select for calculation"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_selected
+msgid "Selected"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:479
+#, python-format
+msgid "Selection of presresconsumption for the calculation process"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -821,6 +1063,7 @@ msgid "Start Date"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringperiod_view_search
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_partner_view_search
 msgid "State"
@@ -872,6 +1115,11 @@ msgid "The interval must be greater than 0."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: sql_constraint:wua.preswatering:0
+msgid "The preswatering number must be a positive value."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: code:addons/base_wua_pressurized_irrigation_request/wizard/wizard_generate_preswateringperiods.py:56
 #, python-format
 msgid "The range of dates must be within the agricultural season."
@@ -880,6 +1128,12 @@ msgstr ""
 #. module: base_wua_pressurized_irrigation_request
 #: sql_constraint:wua.preswateringrequest:0
 msgid "The request code must be unique."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:208
+#, python-format
+msgid "The start date of the preswatering (%s) must be within the period (%s - %s)."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -915,6 +1169,11 @@ msgid "Total"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.actions.server,name:base_wua_pressurized_irrigation_request.wua_set_presresconsumption_as_unselected
+msgid "Unselect for calculation"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_user_id
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswateringrequest_user_id
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
@@ -922,13 +1181,21 @@ msgid "User"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form
 msgid "Validate"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_search
+#: selection:wua.preswatering,state:0
 #: selection:wua.preswateringrequest,state:0
 msgid "Validated"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswatering_view_form
+msgid "Values"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
@@ -955,6 +1222,11 @@ msgid "Watering Duration (Hours)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_number
+msgid "Watering Number"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_search
 msgid "Watering Period"
 msgstr ""
@@ -975,6 +1247,11 @@ msgid "Watering Volume (m³)"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_to_select_view_search
+msgid "Waterpipe"
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
 #: model:mail.template,subject:base_wua_pressurized_irrigation_request.wua_preswatering_weekly_email_template
 msgid "Weekly Watering Schedule"
 msgstr ""
@@ -990,20 +1267,32 @@ msgid "Year"
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:445
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:454
 #, python-format
 msgid "You cannot delete a closed press watering request."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:448
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:548
+#, python-format
+msgid "You cannot delete a presresconsumption in a granted or issued state. First you must delete the watering."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:393
+#, python-format
+msgid "You cannot delete a preswatering if there are issued consumptions."
+msgstr ""
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:457
 #, python-format
 msgid "You cannot delete a validated press watering request."
 msgstr ""
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:365
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:375
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:367
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:377
 #, python-format
 msgid "You do not have permission to edit data."
 msgstr ""

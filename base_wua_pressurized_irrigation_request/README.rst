@@ -2,18 +2,17 @@
    :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
    :alt: License: AGPL-3
 
-=========================================================
-Pressurized Irrigations Reports Requests for Water Users Associations
-=========================================================
+=============================================================
+Pressurized Irrigations Requests for Water Users Associations
+=============================================================
 
-This module adds 'Requests' to the irrigation reports, allowing the users to
-request irrigations reports.
+This module adds Pressurized Irrigation Requests.
 
 Description
 ===========
 
-Requests for Pressurized Irrigation Reports. Allows users and portal users to request some
-pressurized irrigations reports.
+Requests for Pressurized Irrigation. Allows users and portal users to request some
+pressurized irrigations.
 
 Credits
 =======

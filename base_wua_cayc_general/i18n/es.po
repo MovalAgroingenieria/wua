@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-17 10:38+0000\n"
-"PO-Revision-Date: 2024-12-17 10:38+0000\n"
+"POT-Creation-Date: 2025-01-15 14:05+0000\n"
+"PO-Revision-Date: 2025-01-15 14:05+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -71,7 +71,7 @@ msgid "A che parcel must have at least one class associated."
 msgstr "Una parcela padrón CHE debe tener al menos una clase asociada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:44
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:58
 #, python-format
 msgid "A new preswatering request has been created by user: %s on %s."
 msgstr "El usuario %s ha creado una nueva solictud el %s."
@@ -93,6 +93,21 @@ msgstr "Un perímetro de entidad no puede tener un socio padrón CHE asignado."
 #, python-format
 msgid "A primary partner must have a valid partner type ."
 msgstr "Un socio CAYC debe tener un tipo de socio válido."
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_gravity_outlet
+msgid "By Gravity Outlet"
+msgstr "Por salida gravedad"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_pumping
+msgid "By Pumping"
+msgstr "Por bombeo"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_surplus
+msgid "By Surplus"
+msgstr "Por Esplus"
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_form
@@ -176,6 +191,11 @@ msgstr "Elemento (captación)"
 #: model:ir.model,name:base_wua_cayc_general.model_wua_parcel
 msgid "Entity (parcel)"
 msgstr "Elemento (parcela)"
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_preswatering
+msgid "Entity (preswatering)"
+msgstr "Elemento (prorrateo)"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_waterconnection
@@ -326,8 +346,8 @@ msgid "Modules"
 msgstr "Módulos"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:46
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:57
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:60
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:69
 #, python-format
 msgid "New Preswatering Request"
 msgstr "Nuevo solicitud"
@@ -408,6 +428,11 @@ msgid "Parent Partner"
 msgstr "Comunidad Relacionada"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringrequest_partner_parcel_owner_area
+msgid "Partner Parcel Owner Area (ha)"
+msgstr "Área del socio (ha)"
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_partner_type
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_users_partner_type
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_parcel_partner_type
@@ -435,7 +460,12 @@ msgstr "Socios CAYC"
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_position
 msgid "Position"
-msgstr "Posición"
+msgstr "Posició"
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_preswateringperiod
+msgid "Preswatering Period"
+msgstr "Período de riego a presión"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_preswateringrequest
@@ -463,9 +493,25 @@ msgid "Primary Entity"
 msgstr "Entidad primaria"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_proration
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringperiod_proration
+msgid "Proration"
+msgstr "Prorrateo"
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_quotaperiod_line
+msgid "Quota-Period Line"
+msgstr "Línea de período de cupo"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_rebombed_flow_ls
+msgid "Rebombed Flow (l/s)"
+msgstr "Caudal rebombeado (l/s)"
+
+#. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_presresconsumption
 msgid "Request Consumption"
-msgstr "Consumo concedido"
+msgstr "Consumo"
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_form
@@ -530,13 +576,13 @@ msgid "The module value must be a multiple of 5."
 msgstr "El valor del módulo debe ser un mútliplo de 5."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:67
+#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:91
 #, python-format
 msgid "The nominal flow cannot be greater than the maximum_nominal_flow."
 msgstr "El valor de caudal nominal no puede ser mayor que el caudal máximo."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:55
+#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:79
 #, python-format
 msgid "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
 msgstr "El caudal de %s no es una combinación de los módulos del contador (%s -> %s)."
@@ -558,6 +604,12 @@ msgstr "La suma del área de las clases debe ser igual al área oficial."
 #, python-format
 msgid "The sum of parcel class areas must be the parcel official area."
 msgstr "La suma del área de las clases debe ser igual al área oficial."
+
+#. module: base_wua_cayc_general
+#: sql_constraint:wua.preswatering:0
+#: sql_constraint:wua.preswateringperiod:0
+msgid "The value of 'Proration' must be greater than 0."
+msgstr "El valor del 'prorrateo' debe ser mayor a 0."
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_partner_ids
@@ -626,6 +678,11 @@ msgstr "Posición dentro del contador ya existente."
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_search
 msgid "Zone"
 msgstr "Zona"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_zones_united
+msgid "Zones United"
+msgstr "Zonas unidas"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_gis_parcel_class_view

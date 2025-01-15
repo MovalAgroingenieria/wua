@@ -34,6 +34,7 @@
         "views/wua_preswateringperiod_view.xml",
         "views/wua_presresconsumption_view.xml",
         "views/wua_preswateringrequest_view.xml",
+        "views/wua_preswatering_view.xml",
         "views/wua_irrigation_configuration_view.xml",
     ],
     "installable": True,

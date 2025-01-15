@@ -333,6 +333,8 @@ class WuaPreswateringrequest(models.Model):
                         presresconsumption.watering_duration,
                     'nominal_flow':
                         presresconsumption.nominal_flow,
+                    'nominal_flow_ls':
+                        presresconsumption.nominal_flow_ls,
                     'initial_hour':
                         presresconsumption.initial_hour,
                 }))
@@ -378,14 +380,16 @@ class WuaPreswateringrequest(models.Model):
 
     @api.model
     def fields_view_get(
-        self, view_id=None, view_type='form', toolbar=False,
+            self, view_id=None, view_type='form', toolbar=False,
             submenu=False):
         res = super(WuaPreswateringrequest, self).fields_view_get(
             view_id=view_id, view_type=view_type, toolbar=toolbar,
-            submenu=submenu)
+            submenu=submenu,
+        )
         use_flow_ls = self.env['ir.values'].sudo().get_default(
             'wua.irrigation.configuration',
-            'preswateringrequest_flow_liters_per_second')
+            'preswateringrequest_flow_liters_per_second',
+        )
         if view_type in ['form']:
             fields = res.get('fields', {})
             presresconsumption_ids = fields.get('presresconsumption_ids', {})
@@ -393,18 +397,23 @@ class WuaPreswateringrequest(models.Model):
             tree_data = views.get('tree', None)
             if tree_data is not None:
                 doc = etree.XML(tree_data['arch'])
-                for node in doc.xpath("//field[@name='nominal_flow']"):
-                    node.set('invisible', '1' if use_flow_ls else '0')
-                    node.set(
-                        'modifiers', '{"tree_invisible": true, '
-                        '"invisible": true}' if use_flow_ls else
-                        '{"tree_invisible": false, "invisible": false}')
-                for node in doc.xpath("//field[@name='nominal_flow_ls']"):
-                    node.set('invisible', '0' if use_flow_ls else '1')
-                    node.set(
-                        'modifiers', '{"tree_invisible": false, "invisible": '
-                        'false}' if use_flow_ls else '{"tree_invisible": '
-                        'true, "invisible": true}')
+                field_visibility = {
+                    'nominal_flow': not use_flow_ls,
+                    'nominal_flow_ls': use_flow_ls,
+                    'nominal_flow_granted': not use_flow_ls,
+                    'nominal_flow_ls_granted': use_flow_ls,
+                    'nominal_flow_issued': not use_flow_ls,
+                    'nominal_flow_ls_issued': use_flow_ls,
+                }
+                for field, visible in field_visibility.items():
+                    for node in doc.xpath("//field[@name='%s']" % field):
+                        node.set('invisible', '0' if visible else '1')
+                        node.set(
+                            'modifiers',
+                            '{"tree_invisible": false, "invisible": false}' if
+                            visible else
+                            '{"tree_invisible": true, "invisible": true}',
+                        )
                 tree_data['arch'] = etree.tostring(doc, encoding='unicode')
                 res['fields']['presresconsumption_ids']['views']['tree'] = \
                     tree_data

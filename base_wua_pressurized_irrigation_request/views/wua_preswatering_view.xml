@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_preswatering_view_form" model="ir.ui.view">
+        <field name="name">Preswaterings (form view)</field>
+        <field name="model">wua.preswatering</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <field name="is_open" invisible="1"/>
+                <field name="initialized" invisible="1"/>
+                <field name="presresconsumptions_issued" invisible="1"/>
+                <header>
+                    <button name="select_presresconsumptions"
+                            type="object" string="Select"
+                            attrs="{'invisible':
+                                    [('state', '=', '03_validated')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="calculate_presresconsumptions"
+                            type="object" string="Calculate"
+                            attrs="{'invisible':
+                                    ['|',('initialized', '=', False),
+                                         ('state', '=', '03_validated')]}"
+                            groups="base_wua.group_wua_manager"/>
+                    <button name="validate_presresconsumptions"
+                            type="object" string="Validate"
+                            attrs="{'invisible':
+                                    [('state', '!=', '02_calculated')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <button name="issue_presresconsumptions"
+                            type="object" string="Issue Presres."
+                            attrs="{'invisible':
+                                    ['|', ('state', '!=', '03_validated'),
+                                     ('presresconsumptions_issued', '=', True)]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <button name="cancel_preswatering"
+                            type="object" string="Cancel"
+                            attrs="{'invisible':
+                                    [('state', '!=', '03_validated')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="01_draft,02_calculated,03_validated"/>
+                </header>
+                <sheet>
+                    <div name="buttons" class="oe_button_box">
+                        <img src="/base_wua_pressurized_irrigation_request/static/image/img_unlock.png"
+                             hspace="10"
+                             attrs="{'invisible':[('is_open', '=', False)]}"/>
+                        <img src="/base_wua_pressurized_irrigation_request/static/image/img_lock.png"
+                             hspace="10"
+                             attrs="{'invisible':[('is_open', '=', True)]}"/>
+                        <button name="action_see_presresconsumptions"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-moval-irrigation"
+                                attrs="{'invisible':
+                                        [('state','=','01_draft')]}">
+                                <div class="o_form_field o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_presresconsumptions"/>
+                                    </span>
+                                    <span class="o_stat_text">
+                                        consumptions
+                                    </span>
+                                </div>
+                        </button>
+                    </div>
+                    <group name="master_data">
+                        <group name="master_data_left">
+                            <field name="preswateringperiod_id"
+                                   options="{'no_quick_create':True,
+                                             'no_create_edit':True}"
+                                   attrs="{'readonly':[('initialized', '=', True)]}"
+                                   domain="[('state','=','01_open')]"/>
+                            <field name="number"
+                                   attrs="{'readonly':[('initialized', '=', True)]}"/>
+                            <field name="description"/>
+                        </group>
+                        <group name="master_data_right">
+                            <field name="initial_time"
+                                   attrs="{'readonly':[('state', '=', '03_validated')]}"/>
+                        </group>
+                    </group>
+                    <group name="slave_data">
+                        <notebook name="slave_data_notebook">
+                            <page name="values_page" string="Values">
+                                <group name="values_horizontal_group">
+                                    <group name="values_left">
+                                        <field name="preswatering_initial_time"
+                                               readonly="1"/>
+                                        <field name="preswatering_end_time"
+                                               readonly="1"/>
+                                    </group>
+                                    <group name="values_right">
+                                        <field name="preswatering_volume"/>
+                                        <field name="preswatering_volume_granted"/>
+                                        <field name="preswatering_volume_issued"/>
+                                        <field name="nominal_flow_requested"/>
+                                        <field name="nominal_flow_ls_requested"/>
+                                        <field name="nominal_flow_granted"/>
+                                        <field name="nominal_flow_ls_granted"/>
+                                        <field name="nominal_flow_issued"/>
+                                        <field name="nominal_flow_ls_issued"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page name="notes_page" string="Notes">
+                                <field name="notes"/>
+                            </page>
+                        </notebook>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_view_tree" model="ir.ui.view">
+        <field name="name">Preswaterings (tree view)</field>
+        <field name="model">wua.preswatering</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_pressurized_irrigation_request_watering_view_tree">
+                <field name="is_open" invisible="1"/>
+                <field name="preswateringperiod_id"/>
+                <field name="number"/>
+                <field name="initial_time"/>
+                <field name="preswatering_initial_time"/>
+                <field name="preswatering_end_time"/>
+                <field name="preswatering_volume"/>
+                <field name="preswatering_volume_granted"/>
+                <field name="preswatering_volume_issued"/>
+                <field name="state"/>
+                <button type="object" class="oe_stat_button"
+                        icon="fa-unlock"
+                        attrs="{'invisible':
+                                [('is_open','=',False)],
+                                'readonly':'1'}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_view_search" model="ir.ui.view">
+        <field name="name">Preswaterings (search view)</field>
+        <field name="model">wua.preswatering</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="preswateringperiod_id"/>
+                <field name="agriculturalseason_id"/>
+                <filter string="Open" name="isopen"
+                 domain="[('is_open','=',True)]"/>
+                <separator/>
+                <filter string="Draft" name="draft"
+                 domain="[('state','=','01_draft')]"/>
+                <filter string="Calculated" name="calculated"
+                 domain="[('state','=','02_calculated')]"/>
+                <filter string="Validated" name="validated"
+                 domain="[('state','=','03_validated')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agricultural Season"
+                     name="agriculturalseason"
+                     context="{'group_by':'agriculturalseason_id'}"/>
+                    <filter string="Preswatering Period"
+                     name="preswateringperiod"
+                     context="{'group_by':'preswateringperiod_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_view_pivot" model="ir.ui.view">
+        <field name="name">Preswaterings (pivot view)</field>
+        <field name="model">wua.preswatering</field>
+        <field name="arch" type="xml">
+            <pivot string="Agregated Values">
+                <field name="preswatering_duration" type="measure"/>
+                <field name="preswatering_volume" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_view_calendar" model="ir.ui.view">
+        <field name="name">Preswaterings (calendar view)</field>
+        <field name="model">wua.preswatering</field>
+        <field name="arch" type="xml">
+            <calendar date_start="preswatering_initial_time"
+                      date_stop="preswatering_end_time"
+                      mode="month"
+                      display="  [preswatering_volume] m3, [number_of_presresconsumptions] cons.">
+                <field name="preswatering_volume"/>
+                <field name="number_of_presresconsumptions"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="wua_presresconsumption_to_select_view_tree" model="ir.ui.view">
+        <field name="name">Presresconsumptions (tree view)</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <tree delete="false"
+                class="o_base_wua_pressurized_irrigation_request_presresconsumption_to_select_view_tree">
+                <field name="selected" invisible="1"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="request_time"/>
+                <field name="watering_duration"/>
+                <field name="nominal_flow"/>
+                <field name="nominal_flow_ls"/>
+                <field name="watering_volume"/>
+                <field name="waterconnection_id"/>
+                <field name="total_affected_area_official_hec"/>
+                <field name="partner_id"/>
+                <field name="is_portal_user"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_presresconsumption_to_select_view_search" model="ir.ui.view">
+        <field name="name">Presresconsumptions (search view)</field>
+        <field name="model">wua.presresconsumption</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="waterconnection_id"/>
+                <field name="irrigationshed_id"/>
+                <field name="waterpipe_id"/>
+                <field name="hydraulicsector_id"/>
+                <field name="partner_id"/>
+                <filter string="Created by the partner: Yes" name="isportaluseryes"
+                 domain="[('is_portal_user','=',True)]"/>
+                <filter string="Created by the partner: No" name="isportaluserno"
+                 domain="[('is_portal_user','=',False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner"
+                     name="partner"
+                     context="{'group_by':'partner_id'}"/>
+                    <filter string="Request"
+                            name="group_by_preswateringrequest"
+                            context="{'group_by': 'preswateringrequest_id'}"/>
+                    <filter string="Irrigationshed"
+                     name="irrigationshed"
+                     context="{'group_by':'irrigationshed_id'}"/>
+                    <filter string="Waterpipe"
+                     name="waterpipe"
+                     context="{'group_by':'waterpipe_id'}"/>
+                    <filter string="Hydraulic Sector"
+                     name="hydraulicsector"
+                     context="{'group_by':'hydraulicsector_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_preswatering_action" model="ir.actions.act_window">
+        <field name="name">Preswaterings</field>
+        <field name="res_model">wua.preswatering</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,pivot,calendar</field>
+        <field name="view_id" ref="wua_preswatering_view_tree"/>
+        <field name="search_view_id"
+         ref="wua_preswatering_view_search"/>
+        <field name="context">{'search_default_agriculturalseason': 1,
+                               'search_default_preswateringperiod': 1}</field>
+    </record>
+
+    <menuitem id="wua_preswatering_menu"
+              name="Preswaterings"
+              parent="wua_structure_irrigation.base_wua_pressurized_irrigation_menu"
+              action="wua_preswatering_action"
+              sequence="23"
+              groups="base_wua.group_wua_user"/>
+
+</odoo>

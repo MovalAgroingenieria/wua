@@ -11,7 +11,7 @@ msgstr "Socios CAYC"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_technical_presconsumptions_menu
 msgid "Pressurized Consumptions"
-msgstr "Consumos servidos"
+msgstr "Consumos (Toma)"
 
 #. module: wua_structure_irrigation
 #: model:ir.ui.menu,name:wua_structure_irrigation.base_wua_irrigation_menu
@@ -27,7 +27,7 @@ msgstr "Riegos"
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_calendar
 msgid "Presresconsumption"
-msgstr "Consumo concedido"
+msgstr "Consumo"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_request.wua_preswateringperiod_action
@@ -50,7 +50,7 @@ msgid "<span class=\"o_stat_text\">\n"
 "                                Request cons.\n"
 "                            </span>"
 msgstr "<span class=\"o_stat_text\">\n"
-"                                Cons. Concedido\n"
+"                                Cons.\n"
 "                            </span>"
 
 #. module: base_wua_pressurized_irrigation_request
@@ -63,7 +63,7 @@ msgid "<span class=\"o_stat_text\">\n"
 msgstr "<span class=\"o_stat_text\">\n"
 "                            Consumos\n"
 "                        </span><span class=\"o_stat_text\">\n"
-"                            concedidos\n"
+"                            \n"
 "                        </span>"
 
 #. module: base_wua_pressurized_irrigation_request
@@ -78,7 +78,7 @@ msgstr "<span class=\"o_stat_text\">\n"
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form
 #, python-format
 msgid "Consumption Requests"
-msgstr "Consumos concedidos"
+msgstr "Consumos"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_request.action_copy_preswateringrequests
@@ -128,7 +128,7 @@ msgstr "Solicitud"
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_calendar
 msgid "Presresconsumption"
-msgstr "Consumo concedido"
+msgstr "Consumo"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_form
@@ -162,7 +162,7 @@ msgstr "Solicitud"
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_presresconsumption
 msgid "Request Consumption"
-msgstr "Consumo concedido"
+msgstr "Consumo"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_request_time
@@ -199,7 +199,7 @@ msgstr "No se puede eliminar una solicitud validada."
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation.wua_presconsumption_view_graphic
 msgid "Pressure Consumptions"
-msgstr "Consumos Servidos"
+msgstr "Consumos (Toma)"
 
 #. module: base_wua_pressurized_irrigation
 #: model:ir.model.fields,field_description:base_wua_pressurized_irrigation.field_wua_presconsumption_name
@@ -209,7 +209,7 @@ msgstr "Consumo servido"
 #. module: base_wua_pressurized_irrigation
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_technical_presconsumptions_menu
 msgid "Pressurized Consumptions"
-msgstr "Consumos servidos"
+msgstr "Consumos (toma)"
 
 #. module: base_wua_pressurized_irrigation
 #: code:addons/base_wua_pressurized_irrigation/models/wua_agriculturalseason.py:39
@@ -221,4 +221,67 @@ msgstr "Consumos servidos"
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation.wua_presconsumption_menu
 #, python-format
 msgid "Consumptions"
-msgstr "Consumos servidos"
+msgstr "Consumos"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.actions.report.xml,name:base_wua_pressurized_irrigation_request.action_wua_preswateringrequest_report
+#: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_preswateringrequest
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_calendar
+msgid "Preswatering Request"
+msgstr "Solicitudes riego"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.report_wua_preswateringrequest_document
+msgid "<strong>Preswatering Request</strong>"
+msgstr "<strong>Solicitud de riego</strong>"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_preswatering
+msgid "Entity (preswatering)"
+msgstr "Elemento (prorrateo)"
+
+#. module: base_wua_pressurized_irrigation_request
+#: sql_constraint:wua.preswatering:0
+msgid "Existing Preswatering."
+msgstr "Prorrateo ya existente."
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_presresconsumption_preswatering_id
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_name
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
+msgid "Preswatering"
+msgstr "Prorrateo"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.actions.act_window,name:base_wua_pressurized_irrigation_request.wua_preswatering_action
+#: model:ir.ui.menu,name:base_wua_pressurized_irrigation_request.wua_preswatering_menu
+msgid "Preswaterings"
+msgstr "Prorrateos"
+
+#. module: base_wua_pressurized_irrigation_request
+#: sql_constraint:wua.preswatering:0
+msgid "The preswatering number must be a positive value."
+msgstr "El nº de prorrateo debe ser mayor que 0."
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:208
+#, python-format
+msgid "The start date of the preswatering (%s) must be within the period (%s - %s)."
+msgstr "La fecha de inicio del prorrateo (%s) debe encontrarse dentro del periodo (%s - %s)."
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.model.fields,field_description:base_wua_pressurized_irrigation_request.field_wua_preswatering_number
+msgid "Watering Number"
+msgstr "Nº de prorrateo"
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:548
+#, python-format
+msgid "You cannot delete a presresconsumption in a granted or issued state. First you must delete the watering."
+msgstr "No puede eliminar un consumo en estado concedido o servido. Debe eliminar primero el prorrateo asociado."
+
+#. module: base_wua_pressurized_irrigation_request
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:392
+#, python-format
+msgid "You cannot delete a preswatering if there are issued consumptions."
+msgstr "No puede borrar un prorrateo de riego si ya hay algún consumo servido."

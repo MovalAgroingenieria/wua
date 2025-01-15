@@ -9,3 +9,4 @@ from . import wua_irrigation_configuration
 from . import wua_agriculturalseason
 from . import res_partner
 from . import wua_waterconnection
+from . import wua_preswatering

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-17 10:37+0000\n"
-"PO-Revision-Date: 2024-12-17 10:37+0000\n"
+"POT-Creation-Date: 2025-01-15 14:04+0000\n"
+"PO-Revision-Date: 2025-01-15 14:04+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -71,7 +71,7 @@ msgid "A che parcel must have at least one class associated."
 msgstr "Una parcel·la che ha de tenir almenys una classe assignada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:44
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:58
 #, python-format
 msgid "A new preswatering request has been created by user: %s on %s."
 msgstr "L'usuari %s ha creat una sol·licitud nova el %s."
@@ -93,6 +93,21 @@ msgstr "Una parcel·la primària no pot tenir un soci che assignat."
 #, python-format
 msgid "A primary partner must have a valid partner type ."
 msgstr "Un soci primari ha de tenir un tipus de soci vàlid."
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_gravity_outlet
+msgid "By Gravity Outlet"
+msgstr "Per sortida gravetat"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_pumping
+msgid "By Pumping"
+msgstr "Per bombament"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_surplus
+msgid "By Surplus"
+msgstr "Per Esplus"
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_form
@@ -176,6 +191,11 @@ msgstr "Element (captació)"
 #: model:ir.model,name:base_wua_cayc_general.model_wua_parcel
 msgid "Entity (parcel)"
 msgstr "Element (parcel·la)"
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_preswatering
+msgid "Entity (preswatering)"
+msgstr "Element (planificació de reg)"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_waterconnection
@@ -326,8 +346,8 @@ msgid "Modules"
 msgstr "Mòduls"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:46
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:57
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:60
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:69
 #, python-format
 msgid "New Preswatering Request"
 msgstr "Nova sol·licitud de preaigua"
@@ -408,6 +428,11 @@ msgid "Parent Partner"
 msgstr "Comunitat Relacionada"
 
 #. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringrequest_partner_parcel_owner_area
+msgid "Partner Parcel Owner Area (ha)"
+msgstr "Àrea del soci (ha)"
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_partner_type
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_users_partner_type
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_parcel_partner_type
@@ -438,6 +463,11 @@ msgid "Position"
 msgstr "Posición"
 
 #. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_preswateringperiod
+msgid "Preswatering Period"
+msgstr "Període de reg a pressió"
+
+#. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_preswateringrequest
 msgid "Preswatering Request"
 msgstr "Sol·licitud de reg a pressió"
@@ -461,6 +491,22 @@ msgstr "Entitas Primàries"
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_technical_parcel_class_gis_view_search
 msgid "Primary Entity"
 msgstr "Entitat primària"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_proration
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringperiod_proration
+msgid "Proration"
+msgstr "Prorrateig"
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_quotaperiod_line
+msgid "Quota-Period Line"
+msgstr "Línia de període de quota"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_rebombed_flow_ls
+msgid "Rebombed Flow (l/s)"
+msgstr "Cabal rebombeat (l/s)"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_presresconsumption
@@ -530,13 +576,13 @@ msgid "The module value must be a multiple of 5."
 msgstr "The module value must be a multiple of 5."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:67
+#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:91
 #, python-format
 msgid "The nominal flow cannot be greater than the maximum_nominal_flow."
 msgstr "The nominal flow cannot be greater than the maximum_nominal_flow."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:55
+#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:79
 #, python-format
 msgid "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
 msgstr "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
@@ -558,6 +604,12 @@ msgstr "La suma de làrea de les classes ha de ser igual a làrea oficial."
 #, python-format
 msgid "The sum of parcel class areas must be the parcel official area."
 msgstr "La suma de làrea de les classes ha de ser igual a làrea oficial."
+
+#. module: base_wua_cayc_general
+#: sql_constraint:wua.preswatering:0
+#: sql_constraint:wua.preswateringperiod:0
+msgid "The value of 'Proration' must be greater than 0."
+msgstr "El valor de "Prorració" ha de ser superior a 0."
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_partner_ids
@@ -626,6 +678,11 @@ msgstr "Watermeter position already exists."
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.view_partner_search
 msgid "Zone"
 msgstr "Zona"
+
+#. module: base_wua_cayc_general
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_zones_united
+msgid "Zones United"
+msgstr "Zones unides"
 
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_gis_parcel_class_view

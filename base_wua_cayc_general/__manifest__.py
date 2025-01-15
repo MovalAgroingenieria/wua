@@ -38,6 +38,7 @@
         "views/wua_presconsumption_view.xml",
         "views/wua_presresconsumption_view.xml",
         "views/wua_preswateringperiod_view.xml",
+        "views/wua_preswatering_view.xml",
         "views/wua_preswateringrequest_view.xml",
         "views/wua_reading_view.xml",
         "views/wua_negative_reading_view.xml",

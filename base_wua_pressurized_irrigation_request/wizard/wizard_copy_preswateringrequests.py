@@ -92,6 +92,8 @@ class WizardCopyPreswateringrequests(models.TransientModel):
                         presresconsumption.watering_duration,
                     'nominal_flow':
                         presresconsumption.nominal_flow,
+                    'nominal_flow_ls':
+                        presresconsumption.nominal_flow_ls,
                     'initial_hour':
                         presresconsumption.initial_hour,
                     'from_recurrence': True,
