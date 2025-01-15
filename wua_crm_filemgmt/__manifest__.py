@@ -30,6 +30,7 @@
         'reports/res_file_category_report_complaint.xml',
         'reports/res_file_category_report_custom.xml',
         'data/res_file_category_report_data.xml',
+        'reports/res_letter_report.xml',
     ],
     'installable': True,
     'application': False,
