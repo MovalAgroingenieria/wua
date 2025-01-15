@@ -40,34 +40,37 @@
                     </div>
                     <div style="width: 40%; display: table-cell; padding: 0px 8px;">
                         <p style="margin-bottom: 0px"><i>Shipping Address</i></p>
+                        <t t-set="shipping_address" t-value="False"/>
                         <t t-if="o.partner_id.child_ids">
                             <t t-foreach="o.partner_id.child_ids" t-as="address">
                                 <t t-if="address.type == 'delivery'">
                                     <t t-set="shipping_address" t-value="address"/>
-                                    <div>
-                                        <t t-if="shipping_address.name"><strong><span t-field="shipping_address.name"/></strong></t><br/>
-                                        <t t-if="shipping_address.street_type_show"><span t-field="shipping_address.street_type_show"/></t>
-                                        <t t-if="shipping_address.street"><span t-field="shipping_address.street"/></t>
-                                        <t t-if="shipping_address.street_num"><span t-field="shipping_address.street_num"/></t>
-                                        <t t-if="shipping_address.street2"><span t-field="shipping_address.street2"/></t>
-                                        <br/>
-                                        <t t-if="shipping_address.city"><span t-field="shipping_address.city"/></t>
-                                        <t t-if="shipping_address.zip">
-                                            <span>&amp;nbsp;-&amp;nbsp;</span>
-                                            <span t-field="shipping_address.zip"/>
-                                        </t>
-                                        <t id="state_address" t-if="shipping_address.state_id">
-                                            <span t-tag="span">(</span><span t-field="shipping_address.state_id"/>
-                                            <t t-if="not shipping_address.country_id"><span>)</span></t>
-                                            <t t-else=""><span>-</span></t>
-                                        </t>
-                                        <t id="country_address" t-if="shipping_address.country_id">
-                                            <t t-if="not shipping_address.state_id"><span>(</span></t>
-                                            <span t-field="shipping_address.country_id"></span><span>)</span>
-                                        </t>
-                                    </div>
                                 </t>
                             </t>
+                        </t>
+                        <t t-if="shipping_address">
+                            <div>
+                                <t t-if="shipping_address.name"><strong><span t-field="shipping_address.name"/></strong></t><br/>
+                                <t t-if="shipping_address.street_type_show"><span t-field="shipping_address.street_type_show"/></t>
+                                <t t-if="shipping_address.street"><span t-field="shipping_address.street"/></t>
+                                <t t-if="shipping_address.street_num"><span t-field="shipping_address.street_num"/></t>
+                                <t t-if="shipping_address.street2"><span t-field="shipping_address.street2"/></t>
+                                <br/>
+                                <t t-if="shipping_address.city"><span t-field="shipping_address.city"/></t>
+                                <t t-if="shipping_address.zip">
+                                    <span>&amp;nbsp;-&amp;nbsp;</span>
+                                    <span t-field="shipping_address.zip"/>
+                                </t>
+                                <t id="state_address" t-if="shipping_address.state_id">
+                                    <span t-tag="span">(</span><span t-field="shipping_address.state_id"/>
+                                    <t t-if="not shipping_address.country_id"><span>)</span></t>
+                                    <t t-else=""><span>-</span></t>
+                                </t>
+                                <t id="country_address" t-if="shipping_address.country_id">
+                                    <t t-if="not shipping_address.state_id"><span>(</span></t>
+                                    <span t-field="shipping_address.country_id"></span><span>)</span>
+                                </t>
+                            </div>
                         </t>
                         <t t-else="">
                             <div>
