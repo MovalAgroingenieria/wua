@@ -4,11 +4,14 @@ from openerp import api, fields, models
 
 class WuaWaterconnectionMailWizard(models.TransientModel):
     _name = 'wua.waterconnection.mail.wizard'
-    _description = 'Wizard para enviar correos masivos en WaterConnection'
     
+    shared_title = fields.Char(
+        string='Shared Title',
+        help='The title that will be included in the email for all selected records.'
+    )
     shared_text = fields.Text(
-        string='Texto compartido',
-        help='Texto que se incluirá en el correo para todos los registros seleccionados.'
+        string='Shared Text',
+        help='Text that will be included in the email for all selected records.'
     )
     
     @api.multi
@@ -44,29 +47,13 @@ class WuaWaterconnectionMailWizard(models.TransientModel):
             ctx = {
                 'default_model': 'wua.waterconnection',
                 'default_res_id': wc.id,
+                'shared_title': self.shared_title,
                 'shared_text': self.shared_text,
                 'partner_to_sent': partner_rec,
                 'partner_email': partner_email,
             }
             # Enviar el correo individual y obtener el ID de mail.mail generado
-            mail_id = template.with_context(ctx).send_mail(wc.id,
-                                                           force_send=True)
-            #
-            # # ─────────────────────────────────────────────────────────────
-            # # REGISTRAR EL CORREO EN EL MURO (chatter) DEL REGISTRO
-            # # ─────────────────────────────────────────────────────────────
-            # if mail_id:
-            #     mail_record = self.env['mail.mail'].browse(mail_id)
-            #     if mail_record and mail_record.mail_message_id:
-            #         # mail_message_id es el mensaje base que contiene la info del correo
-            #         original_msg = mail_record.mail_message_id
-            #
-            #         # Publicamos en el chatter del registro 'wc' el body y el subject
-            #         wc.message_post(
-            #             body=original_msg.body,
-            #             subject=mail_record.subject,
-            #             message_type='comment',
-            #             subtype='mail.mt_comment',
-            #         )
+            template.with_context(ctx).send_mail(wc.id, force_send=True)
+
         
         return True

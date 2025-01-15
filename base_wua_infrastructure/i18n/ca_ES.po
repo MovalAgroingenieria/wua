@@ -6,14 +6,32 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-22 11:19+0000\n"
-"PO-Revision-Date: 2024-11-22 11:19+0000\n"
+"POT-Creation-Date: 2025-01-15 14:58+0000\n"
+"PO-Revision-Date: 2025-01-15 14:58+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_infrastructure
+#: model:mail.template,body_html:base_wua_infrastructure.email_template_waterconnection_notice
+msgid "\n"
+"                \n"
+"                <p> ${ctx.get('shared_text')}</p>\n"
+"                \n"
+"            "
+msgstr "\n"
+"                \n"
+"                <p> ${ctx.get('shared_text')}</p>\n"
+"                \n"
+"            "
+
+#. module: base_wua_infrastructure
+#: model:mail.template,subject:base_wua_infrastructure.email_template_waterconnection_notice
+msgid " ${ctx.get('shared_title')} - ${object.name}"
+msgstr " ${ctx.get('shared_title')} - ${object.name}"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_report_document
@@ -250,6 +268,11 @@ msgid "Cancel"
 msgstr "Cancel·la"
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.view_wua_waterconnection_mail_wizard_form
+msgid "Cancell"
+msgstr "Cancel·la"
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_check_waterconnections_different_hydraulic_sectors
 msgid "Check Waterconnections Different Sector"
 msgstr "Comprovar preses en diferents sectors"
@@ -302,7 +325,7 @@ msgstr "Reg des del canal de la sèquia"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_uid
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_create_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_create_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_uid
 msgid "Created by"
 msgstr "Creat per"
@@ -323,7 +346,7 @@ msgstr "Creat per"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_create_date
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_create_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_create_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_create_date
 msgid "Created on"
 msgstr "Creat el"
@@ -392,7 +415,7 @@ msgstr "Dialog box to change the parcel name (code), with irrigation infrastruct
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_display_name
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_display_name
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_display_name
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_display_name
 msgid "Display Name"
@@ -440,7 +463,7 @@ msgid "Duplicated hydraulic order."
 msgstr "Nº ordre hidràulic duplicat"
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:359
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:361
 #, python-format
 msgid "Duplicated position."
 msgstr "Posició duplicada."
@@ -472,7 +495,7 @@ msgstr "Punt de subministrament en blanc."
 #: code:addons/base_wua_infrastructure/models/wua_irrigationditch.py:246
 #: code:addons/base_wua_infrastructure/models/wua_irrigationgate.py:175
 #: code:addons/base_wua_infrastructure/models/wua_irrigationshed.py:233
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:348
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:350
 #, python-format
 msgid "Empty Value."
 msgstr "Valor en blanc."
@@ -790,9 +813,9 @@ msgstr "Sectors hidràulics de la zona"
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_id_16125
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_id_14119
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_id_16190
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_id_14184
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_id
@@ -802,9 +825,9 @@ msgstr "Sectors hidràulics de la zona"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id_16158
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id_14152
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_id
 msgid "ID"
@@ -1094,6 +1117,7 @@ msgstr "És una parada"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection___last_update
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone___last_update
 msgid "Last Modified on"
@@ -1114,7 +1138,7 @@ msgstr "Última modificació a"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_write_uid
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_write_uid
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_uid
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_uid
 msgid "Last Updated by"
@@ -1135,7 +1159,7 @@ msgstr "Última actualització per"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_write_date
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_write_date
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_write_date
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone_write_date
 msgid "Last Updated on"
@@ -1478,6 +1502,17 @@ msgid "Sectors"
 msgstr "Sectors"
 
 #. module: base_wua_infrastructure
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.view_wua_waterconnection_mail_wizard_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_form
+msgid "Send Mails"
+msgstr "Enviar correus"
+
+#. module: base_wua_infrastructure
+#: model:ir.actions.act_window,name:base_wua_infrastructure.action_mail_wizard_waterconnection
+msgid "Send mail"
+msgstr "Enviar correu"
+
+#. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_serial_number
 msgid "Serial Number"
 msgstr "Nº sèrie"
@@ -1491,6 +1526,16 @@ msgstr "Diversos pagadors d'aigua: No"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Several water payers: Yes"
 msgstr "Diversos pagadors d'aigua: Sí"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_shared_text
+msgid "Shared Text"
+msgstr "Text compartit"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_shared_title
+msgid "Shared Title"
+msgstr "Títol compartit"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_some_parcel_several_waterpayers
@@ -1562,6 +1607,11 @@ msgstr "Tècnic"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_form
 msgid "Technical Characteristics"
 msgstr "Característiques tècniques"
+
+#. module: base_wua_infrastructure
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_shared_text
+msgid "Text that will be included in the email for all selected records."
+msgstr "Text que s'inclourà a l'email per a tots els registres seleccionats."
 
 #. module: base_wua_infrastructure
 #: sql_constraint:wua.zone:0
@@ -1639,6 +1689,11 @@ msgid "The position must be a positive value."
 msgstr "La posició ha de ser un valor positiu."
 
 #. module: base_wua_infrastructure
+#: model:ir.model.fields,help:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_shared_title
+msgid "The title that will be included in the email for all selected records."
+msgstr "El títol que s'inclourà a l'email per a tots els registres seleccionats."
+
+#. module: base_wua_infrastructure
 #: sql_constraint:wua.irrigationditch:0
 msgid "The water flow must be a value zero or positive."
 msgstr "El mòdul de reg no pot ser un valor negatiu."
@@ -1673,7 +1728,7 @@ msgid "This irrigation gate is present in some parcels: It is not possible to ch
 msgstr "El tablacho està present en alguna parcel·la: No es pot canviar la sèquia."
 
 #. module: base_wua_infrastructure
-#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:395
+#: code:addons/base_wua_infrastructure/models/wua_waterconnection.py:397
 #, python-format
 msgid "This water connection is present in some parcels: It is not possible to change the irrigation shed."
 msgstr "La presa està present en alguna parcel·la: No es pot canviar la caseta."
@@ -1931,3 +1986,8 @@ msgstr "Zones"
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner_waterconnection
 msgid "res.partner.waterconnection"
 msgstr "res.partner.waterconnection"
+
+#. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_waterconnection_mail_wizard
+msgid "wua.waterconnection.mail.wizard"
+msgstr "wua.waterconnection.mail.wizard"
