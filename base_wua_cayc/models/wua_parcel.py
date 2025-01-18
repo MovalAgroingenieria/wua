@@ -518,7 +518,7 @@ class WuaParcel(models.Model):
         filtered_parcel_classes = parcel_classes.search(
             [('parcel_id', '=', parcel_id)])
         filtered_parcel_classes.write({
-            'active': active
+            'active': active,
         })
 
 

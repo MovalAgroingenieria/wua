@@ -97,7 +97,7 @@ class ResPartner(models.Model):
         for record in self:
             if record.partner_type == '01_WUA' and not record.is_independent:
                 raise exceptions.ValidationError(
-                    _('A Water User Association partner must be independent.')
+                    _('A Water User Association partner must be independent.'),
                 )
 
     @api.constrains('partner_code')
@@ -382,7 +382,9 @@ class ResPartner(models.Model):
         # Padder for partner code of che partners
         wuabase_padder = code_of_wuabase * 10000
         connected_to_db = False
+        some_error = False
         try:
+            self.env.cr.savepoint()
             connect_query = self._get_wuabase_connect_query(wuabase)
             self._open_server_connection(connect_query)
             connected_to_db = True
@@ -393,8 +395,7 @@ class ResPartner(models.Model):
                 [('partner_code', '>', wuabase_padder),
                  ('partner_code', '<', wuabase_padder + 10000),
                  ('partner_code', 'not in', partner_codes)])
-            for partner in partners_not_in_base:
-                partner.active = False
+            partners_not_in_base.write({'active': False})
             # Get partners from remote and create or edit (Unarchive if
             # necessary)
             for pc in partner_codes:
@@ -408,12 +409,15 @@ class ResPartner(models.Model):
                     self._create_partner_from_remote(pc, partner_code_che)
             # Update partnerlinks of mapped parcels
             parcels_to_update = wuabase.parcel_mapped_ids
+            all_partnerlinks = parcels_to_update.mapped('partnerlink_ids')
+            if all_partnerlinks:
+                all_partnerlinks.unlink()
             for parcel in parcels_to_update:
                 partnerlinks_of_parcel = self.\
                     _get_partnerlinks_of_parcel_from_remote(parcel, wuabase)
                 # Empty and add the new partnerlink data
                 # (5, 0, 0) not working because write on base_wua
-                parcel.partnerlink_ids.unlink()
+                # parcel.partnerlink_ids.unlink()
                 if (partnerlinks_of_parcel):
                     # Empty and then add
                     # partnerlinks_of_parcel.insert(0, (5, 0, 0))
@@ -421,30 +425,40 @@ class ResPartner(models.Model):
                         'partnerlink_ids': partnerlinks_of_parcel,
                     })
             wuabase.last_syncrhonization_date = fields.Datetime.now()
+            wuabase.message_post(
+                body="Synchronization of partners completed. %s partners " %
+                len(partner_codes))
+            self.env.cr.commit()
         except Exception as e:
             self.env.cr.rollback()
             _logger.error("An error occurred: %s", e)
             wuabase.message_post(
-                body="Error %s: " % e
+                body="Error %s: " % e,
             )
+            some_error = True
+            # Ensure message post is setted
+            self.env.cr.commit()
         finally:
             # Always close db connection if entablished
             if (connected_to_db):
                 self.env.cr.execute("""
                 SELECT dblink_disconnect('conn_to_crbase');
             """)
+        return some_error
 
     @api.model
     def refresh_partners(self):
         # Check parameters are filled
         wuabases = self.env['wua.wuabase'].search(
             [('server_connected', '=', True)],
-            order="last_syncrhonization_date asc")
+            order="last_syncrhonization_date asc",
+            limit=2)
+        some_error = False
         for wb in wuabases:
-            self.refresh_partners_of_wuabase(wb)
-            # For no retrying incorrect wuabases and correct ones get
-            # to syncrhonize
-            self.env.cr.commit()
+            some_error = self.refresh_partners_of_wuabase(wb)
+            # TODO: This can be improved to continue with the next wuabase
+            if some_error:
+                break
 
     @api.multi
     def action_see_secondary_parcels(self):
