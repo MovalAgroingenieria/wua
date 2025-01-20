@@ -11,6 +11,7 @@ class ResPartner(models.Model):
     credit_overdue = fields.Monetary(
         compute='_compute_credit_overdue',
         string='Overdue Receivable',
+        search='_search_credit_overdue',
         help="Overdue amount this customer owes you.")
 
     @api.multi
@@ -21,7 +22,8 @@ class ResPartner(models.Model):
         where_params = [tuple(self.ids)] + where_params
         if where_clause:
             where_clause = 'AND ' + where_clause
-        self.sudo()._cr.execute("""SELECT account_move_line.partner_id, act.type,
+        self.sudo()._cr.execute("""SELECT account_move_line.partner_id,
+                            act.type,
                             SUM(account_move_line.amount_residual)
                             FROM account_move_line
                             LEFT JOIN account_account a
@@ -40,6 +42,27 @@ class ResPartner(models.Model):
             partner = self.browse(pid)
             if act_type == 'receivable':
                 partner.credit_overdue = val
+
+    def _search_credit_overdue(self, operator, value):
+        tables, where_clause, where_params = self.env['account.move.line'].\
+            _query_get()
+        if where_clause:
+            where_clause = 'AND ' + where_clause
+        query = """
+            SELECT account_move_line.partner_id
+            FROM account_move_line
+            LEFT JOIN account_account a ON
+                (account_move_line.account_id = a.id)
+            LEFT JOIN account_account_type act ON (a.user_type_id = act.id)
+            WHERE act.type = 'receivable'
+              AND account_move_line.reconciled IS FALSE
+              AND current_date > account_move_line.date_maturity
+            GROUP BY account_move_line.partner_id
+            HAVING SUM(account_move_line.amount_residual) {operator} %s
+        """.format(operator=operator)
+        self.env.cr.execute(query + where_clause, [value] + where_params)
+        partner_ids = [row[0] for row in self.env.cr.fetchall()]
+        return [('id', 'in', partner_ids)]
 
     @api.multi
     def action_see_invoice_lines(self):
