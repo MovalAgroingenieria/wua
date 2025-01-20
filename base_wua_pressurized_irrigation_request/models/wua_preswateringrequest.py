@@ -460,3 +460,45 @@ class WuaPreswateringrequest(models.Model):
                 raise exceptions.UserError(_(
                     'You cannot delete a validated press watering request.'))
             return super(WuaPreswateringrequest, self).unlink()
+
+    @api.multi
+    def action_apply_changes_to_future_requests(self):
+        notification_template = self.env.ref(
+            'base_wua_pressurized_irrigation_request'
+            '.email_template_preswateringrequest_update')
+        for record in self:
+            future_requests = self.env['wua.preswateringrequest'].search([
+                ('preswateringperiod_id', '=',
+                 record.preswateringperiod_id.id),
+                ('initial_date', '>', record.initial_date),
+                ('partner_id', '=', record.partner_id.id),
+            ])
+            presresconsumption_vals = []
+            for presresconsumption in record.presresconsumption_ids:
+                presresconsumption_vals.append((0, 0, {
+                    'waterconnection_id':
+                        presresconsumption.waterconnection_id.id,
+                    'watering_duration':
+                        presresconsumption.watering_duration,
+                    'nominal_flow':
+                        presresconsumption.nominal_flow,
+                    'nominal_flow_ls':
+                        presresconsumption.nominal_flow_ls,
+                    'initial_hour':
+                        presresconsumption.initial_hour,
+                }))
+            for future_request in future_requests:
+                future_request.presresconsumption_ids.unlink()
+                future_request.write({
+                    'presresconsumption_ids': presresconsumption_vals,
+                })
+            consumptions = record.presresconsumption_ids.mapped(
+                lambda x: {
+                    'water_connection': x.waterconnection_id.name,
+                    'nominal_flow': x.nominal_flow_ls,
+                    'watering_duration': x.watering_duration,
+                    'watering_volume': x.watering_volume,
+                })
+            notification_template.with_context({
+                'data': {'consumptions': consumptions}}).send_mail(
+                record.id, force_send=True)

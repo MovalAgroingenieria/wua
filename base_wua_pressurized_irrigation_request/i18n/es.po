@@ -6,14 +6,75 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-15 14:34+0000\n"
-"PO-Revision-Date: 2025-01-15 14:34+0000\n"
+"POT-Creation-Date: 2025-01-20 10:51+0000\n"
+"PO-Revision-Date: 2025-01-20 10:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:mail.template,body_html:base_wua_pressurized_irrigation_request.email_template_preswateringrequest_update
+msgid "\n"
+"                \n"
+"\n"
+"                    <p>Dear ${object.partner_id.name | safe},</p>\n"
+"                    <p>Your watering request for the period has been updated. The following changes were applied:</p>\n"
+"\n"
+"                    <table border=\"1\" style=\"width: 100%; border-collapse: collapse; text-align: left;\">\n"
+"                        <thead>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\">Water Connection</th>\n"
+"                                <th style=\"padding: 8px;\">Nominal Flow (l/s)</th>\n"
+"                                <th style=\"padding: 8px;\">Duration (h)</th>\n"
+"                                <th style=\"padding: 8px;\">Volume (m³)</th>\n"
+"                            </tr>\n"
+"                        </thead>\n"
+"                        <tbody>\n"
+"                            % for consumption in ctx['data']['consumptions']:\n"
+"                                <tr>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('water_connection', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('nominal_flow_ls', '0.0')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('watering_duration', '0')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('watering_volume', '0.0')}</td>\n"
+"                                </tr>\n"
+"                            % endfor\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <p>Thank you.</p>\n"
+"                \n"
+"            "
+msgstr "\n"
+"                \n"
+"\n"
+"                    <p>Estimado/a ${object.partner_id.name | safe},</p>\n"
+"                    <p>Su solicitud de riego para el período ha sido actualizada. Se han aplicado los siguientes cambios:</p>\n"
+"\n"
+"                    <table border=\"1\" style=\"width: 100%; border-collapse: collapse; text-align: left;\">\n"
+"                        <thead>\n"
+"                            <tr style=\"background-color: #f2f2f2;\">\n"
+"                                <th style=\"padding: 8px;\">Toma</th>\n"
+"                                <th style=\"padding: 8px;\">Caudal Solicitado (l/s)</th>\n"
+"                                <th style=\"padding: 8px;\">Duración (h)</th>\n"
+"                                <th style=\"padding: 8px;\">Volumen (m³)</th>\n"
+"                            </tr>\n"
+"                        </thead>\n"
+"                        <tbody>\n"
+"                            % for consumption in ctx['data']['consumptions']:\n"
+"                                <tr>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('water_connection', '-')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('nominal_flow_ls', '0.0')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('watering_duration', '0')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('watering_volume', '0.0')}</td>\n"
+"                                </tr>\n"
+"                            % endfor\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <p>Gracias.</p>\n"
+"                \n"
+"            "
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:mail.template,body_html:base_wua_pressurized_irrigation_request.wua_preswatering_weekly_email_template
@@ -37,7 +98,7 @@ msgid "\n"
 "                                <tr>\n"
 "                                    <td style=\"padding: 8px;\">${consumption.get('date', '-')}</td>\n"
 "                                    <td style=\"padding: 8px;\">${consumption.get('water_connection', '-')}</td>\n"
-"                                    <td style=\"padding: 8px;\">${consumption.get('nominal_flow', '0.0')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('nominal_flow_ls', '0.0')}</td>\n"
 "                                    <td style=\"padding: 8px;\">${consumption.get('watering_duration', '0')}</td>\n"
 "                                    <td style=\"padding: 8px;\">${consumption.get('watering_volume', '0.0')}</td>\n"
 "                                </tr>\n"
@@ -51,33 +112,33 @@ msgid "\n"
 "            "
 msgstr "\n"
 "                \n"
-"                    <p>Estimado/a <strong>${object.name}</strong>,</p>\n"
-"                    <p>Nos complace proporcionarle su calendario de riego para la próxima semana. A continuación, encontrará los detalles de sus consumos programados:</p>\n"
+"                    <p style=\"margin:0px 0px 9px 0px;\">Estimado/a <strong style=\"font-weight:bold;\">${object.name}</strong>,</p>\n"
+"                    <p style=\"margin:0px 0px 9px 0px;\">Nos complace proporcionarle su calendario de riego para la próxima semana. A continuación, encontrará los detalles de sus consumos programados:</p>\n"
 "\n"
-"                    <table border=\"1\" style=\"width: 100%; border-collapse: collapse; text-align: left;\">\n"
+"                    \n"
+"                            % for consumption in ctx['data']['consumptions']:\n"
+"                                \n"
+"                            % endfor\n"
+"                        <table border=\"1\" style=\"background-color:transparent;border-spacing:0px;border-collapse:collapse;width: 100%; border-collapse: collapse; text-align: left;\">\n"
 "                        <thead>\n"
 "                            <tr style=\"background-color: #f2f2f2;\">\n"
-"                                <th style=\"padding: 8px;\">Fecha</th>\n"
-"                                <th style=\"padding: 8px;\">Toma</th>\n"
-"                                <th style=\"padding: 8px;\">Caudal Nominal (l/s)</th>\n"
-"                                <th style=\"padding: 8px;\">Duración (h)</th>\n"
-"                                <th style=\"padding: 8px;\">Volumen (m³)</th>\n"
+"                                <th style=\"text-align:left;padding: 8px;\">Fecha</th>\n"
+"                                <th style=\"text-align:left;padding: 8px;\">Toma</th>\n"
+"                                <th style=\"text-align:left;padding: 8px;\">Caudal Solicitado (l/s)</th>\n"
+"                                <th style=\"text-align:left;padding: 8px;\">Duración (h)</th>\n"
+"                                <th style=\"text-align:left;padding: 8px;\">Volumen (m³)</th>\n"
 "                            </tr>\n"
 "                        </thead>\n"
-"                        <tbody>\n"
-"                            % for consumption in ctx['data']['consumptions']:\n"
-"                                <tr>\n"
+"                        <tbody><tr>\n"
 "                                    <td style=\"padding: 8px;\">${consumption.get('date', '-')}</td>\n"
 "                                    <td style=\"padding: 8px;\">${consumption.get('water_connection', '-')}</td>\n"
-"                                    <td style=\"padding: 8px;\">${consumption.get('nominal_flow', '0.0')}</td>\n"
+"                                    <td style=\"padding: 8px;\">${consumption.get('nominal_flow_ls', '0.0')}</td>\n"
 "                                    <td style=\"padding: 8px;\">${consumption.get('watering_duration', '0')}</td>\n"
 "                                    <td style=\"padding: 8px;\">${consumption.get('watering_volume', '0.0')}</td>\n"
-"                                </tr>\n"
-"                            % endfor\n"
-"                        </tbody>\n"
+"                                </tr></tbody>\n"
 "                    </table>\n"
 "\n"
-"                    <p>Si tiene alguna pregunta o necesita asistencia, no dude en ponerse en contacto con nosotros.</p>\n"
+"                    <p style=\"margin:0px 0px 9px 0px;\">Si tiene alguna pregunta o necesita asistencia, no dude en ponerse en contacto con nosotros.</p>\n"
 "                \n"
 "            "
 
@@ -146,7 +207,7 @@ msgid "<span class=\"o_stat_text\">\n"
 msgstr "<span class=\"o_stat_text\">\n"
 "                            Consumos\n"
 "                        </span><span class=\"o_stat_text\">\n"
-"                            concedidos\n"
+"                            \n"
 "                        </span>"
 
 #. module: base_wua_pressurized_irrigation_request
@@ -281,7 +342,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:236
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:237
 #, python-format
 msgid "Cannot create preswaterinrequests on a closed period "
 msgstr "No se puede crear una solicitud de riegos de presión en un periodo cerrado "
@@ -322,7 +383,7 @@ msgstr "Código"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_irrigation_configuration
-msgid "Configuration of base_wua_pressurized_irrigation module and base_wua_gravity_irrigation module)"
+msgid "Configuration of irrigation with type of water"
 msgstr "Configuración de riego con tipo de agua"
 
 #. module: base_wua_pressurized_irrigation_request
@@ -909,7 +970,7 @@ msgid "Presresconsumption"
 msgstr "Consumo de solicitud"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:426
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:427
 #, python-format
 msgid "Presresconsumptions"
 msgstr "Consumos de solicitud"
@@ -959,7 +1020,7 @@ msgstr "Períodos de riego a presión"
 #: model:ir.model,name:base_wua_pressurized_irrigation_request.model_wua_preswateringrequest
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_calendar
 msgid "Preswatering Request"
-msgstr "solicitudes riego a presión"
+msgstr "Solicitudes riego a presión"
 
 #. module: base_wua_pressurized_irrigation_request
 #: code:addons/base_wua_pressurized_irrigation_request/models/res_partner.py:78
@@ -999,6 +1060,11 @@ msgstr "Volumen solicitado (m³)"
 #: model:ir.ui.menu,name:base_wua_pressurized_irrigation_request.wua_preswatering_menu
 msgid "Preswaterings"
 msgstr "Planificaciones de riego"
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_preswateringrequest_view_form
+msgid "Propagate changes"
+msgstr "Propagar cambios"
 
 #. module: base_wua_pressurized_irrigation_request
 #: model:ir.ui.view,arch_db:base_wua_pressurized_irrigation_request.wua_presresconsumption_view_search
@@ -1085,7 +1151,7 @@ msgid "Selected"
 msgstr "Seleccionado"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:479
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:480
 #, python-format
 msgid "Selection of presresconsumption for the calculation process"
 msgstr "Selección de consumos de solicitud para el proceso de cálculo"
@@ -1147,7 +1213,7 @@ msgid "The duration must be a non-negative value."
 msgstr "La duración debe ser un valor no negativo."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:222
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:223
 #, python-format
 msgid "The end date of the recurrence (%s) must be within the period (%s - %s)."
 msgstr "La fecha final de la recurrencia (%s) debe estar dentro del período (%s - %s)."
@@ -1175,19 +1241,19 @@ msgid "The request code must be unique."
 msgstr "El código de la solicitud debe ser único."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:208
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:209
 #, python-format
 msgid "The start date of the preswatering (%s) must be within the period (%s - %s)."
 msgstr "La fecha de inicio de la planificación de riego (%s) debe encontrarse dentro del periodo (%s - %s)."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:204
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:205
 #, python-format
 msgid "The start date of the watering request (%s) must be within the period (%s - %s)."
 msgstr "La fecha de inicio de la solicitud de riego (%s) debe estar dentro del periodo (%s - %s)."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:193
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:194
 #, python-format
 msgid "The start date of the watering request must not beearlier than the current date."
 msgstr "La fecha de inicio de la solicitud de riego no debe ser anterior a la fecha actual."
@@ -1311,7 +1377,7 @@ msgid "Year"
 msgstr "Año"
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:454
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:457
 #, python-format
 msgid "You cannot delete a closed press watering request."
 msgstr "No puedes borrar una solicitud con periodo cerrado."
@@ -1320,24 +1386,29 @@ msgstr "No puedes borrar una solicitud con periodo cerrado."
 #: code:addons/base_wua_pressurized_irrigation_request/models/wua_presresconsumption.py:548
 #, python-format
 msgid "You cannot delete a presresconsumption in a granted or issued state. First you must delete the watering."
-msgstr "No puede eliminar un consumo de solictud en estado concedido o servido. Debe eliminar primero la planificación de riego asociada."
+msgstr "No puede eliminar un consumo en estado concedido o servido. Debe eliminar primero el prorrateo asociado."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:393
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswatering.py:394
 #, python-format
 msgid "You cannot delete a preswatering if there are issued consumptions."
 msgstr "No puede borrar una planificación de riego si ya hay algún consumo servido."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:457
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:460
 #, python-format
 msgid "You cannot delete a validated press watering request."
 msgstr "No se puede eliminar una solicitud validada."
 
 #. module: base_wua_pressurized_irrigation_request
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:367
-#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:377
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:368
+#: code:addons/base_wua_pressurized_irrigation_request/models/wua_preswateringrequest.py:378
 #, python-format
 msgid "You do not have permission to edit data."
 msgstr "No tienes permiso para editar estos datos."
+
+#. module: base_wua_pressurized_irrigation_request
+#: model:mail.template,subject:base_wua_pressurized_irrigation_request.email_template_preswateringrequest_update
+msgid "Your Preswatering Request has been Updated"
+msgstr "Su petición de riego ha sido actualizada"
 

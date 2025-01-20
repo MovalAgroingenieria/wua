@@ -20,6 +20,7 @@
     "data": [
         "data/wua_irrigation_config_settings_data.xml",
         "data/wua_preswatering_weekly_mail.xml",
+        "data/wua_preswateringrequest_changes_propagated_mail.xml",
         "data/wua_preswateringperiod_send_notifications_cron.xml",
         "data/wua_preswateringrequest_generate_recurrences_cron.xml",
         "security/ir.model.access.csv",
