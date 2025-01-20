@@ -590,12 +590,14 @@ class WuaPresresconsumption(models.Model):
             for field, visible in field_visibility.items():
                 for node in doc.xpath("//field[@name='%s']" % field):
                     node.set('invisible', '0' if visible else '1')
-                    node.set(
-                        'modifiers',
-                        ('{"tree_invisible": false, "invisible": false}'
-                         if visible
-                         else '{"tree_invisible": true, "invisible": true}'),
-                    )
+                    modifiers = node.get('modifiers')
+                    if modifiers:
+                        modifiers_dict = json.loads(modifiers)
+                    else:
+                        modifiers_dict = {}
+                    modifiers_dict['tree_invisible'] = not visible
+                    modifiers_dict['invisible'] = not visible
+                    node.set('modifiers', json.dumps(modifiers_dict))
         res['arch'] = etree.tostring(doc, encoding='unicode')
         # Now check the toolbar for avoiding select or unselect on not
         # preswatering view

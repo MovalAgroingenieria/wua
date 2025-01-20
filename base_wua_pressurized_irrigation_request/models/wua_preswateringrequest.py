@@ -3,6 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 import datetime
+import json
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
 from datetime import timedelta
@@ -408,12 +409,14 @@ class WuaPreswateringrequest(models.Model):
                 for field, visible in field_visibility.items():
                     for node in doc.xpath("//field[@name='%s']" % field):
                         node.set('invisible', '0' if visible else '1')
-                        node.set(
-                            'modifiers',
-                            '{"tree_invisible": false, "invisible": false}' if
-                            visible else
-                            '{"tree_invisible": true, "invisible": true}',
-                        )
+                        modifiers = node.get('modifiers')
+                        if modifiers:
+                            modifiers_dict = json.loads(modifiers)
+                        else:
+                            modifiers_dict = {}
+                        modifiers_dict['tree_invisible'] = not visible
+                        modifiers_dict['invisible'] = not visible
+                        node.set('modifiers', json.dumps(modifiers_dict))
                 tree_data['arch'] = etree.tostring(doc, encoding='unicode')
                 res['fields']['presresconsumption_ids']['views']['tree'] = \
                     tree_data

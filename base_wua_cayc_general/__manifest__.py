@@ -20,6 +20,7 @@
         "base_wua_pressurized_irrigation_request",
         "base_wua_infrastructure_pressurized_hierarchy",
         "base_wua_quota_management",
+        "wua_pressurized_irrigation_request_sinema",
     ],
     "data": [
         "security/security.xml",
@@ -27,6 +28,7 @@
         "data/res_partner_cron.xml",
         "data/wua_preswateringrequest_change_state_cron.xml",
         "data/wua_wuabase_data.xml",
+        "data/wua_preswatering_issue_cron.xml",
         "data/wua_octroi_data.xml",
         "data/wua_waterchannel_data.xml",
         "reports/wua_parcel_report.xml",

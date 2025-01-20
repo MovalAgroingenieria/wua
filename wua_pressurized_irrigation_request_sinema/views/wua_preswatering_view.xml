@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_preswatering_view_form" model="ir.ui.view">
+        <field name="name">wua.preswatering.form</field>
+        <field name="model">wua.preswatering</field>
+        <field name="inherit_id"
+               ref="base_wua_pressurized_irrigation_request.wua_preswatering_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='buttons']" position="before">
+                <div name="waterconnection_no_siemens" attrs="{'invisible': [('waterconnections_without_remotecontrol_msg', '=', False)]}" style="display: inline-block; margin-top: 10px;">
+                    <div class="panel-body" style="background:#ffe6e6; border-radius:4px; font-weight: bold; color:#ff0000; border-color:#ff0000; border-width:1px; border-style:solid; padding: 10px 20px;">
+                        <field name="waterconnections_without_remotecontrol_msg" nolabel="1"/>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

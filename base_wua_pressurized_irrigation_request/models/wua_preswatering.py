@@ -9,6 +9,7 @@ from lxml import etree
 
 
 class WuaPreswatering(models.Model):
+    _inherit = 'mail.thread'
     _name = 'wua.preswatering'
     _description = 'Entity (preswatering)'
     _order = 'agriculturalseason_id, preswateringperiod_id, number'
@@ -530,6 +531,7 @@ class WuaPreswatering(models.Model):
                 'nominal_flow_ls_issued':
                     presresconsumption.nominal_flow_ls_granted,
             })
+        return True
 
     @api.multi
     def calculate_presresconsumptions(self):
@@ -595,12 +597,20 @@ class WuaPreswatering(models.Model):
                  ('selected', '=', True),
                  ('rejected', '=', False),
                  ('state', '=', '02_granted')])
-        self._process_issued_nominal_flows(
+        issue_correct = self._process_issued_nominal_flows(
             presresconsumptions_to_issue, self)
-        presresconsumptions_to_issue.write({
-            'state': '03_issued',
-        })
-        self.presresconsumptions_issued = True
+        if (issue_correct):
+            presresconsumptions_to_issue.write({
+                'state': '03_issued',
+            })
+            self.presresconsumptions_issued = True
+        # Don't Raise, we need message posts to inform the user
+        # TODO: Now hooks will inform the user but should we also inform
+        # the user here? Issue always gonna be correct here if not further
+        # modules are installed.
+        # else:
+        #     raise exceptions.UserError(_(
+        #         'There was an error issuing the consumptions.'))
 
     # Hook: This method is called from descendant classes to refine
     # the condition to find presres-consumptions in the
