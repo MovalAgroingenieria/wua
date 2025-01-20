@@ -1446,7 +1446,7 @@ class WuaParcel(models.Model):
                                              'there are repeated partners.'))
             zero_or_one_lessee = \
                 self.zero_or_one_lessee(vals['partnerlink_ids'],
-                                        new_parcel.id)
+                                        new_parcel.id, False)
             if not zero_or_one_lessee:
                 raise exceptions.UserError(_('Two or more lessees is '
                                              'not allowed.'))
@@ -1496,7 +1496,12 @@ class WuaParcel(models.Model):
             if process_active_field:
                 self.do_process_active_field(vals['active'])
         super(WuaParcel, self).write(vals)
-        self.update_changed_partners_after_write(vals)
+        should_update_partners = True
+        if self.env.context and self.env.context.get(
+                'no_update_partners', False):
+            should_update_partners = False
+        if should_update_partners:
+            self.update_changed_partners_after_write(vals)
         return True
 
     @api.multi
@@ -2184,7 +2189,8 @@ class WuaParcel(models.Model):
                                          'percentages must be 100, or '
                                          'there are repeated partners.'))
         if ('partnerlink_ids' in vals and
-           (not self.zero_or_one_lessee(vals['partnerlink_ids'], self.id))):
+           (not self.zero_or_one_lessee(
+                vals['partnerlink_ids'], self.id, vals))):
             raise exceptions.UserError(_('Two or more lessees is '
                                          'not allowed.'))
         if ('partnerlink_ids' in vals and
@@ -2525,37 +2531,34 @@ class WuaParcel(models.Model):
                     partnerlink_vals['area_official'] = area_official
                     pos = pos + 1
 
-    def zero_or_one_lessee(self, partnerlink_ids, parcel_id):
+    def zero_or_one_lessee(self, partnerlink_ids, parcel_id, vals=False):
         resp = True
-        unchanged_ids = []
         detectec_lessee = False
+        unchanged_ids = []
         for partnerlink in partnerlink_ids:
-            partnerlink_oper = partnerlink[0]
-            partnerlink_id = partnerlink[1]
-            partnerlink_vals = partnerlink[2]
-            if partnerlink_oper == 4 or (partnerlink_oper == 1 and
-               'profile' not in partnerlink_vals):
+            operation, partnerlink_id, partnerlink_vals = partnerlink
+            if operation == 4 or (
+                    operation == 1 and 'profile' not in partnerlink_vals):
                 unchanged_ids.append(partnerlink_id)
-            if partnerlink_oper == 0 or (partnerlink_oper == 1 and
-               'profile' in partnerlink_vals):
-                if partnerlink_vals['profile'] == 'L':
+            if operation == 0 or (
+                    operation == 1 and 'profile' in partnerlink_vals):
+                if partnerlink_vals.get('profile') == 'L':
                     if detectec_lessee:
-                        return False
-                    else:
-                        detectec_lessee = True
-        if len(unchanged_ids) > 0:
-            filtered_partnerlinks = \
-                self.env['wua.parcel.partnerlink'].search(
-                    [('id', 'in', unchanged_ids)])
-            for partnerlink in filtered_partnerlinks:
+                        resp = False
+                    detectec_lessee = True
+        if unchanged_ids:
+            existing_partnerlinks = self.env['wua.parcel.partnerlink'].search(
+                [('id', 'in', unchanged_ids)],
+            )
+            for partnerlink in existing_partnerlinks:
                 if partnerlink.profile == 'L':
                     if detectec_lessee:
-                        return False
-                    else:
-                        detectec_lessee = True
-        # This is not to detect lessess, but to populate the
-        # leased_parcel field.
-        self.populate_leased_parcel(parcel_id, detectec_lessee)
+                        resp = False
+                    detectec_lessee = True
+        if (not vals):
+            self.populate_leased_parcel(parcel_id, detectec_lessee)
+        else:
+            vals['leased_parcel'] = detectec_lessee
         return resp
 
     # This method can be redefined in another class (when the

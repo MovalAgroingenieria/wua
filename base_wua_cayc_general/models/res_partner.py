@@ -421,7 +421,7 @@ class ResPartner(models.Model):
                 if (partnerlinks_of_parcel):
                     # Empty and then add
                     # partnerlinks_of_parcel.insert(0, (5, 0, 0))
-                    parcel.write({
+                    parcel.with_context(no_update_partners=True).write({
                         'partnerlink_ids': partnerlinks_of_parcel,
                     })
             wuabase.last_syncrhonization_date = fields.Datetime.now()
