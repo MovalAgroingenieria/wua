@@ -495,7 +495,7 @@ class WuaPreswateringrequest(models.Model):
             consumptions = record.presresconsumption_ids.mapped(
                 lambda x: {
                     'water_connection': x.waterconnection_id.name,
-                    'nominal_flow': x.nominal_flow_ls,
+                    'nominal_flow_ls': x.nominal_flow_ls,
                     'watering_duration': x.watering_duration,
                     'watering_volume': x.watering_volume,
                 })

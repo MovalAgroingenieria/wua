@@ -249,7 +249,7 @@ class WuaPreswateringperiod(models.Model):
                 partner_consumptions[partner_id].append({
                     'date': formatted_request_time,
                     'water_connection': consumption.waterconnection_id.name,
-                    'nominal_flow': consumption.nominal_flow_ls,
+                    'nominal_flow_ls': consumption.nominal_flow_ls,
                     'watering_duration': consumption.watering_duration,
                     'watering_volume': consumption.watering_volume,
                 })
