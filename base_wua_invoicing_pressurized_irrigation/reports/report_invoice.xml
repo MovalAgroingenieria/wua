@@ -65,6 +65,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <t t-set="total_lines_quantity_sum" t-value="0"/>
+                                    <t t-set="amount_total_sum" t-value="0"/>
                                     <t t-foreach="wizard.invoice_ids.filtered(lambda inv: connection.id in inv.invoice_line_ids.mapped('waterconnection_id.id'))" t-as="invoice">
                                         <t t-set="total_lines_quantity" t-value="0"/>
                                         <t t-set="other_names" t-value="[]"/>
@@ -92,7 +94,15 @@
                                                 </t>
                                             </td>
                                         </tr>
+                                        <t t-set="total_lines_quantity_sum" t-value="total_lines_quantity_sum + total_lines_quantity"/>
+                                        <t t-set="amount_total_sum" t-value="amount_total_sum + invoice.amount_total"/>
                                     </t>
+                                    <tr>
+                                        <td colspan="4" class="text-right"><strong>Total:</strong></td>
+                                        <td name="total_lines_quantity_sum_td"><span t-esc="total_lines_quantity_sum"/></td>
+                                        <td name="amount_total_sum_td"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(amount_total_sum,2)"/></td>
+                                        <td></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
