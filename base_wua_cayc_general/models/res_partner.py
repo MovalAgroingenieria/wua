@@ -12,10 +12,10 @@ class ResPartner(models.Model):
     _inherit = 'res.partner'
 
     FIELDS_TO_RECOVER_FROM_REMOTE = [
-        'name', 'lastname', 'lastname2', 'email', 'phone', 'mobile',
-        'street', 'street2', 'city', 'zip', 'state_id', 'country_id', 'title',
-        'is_company', 'type', 'website', 'vat', 'lang', 'tz', 'is_wua_partner',
-        'comment', 'street_num',
+        'name', 'firstname', 'lastname', 'lastname2', 'email', 'phone',
+        'mobile', 'street', 'street2', 'city', 'zip', 'state_id', 'country_id',
+        'title', 'is_company', 'type', 'website', 'vat', 'lang', 'tz',
+        'is_wua_partner', 'comment', 'street_num',
     ]
 
     is_primary = fields.Boolean(
