@@ -13,7 +13,7 @@ class ResPartner(models.Model):
 
     FIELDS_TO_RECOVER_FROM_REMOTE = [
         'name', 'firstname', 'lastname', 'lastname2', 'email', 'phone',
-        'mobile', 'street', 'street2', 'city', 'zip', 'state_id', 'country_id',
+        'mobile', 'street', 'street2', 'city', 'zip',
         'title', 'is_company', 'type', 'website', 'vat', 'lang', 'tz',
         'is_wua_partner', 'comment', 'street_num',
     ]
