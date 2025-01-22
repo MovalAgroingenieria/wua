@@ -61,6 +61,17 @@ class WuaInvoiceset(models.Model):
                 """
                 self.env.cr.execute(
                     query_update_presconsumption, (hydricmovement_ids,))
+                # TODO: This is updating all readings, not only the ones
+                # related to the hydricmovements in hydricmovement_ids we
+                # should filter the readings to update only the ones related
+                query_update_reading = """
+                    UPDATE wua_reading wr1
+                    SET invoiced_reading_quota = TRUE
+                    FROM wua_presconsumption wp1
+                    WHERE wr1.presconsumption_id = wp1.id
+                    AND wp1.invoiced_consumption_quota
+                """
+                self.env.cr.execute(query_update_reading)
                 # irrigationreport invoiced if some = the last invoice
                 query_update_irrigationreport = """
                     UPDATE wua_irrigationreport wi1

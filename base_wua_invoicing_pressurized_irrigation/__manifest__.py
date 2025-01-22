@@ -6,14 +6,15 @@
     "name": "Water Users Association: Invoicing of Pressure Consumptions",
     "summary": "In a water users association, global invoicing "
                "based on a selection of pressure irrigation consumptions",
-    "version": '10.0.1.1.1',
+    "version": '10.0.1.1.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
     "license": "AGPL-3",
     "depends": [
         "base_wua_pressurized_irrigation",
-        "base_wua_invoicing", ],
+        "base_wua_invoicing",
+    ],
     "data": [
         "security/ir.model.access.csv",
         "data/product_category_data.xml",

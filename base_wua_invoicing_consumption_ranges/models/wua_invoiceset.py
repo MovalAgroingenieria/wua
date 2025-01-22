@@ -278,11 +278,22 @@ class WuaInvoicesetLine(models.Model):
                           product_id, product_tmpl_id))
                 self.env.cr.execute("""
                     UPDATE wua_presconsumption
-                    SET invoiceset_id=""" + str(self.invoiceset_id.id) + """,
-                    invoiced_consumption=TRUE
-                    WHERE (product_id=""" + str(product_id) + """
-                    or product_id=""" + str(product_tmpl_id) + """)
-                    and invoiceset_id is null""")
+                    SET invoiceset_id = %s,
+                        invoiced_consumption = TRUE
+                    WHERE (product_id = %s OR product_id = %s)
+                    AND invoiceset_id IS NULL
+                """, (self.invoiceset_id.id, product_id, product_tmpl_id))
+                self.env.cr.execute("""
+                    UPDATE wua_reading
+                    SET invoiced_reading = TRUE
+                    WHERE presconsumption_id IN (
+                        SELECT id
+                        FROM wua_presconsumption
+                        WHERE (product_id = %s OR product_id = %s)
+                        AND invoiceset_id = %s
+                        AND invoiced_consumption
+                    )
+                """, (product_id, product_tmpl_id, self.invoiceset_id.id))
                 self.env.cr.commit()
                 self.env.invalidate_all()
                 self.configured_line = True

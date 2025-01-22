@@ -21,4 +21,4 @@ class WuaReading(models.Model):
             if record.presconsumption_id:
                 invoiced_quota_reading = \
                     record.presconsumption_id.invoiced_consumption_quota
-            record.invoiced_reading = invoiced_quota_reading
+            record.invoiced_quota_reading = invoiced_quota_reading
