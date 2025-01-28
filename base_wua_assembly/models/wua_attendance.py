@@ -32,6 +32,14 @@ class WuaAttendance(models.Model):
         required=True,
         ondelete='restrict',)
 
+    partner_code = fields.Integer(
+        string='Code',
+        compute='_compute_partner_code',
+        readonly=True,
+        index=True,
+        store=True,
+    )
+
     name = fields.Char(
         string='Attendance Identifier',
         size=SIZE_ASSEMBLY_NAME + SIZE_PARTNER_CODE + 1,
@@ -140,11 +148,11 @@ class WuaAttendance(models.Model):
     param_allow_notes_in_signature = fields.Boolean(
         string='Allow notes with the partner signature',
         compute='_compute_param_allow_notes_in_signature')
-    
+
     param_add_qr_code_in_attendance = fields.Boolean(
         string='Add QR code in attendance',
         compute='_compute_param_add_qr_code_in_attendance')
-    
+
     with_attendance_notes = fields.Boolean(
         string='There are notes (y/n)',
         default=False,
@@ -195,6 +203,14 @@ class WuaAttendance(models.Model):
             if record.participant_id:
                 participant_name = record.participant_id.name
             record.participant_name = participant_name
+
+    @api.depends('partner_id')
+    def _compute_partner_code(self):
+        for record in self:
+            partner_code = False
+            if record.partner_id and record.partner_id.partner_code:
+                partner_code = record.partner_id.partner_code
+            record.partner_code = partner_code
 
     @api.depends('participant_id')
     def _compute_vat_participant(self):

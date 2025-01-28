@@ -8,8 +8,9 @@
             <tree class="o_base_wua_assembly_attendance_calls_view_tree"
                   create="false" delete="false"
                   default_order="partner_id">
-                <field name="partner_id"
-                       string="Partner"/>
+                <field name="partner_code"
+                       string="Code"/>
+                <field name="participant_name"/>
                 <field name="votes_owned"
                        string="Votes"
                        sum="Total Votes"/>
@@ -22,7 +23,8 @@
         <field name="model">wua.attendance</field>
         <field name="arch" type="xml">
             <search>
-                <field name="partner_id"/>
+                <field name="partner_code"/>
+                <field name="participant_name"/>
             </search>
         </field>
     </record>
