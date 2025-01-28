@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-15 07:12+0000\n"
-"PO-Revision-Date: 2024-05-15 07:12+0000\n"
+"POT-Creation-Date: 2025-01-28 07:39+0000\n"
+"PO-Revision-Date: 2025-01-28 07:39+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -227,7 +227,7 @@ msgstr "Campanya activa"
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_adjustement_volume
 msgid "Adjust. Value (m³)"
-msgstr "Adjust. Value (m³)"
+msgstr "Regularització (m³)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_agriculturalseason_id
@@ -309,7 +309,7 @@ msgstr "Diàleg per imprimir l'informe de distribució de reg"
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wizard_irrigation_distribution_report_display_name
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_display_name
 msgid "Display Name"
-msgstr "Mostrar Nom"
+msgstr "Mostra el nom"
 
 #. module: base_wua_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.wua_irrigationreport_view_search
@@ -356,7 +356,7 @@ msgstr "Element (captació)"
 #. module: base_wua_irrigation_report
 #: model:ir.model,name:base_wua_irrigation_report.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
+msgstr "Element (parcel·la)"
 
 #. module: base_wua_irrigation_report
 #: sql_constraint:wua.irrigationreport:0
@@ -367,7 +367,7 @@ msgstr "El codi de reg ja existeix."
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_end_volume
 #: model:ir.ui.view,arch_db:base_wua_irrigation_report.irrigation_distribution_report_report_document
 msgid "Final Value (m³)"
-msgstr "Final Value (m³)"
+msgstr "Lec. final, m³"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence_ls
@@ -377,7 +377,7 @@ msgstr "Flow (l/s)"
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume_time_equivalence
 msgid "Flow (m³/h)"
-msgstr "Flow (m³/h)"
+msgstr "Flux (m³/h)"
 
 #. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_volume
@@ -674,13 +674,13 @@ msgid "The custom flow be 0 or a greater number"
 msgstr "El cabal específic ha de ser més gran o igual a 0"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:502
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:543
 #, python-format
 msgid "The dates of the report are out of the agricultural season."
 msgstr "Les dates de el part estan fora de la campanya activa."
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:240
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:253
 #: sql_constraint:wua.irrigationreport:0
 #, python-format
 msgid "The delivery note must be 0 or a greater number"
@@ -774,6 +774,16 @@ msgid "Water Amount in hours"
 msgstr "Volums d'aigua en hores"
 
 #. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_watermeter_id
+msgid "Watermeter"
+msgstr "Comptador"
+
+#. module: base_wua_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigation_configuration_watermeter_management
+msgid "Watermeter Management"
+msgstr "Gestió de comptadors"
+
+#. module: base_wua_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_irrigation_report.field_wua_irrigationreport_with_irrigation_worker
 msgid "With Irrig. Worker"
 msgstr "Amb regador"
@@ -789,10 +799,10 @@ msgid "Without Irrigation Worker"
 msgstr "Sense regador"
 
 #. module: base_wua_irrigation_report
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:627
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:638
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:665
-#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:675
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:668
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:679
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:706
+#: code:addons/base_wua_irrigation_report/models/wua_irrigationreport.py:716
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No tens prou permisos per realitzar aquesta acció."

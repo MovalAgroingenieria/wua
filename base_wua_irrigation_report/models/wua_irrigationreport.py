@@ -2,6 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import datetime
+import json
 from lxml import etree
 from odoo import models, fields, api, exceptions, _
 
@@ -177,6 +178,15 @@ class WuaIrrigationReport(models.Model):
         domain="[('partner_id', '=', partner_id)]",
     )
 
+    watermeter_id = fields.Many2one(
+        string='Watermeter',
+        comodel_name='wua.watermeter',
+        index=True,
+        ondelete='restrict',
+        domain="[('waterconnection_id.irrigationpoint_ids.partner_id', "
+               "'=', partner_id)]",
+    )
+
     with_irrigation_worker = fields.Boolean(
         string="With Irrig. Worker",
         default=False)
@@ -334,7 +344,9 @@ class WuaIrrigationReport(models.Model):
         if self.agriculturalseason_id and self.intake_id and self.partner_id:
             data_in_hours = self.env['ir.values'].get_default(
                 'wua.irrigation.configuration', 'data_in_hours')
-            if not data_in_hours:
+            watermeter_management = self.env['ir.values'].get_default(
+                'wua.irrigation.configuration', 'watermeter_management')
+            if not data_in_hours and not watermeter_management:
                 last_report = self.env['wua.irrigationreport'].search(
                     [('agriculturalseason_id', '=',
                       self.agriculturalseason_id.id),
@@ -359,6 +371,33 @@ class WuaIrrigationReport(models.Model):
                 total_seconds() / 3600
         self.hours = hours
 
+    @api.onchange('watermeter_id', 'report_initial_time')
+    def _onchange_watermeter_id(self):
+        # If watermeter associated to the irrigation report
+        # check last irrigationreport and set the initial volume as the
+        # end volume of the last irrigation report
+        watermeter_management = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'watermeter_management')
+        if (watermeter_management and self.watermeter_id and
+                self.report_initial_time):
+            initial_volume = 0
+            search_domain = [('watermeter_id', '=',
+                             self.watermeter_id.id),
+                             ('report_end_time', '<=',
+                             self.report_initial_time)]
+            if (self.id):
+                search_domain.append(('id', '!=', self.id))
+            # Api on change record has no id, but the original
+            # can have it
+            elif (self._origin and self._origin.id):
+                search_domain.append(('id', '!=', self._origin.id))
+            last_ireport = self.env['wua.irrigationreport'].search(
+                search_domain,
+                limit=1, order='report_end_time desc')
+            if (last_ireport and last_ireport[0]):
+                initial_volume = last_ireport[0].end_volume
+            self.initial_volume = initial_volume
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
                         submenu=False):
@@ -373,119 +412,118 @@ class WuaIrrigationReport(models.Model):
             'wua.irrigation.configuration', 'custom_irrigationreport_flow')
         custom_irrigationreport_flow_ls = self.env['ir.values'].get_default(
             'wua.irrigation.configuration', 'custom_irrigationreport_flow_ls')
+        watermeter_management = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'watermeter_management')
         if view_type == 'form':
             doc = etree.XML(res['arch'])
             if data_in_hours:
-                for node in doc.xpath("//field[@name='initial_volume']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"invisible": true}')
-                for node in doc.xpath("//field[@name='end_volume']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"invisible": true}')
+                # Hide 'initial_volume' 'end_volume'
+                for field_name in ['initial_volume', 'end_volume']:
+                    for node in doc.xpath("//field[@name='%s']" % field_name):
+                        modifiers = json.loads(node.get("modifiers", "{}"))
+                        modifiers['invisible'] = True
+                        node.set('modifiers', json.dumps(modifiers))
                 if not hours_sexagesimal:
                     for node in doc.xpath("//field[@name='hours']"):
-                        node.set('widget', '')
-                # Hide conversion factor
-                if (custom_irrigationreport_flow):
+                        node.attrib.pop('widget', None)
+                if custom_irrigationreport_flow:
                     for node in doc.xpath(
                             "//field[@name='conversion_factor']"):
-                        node.set('invisible', '1')
-                        node.set('modifiers', '{"invisible": true}')
-                    # Hide m³ /h
-                    if (custom_irrigationreport_flow_ls):
+                        modifiers = json.loads(node.get("modifiers", "{}"))
+                        modifiers['invisible'] = True
+                        node.set('modifiers', json.dumps(modifiers))
+                    if custom_irrigationreport_flow_ls:
                         for node in doc.xpath(
                                 "//field[@name='volume_time_equivalence']"):
-                            node.set('invisible', '1')
-                            node.set('modifiers', '{"invisible": true}')
-                    # Hide l/s
+                            modifiers = json.loads(node.get("modifiers", "{}"))
+                            modifiers['invisible'] = True
+                            node.set('modifiers', json.dumps(modifiers))
                     else:
                         for node in doc.xpath(
                                 "//field[@name='volume_time_equivalence_ls']"):
-                            node.set('invisible', '1')
-                            node.set('modifiers', '{"invisible": true}')
-                # Hide volume time equivalences
+                            modifiers = json.loads(node.get("modifiers", "{}"))
+                            modifiers['invisible'] = True
+                            node.set('modifiers', json.dumps(modifiers))
                 else:
-                    for node in doc.xpath(
-                            "//field[@name='volume_time_equivalence']"):
-                        node.set('invisible', '1')
-                        node.set('modifiers', '{"invisible": true}')
-                    for node in doc.xpath(
-                            "//field[@name='volume_time_equivalence_ls']"):
-                        node.set('invisible', '1')
-                        node.set('modifiers', '{"invisible": true}')
+                    for field_name in ['volume_time_equivalence',
+                                       'volume_time_equivalence_ls']:
+                        for node in doc.xpath(
+                                "//field[@name='%s']" % field_name):
+                            modifiers = json.loads(node.get("modifiers", "{}"))
+                            modifiers['invisible'] = True
+                            node.set('modifiers', json.dumps(modifiers))
             else:
-                for node in doc.xpath("//field[@name='hours']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"invisible": true}')
-                for node in doc.xpath("//field[@name='conversion_factor']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"invisible": true}')
-                for node in doc.xpath(
-                        "//field[@name='volume_time_equivalence']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"invisible": true}')
-                for node in doc.xpath(
-                        "//field[@name='volume_time_equivalence_ls']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"invisible": true}')
-            # Hide wizard Irrigation distribution in form view
-            actions_to_remove = \
-                ['base_wua_irrigation_report.'
-                 'action_print_irrigation_distribution_report']
+                for field_name in [
+                        'hours', 'conversion_factor',
+                        'volume_time_equivalence',
+                        'volume_time_equivalence_ls']:
+                    for node in doc.xpath("//field[@name='%s']" % field_name):
+                        modifiers = json.loads(node.get("modifiers", "{}"))
+                        modifiers['invisible'] = True
+                        node.set('modifiers', json.dumps(modifiers))
+            if not watermeter_management:
+                for node in doc.xpath("//field[@name='watermeter_id']"):
+                    modifiers = json.loads(node.get("modifiers", "{}"))
+                    modifiers['invisible'] = True
+                    node.set('modifiers', json.dumps(modifiers))
+            actions_to_remove = [
+                'base_wua_irrigation_report.'
+                'action_print_irrigation_distribution_report',
+            ]
             actions_menu = res.get('toolbar', {}).get('action', [])
-            actions_to_show = []
-            if actions_menu:
-                for action_menu in actions_menu:
-                    if action_menu['xml_id'] not in actions_to_remove:
-                        actions_to_show.append(action_menu)
-                res['toolbar']['action'] = actions_to_show
-            res['arch'] = etree.tostring(doc)
-        if view_type == 'tree':
+            res['toolbar']['action'] = [
+                action_menu for action_menu in actions_menu
+                if action_menu['xml_id'] not in actions_to_remove
+            ]
+            res['arch'] = etree.tostring(doc, encoding='unicode')
+        elif view_type == 'tree':
             doc = etree.XML(res['arch'])
             if data_in_hours:
                 if not hours_sexagesimal:
                     for node in doc.xpath("//field[@name='hours']"):
-                        node.set('widget', '')
-                if (custom_irrigationreport_flow):
+                        node.attrib.pop('widget', None)
+                if custom_irrigationreport_flow:
                     for node in doc.xpath(
                             "//field[@name='conversion_factor']"):
-                        node.set('invisible', '1')
-                        node.set('modifiers', '{"tree_invisible": true}')
-                    if (custom_irrigationreport_flow_ls):
+                        modifiers = json.loads(node.get("modifiers", "{}"))
+                        modifiers['tree_invisible'] = True
+                        node.set('modifiers', json.dumps(modifiers))
+                    if custom_irrigationreport_flow_ls:
                         for node in doc.xpath(
                                 "//field[@name='volume_time_equivalence']"):
-                            node.set('invisible', '1')
-                            node.set('modifiers', '{"tree_invisible": true}')
+                            modifiers = json.loads(node.get("modifiers", "{}"))
+                            modifiers['tree_invisible'] = True
+                            node.set('modifiers', json.dumps(modifiers))
                     else:
                         for node in doc.xpath(
                                 "//field[@name='volume_time_equivalence_ls']"):
-                            node.set('invisible', '1')
-                            node.set('modifiers', '{"tree_invisible": true}')
+                            modifiers = json.loads(node.get("modifiers", "{}"))
+                            modifiers['tree_invisible'] = True
+                            node.set('modifiers', json.dumps(modifiers))
                 else:
-                    for node in doc.xpath(
-                            "//field[@name='volume_time_equivalence']"):
-                        node.set('invisible', '1')
-                        node.set('modifiers', '{"tree_invisible": true}')
-                    for node in doc.xpath(
-                            "//field[@name='volume_time_equivalence_ls']"):
-                        node.set('invisible', '1')
-                        node.set('modifiers', '{"tree_invisible": true}')
+                    for field_name in [
+                            'volume_time_equivalence',
+                            'volume_time_equivalence_ls']:
+                        for node in doc.xpath(
+                                "//field[@name='%s']" % field_name):
+                            modifiers = json.loads(node.get("modifiers", "{}"))
+                            modifiers['tree_invisible'] = True
+                            node.set('modifiers', json.dumps(modifiers))
             else:
-                for node in doc.xpath("//field[@name='hours']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"tree_invisible": true}')
-                for node in doc.xpath("//field[@name='conversion_factor']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"tree_invisible": true}')
-                for node in doc.xpath(
-                        "//field[@name='volume_time_equivalence']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"tree_invisible": true}')
-                for node in doc.xpath(
-                        "//field[@name='volume_time_equivalence_ls']"):
-                    node.set('invisible', '1')
-                    node.set('modifiers', '{"tree_invisible": true}')
-            res['arch'] = etree.tostring(doc)
+                for field_name in [
+                        'hours', 'conversion_factor',
+                        'volume_time_equivalence',
+                        'volume_time_equivalence_ls']:
+                    for node in doc.xpath("//field[@name='%s']" % field_name):
+                        modifiers = json.loads(node.get("modifiers", "{}"))
+                        modifiers['tree_invisible'] = True
+                        node.set('modifiers', json.dumps(modifiers))
+            if not watermeter_management:
+                for node in doc.xpath("//field[@name='watermeter_id']"):
+                    modifiers = json.loads(node.get("modifiers", "{}"))
+                    modifiers['tree_invisible'] = True
+                    node.set('modifiers', json.dumps(modifiers))
+            res['arch'] = etree.tostring(doc, encoding='unicode')
         return res
 
     @api.model

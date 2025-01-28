@@ -31,6 +31,11 @@ class WuaIrrigationConfiguration(models.TransientModel):
         default=False,
         help='Values of hour in the HH:MM format (if not, as decimal format)')
 
+    watermeter_management = fields.Boolean(
+        string='Watermeter Management',
+        default=False,
+    )
+
     @api.multi
     def set_default_values(self):
         previous_data_in_hours = self.env['ir.values'].get_default(
@@ -59,6 +64,9 @@ class WuaIrrigationConfiguration(models.TransientModel):
         values.set_default('wua.irrigation.configuration',
                            'custom_irrigationreport_flow_ls',
                            self.custom_irrigationreport_flow_ls)
+        values.set_default('wua.irrigation.configuration',
+                           'watermeter_management',
+                           self.watermeter_management)
         if previous_data_in_hours != current_data_in_hours:
             irrigation_reports = self.env['wua.irrigationreport'].search([])
             if irrigation_reports:
