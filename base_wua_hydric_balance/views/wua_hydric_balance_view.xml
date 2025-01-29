@@ -69,6 +69,7 @@
                             <field name="initial_date" attrs="{'readonly': ['|', ('balance_configured','=','True'), ('balance_state','!=','01_draft')]}"/>
                             <field name="end_date" attrs="{'readonly': ['|', ('balance_configured','=','True'), ('balance_state','!=','01_draft')]}"/>
                             <field name="loss_percentage" attrs="{'readonly': [('balance_state','!=','01_draft')]}"/>
+                            <field name="loss_absolute_value" attrs="{'readonly': [('balance_state','!=','01_draft')]}"/>
                             <field name="description" attrs="{'readonly': [('balance_state','!=','01_draft')]}"/>
                             <field name="balance_configured" invisible="1"/>
                         </group>
@@ -148,6 +149,9 @@
                         </page>
                         <page string="Notes">
                             <field name="notes"/>
+                        </page>
+                        <page string="Loses Notes" attrs="{'invisible': [('loss_absolute_value','=',0)]}">
+                            <field name="absolute_loss_notes"/>
                         </page>
                     </notebook>
                 </sheet>

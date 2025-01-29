@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-07 07:05+0000\n"
-"PO-Revision-Date: 2024-10-07 07:05+0000\n"
+"POT-Creation-Date: 2025-01-29 09:14+0000\n"
+"PO-Revision-Date: 2025-01-29 09:14+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -59,6 +59,11 @@ msgstr "- Consumos a presión solo se muestran los consumos validados y no cance
 #: model:ir.ui.view,arch_db:base_wua_hydric_balance.view_wua_hydric_balance_form
 msgid "<span class=\"o_stat_text\">Results</span>"
 msgstr "<span class=\"o_stat_text\">Resultados</span>"
+
+#. module: base_wua_hydric_balance
+#: model:ir.ui.view,arch_db:base_wua_hydric_balance.wua_hydric_balance_report
+msgid "<span><strong>Loses Notes:</strong></span>"
+msgstr "<span><strong>Notas pérdidas:</strong></span>"
 
 #. module: base_wua_hydric_balance
 #: model:ir.ui.view,arch_db:base_wua_hydric_balance.wua_hydric_balance_report
@@ -144,6 +149,11 @@ msgstr "<strong>Volumen total</strong>"
 #: model:ir.ui.view,arch_db:base_wua_hydric_balance.wua_hydric_balance_report
 msgid "<strong>Variations</strong>"
 msgstr "<strong>Variaciones</strong>"
+
+#. module: base_wua_hydric_balance
+#: model:ir.model.fields,field_description:base_wua_hydric_balance.field_wua_hydric_balance_absolute_loss_notes
+msgid "Absolute loss notes"
+msgstr "Notas pérdidas"
 
 #. module: base_wua_hydric_balance
 #: model:ir.actions.server,name:base_wua_hydric_balance.action_add_to_input
@@ -295,7 +305,7 @@ msgstr "Descripción"
 #: model:ir.model.fields,field_description:base_wua_hydric_balance.field_wua_hydric_balance_variation_display_name
 #: model:ir.model.fields,field_description:base_wua_hydric_balance.field_wua_hydric_balance_variation_line_display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre mostrado"
 
 #. module: base_wua_hydric_balance
 #: model:ir.ui.view,arch_db:base_wua_hydric_balance.view_wua_hydric_balance_search
@@ -634,10 +644,20 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: base_wua_hydric_balance
-#: code:addons/base_wua_hydric_balance/models/wua_hydric_balance.py:261
+#: code:addons/base_wua_hydric_balance/models/wua_hydric_balance.py:272
 #, python-format
 msgid "Line Results"
 msgstr "Linea resultados"
+
+#. module: base_wua_hydric_balance
+#: model:ir.ui.view,arch_db:base_wua_hydric_balance.view_wua_hydric_balance_form
+msgid "Loses Notes"
+msgstr "Notas pérdidas"
+
+#. module: base_wua_hydric_balance
+#: model:ir.model.fields,field_description:base_wua_hydric_balance.field_wua_hydric_balance_loss_absolute_value
+msgid "Loss absolute value (m³)"
+msgstr "Pérdidas absolutas (m³)"
 
 #. module: base_wua_hydric_balance
 #: model:ir.model.fields,field_description:base_wua_hydric_balance.field_wua_hydric_balance_loss_percentage
@@ -801,7 +821,7 @@ msgid "Start Time"
 msgstr "Fecha de inicio"
 
 #. module: base_wua_hydric_balance
-#: code:addons/base_wua_hydric_balance/models/wua_hydric_balance.py:207
+#: code:addons/base_wua_hydric_balance/models/wua_hydric_balance.py:218
 #, python-format
 msgid "The hydric balance can only be copied in the draft state."
 msgstr "El balance hídrico solo puede ser copiado en estado borrador."

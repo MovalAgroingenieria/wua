@@ -65,6 +65,15 @@ class WuaHydricBalance(models.Model):
         required=True,
         index=True,
     )
+    loss_absolute_value = fields.Float(
+        string='Loss absolute value (m³)',
+        digits=(32, 4),
+        required=True,
+        default=0.00,
+    )
+    absolute_loss_notes = fields.Html(
+        string='Absolute loss notes',
+    )
     loss_percentage = fields.Float(
         string='Loss percentage',
         digits=(32, 4),
@@ -153,7 +162,8 @@ class WuaHydricBalance(models.Model):
                 record.total_input_volume -
                 record.total_output_volume -
                 record.total_variation_volume -
-                ((record.loss_percentage / 100) * record.total_input_volume)
+                ((record.loss_percentage / 100) * record.total_input_volume) -
+                record.loss_absolute_value
             )
 
     @api.depends('hydric_balance_input_ids', 'hydric_balance_output_ids',
@@ -193,7 +203,8 @@ class WuaHydricBalance(models.Model):
     def _compute_estimated_loss(self):
         for record in self:
             if record.total_input_volume != 0:
-                record.estimated_loss = (record.loss_percentage / 100) * \
+                record.estimated_loss = record.loss_absolute_value + \
+                    (record.loss_percentage / 100) * \
                     (record.total_input_volume)
             else:
                 record.estimated_loss = 0
