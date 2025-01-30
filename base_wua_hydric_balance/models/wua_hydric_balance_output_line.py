@@ -116,6 +116,12 @@ class WuaHydricBalanceOutputLine(models.Model):
         ondelete='restrict',
     )
 
+    product_id = fields.Many2one(
+        comodel_name='product.product',
+        string='Water Type',
+        ondelete='restrict',
+    )
+
     @api.multi
     def add_to_output(self):
         if (len(self) > 0):

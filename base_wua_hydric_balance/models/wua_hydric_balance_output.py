@@ -279,14 +279,15 @@ class WuaHydricBalanceOutput(models.Model):
                     id, name, create_uid, write_uid, create_date, write_date,
                     output_id, hydric_balance_id, output_line_selected,
                     initial_time, end_time, volume, intake_id,
-                    irrigationreport_id, hydraulicsector_id
+                    irrigationreport_id, hydraulicsector_id, product_id
                 )
                 SELECT nextval('wua_hydric_balance_output_line_id_seq'),
                     %s || ir.id::TEXT, %s, %s, now(), now(), %s, %s, %s,
                     ir.report_initial_time, ir.report_end_time, ir.volume,
                     ir.intake_id,
                     ir.id,
-                    ihl.hydraulicsector_id
+                    ihl.hydraulicsector_id,
+                    ir.product_id
                 FROM wua_irrigationreport AS ir
                 LEFT JOIN wua_intake_hydraulicsectorlink AS ihl
                 ON ir.intake_id = ihl.intake_id
