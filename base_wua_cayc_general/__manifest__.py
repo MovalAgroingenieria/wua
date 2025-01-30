@@ -19,6 +19,7 @@
         "base_wua_irrigation_report",
         "base_wua_pressurized_irrigation_request",
         "base_wua_infrastructure_pressurized_hierarchy",
+        "base_wua_quota_management",
     ],
     "data": [
         "security/security.xml",
