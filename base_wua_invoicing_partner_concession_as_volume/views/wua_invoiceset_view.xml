@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="wua_invoiceset_line_partner_concession_view_tree" model="ir.ui.view" >
+        <field name="name">Invoice-set line for partner concession as volume (tree view)</field>
+        <field name="model">wua.invoiceset.line.partner.concession</field>
+        <field name="arch" type="xml">
+            <tree class="o_base_wua_invoicing_invoiceset_line_partner_view_tree"
+                  create="false" edit="false" delete="false" export="false">
+                <field name="selected" invisible="1"/>
+                <field name="partner_id"/>
+                <button type="object" class="oe_read_only"
+                        icon="fa-check-circle"
+                        attrs="{'invisible':
+                                [('selected','=',False)]}"/>
+                <field name="number_of_votes"/>
+                <field name="is_owner"/>
+                <field name="concession_as_volume"/>
+                <field name="parcel_owner_number"/>
+                <field name="parcel_owner_area"/>
+                <field name="is_lessee"/>
+                <field name="parcel_lessee_number"/>
+                <field name="parcel_lessee_area"/>
+                <field name="is_payer"/>
+                <field name="parcel_payer_number"/>
+                <field name="parcel_payer_area"/>
+                <field name="is_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="wua_invoiceset_line_partner_concession_view_search" model="ir.ui.view" >
+        <field name="name">Invoice-set line for partners concession as volume (search view)</field>
+        <field name="model">wua.invoiceset.line.partner.concession</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <filter string="Selected" name="selected"
+                 domain="[('selected','=',True)]"/>
+                <filter string="Not Selected" name="notselected"
+                 domain="[('selected','!=',True)]"/>
+                <separator/>
+                <filter string="Persons" name="notiscompany"
+                 domain="[('is_company','=',False)]"/>
+                <filter string="Companies" name="iscompany"
+                 domain="[('is_company','=',True)]"/>
+                <separator/>
+                <filter string="Owner" name="isowner"
+                 domain="[('is_owner','=',True)]"/>
+                <filter string="Lessee" name="islessee"
+                 domain="[('is_lessee','=',True)]"/>
+                <filter string="Payer" name="ispayer"
+                 domain="[('is_payer','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Is selected (marked)"
+                     name="isselected"
+                     context="{'group_by':'selected'}"/>
+                    <filter string="Is a company (marked)"
+                     name="isacompany"
+                     context="{'group_by':'is_company'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="wua_add_partner_concession_to_invoiceset" model="ir.actions.server">
+        <field name="name">Add to invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_partner_concession"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.partner.concession'].browse(context['active_ids']).add_to_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_add_partner_concession_to_invoiceset" model="ir.values">
+        <field name="name">Add partner concession to invoice set</field>
+        <field name="model">wua.invoiceset.line.partner.concession</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_add_partner_concession_to_invoiceset'))"/>
+    </record>
+
+    <record id="wua_remove_partner_concession_to_invoiceset" model="ir.actions.server">
+        <field name="name">Remove from invoice set</field>
+        <field name="model_id" ref="model_wua_invoiceset_line_partner_concession"/>
+        <field name="state">code</field>
+        <field name="code">
+            if context.get('active_ids'):
+                action = env['wua.invoiceset.line.partner.concession'].browse(context['active_ids']).remove_from_invoiceset()
+        </field>
+    </record>
+
+    <record id="wua_action_remove_partner_concession_to_invoiceset" model="ir.values">
+        <field name="name">Remove partner concession from invoice set</field>
+        <field name="model">wua.invoiceset.line.partner.concession</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('wua_remove_partner_concession_to_invoiceset'))"/>
+    </record>
+</odoo>
