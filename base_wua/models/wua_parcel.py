@@ -1443,7 +1443,9 @@ class WuaParcel(models.Model):
                not correct_partnerlinks_no_repeat:
                 raise exceptions.UserError(_('Partners: the sum of all '
                                              'percentages must be 100, or '
-                                             'there are repeated partners.'))
+                                             'there are repeated partners.'
+                                             'On parcel: %s.') %
+                                           new_parcel.name)
             zero_or_one_lessee = \
                 self.zero_or_one_lessee(vals['partnerlink_ids'],
                                         new_parcel.id, False)
@@ -2187,7 +2189,8 @@ class WuaParcel(models.Model):
                 vals['partnerlink_ids']))):
             raise exceptions.UserError(_('Partners: the sum of all '
                                          'percentages must be 100, or '
-                                         'there are repeated partners.'))
+                                         'there are repeated partners.'
+                                         'on parcel: %s.') % self.name)
         if ('partnerlink_ids' in vals and
            (not self.zero_or_one_lessee(
                 vals['partnerlink_ids'], self.id, vals))):
