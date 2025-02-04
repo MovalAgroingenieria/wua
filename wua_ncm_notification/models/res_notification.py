@@ -131,15 +131,16 @@ class ResNotification(models.Model):
     @api.multi
     def write(self, vals):
         super(ResNotification, self).write(vals)
-        if ('state' in vals and ((vals['state'] == '01_draft') or
-                                 (vals['state'] == '02_generated') or
-                                 (vals['state'] == '03_sent'))):
+        if 'state' in vals and vals['state'] in ['01_draft', '02_generated',
+                                                 '03_sent', '04_executed']:
             if vals['state'] == '01_draft':
                 self._delete_letters()
             if vals['state'] == '02_generated':
                 self._create_letters()
             if vals['state'] == '03_sent':
                 self._set_state_of_letters(state='rec')
+            if vals['state'] == '04_executed':
+                self._set_state_of_letters(state='draft')
         return True
 
     @api.multi
