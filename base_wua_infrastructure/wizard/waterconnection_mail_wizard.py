@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from openerp import api, fields, models
+# 2025 Moval Agroingeniería
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+
+from odoo import api, fields, models
 
 
 class WuaWaterconnectionMailWizard(models.TransientModel):
@@ -21,13 +24,11 @@ class WuaWaterconnectionMailWizard(models.TransientModel):
         active_ids = self._context.get('active_ids', [])
         WaterConnection = self.env['wua.waterconnection']
         waterconnections = WaterConnection.browse(active_ids)
-
         template = self.env.ref(
             'base_wua_infrastructure.email_template_waterconnection_notice',
             False)
         if not template:
             return True
-
         for wc in waterconnections:
             possible_partners = []
             for irrigationpoint in wc.irrigationpoint_ids:
@@ -50,5 +51,4 @@ class WuaWaterconnectionMailWizard(models.TransientModel):
                 'partner_email': partner_email,
             }
             template.with_context(ctx).send_mail(wc.id, force_send=True)
-
         return True
