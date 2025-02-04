@@ -13,6 +13,7 @@
                 <field name="invoiced" invisible="1"/>
                 <field name="price_unit" attrs="{'invisible': [('invoiced','=', False)]}"/>
                 <field name="sum_price_subtotal" attrs="{'invisible': [('invoiced','=', False)]}"/>
+                <field name="planned_import" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='initial_volume']" position="attributes">
                 <attribute name="attrs">{'readonly':[('invoiced','=', True)]}</attribute>
@@ -44,6 +45,7 @@
                 <field name="price_unit"/>
                 <field name="sum_price_subtotal"/>
                 <field name="invoiced"/>
+                <field name="planned_import" invisible="1"/>
             </xpath>
         </field>
     </record>

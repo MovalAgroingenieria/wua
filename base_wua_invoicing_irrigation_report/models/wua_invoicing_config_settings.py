@@ -34,6 +34,12 @@ class WuaInvoicingConfiguration(models.TransientModel):
         help='If enabled, the irrigationreport can be invoiced by any '
              'product')
 
+    show_planned_import = fields.Boolean(
+        string='Irrigation reports planned import',
+        default=False,
+        help='If enabled, the irrigationreport will show the planned import ',
+    )
+
     @api.multi
     def set_default_values(self):
         super(WuaInvoicingConfiguration, self).set_default_values()
@@ -50,3 +56,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'irrigationreport_invoice_other_product',
                            self.irrigationreport_invoice_other_product)
+        values.set_default('wua.invoicing.configuration',
+                           'show_planned_import',
+                           self.show_planned_import)

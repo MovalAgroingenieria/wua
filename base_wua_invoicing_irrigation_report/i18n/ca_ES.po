@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-10 13:31+0000\n"
-"PO-Revision-Date: 2024-04-10 13:31+0000\n"
+"POT-Creation-Date: 2025-02-04 14:19+0000\n"
+"PO-Revision-Date: 2025-02-04 14:19+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -41,8 +41,8 @@ msgid "Add to invoice set"
 msgstr "Afegir al lot"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:111
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:123
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:127
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:139
 #, python-format
 msgid "An invoiced irrigation report cannot return to draft status."
 msgstr "Un part de reg facturat no pot tornar a l'estat esborrany."
@@ -117,6 +117,11 @@ msgid "Entity (WUA Product Template)"
 msgstr "Element (WUA Product Template)"
 
 #. module: base_wua_invoicing_irrigation_report
+#: model:ir.model,name:base_wua_invoicing_irrigation_report.model_product_product
+msgid "Entity (WUA Product)"
+msgstr "Entity (WUA Product)"
+
+#. module: base_wua_invoicing_irrigation_report
 #: model:ir.model,name:base_wua_invoicing_irrigation_report.model_wua_intake
 msgid "Entity (intake)"
 msgstr "Element (captació)"
@@ -161,6 +166,11 @@ msgstr "Si està habilitat, les línies de detall generades per als informes de 
 #: model:ir.model.fields,help:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_irrigationreport_invoice_other_product
 msgid "If enabled, the irrigationreport can be invoiced by any product"
 msgstr "Si està actiu, els informes de reg poden ser facturats per qualsevol producte"
+
+#. module: base_wua_invoicing_irrigation_report
+#: model:ir.model.fields,help:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_show_planned_import
+msgid "If enabled, the irrigationreport will show the planned import "
+msgstr "Si esta activat, el informe de reg mostrara el import  "
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,help:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_irrigationreport_separate_invoicing
@@ -240,6 +250,11 @@ msgid "Irrigation Report"
 msgstr "Part de Reg"
 
 #. module: base_wua_invoicing_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_product_product_irrigationreport_ids
+msgid "Irrigation Reports"
+msgstr "Parts de Reg"
+
+#. module: base_wua_invoicing_irrigation_report
 #: model:ir.ui.view,arch_db:base_wua_invoicing_irrigation_report.view_partner_form
 msgid "Irrigation report Costs"
 msgstr "Despeses de part de reg"
@@ -285,6 +300,11 @@ msgid "Irrigation reports of a invoice-set line"
 msgstr "Parts de reg d'una línia de lot de factura"
 
 #. module: base_wua_invoicing_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoicing_configuration_show_planned_import
+msgid "Irrigation reports planned import"
+msgstr "Import previst part de reg"
+
+#. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport___last_update
 msgid "Last Modified on"
 msgstr "Darrera modificació el"
@@ -313,6 +333,11 @@ msgstr "Soci"
 #: model:ir.ui.view,arch_db:base_wua_invoicing_irrigation_report.view_partner_form
 msgid "Payment Mode"
 msgstr "Mode de pagament"
+
+#. module: base_wua_invoicing_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_planned_import
+msgid "Planned import"
+msgstr "Import previst"
 
 #. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_price_unit
@@ -365,6 +390,11 @@ msgid "Separate invoicing for irrigation reports"
 msgstr "Facturació separada per als informes de reg"
 
 #. module: base_wua_invoicing_irrigation_report
+#: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_irrigationreport_show_planned_import
+msgid "Show planned import"
+msgstr "Mostrar import previst"
+
+#. module: base_wua_invoicing_irrigation_report
 #: model:ir.model.fields,field_description:base_wua_invoicing_irrigation_report.field_wua_invoiceset_line_irrigationreport_report_initial_time
 msgid "Start Time"
 msgstr "Data d'inici"
@@ -404,7 +434,7 @@ msgid "Water of irrigation reports"
 msgstr "Aigua de Part de Regs"
 
 #. module: base_wua_invoicing_irrigation_report
-#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:117
+#: code:addons/base_wua_invoicing_irrigation_report/models/wua_irrigationreport.py:133
 #, python-format
 msgid "You do not have permission to execute this action."
 msgstr "No té suficients permisos per a realitzar aquesta acció."

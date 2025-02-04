@@ -2,6 +2,7 @@
 # 2019 Moval Agroingeniería
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
+from lxml import etree
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
@@ -61,11 +62,39 @@ class WuaIrrigationReport(models.Model):
         index=True,
         compute='_compute_is_validated')
 
+    planned_import = fields.Float(
+        string='Planned import',
+        store=True,
+        index=True,
+        compute='_compute_planned_import')
+
     _sql_constraints = [
         ('number_of_invoicing_processes_between_0_1',
          'CHECK ( number_of_invoicing_processes <= 1 )',
          'A invoiced irrigation report cannot be invoiced again.'),
         ]
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(WuaIrrigationReport, self).fields_view_get(
+            view_id=view_id, view_type=view_type,
+            toolbar=toolbar, submenu=submenu)
+
+        hide_field = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration', 'show_planned_import')
+        if view_type in ['form', 'tree']:
+            doc = etree.XML(res['arch'])
+
+            for node in doc.xpath("//field[@name='planned_import']"):
+                if hide_field:
+                    node.set('invisible', '0')
+                    node.set('modifiers', '{"invisible": false}')
+
+            res['arch'] = etree.tostring(doc, encoding='unicode')
+
+        return res
 
     @api.depends('invoiceline_ids',
                  'invoiceline_ids.price_subtotal')
@@ -125,6 +154,21 @@ class WuaIrrigationReport(models.Model):
     @api.onchange('intake_id')
     def _compute_product_id(self):
         self.product_id = self.intake_id.product_id
+
+    @api.depends('is_validated', 'volume')
+    def _compute_planned_import(self):
+        data_in_hours = self.env['ir.values'].get_default(
+            'wua.irrigation.configuration', 'data_in_hours')
+        for record in self:
+            planned_import = 0
+            if record.is_validated:
+                if data_in_hours:
+                    planned_import = record.price_unit * record.hours * \
+                        record.conversion_factor
+                else:
+                    planned_import = record.price_unit * record.volume_real * \
+                        record.conversion_factor
+            record.planned_import = planned_import
 
     @api.model
     def create(self, vals):
