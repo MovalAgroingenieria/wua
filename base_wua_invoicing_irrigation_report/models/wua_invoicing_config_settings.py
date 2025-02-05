@@ -28,6 +28,14 @@ class WuaInvoicingConfiguration(models.TransientModel):
              'invoicing the irrigation reports can be setted directly on '
              'the partner')
 
+    irrigationreport_separate_invoicing_by_wc = fields.Boolean(
+        string='Separate invoicing for irrigation reports: '
+               'By Waterconnections',
+        default=False,
+        help='If enabled, the payment method and mandate for '
+             'invoicing the irrigation reports will be suggested from the'
+             'water payer of the waterconnection')
+
     irrigationreport_invoice_other_product = fields.Boolean(
         string='Irrigation reports invoiced by any product',
         default=False,
@@ -53,6 +61,9 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'irrigationreport_separate_invoicing',
                            self.irrigationreport_separate_invoicing)
+        values.set_default('wua.invoicing.configuration',
+                           'irrigationreport_separate_invoicing_by_wc',
+                           self.irrigationreport_separate_invoicing_by_wc)
         values.set_default('wua.invoicing.configuration',
                            'irrigationreport_invoice_other_product',
                            self.irrigationreport_invoice_other_product)

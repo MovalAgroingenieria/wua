@@ -30,6 +30,27 @@
             <xpath expr="//field[@name='adjustement_volume']" position="attributes">
                 <attribute name="attrs">{'readonly':[('invoiced','=', True)]}</attribute>
             </xpath>
+            <xpath expr="//page[@name='signature_page']" position="after">
+                <page name="invoicing_page" string="Invoicing" invisible="1">
+                    <group name="irrigationreport_invoicing_data_group">
+                        <group>
+                            <field name="irrigationreport_payment_mode_id"
+                                   string="Payment Mode"
+                                   domain="[('payment_type','=','inbound')]"/>
+                            <field name="irrigationreport_mandate_required" invisible="1"/>
+                            <field name="irrigationreport_mandate_id"
+                                   string="Direct Debit Mandate"
+                                   attrs="{'invisible':
+                                            [('irrigationreport_mandate_required',
+                                            '=',False)]}"
+                                   domain="[('state','=','valid'),
+                                            ('partner_id','=',partner_id)]"
+                                   context="{'reduced_name_get_for_bankingmandate':
+                                            True}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
         </field>
     </record>
 

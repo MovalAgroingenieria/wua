@@ -60,7 +60,23 @@ class WuaIrrigationReport(models.Model):
         string='Validated',
         store=True,
         index=True,
-        compute='_compute_is_validated')
+        compute='_compute_is_validated',
+    )
+
+    irrigationreport_payment_mode_id = fields.Many2one(
+        string='Irrigation report: Payment Mode',
+        comodel_name='account.payment.mode',
+        index=True,
+        ondelete='restrict')
+
+    irrigationreport_mandate_required = fields.Boolean(
+        string='Irrigation report: Mandate Required',
+        compute='_compute_irrigationreport_mandate_required')
+
+    irrigationreport_mandate_id = fields.Many2one(
+        string='Irrigation report: Direct Debit Mandate',
+        comodel_name='account.banking.mandate',
+        ondelete='restrict')
 
     planned_import = fields.Float(
         string='Planned import',
@@ -74,27 +90,22 @@ class WuaIrrigationReport(models.Model):
          'A invoiced irrigation report cannot be invoiced again.'),
         ]
 
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form',
-                        toolbar=False, submenu=False):
-        res = super(WuaIrrigationReport, self).fields_view_get(
-            view_id=view_id, view_type=view_type,
-            toolbar=toolbar, submenu=submenu)
-
-        hide_field = \
-            self.env['ir.values'].get_default(
-                'wua.invoicing.configuration', 'show_planned_import')
-        if view_type in ['form', 'tree']:
-            doc = etree.XML(res['arch'])
-
-            for node in doc.xpath("//field[@name='planned_import']"):
-                if hide_field:
-                    node.set('invisible', '0')
-                    node.set('modifiers', '{"invisible": false}')
-
-            res['arch'] = etree.tostring(doc, encoding='unicode')
-
-        return res
+    @api.onchange('watermeter_id')
+    def _onchange_watermeter_id(self):
+        irrigationreport_separate_invoicing_by_wc = self.env['ir.values'].\
+            get_default('wua.invoicing.configuration',
+                        'irrigationreport_separate_invoicing_by_wc')
+        if (irrigationreport_separate_invoicing_by_wc and
+                self.watermeter_id and self.watermeter_id.waterconnection_id):
+            if hasattr(
+                self.watermeter_id.waterconnection_id,
+                    'watercosts_payment_mode_id'):
+                self.irrigationreport_payment_mode_id = \
+                    getattr(self.watermeter_id.waterconnection_id,
+                            'watercosts_payment_mode_id')
+                self.irrigationreport_mandate_id = \
+                    getattr(self.watermeter_id.waterconnection_id,
+                            'watercosts_mandate_id')
 
     @api.depends('invoiceline_ids',
                  'invoiceline_ids.price_subtotal')
@@ -105,6 +116,18 @@ class WuaIrrigationReport(models.Model):
                 for invoiceline in record.invoiceline_ids:
                     sum_price_subtotal += invoiceline.price_subtotal
             record.sum_price_subtotal = sum_price_subtotal
+
+    @api.multi
+    @api.onchange('irrigationreport_payment_mode_id')
+    def _compute_irrigationreport_mandate_required(self):
+        for record in self:
+            irrigationreport_mandate_required = False
+            if (record.irrigationreport_payment_mode_id and
+               record.irrigationreport_payment_mode_id.payment_method_id.
+               mandate_required):
+                irrigationreport_mandate_required = True
+            record.irrigationreport_mandate_required = \
+                irrigationreport_mandate_required
 
     @api.depends('invoiceline_ids')
     def _compute_number_of_invoicing_processes(self):
@@ -183,3 +206,31 @@ class WuaIrrigationReport(models.Model):
                 vals['product_id'])
             vals['price_unit'] = product.lst_price
         return super(WuaIrrigationReport, self).write(vals)
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form',
+                        toolbar=False, submenu=False):
+        res = super(WuaIrrigationReport, self).fields_view_get(
+            view_id=view_id, view_type=view_type,
+            toolbar=toolbar, submenu=submenu)
+        show_planned_import = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration', 'show_planned_import')
+        irrigationreport_separate_invoicing_by_wc = \
+            self.env['ir.values'].get_default(
+                'wua.invoicing.configuration',
+                'irrigationreport_separate_invoicing_by_wc')
+        doc = etree.XML(res['arch'])
+        if show_planned_import:
+            if view_type in ['form', 'tree']:
+                # Hide the planned import data
+                for node in doc.xpath("//field[@name='planned_import']"):
+                    node.set('invisible', '0')
+                    node.set('modifiers', '{"invisible": false}')
+        if (irrigationreport_separate_invoicing_by_wc):
+            if view_type in ['form']:
+                for node in doc.xpath("//page[@name='invoicing_page']"):
+                    node.set('invisible', '0')
+                    node.set('modifiers', '{"invisible": false}')
+        res['arch'] = etree.tostring(doc, encoding='unicode')
+        return res

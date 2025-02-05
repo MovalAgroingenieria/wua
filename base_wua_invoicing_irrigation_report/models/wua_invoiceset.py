@@ -94,15 +94,35 @@ class WuaInvoiceset(models.Model):
                     'detail': [invoice_detail],
                 }
                 # Check if custom payment for irrigation reports
+                # It can be on partner on the irrigation report itself
                 separate_invoicing = self.env['ir.values'].\
                     get_default('wua.invoicing.configuration',
                                 'irrigationreport_separate_invoicing')
+                irrigationreport_separate_invoicing_by_wc = self.env[
+                    'ir.values'].get_default(
+                    'wua.invoicing.configuration',
+                    'irrigationreport_separate_invoicing_by_wc')
+                irrigationreport = self.env['wua.irrigationreport'].browse(
+                    invoice_detail['key1'])
                 if (separate_invoicing):
-                    # Check if ohter payment method for irrigation report
-                    if (partner.irrigationreport_payment_mode_id):
+                    if (irrigationreport_separate_invoicing_by_wc and
+                            irrigationreport and
+                            irrigationreport.irrigationreport_payment_mode_id):
                         vals_update = {
                             'payment_mode_id':
-                                partner.irrigationreport_payment_mode_id.id
+                                irrigationreport.
+                                irrigationreport_payment_mode_id.id,
+                        }
+                        # If payment method has a mandate, add it
+                        if (irrigationreport.irrigationreport_mandate_id):
+                            vals_update['mandate_id'] = irrigationreport.\
+                                irrigationreport_mandate_id.id
+                        result.update(vals_update)
+                    # Check if ohter payment method for irrigation report
+                    elif (partner.irrigationreport_payment_mode_id):
+                        vals_update = {
+                            'payment_mode_id':
+                                partner.irrigationreport_payment_mode_id.id,
                         }
                         # If payment method need a mandate, add it
                         if (partner.irrigationreport_mandate_required):
