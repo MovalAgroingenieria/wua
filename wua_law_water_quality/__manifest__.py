@@ -21,6 +21,7 @@
         "reports/law_analysis_report.xml",
         "views/law_measuring_config_setting_view.xml",
         "views/law_measuring_device_view.xml",
+        "views/law_analysis_template_view.xml",
     ],
     "installable": True,
     "application": False,
