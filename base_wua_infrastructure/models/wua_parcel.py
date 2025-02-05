@@ -2544,3 +2544,15 @@ class WuaParcelIrrigationpointWC(models.Model):
         vals['name'] = self.env['ir.sequence'].next_by_code(
             'wua.parcel.irrigationpointwc')
         return super(WuaParcelIrrigationpointWC, self).create(vals)
+
+
+class WuaParcelPartnerlink(models.Model):
+    _inherit = 'wua.parcel.partnerlink'
+
+    hydraulicsector_id = fields.Many2one(
+        string='Hydraulic Sector',
+        comodel_name='wua.hydraulicsector',
+        related='parcel_id.hydraulicsector_id',
+        store=True,
+        readonly=True
+    )

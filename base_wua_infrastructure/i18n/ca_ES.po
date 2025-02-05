@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-15 14:58+0000\n"
-"PO-Revision-Date: 2025-01-15 14:58+0000\n"
+"POT-Creation-Date: 2025-02-03 14:17+0000\n"
+"PO-Revision-Date: 2025-02-03 14:17+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -138,11 +138,6 @@ msgstr "<strong>Infraestructura&amp;nbsp;de&amp;nbsp;reg&amp;nbsp;a&amp;nbsp;pre
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
 msgid "<strong>Water&amp;nbsp;connection&amp;nbsp;points</strong>"
 msgstr "<strong>Tomas</strong>"
-
-#. module: base_wua_infrastructure
-#: sql_constraint:wua.waterconnection.subparcel.rel:0
-msgid "A water connection and subparcel combination must be unique!"
-msgstr "La combinació de una toma i una subparcel·la a de ser única"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_active
@@ -553,7 +548,7 @@ msgstr "Element (caseta)"
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_parcel
 msgid "Entity (parcel)"
-msgstr "Entity (parcel)"
+msgstr "Element (parcel·la)"
 
 #. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_wua_valve
@@ -756,7 +751,7 @@ msgstr "Reg per gravetat"
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_valve_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_search
 msgid "Group By"
-msgstr "Agrupar per"
+msgstr "Agrupa Per"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_irrigationgate_hydraulic_order
@@ -776,6 +771,7 @@ msgstr "Rang d'ordre hidràulic: ["
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_hydraulicsector_id
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_partnerlink_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_subparcel_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_hydraulicsector_id
@@ -813,9 +809,9 @@ msgstr "Sectors hidràulics de la zona"
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_res_partner_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_id_14119
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_id_8818
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_id_14184
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_drainagevalve_type_id_8884
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_flowdivider_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_hydraulicsector_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_infrastructure_configuration_id
@@ -825,7 +821,7 @@ msgstr "Sectors hidràulics de la zona"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpoint_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_parcel_irrigationpointwc_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_id
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id_14152
+#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_valve_type_id_8852
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_mail_wizard_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_id
@@ -1121,7 +1117,7 @@ msgstr "És una parada"
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink___last_update
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_zone___last_update
 msgid "Last Modified on"
-msgstr "Última modificació a"
+msgstr "Darrera modificació el"
 
 #. module: base_wua_infrastructure
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_airvalve_type_write_uid
@@ -1411,6 +1407,11 @@ msgid "Partner"
 msgstr "Empresa"
 
 #. module: base_wua_infrastructure
+#: model:ir.model,name:base_wua_infrastructure.model_wua_parcel_partnerlink
+msgid "Partner link of a parcel"
+msgstr "Enllaç a soci d'una parcel·la"
+
+#. module: base_wua_infrastructure
 #: model:ir.model,name:base_wua_infrastructure.model_res_partner
 msgid "Partner of a WUA"
 msgstr "Partner of a WUA"
@@ -1503,7 +1504,6 @@ msgstr "Sectors"
 
 #. module: base_wua_infrastructure
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.view_wua_waterconnection_mail_wizard_form
-#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_form
 msgid "Send Mails"
 msgstr "Enviar correus"
 
@@ -1785,12 +1785,6 @@ msgid "WC Image"
 msgstr "Imatge Presa"
 
 #. module: base_wua_infrastructure
-#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_pivot
-msgid "Water Connections"
-msgstr "Tomas"
-
-#. module: base_wua_infrastructure
-#: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcel_rel_waterconnection_id
 #: model:ir.model.fields,field_description:base_wua_infrastructure.field_wua_waterconnection_subparcellink_waterconnection_id
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_irrigationpoint_view_search
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_partner_infrastructure_report_document
@@ -1818,6 +1812,7 @@ msgstr "Relació toma i subparcel·la"
 #: model:ir.ui.menu,name:base_wua_infrastructure.wua_waterconnection_menu
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_irrigationshed_view_form
 #: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_parcel_view_form
+#: model:ir.ui.view,arch_db:base_wua_infrastructure.wua_waterconnection_view_pivot
 msgid "Water Connections"
 msgstr "Presses"
 

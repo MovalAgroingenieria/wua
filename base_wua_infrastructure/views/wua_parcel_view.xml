@@ -88,6 +88,7 @@
         </xpath>
         <xpath expr="//field[@name='number_of_subparcels']" position="after">
             <field name="supply_suspended" invisible="1"/>
+            <field name="hydraulicsector_id" invisible="1"/>
         </xpath>
       </field>
     </record>
@@ -282,6 +283,28 @@
             <xpath expr="//field[@name='productionmethod_id']" position="after">
                 <field name="irrigationgate_id"/>
                 <field name="irrigation_duration_coefficient"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="wua_parcel_partnerlink_view_tree" model="ir.ui.view" >
+        <field name="name">Partner Links (tree view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_parcel_partnerlink_view_tree"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='area_official_net']" position="after">
+            <field name="hydraulicsector_id" invisible="1"/>
+          </xpath>
+        </field>
+    </record>
+
+    <record id="wua_technical_parcel_partnerlink_view_tree" model="ir.ui.view" >
+        <field name="name">Partner Links (tree view)</field>
+        <field name="model">wua.parcel.partnerlink</field>
+        <field name="inherit_id" ref="base_wua.wua_technical_parcel_partnerlink_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='other_costs_percentage']" position="after">
+            <field name="hydraulicsector_id" invisible="1"/>
             </xpath>
         </field>
     </record>
