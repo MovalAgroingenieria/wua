@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import pytz
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 from odoo import models, fields, api, exceptions, _
 
 _logger = logging.getLogger(__name__)
@@ -115,25 +115,32 @@ class WuaPresreswatering(models.Model):
     @api.multi
     def validate_presresconsumptions(self):
         self.ensure_one()
-        # Check if hours are correct to send data
         initial_time_utc = fields.Datetime.from_string(self.initial_time)
         spain_tz = pytz.timezone('Europe/Madrid')
         initial_time_sp = pytz.utc.localize(
             initial_time_utc).astimezone(spain_tz)
         current_time_utc = fields.Datetime.now()
         current_time_utc_dt = fields.Datetime.from_string(current_time_utc)
-        current_time_sp = pytz.utc.localize(current_time_utc_dt).astimezone(
-            spain_tz)
-        if (
-            initial_time_sp.date() == current_time_sp.date() and
-            current_time_sp.hour >= 8
-        ):
+        current_time_sp = pytz.utc.localize(
+            current_time_utc_dt).astimezone(spain_tz)
+        request_day = initial_time_sp.date()
+        # Day before at 12:00
+        start_range = datetime.combine(
+            request_day - timedelta(days=1), datetime.min.time()).replace(
+                hour=12)
+        start_range = spain_tz.localize(start_range)
+        # Day of the request at 08:00
+        end_range = datetime.combine(
+            request_day, datetime.min.time()).replace(hour=8)
+        end_range = spain_tz.localize(end_range)
+        if start_range <= current_time_sp <= end_range:
             return super(WuaPresreswatering, self).\
                 validate_presresconsumptions()
         else:
             raise exceptions.UserError(_(
-                'You can only validate the consumptions on request day '
-                'starting at 08:00'))
+                'You can only validate the consumptions starting from '
+                '12:00 on the previous day until 08:00 of the request date.',
+            ))
 
     @api.multi
     def issue_presresconsumptions(self):
