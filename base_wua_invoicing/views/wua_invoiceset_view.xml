@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <form string="Invoce Sets" duplicate="false">
                 <field name="configured_invoiceset" invisible="1"/>
+                <field name="is_being_computed" invisible="1"/>
                 <header>
                     <button name="configure_invoiceset"
                             type="object" string="Configure"
@@ -19,6 +20,12 @@
                                     ['|',
                                      ('configured_invoiceset','=',False),
                                      ('state','=','generated')]}"
+                            groups="base_wua.group_wua_manager"
+                            confirm="Are you sure you want to do this operation?"/>
+                    <button name="action_set_as_not_being_computed"
+                            type="object" string="Set as not calculating"
+                            attrs="{'invisible':
+                                    [('is_being_computed','=', False)]}"
                             groups="base_wua.group_wua_manager"
                             confirm="Are you sure you want to do this operation?"/>
                     <button name="cancel_invoiceset"

@@ -78,6 +78,11 @@ class WuaInvoicingConfiguration(models.TransientModel):
              'ownners names on line description for products of '
              'category 03')
 
+    invoiceset_compute_management = fields.Boolean(
+        string='Compute management on invoiceset',
+        default=False,
+    )
+
     @api.multi
     def set_default_values(self):
         values = self.env['ir.values'].sudo()
@@ -111,3 +116,6 @@ class WuaInvoicingConfiguration(models.TransientModel):
         values.set_default('wua.invoicing.configuration',
                            'show_owners',
                            self.show_owners)
+        values.set_default('wua.invoicing.configuration',
+                           'invoiceset_compute_management',
+                           self.invoiceset_compute_management)

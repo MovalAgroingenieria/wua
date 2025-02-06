@@ -6,6 +6,7 @@ import logging
 import datetime
 from odoo import models, fields, api, exceptions, _
 from operator import itemgetter
+from lxml import etree
 
 
 class WuaInvoiceset(models.Model):
@@ -154,6 +155,11 @@ class WuaInvoiceset(models.Model):
         ], string='State',
         default='draft',
         track_visibility='onchange')
+
+    is_being_computed = fields.Boolean(
+        string='Is being computed',
+        default=False,
+    )
 
     user_id = fields.Many2one(
         string='Salesperson',
@@ -325,8 +331,19 @@ class WuaInvoiceset(models.Model):
     @api.multi
     def calculate_invoiceset(self):
         _logger = logging.getLogger(__name__)
+        compute_management = self.env['ir.values'].sudo().get_default(
+            'wua.invoicing.configuration', 'invoiceset_compute_management')
         for record in self:
+            if (record.is_being_computed):
+                raise exceptions.UserError(_(
+                    'The invoice-set is being computed. Please, wait.'))
             _logger.info('Invoiceset ' + record.name + ': Calculus started')
+            if (compute_management):
+                record.message_post(
+                    body=_('Invoiceset calculus started'),
+                )
+                record.is_being_computed = True
+                self.env.cr.commit()
             invoice_items = self.select_invoice_items(record)
             if len(invoice_items) > 0:
                 invoice_details = self.calculate_invoice_details(invoice_items)
@@ -350,7 +367,17 @@ class WuaInvoiceset(models.Model):
                             })
                         # Hook: run after the calculation
                         self.after_calculate_invoiceset(record)
+            if (compute_management):
+                record.message_post(
+                    body=_('Invoiceset calculus ended'),
+                )
+                record.is_being_computed = False
             _logger.info('Invoiceset ' + record.name + ': Calculus ended')
+
+    @api.multi
+    def action_set_as_not_being_computed(self):
+        self.ensure_one()
+        self.is_being_computed = False
 
     # This method receives the invoiceset to calculate, then it loops
     # from their lines to get the linked items. The method gets a list of
@@ -1740,6 +1767,22 @@ class WuaInvoicesetLine(models.Model):
                         'limit': 10000000,
                         }
                     return act_window
+
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        res = super(WuaInvoicesetLine, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        compute_management = self.env['ir.values'].get_default(
+            'base_wua_invoicing', 'compute_management')
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+            if not compute_management:
+                for node in doc.xpath(
+                        "//button[@name='action_set_as_not_being_computed']"):
+                    node.set('invisible', 1)
+                res['arch'] = etree.tostring(doc)
+        return res
 
     def populate_items_select(self):
         # Add more types
