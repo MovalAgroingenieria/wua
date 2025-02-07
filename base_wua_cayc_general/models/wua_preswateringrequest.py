@@ -51,7 +51,7 @@ class WuaPresreswateringrequest(models.Model):
         record = super(WuaPresreswateringrequest, self).create(vals)
         if record.parent_partner_id:
             record.message_subscribe(partner_ids=[record.parent_partner_id.id])
-            message = self.env['mail.message'].create({
+            message = self.env['mail.message'].sudo().create({
                 'body': _(
                     'A new preswatering request has been created by user: '
                     '%s on %s.' %
@@ -74,6 +74,6 @@ class WuaPresreswateringrequest(models.Model):
                     'auto_delete': False,
                     'notification': True,
                 }
-                mail = self.env['mail.mail'].create(mail_values)
+                mail = self.env['mail.mail'].sudo().create(mail_values)
                 mail.send()
         return record

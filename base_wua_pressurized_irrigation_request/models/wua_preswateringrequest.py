@@ -499,6 +499,6 @@ class WuaPreswateringrequest(models.Model):
                     'watering_duration': x.watering_duration,
                     'watering_volume': x.watering_volume,
                 })
-            notification_template.with_context({
+            notification_template.sudo().with_context({
                 'data': {'consumptions': consumptions}}).send_mail(
                 record.id, force_send=True)
