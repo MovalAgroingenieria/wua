@@ -22,6 +22,7 @@
         "base_wua_quota_management",
         "wua_pressurized_irrigation_request_sinema",
         "base_wua_assembly",
+        "base_wua_invoicing",
     ],
     "data": [
         "security/security.xml",

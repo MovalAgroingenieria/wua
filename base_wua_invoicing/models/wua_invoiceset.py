@@ -1821,7 +1821,7 @@ class WuaInvoicesetLine(models.Model):
 
     # Add more types
     def populate_items_select_parcel(self):
-        parcels = self.env['wua.parcel'].search([])
+        parcels = self.env['wua.parcel'].search([], limit=1)
         if len(parcels) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
