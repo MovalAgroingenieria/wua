@@ -7,8 +7,7 @@ from odoo import models, api
 class WuaAssembly(models.Model):
     _inherit = 'wua.assembly'
 
-    @api.multi
     def _get_partners_domain(self):
-        partners = super(WuaAssembly, self)._get_partners_domain()
-        partners = partners.filtered(lambda partner: partner.is_primary)
-        return partners
+        partner_domain = super(WuaAssembly, self)._get_partners_domain()
+        partner_domain.append(['is_primary', '=', True])
+        return partner_domain
