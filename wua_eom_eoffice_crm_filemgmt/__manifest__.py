@@ -11,6 +11,7 @@
     'author': 'Moval Agroingeniería',
     'license': 'AGPL-3',
     'depends': [
+        'wua_eom_eoffice',
         'eom_eoffice_crm_filemgmt',
     ],
     'data': [
