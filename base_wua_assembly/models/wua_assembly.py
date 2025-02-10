@@ -253,19 +253,22 @@ class WuaAssembly(models.Model):
         string='Date of the assembly',
         default=lambda self: fields.datetime.now(),
         required=True,
-        index=True,)
+        index=True,
+    )
 
     issue = fields.Char(
         string='Issue',
         size=SIZE_ISSUE,
-        required=True,)
+        required=True,
+    )
 
     name = fields.Char(
         string='Assembly Identifier',
         size=SIZE_NAME,
         store=True,
         index=True,
-        compute='_compute_name',)
+        compute='_compute_name',
+    )
 
     company_id = fields.Many2one(
         string='Company',
@@ -273,7 +276,8 @@ class WuaAssembly(models.Model):
         default=_default_company_id,
         compute='_compute_company_id',
         store=True,
-        required=True,)
+        required=True,
+    )
 
     is_multicompany = fields.Boolean(
         string='Multi company',
@@ -285,30 +289,35 @@ class WuaAssembly(models.Model):
     street = fields.Char(
         string='Street',
         default=_default_street,
-        required=True,)
+        required=True,
+    )
 
     zip = fields.Char(
         string='Zip Code',
-        default=_default_zip,)
+        default=_default_zip,
+    )
 
     city = fields.Char(
         string='City',
         default=_default_city,
-        required=True,)
+        required=True,
+    )
 
     state_id = fields.Many2one(
         string='Province',
         comodel_name='res.country.state',
         default=_default_state_id,
         ondelete='restrict',
-        required=True,)
+        required=True,
+    )
 
     country_id = fields.Many2one(
         string='Country',
         comodel_name='res.country',
         default=_default_country_id,
         ondelete='restrict',
-        required=True,)
+        required=True,
+    )
 
     president_id = fields.Many2one(
         string='President',
@@ -316,7 +325,8 @@ class WuaAssembly(models.Model):
         default=_default_president_id,
         domain=[('is_wua_user', '=', True)],
         required=True,
-        track_visibility='onchange',)
+        track_visibility='onchange',
+    )
 
     secretary_id = fields.Many2one(
         string='Secretary',
@@ -324,7 +334,8 @@ class WuaAssembly(models.Model):
         default=_default_secretary_id,
         domain=[('is_wua_user', '=', True)],
         required=True,
-        track_visibility='onchange',)
+        track_visibility='onchange',
+    )
 
     state = fields.Selection(
         selection=[
@@ -337,42 +348,51 @@ class WuaAssembly(models.Model):
         default='01_draft',
         index=True,
         required=True,
-        track_visibility='onchange',)
+        track_visibility='onchange',
+    )
 
     president_id_portaluser = fields.Many2one(
         string='President (for portal user)',
         comodel_name='res.users',
-        compute='_compute_president_id_portaluser',)
+        compute='_compute_president_id_portaluser',
+    )
 
     secretary_id_portaluser = fields.Many2one(
         string='Secretary (for portal user)',
         comodel_name='res.users',
-        compute='_compute_secretary_id_portaluser',)
+        compute='_compute_secretary_id_portaluser',
+    )
 
     first_hour = fields.Float(
         string='First Hour',
         digits=(32, 4),
         default=0,
-        required=True,)
+        required=True,
+    )
 
     second_hour = fields.Float(
         string='Second Hour',
-        digits=(32, 4),)
+        digits=(32, 4),
+    )
 
     first_hour_hhmm = fields.Char(
         string='First hour (as hh:mm)',
-        compute='_compute_first_hour_hhmm',)
+        compute='_compute_first_hour_hhmm',
+    )
 
     second_hour_hhmm = fields.Char(
         string='Second hour (as hh:mm)',
-        compute='_compute_second_hour_hhmm',)
+        compute='_compute_second_hour_hhmm',
+    )
 
     convocation_date = fields.Date(
         string='Date of convocation',
-        track_visibility='onchange',)
+        track_visibility='onchange',
+    )
 
     public_notes = fields.Html(
-        string='Public Notes',)
+        string='Public Notes',
+    )
 
     attendee_text_on_ballot = fields.Html(
         string='Public Notes',
@@ -386,16 +406,19 @@ class WuaAssembly(models.Model):
         compute='_compute_public_notes_text')
 
     internal_notes = fields.Html(
-        string='Internal Notes',)
+        string='Internal Notes',
+    )
 
     publication_text = fields.Html(
         string='Publication Text',
         default=_default_publication_text,
-        translate=True,)
+        translate=True,
+    )
 
     final_paragraph = fields.Html(
         string='Final Paragraph',
-        translate=True,)
+        translate=True,
+    )
 
     is_wua_portal_user = fields.Boolean(
         string='WUA portal user',
@@ -410,71 +433,87 @@ class WuaAssembly(models.Model):
     agendaitem_ids = fields.One2many(
         string='Agenda Items',
         comodel_name='wua.agendaitem',
-        inverse_name='assembly_id',)
+        inverse_name='assembly_id',
+    )
 
     number_of_agendaitems = fields.Integer(
         string='Number of agenda items',
-        compute='_compute_number_of_agendaitems',)
+        compute='_compute_number_of_agendaitems',
+    )
 
     attendance_ids = fields.One2many(
         string='Attendances',
         comodel_name='wua.attendance',
-        inverse_name='assembly_id',)
+        inverse_name='assembly_id',
+    )
 
     number_of_attendances = fields.Integer(
         string='Number of attendances',
-        compute='_compute_number_of_attendances',)
+        compute='_compute_number_of_attendances',
+    )
 
     number_of_attendances_in_assembly = fields.Integer(
         string='Number of attendances (in assembly)',
-        compute='_compute_number_of_attendances_in_assembly',)
+        compute='_compute_number_of_attendances_in_assembly',
+    )
 
     number_of_ballotpapers_in_assembly = fields.Integer(
         string='Number of ballot papers (in assembly)',
-        compute='_compute_number_of_ballotpapers_in_assembly',)
+        compute='_compute_number_of_ballotpapers_in_assembly',
+    )
 
     delegationvote_ids = fields.One2many(
         string='Delegations of vote',
         comodel_name='wua.delegationvote',
-        inverse_name='assembly_id',)
+        inverse_name='assembly_id',
+    )
 
     number_of_delegations = fields.Integer(
         string='Number of delegations of vote',
-        compute='_compute_number_of_delegations',)
+        compute='_compute_number_of_delegations',
+    )
 
     representation_ids = fields.One2many(
         string='Representations',
         comodel_name='wua.representation',
-        inverse_name='assembly_id',)
+        inverse_name='assembly_id',
+    )
 
     number_of_representations = fields.Integer(
         string='Number of representations',
-        compute='_compute_number_of_representations',)
+        compute='_compute_number_of_representations',
+    )
 
     number_of_attendances_with_signature = fields.Integer(
         string='Number of confirmed attendances',
-        compute='_compute_number_of_attendances_with_signature',)
+        compute='_compute_number_of_attendances_with_signature',
+    )
 
     number_of_possible_votes = fields.Integer(
         string='Number of possible votes',
-        compute='_compute_number_of_possible_votes',)
+        compute='_compute_number_of_possible_votes',
+    )
 
     current_year = fields.Boolean(
         string='Current Year',
         compute='_compute_current_year',
-        search='_search_current_year',)
+        search='_search_current_year',
+    )
 
     color = fields.Integer(
         string='State Color',
-        compute='_compute_color',)
+        compute='_compute_color',
+    )
 
     rendered_publication_text = fields.Html(
         string='Preview of publication text',
-        compute='_compute_rendered_publication_text',)
+        compute='_compute_rendered_publication_text',
+    )
 
     rendered_final_paragraph = fields.Html(
         string='Preview of final paragraph',
-        compute='_compute_rendered_final_paragraph',)
+        compute='_compute_rendered_final_paragraph',
+    )
 
     delegation_vote_main_text = fields.Html(
         string='Delegation vote main text',
@@ -493,23 +532,28 @@ class WuaAssembly(models.Model):
 
     rendered_delegation_vote_footer_text = fields.Html(
         string='Rendered delegation vote footer text',
-        compute="_compute_rendered_delegation_vote_footer_text",)
+        compute="_compute_rendered_delegation_vote_footer_text",
+    )
 
     representation_main_text = fields.Html(
         string='Representation main text',
-        default=_default_representation_main_text,)
+        default=_default_representation_main_text,
+    )
 
     rendered_representation_main_text = fields.Html(
         string='Rendered representation main text',
-        compute="_compute_rendered_representation_main_text",)
+        compute="_compute_rendered_representation_main_text",
+    )
 
     representation_footer_text = fields.Html(
         string='Representation footer text',
-        default=_default_representation_footer_text,)
+        default=_default_representation_footer_text,
+    )
 
     rendered_representation_footer_text = fields.Html(
         string='Rendered representation footer text',
-        compute="_compute_rendered_representation_footer_text",)
+        compute="_compute_rendered_representation_footer_text",
+    )
 
     date_now = fields.Datetime(
         default=datetime.datetime.now())
@@ -808,7 +852,8 @@ class WuaAssembly(models.Model):
                 assembly_day=dates.format_date(date_of_assembly,
                                                'd', locale=lang),
                 assembly_month=dates.format_date(date_of_assembly,
-                                                 'LLLL', locale=lang),)
+                                                 'LLLL', locale=lang),
+            )
         except TemplateError as e:
             resp = '<p style="text-align:center;color:red;">' + \
                 '<b><font style="font-size: 14px;">' + \
@@ -831,7 +876,8 @@ class WuaAssembly(models.Model):
                     assembly_day=dates.format_date(
                         date_of_assembly, 'd', locale=lang),
                     assembly_month=dates.format_date(
-                        date_of_assembly, 'LLLL', locale=lang),)
+                        date_of_assembly, 'LLLL', locale=lang),
+                )
         except TemplateError as e:
             resp = '<p style="text-align:center;color:red;">' + \
                 '<b><font style="font-size: 14px;">' + \
@@ -856,7 +902,8 @@ class WuaAssembly(models.Model):
                     assembly_month=dates.format_date(
                         date_of_assembly, 'LLLL', locale=lang),
                     assembly_year=dates.format_date(
-                        date_of_assembly, 'Y', locale=lang),)
+                        date_of_assembly, 'Y', locale=lang),
+                )
         except TemplateError as e:
             resp = '<p style="text-align:center;color:red;">' + \
                 '<b><font style="font-size: 14px;">' + \
@@ -881,7 +928,8 @@ class WuaAssembly(models.Model):
                     assembly_month=dates.format_date(
                         date_of_assembly, 'LLLL', locale=lang),
                     assembly_year=dates.format_date(
-                        date_of_assembly, 'Y', locale=lang),)
+                        date_of_assembly, 'Y', locale=lang),
+                )
         except TemplateError as e:
             resp = '<p style="text-align:center;color:red;">' + \
                 '<b><font style="font-size: 14px;">' + \
@@ -904,7 +952,8 @@ class WuaAssembly(models.Model):
                     assembly_day=dates.format_date(
                         date_of_assembly, 'd', locale=lang),
                     assembly_month=dates.format_date(
-                        date_of_assembly, 'LLLL', locale=lang),)
+                        date_of_assembly, 'LLLL', locale=lang),
+                )
         except TemplateError as e:
             resp = '<p style="text-align:center;color:red;">' + \
                 '<b><font style="font-size: 14px;">' + \
@@ -1015,7 +1064,9 @@ class WuaAssembly(models.Model):
         representation_draft = self.env['wua.representation'].search(
             [('state', '=', '01_draft')])
         if delegationvote_draft or representation_draft:
-           raise exceptions.UserError(_('There are still delegations of vote or representations in draft state.'))
+            raise exceptions.UserError(_(
+                'There are still delegations of vote or representations in '
+                'draft state.'))
         else:
             self.generate_attendances(final_list=True)
             self.state = '03_in_progress'
@@ -1044,6 +1095,48 @@ class WuaAssembly(models.Model):
     @api.multi
     def _get_partners_domain(self):
         return [('is_wua_partner', '=', True), ('is_owner', '=', True)]
+
+    def update_attendance_translations(self, notification_id):
+        sql_insert_translations = \
+            """
+            INSERT INTO ir_translation (lang, name, res_id, src, value, type,
+                state, module)
+            SELECT
+                t.lang,
+                'res.notification,main_page',
+                n.id,
+                t.src,
+                t.value,
+                'model',
+                'translated',
+                t.module
+            FROM ir_translation t
+            INNER JOIN res_notificationset s ON t.res_id = s.id
+            INNER JOIN res_notification n ON n.notificationset_id = s.id
+            WHERE t.name = 'res.notificationset,main_page' AND s.id = %s
+            AND n.id = %s;
+            """ % (self.id, notification_id)
+        self.env.cr.execute(sql_insert_translations)
+        sql_insert_translations = \
+            """
+            INSERT INTO ir_translation (lang, name, res_id, src, value, type,
+                state, module)
+            SELECT
+                t.lang,
+                'res.notification,final_paragraph',
+                n.id,
+                t.src,
+                t.value,
+                'model',
+                'translated',
+                t.module
+            FROM ir_translation t
+            INNER JOIN res_notificationset s ON t.res_id = s.id
+            INNER JOIN res_notification n ON n.notificationset_id = s.id
+            WHERE t.name = 'res.notificationset,final_paragraph' AND s.id = %s
+            AND n.id = %s;
+            """ % (self.id, notification_id)
+        self.env.cr.execute(sql_insert_translations)
 
     @api.multi
     def generate_attendances(self, final_list=False):
@@ -1115,7 +1208,7 @@ class WuaAssembly(models.Model):
             'res_model': 'wizard.preview.publicationtext',
             'src_model': 'wua.assembly',
             'view_mode': 'form',
-            'target': 'new'
+            'target': 'new',
             }
         return act_window
 
@@ -1124,7 +1217,8 @@ class WuaAssembly(models.Model):
         self.ensure_one()
         act_window = {
             'type': 'ir.actions.act_window',
-            'name': _('Preview of the final paragraph of the assembly convocation'),
+            'name': _(
+                'Preview of the final paragraph of the assembly convocation'),
             'res_model': 'wizard.preview.publicationtext',
             'src_model': 'wua.assembly',
             'view_mode': 'form',
@@ -1144,8 +1238,10 @@ class WuaAssembly(models.Model):
         search_view = self.env.ref(
             'base_wua_assembly.wua_agendaitem_particular_view_search')
         custom_context = \
-            {'default_assembly_id': current_assembly.id,
-             'show_only_itemnumber': True, }
+            {
+                'default_assembly_id': current_assembly.id,
+                'show_only_itemnumber': True,
+            }
         suffix_title = current_assembly._get_state_clarification()
         if (current_assembly.state == '03_in_progress' or
            current_assembly.state == '04_finished'):
@@ -1194,8 +1290,10 @@ class WuaAssembly(models.Model):
         search_view = self.env.ref(
             'base_wua_assembly.wua_delegationvote_particular_view_search')
         custom_context = \
-            {'default_assembly_id': current_assembly.id,
-             'show_only_grantor': True, }
+            {
+                'default_assembly_id': current_assembly.id,
+                'show_only_grantor': True,
+            }
         suffix_title = current_assembly._get_state_clarification()
         act_window = {
             'type': 'ir.actions.act_window',
@@ -1222,8 +1320,10 @@ class WuaAssembly(models.Model):
         search_view = self.env.ref(
             'base_wua_assembly.wua_representation_particular_view_search')
         custom_context = \
-            {'default_assembly_id': current_assembly.id,
-             'show_only_partner': True, }
+            {
+                'default_assembly_id': current_assembly.id,
+                'show_only_partner': True,
+            }
         suffix_title = current_assembly._get_state_clarification()
         act_window = {
             'type': 'ir.actions.act_window',

@@ -435,7 +435,7 @@ class WuaQuota(models.Model):
                         'quotaperiod_id': self.quotaperiod_id.id,
                         'superproduct_id': self.superproduct_id.id,
                         'partner_id': self.partner_id.id,
-                        }
+                        },
             }
         return act_window
 
@@ -456,7 +456,7 @@ class WuaQuota(models.Model):
                         'quotaperiod_id': self.quotaperiod_id.id,
                         'superproduct_id': self.superproduct_id.id,
                         'quota_id': self.id,
-                        }
+                        },
             }
         return act_window
 
@@ -495,7 +495,7 @@ class WuaQuota(models.Model):
             'src_model': 'wua.superproduct',
             'view_mode': 'form',
             'target': 'new',
-            'context': {'refresh_view': True}
+            'context': {'refresh_view': True},
             }
         return act_window
 
@@ -847,7 +847,7 @@ class WuaQuota(models.Model):
             'view_type': 'form',
             'view_mode': 'tree,form',
             'target': 'current',
-            'context': {'search_default_inquotasyes': True}
+            'context': {'search_default_inquotasyes': True},
             }
 
     def do_refresh_parcels(self):

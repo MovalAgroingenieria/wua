@@ -80,7 +80,8 @@ class WuaRepresentation(models.Model):
         comodel_name='wua.assembly',
         index=True,
         required=True,
-        ondelete='cascade',)
+        ondelete='cascade',
+    )
 
     partner_id = fields.Many2one(
         string='Partner',
@@ -90,21 +91,24 @@ class WuaRepresentation(models.Model):
                 ('number_of_votes', '>', 0)],
         index=True,
         required=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     agent_id = fields.Many2one(
         string='Agent',
         comodel_name='res.partner',
         index=True,
         required=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     name = fields.Char(
         string='Representation Identifier',
         size=SIZE_ASSEMBLY_NAME + SIZE_PARTNER_CODE + 1,
         store=True,
         index=True,
-        compute='_compute_name',)
+        compute='_compute_name',
+    )
 
     assembly_state = fields.Selection(
         selection=[
@@ -116,7 +120,8 @@ class WuaRepresentation(models.Model):
         string='Assembly State',
         default=_default_assembly_state,
         store=True,
-        compute='_compute_assembly_state',)
+        compute='_compute_assembly_state',
+    )
 
     state = fields.Selection(
         selection=[
@@ -124,32 +129,39 @@ class WuaRepresentation(models.Model):
             ('02_validated', 'Validated'),
         ],
         string='State',
-        default='01_draft',)
+        default='01_draft',
+    )
 
     transferred_votes = fields.Integer(
         string='Transferred Votes',
         store=True,
         index=True,
-        compute='_compute_transferred_votes',)
+        compute='_compute_transferred_votes',
+    )
 
     notes = fields.Html(
-        string='Notes',)
+        string='Notes',
+    )
 
     representation_main_text = fields.Html(
         string='Representation main text',
-        default=_default_representation_main_text,)
+        default=_default_representation_main_text,
+    )
 
     rendered_representation_main_text = fields.Html(
         string='Rendered representation main text',
-        compute="_compute_rendered_representation_main_text",)
+        compute="_compute_rendered_representation_main_text",
+    )
 
     representation_footer_text = fields.Html(
         string='Representation footer text',
-        default=_default_representation_footer_text,)
+        default=_default_representation_footer_text,
+    )
 
     rendered_representation_footer_text = fields.Html(
         string='Rendered representation footer text',
-        compute="_compute_rendered_representation_footer_text",)
+        compute="_compute_rendered_representation_footer_text",
+    )
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -331,7 +343,8 @@ class WuaRepresentation(models.Model):
                     assembly_month=dates.format_date(
                         date_of_assembly, 'LLLL', locale=lang),
                     assembly_year=dates.format_date(
-                        date_of_assembly, 'Y', locale=lang),)
+                        date_of_assembly, 'Y', locale=lang),
+                )
         except TemplateError as e:
             resp = '<p style="text-align:center;color:red;">' + \
                 '<b><font style="font-size: 14px;">' + \
@@ -354,7 +367,8 @@ class WuaRepresentation(models.Model):
                     assembly_day=dates.format_date(
                         date_of_assembly, 'd', locale=lang),
                     assembly_month=dates.format_date(
-                        date_of_assembly, 'LLLL', locale=lang),)
+                        date_of_assembly, 'LLLL', locale=lang),
+                )
         except TemplateError as e:
             resp = '<p style="text-align:center;color:red;">' + \
                 '<b><font style="font-size: 14px;">' + \

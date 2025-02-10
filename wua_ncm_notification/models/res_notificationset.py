@@ -20,11 +20,13 @@ class ResNotificationset(models.Model):
         string='Associated File',
         comodel_name='res.file',
         index=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     create_letter = fields.Boolean(
         string='Create a output letter automatically',
-        default=_default_create_letter,)
+        default=_default_create_letter,
+    )
 
     def _get_conditions_for_new_notifications(self):
         self.ensure_one()

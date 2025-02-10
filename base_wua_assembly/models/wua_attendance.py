@@ -22,7 +22,8 @@ class WuaAttendance(models.Model):
         comodel_name='wua.assembly',
         index=True,
         required=True,
-        ondelete='cascade',)
+        ondelete='cascade',
+    )
 
     partner_id = fields.Many2one(
         string='Partner',
@@ -30,7 +31,8 @@ class WuaAttendance(models.Model):
         domain=[('is_wua_partner', '=', True)],
         index=True,
         required=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     partner_code = fields.Integer(
         string='Code',
@@ -45,52 +47,61 @@ class WuaAttendance(models.Model):
         size=SIZE_ASSEMBLY_NAME + SIZE_PARTNER_CODE + 1,
         store=True,
         index=True,
-        compute='_compute_name',)
+        compute='_compute_name',
+    )
 
     votes_owned = fields.Integer(
         string='Own Votes',
         default=0,
-        required=True,)
+        required=True,
+    )
 
     votes_delegation = fields.Integer(
         string='Votes by delegation',
         default=0,
-        required=True,)
+        required=True,
+    )
 
     votes_total = fields.Integer(
         string='Total Votes',
         store=True,
         index=True,
-        compute='_compute_votes_total',)
+        compute='_compute_votes_total',
+    )
 
     participant_id = fields.Many2one(
         string='Participant',
         comodel_name='res.partner',
         index=True,
         store=True,
-        compute='_compute_participant_id',)
+        compute='_compute_participant_id',
+    )
 
     participant_name = fields.Char(
         string='Participant Name',
         index=True,
         store=True,
-        compute='_compute_participant_name',)
+        compute='_compute_participant_name',
+    )
 
     vat_participant = fields.Char(
         string='TIN (participant)',
         index=True,
         store=True,
-        compute='_compute_vat_participant',)
+        compute='_compute_vat_participant',
+    )
 
     vat_partner = fields.Char(
         string='TIN of partner',
         index=True,
         store=True,
-        compute='_compute_vat_partner',)
+        compute='_compute_vat_partner',
+    )
 
     represented_partner = fields.Char(
         string='Represented Partner',
-        compute='_compute_represented_partner',)
+        compute='_compute_represented_partner',
+    )
 
     assembly_state = fields.Selection(
         selection=[
@@ -102,22 +113,26 @@ class WuaAttendance(models.Model):
         string='Assembly State',
         default='02_called',
         store=True,
-        compute='_compute_assembly_state',)
+        compute='_compute_assembly_state',
+    )
 
     receiver_id = fields.Many2one(
         string='Receiver (if there is voting delegation)',
         comodel_name='res.partner',
         index=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     potential_attendee = fields.Boolean(
         string='Potential Attendee (y/n)',
         store=True,
-        compute='_compute_potential_attendee',)
+        compute='_compute_potential_attendee',
+    )
 
     present = fields.Boolean(
         string='Present',
-        default=False,)
+        default=False,
+    )
 
     attendance_signature = fields.Binary(
         string='Signature')
@@ -357,7 +372,6 @@ class WuaAttendance(models.Model):
             record.param_add_qr_code_in_attendance = \
                 param_add_qr_code_in_attendance
 
-
     @api.multi
     def _compute_compressed_assignors(self):
         model_wua_delegationvote = self.env['wua.delegationvote']
@@ -473,7 +487,7 @@ class WuaAttendance(models.Model):
         if attendance_id:
             attendance = self.browse(attendance_id)
             if attendance:
-                attendance.write({'with_attendance_notes': True, })
+                attendance.write({'with_attendance_notes': True})
 
     def _get_or_generate_attendance_link(self):
         base_url = self.env['ir.config_parameter'].get_param('web.base.url')
@@ -489,6 +503,6 @@ class WuaAttendance(models.Model):
             link_title = _("QR code link for attendance %s") % self.name
             url = self.env['link.tracker'].sudo().create({
                 "title": link_title,
-                "url": url_raw
+                "url": url_raw,
             }).short_url
         return url

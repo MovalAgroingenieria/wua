@@ -12,7 +12,9 @@
     <template id="wua_attendance_individual_call_report">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
-                <t t-call="base_wua_assembly.wua_attendance_individual_call_report_document"/>
+                <t t-set="lang" t-value="o.partner_id.lang or 'es_ES'"/>
+                <t t-set="o" t-value="o.with_context(lang=o.partner_id.lang or 'es_ES')"/>
+                <t t-call="base_wua_assembly.wua_attendance_individual_call_report_document" t-lang="lang"/>
             </t>
         </t>
     </template>

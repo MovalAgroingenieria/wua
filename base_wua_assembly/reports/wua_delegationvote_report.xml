@@ -35,6 +35,8 @@
     <template id="wua_delegationvote_report_document">
         <t t-call="report.html_container">
             <t t-foreach="docs" t-as="o">
+                <t t-set="lang" t-value="o.grantor_id.lang or 'es_ES'"/>
+                <t t-set="o" t-value="o.with_context(lang=o.grantor_id.lang or 'es_ES')"/>
                 <t t-call="base_wua_assembly.wua_delegationvote_internal_layout">
                     <div class="page">
 

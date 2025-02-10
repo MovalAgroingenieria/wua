@@ -45,36 +45,44 @@ class WuaAgendaitem(models.Model):
         comodel_name='wua.assembly',
         index=True,
         required=True,
-        ondelete='cascade',)
+        ondelete='cascade',
+    )
 
     number = fields.Integer(
         string='Item Number',
         default=_default_number,
-        required=True,)
+        required=True,
+    )
 
     name = fields.Char(
         string='Agenda Item Identifier',
         size=SIZE_ASSEMBLYCODE + SIZE_NUMERICSUFFIX + 1,
         store=True,
         index=True,
-        compute='_compute_name',)
+        compute='_compute_name',
+    )
 
     description = fields.Char(
         string='Agenda Item',
         required=True,
-        track_visibility='onchange',)
+        translate=True,
+        track_visibility='onchange',
+    )
 
     type_01_not_voteable = fields.Boolean(
         string='Type: Not voteable',
-        default=False,)
+        default=False,
+    )
 
     type_02_yes_or_no = fields.Boolean(
         string='Type: Yes/No',
-        default=True,)
+        default=True,
+    )
 
     type_03_options = fields.Boolean(
         string='Type: Multiple options',
-        default=False,)
+        default=False,
+    )
 
     type = fields.Selection(
         selection=[
@@ -85,31 +93,37 @@ class WuaAgendaitem(models.Model):
         string='Type of agenda item',
         store=True,
         compute='_compute_type',
-        default='02_yes_or_no',)
+        default='02_yes_or_no',
+    )
 
     count_yes = fields.Integer(
         string='Affirmative votes',
         default=0,
-        required=True,)
+        required=True,
+    )
 
     count_no = fields.Integer(
         string='Negative votes',
         default=0,
-        required=True,)
+        required=True,
+    )
 
     count_abstention = fields.Integer(
         string='Abstentions',
         default=0,
-        required=True,)
+        required=True,
+    )
 
     count_null = fields.Integer(
         string='Null votes',
         default=0,
-        required=True,)
+        required=True,
+    )
 
     count_total = fields.Integer(
         string='Total votes',
-        compute='_compute_count_total',)
+        compute='_compute_count_total',
+    )
 
     approved = fields.Selection(
         selection=[
@@ -120,7 +134,8 @@ class WuaAgendaitem(models.Model):
         string='Approved Item',
         default='02_no',
         store=True,
-        compute='_compute_approved',)
+        compute='_compute_approved',
+    )
 
     icon_approved = fields.Binary(
         string='Icon for voting result',
@@ -136,48 +151,58 @@ class WuaAgendaitem(models.Model):
         string='Assembly State',
         default=_default_assembly_state,
         store=True,
-        compute='_compute_assembly_state',)
+        compute='_compute_assembly_state',
+    )
 
     option_ids = fields.One2many(
         string='Options',
         comodel_name='wua.agendaitem.option',
-        inverse_name='agendaitem_id',)
+        inverse_name='agendaitem_id',
+    )
 
     option_ids_readonly = fields.One2many(
         string='Options (read only)',
         comodel_name='wua.agendaitem.option',
         inverse_name='agendaitem_id',
-        compute='_compute_option_ids_readonly',)
+        compute='_compute_option_ids_readonly',
+    )
 
     chosen_option_id = fields.Many2one(
         string='Chosen Option (id)',
         comodel_name='wua.agendaitem.option',
         store=True,
-        compute='_compute_chosen_option_id',)
+        compute='_compute_chosen_option_id',
+    )
 
     chosen_option = fields.Char(
         string='Chosen Option',
-        compute='_compute_chosen_option',)
+        compute='_compute_chosen_option',
+    )
 
     internal_notes = fields.Html(
-        string='Internal Notes',)
+        string='Internal Notes',
+    )
 
     final_summary = fields.Html(
-        string='Final Summary',)
+        string='Final Summary',
+    )
 
     total_votes_less_than_possible_votes = fields.Boolean(
         string='Total-votes value less than possible-votes value',
         default=False,
-        compute='_compute_total_votes_less_than_possible_votes',)
+        compute='_compute_total_votes_less_than_possible_votes',
+    )
 
     total_votes_greather_than_possible_votes = fields.Boolean(
         string='Total-votes value greather than possible-votes value',
         default=False,
-        compute='_compute_total_votes_greather_than_possible_votes',)
+        compute='_compute_total_votes_greather_than_possible_votes',
+    )
 
     warning_message = fields.Char(
         string='Warning Message',
-        compute='_compute_warning_message',)
+        compute='_compute_warning_message',
+    )
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
@@ -354,7 +379,8 @@ class WuaAgendaitem(models.Model):
                (record.type_02_yes_or_no and
                record.type_03_options)):
                 raise exceptions.UserError(
-                    _('It is not possible to choose multiple types of voting.'))
+                    _('It is not possible to choose multiple types '
+                      'of voting.'))
             if ((not record.type_01_not_voteable) and
                (not record.type_02_yes_or_no) and
                (not record.type_03_options)):
@@ -474,15 +500,18 @@ class WuaAgendaitemOption(models.Model):
         comodel_name='wua.agendaitem',
         index=True,
         required=True,
-        ondelete='cascade',)
+        ondelete='cascade',
+    )
 
     sequence = fields.Integer(
-        string='Display order',)
+        string='Display order',
+    )
 
     option = fields.Char(
         string='Option',
         size=SIZE_OPTION,
-        required=True,)
+        required=True,
+    )
 
     name = fields.Char(
         string='Option Identifier',
@@ -490,12 +519,14 @@ class WuaAgendaitemOption(models.Model):
         WuaAgendaitem.SIZE_NUMERICSUFFIX + SIZE_OPTION + 2,
         store=True,
         compute='_compute_name',
-        index=True,)
+        index=True,
+    )
 
     count_option = fields.Integer(
         string='Votes',
         default=0,
-        required=True,)
+        required=True,
+    )
 
     assembly_state = fields.Selection(
         selection=[
@@ -505,7 +536,8 @@ class WuaAgendaitemOption(models.Model):
             ('04_finished', 'Finished'),
         ],
         string='Assembly State',
-        related='agendaitem_id.assembly_state',)
+        related='agendaitem_id.assembly_state',
+    )
 
     _sql_constraints = [
         ('unique_name', 'UNIQUE (name)',
