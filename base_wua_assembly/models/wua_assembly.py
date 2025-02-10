@@ -1042,11 +1042,16 @@ class WuaAssembly(models.Model):
         self.attendance_ids.unlink()
 
     @api.multi
+    def _get_partners_domain(self):
+        partners = self.env['res.partner'].search(
+            [('is_wua_partner', '=', True), ('is_owner', '=', True)])
+        return partners
+
+    @api.multi
     def generate_attendances(self, final_list=False):
         self.ensure_one()
         self.reset_attendances()
-        partners = self.env['res.partner'].search(
-            [('is_wua_partner', '=', True), ('is_owner', '=', True)])
+        partners = self._get_partners_domain()
         if partners:
             model_wua_attendance = self.env['wua.attendance']
             for partner in partners:

@@ -21,6 +21,7 @@
         "base_wua_infrastructure_pressurized_hierarchy",
         "base_wua_quota_management",
         "wua_pressurized_irrigation_request_sinema",
+        "base_wua_assembly",
     ],
     "data": [
         "security/security.xml",
