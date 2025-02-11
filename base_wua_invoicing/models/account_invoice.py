@@ -70,7 +70,8 @@ class AccountInvoice(models.Model):
         relation='account_invoice_account_invoice_tag_rel',
         column1='invoice_id',
         column2='state_tag_id',
-        index=True,)
+        index=True,
+    )
 
     # It is not necessary "api.depends" (get from parent method).
     def _compute_amount(self):
@@ -150,6 +151,26 @@ class AccountInvoice(models.Model):
             for record in self:
                 record.action_invoice_cancel()
                 record.action_invoice_draft()
+
+    @api.multi
+    def action_set_as_refunded(self):
+        invoices_closed = self.filtered(
+            lambda x: x.state != 'open' or x.type != 'out_invoice')
+        if invoices_closed:
+            invoice_ids = ', '.join(
+                [str(invoice.number) for invoice in invoices_closed])
+            raise UserError(_(
+                """The following invoice IDs
+                are closed  or not a customer invoice
+                and cannot be processed: %s""")
+                % invoice_ids)
+        else:
+            for record in self:
+                record.action_invoice_cancel()
+                record.action_invoice_draft()
+                record.type = 'out_refund'
+                for line in record.invoice_line_ids:
+                    line.quantity = -line.quantity
 
 
 class AccountInvoiceLine(models.Model):
@@ -276,7 +297,6 @@ class AccountInvoiceLine(models.Model):
         for record in self:
             record.invoice_state = record.invoice_id.state
 
-
     # No summary for: quantity, price_unit
     @api.model
     def read_group(self, domain, fields, groupby,
@@ -297,7 +317,8 @@ class AccountInvoiceTag(models.Model):
     name = fields.Char(
         string='Invoice Tag',
         index=True,
-        required=True,)
+        required=True,
+    )
 
     color = fields.Integer(
         string='Color Index')

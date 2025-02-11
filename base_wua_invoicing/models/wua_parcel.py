@@ -11,7 +11,7 @@ class WuaParcel(models.Model):
     overdue = fields.Boolean(
         string='Overdue',
         compute='_compute_overdue')
-    
+
     use_ownership_percentage_on_invoicing = fields.Boolean(
         string='Use Ownership Percentage On Invoicing',
         default=False,
