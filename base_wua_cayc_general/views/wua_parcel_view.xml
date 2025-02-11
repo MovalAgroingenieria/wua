@@ -238,6 +238,9 @@
                 <field name="octroi_id" colspan="4" attrs="{'invisible': [('is_primary', '=', True)]}"/>
                 <field name="waterchannel_id" colspan="4" attrs="{'invisible': [('is_primary', '=', True)]}"/>
             </xpath>
+            <xpath expr="//field[@name='partnerlink_ids']/tree/field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('is_wua_partner', '=', True), ('is_primary', '=', True)]</attribute>
+            </xpath>
         </field>
     </record>
 
