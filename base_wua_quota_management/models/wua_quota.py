@@ -5,7 +5,9 @@
 import datetime
 import locale
 from babel.numbers import format_decimal
-from odoo import models, fields, api, exceptions, _, tools
+from odoo import models, fields, api, exceptions, _
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class WuaQuota(models.Model):
@@ -1229,16 +1231,31 @@ class WuaQuotaAggregatevalue(models.Model):
     _auto = False
 
     def init(self):
-        tools.drop_view_if_exists(self.env.cr, 'wua_quota_aggregatevalue')
-        self.env.cr.execute("""
-            CREATE OR REPLACE VIEW wua_quota_aggregatevalue AS (
-            SELECT row_number() OVER() AS id, quotaperiod_id, partner_id,
-              SUM(accumulated_input) AS accumulated_input,
-              SUM(accumulated_consumption) AS accumulated_consumption,
-              SUM(accumulated_input) - SUM(accumulated_consumption) AS balance
-            FROM wua_quota q INNER JOIN res_partner p ON q.partner_id = p.id
-           WHERE of_active_agriculturalseason
-           GROUP BY quotaperiod_id, partner_id)""")
+        try:
+            self.env.cr.execute("""
+                CREATE MATERIALIZED VIEW IF NOT EXISTS
+                        wua_quota_aggregatevalue AS (
+                    SELECT row_number() OVER() AS id, quotaperiod_id,
+                    partner_id,
+                    SUM(accumulated_input) AS accumulated_input,
+                    SUM(accumulated_consumption) AS accumulated_consumption,
+                    SUM(accumulated_input) - SUM(accumulated_consumption) AS
+                        balance
+                    FROM wua_quota q INNER JOIN res_partner p ON
+                         q.partner_id = p.id
+                    WHERE of_active_agriculturalseason GROUP BY
+                    quotaperiod_id, partner_id)
+                """)
+            self.env.cr.execute("""
+                    CREATE UNIQUE INDEX IF NOT EXISTS
+                    idx_wua_quota_aggregatevalue ON
+                    wua_quota_aggregatevalue (id);
+                """)
+
+        except Exception as e:
+            _logger.error(
+                "Failed to create materialized view "
+                "'account_invoice_line_grouped': %s", e)
 
     quotaperiod_id = fields.Many2one(
         string='Quota Period',
@@ -1392,3 +1409,18 @@ class WuaQuotaAggregatevalue(models.Model):
             name = initial_date_str + ' - ' + partner_name
             result.append((record.id, name))
         return result
+
+    @api.model
+    def refresh_materialized_view(self):
+        try:
+            self.env.cr.execute(
+                "REFRESH MATERIALIZED VIEW CONCURRENTLY "
+                "wua_quota_aggregatevalue")
+            self.env.cr.commit()
+            _logger.info(
+                "Materialized view 'wua_quota_aggregatevalue' "
+                "refreshed successfully.")
+        except Exception as e:
+            _logger.error(
+                "Failed to refresh materialized view "
+                "'wua_quota_aggregatevalue': %s", e)

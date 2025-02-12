@@ -63,7 +63,7 @@ class ResPartner(models.Model):
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
                             'search_default_active_agriculturalseason': True,
-                            'search_default_not_closed_quotaperiod': True}
+                            'search_default_not_closed_quotaperiod': True},
                 }
             return act_window
 
@@ -93,7 +93,7 @@ class ResPartner(models.Model):
                 'context': {'compressed_agriculturalseason': True,
                             'compressed_quotaperiod': True,
                             'search_default_active_agriculturalseason': True,
-                            'search_default_not_closed_quotaperiod': True}
+                            'search_default_not_closed_quotaperiod': True},
                 }
             return act_window
 
@@ -106,7 +106,7 @@ class ResPartner(models.Model):
             'res_model': 'wizard.provision.partner',
             'src_model': 'res.partner',
             'view_mode': 'form',
-            'target': 'new'
+            'target': 'new',
             }
         return act_window
 

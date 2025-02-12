@@ -6,7 +6,7 @@
     "name": "Water Users Association: Quota Management",
     "summary": "Quota management for pressurized irrigation, gravity "
                "irrigation and irrigation based on irrigation reports",
-    "version": '10.0.1.1.6',
+    "version": '10.0.1.1.7',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -21,6 +21,7 @@
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/mail_template_data.xml",
+        "data/wua_quota_aggregated_value_refresh_cron.xml",
         "data/wua_quotas_config_settings_data.xml",
         "data/wua_superproduct_data.xml",
         "data/wua_individualinput_category_data.xml",
