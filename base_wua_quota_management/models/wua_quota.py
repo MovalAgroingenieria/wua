@@ -1235,16 +1235,30 @@ class WuaQuotaAggregatevalue(models.Model):
             self.env.cr.execute("""
                 CREATE MATERIALIZED VIEW IF NOT EXISTS
                         wua_quota_aggregatevalue AS (
-                    SELECT row_number() OVER() AS id, quotaperiod_id,
-                    partner_id,
-                    SUM(accumulated_input) AS accumulated_input,
-                    SUM(accumulated_consumption) AS accumulated_consumption,
-                    SUM(accumulated_input) - SUM(accumulated_consumption) AS
-                        balance
-                    FROM wua_quota q INNER JOIN res_partner p ON
-                         q.partner_id = p.id
-                    WHERE of_active_agriculturalseason GROUP BY
-                    quotaperiod_id, partner_id)
+                SELECT row_number() OVER() AS id,
+                    q.quotaperiod_id,
+                    q.partner_id,
+                    COALESCE(wpp1.total_area, 0)
+                    AS total_area_official_water_costs_net,
+                    CASE
+                        WHEN COALESCE(wpp1.total_area, 0) = 0 THEN 0
+                        ELSE SUM(q.accumulated_consumption) /
+                        COALESCE(wpp1.total_area, 0)
+                    END AS consumption_provision,
+                    SUM(q.accumulated_input) AS accumulated_input,
+                    SUM(q.accumulated_consumption) AS accumulated_consumption,
+                    SUM(q.accumulated_input) - SUM(q.accumulated_consumption)
+                    AS balance
+                FROM wua_quota q
+                INNER JOIN res_partner p ON q.partner_id = p.id
+                LEFT JOIN (
+                    SELECT partner_id, SUM(area_official_water_costs_net)
+                    AS total_area
+                    FROM wua_parcel_partnerlink
+                    GROUP BY partner_id
+                ) wpp1 ON q.partner_id = wpp1.partner_id
+                WHERE q.of_active_agriculturalseason
+                GROUP BY q.quotaperiod_id, q.partner_id, wpp1.total_area)
                 """)
             self.env.cr.execute("""
                     CREATE UNIQUE INDEX IF NOT EXISTS
@@ -1314,6 +1328,16 @@ class WuaQuotaAggregatevalue(models.Model):
     expected_date_for_zero_balance = fields.Date(
         string='Expected 0 balance date',
         compute='_compute_expected_date_for_zero_balance')
+
+    total_area_official_water_costs_net = fields.Float(
+        string='Total area official water costs net',
+        digits=(32, 4),
+    )
+
+    consumption_provision = fields.Float(
+        string='Consumption provision',
+        digits=(32, 4),
+    )
 
     @api.depends('accumulated_input', 'accumulated_consumption')
     def _compute_available_quota_percentage(self):
