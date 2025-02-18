@@ -360,17 +360,12 @@ class WuaAttendance(models.Model):
 
     @api.multi
     def _compute_param_add_qr_code_in_attendance(self):
-        param_add_qr_code_in_attendance = True
         value_of_param_add_qr_code_in_attendance = \
             self.env['ir.values'].get_default(
                 'wua.assembly.configuration', 'add_qr_code_in_attendance')
-        if value_of_param_add_qr_code_in_attendance is None:
-            value_of_param_add_qr_code_in_attendance = True
-        if not value_of_param_add_qr_code_in_attendance:
-            param_add_qr_code_in_attendance = False
         for record in self:
             record.param_add_qr_code_in_attendance = \
-                param_add_qr_code_in_attendance
+                value_of_param_add_qr_code_in_attendance
 
     @api.multi
     def _compute_compressed_assignors(self):

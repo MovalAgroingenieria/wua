@@ -11,49 +11,59 @@ class WuaAssemblyindexConfiguration(models.TransientModel):
     _description = 'Configuration of base_wua_assembly module'
 
     assembly_street = fields.Char(
-        string='Street',)
+        string='Street',
+    )
 
     assembly_zip = fields.Char(
-        string='Zip Code',)
+        string='Zip Code',
+    )
 
     assembly_city = fields.Char(
-        string='City',)
+        string='City',
+    )
 
     assembly_state_id = fields.Many2one(
         string='Province',
         comodel_name='res.country.state',
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     assembly_country_id = fields.Many2one(
         string='Country',
         comodel_name='res.country',
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     assembly_president_id = fields.Many2one(
         string='President',
         comodel_name='res.users',
         domain=[('is_wua_user', '=', True)],
-        required=True,)
+        required=True,
+    )
 
     assembly_secretary_id = fields.Many2one(
         string='Secretary',
         comodel_name='res.users',
         domain=[('is_wua_user', '=', True)],
-        required=True,)
+        required=True,
+    )
 
     vat_required = fields.Boolean(
         string='TIN required',
         default=False,
-        required=True,)
+        required=True,
+    )
 
     allow_notes_in_signature = fields.Boolean(
         string='Allow notes with the partner signature',
         default=True,
-        required=True,)
-    
+        required=True,
+    )
+
     add_qr_code_in_attendance = fields.Boolean(
         string='Add qr code in attendance',
-        default=False,)
+        default=False,
+    )
 
     @api.onchange('assembly_state_id')
     def _onchange_assembly_state_id(self):

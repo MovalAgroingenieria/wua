@@ -30,12 +30,23 @@
                 <div name="wua_partner_data">
                     <div class="row" style="margin-top: 24px;">
                         <div class="col-xs-12" style="display: table;">
-                            <div t-if="o.param_add_qr_code_in_attendance" style="font-size: 0.3em" class="text-center col-2">
-                                <div style="font-size: 0.3px; margin-bottom: 2px;">&amp;nbsp;</div>
-                                <img style="width: 115px; margin-left: 8px; margin-top: 8px;" t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s' % (o._get_or_generate_attendance_link(), 3, 4, 0, 1)"/>
-                            </div>
-                            <div style="width: 50%; display: table-cell;" class="col-5">
-                                <table name="partner_vote_data" style="width:90%;"/>
+                            <div style="width: 50%; display: table-cell; vertical-align: top;" class="col-5">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td style="text-align: left; width: 100%;">
+                                            <t t-if="o.param_add_qr_code_in_attendance">
+                                                <img style="width: 115px; margin-bottom: 8px;"
+                                                    t-att-src="'/report/qr/?value=%s&amp;error_correction=%s&amp;box_size=%s&amp;border=%s&amp;version=%s'
+                                                    % (o._get_or_generate_attendance_link(), 3, 4, 0, 1)"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align: center;">
+                                            <table name="partner_vote_data" t-att-style="'width: %s;'" t-attf="% o.param_add_qr_code_in_attendance and '70%' or '90%'"/>
+                                        </td>
+                                    </tr>
+                                </table>
                             </div>
                             <div style="display: table-cell; padding-left: 96px;" class="col-5">
                                 <t t-if="o.partner_id.name">

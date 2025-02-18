@@ -6,7 +6,7 @@
     "name": "Water Users Association: Management of assemblies",
     "summary": "In a water users association, management of the complete "
                "process of a assembly.",
-    "version": '10.0.1.1.1',
+    "version": '10.0.1.1.2',
     "category": "Water Users Associations",
     "website": "http://www.moval.es",
     "author": "Moval Agroingeniería",
@@ -21,6 +21,7 @@
     "data": [
         "security/ir.model.access.csv",
         "security/security.xml",
+        "data/wua_assembly_config_settings_data.xml",
         "wizard/wizard_preview_publicationtext_view.xml",
         "views/resources.xml",
         "views/base_wua_assembly_menus.xml",
