@@ -11,8 +11,8 @@ def migrate(cr, version):
     _logger.info("Dropping ir_values of qr data")
     try:
         cr.execute("""
-            DELETE FROM ir_values WHERE name = 'add_qr_code_in_attendance
-            AND model = 'wua.assembly.configuration';';
+            DELETE FROM ir_values WHERE name = 'add_qr_code_in_attendance'
+            AND model = 'wua.assembly.configuration';
         """)
         _logger.info("ir_values of qr data dropped successfully.")
     except Exception as e:
