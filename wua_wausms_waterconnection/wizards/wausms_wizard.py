@@ -75,6 +75,15 @@ class WauSMSWizard(models.Model):
         res['arch'] = etree.tostring(doc)
         return res
 
+    def _calculate_number_of_sms(self, sms_message):
+        if len(sms_message) <= 160:
+            number_of_sms = 1
+        else:
+            number_of_sms = (len(sms_message) // 153) + 1
+            if number_of_sms > 10:
+                number_of_sms = 10
+        return number_of_sms
+
     @api.multi
     def send_sms_action(self, context):
         service_url = self.env['ir.values'].get_default(
@@ -231,17 +240,21 @@ class WauSMSWizard(models.Model):
             if raw_sms_message:
                 sms_message = self._escape_json_special_chars(raw_sms_message)
 
+            # Calculate number of sms
+            number_of_sms = self._calculate_number_of_sms(sms_message)
+
             # Check size
-            if len(sms_message) > 160:
+            if len(sms_message) > 1530:
                 raise ValidationError(
-                    _("Number of characters must not exceed 160"))
+                    _("Number of characters must not exceed 1530"))
 
             # Encode json
             data_raw = {
                 "to": [reformated_phone_number],
                 "text": sms_message,
                 "from": sender,
-                "trsec": "1"}
+                "trsec": "1",
+                "parts": number_of_sms, }
             data = json.dumps(data_raw)
 
             # Send and catch response
@@ -274,24 +287,32 @@ class WauSMSWizard(models.Model):
             if context.get("mode") == 'partner':
                 sms_confirmations += \
                     sms_confirmation + " -- [" + subject + " - " + \
-                    partner.name + "]" + '\n'
+                    partner.name + \
+                    "Num. " + str(number_of_sms) + "]" + '\n'
             if context.get("mode") == 'invoice':
                 sms_confirmations += \
                     sms_confirmation + " -- [" + subject + " - " + \
-                    str(invoice.number) + " - " + partner.name + "]" + '\n'
+                    str(invoice.number) + " - " + \
+                    "Num. " + str(number_of_sms) + " - " + \
+                    partner.name + "]" + '\n'
             if context.get("mode") == 'parcel':
                 sms_confirmations += \
                     sms_confirmation + " -- [" + subject + " - " + \
-                    str(parcel.name) + " - " + partner.name + "]" + '\n'
+                    str(parcel.name) + " - " + \
+                    "Num. " + str(number_of_sms) + " - " + \
+                    partner.name + "]" + '\n'
             if context.get("mode") == 'waterconnection':
                 sms_confirmations += \
                     sms_confirmation + " -- [" + subject + " - " + \
-                    str(waterconnection.name) + " - " + partner.name + "]" + \
-                    '\n'
+                    str(waterconnection.name) + " - " + \
+                    "Num. " + str(number_of_sms) + " - " + \
+                    partner.name + "]" + '\n'
             if context.get("mode") == 'quota':
                 sms_confirmations += \
                     sms_confirmation + " -- [" + subject + " - " + \
-                    str(quota.name) + " - " + partner.name + "]" + '\n'
+                    str(quota.name) + " - " + \
+                    "Num. " + str(number_of_sms) + " - " + \
+                    partner.name + "]" + '\n'
 
             # Response message (only shown in debug mode)
             if connection_ok:
@@ -312,6 +333,8 @@ class WauSMSWizard(models.Model):
                 response_messages += "Subject: " + subject + '\n' \
                                      "Sender: " + sender + '\n' \
                                      "To: " + reformated_phone_number + '\n' \
+                                     "Number of SMS: " + str(number_of_sms) + \
+                                     '\n' \
                                      "Response: " + response_message + '\n'
             else:
                 response_messages += "Subject: " + subject + '\n' \
@@ -320,6 +343,8 @@ class WauSMSWizard(models.Model):
                                      "Partner: " + partner.name + '\n' \
                                      "Confirmation: " + sms_confirmation_info \
                                      + '\n' \
+                                     "Number of SMS: " + str(number_of_sms) + \
+                                     '\n' \
                                      "Response: " + '\n' + response_message \
                                      + '\n'
 
@@ -343,7 +368,8 @@ class WauSMSWizard(models.Model):
                 "response_code": status_code,
                 "sms_confirmation": sms_confirmation,
                 "sms_confirmation_info": sms_confirmation_info,
-                "response_message": response_message, }
+                "response_message": response_message,
+                "number_of_sms": number_of_sms, }
             self.env['wausms.tracking'].create(tracking_data)
             self.env.cr.commit()
 

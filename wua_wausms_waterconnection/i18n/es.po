@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-14 14:50+0000\n"
-"PO-Revision-Date: 2023-09-14 14:50+0000\n"
+"POT-Creation-Date: 2025-02-18 12:56+0000\n"
+"PO-Revision-Date: 2025-02-18 12:56+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,8 +21,8 @@ msgid "<span class=\"o_stat_text\" style=\"display:inline;\"> SMS's</span>"
 msgstr "<span class=\"o_stat_text\" style=\"display:inline;\"> SMS</span>"
 
 #. module: wua_wausms_waterconnection
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:249
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:285
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:278
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:326
 #, python-format
 msgid "ERROR: no response"
 msgstr "ERROR: sin repuesta"
@@ -34,13 +34,13 @@ msgstr "Elemento (toma)"
 
 #. module: wua_wausms_waterconnection
 #: code:addons/wua_wausms_waterconnection/models/wausms_template.py:50
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:210
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:235
 #, python-format
 msgid "Error resolving template: {}"
 msgstr "Error resolviendo la plantilla: {}"
 
 #. module: wua_wausms_waterconnection
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:254
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:283
 #, python-format
 msgid "No subject"
 msgstr "Sin asunto"
@@ -57,13 +57,13 @@ msgid "Number of SMS"
 msgstr "Nº de SMS"
 
 #. module: wua_wausms_waterconnection
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:221
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:249
 #, python-format
-msgid "Number of characters must not exceed 160"
-msgstr "El número de caracteres no puede exceder los 160"
+msgid "Number of characters must not exceed 1530"
+msgstr "El número de caracteres no debe superar los 1530"
 
 #. module: wua_wausms_waterconnection
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:197
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:221
 #, python-format
 msgid "Partner %s does not have a mobile number"
 msgstr "El socio %s no tiene teléfono móvil"
@@ -76,7 +76,7 @@ msgid "SMS"
 msgstr "SMS"
 
 #. module: wua_wausms_waterconnection
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:330
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:377
 #, python-format
 msgid "SMS confirmation"
 msgstr "Confirmación SMS"
@@ -102,7 +102,7 @@ msgid "Send SMS"
 msgstr "Enviar SMS"
 
 #. module: wua_wausms_waterconnection
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:192
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:216
 #, python-format
 msgid "The phone number for testing has not been set."
 msgstr "El teléfono para pruebas no ha sido establecido."
@@ -121,7 +121,7 @@ msgstr "El objeto Toma (waterconnection) también está disponible. Observar que
 "                    atributos y éstos dependen de los módulos instalados."
 
 #. module: wua_wausms_waterconnection
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:148
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:167
 #, python-format
 msgid "There are no items selected."
 msgstr "No se ha seleccionado ningún ítem."
@@ -179,7 +179,7 @@ msgid "Wizard to send SMS through WauSMS service"
 msgstr "Asistente para enviar mensajes a través del servicio WauSMS"
 
 #. module: wua_wausms_waterconnection
-#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:212
+#: code:addons/wua_wausms_waterconnection/wizards/wausms_wizard.py:237
 #, python-format
 msgid "empty message"
 msgstr "mensaje vacio"
@@ -191,6 +191,11 @@ msgstr "wausms.configuration"
 
 #. module: wua_wausms_waterconnection
 #: model:ir.ui.view,arch_db:wua_wausms_waterconnection.wausms_template_view_form
+msgid "{% for shift in waterconnection.irrigation_shift_ids %} {% if shift.name == 'SHIFT NAME' %} {{ shift.description }} {% endif %} {% endfor %}"
+msgstr "{% for shift in waterconnection.irrigation_shift_ids %} {% if shift.name == 'SHIFT NAME' %} {{ shift.description }} {% endif %} {% endfor %}"
+
+#. module: wua_wausms_waterconnection
+#: model:ir.ui.view,arch_db:wua_wausms_waterconnection.wausms_template_view_form
 msgid "{{ waterconnection.description }}"
 msgstr "{{ waterconnection.description }}"
 
@@ -198,11 +203,6 @@ msgstr "{{ waterconnection.description }}"
 #: model:ir.ui.view,arch_db:wua_wausms_waterconnection.wausms_template_view_form
 msgid "{{ waterconnection.hydraulicsector_id.name }}"
 msgstr "{{ waterconnection.hydraulicsector_id.name }}"
-
-#. module: wua_wausms_waterconnection
-#: model:ir.ui.view,arch_db:wua_wausms_waterconnection.wausms_template_view_form
-msgid "{{ waterconnection.irrigation_shift_id.name }}"
-msgstr "{{ waterconnection.irrigation_shift_id.name }}"
 
 #. module: wua_wausms_waterconnection
 #: model:ir.ui.view,arch_db:wua_wausms_waterconnection.wausms_template_view_form
@@ -218,4 +218,3 @@ msgstr "{{ waterconnection.name }}"
 #: model:ir.ui.view,arch_db:wua_wausms_waterconnection.wausms_template_view_form
 msgid "{{ waterconnection.product_id.name }}"
 msgstr "{{ waterconnection.product_id.name }}"
-
