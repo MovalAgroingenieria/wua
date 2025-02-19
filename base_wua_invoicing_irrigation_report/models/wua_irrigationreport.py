@@ -223,10 +223,11 @@ class WuaIrrigationReport(models.Model):
         doc = etree.XML(res['arch'])
         if show_planned_import:
             if view_type in ['form', 'tree']:
-                # Hide the planned import data
                 for node in doc.xpath("//field[@name='planned_import']"):
                     node.set('invisible', '0')
-                    node.set('modifiers', '{"invisible": false}')
+                    node.set('readonly', '1')
+                    node.set('modifiers',
+                             '{"invisible": false, "readonly": true}')
         if (irrigationreport_separate_invoicing_by_wc):
             if view_type in ['form']:
                 for node in doc.xpath("//page[@name='invoicing_page']"):
