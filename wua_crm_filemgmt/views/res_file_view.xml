@@ -221,6 +221,25 @@
         </field>
     </record>
 
+    <record id="res_file_technical_partnerlink_view_tree" model="ir.ui.view">
+        <field name="name">File Partnerlink Technical(tree view)</field>
+        <field name="model">res.file.partnerlink</field>
+        <field name="arch" type="xml">
+            <tree class="o_res_file_partnerlink_view_tree" editable="bottom" default_order="create_date desc">
+                <field name="file_id"/>
+                <field name="partner_id"/>
+                <field name="is_main"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_file_technical_partnerlink_action" model="ir.actions.act_window">
+        <field name="name">Partner Links Technical(low-level)</field>
+        <field name="res_model">res.file.partnerlink</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="res_file_technical_partnerlink_view_tree"/>
+    </record>
+
     <record id="wua_generate_files_parcel_shp" model="ir.actions.server">
         <field name="name">Generate Parcel SHP</field>
         <field name="model_id" ref="model_res_file"/>
@@ -252,5 +271,12 @@
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server,' + str(ref('res_file_print_selected_report'))"/>
     </record>
+
+    <menuitem id="res_file_technical_partnerlinks_menu"
+              name="Partner Links"
+              parent="technical_menu"
+              action="res_file_technical_partnerlink_action"
+              sequence="2"
+              groups="base.group_system"/>
 
 </odoo>

@@ -20,6 +20,7 @@
         'security/ir.model.access.csv',
         'data/res_file_category_data.xml',
         'views/resources.xml',
+        'views/wua_crm_filemgmt_menus.xml',
         'views/res_file_view.xml',
         'views/wua_parcel_view.xml',
         'wizard/wizard_add_parcels_to_file.xml',
