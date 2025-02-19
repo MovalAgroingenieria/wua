@@ -171,6 +171,7 @@ class AccountInvoice(models.Model):
                 record.type = 'out_refund'
                 for line in record.invoice_line_ids:
                     line.quantity = -line.quantity
+                record.compute_taxes()
 
 
 class AccountInvoiceLine(models.Model):
