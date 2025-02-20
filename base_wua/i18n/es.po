@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-19 11:53+0000\n"
-"PO-Revision-Date: 2024-11-19 11:53+0000\n"
+"POT-Creation-Date: 2025-02-19 09:08+0000\n"
+"PO-Revision-Date: 2025-02-19 09:08+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -764,6 +764,7 @@ msgstr "Manzano"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wizard_change_parcel_name_view_form
+#: model:ir.ui.view,arch_db:base_wua.wizard_set_vat_view_form
 #: model:ir.ui.view,arch_db:base_wua.wua_config_settings_view_form
 msgid "Apply"
 msgstr "Aplicar"
@@ -1074,6 +1075,7 @@ msgstr "Cálculo: socios"
 
 #. module: base_wua
 #: model:ir.ui.view,arch_db:base_wua.wizard_change_parcel_name_view_form
+#: model:ir.ui.view,arch_db:base_wua.wizard_set_vat_view_form
 #: model:ir.ui.view,arch_db:base_wua.wua_config_settings_view_form
 msgid "Cancel"
 msgstr "Cancelar"
@@ -1125,6 +1127,7 @@ msgstr "Configuración del Censo"
 
 #. module: base_wua
 #: model:ir.actions.act_window,name:base_wua.action_change_parcel_name
+#: model:ir.actions.act_window,name:base_wua.action_set_partner_code
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_view_form
 msgid "Change Code"
 msgstr "Cambiar código"
@@ -1320,6 +1323,7 @@ msgstr "Municipio:"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_create_uid
+#: model:ir.model.fields,field_description:base_wua.field_wizard_set_partner_code_create_uid
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_create_uid
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_create_uid
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_create_uid
@@ -1344,6 +1348,7 @@ msgstr "Creado por"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_create_date
+#: model:ir.model.fields,field_description:base_wua.field_wizard_set_partner_code_create_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_create_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_create_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_create_date
@@ -1420,6 +1425,11 @@ msgstr "Planes de cultivo"
 #: model:ir.ui.menu,name:base_wua.wua_cultivation_menu
 msgid "Cultivations"
 msgstr "Cultivos"
+
+#. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wizard_set_vat_view_form
+msgid "Data of a VAT"
+msgstr "Datos VAT"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_title_deed_date
@@ -1503,7 +1513,13 @@ msgid "Dialog box to change the parcel name (code), with irrigation infrastructu
 msgstr "Dialog box to change the parcel name (code), with irrigation infrastructure"
 
 #. module: base_wua
+#: model:ir.model,name:base_wua.model_wizard_set_partner_code
+msgid "Dialog box to set a Partner Code"
+msgstr "Diálogo asignación código de socio"
+
+#. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_display_name
+#: model:ir.model.fields,field_description:base_wua.field_wizard_set_partner_code_display_name
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_display_name
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_display_name
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_display_name
@@ -2032,6 +2048,7 @@ msgstr "Cítricos híbridos"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_id
+#: model:ir.model.fields,field_description:base_wua.field_wizard_set_partner_code_id
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_id
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_id
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_id
@@ -2232,7 +2249,13 @@ msgid "Is a company (marked)"
 msgstr "Condición de empresa (sí/no)"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1632
+#: code:addons/base_wua/wizard/wizard_set_partner_code.py:39
+#, python-format
+msgid "Is not possible to change the partner_code of a partner that is already a WUA partner"
+msgstr "No es posible cambiar el código de socio de un socio que ya es un socio WUA."
+
+#. module: base_wua
+#: code:addons/base_wua/models/wua_parcel.py:1641
 #, python-format
 msgid "It is not possible to create the files of SHP."
 msgstr "No es posible crear los ficheros de los SHP."
@@ -2259,6 +2282,7 @@ msgstr "Parcelario"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name___last_update
+#: model:ir.model.fields,field_description:base_wua.field_wizard_set_partner_code___last_update
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession___last_update
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration___last_update
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation___last_update
@@ -2285,6 +2309,7 @@ msgstr "Última modificación en"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_write_uid
+#: model:ir.model.fields,field_description:base_wua.field_wizard_set_partner_code_write_uid
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_write_uid
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_write_uid
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_write_uid
@@ -2309,6 +2334,7 @@ msgstr "Última actualización por"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wizard_change_parcel_name_write_date
+#: model:ir.model.fields,field_description:base_wua.field_wizard_set_partner_code_write_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_concession_write_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_write_date
 #: model:ir.model.fields,field_description:base_wua.field_wua_cultivation_variety_write_date
@@ -2386,11 +2412,6 @@ msgstr "Parcela arrendada"
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_leased_dates_required
 msgid "Leased dates required"
 msgstr "Fechas de arrendamiento obligatorias"
-
-#. module: base_wua
-#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_leaser_id
-msgid "Leaser"
-msgstr "Arrendatario"
 
 #. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_127
@@ -2610,7 +2631,7 @@ msgid "No SHP: The user must be a portal user, or it is not possible to obtain S
 msgstr "Sin archivo SHP: el usuario debe ser un usuario del portal, o no es posible obtener archivos SHP fuera del programa principal."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1685
+#: code:addons/base_wua/models/wua_parcel.py:1694
 #, python-format
 msgid "No parcel with gis relation."
 msgstr "No hay parcelas con vínculo GIS."
@@ -2783,13 +2804,13 @@ msgid "Only one legal representative is allowed."
 msgstr "Sólo se permite tener un único representante legal."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3276
+#: code:addons/base_wua/models/wua_parcel.py:3299
 #, python-format
 msgid "Only one usufructuary per parcel."
 msgstr "Solo un usufructuario por parcela."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:3269
+#: code:addons/base_wua/models/wua_parcel.py:3292
 #, python-format
 msgid "Only owners can be usufructuaries."
 msgstr "Solo los propietarios pueden ser usufructuarios."
@@ -2901,7 +2922,6 @@ msgid "Owned percentage"
 msgstr "Porcentaje de propiedad"
 
 #. module: base_wua
-#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_owner_id
 #: model:ir.ui.view,arch_db:base_wua.view_partner_search
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_partnerlink_view_search
 #: selection:wua.parcel.partnerlink,profile:0
@@ -3003,8 +3023,8 @@ msgstr "Parcela:"
 #: code:addons/base_wua/controllers/partner.py:43
 #: code:addons/base_wua/controllers/partner.py:75
 #: code:addons/base_wua/models/res_partner.py:682
-#: code:addons/base_wua/models/wua_parcel.py:1723
-#: code:addons/base_wua/models/wua_parcel.py:3566
+#: code:addons/base_wua/models/wua_parcel.py:1732
+#: code:addons/base_wua/models/wua_parcel.py:3589
 #: model:ir.actions.act_window,name:base_wua.res_partner_partnerlink_action
 #: model:ir.actions.act_window,name:base_wua.wua_parcel_action
 #: model:ir.model.fields,field_description:base_wua.field_res_partner_parcel_ids
@@ -3041,6 +3061,12 @@ msgstr "Parcelas, como propietario (para votos)"
 #: model:ir.model.fields,field_description:base_wua.field_res_users_parcel_payer_number
 msgid "Parcels, as payer"
 msgstr "Parcelas, como pagador"
+
+#. module: base_wua
+#: model:ir.model.fields,field_description:base_wua.field_wizard_set_partner_code_partner_code
+#: model:ir.ui.view,arch_db:base_wua.wizard_set_vat_view_form
+msgid "Partner Code"
+msgstr "Código Socio"
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partnerlink_pos
@@ -3110,11 +3136,16 @@ msgid "Partners (WUA Portal User)"
 msgstr "Socios"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1442
-#: code:addons/base_wua/models/wua_parcel.py:2180
+#: code:addons/base_wua/models/wua_parcel.py:1444
 #, python-format
-msgid "Partners: the sum of all percentages must be 100, or there are repeated partners."
-msgstr "Socios: la suma de todos los porcentajes debe ser 100, o bien hay socios repetidos."
+msgid "Partners: the sum of all percentages must be 100, or there are repeated partners.On parcel: %s."
+msgstr "Socios: la suma de todos los porcentajes debe ser 100, o bien hay socios repetidos.En la parcela: %s."
+
+#. module: base_wua
+#: code:addons/base_wua/models/wua_parcel.py:2190
+#, python-format
+msgid "Partners: the sum of all percentages must be 100, or there are repeated partners.on parcel: %s."
+msgstr "Socios: la suma de todos los porcentajes debe ser 100, o bien hay socios repetidos.En la parcela: %s."
 
 #. module: base_wua
 #: model:ir.model.fields,field_description:base_wua.field_wua_configuration_url_gis_viewer_password
@@ -3226,6 +3257,11 @@ msgid "Pivot"
 msgstr "Pivot"
 
 #. module: base_wua
+#: model:ir.ui.view,arch_db:base_wua.wizard_set_vat_view_form
+msgid "Please, insert the new partner_code"
+msgstr "Por favor, introduzca el nuevo código de socio"
+
+#. module: base_wua
 #: model:wua.cultivation,name:base_wua.cultivation_044
 msgid "Plum"
 msgstr "Ciruelo"
@@ -3310,7 +3346,6 @@ msgid "Profile"
 msgstr "Perfil"
 
 #. module: base_wua
-#: model:ir.model.fields,field_description:base_wua.field_wua_parcel_partnerlink_propietary_partner_id
 #: model:ir.ui.view,arch_db:base_wua.wua_parcel_partnerlink_view_search
 msgid "Propietary"
 msgstr "Propietario"
@@ -3748,14 +3783,14 @@ msgid "Tenant"
 msgstr "Arrendatario"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1681
+#: code:addons/base_wua/models/wua_parcel.py:1690
 #, python-format
 msgid "The \"URL GIS Viewer WFS\" parameter is not populated."
 msgstr "parámetro \"URL del servicio WFS\" no ha sido inicializado."
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:857
-#: code:addons/base_wua/models/wua_parcel.py:1808
+#: code:addons/base_wua/models/wua_parcel.py:1817
 #, python-format
 msgid "The \"URL GIS Viewer WMS\" parameter or \"URL GIS Viewer WFS\" are not populated."
 msgstr "El parámetro \"URL del servicio WMS\" o el parámetro \"URL del servicio WFS\" no ha sido inicializado."
@@ -3826,7 +3861,7 @@ msgid "The code of the link-to-partners, subparcels and other dependent entities
 msgstr "El código de los enlaces a socios, subparcelas y resto de entidades dependientes también será modificado"
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1612
+#: code:addons/base_wua/models/wua_parcel.py:1621
 #, python-format
 msgid "The database has no GIS layers, or the \"Path of frompgtoshp\" parameter is not populated."
 msgstr "La base de datos no tiene capas GIS, o el parámetro \"Ruta de frompgtoshp\" no se ha indicado."
@@ -3923,11 +3958,11 @@ msgid "The second initial code for partners must be a value zero or positive."
 msgstr "El valor inicial para la codificación alternativa debe ser un valor cero o positivo."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1431
-#: code:addons/base_wua/models/wua_parcel.py:2168
+#: code:addons/base_wua/models/wua_parcel.py:1432
+#: code:addons/base_wua/models/wua_parcel.py:2178
 #, python-format
-msgid "The sum of subparcel areas must be the parcel official area."
-msgstr "La suma de las áreas de las subparcelas debe coincidir con el área declarada."
+msgid "The sum of subparcel areas must be the parcel official area for parcel: %s."
+msgstr "La suma de las áreas de las subparcelas debe coincidir con el área declarada: %s."
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_config_settings.py:325
@@ -4056,15 +4091,15 @@ msgid "Two digits of the official cadastral code."
 msgstr "Dos dígitos del código catastral oficial."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1449
-#: code:addons/base_wua/models/wua_parcel.py:2185
+#: code:addons/base_wua/models/wua_parcel.py:1453
+#: code:addons/base_wua/models/wua_parcel.py:2197
 #, python-format
 msgid "Two or more lessees is not allowed."
 msgstr "No se permite más de un arrendatario."
 
 #. module: base_wua
-#: code:addons/base_wua/models/wua_parcel.py:1454
-#: code:addons/base_wua/models/wua_parcel.py:2189
+#: code:addons/base_wua/models/wua_parcel.py:1458
+#: code:addons/base_wua/models/wua_parcel.py:2201
 #, python-format
 msgid "Two or more partners as manager are not allowed, or there is no manager."
 msgstr "No se ha elegido ningún regante, o bien se ha designado a más de uno."
@@ -4434,7 +4469,7 @@ msgstr "ha"
 
 #. module: base_wua
 #: code:addons/base_wua/models/wua_parcel.py:1212
-#: code:addons/base_wua/models/wua_parcel.py:3029
+#: code:addons/base_wua/models/wua_parcel.py:3052
 #, python-format
 msgid "hectares"
 msgstr "hectáreas"

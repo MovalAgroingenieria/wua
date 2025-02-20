@@ -67,6 +67,7 @@
         "data/wua_parcel_cron.xml",
         "data/set_gis_fields_cron.xml",
         "wizard/wizard_change_parcel_name_view.xml",
+        "wizard/wizard_set_partner_code_view.xml",
         "views/resources.xml",
         "views/wua_parcel_view.xml",
         "views/wua_region_view.xml",

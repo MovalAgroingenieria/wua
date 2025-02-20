@@ -4,3 +4,4 @@
 
 from . import wizard_change_parcel_name
 from . import portal_wizard
+from . import wizard_set_partner_code
