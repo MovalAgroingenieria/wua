@@ -17,7 +17,9 @@
     "data": [
         "security/ir.model.access.csv",
         "data/product_category_data.xml",
+        "views/wua_invoicing_config_settings_view.xml",
         "views/account_invoice_view.xml",
+        "views/product_views.xml",
         "views/resources.xml",
         "views/wua_invoiceset_view.xml",
     ],

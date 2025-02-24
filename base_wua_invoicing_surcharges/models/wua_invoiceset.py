@@ -92,6 +92,54 @@ class WuaInvoiceset(models.Model):
                     invoice.invoice_id.id)
             return invoicetotalvarsurcharge_ids
 
+    def get_invoice_details_with_surcharges(self, invoice_details):
+        invoice_details_with_surcharges = []
+        for invoice_detail in invoice_details:
+            if (invoice_detail['categ_code'] in [16, 17, 18]):
+                invoice_details_with_surcharges.append(invoice_detail)
+        return invoice_details_with_surcharges
+
+    def group_invoice_details_with_surcharges(self, invoice_details):
+        invoices_data = []
+        for invoice_detail in invoice_details:
+            partner = self.env['res.partner'].browse(
+                invoice_detail['partner_id'])
+            if partner:
+                payment_mode_id = partner.customer_payment_mode_id.id
+                result = {
+                    'partner_id': invoice_detail['partner_id'],
+                    'partner_code': partner.partner_code,
+                    'account_id': partner.property_account_receivable_id.id,
+                    'payment_term_id': partner.property_payment_term_id.id,
+                    'payment_mode_id': payment_mode_id,
+                    'customer_invoice_transmit_method_id':
+                        partner.customer_invoice_transmit_method_id.id,
+                    'detail': [invoice_detail],
+                }
+                invoices_data.append(result)
+        return invoices_data
+
+    def group_invoice_details(self, invoice_details):
+        individual_invoice = self.env['ir.values'].get_default(
+            'wua.invoicing.configuration',
+            'surcharges_individual_invoice')
+        invoices_data = []
+        if (individual_invoice):
+            invoice_details_with_surcharges =  \
+                self.get_invoice_details_with_surcharges(
+                    invoice_details)
+            invoice_details_without_surcharges = \
+                [x for x in invoice_details
+                    if x not in invoice_details_with_surcharges]
+            invoices_data = self.group_invoice_details_with_surcharges(
+                invoice_details_with_surcharges) + \
+                super(WuaInvoiceset, self).group_invoice_details(
+                    invoice_details_without_surcharges)
+        else:
+            invoices_data = super(WuaInvoiceset, self).group_invoice_details(
+                invoice_details)
+        return invoices_data
+
     def calculate_invoice_details_others_categ(self, product_id, categ_code,
                                                item_ids, partnerlinks):
         if categ_code != 16 and categ_code != 17 and categ_code != 18:
@@ -128,6 +176,7 @@ class WuaInvoiceset(models.Model):
         if (invoice.invoiceset_id):
             description += ' - ' + invoice.invoiceset_id.description
         description += ')'
+
         return description
 
     def calculate_invoice_details_categ16(self, product_id, categ_code,
@@ -163,8 +212,12 @@ class WuaInvoiceset(models.Model):
         description += _('€ for invoice ')
         description += invoice.number + ' (' + invoice_date_format
         if (invoice.invoiceset_id):
-            description += ' - ' + invoice.invoiceset_id.description
-        description += ')'
+            description += u' - ' + invoice.invoiceset_id.description
+        description += u')'
+        if (invoice.invoice_line_ids):
+            description += u':\n- '
+            description += u'\n- '.join(
+                invoice.invoice_line_ids.mapped(lambda x: x.name))
         return description
 
     def calculate_invoice_details_categ17(self, product_id, categ_code,
@@ -348,7 +401,7 @@ class WuaInvoicesetLine(models.Model):
 
     @api.depends('line_invoice_with_variable_surcharge_ids',
                  'line_invoice_with_fixed_surcharge_ids',
-                 'line_invoice_with_total_variable_surcharge_ids',)
+                 'line_invoice_with_total_variable_surcharge_ids')
     def _compute_configured_line(self):
         super(WuaInvoicesetLine, self)._compute_configured_line()
         for record in self:
@@ -379,10 +432,15 @@ class WuaInvoicesetLine(models.Model):
     def populate_items_select_invoice_with_variable_surcharge(
             self, product_id):
         invoices = self.env['account.invoice'].search(
-            ['|', ('type', '=', 'out_invoice'), ('type', '=', 'out_refund')])
+            ['|', ('type', '=', 'out_invoice'), ('type', '=', 'out_refund')],
+            limit=1)
         if len(invoices) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
+            product = self.env['product.product'].browse(product_id)
+            state_domain = 'AND state != \'draft\''
+            if (product.only_open_invoices):
+                state_domain = 'AND state = \'open\''
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -400,7 +458,8 @@ class WuaInvoicesetLine(models.Model):
                     number_of_variable_surcharges
                     FROM account_invoice
                     WHERE (type = 'out_refund' OR
-                    type = 'out_invoice') AND state != 'draft' AND residual > 0
+                    type = 'out_invoice') """ + state_domain + """
+                    AND residual > 0
                     AND number IS NOT NULL
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
@@ -413,10 +472,15 @@ class WuaInvoicesetLine(models.Model):
     def populate_items_select_invoice_with_fixed_surcharge(
             self, product_id):
         invoices = self.env['account.invoice'].search(
-            ['|', ('type', '=', 'out_invoice'), ('type', '=', 'out_refund')])
+            ['|', ('type', '=', 'out_invoice'), ('type', '=', 'out_refund')],
+            limit=1)
         if len(invoices) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
+            product = self.env['product.product'].browse(product_id)
+            state_domain = 'AND state != \'draft\''
+            if (product.only_open_invoices):
+                state_domain = 'AND state = \'open\''
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -435,7 +499,7 @@ class WuaInvoicesetLine(models.Model):
                     number_of_fixed_surcharges
                     FROM account_invoice
                     WHERE (type = 'out_refund' OR
-                    type = 'out_invoice') AND state != 'draft' AND
+                    type = 'out_invoice') """ + state_domain + """ AND
                     number IS NOT NULL
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
@@ -452,6 +516,10 @@ class WuaInvoicesetLine(models.Model):
         if len(invoices) > 0:
             user_id = self.env.user.id
             invoicesetline_id = self.id
+            product = self.env['product.product'].browse(product_id)
+            state_domain = 'AND state != \'draft\''
+            if (product.only_open_invoices):
+                state_domain = 'AND state = \'open\''
             try:
                 self.env.cr.savepoint()
                 self.env.cr.execute("""
@@ -469,7 +537,8 @@ class WuaInvoicesetLine(models.Model):
                     number_of_total_variable_surcharges
                     FROM account_invoice
                     WHERE (type = 'out_refund' OR
-                    type = 'out_invoice') AND state != 'draft' AND
+                    type = 'out_invoice')
+                    """ + state_domain + """ AND
                     number IS NOT NULL
                     """, (user_id, user_id, invoicesetline_id))
                 self.env.cr.commit()
@@ -523,58 +592,69 @@ class WuaInvoicesetLineInvoiceSurchargeVariable(models.Model):
         string='Line',
         comodel_name='wua.invoiceset.line',
         required=True,
-        ondelete='cascade')
+        ondelete='cascade',
+    )
 
     invoiceset_id = fields.Many2one(
         string='Invoiceset',
         comodel_name='wua.invoiceset',
-        ondelete='cascade')
+        ondelete='cascade',
+    )
 
     selected = fields.Boolean(
         string="Selected",
-        default=True)
+        default=True,
+    )
 
     invoice_id = fields.Many2one(
         string='Invoice',
         comodel_name='account.invoice',
         required=True,
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     partner_id = fields.Many2one(
         string='Partner',
         comodel_name='res.partner',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     number = fields.Char(
         string='Number',
         size=32,
         required=True,
-        index=True,)
+        index=True,
+    )
 
     date_due = fields.Date(
         string='Due Date',
-        index=True,)
+        index=True,
+    )
 
     date_invoice = fields.Date(
         string='Invoice Date',
-        index=True,)
+        index=True,
+    )
 
     # NEEDED FOR fields.Monetary
     currency_id = fields.Many2one(
         comodel_name='res.currency',
         string='Currency',
-        compute='_compute_currency_id')
+        compute='_compute_currency_id',
+    )
 
     residual = fields.Monetary(
         string='Amount Due',
         currency_field='currency_id',
         required=True,
         index=True,
-        help="Remaining amount due.")
+        help="Remaining amount due.",
+    )
 
     number_of_variable_surcharges = fields.Integer(
         string='Invoicing Processes Variable Surcharges',
-        index=True,)
+        index=True,
+    )
 
     @api.multi
     def _compute_currency_id(self):
@@ -608,58 +688,69 @@ class WuaInvoicesetLineInvoiceSurchargeFixed(models.Model):
         string='Line',
         comodel_name='wua.invoiceset.line',
         required=True,
-        ondelete='cascade')
+        ondelete='cascade',
+    )
 
     invoiceset_id = fields.Many2one(
         string='Invoiceset',
         comodel_name='wua.invoiceset',
-        ondelete='cascade')
+        ondelete='cascade',
+    )
 
     selected = fields.Boolean(
         string="Selected",
-        default=True)
+        default=True,
+    )
 
     invoice_id = fields.Many2one(
         string='Invoice',
         comodel_name='account.invoice',
         required=True,
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     partner_id = fields.Many2one(
         string='Partner',
         comodel_name='res.partner',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     number = fields.Char(
         string='Number',
         size=32,
         required=True,
-        index=True,)
+        index=True,
+    )
 
     date_due = fields.Date(
         string='Due Date',
-        index=True,)
+        index=True,
+    )
 
     date_invoice = fields.Date(
         string='Invoice Date',
-        index=True,)
+        index=True,
+    )
 
     # NEEDED FOR fields.Monetary
     currency_id = fields.Many2one(
         comodel_name='res.currency',
         string='Currency',
-        compute='_compute_currency_id')
+        compute='_compute_currency_id',
+    )
 
     residual = fields.Monetary(
         string='Amount Due',
         currency_field='currency_id',
         required=True,
         index=True,
-        help="Remaining amount due.")
+        help="Remaining amount due.",
+    )
 
     number_of_fixed_surcharges = fields.Integer(
         string='Invoicing Processes Fixed Surcharges',
-        index=True,)
+        index=True,
+    )
 
     @api.multi
     def _compute_currency_id(self):
@@ -694,57 +785,68 @@ class WuaInvoicesetLineInvoiceTotalSurchargeVariable(models.Model):
         string='Line',
         comodel_name='wua.invoiceset.line',
         required=True,
-        ondelete='cascade')
+        ondelete='cascade',
+    )
 
     invoiceset_id = fields.Many2one(
         string='Invoiceset',
         comodel_name='wua.invoiceset',
-        ondelete='cascade')
+        ondelete='cascade',
+    )
 
     selected = fields.Boolean(
         string="Selected",
-        default=True)
+        default=True,
+    )
 
     invoice_id = fields.Many2one(
         string='Invoice',
         comodel_name='account.invoice',
         required=True,
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     partner_id = fields.Many2one(
         string='Partner',
         comodel_name='res.partner',
-        ondelete='restrict')
+        ondelete='restrict',
+    )
 
     number = fields.Char(
         string='Number',
         size=32,
         required=True,
-        index=True,)
+        index=True,
+    )
 
     date_due = fields.Date(
         string='Due Date',
-        index=True,)
+        index=True,
+    )
 
     date_invoice = fields.Date(
         string='Invoice Date',
-        index=True,)
+        index=True,
+    )
 
     # NEEDED FOR fields.Monetary
     currency_id = fields.Many2one(
         comodel_name='res.currency',
         string='Currency',
-        compute='_compute_currency_id')
+        compute='_compute_currency_id',
+    )
 
     amount_total = fields.Monetary(
         string='Total amount',
         currency_field='currency_id',
         required=True,
-        index=True,)
+        index=True,
+    )
 
     number_of_total_variable_surcharges = fields.Integer(
         string='Invoicing Processes Variable Surcharges (Total)',
-        index=True,)
+        index=True,
+    )
 
     @api.multi
     def _compute_currency_id(self):

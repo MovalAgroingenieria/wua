@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-07 10:59+0000\n"
-"PO-Revision-Date: 2024-11-07 10:59+0000\n"
+"POT-Creation-Date: 2025-02-24 16:32+0000\n"
+"PO-Revision-Date: 2025-02-24 16:32+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:128
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:174
 #, python-format
 msgid "% for invoice "
 msgstr "% de la factura "
@@ -48,6 +48,11 @@ msgstr "C17: Recàrrec fix."
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_account_invoice_amount_untaxed_categ18
 msgid "C18: Variable surcharge (Total amount)."
 msgstr "C18: Recàrrec variable total."
+
+#. module: base_wua_invoicing_surcharges
+#: model:ir.model,name:base_wua_invoicing_surcharges.model_wua_invoicing_configuration
+msgid "Configuration of base_wua_invoicing module"
+msgstr "Configuration of base_wua_invoicing module"
 
 #. module: base_wua_invoicing_surcharges
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_fixed_create_uid
@@ -119,15 +124,15 @@ msgid "Entity (line of a WUA invoice set)"
 msgstr "Element (línia de lot de factures)"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:413
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:448
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:482
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:470
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:510
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:549
 #, python-format
 msgid "Error when updating records."
 msgstr "Error en actualitzar els registres."
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:496
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:563
 #: model:product.template,name:base_wua_invoicing_surcharges.product_17
 #, python-format
 msgid "Fixed Surcharge"
@@ -143,7 +148,7 @@ msgstr "Recàrrecs fixos de factures"
 #: model:ir.ui.view,arch_db:base_wua_invoicing_surcharges.wua_invoiceset_line_invoice_surcharge_variable_view_search
 #: model:ir.ui.view,arch_db:base_wua_invoicing_surcharges.wua_invoiceset_line_invoice_total_surcharge_variable_view_search
 msgid "Group By"
-msgstr "Agrupar per"
+msgstr "Agrupa Per"
 
 #. module: base_wua_invoicing_surcharges
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_fixed_id
@@ -151,6 +156,22 @@ msgstr "Agrupar per"
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_total_surcharge_variable_id
 msgid "ID"
 msgstr "ID"
+
+#. module: base_wua_invoicing_surcharges
+#: model:ir.model.fields,help:base_wua_invoicing_surcharges.field_product_product_only_open_invoices
+#: model:ir.model.fields,help:base_wua_invoicing_surcharges.field_product_template_only_open_invoices
+msgid "If checked, only open invoices will be considered for this product."
+msgstr "Si està marcat, només les factures obertes seran seleccionables a lots d'aquest producte."
+
+#. module: base_wua_invoicing_surcharges
+#: model:ir.model.fields,help:base_wua_invoicing_surcharges.field_wua_invoicing_configuration_surcharges_individual_invoice
+msgid "If enabled, an invoiceset will generate one invoice for every invoice instead of group them by partner"
+msgstr "Si esteu habilitat, es generarà una factura per cada recàrrec en lloc d'agrupar-lo per soci"
+
+#. module: base_wua_invoicing_surcharges
+#: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoicing_configuration_surcharges_individual_invoice
+msgid "Individual invoicing of surcharges"
+msgstr "Facturació de recàrrecs individual"
 
 #. module: base_wua_invoicing_surcharges
 #: model:product.uom,name:base_wua_invoicing_surcharges.product_uom_invoices
@@ -243,25 +264,30 @@ msgid "Invoicing Processes Variable Surcharges (Total)"
 msgstr "Nº facturacions recàrrec variable total"
 
 #. module: base_wua_invoicing_surcharges
+#: model:ir.ui.view,arch_db:base_wua_invoicing_surcharges.wua_invoicing_config_settings_view_form
+msgid "Invoicing of Surcharge Products"
+msgstr "Facturació de recàrrecs"
+
+#. module: base_wua_invoicing_surcharges
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_fixed___last_update
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_variable___last_update
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_total_surcharge_variable___last_update
 msgid "Last Modified on"
-msgstr "Última modificació el "
+msgstr "Darrera modificació el"
 
 #. module: base_wua_invoicing_surcharges
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_fixed_write_uid
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_variable_write_uid
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_total_surcharge_variable_write_uid
 msgid "Last Updated by"
-msgstr "Última actualització per"
+msgstr "Darrera Actualització per"
 
 #. module: base_wua_invoicing_surcharges
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_fixed_write_date
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_variable_write_date
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_total_surcharge_variable_write_date
 msgid "Last Updated on"
-msgstr "Última actualització el"
+msgstr "Darrera Actualització el"
 
 #. module: base_wua_invoicing_surcharges
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_fixed_invoicesetline_id
@@ -293,6 +319,12 @@ msgid "Number"
 msgstr "Número"
 
 #. module: base_wua_invoicing_surcharges
+#: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_product_product_only_open_invoices
+#: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_product_template_only_open_invoices
+msgid "Only open invoices"
+msgstr "Només factures obertes"
+
+#. module: base_wua_invoicing_surcharges
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_fixed_partner_id
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_surcharge_variable_partner_id
 #: model:ir.model.fields,field_description:base_wua_invoicing_surcharges.field_wua_invoiceset_line_invoice_total_surcharge_variable_partner_id
@@ -303,7 +335,7 @@ msgid "Partner"
 msgstr "Soci"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:198
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:249
 #, python-format
 msgid "Reference Invoice"
 msgstr "Referència factura"
@@ -329,13 +361,13 @@ msgid "Selected"
 msgstr "Seleccionat"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:163
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:210
 #, python-format
 msgid "Surcharge of "
 msgstr "Recàrrec de "
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:126
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:172
 #, python-format
 msgid "Surcharge of the "
 msgstr "Recàrrec del "
@@ -346,7 +378,7 @@ msgid "Total amount"
 msgstr "Total"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:486
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:553
 #: model:product.template,name:base_wua_invoicing_surcharges.product_16
 #, python-format
 msgid "Variable Surcharge"
@@ -358,7 +390,7 @@ msgid "Variable Surcharge (Total amount)"
 msgstr "Recàrrec variable total"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:506
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:573
 #, python-format
 msgid "Variable Surcharge (Total)"
 msgstr "Recàrrec variable total"
@@ -374,7 +406,7 @@ msgid "Variable Surcharge for account invoices (Total amount)"
 msgstr "Recàrrecs variables de factures total"
 
 #. module: base_wua_invoicing_surcharges
-#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:165
+#: code:addons/base_wua_invoicing_surcharges/models/wua_invoiceset.py:212
 #, python-format
 msgid "€ for invoice "
 msgstr "€ per la factura "

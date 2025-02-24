@@ -5,3 +5,4 @@
 from . import product
 from . import wua_invoiceset
 from . import account_invoice
+from . import wua_invoicing_config_settings

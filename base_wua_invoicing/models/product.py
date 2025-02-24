@@ -154,7 +154,7 @@ class ProductTemplate(models.Model):
         default='none',
         store=True,
         compute='_compute_linkable_unit_type')
-    
+
     allow_ownerhsip_percentage = fields.Boolean(
         string='Allow Ownerhsip Percentage',
         default=False,

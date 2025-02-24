@@ -35,3 +35,9 @@ class ProductTemplate(models.Model):
         ('variablesurcharge', 'Variable Surcharge'),
         ('fixedsurcharge', 'Fixed Surcharge'),
         ('variabletotalsurcharge', 'Variable Surcharge (Total)')])
+
+    only_open_invoices = fields.Boolean(
+        string='Only open invoices',
+        default=False,
+        help='If checked, only open invoices will be considered for this '
+             'product.')

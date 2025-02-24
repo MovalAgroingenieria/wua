@@ -277,7 +277,8 @@ class WuaParcel(models.Model):
                  ('waterconnection_id', 'in', waterconnections_to_del)])
             irrigation_points_to_del.unlink()
             self.env['wua.waterconnection'].write_track_irrigationpoint_ids(
-                self.env['wua.waterconnection'].browse(waterconnections_to_del)
+                self.env['wua.waterconnection'].browse(
+                    waterconnections_to_del),
             )
         if len(waterconnections_to_add) > 0:
             for waterconnection_id in waterconnections_to_add:
@@ -287,7 +288,8 @@ class WuaParcel(models.Model):
                     'waterconnection_id': waterconnection_id,
                     })
             self.env['wua.waterconnection'].write_track_irrigationpoint_ids(
-                self.env['wua.waterconnection'].browse(waterconnections_to_add)
+                self.env['wua.waterconnection'].browse(
+                    waterconnections_to_add),
             )
         return True
 
@@ -2554,5 +2556,5 @@ class WuaParcelPartnerlink(models.Model):
         comodel_name='wua.hydraulicsector',
         related='parcel_id.hydraulicsector_id',
         store=True,
-        readonly=True
+        readonly=True,
     )
