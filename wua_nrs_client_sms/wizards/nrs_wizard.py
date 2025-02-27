@@ -56,6 +56,15 @@ class NRSWizard(models.Model):
         res['arch'] = etree.tostring(doc)
         return res
 
+    def _calculate_number_of_sms(self, sms_message):
+        if len(sms_message) <= 160:
+            number_of_sms = 1
+        else:
+            number_of_sms = (len(sms_message) // 153) + 1
+            if number_of_sms > 10:
+                number_of_sms = 10
+        return number_of_sms
+
     @api.multi
     def send_sms_action(self, context):
         service_url = self.env['ir.values'].get_default(
@@ -174,10 +183,13 @@ class NRSWizard(models.Model):
             if raw_sms_message:
                 sms_message = self._escape_json_special_chars(raw_sms_message)
 
+            # Calculate number of sms
+            number_of_sms = self._calculate_number_of_sms(sms_message)
+
             # Check size
-            if len(sms_message) > 160:
+            if len(sms_message) > 1530:
                 raise ValidationError(
-                    _("Number of characters must not exceed 160"))
+                    _("Number of characters must not exceed 1530"))
 
             # Encode json
             data_raw = {
@@ -185,7 +197,8 @@ class NRSWizard(models.Model):
                 "from": sender,
                 "message": sms_message,
                 "certified": certify,
-                "flash": sms_flash}
+                "flash": sms_flash,
+                "parts": number_of_sms, }
             data = json.dumps(data_raw)
 
             # Send and catch response
@@ -217,18 +230,22 @@ class NRSWizard(models.Model):
                 subject = ""
             if context.get("mode") == 'test':
                 sms_confirmations += str(num_of_sms).zfill(4) + ' -- ' + \
+                    "Num " + str(number_of_sms) + " - " + \
                     sms_confirmation + " -- [" + subject + "]"
             if context.get("mode") == 'partner':
                 sms_confirmations += str(num_of_sms).zfill(4) + ' -- ' + \
                     sms_confirmation + " -- [" + subject + " - " + \
+                    "Num " + str(number_of_sms) + " - " + \
                     partner.name + "]"
             if context.get("mode") == 'invoice':
                 sms_confirmations += str(num_of_sms).zfill(4) + ' -- ' + \
                     sms_confirmation + " -- [" + subject + " - " + \
+                    "Num " + str(number_of_sms) + " - " + \
                     str(invoice.number) + " - " + partner.name + "]"
             if context.get("mode") == 'parcel':
                 sms_confirmations += str(num_of_sms).zfill(4) + ' -- ' + \
                     sms_confirmation + " -- [" + subject + " - " + \
+                    "Num " + str(number_of_sms) + " - " + \
                     str(parcel.name) + " - " + partner.name + "]"
 
             # Response message (only shown in debug mode)
@@ -269,6 +286,7 @@ class NRSWizard(models.Model):
                     _("Sender: ") + sender + '\n' + \
                     _("To: ") + reformated_phone_number + '\n' + \
                     _("Certified: ") + is_certifed + '\n' + \
+                    _("Number of SMS: ") + str(number_of_sms) + '\n' + \
                     _("Response: ") + response_message + '\n' + '\n'
             else:
                 response_messages += \
@@ -280,6 +298,7 @@ class NRSWizard(models.Model):
                     _("Partner: ") + partner.name + '\n' + \
                     _("Confirmation: ") + sms_confirmation_info + '\n' + \
                     _("Certified: ") + is_certifed + '\n' + \
+                    _("Number of SMS: ") + str(number_of_sms) + '\n' +\
                     _("Response: ") + '\n' + response_message + '\n' + '\n'
 
             # Insert tracking data
@@ -301,7 +320,8 @@ class NRSWizard(models.Model):
                 "response_code": status_code,
                 "sms_confirmation": sms_confirmation,
                 "sms_confirmation_info": sms_confirmation_info,
-                "response_message": response_message}
+                "response_message": response_message,
+                "number_of_sms": number_of_sms, }
             self.env['nrs.tracking'].create(tracking_data)
 
         return {
