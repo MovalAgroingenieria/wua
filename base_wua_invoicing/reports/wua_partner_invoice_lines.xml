@@ -145,8 +145,13 @@
                                             <th name="line_product">Product</th>
                                             <th name="quantity">Quantity</th>
                                             <th name="total_linesprice_th">Price</th>
-                                            <th name="subtotal_line">Subtotal</th>
-                                            <th name="tax">Tax</th>
+                                            <t t-if="wizard.show_tax">
+                                                <th name="subtotal_line">Subtotal</th>
+                                                <th name="tax">Tax</th>
+                                            </t>
+                                            <t t-if="wizard.show_invoice_state">
+                                                <th name="invoice_state">Invoice State</th>
+                                            </t>
                                             <th name="total_lines_amount_th">Amount</th>
                                         </tr>
                                     </thead>
@@ -168,17 +173,27 @@
                                                 <td name="line_product"><span t-field="line.product_id"/></td>
                                                 <td name="line_quantity"><span t-field="line.quantity"/></td>
                                                 <td name="line_price"><span t-field="line.price_unit"/></td>
-                                                <td name="line_subtotal"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line.quantity * line.price_unit, 2)"/></td>
-                                                <td name="line_tax"><t t-foreach="line.invoice_line_tax_ids" t-as="tax"><span t-field="tax.name"/></t></td>
+                                                <t t-if="wizard.show_tax">
+                                                    <td name="line_subtotal"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line.quantity * line.price_unit, 2)"/></td>
+                                                    <td name="line_tax"><t t-foreach="line.invoice_line_tax_ids" t-as="tax"><span t-field="tax.name"/></t></td>
+                                                </t>
+                                                <t t-if="wizard.show_invoice_state">
+                                                    <td name="line_invoice_state"><span t-field="line.invoice_id.state"/></td>
+                                                </t>
                                                 <td name="line_total"><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(line_total, 2)"/></td>
                                             </tr>
                                         </t>
                                         <tr>
                                             <td colspan="5"/>
                                             <td><strong>Total</strong></td>
-                                            <td><span t-esc="subtotal_amount"/></td>
-                                            <td/>
-                                            <td><span t-esc="total_amount"/></td>
+                                            <t t-if="wizard.show_tax">
+                                                <td><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(subtotal_amount, 2)"/></td>
+                                                <td/>
+                                            </t>
+                                            <t t-if="wizard.show_invoice_state">
+                                                <td/>
+                                            </t>
+                                            <td><span t-esc="wizard.env['wua.parcel'].transform_float_to_locale(total_amount, 2)"/></td>
                                         </tr>
                                     </tbody>
                                 </table>

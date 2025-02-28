@@ -35,6 +35,26 @@ class WizardPrintPartnerInvoiceLines(models.TransientModel):
         default=lambda self: fields.Datetime.now(),
         required=True)
 
+    filter_by_journals = fields.Boolean(
+        string='Filter by Journals',
+        default=False,
+    )
+
+    journal_ids = fields.Many2many(
+        comodel_name='account.journal',
+        string='Journals',
+    )
+
+    show_tax = fields.Boolean(
+        string='Show Tax',
+        default=True,
+    )
+
+    show_invoice_state = fields.Boolean(
+        string='Show Invoice State',
+        default=False,
+    )
+
     invoice_ids = fields.Many2many(
         comodel_name='account.invoice',
         compute='_compute_invoices',
@@ -45,7 +65,8 @@ class WizardPrintPartnerInvoiceLines(models.TransientModel):
         compute='_compute_invoice_lines',
         string='Invoice Lines')
 
-    @api.depends('initial_date', 'end_date', 'partner_ids')
+    @api.depends('initial_date', 'end_date', 'partner_ids',
+                 'filter_by_journals', 'journal_ids')
     def _compute_invoice_lines(self):
         for record in self:
             if record.initial_date \
@@ -54,12 +75,18 @@ class WizardPrintPartnerInvoiceLines(models.TransientModel):
                     raise exceptions.UserError(
                         _('''Incorrect dates,
                             the initial date is after the end date.'''))
-                invoice_lines = self.env['account.invoice.line'].search([
+                search_domain = [
                     ('invoice_id.date_invoice', '>=', record.initial_date),
                     ('invoice_id.date_invoice', '<=', record.end_date),
                     ('partner_id',
-                        'in', record.partner_ids.ids)
-                ])
+                        'in', record.partner_ids.ids)]
+                if (record.filter_by_journals and
+                        record.journal_ids):
+                    search_domain.append(
+                        ('invoice_id.journal_id', 'in',
+                         record.journal_ids.ids))
+                invoice_lines = self.env['account.invoice.line'].search(
+                    search_domain)
                 record.invoice_line_ids = invoice_lines
 
     @api.depends('invoice_line_ids')
@@ -77,7 +104,6 @@ class WizardPrintPartnerInvoiceLines(models.TransientModel):
         if self.initial_date > self.end_date:
             raise exceptions.UserError(
                 _('Incorrect dates, the initial date is after the end date.'))
-
         return self.env['report'].get_action(
             self,
             'base_wua_invoicing.report_partner_invoice_lines')
