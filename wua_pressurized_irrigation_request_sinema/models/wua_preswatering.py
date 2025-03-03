@@ -131,12 +131,12 @@ class WuaPresreswatering(models.Model):
     @api.multi
     def validate_presresconsumptions(self):
         self.ensure_one()
-        if self.waterconnections_without_remotecontrol_msg:
-            raise exceptions.UserError(_(
-                'There are waterconnections without SIEMENS ID'))
+        # if self.waterconnections_without_remotecontrol_msg:
+        #     raise exceptions.UserError(_(
+        #         'There are waterconnections without SIEMENS ID'))
         siemens_data = {}
         for consumption in self.presresconsumption_ids.filtered(
-                lambda x: x.selected):
+                lambda x: x.selected and x.waterconnection_id.siemens_id):
             siemens_id = consumption.waterconnection_id.siemens_id
             if siemens_id not in siemens_data:
                 siemens_data[siemens_id] = {
@@ -167,7 +167,7 @@ class WuaPresreswatering(models.Model):
         for presresconsumption in presresconsumptions:
             siemens_data = {}
             for consumption in self.presresconsumption_ids.filtered(
-                    lambda x: x.selected):
+                    lambda x: x.selected and x.waterconnection_id.siemens_id):
                 siemens_id = consumption.waterconnection_id.siemens_id
                 if siemens_id not in siemens_data:
                     siemens_data[siemens_id] = []
