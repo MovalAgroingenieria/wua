@@ -56,6 +56,19 @@
         </field>
     </record>
 
+    <record id="view_account_payment_order_form_inherit_confirm" model="ir.ui.view">
+    <field name="name">account.payment.order.form.inherit.confirm</field>
+    <field name="model">account.payment.order</field>
+    <field name="inherit_id" ref="account_payment_order.account_payment_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//button[@name='action_done_cancel']" position="attributes">
+        <attribute name="confirm">IMPORTANT NOTICE. You are about to cancel a charge/payment order from a file uploaded to the bank.
+        This may have information loss effects and produce errors in the reconciliation if there are accounting movements subsequent to this charge/payment order
+        (returns, bank reconciliation, mandate changes). Consider whether it is really necessary to do so.</attribute>
+      </xpath>
+    </field>
+  </record>
+
     <record id="action_invoice_cancel_draft" model="ir.actions.server">
         <field name="name">Open Invoices To Draft</field>
         <field name="model_id" ref="account.model_account_invoice"/>
