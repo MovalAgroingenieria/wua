@@ -13,34 +13,34 @@ class WuaPresreswatering(models.Model):
     _inherit = 'wua.preswatering'
 
     proration = fields.Float(
-        string="Proration",
+        string='Proration',
         required=True,
         digits=(32, 2),
     )
 
     zones_united = fields.Boolean(
-        string="Zones United",
+        string='Zones United',
         default=False,
     )
 
     rebombed_flow_ls = fields.Float(
-        string="Rebombed Flow (l/s)",
+        string='Rebombed Flow (l/s)',
         digits=(32, 0),
         default=0.0,
     )
 
     by_gravity_outlet = fields.Boolean(
-        string="By Gravity Outlet",
+        string='By Gravity Outlet',
         default=False,
     )
 
     by_pumping = fields.Boolean(
-        string="By Pumping",
+        string='By Pumping',
         default=False,
     )
 
     by_surplus = fields.Boolean(
-        string="By Surplus",
+        string='By Surplus',
         default=False,
     )
 
@@ -192,3 +192,80 @@ class WuaPresreswatering(models.Model):
             except Exception as e:
                 _logger.error(
                     'Error issuing preswatering %s: %s', preswatering, e)
+
+        def _get_sinema_consumptions(self):
+            consumption_data = {}
+            response_data = self._send_sinema_remote_data({}, method='get')
+            if response_data and 'variables' in response_data:
+                variable_names = [
+                    var['variableName'] for var in response_data['variables']]
+                if variable_names:
+                    payload = {'variableNames': variable_names}
+                    values_response = self._send_sinema_remote_data(
+                        payload, method='post')
+                    if values_response:
+                        consumption_data = {
+                            var['variableName']: float(var['value'])
+                            for var in values_response
+                            if float(var['value']) > 0
+                        }
+            if not consumption_data:
+                self.message_post(body=_(
+                    'No valid consumption data received from SINEMA.'))
+            return consumption_data
+
+    def _process_issued_nominal_flows(self, presresconsumptions, preswatering):
+        super(WuaPresreswatering, self)._process_issued_nominal_flows(
+            presresconsumptions, preswatering)
+        consumption_data = self._get_sinema_consumptions()
+        if consumption_data:
+            siemens_ids = [
+                name.split('_QMedio_24h')[0] for name in
+                consumption_data.keys()]
+            waterconnections = self.env['wua.waterconnection'].search(
+                [('siemens_id', 'in', siemens_ids)])
+            for wc in waterconnections:
+                variable_name = '%s_QMedio_24h' % wc.siemens_id
+                if variable_name in consumption_data:
+                    consumption = consumption_data[variable_name]
+                    partner_id = wc.partner_id.id
+                    if not partner_id:
+                        continue
+                    preswatering_date = fields.Datetime.from_string(
+                        preswatering.initial_time).date().strftime('%Y-%m-%d')
+                    request = self.env['wua.preswateringrequest'].search([
+                        ('partner_id', '=', partner_id),
+                        ('initial_date', '=', preswatering_date),
+                    ], limit=1)
+                    if request:
+                        existing_consumption = self.env[
+                            'wua.presresconsumption'].search([
+                                ('preswateringrequest_id', '=', request.id),
+                                ('waterconnection_id', '=', wc.id),
+                            ], limit=1)
+                        if existing_consumption:
+                            existing_consumption.nominal_flow_ls_issued = \
+                                consumption
+                        else:
+                            self.env['wua.presresconsumption'].create({
+                                'preswateringrequest_id': request.id,
+                                'waterconnection_id': wc.id,
+                                'nominal_flow_ls_issued': consumption,
+                            })
+                    else:
+                        new_request = self.env[
+                            'wua.preswateringrequest'].create({
+                                'partner_id': partner_id,
+                                'initial_date': preswatering_date,
+                                'preswateringperiod_id':
+                                    preswatering.preswateringperiod_id.id,
+                                'user_id': self.env.user.id,
+                                'state': '02_validated',
+                                'preswateringperiod_id':
+                                    preswatering.preswateringperiod_id.id,
+                            })
+                        self.env['wua.presresconsumption'].create({
+                            'preswateringrequest_id': new_request.id,
+                            'waterconnection_id': wc.id,
+                            'nominal_flow_ls_issued': consumption,
+                        })
