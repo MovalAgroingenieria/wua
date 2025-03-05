@@ -286,4 +286,5 @@ class WuaPresreswatering(models.Model):
                             'preswateringrequest_id': new_request.id,
                             'waterconnection_id': wc.id,
                             'nominal_flow_ls_issued': consumption,
+                            'preswatering_id': preswatering.id,
                         })
