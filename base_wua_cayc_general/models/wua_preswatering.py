@@ -165,6 +165,27 @@ class WuaPresreswatering(models.Model):
                 'You can only issue the consumptions from the previous day '
                 'until 08:00 of the current day'))
 
+    def _get_sinema_consumptions(self):
+        consumption_data = {}
+        response_data = self._send_sinema_remote_data({}, method='get')
+        if response_data and 'variables' in response_data:
+            variable_names = [
+                var['variableName'] for var in response_data['variables']]
+            if variable_names:
+                payload = {'variableNames': variable_names}
+                values_response = self._send_sinema_remote_data(
+                    payload, method='post')
+                if values_response:
+                    consumption_data = {
+                        var['variableName']: float(var['value'])
+                        for var in values_response
+                        if float(var['value']) > 0
+                    }
+        if not consumption_data:
+            self.message_post(body=_(
+                'No valid consumption data received from SINEMA.'))
+        return consumption_data
+
     @api.model
     def get_sinema_issued_consumptions(self):
         current_time_utc = fields.Datetime.now()
@@ -192,27 +213,6 @@ class WuaPresreswatering(models.Model):
             except Exception as e:
                 _logger.error(
                     'Error issuing preswatering %s: %s', preswatering, e)
-
-        def _get_sinema_consumptions(self):
-            consumption_data = {}
-            response_data = self._send_sinema_remote_data({}, method='get')
-            if response_data and 'variables' in response_data:
-                variable_names = [
-                    var['variableName'] for var in response_data['variables']]
-                if variable_names:
-                    payload = {'variableNames': variable_names}
-                    values_response = self._send_sinema_remote_data(
-                        payload, method='post')
-                    if values_response:
-                        consumption_data = {
-                            var['variableName']: float(var['value'])
-                            for var in values_response
-                            if float(var['value']) > 0
-                        }
-            if not consumption_data:
-                self.message_post(body=_(
-                    'No valid consumption data received from SINEMA.'))
-            return consumption_data
 
     def _process_issued_nominal_flows(self, presresconsumptions, preswatering):
         super(WuaPresreswatering, self)._process_issued_nominal_flows(
