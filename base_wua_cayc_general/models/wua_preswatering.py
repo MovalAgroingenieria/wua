@@ -233,8 +233,8 @@ class WuaPresreswatering(models.Model):
                     'Error issuing preswatering %s: %s', preswatering, e)
 
     def _process_issued_nominal_flows(self, presresconsumptions, preswatering):
-        super(WuaPresreswatering, self)._process_issued_nominal_flows(
-            presresconsumptions, preswatering)
+        response = super(WuaPresreswatering, self).\
+            _process_issued_nominal_flows(presresconsumptions, preswatering)
         consumption_data = self._get_sinema_consumptions()
         if consumption_data:
             siemens_ids = [
@@ -288,3 +288,4 @@ class WuaPresreswatering(models.Model):
                             'nominal_flow_ls_issued': consumption,
                             'preswatering_id': preswatering.id,
                         })
+        return response
