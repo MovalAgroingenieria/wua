@@ -3,6 +3,8 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import pytz
 import logging
+import json
+import base64
 from datetime import datetime, timedelta
 from odoo import models, fields, api, exceptions, _
 
@@ -167,7 +169,8 @@ class WuaPresreswatering(models.Model):
 
     def _get_sinema_consumptions(self):
         consumption_data = {}
-        response_data = self._send_sinema_remote_data({}, method='get')
+        response_data = self._send_sinema_remote_data(
+            {"variableName": "*_QMedio_24h*"}, method='get')
         if response_data and 'variables' in response_data:
             variable_names = [
                 var['variableName'] for var in response_data['variables']]
@@ -175,7 +178,22 @@ class WuaPresreswatering(models.Model):
                 payload = {'variableNames': variable_names}
                 values_response = self._send_sinema_remote_data(
                     payload, method='post')
-                if values_response:
+                if values_response and self._handle_sinema_response(
+                        values_response):
+                    json_content = json.dumps(response_data, indent=4)
+                    current_time_str = fields.Datetime.now()
+                    filename = 'sinema_response_all_data_{}.json'.format(
+                        current_time_str)
+                    self.env['ir.attachment'].create({
+                        'name': filename,
+                        'res_model': self._name,
+                        'res_id': self.id,
+                        'type': 'binary',
+                        'datas': base64.b64encode(
+                            json_content.encode('utf-8')),
+                        'datas_fname': filename,
+                        'mimetype': 'application/json',
+                    })
                     consumption_data = {
                         var['variableName']: float(var['value'])
                         for var in values_response

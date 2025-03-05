@@ -32,7 +32,10 @@ class WuaPresreswatering(models.Model):
         if (not url or not username or not password):
             raise exceptions.UserError(_(
                 'You must configure the SINEMA remotecontrol settings'))
-        url = '{}/tagManagement/Values'.format(url)
+        if method.lower() == 'get':
+            url = '{}/tagManagement/variables'.format(url)
+        else:
+            url = '{}/tagManagement/Values'.format(url)
         auth_string = '{}:{}'.format(username, password)
         auth_base64 = base64.b64encode(
             auth_string.encode('utf-8')).decode('utf-8')
@@ -41,6 +44,8 @@ class WuaPresreswatering(models.Model):
             'Content-Type': 'application/json',
         }
         request_function = requests.put
+        # Method get is not really a get method, just
+        # uses another endpoint
         if method == 'post':
             request_function = requests.post
         try:
