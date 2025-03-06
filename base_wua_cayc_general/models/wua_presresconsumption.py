@@ -41,10 +41,12 @@ class WuaPresresconsumption(models.Model):
 
     nominal_flow_issued = fields.Float(
         digits=(32, 0),
+        readonly=False,
     )
 
     nominal_flow_ls_issued = fields.Float(
         digits=(32, 0),
+        readonly=False,
     )
 
     def is_close(self, a, b, rel_tol=1e-09, abs_tol=0.0):
