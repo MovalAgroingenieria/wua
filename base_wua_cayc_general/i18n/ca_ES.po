@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-06 10:15+0000\n"
-"PO-Revision-Date: 2025-02-06 10:15+0000\n"
+"POT-Creation-Date: 2025-03-06 09:29+0000\n"
+"PO-Revision-Date: 2025-03-06 09:29+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -71,7 +71,7 @@ msgid "A che parcel must have at least one class associated."
 msgstr "Una parcel·la che ha de tenir almenys una classe assignada."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:58
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:78
 #, python-format
 msgid "A new preswatering request has been created by user: %s on %s."
 msgstr "L'usuari %s ha creat una sol·licitud nova el %s."
@@ -93,6 +93,11 @@ msgstr "Una parcel·la primària no pot tenir un soci che assignat."
 #, python-format
 msgid "A primary partner must have a valid partner type ."
 msgstr "Un soci primari ha de tenir un tipus de soci vàlid."
+
+#. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_assembly
+msgid "Assembly"
+msgstr "Assemblea"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_gravity_outlet
@@ -188,6 +193,11 @@ msgid "Entity (intake)"
 msgstr "Element (captació)"
 
 #. module: base_wua_cayc_general
+#: model:ir.model,name:base_wua_cayc_general.model_wua_invoiceset_line
+msgid "Entity (line of a WUA invoice set)"
+msgstr "Element (línia de lot de factures)"
+
+#. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_parcel
 msgid "Entity (parcel)"
 msgstr "Element (parcel·la)"
@@ -211,6 +221,12 @@ msgstr "Element (comptador)"
 #: model:ir.model,name:base_wua_cayc_general.model_wua_waterchannel
 msgid "Entity (waterchannel)"
 msgstr "Element (canal)"
+
+#. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_invoiceset.py:40
+#, python-format
+msgid "Error when updating records."
+msgstr "Error en introduir registres."
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_watermeter_module_view_search
@@ -346,11 +362,17 @@ msgid "Modules"
 msgstr "Mòduls"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:60
-#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:69
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:80
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:89
 #, python-format
 msgid "New Preswatering Request"
 msgstr "Nova sol·licitud de preaigua"
+
+#. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:203
+#, python-format
+msgid "No valid consumption data received from SINEMA."
+msgstr "No s'han rebut dades de consum vàlides de SINEMA."
 
 #. module: base_wua_cayc_general
 #: model:ir.ui.view,arch_db:base_wua_cayc_general.wua_octroi_view_form
@@ -657,9 +679,15 @@ msgid "Waterchannels"
 msgstr "Canals"
 
 #. module: base_wua_cayc_general
+#: code:addons/base_wua_cayc_general/models/wua_preswateringrequest.py:53
+#, python-format
+msgid "Waterconnection: %s, Flow: %s %s"
+msgstr "Presa: %s, Cabal: %s %s"
+
+#. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_watermeter_id
 msgid "Watermeter"
-msgstr "Contador"
+msgstr "Comptador"
 
 #. module: base_wua_cayc_general
 #: model:ir.actions.act_window,name:base_wua_cayc_general.wua_technical_watermeter_module_action
@@ -673,13 +701,13 @@ msgid "Watermeter position already exists."
 msgstr "Watermeter position already exists."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:164
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:166
 #, python-format
 msgid "You can only issue the consumptions from the previous day until 08:00 of the current day"
 msgstr "Només pots obtenir els consums servits del dia anterior fins a les 08:00 del dia actual."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:140
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:142
 #, python-format
 msgid "You can only validate the consumptions starting from 12:00 on the previous day until 08:00 of the request date."
 msgstr "Només es poden validar les consumicions a partir de les 12:00 del dia anterior fins a les 08:00 de la data de sol·licitud."

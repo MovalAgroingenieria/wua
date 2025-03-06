@@ -180,7 +180,7 @@ class WuaPresreswatering(models.Model):
                     payload, method='post')
                 if values_response and self._handle_sinema_response(
                         values_response):
-                    json_content = json.dumps(response_data, indent=4)
+                    json_content = json.dumps(values_response, indent=4)
                     current_time_str = fields.Datetime.now()
                     filename = 'sinema_response_all_data_{}.json'.format(
                         current_time_str)
@@ -236,6 +236,9 @@ class WuaPresreswatering(models.Model):
         response = super(WuaPresreswatering, self).\
             _process_issued_nominal_flows(presresconsumptions, preswatering)
         consumption_data = self._get_sinema_consumptions()
+        global_initial_hour = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'default_presresconsumption_initial_hour')
         if consumption_data:
             siemens_ids = [
                 name.split('_QMedio_24h')[0] for name in
@@ -268,7 +271,13 @@ class WuaPresreswatering(models.Model):
                             self.env['wua.presresconsumption'].create({
                                 'preswateringrequest_id': request.id,
                                 'waterconnection_id': wc.id,
+                                'nominal_flow': 0.0,
+                                'nominal_flow_ls': 0.0,
                                 'nominal_flow_ls_issued': consumption,
+                                'preswatering_id': preswatering.id,
+                                'initial_hour': global_initial_hour,
+                                'state': '03_issued',
+                                'from_remotecontrol': True,
                             })
                     else:
                         new_request = self.env[
@@ -281,11 +290,17 @@ class WuaPresreswatering(models.Model):
                                 'state': '02_validated',
                                 'preswateringperiod_id':
                                     preswatering.preswateringperiod_id.id,
+                                'from_remotecontrol': True,
                             })
                         self.env['wua.presresconsumption'].create({
                             'preswateringrequest_id': new_request.id,
                             'waterconnection_id': wc.id,
+                            'nominal_flow': 0.0,
+                            'nominal_flow_ls': 0.0,
                             'nominal_flow_ls_issued': consumption,
                             'preswatering_id': preswatering.id,
+                            'initial_hour': global_initial_hour,
+                            'state': '03_issued',
+                            'from_remotecontrol': True,
                         })
         return response
