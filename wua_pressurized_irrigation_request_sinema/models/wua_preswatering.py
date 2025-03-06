@@ -77,11 +77,12 @@ class WuaPresreswatering(models.Model):
                         item['error'],
                     ),
                 )
+        response_data[:] = [
+            item for item in response_data if 'error' not in item]
         if errors:
             self.message_post(body=_(
                 'The following variables encountered errors:\n%s',
             ) % '\n'.join(errors))
-            return False
         return True
 
     @api.multi
