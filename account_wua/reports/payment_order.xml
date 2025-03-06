@@ -12,12 +12,17 @@
         <!-- Change infocell "Used account" format and position -->
         <xpath expr="//div[@t-if='doc.company_partner_bank_id.bank_id.id']" position="replace"/>
         <xpath expr="//div[@t-if='doc.payment_mode_id.name']" position="before">
+            <div t-if="doc.description" style="margin-left: 14px;">
+                <strong>Description: </strong>
+                <span t-esc="doc.description"/>
+            </div>
+        </xpath>
+        <xpath expr="//div[@t-if='doc.payment_mode_id.name']" position="before">
             <div t-if="doc.company_partner_bank_id.bank_id.id" style="margin-left: 14px;">
                 <strong>Used Account: </strong>
                 <span t-esc="get_bank_account_name(doc.company_partner_bank_id)"/>
             </div>
         </xpath>
-
         <!-- Do no show "Company Currency" infocell -->
         <xpath expr="//div[@t-if='doc.company_id.currency_id.name']" position="attributes">
             <attribute name="t-att-style">"display: none"</attribute>
