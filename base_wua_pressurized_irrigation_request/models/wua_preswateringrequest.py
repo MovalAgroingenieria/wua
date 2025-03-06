@@ -70,6 +70,7 @@ class WuaPreswateringrequest(models.Model):
         string='Start Date',
         required=True,
         index=True,
+        track_visibility='onchange',
     )
 
     user_id = fields.Many2one(
@@ -91,6 +92,13 @@ class WuaPreswateringrequest(models.Model):
         string='Consumption Requests',
         comodel_name='wua.presresconsumption',
         inverse_name='preswateringrequest_id',
+    )
+
+    track_presresconsumption_ids = fields.Char(
+        string='Consumption Requests (track)',
+        store=True,
+        compute='_compute_track_presresconsumption_ids',
+        track_visibility='onchange',
     )
 
     number_of_presresconsumptions = fields.Integer(
@@ -181,19 +189,22 @@ class WuaPreswateringrequest(models.Model):
         ('unique_name', 'UNIQUE(name)', 'The request code must be unique.'),
     ]
 
-    @api.constrains('initial_date', 'partner_id')
+    @api.constrains('initial_date', 'partner_id', 'user_id')
     def _check_initial_date_earlier_than_today(self):
         lock_modification_hours = self.env['ir.values'].sudo().get_default(
             'wua.irrigation.configuration',
             'lock_modification_hours')
-        for record in self:
-            initial_datetime = fields.Datetime.from_string(record.initial_date)
-            if (fields.Datetime.from_string(fields.Datetime.now()) >=
-                    initial_datetime - timedelta(
-                        hours=lock_modification_hours)):
-                raise exceptions.ValidationError(_(
-                    'The start date of the watering request must not be'
-                    'earlier than the current date.'))
+        #  If the user has the admin group, the date is not checked
+        if not self.env.user.has_group('base.group_system'):
+            for record in self:
+                initial_datetime = fields.Datetime.from_string(
+                    record.initial_date)
+                if (fields.Datetime.from_string(fields.Datetime.now()) >=
+                        initial_datetime - timedelta(
+                            hours=lock_modification_hours)):
+                    raise exceptions.ValidationError(_(
+                        'The start date of the watering request must not be'
+                        'earlier than the current date.'))
 
     @api.constrains('initial_date', 'preswateringperiod_id')
     def _check_initial_date_within_period(self):
@@ -288,6 +299,30 @@ class WuaPreswateringrequest(models.Model):
             if (record.partner_id and record.currency_id):
                 credit_overdue = record.partner_id.credit_overdue
             record.credit_overdue = credit_overdue
+
+    @api.depends('presresconsumption_ids')
+    def _compute_track_presresconsumption_ids(self):
+        use_flow_ls = self.env['ir.values'].sudo().get_default(
+            'wua.irrigation.configuration',
+            'preswateringrequest_flow_liters_per_second',
+        )
+        for record in self:
+            track_presresconsumption_ids = []
+            for presresconsumption in record.presresconsumption_ids:
+                wc_name = presresconsumption.waterconnection_id.name
+                nominal_flow = presresconsumption.nominal_flow_ls if \
+                    use_flow_ls else presresconsumption.nominal_flow
+                nominal_flow_unit = "l/s" if use_flow_ls else "m³/h"
+                watering_duration = presresconsumption.watering_duration or 0
+                watering_volume = presresconsumption.watering_volume or 0
+                description = _(
+                    'Waterconnection: %s, Flow: %s %s, '
+                    'Duration: %s min, Volumen: %s m³') % \
+                    (wc_name, nominal_flow, nominal_flow_unit,
+                        watering_duration, watering_volume)
+                track_presresconsumption_ids.append(description)
+            record.track_presresconsumption_ids = "\n".join(
+                track_presresconsumption_ids)
 
     @api.multi
     def _compute_number_of_presresconsumptions(self):
