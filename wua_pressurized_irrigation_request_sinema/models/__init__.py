@@ -4,4 +4,6 @@
 
 from . import wua_waterconnection
 from . import wua_preswatering
+from . import wua_presresconsumption
+from . import wua_preswateringrequest
 from . import wua_irrigation_config_settings

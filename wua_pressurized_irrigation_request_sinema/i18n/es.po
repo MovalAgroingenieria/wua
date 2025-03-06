@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-18 10:21+0000\n"
-"PO-Revision-Date: 2025-01-18 10:21+0000\n"
+"POT-Creation-Date: 2025-03-06 09:24+0000\n"
+"PO-Revision-Date: 2025-03-06 09:24+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,16 +31,22 @@ msgid "Entity (water connection)"
 msgstr "Elemento (toma)"
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:61
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:70
 #, python-format
 msgid "Error during communication: {}"
 msgstr "Error durante la conexión con API: {}"
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:56
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:65
 #, python-format
 msgid "Failed to send data to remote control. Status: {}, Response: {}"
 msgstr "Fallo en el envío de información al telecontrol. Estado: {}, Respuesta: {}"
+
+#. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_presresconsumption_from_remotecontrol
+#: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_preswateringrequest_from_remotecontrol
+msgid "From Remote Control"
+msgstr "Creada desde telecontrol"
 
 #. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,help:wua_pressurized_irrigation_request_sinema.field_wua_irrigation_configuration_sinema_password
@@ -48,9 +54,19 @@ msgid "Password for the SIEMENS remotecontrol API REST"
 msgstr "Contraseña para la API REST de SIEMENS"
 
 #. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model,name:wua_pressurized_irrigation_request_sinema.model_wua_preswateringrequest
+msgid "Preswatering Request"
+msgstr "Solicitudes de riego a presión"
+
+#. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_preswatering_consumptions_sended
 msgid "Remotecontrol sended"
 msgstr "Información enviada al telecontrol"
+
+#. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model,name:wua_pressurized_irrigation_request_sinema.model_wua_presresconsumption
+msgid "Request Consumption"
+msgstr "Consumo de solicitud"
 
 #. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_waterconnection_siemens_id
@@ -78,18 +94,12 @@ msgid "Sinema Username"
 msgstr "Usuario Sinema"
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:76
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:87
 #, python-format
 msgid "The following variables encountered errors:\n"
 "%s"
 msgstr "Las siguientes variables devolvieron errores:\n"
 "%s"
-
-#. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:127
-#, python-format
-msgid "There are waterconnections without SIEMENS ID"
-msgstr "Existen tomas sin el SIEMENDS ID"
 
 #. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,help:wua_pressurized_irrigation_request_sinema.field_wua_irrigation_configuration_sinema_endpoint
@@ -102,7 +112,7 @@ msgid "Username for the SIEMENS remotecontrol API REST"
 msgstr "Usuario para la API REST de SIEMENS"
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:92
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:102
 #, python-format
 msgid "Waterconnections without SIEMENS ID: "
 msgstr "Tomas sin el SIEMENS ID: "
@@ -111,6 +121,12 @@ msgstr "Tomas sin el SIEMENS ID: "
 #: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_preswatering_waterconnections_without_remotecontrol_msg
 msgid "Waterconnections without remotecontrol"
 msgstr "Tomas sin conexión con telecontrol"
+
+#. module: wua_pressurized_irrigation_request_sinema
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:118
+#, python-format
+msgid "You cannot cancel a preswatering with issued consumptions"
+msgstr "No puede cancelar una planificación de riego con consumos servidos"
 
 #. module: wua_pressurized_irrigation_request_sinema
 #: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:33

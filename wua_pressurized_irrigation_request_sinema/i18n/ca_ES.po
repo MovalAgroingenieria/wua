@@ -1,13 +1,13 @@
-# Traducció del servidor Odoo.
-# Aquest fitxer conté la traducció dels següents mòduls:
-#   * wua_pressurized_irrigation_request_sinema
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* wua_pressurized_irrigation_request_sinema
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-18 10:20+0000\n"
-"PO-Revision-Date: 2025-01-18 10:20+0000\n"
+"POT-Creation-Date: 2025-03-06 09:23+0000\n"
+"PO-Revision-Date: 2025-03-06 09:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,16 +31,22 @@ msgid "Entity (water connection)"
 msgstr "Element (connexió d'aigua)"
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:61
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:70
 #, python-format
 msgid "Error during communication: {}"
 msgstr "Error durant la comunicació: {}"
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:56
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:65
 #, python-format
 msgid "Failed to send data to remote control. Status: {}, Response: {}"
 msgstr "Error en enviar dades al control remot. Estat: {}, Resposta: {}"
+
+#. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_presresconsumption_from_remotecontrol
+#: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_preswateringrequest_from_remotecontrol
+msgid "From Remote Control"
+msgstr "Creada des de telecontrol"
 
 #. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,help:wua_pressurized_irrigation_request_sinema.field_wua_irrigation_configuration_sinema_password
@@ -48,9 +54,19 @@ msgid "Password for the SIEMENS remotecontrol API REST"
 msgstr "Contrasenya per a l'API REST del control remot de SIEMENS"
 
 #. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model,name:wua_pressurized_irrigation_request_sinema.model_wua_preswateringrequest
+msgid "Preswatering Request"
+msgstr "Sol·licitud de reg a pressió"
+
+#. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_preswatering_consumptions_sended
 msgid "Remotecontrol sended"
 msgstr "Control remot enviat"
+
+#. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model,name:wua_pressurized_irrigation_request_sinema.model_wua_presresconsumption
+msgid "Request Consumption"
+msgstr "Consum de sol·licitud"
 
 #. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_waterconnection_siemens_id
@@ -78,18 +94,12 @@ msgid "Sinema Username"
 msgstr "Nom d'usuari de Sinema"
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:76
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:87
 #, python-format
 msgid "The following variables encountered errors:\n"
 "%s"
 msgstr "Les variables següents han trobat errors:\n"
 "%s"
-
-#. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:127
-#, python-format
-msgid "There are waterconnections without SIEMENS ID"
-msgstr "Hi ha connexions d'aigua sense ID de SIEMENS"
 
 #. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,help:wua_pressurized_irrigation_request_sinema.field_wua_irrigation_configuration_sinema_endpoint
@@ -102,7 +112,7 @@ msgid "Username for the SIEMENS remotecontrol API REST"
 msgstr "Nom d'usuari per a l'API REST del control remot de SIEMENS"
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:92
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:102
 #, python-format
 msgid "Waterconnections without SIEMENS ID: "
 msgstr "Connexions d'aigua sense ID de SIEMENS: "
@@ -113,7 +123,14 @@ msgid "Waterconnections without remotecontrol"
 msgstr "Connexions d'aigua sense control remot"
 
 #. module: wua_pressurized_irrigation_request_sinema
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:118
+#, python-format
+msgid "You cannot cancel a preswatering with issued consumptions"
+msgstr "No podeu cancel·lar una planificació de reg amb consums servits"
+
+#. module: wua_pressurized_irrigation_request_sinema
 #: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:33
 #, python-format
 msgid "You must configure the SINEMA remotecontrol settings"
 msgstr "Heu de configurar els paràmetres del control remot de SINEMA"
+

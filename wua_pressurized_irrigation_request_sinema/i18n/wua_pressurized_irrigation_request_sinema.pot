@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-18 10:20+0000\n"
-"PO-Revision-Date: 2025-01-18 10:20+0000\n"
+"POT-Creation-Date: 2025-03-06 09:23+0000\n"
+"PO-Revision-Date: 2025-03-06 09:23+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,15 +31,21 @@ msgid "Entity (water connection)"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:61
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:70
 #, python-format
 msgid "Error during communication: {}"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:56
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:65
 #, python-format
 msgid "Failed to send data to remote control. Status: {}, Response: {}"
+msgstr ""
+
+#. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_presresconsumption_from_remotecontrol
+#: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_preswateringrequest_from_remotecontrol
+msgid "From Remote Control"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema
@@ -48,8 +54,18 @@ msgid "Password for the SIEMENS remotecontrol API REST"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model,name:wua_pressurized_irrigation_request_sinema.model_wua_preswateringrequest
+msgid "Preswatering Request"
+msgstr ""
+
+#. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_preswatering_consumptions_sended
 msgid "Remotecontrol sended"
+msgstr ""
+
+#. module: wua_pressurized_irrigation_request_sinema
+#: model:ir.model,name:wua_pressurized_irrigation_request_sinema.model_wua_presresconsumption
+msgid "Request Consumption"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema
@@ -78,16 +94,10 @@ msgid "Sinema Username"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:76
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:87
 #, python-format
 msgid "The following variables encountered errors:\n"
 "%s"
-msgstr ""
-
-#. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:127
-#, python-format
-msgid "There are waterconnections without SIEMENS ID"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema
@@ -101,7 +111,7 @@ msgid "Username for the SIEMENS remotecontrol API REST"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema
-#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:92
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:102
 #, python-format
 msgid "Waterconnections without SIEMENS ID: "
 msgstr ""
@@ -109,6 +119,12 @@ msgstr ""
 #. module: wua_pressurized_irrigation_request_sinema
 #: model:ir.model.fields,field_description:wua_pressurized_irrigation_request_sinema.field_wua_preswatering_waterconnections_without_remotecontrol_msg
 msgid "Waterconnections without remotecontrol"
+msgstr ""
+
+#. module: wua_pressurized_irrigation_request_sinema
+#: code:addons/wua_pressurized_irrigation_request_sinema/models/wua_preswatering.py:118
+#, python-format
+msgid "You cannot cancel a preswatering with issued consumptions"
 msgstr ""
 
 #. module: wua_pressurized_irrigation_request_sinema

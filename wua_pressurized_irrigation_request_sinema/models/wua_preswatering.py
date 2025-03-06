@@ -33,9 +33,13 @@ class WuaPresreswatering(models.Model):
             raise exceptions.UserError(_(
                 'You must configure the SINEMA remotecontrol settings'))
         if method.lower() == 'get':
-            url = '{}/tagManagement/variables'.format(url)
+            variable_name = '*'
+            if (payload and 'variableName' in payload):
+                variable_name = payload['variableName']
+            url = '%s/tagManagement/variables?variableName=%s' % (
+                url, variable_name)
         else:
-            url = '{}/tagManagement/Values'.format(url)
+            url = '%s/tagManagement/Values' % (url)
         auth_string = '{}:{}'.format(username, password)
         auth_base64 = base64.b64encode(
             auth_string.encode('utf-8')).decode('utf-8')
@@ -46,7 +50,7 @@ class WuaPresreswatering(models.Model):
         request_function = requests.put
         # Method get is not really a get method, just
         # uses another endpoint
-        if method == 'post':
+        if method in ['post', 'get']:
             request_function = requests.post
         try:
             response = request_function(
@@ -109,7 +113,8 @@ class WuaPresreswatering(models.Model):
             # we cannot reset the values in the remote control, because
             # this will cause a mismatch between the data used on SINEMA
             # AND the data stored in the database.
-            if self.state == '03_issued':
+            if len(self.presresconsumption_ids.filtered(
+                    lambda x: x.state == '03_issued')) > 0:
                 raise exceptions.UserError(_(
                     'You cannot cancel a preswatering with issued '
                     'consumptions'))
