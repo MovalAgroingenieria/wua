@@ -223,7 +223,7 @@ class WuaPresreswatering(models.Model):
         preswaterings = self.search([
             ('initial_time', '>=', valid_start_utc),
             ('initial_time', '<', valid_end_utc),
-            ('state', '=', '02_validated'),
+            ('state', '=', '03_validated'),
         ])
         for preswatering in preswaterings:
             try:

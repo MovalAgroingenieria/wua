@@ -208,6 +208,12 @@ class WuaPresresconsumption(models.Model):
         store=True,
     )
 
+    request_date = fields.Date(
+        string='Request Date',
+        compute='_compute_request_date',
+        store=True,
+    )
+
     modification_deadline = fields.Datetime(
         string="Modification Deadline",
         compute="_compute_modification_deadline",
@@ -428,6 +434,15 @@ class WuaPresresconsumption(models.Model):
                 local_datetime = user_timezone.localize(local_datetime)
                 request_time = local_datetime.astimezone(pytz.utc)
             record.request_time = request_time
+
+    @api.depends('request_time')
+    def _compute_request_date(self):
+        for record in self:
+            request_date = None
+            if (record.request_time):
+                request_date = fields.Datetime.from_string(record.request_time)
+                request_date = request_date.strftime('%Y-%m-%d')
+            record.request_date = request_date
 
     @api.depends('request_time')
     def _compute_modification_deadline(self):
