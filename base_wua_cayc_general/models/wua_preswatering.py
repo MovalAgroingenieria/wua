@@ -204,25 +204,26 @@ class WuaPresreswatering(models.Model):
                 'No valid consumption data received from SINEMA.'))
         return consumption_data
 
-    @api.model
     def get_sinema_issued_consumptions(self):
-        current_time_utc = fields.Datetime.now()
-        current_time_utc_dt = fields.Datetime.from_string(current_time_utc)
+        current_time_utc = datetime.utcnow()
         spain_tz = pytz.timezone('Europe/Madrid')
-        current_time_sp = pytz.utc.localize(current_time_utc_dt).astimezone(
+        current_time_sp = pytz.utc.localize(current_time_utc).astimezone(
             spain_tz)
-        today_0800_sp = current_time_sp.replace(
-            hour=8, minute=0, second=0, microsecond=0)
-        valid_start = (today_0800_sp - timedelta(days=1)).replace(
-            hour=0, minute=0, second=0, microsecond=0)
-        valid_end = today_0800_sp
-        valid_start_utc = valid_start.astimezone(pytz.utc).strftime(
+        today_date_sp = current_time_sp.date()
+        yesterday_date_sp = today_date_sp - timedelta(days=1)
+        valid_start_sp = spain_tz.localize(
+            datetime(yesterday_date_sp.year, yesterday_date_sp.month,
+                     yesterday_date_sp.day, 0, 0, 0))
+        valid_end_sp = spain_tz.localize(
+            datetime(yesterday_date_sp.year, yesterday_date_sp.month,
+                     yesterday_date_sp.day, 23, 59, 59))
+        valid_start_utc = valid_start_sp.astimezone(pytz.utc).strftime(
             '%Y-%m-%d %H:%M:%S')
-        valid_end_utc = valid_end.astimezone(pytz.utc).strftime(
+        valid_end_utc = valid_end_sp.astimezone(pytz.utc).strftime(
             '%Y-%m-%d %H:%M:%S')
         preswaterings = self.search([
             ('initial_time', '>=', valid_start_utc),
-            ('initial_time', '<', valid_end_utc),
+            ('initial_time', '<=', valid_end_utc),
             ('state', '=', '03_validated'),
         ])
         for preswatering in preswaterings:
