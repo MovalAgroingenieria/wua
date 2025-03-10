@@ -29,6 +29,7 @@
         "security/ir.model.access.csv",
         "data/res_partner_cron.xml",
         "data/wua_preswateringrequest_change_state_cron.xml",
+        "data/wua_preswatering_generate_daily_cron.xml",
         "data/wua_wuabase_data.xml",
         "data/wua_preswatering_issue_cron.xml",
         "data/wua_octroi_data.xml",

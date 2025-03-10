@@ -69,6 +69,12 @@ class WuaPreswateringperiod(models.Model):
         inverse_name='preswateringperiod_id',
     )
 
+    preswatering_ids = fields.One2many(
+        string='Pres Waterings',
+        comodel_name='wua.preswatering',
+        inverse_name='preswateringperiod_id',
+    )
+
     number_of_requests = fields.Integer(
         string='Number of Requests',
         compute='_compute_number_of_requests',

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-06 09:29+0000\n"
-"PO-Revision-Date: 2025-03-06 09:29+0000\n"
+"POT-Creation-Date: 2025-03-10 15:15+0000\n"
+"PO-Revision-Date: 2025-03-10 15:15+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -101,16 +101,19 @@ msgstr "Assemblea"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_gravity_outlet
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringperiod_by_gravity_outlet
 msgid "By Gravity Outlet"
 msgstr "Per sortida gravetat"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_pumping
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringperiod_by_pumping
 msgid "By Pumping"
 msgstr "Per bombament"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_by_surplus
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringperiod_by_surplus
 msgid "By Surplus"
 msgstr "Per Esplus"
 
@@ -134,7 +137,7 @@ msgstr "Concessió com a volum"
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_wua_irrigation_configuration
 msgid "Configuration of irrigation with type of water"
-msgstr "Configuració del reg amb tipus d'aigua"
+msgstr "Configuration of irrigation with type of water"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_wuabase_server_connected
@@ -342,7 +345,7 @@ msgstr "Horari de modificació de bloqueig per a socis independents"
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_waterconnection_maximum_nominal_flow
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_maximum_nominal_flow
 msgid "Maximum nominal flow (l/s)"
-msgstr "Caudal nominal màxim (l/s)"
+msgstr "Maximum nominal flow (l/s)"
 
 #. module: base_wua_cayc_general
 #: code:addons/base_wua_cayc_general/models/res_partner.py:267
@@ -353,7 +356,7 @@ msgstr "Falta algun paràmetre de connexió del servidor."
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_module_module_flow
 msgid "Module Flow (l/s)"
-msgstr "Flux del mòdul (l/s)"
+msgstr "Module Flow (l/s)"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_watermeter_watermeter_module_ids
@@ -369,7 +372,7 @@ msgid "New Preswatering Request"
 msgstr "Nova sol·licitud de preaigua"
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:203
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:209
 #, python-format
 msgid "No valid consumption data received from SINEMA."
 msgstr "No s'han rebut dades de consum vàlides de SINEMA."
@@ -439,7 +442,7 @@ msgstr "Parcel·les Vinculades"
 #. module: base_wua_cayc_general
 #: model:ir.actions.act_window,name:base_wua_cayc_general.wua_parcel_primary_action
 msgid "Parcels Primary"
-msgstr "Perímetres de Tomas-CCRR"
+msgstr "Parcel·les Primàries"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_res_partner_parent_partner_id
@@ -466,7 +469,7 @@ msgstr "Tipus de soci"
 #. module: base_wua_cayc_general
 #: model:ir.model,name:base_wua_cayc_general.model_res_partner
 msgid "Partner of a WUA"
-msgstr "Soci"
+msgstr "Partner of a WUA"
 
 #. module: base_wua_cayc_general
 #: model:ir.actions.act_window,name:base_wua_cayc_general.res_partner_che_action
@@ -527,6 +530,7 @@ msgstr "Línia de període de quota"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_rebombed_flow_ls
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringperiod_rebombed_flow_ls
 msgid "Rebombed Flow (l/s)"
 msgstr "Cabal rebombeat (l/s)"
 
@@ -598,13 +602,13 @@ msgid "The module value must be a multiple of 5."
 msgstr "The module value must be a multiple of 5."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:91
+#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:93
 #, python-format
 msgid "The nominal flow cannot be greater than the maximum_nominal_flow."
 msgstr "The nominal flow cannot be greater than the maximum_nominal_flow."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:79
+#: code:addons/base_wua_cayc_general/models/wua_presresconsumption.py:81
 #, python-format
 msgid "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
 msgstr "The nominal flow of %s is not a combination of the watermeter modules (%s -> %s)."
@@ -646,7 +650,7 @@ msgstr "Comptador"
 #. module: base_wua_cayc_general
 #: selection:res.partner,partner_type:0
 msgid "Water Supply"
-msgstr "Abastament"
+msgstr "Subministrament d'aigua"
 
 #. module: base_wua_cayc_general
 #: selection:res.partner,partner_type:0
@@ -701,13 +705,13 @@ msgid "Watermeter position already exists."
 msgstr "Watermeter position already exists."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:166
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:172
 #, python-format
 msgid "You can only issue the consumptions from the previous day until 08:00 of the current day"
 msgstr "Només pots obtenir els consums servits del dia anterior fins a les 08:00 del dia actual."
 
 #. module: base_wua_cayc_general
-#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:142
+#: code:addons/base_wua_cayc_general/models/wua_preswatering.py:148
 #, python-format
 msgid "You can only validate the consumptions starting from 12:00 on the previous day until 08:00 of the request date."
 msgstr "Només es poden validar les consumicions a partir de les 12:00 del dia anterior fins a les 08:00 de la data de sol·licitud."
@@ -721,6 +725,7 @@ msgstr "Zona"
 
 #. module: base_wua_cayc_general
 #: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswatering_zones_united
+#: model:ir.model.fields,field_description:base_wua_cayc_general.field_wua_preswateringperiod_zones_united
 msgid "Zones United"
 msgstr "Zones unides"
 

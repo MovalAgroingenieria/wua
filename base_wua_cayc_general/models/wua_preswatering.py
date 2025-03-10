@@ -76,6 +76,21 @@ class WuaPresreswatering(models.Model):
     def _onchange_preswateringperiod_id(self):
         if self.preswateringperiod_id:
             self.proration = self.preswateringperiod_id.proration
+            self.zones_united = self.preswateringperiod_id.zones_united
+            self.rebombed_flow_ls = self.preswateringperiod_id.rebombed_flow_ls
+            self.by_gravity_outlet = \
+                self.preswateringperiod_id.by_gravity_outlet
+            self.by_pumping = self.preswateringperiod_id.by_pumping
+            self.by_surplus = self.preswateringperiod_id.by_surplus
+            # Now check all the number of presatering_ids of the
+            # preswateringperiod_id and set the biggest number + 1
+            number_to_set = 1
+            id_to_exclude = self.id or self._origin.id
+            for preswatering in self.preswateringperiod_id.preswatering_ids.\
+                    filtered(lambda x: x.id and x.id not in [id_to_exclude]):
+                if preswatering.number >= number_to_set:
+                    number_to_set = preswatering.number + 1
+            self.number = number_to_set
 
     def _process_granted_nominal_flows(
             self, presresconsumptions, preswatering):
@@ -232,6 +247,29 @@ class WuaPresreswatering(models.Model):
             except Exception as e:
                 _logger.error(
                     'Error issuing preswatering %s: %s', preswatering, e)
+
+    def generate_daily_preswatering(self):
+        today = fields.Date.from_string(fields.Date.context_today(self))
+        yesterday = today - timedelta(days=1)
+        last_preswatering = self.search([
+            ('initial_time', '>=', yesterday.strftime('%Y-%m-%d 00:00:00')),
+            ('initial_time', '<=', yesterday.strftime('%Y-%m-%d 23:59:59')),
+        ], order='initial_time desc', limit=1)
+        if last_preswatering:
+            initial_time = fields.Datetime.from_string(
+                last_preswatering.initial_time) + timedelta(days=1)
+            preswatering_period = last_preswatering.preswateringperiod_id
+            new_preswatering = self.create({
+                'preswateringperiod_id': preswatering_period.id,
+                'number': last_preswatering.number + 1,
+                'state': '01_draft',
+                'initial_time': initial_time,
+                'proration': preswatering_period.proration,
+            })
+            new_preswatering._onchange_preswateringperiod_id()
+            new_preswatering.select_presresconsumptions()
+            new_preswatering.calculate_presresconsumptions()
+            # new_preswatering.validate_presresconsumptions()
 
     def _process_issued_nominal_flows(self, presresconsumptions, preswatering):
         response = super(WuaPresreswatering, self).\

@@ -15,6 +15,32 @@ class WuaPresreswateringperiod(models.Model):
         default=1.0,
     )
 
+    zones_united = fields.Boolean(
+        string='Zones United',
+        default=False,
+    )
+
+    rebombed_flow_ls = fields.Float(
+        string='Rebombed Flow (l/s)',
+        digits=(32, 0),
+        default=0.0,
+    )
+
+    by_gravity_outlet = fields.Boolean(
+        string='By Gravity Outlet',
+        default=False,
+    )
+
+    by_pumping = fields.Boolean(
+        string='By Pumping',
+        default=False,
+    )
+
+    by_surplus = fields.Boolean(
+        string='By Surplus',
+        default=False,
+    )
+
     _sql_constraints = [
         ('check_proration_positive',
          'CHECK(proration > 0)',
