@@ -11,20 +11,24 @@ class ResFile(models.Model):
     notificationset_ids = fields.One2many(
         string='Notification Sets',
         comodel_name='res.notificationset',
-        inverse_name='file_id')
+        inverse_name='file_id',
+    )
 
     number_of_notificationsets = fields.Integer(
         string='Number of notification sets',
-        compute='_compute_number_of_notificationsets',)
+        compute='_compute_number_of_notificationsets',
+    )
 
     notification_ids = fields.One2many(
         string='Notifications',
         comodel_name='res.notification',
-        inverse_name='file_id')
+        inverse_name='file_id',
+    )
 
     number_of_notifications = fields.Integer(
         string='Number of notifications',
-        compute='_compute_number_of_notifications',)
+        compute='_compute_number_of_notifications',
+    )
 
     @api.multi
     def _compute_number_of_notificationsets(self):
@@ -62,6 +66,9 @@ class ResFile(models.Model):
             'search_view_id': [search_view.id],
             'target': 'current',
             'domain': [('file_id', '=', current_file.id)],
-            'context': {'from_files': True, 'default_file_id': current_file.id,},
+            'context': {
+                'from_files': True,
+                'default_file_id': current_file.id,
+                },
             }
         return act_window

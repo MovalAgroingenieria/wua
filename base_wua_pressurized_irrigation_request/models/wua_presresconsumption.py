@@ -107,6 +107,7 @@ class WuaPresresconsumption(models.Model):
         string='Nominal Flow Requested (m³/h)',
         digits=(32, 4),
         required=True,
+        default=0.0,
     )
 
     nominal_flow_ls = fields.Float(
@@ -119,24 +120,28 @@ class WuaPresresconsumption(models.Model):
         string='Nominal Flow Granted (m³/h)',
         digits=(32, 4),
         readonly=True,
+        default=0.0,
     )
 
     nominal_flow_ls_granted = fields.Float(
         string='Nominal Flow Granted (l/s)',
         digits=(32, 4),
         readonly=True,
+        default=0.0,
     )
 
     nominal_flow_issued = fields.Float(
         string='Nominal Flow Issued (m³/h)',
         digits=(32, 4),
         readonly=True,
+        default=0.0,
     )
 
     nominal_flow_ls_issued = fields.Float(
         string='Nominal Flow Issued (l/s)',
         digits=(32, 4),
         readonly=True,
+        default=0.0,
     )
 
     watering_volume = fields.Float(

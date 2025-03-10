@@ -11,4 +11,5 @@ class ResLetter(models.Model):
     notification_id = fields.Many2one(
         string='Notification',
         comodel_name='res.notification',
-        ondelete='cascade',)
+        ondelete='cascade',
+    )

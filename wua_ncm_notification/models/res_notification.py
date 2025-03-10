@@ -11,7 +11,8 @@ class ResNotification(models.Model):
     is_wua_partner = fields.Boolean(
         string='Is a WUA partner',
         store=True,
-        compute='_compute_is_wua_partner',)
+        compute='_compute_is_wua_partner',
+    )
 
     file_id = fields.Many2one(
         string='Associated File',
@@ -19,43 +20,51 @@ class ResNotification(models.Model):
         store=True,
         compute='_compute_file_id',
         index=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     letter_ids = fields.One2many(
         string='Associated Letters',
         comodel_name='res.letter',
-        inverse_name='notification_id')
+        inverse_name='notification_id',
+    )
 
     letter_id = fields.Many2one(
         string='Associated Letter',
         comodel_name='res.letter',
-        compute='_compute_letter_id',)
+        compute='_compute_letter_id',
+    )
 
     number_of_votes = fields.Integer(
         string="Number of votes",
         store=True,
-        compute='_compute_number_of_votes',)
+        compute='_compute_number_of_votes',
+    )
 
     parcel_owner_number = fields.Integer(
         string="Parcels, as owner",
         store=True,
-        compute='_compute_parcel_owner_number',)
+        compute='_compute_parcel_owner_number',
+    )
 
     parcel_owner_area_hec = fields.Float(
         string="Area, as owner (hectares)",
         store=True,
-        compute='_compute_parcel_owner_area_hec',)
+        compute='_compute_parcel_owner_area_hec',
+    )
 
     parcel_lessee_number = fields.Integer(
         string="Parcels, as lessee",
         store=True,
-        compute='_compute_parcel_lessee_number',)
+        compute='_compute_parcel_lessee_number',
+    )
 
     parcel_lessee_area_hec = fields.Float(
         string="Area, as lessee (hectares)",
         digits=(32, 4),
         store=True,
-        compute='_compute_parcel_lessee_area_hec',)
+        compute='_compute_parcel_lessee_area_hec',
+    )
 
     parcel_ids = fields.One2many(
         string='Parcels',

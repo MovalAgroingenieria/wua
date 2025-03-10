@@ -11,20 +11,24 @@ class ResNotificationsetType(models.Model):
 
     include_partner_if_wua = fields.Boolean(
         string='Include WUA partners',
-        default=True,)
+        default=True,
+    )
 
     include_partner_if_customer = fields.Boolean(
-        default=False,)
+        default=False,
+    )
 
     include_partner_if_supplier = fields.Boolean(
-        default=False,)
+        default=False,
+    )
 
     attach_report_id = fields.Many2one(
         string='Report to Attach',
         comodel_name='ir.actions.report.xml',
         domain=[('model', '=', 'res.partner')],
         index=True,
-        ondelete='restrict',)
+        ondelete='restrict',
+    )
 
     def _get_a_partner(self):
         resp = None

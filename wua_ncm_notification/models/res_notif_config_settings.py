@@ -10,11 +10,13 @@ class ResNotifConfigSettings(models.TransientModel):
 
     with_letter = fields.Boolean(
         string='Create a output letter automatically',
-        default=False,)
+        default=False,
+    )
 
     hide_address = fields.Boolean(
         string='Hide the address of partner in envelope',
-        default=False,)
+        default=False,
+    )
 
     @api.multi
     def set_default_values(self):
