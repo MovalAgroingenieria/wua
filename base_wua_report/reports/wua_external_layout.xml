@@ -175,43 +175,50 @@
     <!-- Footer -->
     <template id="external_layout_footer">
         <div class="footer">
-            <div style="border-top: 1px solid black;">
-                <!-- Company custom footer -->
-                <t t-if="company.custom_footer">
-                    <div style="font-size: 8px; margin-top: 2px;text-align: left;">
-                        <span t-raw="company.rml_footer"/>
-                        <t t-if="company.company_registry">
-                            <br/>
-                            <span t-field="company.company_registry"/>
-                        </t>
-                    </div>
-                </t>
-                <!-- Details by document -->
-               <div class="text-right" name="details_by_document">
-                   <!-- Details according document type -->
-                   <t t-if="docs and docs[0]._name == 'account.invoice' and o.number" name="invoice_details">
-                       <span t-field="o.number" style="font-size: 8px;"/>
-                       <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
-                   </t>
-                   <t t-if="docs and docs[0]._name == 'credit.control.communication' and doc.partner_id.name" name="credit_control_details">
-                       <span t-field="doc.partner_id.name" style="font-size: 8px;"/>
-                       <t t-if="doc.partner_id.partner_code">
-                            <t t-set="partner_code" t-value="str(doc.partner_id.partner_code)"/>
-                            <span style="font-size: 8px;">[</span><span t-esc="partner_code" style="font-size: 8px;"/><span style="font-size: 8px;">]</span>
-                       </t>
-                       <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
-                   </t>
-                   <t t-if="docs and docs[0]._name == 'wua.certificate' and docs[0].reference_number" name="certificate_details">
-                       <span t-field="docs[0].reference_number" style="font-size: 8px;"/>
-                       <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
-                   </t>
-                   <!-- Page numbers -->
-                   <div name="page_numbers" style="display: inline;">
-                       <span class="page" style="font-size: 8px;"/>
-                       <span style="font-size: 8px;">/</span>
-                       <span class="topage" style="font-size: 8px;"/>
-                   </div>
-               </div>
+            <div style="border-top: 1px solid black; padding-top: 5px; width: 100%;">
+                <table style="width: 100%; height: 100%;">
+                    <tr style="height: 90%;">
+                        <td style="vertical-align: top; font-size: 8px; text-align: left;">
+                            <!-- Company custom footer -->
+                            <t t-if="company.custom_footer">
+                                <span t-raw="company.rml_footer"/>
+                                <t t-if="company.company_registry">
+                                    <br/>
+                                    <span t-field="company.company_registry"/>
+                                </t>
+                            </t>
+                        </td>
+                    </tr>
+                    <tr style="height: 10%;">
+                        <td>
+                            <!-- Details according to document type -->
+                            <div class="text-right" name="details_by_document" style="font-size: 8px;">
+                                <t t-if="docs and docs[0]._name == 'account.invoice' and o.number" name="invoice_details">
+                                    <span t-field="o.number" style="font-size: 8px;"/>
+                                    <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
+                                </t>
+                                <t t-if="docs and docs[0]._name == 'credit.control.communication' and doc.partner_id.name" name="credit_control_details">
+                                    <span t-field="doc.partner_id.name"  style="font-size: 8px;"/>
+                                    <t t-if="doc.partner_id.partner_code">
+                                        <t t-set="partner_code" t-value="str(doc.partner_id.partner_code)"/>
+                                        <span style="font-size: 8px;">[</span><span t-esc="partner_code"  style="font-size: 8px;"/><span style="font-size: 8px;">]</span>
+                                    </t>
+                                    <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
+                                </t>
+                                <t t-if="docs and docs[0]._name == 'wua.certificate' and docs[0].reference_number" name="certificate_details">
+                                    <span t-field="docs[0].reference_number" style="font-size: 8px;"/>
+                                    <span style="font-size: 8px;">&amp;nbsp;&amp;nbsp;</span>
+                                </t>
+                                <!-- Page numbers -->
+                                <div name="page_numbers" style="font-size: 8px; display: inline; margit-bottom: 4px;">
+                                    <span class="page"/>
+                                    <span>/</span>
+                                    <span class="topage"/>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </template>
