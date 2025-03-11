@@ -5,7 +5,7 @@ import pytz
 import logging
 import json
 import base64
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from odoo import models, fields, api, exceptions, _
 
 _logger = logging.getLogger(__name__)
@@ -128,6 +128,16 @@ class WuaPresreswatering(models.Model):
                         'nominal_flow_granted': consumption.nominal_flow,
                         'nominal_flow_ls_granted': consumption.nominal_flow_ls,
                     })
+
+    # Hook: Ensure only the same day is setted for the initial_time
+    def _update_condition(self, condition):
+        condition = super(WuaPresreswatering, self)._update_condition(
+            condition)
+        initial_time = fields.Datetime.from_string(self.initial_time)
+        end_of_day = datetime.combine(initial_time.date(), time(23, 59, 59))
+        condition.append(
+            ('request_time', '<', end_of_day.strftime('%Y-%m-%d %H:%M:%S')))
+        return condition
 
     @api.multi
     def validate_presresconsumptions(self):
@@ -269,7 +279,7 @@ class WuaPresreswatering(models.Model):
             new_preswatering._onchange_preswateringperiod_id()
             new_preswatering.select_presresconsumptions()
             new_preswatering.calculate_presresconsumptions()
-            # new_preswatering.validate_presresconsumptions()
+            new_preswatering.validate_presresconsumptions()
 
     def _process_issued_nominal_flows(self, presresconsumptions, preswatering):
         response = super(WuaPresreswatering, self).\

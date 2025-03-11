@@ -498,7 +498,7 @@ class WuaPreswatering(models.Model):
 
     def join_presresconsumptions_to_preswatering_by_request(self):
         resp = 0
-        # Get only preswatering of the same day until next
+        # Get only preswatering from the same day or later
         initial_time = self.initial_time
         condition = [
             ('preswateringperiod_id', '=', self.preswateringperiod_id.id),
