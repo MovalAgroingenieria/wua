@@ -25,6 +25,20 @@ class AccountPaymentOrder(models.Model):
                                 })
         return res
 
+    def process_missing_functions(self):
+        super(AccountPaymentOrder, self).process_missing_functions()
+        for order in self:
+            if order.payment_mode_id.name == 'DipuCR':
+                for bline in order.bank_line_ids:
+                    if bline.dipucr_sent:
+                        for line in bline.payment_line_ids:
+                            if bline.name == line.bank_line_id.name:
+                                invoice = line.invoice_id
+                                invoice.write({
+                                    'in_dipucr': True,
+                                    'dipucr_ref': bline.dipucr_ref,
+                                })
+
     @api.multi
     def action_done_cancel(self):
         for order in self:

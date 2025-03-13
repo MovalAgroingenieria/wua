@@ -50,6 +50,21 @@ class AccountPaymentOrder(models.Model):
                 from_account_payment_order=True)._amount_residual()
         return True
 
+    @api.multi
+    def action_process_missing_functions(self):
+        invoices = self.env['account.invoice'].browse()
+        move_lines = self.env['account.move.line'].browse()
+        for order in self:
+            for payment_line in order.payment_line_ids:
+                if payment_line.move_line_id.invoice_id:
+                    invoices |= payment_line.move_line_id.invoice_id
+                move_lines |= payment_line.move_line_id
+        if invoices:
+            invoices._compute_payments()
+        if move_lines:
+            move_lines.with_context(
+                from_account_payment_order=True)._amount_residual()
+
     @api.model
     def create(self, vals):
         if vals.get('name', 'New') == 'New':

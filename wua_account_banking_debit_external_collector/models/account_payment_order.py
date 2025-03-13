@@ -31,3 +31,25 @@ class AccountPaymentOrder(models.Model):
                                     move_line.external_collector_ref = \
                                         bline.external_collector_ref
         return res
+
+    def process_missing_functions(self):
+        super(AccountPaymentOrder, self).process_missing_functions()
+        for order in self:
+            if order.payment_mode_id.name == 'ext_collector':
+                for bline in order.bank_line_ids:
+                    if bline.ext_collector_sent:
+                        for line in bline.payment_line_ids:
+                            if bline.name == line.bank_line_id.name:
+                                invoice = line.invoice_id
+                                invoice.write({
+                                    'in_external_collector': True,
+                                    'external_collector_ref':
+                                        bline.external_collector_ref,
+                                    })
+                                move_lines = \
+                                    self.env['account.move.line'].search([
+                                        ('invoice_id', '=', invoice.id)])
+                            if move_lines:
+                                for move_line in move_lines:
+                                    move_line.external_collector_ref = \
+                                        bline.external_collector_ref

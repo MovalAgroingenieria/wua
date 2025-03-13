@@ -153,3 +153,23 @@ class AccountPaymentOrder(models.Model):
                                 for move_line in move_lines:
                                     move_line.suma_ref = bline.suma_ref
         return res
+
+    def process_missing_functions(self):
+        super(AccountPaymentOrder, self).process_missing_functions()
+        for order in self:
+            if order.payment_mode_id.name == 'SUMA':
+                for bline in order.bank_line_ids:
+                    if bline.suma_sent:
+                        for line in bline.payment_line_ids:
+                            if bline.name == line.bank_line_id.name:
+                                invoice = line.invoice_id
+                                invoice.write({
+                                    'in_suma': True,
+                                    'suma_ref': bline.suma_ref,
+                                })
+                                move_lines = self.env[
+                                    'account.move.line'].search(
+                                        [('invoice_id', '=', invoice.id)])
+                            if move_lines:
+                                for move_line in move_lines:
+                                    move_line.suma_ref = bline.suma_ref
