@@ -32,10 +32,11 @@ class ResFile(models.Model):
 
     @api.multi
     def _compute_number_of_notificationsets(self):
-        for record in self:
+        for record in self.sudo():
             number_of_notificationsets = 0
             if record.notificationset_ids:
-                number_of_notificationsets = len(record.notificationset_ids)
+                number_of_notificationsets = len(
+                    record.notificationset_ids)
             record.number_of_notificationsets = number_of_notificationsets
 
     @api.multi
